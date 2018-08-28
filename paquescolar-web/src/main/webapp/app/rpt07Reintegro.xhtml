@@ -1,0 +1,122 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" disabled="true" />
+                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true" />
+                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{pagoProveedoresController.impRptPagoProve}"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options" class="centradoVertical">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+
+                    <h3>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h3>
+                    <h:panelGrid columns="2">
+                        <h:outputText value="Departamento"/>
+                        <p:selectOneMenu id="codigoDepartamento" value="#{pagoProveedoresController.codigoDepartamento}"  required="true" disabled="#{datosGeograficosController.usuarioDepartamental}" >
+                            <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
+                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
+                            <p:ajax update="codigoDepartamento"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
+                        <h:panelGrid columns="3" id="txtCodigoEntidad" >
+                            <p:inputText value="#{pagoProveedoresController.codigoEntidad}" maxlength="5" size="6" onkeypress="disableEnter();" onkeyup="queryEntidad(this.value);"/>
+                            <p:spacer width="10"/>
+                            <p:outputLabel id="nombreCE" value="#{pagoProveedoresController.entidadEducativa.nombre}" style="font-weight: bold"/>
+                        </h:panelGrid>
+                        
+                        <p:commandButton value="Filtrar" action="#{pagoProveedoresController.generarRptLiquidacion}" update="pnlDatos"/>
+                    </h:panelGrid>
+                </div>
+
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Lista de Pagos"/>
+                    </h1>
+
+                    <h:panelGrid id="pnlDatos">
+                        <p:dataTable id="tblDatos" value="#{pagoProveedoresController.lstEmailProveeCredito}" var="reg">
+
+                            <f:facet name="header">
+                                <p:spacer width="10" height="8"/>
+                                <h:commandLink style="float:right;">
+                                    <i class="fa fa-download"></i>
+                                    <p:spacer width="10" height="8"/>
+                                    <h:outputText value="Exportar"/>
+                                    <p:dataExporter  type="xls" encoding="ISO-8859-1" target="tblDatos" 
+                                                     fileName="rptPagoProve_#{catalogosGeneralesController.formatoFechaReporte}" 
+                                                     postProcessor="#{pagoProveedoresController.rptPagoProveedores}"/>
+                                </h:commandLink>
+                            </f:facet>
+
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column rowspan="2" headerText="Cod. Entidad" width="48"/>
+                                    <p:column rowspan="2" headerText="Nombre C.E." />
+                                    <p:column rowspan="2" headerText="Rubro" width="80"/>
+                                    <p:column rowspan="2" headerText="N.I.T." width="110"/>
+                                    <p:column rowspan="2" headerText="Razon Social" />
+                                    <p:column colspan="2" headerText="Documento de pago" width="160"/>
+                                    <p:column rowspan="2" headerText="Monto" width="80"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column headerText="Número" width="80"/>
+                                    <p:column headerText="Fecha" width="80"/>
+                                </p:row>
+                            </p:columnGroup>
+
+                            <p:column headerText="Cod. Entidad" style="text-align: center;">
+                                <p:outputLabel value="#{reg.codigoEntidad}"/>
+                            </p:column>
+                            <p:column headerText="Nombre C.E." style="font-size: 10px;">
+                                <p:outputLabel value="#{reg.nombreCe}"/>
+                            </p:column>
+                            <p:column headerText="Rubro">
+                                <p:outputLabel value="#{reg.descripcionRubro}"/>
+                            </p:column>
+                            <p:column headerText="N.I.T.">
+                                <p:outputLabel value="#{reg.numeroNitEmp}"/>
+                            </p:column>
+                            <p:column headerText="Razon Social" style="font-size: 10px;">
+                                <p:outputLabel value="#{reg.razonSocial}"/>
+                            </p:column>
+                            <p:column headerText="No.Doc.Pago" >
+                                <p:outputLabel value="#{reg.docPago}"/>
+                            </p:column>
+                            <p:column headerText="Fecha.Doc.Pago" style="text-align: center;" >
+                                <p:outputLabel value="#{reg.fechaDocPago}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="Monto ($)" style="text-align: right;">
+                                <p:outputLabel value="#{reg.montoActual}">
+                                    <f:convertNumber pattern="$ #,##0.00"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                </div>
+            </div>
+        </div>
+        
+        <p:remoteCommand name="findEntidad" update="nombreCE" actionListener="#{pagoProveedoresController.buscarEntidadEducativa}" />
+    </ui:define>
+</ui:composition>

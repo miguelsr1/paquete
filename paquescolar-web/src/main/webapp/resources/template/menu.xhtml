@@ -1,0 +1,31 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pv="http://primefaces.org/paradise">
+
+    <div class="layout-menu-wrapper #{guestPreferences.darkMenu ? 'layout-menu-dark' : null}">
+        <div class="nano">
+            <div class="nano-content sidebar-scroll-content">
+                <div class="layout-menu-container">
+                    <h:form id="menuform">
+                        <p:panelGrid columns="1" columnClasses="col12"
+                                     style="width: 100%; text-align: center; border:0px none; background-color:transparent;"
+                                     styleClass="form-group ui-panelgrid-blank">
+                            <p:outputLabel value="versión: #{catalogosGeneralesController.version}" style="font-size: 10px;"/>
+                            <p:panelGrid columns="2" columnClasses="col2_label,col10" 
+                                         style="width: 100%; border:0px none; background-color:transparent;"
+                                         styleClass="form-group ui-panelgrid-blank">
+                                
+                            </p:panelGrid>
+                        </p:panelGrid>
+                        <pv:menu model="#{menuController.model}" />
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</ui:composition>

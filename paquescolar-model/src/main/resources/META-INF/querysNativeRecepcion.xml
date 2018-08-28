@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings 
+    xmlns="http://java.sun.com/xml/ns/persistence/orm" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm  http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    <description>Native queries para Paquete Escolar</description>
+    
+   
+    <named-native-query name="Recepcion.ItemsPendienteDeEntrega" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.recepcion.DetalleItems">
+        <query>
+            <![CDATA[
+            SELECT 
+                rownum              as idRow,
+                CANTIDAD            as cantidad,
+                CONSOLIDADO_ESP_TEC as consolidadoEspTec, 
+                NO_ITEM             as noItem 
+            FROM 
+                VW_RECEP_ITEM_PENDIENTES 
+            WHERE 
+                ID_CONTRATO = ?1 
+            ORDER BY 
+                NO_ITEM
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="Recepcion.ItemsPendienteDeEntregaByNoItem" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.recepcion.DetalleItems">
+        <query>
+            <![CDATA[
+            SELECT 
+                rownum              as idRow,
+                ID_DETALLE          as idDetalleOfe,
+                CANTIDAD            as cantidad,
+                CONSOLIDADO_ESP_TEC as consolidadoEspTec, 
+                NO_ITEM             as noItem 
+            FROM 
+                VW_RECEP_ITEM_PENDIENTES 
+            WHERE 
+                ID_CONTRATO = ?1 and
+                NO_ITEM = ?2
+            ORDER BY 
+                NO_ITEM
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="Recepcion.RptGeneralDeEntregas" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.recepcion.ReportePorDepartamentoDto">
+        <query>
+            <![CDATA[
+            SELECT 
+                codigo_departamento                             codigoDepartamento,
+                NOMBRE_DEPARTAMENTO                             nombreDepartamento, 
+                NVL(SUM(TOTAL_UNIFORME),0)                      totalContratosUniforme, 
+                NVL(SUM(ENTREGADO_UNIFORME),0)                  totalEntregasUniforme, 
+                SUM(TOTAL_UTILES)                               totalContratosUtiles, 
+                SUM(ENTREGADO_UTILES)                           totalEntregasUtiles, 
+                SUM(TOTAL_ZAPATOS)                              totalContratosZapatos, 
+                SUM(ENTREGADO_ZAPATOS)                          totalEntregasZapatos, 
+                SUM(TOTALCONTRATOS)                             totalContratos, 
+                SUM(TOTALENTREGADO)                             totalEntregas, 
+                (SUM(TOTALENTREGADO)/SUM(TOTALCONTRATOS))*100   porcentajeDeAvance
+            FROM 
+                (SELECT 
+                    TB.CODIGO_ENTIDAD, 
+                    TB.NOMBRE, 
+                    NVL(TB.TOTAL_UNIFORME,0) TOTAL_UNIFORME, 
+                    NVL(TB.ENTREGADO_UNIFORME,0) ENTREGADO_UNIFORME, 
+                    NVL(TB.TOTAL_UTILES,0) TOTAL_UTILES, 
+                    NVL(TB.ENTREGADO_UTILES,0) ENTREGADO_UTILES, 
+                    NVL(TB.TOTAL_ZAPATOS,0) TOTAL_ZAPATOS, 
+                    NVL(TB.ENTREGADO_ZAPATOS,0) ENTREGADO_ZAPATOS, 
+                    TB.CODIGO_DEPARTAMENTO, 
+                    TB.NOMBRE_DEPARTAMENTO, 
+                    NVL(TB.TOTAL_UNIFORME,0)     + NVL(TB.TOTAL_UTILES,0) + NVL(TB.TOTAL_ZAPATOS,0) TOTALCONTRATOS, 
+                    NVL(TB.ENTREGADO_UNIFORME,0) + NVL(TB.ENTREGADO_UTILES,0) + NVL(TB.ENTREGADO_ZAPATOS,0) TOTALENTREGADO 
+                FROM 
+                    (SELECT TBL.*, 
+                        TBL1.TOTAL_UNIFORME, 
+                        TBL2.ENTREGADO_UNIFORME , 
+                        TBL3.TOTAL_UTILES, 
+                        TBL4.ENTREGADO_UTILES, 
+                        TBL5.TOTAL_ZAPATOS, 
+                        TBL6.ENTREGADO_ZAPATOS 
+                    FROM 
+                        (select CODIGO_DEPARTAMENTO, NOMBRE_DEPARTAMENTO, CODIGO_ENTIDAD, NOMBRE
+                        from VW_SUB_CE_CONTRATADOS
+                        where ID_DET_PROCESO_ADQ in (?1,?2,?3)) TBL 
+                    LEFT OUTER JOIN 
+                        (select CODIGO_DEPARTAMENTO, NOMBRE_DEPARTAMENTO, CODIGO_ENTIDAD, NOMBRE, total_contratos TOTAL_UNIFORME
+                        from vw_sub_ce_contra_cant
+                        where id_det_proceso_adq = ?1) TBL1 ON TBL.CODIGO_DEPARTAMENTO = TBL1.CODIGO_DEPARTAMENTO AND TBL.CODIGO_ENTIDAD = TBL1.CODIGO_ENTIDAD 
+                    LEFT OUTER JOIN 
+                        (select CODIGO_DEPARTAMENTO, NOMBRE_DEPARTAMENTO, CODIGO_ENTIDAD, NOMBRE, contratos_entregados ENTREGADO_UNIFORME
+                        from VW_SUB_CE_CONTRA_TOTAL_ENTRE            
+                        where ID_DET_PROCESO_ADQ = ?1) TBL2 ON TBL1.CODIGO_DEPARTAMENTO = TBL2.CODIGO_DEPARTAMENTO AND TBL1.CODIGO_ENTIDAD = TBL2.CODIGO_ENTIDAD 
+                    LEFT OUTER JOIN 
+                        (select CODIGO_DEPARTAMENTO, NOMBRE_DEPARTAMENTO, CODIGO_ENTIDAD, NOMBRE, total_contratos TOTAL_UTILES
+                        from vw_sub_ce_contra_cant
+                        where id_det_proceso_adq = ?2) TBL3 ON TBL.CODIGO_DEPARTAMENTO = TBL3.CODIGO_DEPARTAMENTO AND TBL.CODIGO_ENTIDAD = TBL3.CODIGO_ENTIDAD 
+                    LEFT OUTER JOIN 
+                        (select CODIGO_DEPARTAMENTO, NOMBRE_DEPARTAMENTO, CODIGO_ENTIDAD, NOMBRE, contratos_entregados ENTREGADO_UTILES
+                        from VW_SUB_CE_CONTRA_TOTAL_ENTRE            
+                        where ID_DET_PROCESO_ADQ = ?2) TBL4 ON TBL3.CODIGO_DEPARTAMENTO = TBL4.CODIGO_DEPARTAMENTO AND TBL3.CODIGO_ENTIDAD = TBL4.CODIGO_ENTIDAD 
+                    LEFT OUTER JOIN 
+                        (select CODIGO_DEPARTAMENTO, NOMBRE_DEPARTAMENTO, CODIGO_ENTIDAD, NOMBRE, total_contratos TOTAL_ZAPATOS
+                        from vw_sub_ce_contra_cant
+                        where id_det_proceso_adq = ?3) TBL5 ON TBL.CODIGO_DEPARTAMENTO = TBL5.CODIGO_DEPARTAMENTO AND TBL.CODIGO_ENTIDAD = TBL5.CODIGO_ENTIDAD 
+                    LEFT OUTER JOIN 
+                        (select CODIGO_DEPARTAMENTO, NOMBRE_DEPARTAMENTO, CODIGO_ENTIDAD, NOMBRE, contratos_entregados ENTREGADO_ZAPATOS
+                        from VW_SUB_CE_CONTRA_TOTAL_ENTRE            
+                        where ID_DET_PROCESO_ADQ = ?3) TBL6 ON TBL5.CODIGO_DEPARTAMENTO = TBL6.CODIGO_DEPARTAMENTO AND TBL5.CODIGO_ENTIDAD = TBL6.CODIGO_ENTIDAD) TB) 
+            GROUP BY CODIGO_DEPARTAMENTO, NOMBRE_DEPARTAMENTO
+            order by codigo_departamento
+            ]]>
+        </query>
+    </named-native-query>
+</entity-mappings>

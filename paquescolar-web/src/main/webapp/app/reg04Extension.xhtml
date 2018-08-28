@@ -1,0 +1,98 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" oncomplete="onClick('btoBuscarC');"
+                                    action="#{modificatoriaController.validarProcesoAdquisicion}" actionListener="#{modificatoriaController.nuevaExtinsion}"/>
+                        <p:menuitem value="Consultar" icon="fa fa-search " id="mtmModificar" oncomplete="onClick('btoBuscarC');"
+                                    action="#{modificatoriaController.consultarExtinsionContrato}"/>
+                        <p:menuitem value="Guardar" icon="fa fa-save" action="#{modificatoriaController.validarExtension}"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options" class="centradoVertical">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar> 
+
+                    <p:panel id="pnlFiltro" header="Seleccionar Contrato" visible="false" >
+                        <p:commandButton id="btoBuscarC" icon="fa fa-plus" action="#{modificatoriaController.mostrarFiltroContrato}">
+                            <p:ajax event="dialogReturn" listener="#{modificatoriaController.onContratoChosen}" update="pnlContrato pnlDetalle"/>
+                        </p:commandButton>
+                    </p:panel>
+
+                    <h3>
+                        <i class="fa fa-file-text-o blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <p:outputLabel value="Datos Generales del Contrato"/>
+                    </h3>
+
+                    <p:outputPanel id="pnlContrato">
+                        <p:panelGrid columns="2" columnClasses="col3_label,col9"
+                                     styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+                            <h:outputText value="#{bundle['compra.rubroAdq']}:"/>
+                            <p:outputLabel value="#{catalogosGeneralesController.descripcionRubro(modificatoriaController.idRubro)}" style="font-weight: bold;"/>
+                            <h:outputText value="#{bundle['ce.codEnt']}:"/>
+                            <h:panelGrid columns="2">
+                                <p:outputLabel value="#{modificatoriaController.contratoSelecionado.codigoEntidad} -" style="font-weight: bold;"/>
+                                <p:outputLabel value="#{modificatoriaController.contratoSelecionado.nombreCe}" style="font-weight: bold;"/>
+                            </h:panelGrid>
+                        </p:panelGrid>
+                        <p:panelGrid columns="4" columnClasses="col3_label,col3,col2_label,col4"
+                                     styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+                            <h:outputText value="Número de Contrato:"/>
+                            <p:outputLabel value="ME-#{modificatoriaController.contratoSelecionado.numeroContrato}" style="font-weight: bold;"/>
+                            <h:outputText value="Monto $:"/>
+                            <p:outputLabel value="#{modificatoriaController.contratoSelecionado.monto}" style="font-weight: bold; text-align: right;">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </p:outputLabel>
+                            <h:outputText value="N.I.T.:"/>
+                            <p:outputLabel value="#{modificatoriaController.contratoSelecionado.numeroNit}" style="font-weight: bold;"/>
+                            <h:outputText value="Proveedor:"/>
+                            <p:outputLabel value="#{modificatoriaController.contratoSelecionado.razonSocial}" style="font-weight: bold;"/>
+                        </p:panelGrid>
+                    </p:outputPanel>
+
+                </div>
+
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-list-ol blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Datos sobre Extinsión"/>
+                    </h1>
+                    <p:outputPanel id="pnlDetalle">
+                        <h:panelGrid columns="10">
+                            <h:outputText value="Resolución Inicio:"/>
+                            <p:calendar value="#{modificatoriaController.contratoEstado.fechaSolicitud}" pattern="dd/MM/yyyy" size="10"/>
+                            <p:spacer width="10" height="8"/>
+                            <h:outputText value="Resolución Pruebas:"/>
+                            <p:calendar value="#{modificatoriaController.contratoEstado.fechaNota}" pattern="dd/MM/yyyy" size="10"/>
+                            <p:spacer width="10" height="8"/>
+                            <h:outputText value="Resolución Declaración"/>
+                            <p:calendar value="#{modificatoriaController.contratoEstado.fechaResolucion}" pattern="dd/MM/yyyy" size="10"/>
+                            <p:spacer width="10" height="8"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Tipo:"/>
+                            <p:selectOneMenu value="#{modificatoriaController.idTipoModif}" disabled="#{modificatoriaController.deshabilitar}">
+                                <f:selectItem itemLabel="Seleccione un valor"/>
+                                <f:selectItems value="#{modificatoriaController.lstTipoExtinsionContratos}" var="tipo" itemValue="#{tipo.idModifContrato}" itemLabel="#{tipo.descripcionModificativa}"/>
+                            </p:selectOneMenu>
+                            <h:outputText value="Justificación:"/>
+                            <p:inputTextarea cols="25" rows="3" value="#{modificatoriaController.contratoEstado.justificacionModificativa}" disabled="#{modificatoriaController.deshabilitar}"/>
+                        </h:panelGrid>
+                    </p:outputPanel>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

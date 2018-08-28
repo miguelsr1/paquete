@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+build-time: 180618
+Implementation-Title: paquescolar-web
+Implementation-Version: 2.1.10
+Implementation-Build: 2.1.10

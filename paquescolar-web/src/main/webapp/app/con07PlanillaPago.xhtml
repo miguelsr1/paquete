@@ -1,0 +1,131 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" disabled="true" />
+                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true" />
+                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true" />
+                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options" class="centradoVertical">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+
+                    <h3>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h3>
+
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-2">
+                            <p:outputLabel value="Id.Planilla"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:inputText value="#{pagoProveedoresController.idPlanilla}"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-2">
+                            <p:outputLabel value="Monto"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:inputText value="#{pagoProveedoresController.montoTotal}"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-2">
+                            <p:outputLabel value="N.I.T."/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:inputText value="#{pagoProveedoresController.numeroNit}" style="width: 90%;"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-2">
+                            <p:outputLabel value="Entidad Financiera"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:inputText value="#{pagoProveedoresController.nombreEntFinanciera}" style="width: 90%;"/>
+                        </div>
+                    </div>
+                    <p:commandButton value="Buscar" action="#{pagoProveedoresController.buscarPlanilla}" icon="fa fa-search" update="tblDatos"/>
+                </div>
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Datos"/>
+                    </h1>
+
+                    <p:dataTable id="tblDatos" value="#{pagoProveedoresController.lstBusquedaPlanillas}" var="pla" scrollable="true" 
+                                 paginator="true" paginatorPosition="top" rows="10">
+                        <f:facet name="header">
+                            <p:spacer width="10" height="8"/>
+                            <h:commandLink style="float:right;">
+                                <i class="fa fa-download"></i>
+                                <p:spacer width="10" height="8"/>
+                                <h:outputText value="Exportar"/>
+                                <p:dataExporter type="xls" encoding="ISO-8859-1" target="tblDatos" 
+                                                fileName="busquedaDePlanillas_#{catalogosGeneralesController.formatoFechaReporte}" 
+                                                postProcessor="#{pagoProveedoresController.postProcessXLS}"/>  
+                            </h:commandLink>
+                        </f:facet>
+
+                        <p:column headerText="No.Req." width="100">
+                            <h:outputText value="#{pla.formatoRequerimiento}"/>
+                        </p:column>
+                        <p:column headerText="Cod.Ent." style="text-align: center" width="45">
+                            <h:outputText value="#{pla.codigoEntidad}"/>
+                        </p:column>
+                        <p:column headerText="Nombre CE" width="200">
+                            <h:outputText value="#{pla.nombreCe}"/>
+                        </p:column>
+                        <p:column headerText="Departamento" width="110">
+                            <h:outputText value="#{pla.nombreDepartamento}"/>
+                        </p:column>
+                        <p:column headerText="N.I.T. Proveedor" width="110">
+                            <h:outputText value="#{pla.numeroNit}"/>
+                        </p:column>
+                        <p:column headerText="Proveedor" width="200">
+                            <h:outputText value="#{pla.razonSocial}"/>
+                        </p:column>
+                        <p:column headerText="Rubro" width="150">
+                            <h:outputText value="#{pla.descripcionRubro}"/>
+                        </p:column>
+                        <p:column headerText="Monto($)" style="text-align: right" width="55">
+                            <h:outputText value="#{pla.montoActual}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Cantidad" style="text-align: right" width="50">
+                            <h:outputText value="#{pla.cantidadActual}"/>
+                        </p:column>
+                        <p:column headerText="Entidad Financiera" width="200">
+                            <h:outputText value="#{pla.nombreEntFinan}"/>
+                        </p:column>
+                        <p:column headerText="Id.Pla." style="text-align: center" width="40">
+                            <p:commandLink action="#{pagoProveedoresController.verPlanillaPago}" value="#{pla.idPlanilla}" oncomplete="PF('dlgPlanillaPago').show();">
+                                <f:setPropertyActionListener value="#{pla.idPlanilla}" target="#{pagoProveedoresController.idPlanilla}"/>
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="Fecha Pla." style="text-align: center" width="55">
+                            <h:outputText value="#{pla.fechaInsercion}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+        </div>
+
+        <p:dialog id="dlgPlanillaPago" widgetVar="dlgPlanillaPago" header="Planilla de Pago" width="900" height="600" modal="true" resizable="false">
+            <ui:include src="/app/comunes/fragmentos/pagoProveedores/planillaPago.xhtml"/>
+        </p:dialog>
+        <p:panel id="pnlDatos" visible="false"></p:panel>
+    </ui:define>
+</ui:composition>

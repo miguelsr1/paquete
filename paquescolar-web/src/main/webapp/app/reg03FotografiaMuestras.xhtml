@@ -1,0 +1,69 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar id="menuBar"> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" ajax="true" process="@this" disabled="true"/>
+                        <p:menuitem value="Modificar" update="frmPrincipal" icon="fa fa-edit" ajax="true"  onclick="onClick('btnModificar');"/>
+                        <p:menuitem value="Guardar" icon="fa fa-save"  disabled="#{menuController.usuarioSoloLectura || proveedorController.deshabiliar}" 
+                                    action="#{proveedorController.guardarPreciosRef}" update=":frmPrincipal:pnlFotografiaZapatos"/>
+                        <p:menuitem value="Imprimir" ajax="false" icon="fa fa-print" action="#{proveedorController.impOfertaGlobal}" />
+                        <p:menuitem value="Principal" icon="fa fa-home" action="#{anhoProcesoController.limpiarVariables}" />
+
+                        <f:facet  name="options">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+                    <p:panel visible="false">
+                        <p:commandButton id="btnModificar" value="ok" actionListener="#{proveedorController.filtroProveedores}">
+                            <p:ajax event="dialogReturn" listener="#{proveedorController.empSelecPrecioRef}"   update="frmPrincipal pnlFoto" />
+                        </p:commandButton>
+                    </p:panel>
+
+                    <ui:include src="/app/comunes/datosGenProveedor.xhtml"/>
+
+                </div>
+
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Fotografias de muestras de Zapatos"/>
+                    </h1>
+
+                    <h:panelGrid columns="2" cellpadding="0" cellspacing="0" id="pnlFotografiaZapatos">
+                        <h:panelGrid columns="1">
+                            <h:panelGrid columns="4">
+                                <h:outputText value="Seleccione un estilo"/>
+                                <p:selectOneMenu value="#{proveedorController.estiloZapato}">
+                                    <f:selectItem itemLabel="----" itemValue="0"/>
+                                    <f:selectItem itemLabel="F-01" itemValue="F-01"/>
+                                    <f:selectItem itemLabel="F-02" itemValue="F-02"/>
+                                    <f:selectItem itemLabel="F-03" itemValue="F-03"/>
+                                    <f:selectItem itemLabel="M-01" itemValue="M-01"/>
+                                    <f:selectItem itemLabel="M-02" itemValue="M-02"/>
+                                    <f:selectItem itemLabel="M-03" itemValue="M-03"/>
+                                    <p:ajax listener="#{proveedorController.cargarFotografias}" update=":frmPrincipal:pnlFotografiaZapatos"/>
+                                </p:selectOneMenu>
+                                <p:spacer width="50" height="8"/>
+                                <p:commandButton value="Tomar fotografia" icon="fa fa-camera" action="#{proveedorController.dlgFotografiaZapato}">
+                                    <p:ajax event="dialogReturn" listener="#{proveedorController.updateFrmFotoZapato}" update="pnlFotografiaZapatos"/>
+                                </p:commandButton>
+                            </h:panelGrid>
+                            <p:galleria value="#{proveedorController.images}" var="image" panelHeight="500" style="width: auto;" autoPlay="false">
+                                <p:graphicImage value="/DynamicImageServlet?file=#{image}" style="max-height: 500px; width: auto;"/>
+                            </p:galleria>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

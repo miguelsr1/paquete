@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bd36e8b4-9a05-443a-91c3-b848b3d35659">
+	<property name="ireport.zoom" value="1.9487171000000212"/>
+	<property name="ireport.x" value="450"/>
+	<property name="ireport.y" value="720"/>
+	<parameter name="ubicacionImagenes" class="java.lang.String"/>
+	<parameter name="descripcionRubro" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="parvularia" class="sv.gob.mined.paquescolar.model.EstadisticaCenso">
+		<fieldDescription><![CDATA[parvularia]]></fieldDescription>
+	</field>
+	<field name="departamento" class="java.lang.String">
+		<fieldDescription><![CDATA[departamento]]></fieldDescription>
+	</field>
+	<field name="modalidadDeAdministracion" class="java.lang.String">
+		<fieldDescription><![CDATA[modalidadDeAdministracion]]></fieldDescription>
+	</field>
+	<field name="nombreCe" class="java.lang.String">
+		<fieldDescription><![CDATA[nombreCe]]></fieldDescription>
+	</field>
+	<field name="municipio" class="java.lang.String">
+		<fieldDescription><![CDATA[municipio]]></fieldDescription>
+	</field>
+	<field name="ciclo3" class="sv.gob.mined.paquescolar.model.EstadisticaCenso">
+		<fieldDescription><![CDATA[ciclo3]]></fieldDescription>
+	</field>
+	<field name="ciclo1" class="sv.gob.mined.paquescolar.model.EstadisticaCenso">
+		<fieldDescription><![CDATA[ciclo1]]></fieldDescription>
+	</field>
+	<field name="codigoEntidad" class="java.lang.String">
+		<fieldDescription><![CDATA[codigoEntidad]]></fieldDescription>
+	</field>
+	<field name="ciclo2" class="sv.gob.mined.paquescolar.model.EstadisticaCenso">
+		<fieldDescription><![CDATA[ciclo2]]></fieldDescription>
+	</field>
+	<field name="bachillerato" class="sv.gob.mined.paquescolar.model.EstadisticaCenso">
+		<fieldDescription><![CDATA[bachillerato]]></fieldDescription>
+	</field>
+	<field name="usuarioInsercion" class="java.lang.String">
+		<fieldDescription><![CDATA[usuarioInsercion]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="5" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="149" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="3d100236-0539-4f34-ae88-c54670f9e57c" x="30" y="93" width="534" height="54"/>
+			</rectangle>
+			<textField>
+				<reportElement uuid="87fb36b1-2c71-459a-ad36-5ad8de0f3346" x="45" y="119" width="511" height="18"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RUBRO: "+$P{descripcionRubro}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d27e13f6-3059-4355-b5b0-1e68893a5f01" x="103" y="102" width="399" height="18"/>
+				<textElement textAlignment="Center">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[CERTIFICACION DE DISPONIBILIDAD PRESUPUESTARIA]]></text>
+			</staticText>
+			<image hAlign="Center">
+				<reportElement uuid="69c0940a-4f7c-4cf8-80cc-8c68a262bf63" x="213" y="7" width="155" height="85"/>
+				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"logo_mined.png"]]></imageExpression>
+			</image>
+			<rectangle>
+				<reportElement uuid="f806fc9f-7982-4cb5-983d-00f5d125f6ce" x="322" y="-185" width="76" height="22"/>
+			</rectangle>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="333" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="f4a06050-6a87-4a75-a7b9-21dc0599ceec" x="30" y="89" width="246" height="20"/>
+				<textElement/>
+				<text><![CDATA[5. ORGANISMO DE ADMINISTRACION ESCOLAR:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1ded80b7-0b29-4586-b6d7-a83b149e6136" x="30" y="49" width="184" height="20"/>
+				<textElement/>
+				<text><![CDATA[3. CODIGO DEL CENTRO EDUCATIVO:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="35eb23f7-684a-4aa0-a94b-0b5d3d12abdb" x="214" y="49" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{codigoEntidad}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d59df07c-cb28-4038-8ec2-b6b05958246c" x="30" y="69" width="70" height="20"/>
+				<textElement/>
+				<text><![CDATA[4. NOMBRE:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="3c61310b-bd80-4d9f-b52b-c09c8254e3d2" x="100" y="69" width="456" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nombreCe}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e8900a7f-97f4-45f1-a7d2-585b35e4452f" x="276" y="89" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{modalidadDeAdministracion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="9a5a2c79-6eac-4f72-a051-2e0827eae9f0" x="30" y="29" width="70" height="20"/>
+				<textElement/>
+				<text><![CDATA[2. MUNICIPIO:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="68c9cb32-d87b-4e85-b9b7-595f883a52c3" x="100" y="29" width="231" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{municipio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9de33775-cb88-410b-8a14-459e1445fbba" x="135" y="9" width="196" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{departamento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="3c46f8d9-381f-45cc-8551-c0bc6a0b1aa5" x="30" y="9" width="105" height="20"/>
+				<textElement/>
+				<text><![CDATA[1. DEPARTAMENTO:]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="54a708fd-5510-4ef1-85db-18e7099ca0dc" x="327" y="248" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="6cf27c9e-9844-43da-99fa-a4660407e4e9" x="175" y="270" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="421fdb3a-42df-4202-aebf-f20c5bc26ff7" x="327" y="226" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="e7fe00f4-2fc8-4a8f-be5a-02e2bf1f2950" x="403" y="270" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="d4d63f01-f185-4460-9276-fa35ec30e81e" x="175" y="204" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="3a28e741-3a21-4493-b80a-e6fafac3b4dd" x="403" y="248" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="f151c961-8e77-49df-bf0d-01b20e21e403" x="75" y="160" width="100" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="f69b4e42-4a79-4052-8474-1360fa31c15b" x="175" y="120" width="228" height="20"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="3e2a32a1-eb1d-4c67-94a6-6e1a7e6ec7ff" x="251" y="204" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="17352fe3-434f-40e6-9374-4611f2eee0cf" x="75" y="270" width="100" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="21ffecd0-b242-4082-b2fe-00bcf59f828b" x="251" y="226" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="c5585bae-5f82-4261-8ce2-e9070b579bb8" x="75" y="120" width="100" height="40"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="2231168e-d379-4458-943e-e96af98d1c7a" x="403" y="160" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="3ca4a7cc-9522-4822-967c-f1c01f494164" x="175" y="248" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="f9c25e7a-d353-4c46-898a-376878495873" x="327" y="182" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="7e8da4bd-ef23-4ab8-9862-cd871cc1dd8c" x="251" y="248" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="b8627365-5534-4f00-aebc-16abb8856587" x="75" y="182" width="100" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="988f5899-58ce-4fb2-8c5f-83d84e525c3e" x="75" y="226" width="100" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="2ef1bf88-74e9-4646-8337-68899d8abbf5" x="175" y="140" width="76" height="20"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="12dbade4-46d8-483f-9ded-ee830e773d37" x="175" y="182" width="76" height="22"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="55445b57-adf2-4fc4-9f21-40b5e70ea21d" x="191" y="121" width="198" height="19"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[No DE ALUMNOS]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="c0d23cba-47b1-4dc7-b163-e92efe266b2e" x="75" y="204" width="100" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="eee2593a-923b-4de3-a300-9bfccc252a76" x="327" y="140" width="76" height="20"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="be69fccc-33ba-4d70-89fd-bd49e697cad6" x="327" y="270" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="7c4b9640-b48f-46ef-abfa-fbb3077b6f66" x="403" y="120" width="76" height="40"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="159dee03-f638-4103-a4ff-babeb8a50eaf" x="75" y="248" width="100" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="1246ebec-c9b4-47ca-8967-45ef221926a8" x="251" y="160" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="ab2852ef-8f7f-4196-bb27-5be12b079307" x="175" y="226" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="658585e1-7377-4344-a3ff-f7bb6810f0c9" x="327" y="204" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="56f0fc90-d2c6-42cc-a319-52a16df984bc" x="251" y="140" width="76" height="20"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="30875bbe-6b1c-43cd-91a7-6c5a59c983f1" x="175" y="141" width="76" height="19"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[MASCULINO]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="94d44f9c-af93-4d4e-a059-a380652ffef7" x="251" y="270" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="8c49c56a-8941-4201-be11-c8d23f0a5b87" x="327" y="160" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="ff96bdc1-a35f-406b-b691-50dd7ad17dad" x="251" y="182" width="76" height="22"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="48b8d9e0-9323-4d94-9e9b-192705440df2" x="85" y="186" width="90" height="13"/>
+				<textElement/>
+				<text><![CDATA[I CICLO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d0ba585f-8bd4-404d-8028-bf438c9a4dac" x="251" y="141" width="76" height="19"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[FEMENINO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5da583fa-5051-4f2f-bfea-9c107355879e" x="327" y="141" width="76" height="19"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="308fa556-60f6-4b66-86d7-d55f05f66771" x="75" y="134" width="100" height="13"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[NIVEL Y CICLO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3ff5f3ad-8f13-4f25-b506-b769d3ee02ed" x="85" y="208" width="90" height="13"/>
+				<textElement/>
+				<text><![CDATA[II CICLO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d35c9b83-b442-4263-91dc-44620c5e921d" x="85" y="164" width="90" height="13"/>
+				<textElement/>
+				<text><![CDATA[PARVULARIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="78a551e3-6697-4052-927f-41b56ca16141" x="86" y="274" width="90" height="13"/>
+				<textElement/>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3ae17a46-0b13-442b-a5b5-18ea5c6b3fcf" x="85" y="230" width="90" height="13"/>
+				<textElement/>
+				<text><![CDATA[III CICLO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b526ee28-3431-44c2-8c19-d517d309159c" x="403" y="121" width="76" height="39"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[MONTO ($)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6eef1c20-1ddc-40c5-a2c1-4b57ee80cdc3" x="85" y="252" width="90" height="13"/>
+				<textElement/>
+				<text><![CDATA[BACHILLERATO]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="848229ff-cb3f-42f4-9f3f-ee19b739d687" x="175" y="164" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{parvularia}.getMasculino()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="34689477-e0ba-454a-b83a-a993f04fe6e0" x="175" y="186" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ciclo1}.getMasculino()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="68142f39-1d29-48ba-908b-2a47ef0d66fd" x="175" y="208" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ciclo2}.getMasculino()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="5c5e77ee-ae3c-4642-ba0e-ddab0bc1660d" x="174" y="230" width="73" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ciclo3}.getMasculino()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f1c16a41-7688-47ff-bee6-e992326eed68" x="175" y="252" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{bachillerato}.getMasculino()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="1cf46fc8-84ba-4863-8491-d54248d5215c" x="251" y="164" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{parvularia}.getFemenimo()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8fbe1863-1dd1-442c-abb2-9f5b4a293af6" x="251" y="186" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ciclo1}.getFemenimo()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b6e256f2-522e-4d5f-b647-108fde0b295d" x="251" y="208" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ciclo2}.getFemenimo()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="fa68175e-35ef-45fc-a5db-4355a1da265e" x="251" y="230" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ciclo3}.getFemenimo()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="52bc557c-8e36-40d1-9396-a7ee9a2bcae2" x="251" y="252" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{bachillerato}.getFemenimo()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="286af463-1e54-40fa-ac34-289c9426efd3" x="327" y="186" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ciclo1}.getMasculino().add($F{ciclo1}.getFemenimo())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="63640cd2-6672-4bf3-b78f-d43c66882652" x="326" y="230" width="73" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ciclo3}.getMasculino().add($F{ciclo3}.getFemenimo())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="bbe08e5a-5879-41b2-988b-df783e80e6c8" x="327" y="164" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{parvularia}.getMasculino().add($F{parvularia}.getFemenimo())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9d8958c4-a3d6-4e2d-b8a4-85321ac56827" x="327" y="252" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{bachillerato}.getMasculino().add($F{bachillerato}.getFemenimo())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d5ded8d7-a4b2-4e4d-a5ad-a25c88466b8c" x="327" y="208" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ciclo2}.getMasculino().add($F{ciclo2}.getFemenimo())]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement uuid="ecdd2242-94f4-4ffa-828a-284c75c55ded" x="403" y="182" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="61577f64-c5b8-435e-9be9-764704a15e23" x="403" y="204" width="76" height="22"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="85204ba2-7229-41cb-a19a-7d0e0a5cd653" x="403" y="226" width="76" height="22"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="cdb49413-7dee-43cf-aaa3-59c50d0715ff" x="0" y="305" width="572" height="27"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Se verifica asignacion presupuestaria en cumplimiento al Articulo 10, Literal "E" de la Ley de Adquisiciones y Contrataciones de la Administración Pública (LACAP).]]></text>
+			</staticText>
+			<textField pattern="#,##0;(-#,##0)">
+				<reportElement uuid="31c22af6-4626-4c05-997f-65e667f6b0a7" x="176" y="274" width="71" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{bachillerato}.getMasculino().add($F{ciclo3}.getMasculino()).add($F{ciclo2}.getMasculino()).add($F{ciclo1}.getMasculino()).add($F{parvularia}.getMasculino())]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(-#,##0)">
+				<reportElement uuid="46c19fe7-38fc-40c5-b240-7fab99c0994f" x="252" y="274" width="70" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{bachillerato}.getFemenimo().add($F{ciclo3}.getFemenimo()).add($F{ciclo2}.getFemenimo()).add($F{ciclo1}.getFemenimo()).add($F{parvularia}.getFemenimo())]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(-#,##0)">
+				<reportElement uuid="0ffdbd00-6477-42f6-8b65-0a7767d5fb07" x="328" y="274" width="70" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{parvularia}.getMasculino().add($F{parvularia}.getFemenimo()).add($F{ciclo1}.getMasculino().add($F{ciclo1}.getFemenimo())).add($F{ciclo2}.getMasculino().add($F{ciclo2}.getFemenimo())).add($F{ciclo3}.getMasculino().add($F{ciclo3}.getFemenimo())).add($F{bachillerato}.getMasculino().add($F{bachillerato}.getFemenimo()))]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)">
+				<reportElement uuid="26510547-4b32-4556-bd5f-29b1f7e5d8ec" x="403" y="208" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[(new BigDecimal($F{ciclo2}.getMasculino()).multiply(new BigDecimal("10.50")).add(new BigDecimal($F{ciclo2}.getFemenimo()).multiply(new BigDecimal("9.00"))))]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)">
+				<reportElement uuid="eafeee60-33c9-444a-8f77-38789ef0255d" x="403" y="186" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[(new BigDecimal($F{ciclo1}.getMasculino()).multiply(new BigDecimal("10.50")).add(new BigDecimal($F{ciclo1}.getFemenimo()).multiply(new BigDecimal("9.00"))))]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)">
+				<reportElement uuid="05c078c8-0e06-4153-9908-fa8aa128a607" x="403" y="164" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[(new BigDecimal($F{parvularia}.getMasculino()).multiply(new BigDecimal("8.25")).add(new BigDecimal($F{parvularia}.getFemenimo()).multiply(new BigDecimal("8.50"))))]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)">
+				<reportElement uuid="5f0ae257-580f-4179-b29b-600e517507b7" x="403" y="252" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[(new BigDecimal($F{bachillerato}.getMasculino()).multiply(new BigDecimal("10.50")).add(new BigDecimal($F{bachillerato}.getFemenimo()).multiply(new BigDecimal("9.00"))))]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement uuid="05aec2e4-1afb-41e7-aafe-b2851379994b" x="403" y="274" width="72" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[(new BigDecimal($F{parvularia}.getMasculino()).multiply(new BigDecimal("8.25")).
+add(new BigDecimal($F{parvularia}.getFemenimo()).multiply(new BigDecimal("8.50"))).
+add(new BigDecimal($F{ciclo1}.getMasculino()).multiply(new BigDecimal("10.50"))).
+add(new BigDecimal($F{ciclo1}.getFemenimo()).multiply(new BigDecimal("9.00"))).
+add(new BigDecimal($F{ciclo2}.getMasculino()).multiply(new BigDecimal("10.50"))).
+add(new BigDecimal($F{ciclo2}.getFemenimo()).multiply(new BigDecimal("9.00"))).
+add(new BigDecimal($F{ciclo3}.getMasculino()).multiply(new BigDecimal("10.50"))).
+add(new BigDecimal($F{ciclo3}.getFemenimo()).multiply(new BigDecimal("9.00"))).
+add(new BigDecimal($F{bachillerato}.getMasculino()).multiply(new BigDecimal("10.50"))).
+add(new BigDecimal($F{bachillerato}.getFemenimo()).multiply(new BigDecimal("9.00"))))]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)">
+				<reportElement uuid="79b3b514-cd67-4f1a-8c02-07249365b478" x="402" y="230" width="73" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[(new BigDecimal($F{ciclo3}.getMasculino()).multiply(new BigDecimal("10.50")).add(new BigDecimal($F{ciclo3}.getFemenimo()).multiply(new BigDecimal("9.00"))))]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="137" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="27df56a8-49cd-46f6-907f-b017100fcee8" x="227" y="12" width="222" height="16"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="8b9fc09c-1326-43f8-98a0-0e8d39732bd7" x="127" y="12" width="100" height="32"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="da7568af-e2cd-42c5-8805-9871eb640678" x="232" y="12" width="211" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRECIO DE REFERENCIA (US $)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1111d7ec-a2f4-484d-a8f6-a71562daed66" x="134" y="19" width="88" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NIVEL EDUCATIVO]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="08debb0b-a748-4162-8b66-6f2d5e45c7c2" x="227" y="28" width="111" height="16"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="d7f911b5-c996-4823-a68f-873d7bc47d81" x="338" y="28" width="111" height="16"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="b843a8f4-4970-44ab-8b0d-9e1660303766" x="127" y="44" width="100" height="16"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="42b2a69b-e656-4a7d-b2a7-38f0bdcc188d" x="338" y="44" width="111" height="16"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="c7b66e5d-0648-4986-9908-7f416050da67" x="227" y="44" width="111" height="16"/>
+			</rectangle>
+			<textField>
+				<reportElement uuid="c4002b61-9d9e-450b-bd36-5c3cf368c101" x="232" y="44" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[8.50]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9f208382-8d24-4499-ac75-bf424979e07c" x="343" y="45" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[8.25]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement uuid="e4bb8ee2-a611-4917-83ea-ce9b4618f5cf" x="227" y="60" width="111" height="16"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="23a89a6c-82bf-4f27-96ac-c41174ee6854" x="338" y="60" width="111" height="16"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="4f4c59df-b23c-49b1-b2c3-32e26bface30" x="127" y="60" width="100" height="16"/>
+			</rectangle>
+			<textField>
+				<reportElement uuid="c85d5594-8003-4235-88ae-690c59466b05" x="343" y="61" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[10.50]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ee7f0ced-fb3e-4d39-8a5c-a542e926f855" x="232" y="60" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[9.00]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement uuid="df9b42f3-a4a6-42eb-925a-c49d9450f780" x="127" y="76" width="100" height="16"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="98724871-9ac6-4d30-8bda-2c37173542f7" x="338" y="76" width="111" height="16"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="53a4f365-73ec-4bbd-ad9f-776b8557bff3" x="227" y="76" width="111" height="16"/>
+			</rectangle>
+			<textField>
+				<reportElement uuid="c198d6b2-971e-4d08-8c49-7ee6d77ce200" x="232" y="76" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[9.00]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9905838e-b42a-476e-8f12-388530a608bf" x="343" y="77" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[10.50]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement uuid="afcacfc1-ef6e-4e30-831b-b03ee7408c70" x="227" y="108" width="111" height="16"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="8c17ce65-91c5-4ea0-8f42-563c19d31da9" x="338" y="108" width="111" height="16"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="4ff41f28-3c20-416a-829c-2b3ec9bd5cfb" x="127" y="108" width="100" height="16"/>
+			</rectangle>
+			<textField>
+				<reportElement uuid="9a41dfae-5e82-4179-b93c-d5e5bc199698" x="343" y="109" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[10.50]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d5e1d442-08fa-44f7-9761-3ce222c0add1" x="232" y="108" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[9.00]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement uuid="db31c182-6729-4abf-b4e6-78f07456842d" x="127" y="92" width="100" height="16"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="a44a00e4-0ae6-488d-b419-9bd440d0b27d" x="338" y="92" width="111" height="16"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="3732d7f3-a7dc-42f9-83ac-64c847e9a2d6" x="227" y="92" width="111" height="16"/>
+			</rectangle>
+			<textField>
+				<reportElement uuid="c918d6c6-aa7c-4195-8537-b79c52f15e2e" x="232" y="92" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[9.00]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="eb0325c5-14bf-45f2-a55a-56378bb3e844" x="343" y="93" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[10.50]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="04d41e3d-b6f4-49b6-93f4-4fee9181553f" x="129" y="108" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<text><![CDATA[Bachillerato]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="20e0646b-e466-471e-a5fe-5fd03a5ed06f" x="232" y="28" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NIÑA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="235e945c-8e59-4b18-a8f2-650354460dc8" x="129" y="44" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<text><![CDATA[Parvularia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f89f05f3-6248-4473-bc16-7d2b24c34fe6" x="343" y="29" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NIÑO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e4a1ca9a-a44c-4ac9-84cf-1e123a1169f7" x="127" y="60" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<text><![CDATA[Ciclo I]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f66c0302-f5e6-407d-a510-a75dd307fb36" x="127" y="76" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<text><![CDATA[Ciclo II]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8b26f6ac-2526-4e70-99c5-7ad023cd3133" x="127" y="92" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<text><![CDATA[Ciclo III]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="10" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="13" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="149636aa-f238-41bf-ba40-8b5dc464a1e0" key="textField-10" x="0" y="0" width="176" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{usuarioInsercion}+" - "+(new SimpleDateFormat("HH:mm dd/MM/yyyy")).format(new Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="4" splitType="Stretch"/>
+	</summary>
+</jasperReport>

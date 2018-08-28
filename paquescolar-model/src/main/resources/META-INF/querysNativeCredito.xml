@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings 
+    xmlns="http://java.sun.com/xml/ns/persistence/orm" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm  http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    <description>Native queries para Paquete Escolar</description>
+    
+   
+    <named-native-query name="Credito.ProcesoCreditoHabilitado" 
+                        result-class="sv.gob.mined.paquescolar.model.RubrosAmostrarInteres">
+        <query>
+            <![CDATA[
+            SELECT RUBROS_AMOSTRAR_INTERES.*
+            FROM RUBROS_AMOSTRAR_INTERES
+              INNER JOIN DETALLE_PROCESO_ADQ ON DETALLE_PROCESO_ADQ.ID_RUBRO_ADQ = RUBROS_AMOSTRAR_INTERES.ID_RUBRO_INTERES
+              INNER JOIN PROCESO_ADQUISICION ON PROCESO_ADQUISICION.ID_PROCESO_ADQ = DETALLE_PROCESO_ADQ.ID_PROCESO_ADQ
+              INNER JOIN ENT_FINAN_DET_PRO_ADQ ON ENT_FINAN_DET_PRO_ADQ.ID_DET_PROCESO_ADQ = DETALLE_PROCESO_ADQ.ID_DET_PROCESO_ADQ
+            WHERE 
+              DETALLE_PROCESO_ADQ.CREDITO = 1 AND
+              DETALLE_PROCESO_ADQ.ID_PROCESO_ADQ = ?1 AND
+              ENT_FINAN_DET_PRO_ADQ.COD_ENT_FINANCIERA = ?2
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Credito.EntidadCreditoHabilitado" 
+                        result-class="sv.gob.mined.paquescolar.model.EntidadFinanciera">
+        <query>
+            <![CDATA[
+            SELECT ef.* 
+            FROM ENTIDAD_FINANCIERA ef
+            WHERE 
+                ef.COD_ENT_FINANCIERA not in (SELECT efd.COD_ENT_FINANCIERA 
+                    FROM ENTIDAD_FINANCIERA ef
+                        inner JOIN ENT_FINAN_DET_PRO_ADQ efd ON ef.COD_ENT_FINANCIERA = efd.COD_ENT_FINANCIERA
+                    WHERE 
+                        efd.ID_DET_PROCESO_ADQ = ?1)
+            ORDER BY 
+                ef.NOMBRE_ENT_FINAN
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="Credito.ResumenGenralDeCreditos" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.credito.ResumenCreditosDto">
+        <query>
+            <![CDATA[
+            select
+                rownum              as idRow,
+                COD_ENT_FINANCIERA  as codEntFinanciera,
+                NOMBRE_ENT_FINAN    as nombreEntFinan,
+                cantidadCreditos    as cantidadCreditos,
+                montoCreditoUniforme    as montoCreditoUniforme,
+                montoCreditoUtiles      as montoCreditoUtiles,
+                montoCreditoZapatos     as montoCreditoZapatos,
+                montoCreditoUniforme1   as montoCreditoUniforme1,
+                montoCreditoUniforme2   as montoCreditoUniforme2
+            from 
+                (select 
+                    TBL.COD_ENT_FINANCIERA,
+                    TBL.NOMBRE_ENT_FINAN,
+                    SUM(TBL.CANT_CRE) cantidadCreditos,
+                    SUM(TBL.MONTO_UNIF) montoCreditoUniforme,
+                    SUM(TBL.MONTO_UTIL) montoCreditoUtiles,
+                    SUM(TBL.MONTO_ZAP) montoCreditoZapatos,
+                    SUM(TBL.MONTO_UNIF1) montoCreditoUniforme1,
+                    SUM(TBL.MONTO_UNIF2) montoCreditoUniforme2
+                from
+                    ((select 
+                        TBL1.COD_ENT_FINANCIERA, 
+                        TBL1.NOMBRE_ENT_FINAN, 
+                        TBL1.ID_PROCESO,
+                        COUNT(TBL1.COD_ENT_FINANCIERA) CANT_CRE, 
+                        SUM(TBL1.MONTO_CREDITO) MONTO_UNIF,
+                        0 MONTO_UTIL,
+                        0 MONTO_ZAP,
+                        0 MONTO_UNIF1,
+                        0 MONTO_UNIF2
+                    from 
+                        (select distinct 
+                            cc.ID_CREDITO, 
+                            cc.COD_ENT_FINANCIERA, 
+                            ef.NOMBRE_ENT_FINAN, 
+                            cc.id_proceso, 
+                            cc.monto_credito
+                        from 
+                            CREDITO_BANCARIO cc
+                            inner join ENTIDAD_FINANCIERA ef    on cc.cod_ent_financiera = ef.cod_ent_financiera
+                            INNER JOIN DETALLE_CREDITO dc       ON cc.ID_CREDITO = dc.ID_CREDITO
+                            INNER JOIN DETALLE_PROCESO_ADQ dpa  ON dpa.ID_DET_PROCESO_ADQ = cc.ID_DET_PROCESO_ADQ
+                            INNER JOIN PROCESO_ADQUISICION pa   ON pa.ID_PROCESO_ADQ = dpa.ID_PROCESO_ADQ
+                        where 
+                            cc.ESTADO_ELIMINACION = 0
+                            AND dc.ESTADO_ELIMINACION = 0
+                            AND pa.ID_ANHO IN (?1)
+                            and dpa.ID_RUBRO_ADQ in(1)) TBL1
+                    group by  TBL1.COD_ENT_FINANCIERA, TBL1.ID_PROCESO,TBL1.NOMBRE_ENT_FINAN,0,0,0,0)
+                    UNION
+                    (select 
+                        TBL1.COD_ENT_FINANCIERA, 
+                        TBL1.NOMBRE_ENT_FINAN, 
+                        TBL1.ID_PROCESO,
+                        COUNT(TBL1.COD_ENT_FINANCIERA) CANT_CRE, 
+                        0 MONTO_UNIF,
+                        SUM(TBL1.MONTO_CREDITO) MONTO_UTIL,
+                        0 MONTO_ZAP,
+                        0 MONTO_UNIF1,
+                        0 MONTO_UNIF2
+                    from 
+                        (select distinct 
+                            cc.ID_CREDITO, 
+                            cc.COD_ENT_FINANCIERA, 
+                            ef.NOMBRE_ENT_FINAN, 
+                            cc.id_proceso, 
+                            cc.monto_credito
+                        from 
+                            CREDITO_BANCARIO cc
+                            inner join ENTIDAD_FINANCIERA ef    on cc.cod_ent_financiera = ef.cod_ent_financiera
+                            inner join detalle_credito dc       on cc.ID_CREDITO = dc.ID_CREDITO
+                            INNER JOIN DETALLE_PROCESO_ADQ dpa  ON dpa.ID_DET_PROCESO_ADQ = cc.ID_DET_PROCESO_ADQ
+                            INNER JOIN PROCESO_ADQUISICION pa   ON pa.ID_PROCESO_ADQ = dpa.ID_PROCESO_ADQ
+                        where 
+                            cc.ESTADO_ELIMINACION = 0
+                            AND dc.ESTADO_ELIMINACION = 0
+                            AND pa.ID_ANHO IN (?1)
+                            and dpa.ID_RUBRO_ADQ in(2)) TBL1
+                    group by  TBL1.COD_ENT_FINANCIERA, TBL1.ID_PROCESO,TBL1.NOMBRE_ENT_FINAN,0,0,0,0)
+                    UNION
+                    (select 
+                        TBL1.COD_ENT_FINANCIERA, 
+                        TBL1.NOMBRE_ENT_FINAN, 
+                        TBL1.ID_PROCESO,
+                        COUNT(TBL1.COD_ENT_FINANCIERA) CANT_CRE, 
+                        0 MONTO_UNIF,
+                        0 MONTO_UTIL,
+                        sum(tbl1.monto_credito) MONTO_ZAP,
+                        0 MONTO_UNIF1,
+                        0 MONTO_UNIF2
+                    from 
+                        (select distinct 
+                            cc.ID_CREDITO, 
+                            cc.COD_ENT_FINANCIERA, 
+                            ef.NOMBRE_ENT_FINAN, 
+                            cc.id_proceso, 
+                            cc.monto_credito
+                        from 
+                            CREDITO_BANCARIO cc
+                            inner join ENTIDAD_FINANCIERA ef    on cc.cod_ent_financiera = ef.cod_ent_financiera
+                            INNER JOIN DETALLE_CREDITO dc       ON cc.ID_CREDITO = dc.ID_CREDITO
+                            INNER JOIN DETALLE_PROCESO_ADQ dpa  ON dpa.ID_DET_PROCESO_ADQ = cc.ID_DET_PROCESO_ADQ
+                            INNER JOIN PROCESO_ADQUISICION pa   ON pa.ID_PROCESO_ADQ = dpa.ID_PROCESO_ADQ
+                        where 
+                            cc.ESTADO_ELIMINACION = 0
+                            AND dc.ESTADO_ELIMINACION = 0
+                            AND pa.ID_ANHO IN (?1)
+                            and dpa.ID_RUBRO_ADQ in(3)) TBL1
+                    group by  TBL1.COD_ENT_FINANCIERA, TBL1.ID_PROCESO,TBL1.NOMBRE_ENT_FINAN,0,0,0,0)
+                    UNION
+                    (select 
+                        TBL1.COD_ENT_FINANCIERA, 
+                        TBL1.NOMBRE_ENT_FINAN, 
+                        TBL1.ID_PROCESO,
+                        COUNT(TBL1.COD_ENT_FINANCIERA) CANT_CRE, 
+                        0 MONTO_UNIF,
+                        0 MONTO_UTIL,
+                        0 MONTO_ZAP,
+                        sum(tbl1.monto_credito) MONTO_UNIF1,
+                        0 MONTO_UNIF2
+                    from 
+                        (select distinct 
+                            cc.ID_CREDITO, 
+                            cc.COD_ENT_FINANCIERA, 
+                            ef.NOMBRE_ENT_FINAN, 
+                            cc.id_proceso, 
+                            cc.monto_credito
+                        from 
+                            CREDITO_BANCARIO cc
+                            inner join ENTIDAD_FINANCIERA ef    on cc.cod_ent_financiera = ef.cod_ent_financiera
+                            INNER JOIN DETALLE_CREDITO dc       ON cc.ID_CREDITO = dc.ID_CREDITO
+                            INNER JOIN DETALLE_PROCESO_ADQ dpa  ON dpa.ID_DET_PROCESO_ADQ = cc.ID_DET_PROCESO_ADQ
+                            INNER JOIN PROCESO_ADQUISICION pa   ON pa.ID_PROCESO_ADQ = dpa.ID_PROCESO_ADQ
+                        where 
+                            cc.ESTADO_ELIMINACION = 0
+                            AND dc.ESTADO_ELIMINACION = 0
+                            AND pa.ID_ANHO IN (?1)
+                            and dpa.ID_RUBRO_ADQ in(4)) TBL1
+                    group by  TBL1.COD_ENT_FINANCIERA, TBL1.ID_PROCESO,TBL1.NOMBRE_ENT_FINAN,0,0,0,0)
+                    UNION
+                    (select 
+                        TBL1.COD_ENT_FINANCIERA, 
+                        TBL1.NOMBRE_ENT_FINAN, 
+                        TBL1.ID_PROCESO,
+                        COUNT(TBL1.COD_ENT_FINANCIERA) CANT_CRE, 
+                        0 MONTO_UNIF,
+                        0 MONTO_UTIL,
+                        0 MONTO_ZAP,
+                        0 MONTO_UNIF1,
+                        sum(tbl1.monto_credito) MONTO_UNIF2
+                    from 
+                        (select distinct 
+                            cc.ID_CREDITO, 
+                            cc.COD_ENT_FINANCIERA, 
+                            ef.NOMBRE_ENT_FINAN, 
+                            cc.id_proceso, 
+                            cc.monto_credito
+                        from 
+                            CREDITO_BANCARIO cc
+                            inner join ENTIDAD_FINANCIERA ef    on cc.cod_ent_financiera = ef.cod_ent_financiera
+                            INNER JOIN DETALLE_CREDITO dc       ON cc.ID_CREDITO = dc.ID_CREDITO
+                            INNER JOIN DETALLE_PROCESO_ADQ dpa  ON dpa.ID_DET_PROCESO_ADQ = cc.ID_DET_PROCESO_ADQ
+                            INNER JOIN PROCESO_ADQUISICION pa   ON pa.ID_PROCESO_ADQ = dpa.ID_PROCESO_ADQ
+                        where 
+                            cc.ESTADO_ELIMINACION = 0
+                            AND dc.ESTADO_ELIMINACION = 0
+                            AND pa.ID_ANHO IN (?1)
+                            and dpa.ID_RUBRO_ADQ in(5)) TBL1
+                    group by  TBL1.COD_ENT_FINANCIERA, TBL1.ID_PROCESO,TBL1.NOMBRE_ENT_FINAN,0,0,0,0)) TBL
+                group by 
+                    TBL.COD_ENT_FINANCIERA,
+                    TBL.NOMBRE_ENT_FINAN)
+            order by 
+                    COD_ENT_FINANCIERA
+            ]]>
+        </query>
+    </named-native-query>
+</entity-mappings>

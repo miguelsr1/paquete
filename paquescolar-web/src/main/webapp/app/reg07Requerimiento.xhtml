@@ -1,0 +1,121 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" />
+                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" />
+                        <p:menuitem value="Guardar" icon="fa fa-save" 
+                                    disabled="#{menuController.usuarioSoloLectura}" ajax="true"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" />
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+
+                    <p:panel header="Filtro">
+                        <h:panelGrid columns="2">
+                            <h:outputText value="#{bundle['ce.nivelEdu']}"/>
+                            <p:selectOneMenu id="cboNivelEdu" value="#{pagoProveedoresController.idNivelEducativo}">
+                                <f:selectItem itemValue="" itemLabel="Selecione un valor"/>
+                                <f:selectItem itemValue="1" itemLabel="Parvularia"/>
+                                <f:selectItem itemValue="2" itemLabel="Basica"/>
+                                <f:selectItem itemValue="6" itemLabel="Media"/>
+                                <p:ajax update="cboNivelEdu"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="#{bundle['depa']}"/>
+                            <p:selectOneMenu id="codigoDepartamento" value="#{pagoProveedoresController.codigoDepartamento}"  required="true" disabled="#{datosGeograficosController.usuarioDepartamental}" >
+                                <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
+                                <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.nombreDepartamento}"/>
+                                <p:ajax update="codigoDepartamento cboBanco cboCuentaBancaria" listener="#{pagoProveedoresController.updateCuentaBancaria}"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="#{bundle['compra.rubroAdq']}" />
+                            <p:selectOneMenu id="cboRubro" value="#{pagoProveedoresController.idRubro}">
+                                <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />
+                                <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                <p:ajax update="cboRubro txtConcepto"/>
+                            </p:selectOneMenu>
+
+                            <h:outputText value="¿Contratos con crédito?"/>
+                            <p:selectOneMenu value="#{pagoProveedoresController.credito}">
+                                <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
+                                <f:selectItem itemValue="1" itemLabel="NO credito"/>
+                                <f:selectItem itemValue="2" itemLabel="SI credito"/>
+                                <p:ajax update="txtConcepto pnlDatos" listener="#{pagoProveedoresController.updateConcepto}"/>
+                            </p:selectOneMenu>
+
+                            <h:outputText value="Concepto"/>
+                            <p:inputText id="txtConcepto" size="100" value="#{pagoProveedoresController.concepto}" readonly="true" />
+
+                            <h:outputText value="Banco"/>
+                            <h:panelGrid columns="4">
+                                <p:selectOneMenu id="cboBanco" value="#{pagoProveedoresController.idBanco}">
+                                    <f:selectItems value="#{pagoProveedoresController.lstBancos}" var="banco" itemLabel="#{banco.nombreBanco}" itemValue="#{banco.idBanco}"/>
+                                    <p:ajax update="cboCuentaBancaria" listener="#{pagoProveedoresController.updateCuentaBancaria}"/>
+                                </p:selectOneMenu>
+                                <p:spacer width="15" />
+                                <h:outputText value="Cuenta Bancaria"/>
+                                <p:selectOneMenu id="cboCuentaBancaria" value="#{pagoProveedoresController.cuentaBancaria}">
+                                    <f:selectItem itemValue="" itemLabel="Seleccione una cuenta"/>
+                                    <f:selectItems value="#{pagoProveedoresController.lstCuentaBancaria}" var="cuenta" itemLabel="#{cuenta.numeroCuenta}" itemValue="#{cuenta.numeroCuenta}"/>
+                                </p:selectOneMenu>
+                            </h:panelGrid>
+
+                            <p:commandButton value="Filtrar" icon="fa fa-filter" action="#{pagoProveedoresController.generarDatosPreliminares}" update="pnlDatos"/>
+                        </h:panelGrid>
+                    </p:panel>
+
+
+                    <p:panel id="pnlDatos" header="Datos Preliminar para Requerimiento">
+                        <h:panelGrid columns="10" id="pnlResumen">
+                            <h:outputText value="No. Modalidades: "/>
+                            <h:outputText value="#{pagoProveedoresController.numeroModalidades}" style="font-weight: bold;"/>
+                            <p:spacer width="50"/>
+                            <h:outputText value="Matrícula: "/>
+                            <h:outputText value="#{pagoProveedoresController.numeroMatricula}" style="font-weight: bold;"/>
+                            <p:spacer width="50"/>
+                            <h:outputText value="Total del requerimiento: "/>
+                            <h:outputText value="#{pagoProveedoresController.totalRequerimiento}" style="font-weight: bold;">
+                                <f:convertNumber pattern="$ #,##0.00"/>
+                            </h:outputText>
+                            <p:spacer width="50"/>
+                            <p:commandButton value="Generar Requerimiento" action="#{pagoProveedoresController.generarRequerimiento}"
+                                             disabled="#{menuController.usuarioSoloLectura}"/>
+                        </h:panelGrid>
+                        <p:dataTable value="#{pagoProveedoresController.lstDatos}" var="ce" style="margin-bottom:0"
+                                     scrollable="true" scrollRows="10" scrollHeight="220">
+
+                            <p:column headerText="#{bundle['tabla.codEnt']}" width="8">
+                                <p:outputLabel value="#{ce.codigoEntidad}"/>
+                            </p:column>
+                            <p:column headerText="#{bundle['tabla.nomEntCorto']}" width="180">
+                                <p:outputLabel value="#{ce.nombre}"/>
+                            </p:column>
+                            <p:column headerText="#{bundle['tabla.cantidad']}" width="25" style="text-align: right;">
+                                <h:outputText value="#{ce.cantidadTotal}">
+                                    <f:convertNumber pattern="#,##0"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{bundle['tabla.monto']}" width="25" style="text-align: right;">
+                                <h:outputText value="#{ce.montoTotal}">
+                                    <f:convertNumber pattern="$ #,##0.00"/>
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,124 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar id="menuBar">  
+                        <p:menuitem value="Nuevo"  ajax="true" action="edit06Seguimiento" actionListener="#{segFisicoController.nuevoSeguimiento}"
+                                    disabled="#{menuController.usuarioSoloLectura}" update="pnlFiltro" icon="fa fa-file-o">
+                            <f:param name="nuevoSeg" value="1"/>
+                        </p:menuitem>
+                        <p:menuitem value="Modificar"  ajax="true" update="pnlFiltro" icon="fa fa-edit" disabled="true"/>
+                        <p:menuitem value="Guardar"  ajax="true" update="pnlFiltro" icon="fa fa-save" disabled="true"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+                    <h3>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h3>
+
+                    <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col3_label,col9" 
+                                 styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+                        <p:outputLabel value="#{bundle['ce.codEnt']}:" />
+                        <h:panelGrid columns="3" id="codigoEntidad" >
+                            <p:inputText maxlength="5" value="#{segFisicoController.codigoEntidad}" size="6" autocomplete="off"  onkeyup="queryEntidad(this.value);"/>
+                            <p:spacer width="10"/>
+                            <p:outputLabel id="nombreCE" value="#{segFisicoController.entidadEducativa.nombre}" style="font-weight: bold"/>
+                        </h:panelGrid>
+
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />  
+                        <p:selectOneMenu id="idRubro" value="#{segFisicoController.rubro}" effect="fade">
+                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
+                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="N.I.T.:" />
+                        <p:inputMask id="nit" mask="9999-999999-999-9"  value="#{segFisicoController.numeroNit}" 
+                                     size="17"/>
+                        <h:outputText value="Proveedor:"/>
+                        <p:inputText value="#{segFisicoController.razonSocial}" size="55"/>
+                        <h:outputText value="Departamento C.E.:" />
+                        <p:selectOneMenu id="cboDepartamento" value="#{segFisicoController.codigoDepartamento}" >
+                            <f:selectItem noSelectionOption="true" itemLabel="Seleccione un departamento" />
+                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}"/>
+                        </p:selectOneMenu>
+                        <h:outputText value="Numero Contrato:"/>
+                        <p:inputText value="#{segFisicoController.numeroContrato}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="Buscar" icon="ui-icon-search" action="#{segFisicoController.buscarSeguimiento}" update="pnlDatos"/>  
+                </div>
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Listado de contratos"/>
+                    </h1>
+                    <p:dataTable id="pnlDatos" value="#{segFisicoController.lstSeguimientos}" var="seguimiento" rowIndexVar="rowId" rowKey="#{seguimiento.idContrato}"
+                                 emptyMessage="No se encontrarón coincidencias con los criterios de búsqueda" 
+                                 paginator="true" paginatorPosition="top" rows="10"
+                                 rowStyleClass="#{seguimiento.estado eq 'EN PROCESO' ? 'filaVerde' : null}"> 
+                        <p:column headerText="#" style="text-align: center" width="10">
+                            #{rowId+1}
+                        </p:column>
+                        <p:column headerText="Departamento" width="90">
+                            <h:outputText value="#{seguimiento.nombreDepartamento}"/>
+                        </p:column>
+                        <p:column headerText="Cód. Entidad" width="30">
+                            <h:outputText value="#{seguimiento.codigoEntidad}"/>
+                        </p:column>
+                        <p:column headerText="Nombre C.E." width="100">
+                            <h:outputText value="#{seguimiento.nombreCe}"/>
+                        </p:column>
+                        <p:column headerText="N.I.T. proveedor" width="100">
+                            <h:outputText value="#{seguimiento.numeroNit}"/>
+                        </p:column>
+                        <p:column headerText="Proveedor" width="100">
+                            <h:outputText value="#{seguimiento.razonSocial}"/>
+                        </p:column>
+                        <p:column headerText="Monto $" style="text-align: right;"  width="60">
+                            <h:outputText value="#{seguimiento.monto}">
+                                <f:convertNumber pattern="#,###.00"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Estado" style="text-align: center;"  width="70">
+                            <h:outputText value="#{seguimiento.estado}"/>
+                        </p:column>
+                        <p:column headerText="Ver" style="text-align: center;" width="15">
+                            <p:commandLink action="edit06Seguimiento.mined">
+                                <f:param name="idContrato" value="#{seguimiento.idContrato}"/>
+                                <f:param name="estadoSeguimiento" value="#{seguimiento.estado}"/>
+                                <i class="fa fa-hand-o-right blue" style="font-size: 17px;"></i>
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="Borrar" style="text-align: center;" width="20">
+                            <p:commandLink oncomplete="PF('confirmDialog').show();">
+                                <p:outputLabel rendered="#{!seguimiento.estadoEliminacion}"> <i class="fa fa-trash-o red" style="font-size: 16px;"></i></p:outputLabel>
+                                <f:setPropertyActionListener value="#{seguimiento.idRecepcion}" target="#{segFisicoController.idRecepcion}"/>  
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+        </div>
+
+        <p:confirmDialog id="confirmDialog" message="¿Esta seguro de eliminar el registro seleccionado?" severity="alert" appendTo="@(body)" 
+                         header="Confirmación" widgetVar="confirmDialog" closable="false" showEffect="puff" hideEffect="puff">  
+            <p:commandButton id="confirm" value="Si" icon="fa fa-check-circle" ajax="true" process="@this" action="#{segFisicoController.eliminarRecepcionBienesYServicios}"
+                             update="pnlDatos" oncomplete="PF('confirmDialog').hide();"/>  
+            <p:commandButton id="decline" value="No" onclick="PF('confirmDialog').hide();" type="button" icon="fa fa-times-circle"/>
+        </p:confirmDialog> 
+
+        <p:remoteCommand name="findEntidad" update="nombreCE" actionListener="#{segFisicoController.buscarEntidadEducativa}" />
+    </ui:define>
+</ui:composition>

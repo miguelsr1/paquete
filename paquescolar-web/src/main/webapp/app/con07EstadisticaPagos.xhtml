@@ -1,0 +1,162 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+
+    <ui:define name="head">
+
+        <style type="text/css">
+            .jqplot-xaxis-label, .jqplot-yaxis-label, .jqplot-y2axis-label, .jqplot-x2axis-label {
+                color: #757575; 
+            }
+
+            table.jqplot-table-legend {
+                background-color: #ffffff;
+                color: #757575;
+                border-color: #dce2e7;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" disabled="true"/>
+                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true"/>
+                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options" class="centradoVertical">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+
+                    <h3>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h3>
+                    <p:panelGrid columns="2" columnClasses="col4_label,col8"
+                                 style="border:0px none; background-color:transparent;"
+                                 styleClass="ui-panelgrid-blank form-group form-elements">
+                        <h:outputText value="Departamento"/>
+                        <p:selectOneMenu id="codigoDepartamento" value="#{pagoProveedoresController.codigoDepartamento}" disabled="#{datosGeograficosController.usuarioDepartamental}" >
+                            <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
+                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
+                            <p:ajax update="codigoDepartamento"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
+                        <p:selectOneMenu id="cboRubro" value="#{pagoProveedoresController.idRubro}" >
+                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />
+                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                        </p:selectOneMenu>
+
+                        <p:commandButton value="Filtrar" action="#{pagoProveedoresController.createDonutModel}" update="pnlDatos"/>
+                    </p:panelGrid>
+                </div>
+                <div class="card clearfix">
+                    <h3>
+                        <i class="fa fa-pie-chart orange" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Datos"/>
+                    </h3>
+                    <h:panelGrid id="pnlDatos" columns="2" styleClass="panelColumns">
+                        <h:panelGrid columns="1">
+                            <p:chart type="donut" model="#{pagoProveedoresController.donutModel}" style="height:300px; width: 400px;" rendered="#{pagoProveedoresController.codigoDepartamento ne '00'}"/>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1">
+                            <h3>Cuadro Resumen</h3>
+                            <p:dataTable value="#{pagoProveedoresController.lstResumenPago}" var="pago" rendered="#{pagoProveedoresController.renderGrafico}"
+                                         rowKey="#{pago.formatoRequerimiento}" rowIndexVar="rowId" sortBy="#{pago.codigoDepartamento}"
+                                         rowStyleClass="#{pago.montoSaldo gt 0 ? null : 'filaCompletada'}">
+                                <p:column headerText="Núm. Req." width="80">
+                                    <p:outputLabel value="#{pago.formatoRequerimiento}"/>
+                                </p:column>
+                                <p:column headerText="# Planillas" style="text-align: right;" width="45">
+                                    <p:outputLabel value="#{pago.cantidadPlanilla}"/>
+                                </p:column>
+                                <p:column headerText="# CE" style="text-align: right;" width="30">
+                                    <p:outputLabel value="#{pago.cantidadCe}"/>
+                                </p:column>
+                                <p:column headerText="Monto del Requerimiento" style="text-align: right;">
+                                    <p:outputLabel value="#{pago.montoTotal}">
+                                        <f:convertNumber pattern="#,##0.00"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column headerText="Monto Pagado" style="text-align: right;">
+                                    <p:outputLabel value="#{pago.montoPagado}">
+                                        <f:convertNumber pattern="#,##0.00"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column headerText="Monto Pendiente" style="text-align: right;">
+                                    <p:outputLabel value="#{pago.montoPendiente}">
+                                        <f:convertNumber pattern="#,##0.00"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column headerText="Monto Reintegro" style="text-align: right;">
+                                    <p:outputLabel value="#{pago.montoReintegro}">
+                                        <f:convertNumber pattern="#,##0.00"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column headerText="Monto Saldo" style="text-align: right;">
+                                    <p:outputLabel value="#{pago.montoSaldo}">
+                                        <f:convertNumber pattern="#,##0.00"/>
+                                    </p:outputLabel>
+                                </p:column>
+
+                                <p:summaryRow>
+                                    <p:column style="text-align:right">
+                                        <h:outputText value="Totales" />
+                                    </p:column>
+                                    <p:column style="text-align: right;">
+                                        <h:outputText value="#{pagoProveedoresController.cantidadPlanilla}" style="font-weight: bold;">
+                                            <f:convertNumber pattern="#,##0"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column style="text-align: right;">
+                                        <h:outputText value="#{pagoProveedoresController.cantidadCe}" style="text-align: right; font-weight: bold;">
+                                            <f:convertNumber pattern="#,##0"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column style="text-align: right;">
+                                        <h:outputText value="#{pagoProveedoresController.montoTotal}" style="text-align: right; font-weight: bold;">
+                                            <f:convertNumber pattern="$ #,##0.00"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column style="text-align: right;">
+                                        <h:outputText value="#{pagoProveedoresController.montoPagado}" style="text-align: right; font-weight: bold;">
+                                            <f:convertNumber pattern="$ #,##0.00"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column style="text-align: right;">
+                                        <h:outputText value="#{pagoProveedoresController.montoPendiente}" style="text-align: right; font-weight: bold;">
+                                            <f:convertNumber pattern="$ #,##0.00"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column style="text-align: right;">
+                                        <h:outputText value="#{pagoProveedoresController.montoReintegro}" style="text-align: right; font-weight: bold;">
+                                            <f:convertNumber pattern="$ #,##0.00"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column style="text-align: right;">
+                                        <h:outputText value="#{pagoProveedoresController.montoSaldo}" style="text-align: right; font-weight: bold;">
+                                            <f:convertNumber pattern="$ #,##0.00"/>
+                                        </h:outputText>
+                                    </p:column>
+                                </p:summaryRow>
+                            </p:dataTable>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

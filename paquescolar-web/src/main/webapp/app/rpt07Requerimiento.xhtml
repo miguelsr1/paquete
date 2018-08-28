@@ -1,0 +1,82 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" disabled="true" />
+                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true" />
+                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{pagoProveedoresController.imprimirRequerimiento}"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options" class="centradoVertical">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+
+                    <h3>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h3>
+                    <h:panelGrid columns="2">
+                        <h:outputText value="Departamento"/>
+                        <p:selectOneMenu id="codigoDepartamento" value="#{pagoProveedoresController.codigoDepartamento}"  required="true" disabled="#{datosGeograficosController.usuarioDepartamental}" >
+                            <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
+                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
+                            <p:ajax update="codigoDepartamento"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
+                        <p:selectOneMenu id="cboRubro" value="#{pagoProveedoresController.idRubro}">
+                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />
+                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                        </p:selectOneMenu>
+
+                        <p:commandButton value="Filtrar" action="#{pagoProveedoresController.buscarRequerimientosImp}" update="pnlDatos"/>
+                    </h:panelGrid>
+                </div>
+
+                <div class="card clearfix">
+                    <h3>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Lista de Requerimientos disponibles"/>
+                    </h3>
+
+                    <h:panelGrid id="pnlDatos">
+                        <p:dataTable value="#{pagoProveedoresController.lstRequerimientoFondos}" var="req" style="margin-bottom:0" 
+                                     selection="#{pagoProveedoresController.requerimientoFondos}" rowKey="#{req.idRequerimiento}" rowIndexVar="id"
+                                     selectionMode="single" >
+
+                            <p:column headerText="id Req." width="40" style="text-align: center;">
+                                <p:outputLabel value="#{req.idRequerimiento}"/>
+                            </p:column>
+                            <p:column headerText="Concepto">
+                                <p:outputLabel value="#{req.concepto}"/>
+                            </p:column>
+                            <p:column headerText="Número" width="80">
+                                <p:outputLabel value="#{req.formatoRequerimiento}"/>
+                            </p:column>
+                            <p:column headerText="No C.E." width="40" style="text-align: right;">
+                                <p:outputLabel value="#{req.detalleRequerimientoList.size()}"/>
+                            </p:column>
+                            <p:column headerText="Monto ($)" width="90" style="text-align: right;">
+                                <p:outputLabel value="#{req.montoTotal}">
+                                    <f:convertNumber pattern="$ #,##0.00"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

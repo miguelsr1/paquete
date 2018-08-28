@@ -1,0 +1,87 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="ui-g-12 card">
+                    <p:menubar id="menuBar">  
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+                        <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+                        <p:menuitem value="Guardar" icon="fa fa-save" action="#{creditoBancarioController.guardar}" update="pnlProceso tblEntidades"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                        <p:panel id="pnlProceso">
+                            <f:facet name="header">
+                                <i class="fa fa-cogs blue" style="font-size: 16px;"></i>
+                                <p:spacer width="10" height="8"/>
+                                <p:outputLabel value="Habilitar Procesos"/>
+                            </f:facet>
+                            <p:dataTable value="#{creditoBancarioController.lstDetalleProcesoCredito}" var="det" rowKey="#{det.idDetProcesoAdq}"
+                                         selection="#{creditoBancarioController.detalleProceso}" selectionMode="single">
+                                <p:ajax event="rowSelect" listener="#{creditoBancarioController.updateEntidadHabilitarCredito}" update="tblEntidades"/>
+
+                                <p:column headerText="id" width="25">
+                                    <h:outputText value="#{det.idDetProcesoAdq}"/>
+                                </p:column>
+                                <p:column headerText="Rubro">
+                                    <h:outputText value="#{det.idRubroAdq.descripcionRubro}"/>
+                                </p:column>
+                                <p:column headerText="Habilitar" width="50" style="text-align: center;">
+                                    <p:selectBooleanButton value="#{det.habilitarCredito}" onLabel="On" offLabel="Off"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </div>
+                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                        <p:panel>
+                            <f:facet name="header">
+                                <i class="fa fa-university blue" style="font-size: 16px;"></i>
+                                <p:spacer width="10" height="8"/>
+                                <p:outputLabel value="Entidades habilitadas"/>
+                                <p:commandButton value="Agregar" actionListener="#{creditoBancarioController.openDialogEntidades}" update="dlgEntidadesFinancieras" icon="fa fa-plus-circle" style="float: right;"/>
+                            </f:facet>
+                            <p:dataTable id="tblEntidades" value="#{creditoBancarioController.lstEntFinanDetProAdq}" var="ent"
+                                         emptyMessage="No hay entidades">
+                                <p:column headerText="Nombre">
+                                    <h:outputText value="#{ent.codEntFinanciera.nombreEntFinan}"/>
+                                </p:column>
+                                <p:column headerText="Eliminar" width="50" style="text-align: center;">
+                                    <p:selectBooleanButton value="#{ent.eliminar}" onIcon="fa fa-minus-circle" offIcon="fa fa-check-circle" onLabel="" offLabel=""/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p:dialog id="dlgEntidadesFinancieras"  widgetVar="dlgEntidadesFinancieras" header="Seleccionar entidades" 
+                  visible="#{creditoBancarioController.visibleDlgEntidades}" width="600" height="300">
+            <p:dataTable id="tblEntidadesDisponibles" value="#{creditoBancarioController.lstEntFinanHabilitadoCredito}" var="entidad" rowKey="#{entidad.codEntFinanciera}"
+                         selection="#{creditoBancarioController.lstEntidadFinanciera}" selectionMode="multiple">
+                <p:column headerText="Código" width="40">
+                    <h:outputText value="#{entidad.codEntFinanciera}"/>
+                </p:column>
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{entidad.nombreEntFinan}"/>
+                </p:column>
+            </p:dataTable>
+            <f:facet name="footer">
+                <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{creditoBancarioController.agregarEntidades}" onsuccess="PF('dlgEntidadesFinancieras').hide()" update="tblEntidades" />
+                <p:commandButton value="Cancelar" icon="fa fa-times-circle" onclick="PF('dlgEntidadesFinancieras').hide();" />
+            </f:facet>
+        </p:dialog>
+    </ui:define>
+</ui:composition>
+

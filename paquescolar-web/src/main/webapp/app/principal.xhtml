@@ -1,0 +1,121 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/plantillaLogin.xhtml">
+    <ui:define name="content">
+        <h:form>
+            <div class="contentPrincipal ">
+                <div style="position: absolute; right: 1%;" >
+                    <p:commandButton value="Salir" icon="fa fa-sign-out" action="#{personaController.logout}"/>
+                </div>
+                <div class="bloque40 propiedadBloque1 textoConSombra" style=" min-height:200px; max-width: 1024px;  background-repeat:no-repeat;">
+                    <h3 class="estiloDeTopico estiloFuente">Ejecución</h3>
+                    <p:separator/>
+                    <div class="subItem2">
+                        <h:commandLink action="#{menuController.selectOpcion}"  styleClass="secciones" >
+                            <h:panelGrid columns="2" >
+                                <p:graphicImage name="ejecucion.png" library="images" />
+                                Feria Escolar
+                            </h:panelGrid>
+                            <f:setPropertyActionListener target="#{menuController.app}" value="2" />
+                        </h:commandLink>
+                    </div>
+                    <div class="subItem2">
+                        <p:commandLink  action="#{menuController.selectOpcion}" ajax="false" styleClass="secciones">
+                            <h:panelGrid columns="2"  >
+                                <p:graphicImage name="grafico.png" library="images" />
+                                Avance de <br />contrataciones
+                            </h:panelGrid>
+                            <f:setPropertyActionListener target="#{menuController.app}" value="3" />
+                        </p:commandLink>
+                    </div>
+                </div>
+                <div class="bloque60 propiedadBloque1 textoConSombra" style=" min-height:200px; background-position:left top; background-repeat:no-repeat;">
+                    <h3 class="estiloDeTopico estiloFuente">Seguimiento</h3>
+                    <p:separator/>
+                    <div class="subItem33">
+                        <p:commandLink action="#{menuController.selectOpcion}" ajax="false" styleClass="secciones" >
+                            <h:panelGrid columns="2"  >
+                                <p:graphicImage name="modificativa.png" library="images"/>
+                                Modificativas a <br />contrato
+                            </h:panelGrid>
+                            <f:setPropertyActionListener target="#{menuController.app}" value="12" />
+                        </p:commandLink>
+                    </div>
+                    <div class="subItem33">
+                        <p:commandLink action="#{menuController.selectOpcion}" ajax="false" styleClass="secciones">
+                            <h:panelGrid columns="2"  >
+                                <p:graphicImage name="seguimiento_financiero.png" library="images"/>
+                                Registro de <br />créditos
+                            </h:panelGrid>
+                            <f:setPropertyActionListener target="#{menuController.app}" value="5" />
+                        </p:commandLink>
+                    </div>
+                    <div class="subItem33">
+                        <p:commandLink action="#{menuController.selectOpcion}" ajax="false" styleClass="secciones">
+                            <h:panelGrid columns="2"  >
+                                <p:graphicImage name="entregas.png" library="images"/>
+                                Recepción de <br/>Bienes y Servicios
+                            </h:panelGrid>
+                            <f:setPropertyActionListener target="#{menuController.app}" value="4" />
+                        </p:commandLink>
+                    </div>
+                </div>
+
+                <div class="bloque2 propiedadBloque2 textoConSombra" style=" min-height:200px; background-position:left top; background-repeat:no-repeat;">
+                    <h3 class="estiloDeTopico estiloFuente">Control</h3>
+                    <p:separator/>
+                    <div class="subItem" >
+                        <p:commandLink action="#{menuController.selectOpcion}" ajax="false" styleClass="secciones">
+                            <h:panelGrid columns="2"  >
+                                <p:graphicImage name="add_usuario.png" library="images" />
+                                Creación de <br />Usuarios
+                            </h:panelGrid>
+                            <f:setPropertyActionListener target="#{menuController.app}" value="8" />
+                        </p:commandLink>
+                    </div>
+
+                    <div class="subItem" >
+                        <p:commandLink action="#{menuController.selectOpcion}" ajax="false" styleClass="secciones">
+                            <h:panelGrid columns="2"  >
+                                <p:graphicImage name="banco.png" library="images" />
+                                Entidades Financieras y <br/>Asociación de Usuario
+                            </h:panelGrid>
+                            <f:setPropertyActionListener target="#{menuController.app}" value="6" />
+                        </p:commandLink>
+                    </div>
+
+                    <div class="subItem" >
+                        <p:commandLink action="#{menuController.selectOpcion}" ajax="false" styleClass="secciones">
+                            <h:panelGrid columns="2"  >
+                                <p:graphicImage name="payment.png" library="images" />
+                                Proceso de pago a Proveedores<br />
+                            </h:panelGrid>
+                            <f:setPropertyActionListener target="#{menuController.app}" value="11" />
+                        </p:commandLink>
+                    </div>
+
+                    <div class="subItem" >
+                        <p:commandLink action="#{menuController.selectOpcion}" ajax="false" styleClass="secciones">
+                            <h:panelGrid columns="2"  >
+                                <p:graphicImage name="proveedor.png" library="images" />
+                                Datos generales del<br /> proveedor
+                            </h:panelGrid>
+                            <f:setPropertyActionListener target="#{menuController.app}" value="9" />
+                        </p:commandLink>
+                    </div>
+                </div>
+                <center>
+                    <i class="fa fa-eye">
+                        <p:commandLink action="#{menuController.verResumenGeneralContrataciones}">
+                            Resumen general de contrataciones
+                        </p:commandLink>
+                    </i>
+                </center>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

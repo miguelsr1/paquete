@@ -1,0 +1,133 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo"
+                                    update="pnlFiltro" disabled="true"/>
+                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" 
+                                    update="pnlFiltro" disabled="true"/>
+                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options" class="centradoVertical">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+
+                    <p:panel id="pnlFiltro">
+                        <f:facet name="header" >
+                            <i class="fa fa-file-text-o blue" style="font-size: 16px;"></i>
+                            <p:spacer width="10"/>
+                            <p:outputLabel value="Consulta Terminaciones de Contratos"/>
+                        </f:facet>
+                        <h:panelGrid columns="2" >
+                            <p:outputLabel value="Rubro de adquisicion:" />
+                            <p:selectOneMenu id="cboRubro" value="#{modificatoriaController.idRubro}">
+                                <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />
+                                <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                <p:ajax update="pnlFiltro" listener="#{modificatoriaController.buscarProceso}" />
+                            </p:selectOneMenu>
+                            <p:commandButton value="Buscar" action="#{modificatoriaController.buscarTerminacionesContratos}" update="pnlDetDepartamento"/>
+                        </h:panelGrid>
+                    </p:panel>
+
+                    <p:panel id="pnlDetDepartamento" header="Detalle de Terminaciones de Contratos" >
+                        <h:outputText value="LEYENDAS"/>
+                        <h:panelGrid columns="8">
+                            <h:outputText value="1 - "/>
+                            <h:outputText value="Incumplimiento en Plazo Contractual" style="font-weight: bold;"/>
+                            <p:spacer width="12" height="8"/>
+                            <h:outputText value="2 - "/>
+                            <h:outputText value="Por Mutuo Acuerdo" style="font-weight: bold;"/>
+                            <p:spacer width="12" height="8"/>
+                            <h:outputText value="3 - "/>
+                            <h:outputText value="Cambio de Proveedor" style="font-weight: bold;"/>
+                            <h:outputText value="4 - "/>
+                            <h:outputText value="Dimision de Contrato" style="font-weight: bold;"/>
+                            <p:spacer width="12" height="8"/>
+                            <h:outputText value="5 - "/>
+                            <h:outputText value="Fallecimiento del Proveedor" style="font-weight: bold;"/>
+                        </h:panelGrid>
+                        <p:dataTable value="#{modificatoriaController.lstProDetModificativas}" var="detalle" rowIndexVar="idRow">
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column rowspan="2" headerText="#" width="8"/>
+                                    <p:column rowspan="2" headerText="N.I.T." />
+                                    <p:column rowspan="2" headerText="Proveedor" />
+                                    <p:column rowspan="2" headerText="Codigo" />
+                                    <p:column rowspan="2" headerText="Centro Educativo" />
+                                    <p:column rowspan="2" headerText="Departamento" />
+                                    <p:column rowspan="2" headerText="Num. Contrato" />
+                                    <p:column rowspan="2" headerText="Monto($)" />
+                                    <p:column colspan="5" headerText="Motivo de Finalizacion" width="160"/>
+                                    <p:column rowspan="2" headerText="Fecha resolucion" />
+                                </p:row>
+                                <p:row>
+                                    <p:column headerText="1" />
+                                    <p:column headerText="2" />
+                                    <p:column headerText="3"/>
+                                    <p:column headerText="4" />
+                                    <p:column headerText="5" />
+                                </p:row>
+                            </p:columnGroup>
+
+                            <p:column headerText="#" style="text-align: center;" width="5">
+                                <h:outputText value="#{idRow+1}"/>
+                            </p:column>
+                            <p:column headerText="N.I.T.">
+                                <h:outputText value="#{detalle.numeroNit}"/>
+                            </p:column>
+                            <p:column headerText="Proveedor">
+                                <h:outputText value="#{detalle.razonSocial}"/>
+                            </p:column>
+                            <p:column headerText="Codigo">
+                                <h:outputText value="#{detalle.codigoEntidad}"/>
+                            </p:column>
+                            <p:column headerText="Centro Educativo">
+                                <h:outputText value="#{detalle.nombreCe}"/>
+                            </p:column>
+                            <p:column headerText="Departamento">
+                                <h:outputText value="#{detalle.nombreDepartamento}"/>
+                            </p:column>
+                            <p:column headerText="Num. Contrato">
+                                <h:outputText value="#{detalle.numContrato}"/>
+                            </p:column>
+                            <p:column headerText="Monto ($)" style="text-align: right;">
+                                <h:outputText value="#{detalle.montoContratoActual}">
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="1" style="text-align: center;">
+                                <p:selectBooleanCheckbox value="#{detalle.tipoExtinsion1}" disabled="true"/>
+                            </p:column>
+                            <p:column headerText="2" style="text-align: center;">
+                                <p:selectBooleanCheckbox value="#{detalle.tipoExtinsion2}" disabled="true"/>
+                            </p:column>
+                            <p:column headerText="3" style="text-align: center;">
+                                <p:selectBooleanCheckbox value="#{detalle.tipoExtinsion3}" disabled="true"/>
+                            </p:column>
+                            <p:column headerText="4" style="text-align: center;">
+                                <p:selectBooleanCheckbox value="#{detalle.tipoExtinsion4}" disabled="true"/>
+                            </p:column>
+                            <p:column headerText="5" style="text-align: center;">
+                                <p:selectBooleanCheckbox value="#{detalle.tipoExtinsion5}" disabled="true"/>
+                            </p:column>
+                            <p:column headerText="Fecha resolucion" style="text-align: right;">
+                                <h:outputText value="#{detalle.fechaResolucion}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>       
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

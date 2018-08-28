@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings 
+    xmlns="http://java.sun.com/xml/ns/persistence/orm" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm  http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    <description>Native queries para Paquete Escolar</description>
+    
+   
+    <named-native-query name="PagoProve.ConstanciaRentencionByAnhoAndNitEmp" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                           as idRow,
+                VW_RPT_RENTA.RAZON_SOCIAL        as razonSocial, 
+                VW_RPT_RENTA.NUMERO_NIT          as numeroNit, 
+                VW_RPT_RENTA.NUM_CHEQUE          as numCheque,
+                VW_RPT_RENTA.FECHA_CHEQUE        as fechaCheque, 
+                VW_RPT_RENTA.DOC_PAGO            as docPago, 
+                VW_RPT_RENTA.MONTO_ACTUAL        as montoActual, 
+                VW_RPT_RENTA.MONTO_RETENCION     as montoRetencion, 
+                VW_RPT_RENTA.MONTO_RENTA         as montoRenta, 
+                VW_RPT_RENTA.NOMBRE_DEPARTAMENTO as nombreDepartamento, 
+                VW_RPT_RENTA.CODIGO_DEPARTAMENTO as codigoDepartamento, 
+                VW_RPT_RENTA.ID_ANHO             as idAnho, 
+                VW_RPT_RENTA.MES_REGISTRO        as mesRegistro,
+                formato_requerimiento            as formatoRequerimiento
+            from 
+                VW_RPT_RENTA
+                inner join DATOS_DEPA_PAGADURIA on VW_RPT_RENTA.CODIGO_DEPARTAMENTO = DATOS_DEPA_PAGADURIA.CODIGO_DEPARTAMENTO
+                inner join anho on VW_RPT_RENTA.ID_ANHO = anho.ID_ANHO
+            where 
+                extract(year from vw_rpt_renta.FECHA_CHEQUE) = ?1 and 
+                (VW_RPT_RENTA.NUMERO_NIT = ?2 or VW_RPT_RENTA.CODIGO_DEPARTAMENTO = ?3)
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="PagoProve.ReporteRentaMensualByRequerimiento" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto">
+        <query>
+            <![CDATA[
+            select 
+                ROWNUM          as idRow, 
+                razon_social    as razonSocial, 
+                numero_nit      as numeroNit, 
+                NUM_CHEQUE      as numCheque, 
+                FECHA_CHEQUE    as fechaCheque, 
+                DOC_PAGO        as docPago, 
+                MONTO_ACTUAL    as montoActual, 
+                MONTO_RETENCION as montoRetencion, 
+                MONTO_RENTA     as montoRenta 
+            from 
+                VW_RPT_RENTA 
+            where 
+                CODIGO_DEPARTAMENTO = ?1 and
+                (extract(MONTH FROM FECHA_CHEQUE) = ?2) and
+                (extract(YEAR FROM FECHA_CHEQUE) = ?3) and 
+                (formato_requerimiento = ?4)
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="PagoProve.FileF910" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto">
+        <query>
+            <![CDATA[
+            select 
+                ROWNUM          as idRow, 
+                NOMBRE          as razonSocial,
+                NUMERO_NIT      as numeroNit,
+                MONTO_RETENCION as montoRetencion,
+                MONTO_RENTA     as montoRenta
+            from
+                (select 
+                    NOMBRE, NUMERO_NIT,
+                    sum(MONTO_RETENCION) MONTO_RETENCION, 
+                    sum(MONTO_RENTA) MONTO_RENTA
+                from 
+                    VW_RPT_RENTA 
+                    inner join anho on anho.id_anho = VW_RPT_RENTA.id_anho
+                where 
+                    CODIGO_DEPARTAMENTO = ?1 and
+                    extract(year from fecha_cheque) = ?2
+                group by
+                    NOMBRE,
+                    numero_nit) tbl
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="PagoProve.ReporteRentaMensual" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto">
+        <query>
+            <![CDATA[
+            select 
+                ROWNUM          as idRow, 
+                razon_social    as razonSocial, 
+                numero_nit      as numeroNit, 
+                NUM_CHEQUE      as numCheque, 
+                FECHA_CHEQUE    as fechaCheque, 
+                DOC_PAGO        as docPago, 
+                MONTO_ACTUAL    as montoActual, 
+                MONTO_RETENCION as montoRetencion, 
+                MONTO_RENTA     as montoRenta 
+            from 
+                VW_RPT_RENTA 
+            where 
+                CODIGO_DEPARTAMENTO = ?1 and
+                (extract(MONTH FROM FECHA_CHEQUE) = ?2) and
+                (extract(YEAR FROM FECHA_CHEQUE) = ?3)
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="PagoProve.ProveedoresByIdRequerimiento" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto">
+        <query>
+            <![CDATA[
+            SELECT
+                ROWNUM          as idRow,
+                razon_social    as razonSocial,
+                numero_nit      as numeroNit
+            FROM (SELECT distinct razon_social, numero_nit    
+                FROM detalle_requerimiento 
+                WHERE id_requerimiento = ?1 and  
+                    id_contrato NOT IN (SELECT dr.id_contrato
+                                    FROM detalle_planilla dp 
+                                        inner join detalle_doc_pago ddp on dp.ID_DETALLE_DOC_PAGO = ddp.ID_DETALLE_DOC_PAGO 
+                                        inner join detalle_requerimiento dr on dr.ID_DET_REQUERIMIENTO = ddp.ID_DET_REQUERIMIENTO
+                                    WHERE dr.ID_REQUERIMIENTO = ?1)
+                                    ORDER BY RAZON_SOCIAL) tb
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="PagoProve.IsPlanillaConReintegro" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto">
+        <query>
+            <![CDATA[
+            SELECT 
+                count(dp.CODIGO_ENTIDAD) as idRow
+            FROM PLANILLA_PAGO PP
+                INNER JOIN DETALLE_PLANILLA DP ON PP.ID_PLANILLA = DP.ID_PLANILLA
+                INNER JOIN DETALLE_DOC_PAGO DDP ON DP.ID_DETALLE_DOC_PAGO = DDP.ID_DETALLE_DOC_PAGO
+                INNER JOIN DETALLE_REQUERIMIENTO DR ON DDP.ID_DET_REQUERIMIENTO = DR.ID_DET_REQUERIMIENTO
+            WHERE PP.ID_PLANILLA = ?1
+                AND PP.ESTADO_ELIMINACION = 0
+                AND DP.ESTADO_ELIMINACION = 0
+                and (dp.monto_original - dp.monto_actual) <> 0
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="PagoProve.NitProveedorByIdPlanilla" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto">
+        <query>
+            <![CDATA[
+            select 
+                ROWNUM              as idRow,
+                numero_nit          as numeroNit,
+                razon_social        as razonSocial,
+                correo_electronico  as correoElectronico
+            from(
+                SELECT distinct dr.NUMERO_NIT, dr.RAZON_SOCIAL, emp.CORREO_ELECTRONICO
+                FROM detalle_planilla dd
+                    inner join DETALLE_DOC_PAGO ddp on ddp.ID_DETALLE_DOC_PAGO = dd.ID_DETALLE_DOC_PAGO
+                    inner join DETALLE_REQUERIMIENTO dr on dr.ID_DET_REQUERIMIENTO = ddp.ID_DET_REQUERIMIENTO
+                    inner join empresa emp on emp.NUMERO_NIT = dr.NUMERO_NIT
+                WHERE dd.ID_PLANILLA = ?1
+                    AND dd.ESTADO_ELIMINACION = 0
+                ORDER BY dr.NUMERO_NIT)
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="PagoProve.ResumenPagoByDepaAndDetProcesoAdq" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosResumenPagosDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                                          as idRow,
+                formato_requerimiento                           as formatoRequerimiento,
+                cantidad_planilla                               as cantidadPlanilla,
+                cantidad_ce                                     as cantidadCe,
+                monto_total                                     as montoTotal,
+                monto_pagado                                    as montoPagado,
+                monto_pendiente                                 as montoPendiente,
+                monto_reintegro                                 as montoReintegro,
+                monto_total - (monto_pagado+monto_reintegro)    as montoSaldo,
+                codigo_departamento                             as codigoDepartamento
+            from (SELECT 
+                  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,
+                  COUNT(DISTINCT PLANILLA_PAGO.ID_PLANILLA) CANTIDAD_PLANILLA,
+                  COUNT(DISTINCT DETALLE_PLANILLA.ID_DETALLE_PLANILLA) CANTIDAD_CE,
+                  REQUERIMIENTO_FONDOS.MONTO_TOTAL,
+                  NVL(FN_RF_MONTO_PAGADO(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_PAGADO,
+                  NVL(FN_RF_MONTO_PENDIENTE(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO), 0) MONTO_PENDIENTE,
+                  NVL(FN_RF_MONTO_REINTEGRAR(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_REINTEGRO,
+                  requerimiento_fondos.codigo_departamento
+                FROM REQUERIMIENTO_FONDOS
+                  left outer JOIN DETALLE_REQUERIMIENTO ON REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO
+                  left outer JOIN PLANILLA_PAGO ON PLANILLA_PAGO.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO
+                  LEFT OUTER JOIN DETALLE_PLANILLA ON PLANILLA_PAGO.ID_PLANILLA = DETALLE_PLANILLA.ID_PLANILLA
+                WHERE
+                  REQUERIMIENTO_FONDOS.CODIGO_DEPARTAMENTO = ?1 AND
+                  REQUERIMIENTO_FONDOS.ID_DET_PROCESO_ADQ = ?2 AND
+                  requerimiento_fondos.estado_eliminacion = 0 and
+                  (DETALLE_PLANILLA.ESTADO_ELIMINACION = 0 OR DETALLE_PLANILLA.ESTADO_ELIMINACION IS NULL)
+                group by 
+                  REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO,
+                  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,
+                  REQUERIMIENTO_FONDOS.MONTO_TOTAL,
+                  requerimiento_fondos.codigo_departamento) tb
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="PagoProve.ResumenPagoByDetProcesoAdq" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosResumenPagosDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                                          as idRow,
+                formato_requerimiento                           as formatoRequerimiento,
+                cantidad_planilla                               as cantidadPlanilla,
+                cantidad_ce                                     as cantidadCe,
+                monto_total                                     as montoTotal,
+                monto_pagado                                    as montoPagado,
+                monto_pendiente                                 as montoPendiente,
+                monto_reintegro                                 as montoReintegro,
+                monto_total - (monto_pagado+monto_reintegro)    as montoSaldo,
+                codigo_departamento                             as codigoDepartamento
+            from (SELECT 
+                  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,
+                  COUNT(DISTINCT PLANILLA_PAGO.ID_PLANILLA) CANTIDAD_PLANILLA,
+                  COUNT(DISTINCT DETALLE_PLANILLA.ID_DETALLE_PLANILLA) CANTIDAD_CE,
+                  REQUERIMIENTO_FONDOS.MONTO_TOTAL,
+                  NVL(FN_RF_MONTO_PAGADO(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_PAGADO,
+                  NVL(FN_RF_MONTO_PENDIENTE(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO), 0) MONTO_PENDIENTE,
+                  NVL(FN_RF_MONTO_REINTEGRAR(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_REINTEGRO,
+                  requerimiento_fondos.codigo_departamento
+                FROM REQUERIMIENTO_FONDOS
+                  left outer JOIN DETALLE_REQUERIMIENTO ON REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO
+                  left outer JOIN PLANILLA_PAGO ON PLANILLA_PAGO.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO
+                  LEFT OUTER JOIN DETALLE_PLANILLA ON PLANILLA_PAGO.ID_PLANILLA = DETALLE_PLANILLA.ID_PLANILLA
+                WHERE
+                  REQUERIMIENTO_FONDOS.ID_DET_PROCESO_ADQ = ?1 AND
+                  requerimiento_fondos.estado_eliminacion = 0 and
+                  (DETALLE_PLANILLA.ESTADO_ELIMINACION = 0 OR DETALLE_PLANILLA.ESTADO_ELIMINACION IS NULL)
+                group by 
+                  REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO,
+                  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,
+                  REQUERIMIENTO_FONDOS.MONTO_TOTAL,
+                  requerimiento_fondos.codigo_departamento) tb
+                order by 
+                    codigo_departamento, formato_requerimiento
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="PagoProve.RptLiquidacionDePagos" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto">
+        <query>
+            <![CDATA[
+                select
+                    rownum              as idRow,
+                    CODIGO_DEPARTAMENTO as codigoDepartamento,
+                    CODIGO_ENTIDAD      as codigoEntidad,
+                    NOMBRE_CE           as nombreCe,
+                    DESCRIPCION_RUBRO   as descripcionRubro,
+                    NUMERO_NIT          as numeroNitEmp,
+                    RAZON_SOCIAL        as razonSocial,
+                    NO_DOC_PAGO         as docPago,
+                    FECHA_DOC_PAGO      as fechaDocPago,
+                    MONTO_ACTUAL        as montoActual
+                from
+                    vw_rpt_pago_liquidacion_depa
+                where
+                    codigo_departamento = ?1 and
+                    (extract(YEAR FROM FECHA_CHEQUE) = ?2) and
+                    ID_PROCESO_ADQ = ?3 and
+                    CODIGO_ENTIDAD = ?4
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="PagoProve.RptReintegroByIdReq" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto">
+        <query>
+            <![CDATA[
+                select
+                    rownum          as idRow,
+                    CODIGO_ENTIDAD  as codigoEntidad, 
+                    NOMBRE_CE       as nombreCe, 
+                    RAZON_SOCIAL    as razonSocial, 
+                    REINTEGRO       as montoReintegro
+                from
+                    vw_rpt_pago_reintegro
+                where
+                    id_requerimiento = ?1
+            ]]>
+        </query>
+    </named-native-query>
+</entity-mappings>

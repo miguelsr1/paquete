@@ -1,0 +1,125 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+                        <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+
+                    <h3>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h3>
+
+                    <p:panelGrid columns="2"
+                                 styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />  
+                        <p:selectOneMenu id="idRubro" value="#{creditoBancarioController.rubro}" effect="fade">
+                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
+                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}"/>
+                            <p:ajax listener="#{creditoBancarioController.resetNit}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Entidad Financiera:" />  
+                        <p:selectOneMenu id="idEntFinan" value="#{creditoBancarioController.entidadSeleccionado}" effect="fade" converter="genericConverter"  >
+                            <f:selectItem itemLabel="Seleccione Entidad Financiera" itemValue="" /> 
+                            <f:selectItems value="#{creditoBancarioController.lstEntidades}" />
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Estado Credito:" />  
+                        <p:selectOneMenu id="idEstadoCred" value="#{creditoBancarioController.estadoCredito}" effect="fade" >
+                            <f:selectItem itemLabel="Seleccione Entidad Financiera" itemValue="" /> 
+                            <f:selectItems value="#{creditoBancarioController.selectEstadoCredito}" />
+                        </p:selectOneMenu>
+
+                        <p:commandButton   value="Buscar" icon="ui-icon-search" actionListener="#{creditoBancarioController.buscarListadoProveedor}" update="tblCeNoDisponibles"/>  
+                    </p:panelGrid>
+                </div>
+
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Datos"/>
+                    </h1>
+                    <p:outputPanel id="tblCeNoDisponibles">
+                        <h:panelGrid columns="8">
+                            <p:outputLabel value="Total de contratos:" />
+                            <p:inputText value="#{creditoBancarioController.numeroDeContratosEnCredito}" size="5" style="text-align: right;" readonly="true"/>
+                            <p:spacer width="10" height="8"/>
+                            <p:outputLabel value="Monto total de Creditos:"/>
+                            <p:inputNumber thousandSeparator="," decimalSeparator="." decimalPlaces="2" value="#{creditoBancarioController.montoTotalEnCreditos}" inputStyle="text-align: right;" readonly="true"/>
+                            <p:spacer width="10" height="8"/>
+                            <p:outputLabel value="Monto total de Contratos:"/>
+                            <p:inputNumber thousandSeparator="," decimalSeparator="." decimalPlaces="2" value="#{creditoBancarioController.montoTotalEnContratos}" inputStyle="text-align: right" readonly="true" />
+                        </h:panelGrid>
+                        <br/>
+                        <p:dataTable id="tblResumen" widgetVar="tblResumen" var="ceNoDisponible" value="#{creditoBancarioController.listaProvGral}" 
+                                     emptyMessage="No hay ningun credito" paginator="true" paginatorPosition="top"> 
+                            <f:facet name="header">
+                                <p:spacer width="10" height="8"/>
+                                <h:commandLink style="float:right;">
+                                    <i class="fa fa-download"></i>
+                                    <p:spacer width="10" height="8"/>
+                                    <h:outputText value="Exportar"/>
+                                    <p:dataExporter  type="xls" encoding="ISO-8859-1" target="tblResumen" 
+                                                     fileName="lstResume_#{catalogosGeneralesController.formatoFechaReporte}"
+                                                     preProcessor="#{creditoBancarioController.preProcessDatosProveedorXLS}"/>  
+                                </h:commandLink>
+                            </f:facet>
+
+                            <p:column headerText="NIT">  
+                                <h:outputText value="#{ceNoDisponible.numeroNit}"  />  
+                            </p:column> 
+                            <p:column headerText="Razon Social">  
+                                <h:outputText value="#{ceNoDisponible.razonSocial}" />  
+                            </p:column> 
+                            <p:column headerText="Entidad Financiera">  
+                                <h:outputText value="#{ceNoDisponible.nombreEntFinan}" />  
+                            </p:column> 
+                            <p:column headerText="Departamento">  
+                                <h:outputText value="#{ceNoDisponible.nombreDepartamento}" />  
+                            </p:column> 
+                            <p:column headerText="#{bundle['tabla.codEnt']}" width="30">  
+                                <h:outputText value="#{ceNoDisponible.codigoEntidad}" />  
+                            </p:column>  
+                            <p:column headerText="Nombre C.E.">  
+                                <h:outputText value="#{ceNoDisponible.nombre}" />  
+                            </p:column> 
+                            <p:column headerText="Monto Crédito ($)" width="55" style="text-align: right;">  
+                                <h:outputText value="#{ceNoDisponible.montoCredito}" >  
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputText>
+                            </p:column> 
+                            <p:column headerText="Estatus" width="40" style="text-align: center;">  
+                                <h:outputText value="#{ceNoDisponible.descripCredAct}" />  
+                            </p:column> 
+                            <p:column headerText="Rubro">  
+                                <h:outputText value="#{ceNoDisponible.descripcionRubro}" />  
+                            </p:column> 
+                            <p:column headerText="Monto Contrato($)" width="55" style="text-align: right;" >  
+                                <h:outputText value="#{ceNoDisponible.montoContrato}" >  
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputText>
+                            </p:column> 
+                        </p:dataTable> 
+                    </p:outputPanel>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

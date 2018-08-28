@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+            <link href="#{request.contextPath}/resources/images/favicon.png" rel="shortcut icon"/>
+        </f:facet>
+        <title>Sistema de Paquetes Escolares - Error</title>
+    </h:head>
+
+    <h:body styleClass="exception-body">
+        <div class="exception-panel">
+            <div class="exception-panel-content">
+                <p:graphicImage name="error-icon.png" library="images"/>
+                <h1>Ha ocurrido un error inesperado.</h1>
+                <p>Comunicar este problema al administrador del aplicativo.</p>
+            </div>
+            <div>
+                <ul>
+                    <li><b>Ajax request:</b> #{facesContext.partialViewContext.ajaxRequest ? 'Yes' : 'No'}</li>
+                    <li><b>Exception type:</b> #{pfExceptionHandler.type}</li>
+                    <li><b>StackTrace:</b>
+
+                        <p:textEditor widgetVar="editor2" readonly="true" toolbarVisible="false" value="#{pfExceptionHandler.formattedStackTrace}" height="300" style="margin-bottom:10px"/>
+                    </li>
+                </ul>
+            </div>
+            <div class="exception-panel-footer">
+                <p:commandButton type="button" value="Inicio" onclick="window.location = '#{request.contextPath}/app/inicial.mined';" />
+            </div>
+        </div>
+
+
+        <h:outputStylesheet name="css/layout-default.css" library="paradise-layout" />
+    </h:body>
+
+</html>

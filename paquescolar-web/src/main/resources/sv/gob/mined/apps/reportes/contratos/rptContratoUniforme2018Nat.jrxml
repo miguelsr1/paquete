@@ -1,0 +1,694 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptContratoPersonaNaturalZapatos" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="b3d27ee3-cc8d-4284-9900-697f3963c735">
+	<property name="ireport.zoom" value="1.1269722013523735"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="121"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="dsDetalle" uuid="902db5e9-19dd-4ac1-a3d6-2f6ce8a895a3">
+		<parameter name="idResolucionAdj" class="java.math.BigDecimal">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT NO_ITEM, CONSOLIDADO_ESP_TEC, CANTIDAD, PRECIO_UNITARIO, SUB_TOTAL 
+FROM VW_RPT_DET_ITEMS_DIST 
+WHERE ID_RESOLUCION_ADJ = $P{idResolucionAdj} and
+  consolidado_esp_tec not like '%BACHILLERATO%'
+ORDER BY TO_NUMBER(NO_ITEM)]]>
+		</queryString>
+		<field name="NO_ITEM" class="java.lang.String"/>
+		<field name="CONSOLIDADO_ESP_TEC" class="java.lang.String"/>
+		<field name="CANTIDAD" class="java.math.BigDecimal"/>
+		<field name="PRECIO_UNITARIO" class="java.math.BigDecimal"/>
+		<field name="SUB_TOTAL" class="java.math.BigDecimal"/>
+		<variable name="vCantidad" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{CANTIDAD}]]></variableExpression>
+		</variable>
+		<variable name="vMonto" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{SUB_TOTAL}]]></variableExpression>
+		</variable>
+	</subDataset>
+	<subDataset name="dsDetalleBac" uuid="a69d6577-4d9b-4062-af7e-7ff3b9d198fd">
+		<parameter name="idResolucionAdj" class="java.math.BigDecimal">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="cantidadTotal" class="java.math.BigDecimal"/>
+		<parameter name="montoTotal" class="java.math.BigDecimal"/>
+		<queryString>
+			<![CDATA[SELECT NO_ITEM, CONSOLIDADO_ESP_TEC, CANTIDAD, PRECIO_UNITARIO, SUB_TOTAL 
+FROM VW_RPT_DET_ITEMS_DIST 
+WHERE ID_RESOLUCION_ADJ = $P{idResolucionAdj} and
+  consolidado_esp_tec like '%BACHILLERATO%'
+ORDER BY TO_NUMBER(NO_ITEM)]]>
+		</queryString>
+		<field name="NO_ITEM" class="java.lang.String"/>
+		<field name="CONSOLIDADO_ESP_TEC" class="java.lang.String"/>
+		<field name="CANTIDAD" class="java.math.BigDecimal"/>
+		<field name="PRECIO_UNITARIO" class="java.math.BigDecimal"/>
+		<field name="SUB_TOTAL" class="java.math.BigDecimal"/>
+		<variable name="vCantidadBac" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{CANTIDAD}]]></variableExpression>
+		</variable>
+		<variable name="vMontoBac" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{SUB_TOTAL}]]></variableExpression>
+		</variable>
+	</subDataset>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[".\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ubicacionImagenes" class="java.lang.String"/>
+	<parameter name="P_FECHA_INICIO" class="java.lang.String"/>
+	<parameter name="telDirector" class="java.lang.String"/>
+	<parameter name="descripcionRubro" class="java.lang.String"/>
+	<parameter name="idContrato" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="idResolucion" class="java.math.BigDecimal"/>
+	<parameter name="bachillerato" class="java.lang.Boolean"/>
+	<queryString>
+		<![CDATA[SELECT * FROM VW_RPT_CONTRATO_JUR_CABECERA  WHERE ID_CONTRATO=$P{idContrato}]]>
+	</queryString>
+	<field name="VALOR" class="java.math.BigDecimal"/>
+	<field name="CANTIDAD" class="java.math.BigDecimal"/>
+	<field name="NUMERO_CONTRATO" class="java.lang.String"/>
+	<field name="RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="DESCRIPCION_RUBRO" class="java.lang.String"/>
+	<field name="NOMBRE_MIEMBRO" class="java.lang.String"/>
+	<field name="INICIALES_MODALIDAD" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="PLAZO_PREVISTO_ENTREGA" class="java.math.BigDecimal"/>
+	<field name="CIUDAD_FIRMA" class="java.lang.String"/>
+	<field name="DIRECCION_CE" class="java.lang.String"/>
+	<field name="TELEFONO_CE" class="java.lang.String"/>
+	<field name="FAX_CE" class="java.lang.String"/>
+	<field name="DIRECCION_EMP" class="java.lang.String"/>
+	<field name="TELEFONO_EMP" class="java.lang.String"/>
+	<field name="CELULAR_EMP" class="java.lang.String"/>
+	<field name="FAX_EMP" class="java.lang.String"/>
+	<field name="NUMERO_NIT" class="java.lang.String"/>
+	<field name="USUARIO_INSERCION" class="java.lang.String"/>
+	<field name="ANHO_CONTRATO" class="java.lang.String"/>
+	<field name="FECHA_EMISION" class="java.lang.String"/>
+	<field name="NOMBRE_PRESENTANTE" class="java.lang.String"/>
+	<field name="CODIGO_ENTIDAD" class="java.lang.String"/>
+	<field name="ID_CONTRATO" class="java.math.BigDecimal"/>
+	<field name="ID_RUBRO_ADQ" class="java.math.BigDecimal"/>
+	<field name="DISTRIBUIDOR" class="java.math.BigDecimal"/>
+	<field name="MOSTRAR_LEYENDA" class="java.math.BigDecimal"/>
+	<field name="NOMBRE_DEPARTAMENTO" class="java.lang.String"/>
+	<field name="NOMBRE_MUNICIPIO" class="java.lang.String"/>
+	<field name="NUMERO_DUI" class="java.lang.String"/>
+	<field name="NIT_REPRESENTANTE" class="java.lang.String"/>
+	<field name="PRIMERO" class="java.math.BigDecimal"/>
+	<group name="cabecera">
+		<groupExpression><![CDATA[$F{CODIGO_ENTIDAD}]]></groupExpression>
+		<groupHeader>
+			<band height="179" splitType="Stretch">
+				<image onErrorType="Blank">
+					<reportElement uuid="844fab98-6db0-4fbc-b7fe-37651b8c294d" key="image-1" x="17" y="4" width="60" height="60"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo.jpg"]]></imageExpression>
+				</image>
+				<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+					<reportElement uuid="0af0e01a-e1bf-443f-9df6-1d5f8614f2da" key="image-2" x="408" y="4" width="98" height="60"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"logo_mined_rpt.png"]]></imageExpression>
+				</image>
+				<textField isBlankWhenNull="false">
+					<reportElement uuid="a7c7bc99-b105-485f-ab16-85c3a6f0058a" key="textField-7" x="100" y="8" width="308" height="35"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="13"/>
+					</textElement>
+					<textFieldExpression><![CDATA["CONTRATO No. ME-"+$F{NUMERO_CONTRATO}+"/"+$F{ANHO_CONTRATO}+"/COD:"+$F{CODIGO_ENTIDAD}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="735d7e0e-c206-43a2-8c36-0ca7a274c416" key="textField-8" x="0" y="93" width="510" height="86"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Arial" size="8" isUnderline="false" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["<style isBold='true' pdfFontName='Helvetica-Bold'>NOSOTROS,</style> "+$F{NOMBRE_MIEMBRO}+" actuando en nombre y representación del Organismo de Administración Escolar ".
+concat($F{INICIALES_MODALIDAD}).concat(" del ").concat($F{NOMBRE}).concat(" con código: ").concat($F{CODIGO_ENTIDAD}).concat(", Municipio "+$F{NOMBRE_MUNICIPIO}).
+concat(", Departamento "+$F{NOMBRE_DEPARTAMENTO}).concat(" que en lo sucesivo en este instrumento ").
+concat("se denominará <style isBold='true' pdfFontName='Helvetica-Bold'>\"El Contratante u Organismo\",</style> y por otra parte ").concat($F{RAZON_SOCIAL}).
+concat(", No. de NIT: " + $F{NUMERO_NIT}).
+concat(", que en lo sucesivo en este instrumento se denominará <style isBold='true' pdfFontName='Helvetica-Bold'>\"El Contratista\", CONVENIMOS</style> en celebrar el presente").
+concat(" contrato de <style isBold='true' pdfFontName='Helvetica-Bold'>").concat($F{DESCRIPCION_RUBRO} + " " + $F{ANHO_CONTRATO}).concat(",</style> conforme a las cláusulas que a continuación se especifican. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA I: OBJETO DEL CONTRATO.</style> Ambas partes convienen en contratar los servicios <style isBold='true' pdfFontName='Helvetica-Bold'>\"").concat($F{DESCRIPCION_RUBRO} + " " + $F{ANHO_CONTRATO}).concat("\"</style> ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA II: PRECIO Y FORMA DE PAGO.</style> El precio total por los servicios o adquisiciones objeto del presente").
+concat(" contrato asciende a la suma de ").concat(Herramientas.aLetras($F{VALOR}).trim()).concat(" DOLARES DE LOS ESTADOS").
+concat(" UNIDOS DE AMERICA. (US$ ").concat((new DecimalFormat("#,###.00").format($F{VALOR}))).
+concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones de ley aplicables. El monto que será pagado por la Pagaduría Auxiliar Departamental de acuerdo al siguiente detalle:")]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="false">
+					<reportElement uuid="2e9920e6-0ac3-4620-8d45-6a855fe8d96b" key="textField-11" x="1" y="56" width="509" height="35"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA["\""+$P{descripcionRubro}+" "+$F{ANHO_CONTRATO}+
+"\"\nFUENTE DE FINANCIAMIENTO:GOES"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="154" splitType="Stretch">
+				<staticText>
+					<reportElement uuid="968b6c89-592a-492d-8e3c-4a9c264352d5" key="staticText-1" x="0" y="25" width="14" height="13"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<text><![CDATA[F.:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="false">
+					<reportElement uuid="c0454f5e-8535-40d2-8b13-3a4f14ad76ab" key="textField-4" x="12" y="38" width="233" height="52"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE_MIEMBRO}+
+"\nPresidente(a) del Organismo de"+
+"\nAdministración Escolar del Centro Educativo"+
+"\nCONTRATANTE"]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement uuid="746293a5-1f5a-429d-97b9-9d7c914da1ca" key="line-1" x="14" y="34" width="168" height="1"/>
+				</line>
+				<staticText>
+					<reportElement uuid="8851b578-9a66-4f26-bbf0-832a8feed400" key="staticText-5" x="265" y="25" width="14" height="13"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<text><![CDATA[F.:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="false">
+					<reportElement uuid="7dfe37b0-499e-4136-a289-9094f851f4f0" key="textField-5" x="277" y="38" width="233" height="52"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE_PRESENTANTE}+
+"\nNo DUI: "+$F{NUMERO_DUI}+
+"\nNo NIT: "+$F{NUMERO_NIT}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement uuid="37c3904a-0e84-4573-b87f-af69e180b712" key="line-2" x="279" y="34" width="168" height="1"/>
+				</line>
+				<textField>
+					<reportElement uuid="e4c1ae0d-e163-4e4d-84ef-0243fcd735dd" x="0" y="111" width="510" height="43"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{DISTRIBUIDOR}.equals("1"))?($F{MOSTRAR_LEYENDA}.equals("1")?"Nota: Este proveedor es contribuyente del IVA, y debe presentar fotocopia de la tarjeta del IVA, solvencia original o copia certificada por un notario de la Solvencia Municipal y Solvencia Tributaria":"Nota: Este proveedor debe presentar Solvencia Original o Copia certificada por un notario de la Solvencia Municipal y Solvencia Tributaria."):
+($F{MOSTRAR_LEYENDA}.equals("1")?"Nota: Este proveedor es contribuyente del IVA, y debe presentar fotocopia de la tarjeta del IVA, solvencia original o copia certificada por un notario de la Solvencia Municipal y Solvencia Tributaria":"")]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="detalle">
+		<groupExpression><![CDATA[$F{NOMBRE}]]></groupExpression>
+		<groupHeader>
+			<band height="21" splitType="Stretch">
+				<componentElement>
+					<reportElement uuid="9f6eda63-3937-4b7c-8014-ea7b5b8a13ec" key="table 1" style="table 1" x="56" y="4" width="423" height="17"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="dsDetalle" uuid="0fd94d9f-b897-4c36-b1c1-22d112e1be13">
+							<datasetParameter name="idResolucionAdj">
+								<datasetParameterExpression><![CDATA[$P{idResolucion}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:columnGroup width="230" uuid="41e5af02-3f7f-48d6-a228-a01583346103">
+							<jr:columnFooter height="14" rowSpan="1">
+								<staticText>
+									<reportElement uuid="c918e665-b3de-463a-b2f8-b5ff8b3f421a" x="13" y="0" width="217" height="14"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Arial" size="10" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Sub Total Parvularia + Básica]]></text>
+								</staticText>
+							</jr:columnFooter>
+							<jr:column width="40" uuid="ae1e7a98-59e2-4d0c-8646-67ac1fc514c3">
+								<jr:columnHeader style="table_TD" height="13" rowSpan="1">
+									<staticText>
+										<reportElement uuid="f52b5324-27d3-4b50-b134-cc1e4f4ae913" x="0" y="0" width="40" height="13"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle">
+											<font fontName="Arial" size="9" isBold="true"/>
+										</textElement>
+										<text><![CDATA[No Item]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell style="table 1_TD" height="13" rowSpan="1">
+									<textField>
+										<reportElement uuid="50a90186-ebeb-49a0-82df-d92d7657619c" x="0" y="0" width="40" height="13"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle">
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{NO_ITEM}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="190" uuid="7e933a8a-421f-4c7c-b4bc-2f18587ad999">
+								<jr:columnHeader style="table_TD" height="13" rowSpan="1">
+									<staticText>
+										<reportElement uuid="ad3af154-24f0-4868-a50b-97d9626d7aa5" x="0" y="0" width="190" height="13"/>
+										<textElement textAlignment="Center" verticalAlignment="Middle">
+											<font fontName="Arial" size="9" isBold="true"/>
+										</textElement>
+										<text><![CDATA[Descripción del Item]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell style="table 1_TD" height="13" rowSpan="1">
+									<textField>
+										<reportElement uuid="d6e97019-7dfa-4a42-bf80-487f2c735a58" x="1" y="0" width="188" height="13"/>
+										<textElement textAlignment="Left" verticalAlignment="Middle">
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{CONSOLIDADO_ESP_TEC}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+						</jr:columnGroup>
+						<jr:column width="48" uuid="1a1b37db-08e0-48ff-a17e-bd5c9c9952c8">
+							<jr:columnHeader style="table_TD" height="13" rowSpan="1">
+								<staticText>
+									<reportElement uuid="f004ebed-ede7-4cd5-99be-7cb8e550cb29" x="0" y="0" width="48" height="13"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Cantidad]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter style="table_TD" height="14" rowSpan="1">
+								<textField pattern="#,##0">
+									<reportElement uuid="fd5c6c81-7c44-4c3c-bb81-7c78ccb00179" x="0" y="0" width="48" height="14"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="10" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{vCantidad}]]></textFieldExpression>
+								</textField>
+							</jr:columnFooter>
+							<jr:detailCell style="table 1_TD" height="13" rowSpan="1">
+								<textField pattern="#,##0">
+									<reportElement uuid="d016e686-0006-4bb6-b620-db0d750b4cc0" x="0" y="0" width="48" height="13"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{CANTIDAD}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="74" uuid="5e93de6b-caa5-4df2-8cfc-0d7eaf7b6691">
+							<jr:columnHeader style="table_TD" height="13" rowSpan="1">
+								<staticText>
+									<reportElement uuid="e82af698-5ed9-4a6c-a97f-4d8be8c0d964" x="0" y="0" width="74" height="13"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Precio Unit. ($)]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter style="table_TD" height="14" rowSpan="1"/>
+							<jr:detailCell style="table 1_TD" height="13" rowSpan="1">
+								<textField pattern="#,##0.00">
+									<reportElement uuid="17173372-ec80-4006-9596-d5ec9e242bb3" x="0" y="0" width="72" height="13"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Arial" size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{PRECIO_UNITARIO}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="74" uuid="7eb9c674-6dcd-401f-b519-823f7fcebc15">
+							<jr:columnHeader style="table_TD" height="13" rowSpan="1">
+								<staticText>
+									<reportElement uuid="70128808-3f92-4226-9caf-948533cfcd9f" x="0" y="0" width="74" height="13"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Precio Total ($)]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter style="table_TD" height="14" rowSpan="1">
+								<textField pattern="#,##0.00">
+									<reportElement uuid="92e9f26d-3d77-4544-8bbe-c96647eaebfa" x="0" y="0" width="72" height="14"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Arial" size="10" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{vMonto}]]></textFieldExpression>
+								</textField>
+							</jr:columnFooter>
+							<jr:detailCell style="table 1_TD" height="13" rowSpan="1">
+								<textField pattern="#,##0.00">
+									<reportElement uuid="ecda2035-890b-4b66-9977-de7c7dda1eaa" x="0" y="0" width="72" height="13"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Arial" size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{SUB_TOTAL}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15" splitType="Stretch">
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="73650e16-4f61-464f-80b6-91142b686d65" key="textField-3" stretchType="RelativeToBandHeight" mode="Opaque" x="1" y="3" width="509" height="12" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Justified" verticalAlignment="Top" rotation="None" markup="styled">
+						<font fontName="Arial" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA["La cantidad mencionada anteriormente será cancelada cuando el contratista haya realizado la entrega del primer uniforme completo a todos los estudiantes del centro educativo; y además se hayan efectuado todas las correcciones en las prendas que presentaron reclamos de confección y se hayan recibido a satisfacción por parte del Centro Escolar a través del Administrador de este contrato (Presidente del Organismo de Administración Escolar). Los documentos a presentar a la Pagaduría Auxiliar de la Dirección Departamental de Educación del Departamento correspondiente, para efectos de gestión de pago, por parte del contratista son: I) Factura de Consumidor Final o Recibo, el cual debe ser emitido a nombre del Organismos de Administración Escolar del Centro Educativo, en el que se indique la descripción del bien o servicio suministrado, la cantidad, el precio unitario y el monto total; II) Acta de Recepción firmada y sellada por parte del Presidente del Organismo, de haber recibido a satisfacción los bienes o servicios objeto de este contrato; III) Cualquier resolución que se celebre y modifique lo acordado en el presente instrumento como Resoluciones de Prórroga, Resoluciones Modificativas, Resoluciones de multa, e incluso Resoluciones de Extinción. ".
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA III: PLAZO:</style> El plazo máximo de entrega para los bienes objeto de este contrato, será de 60 DIAS CALENDARIO, contados a partir de la fecha indicada en la orden de inicio, emitida por el Organismo de Administración Escolar. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA IV: FORMA DE ENTREGA Y RECEPCION:</style> De conformidad al artículo cuarenta y cuatro literal j), de la LACAP, el contratista garantiza que entregará los bienes objeto del presente CONTRATO, con las mismas condiciones y especificaciones ofertadas, de acuerdo a lo establecido en las especificaciones técnicas a satisfacción del Organismo de Administración Escolar, en el centro educativo y de acuerdo a lo relativo a entrega y recepción de la Cláusula V del presente contrato. La entrega de los mismos podrá ser total o parcial pero solo se tendrá por cumplida la obligación de entrega hasta haber completado el total de las piezas de uniformes que se estipulan en el presente contrato. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA V: OBLIGACIONES DEL CONTRATISTA:</style> Son obligaciones del contratista las siguientes: a) El retiro de tela para la confección de uniformes, que se hará en el centro educativo; b) La toma de tallas, la que también se realizará en el centro educativo; c) La entrega de los productos a padres, madres de familia, estudiantes de tercer ciclo o bachillerato, o responsables de los estudiantes, que de igual manera se realizará en el centro educativo; d) En el caso de reclamos en la confección de los uniformes, deberán ser solventados por el contratista durante el plazo de ejecución del contrato; e) Deberá entregar los productos contra una lista de entrega a satisfacción del padre, madre de familia, estudiantes de tercer ciclo o bachillerato o responsables de los estudiantes; f) Los uniformes deberán ser empacados en bolsas plásticas transparentes y resistentes, especificando el nombre del estudiante, talla por prenda, nivel y ciclo educativo, nombre del centro escolar al que pertenece, así como el contenido de cada bolsa; g) Deberá dar buen uso y resguardo apropiado a la tela que reciba, así como también deberá devolver la tela sobrante, caso contrario el Contratante aplicará las sanciones correspondientes; h) Mantener datos de dirección y teléfonos actualizados, así como dar por recibida cualquier notificación escrita y recibir información por cualquier medio de comunicación. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA VI: INCUMPLIMIENTO:</style> En el caso de mora (atraso) en el cumplimiento por parte del contratista de las obligaciones emanadas del presente Contrato, se aplicarán las multas establecidas en el Artículo Ochenta y Cinco de la LACAP o se dará por extinguido el mismo. El contratista expresamente se somete a las sanciones que emanan de la ley o del presente Contrato, cuando sean por razón imputable a él y serán impuestas por el Organismo que administra el Centro Educativo, a cuya competencia se somete a efectos de la imposición. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA VII: CESIÓN DE DERECHOS:</style> Únicamente podrán traspasar o ceder, los derechos y obligaciones que emanan del pago del presente contrato. La gestión y trámite de pago incluirá el retiro de los cheques y/o depósitos a cuentas bancarias correspondientes. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA VIII: DELEGACION ESPECIAL:</style> Por medio de éste instrumento, el contratante faculta expresamente a la Pagaduría Auxiliar Departamental de la Dirección Departamental de Educación correspondiente a la ubicación del Contratante, como Centro Escolar, para aceptar notificaciones de cesiones de beneficios económicos del presente contrato que el Contratista hiciere a favor de terceros de acuerdo a la cláusula precedente. En ese sentido, la Pagaduría Auxiliar Departamental podrá aceptar notificaciones y firmar cualquier documento relacionado a las mismas y extender los pagos derivados del presente contrato en base a la cláusula precedente, por medio de cheque a nombre del Cesionario o por medio de abonos en cuenta bancaria que el cesionario tuviere abiertas a su nombre con instituciones bancarias, o de acuerdo a las instrucciones que el Cesionario le emitiere por escrito. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA IX: DOCUMENTOS CONTRACTUALES:</style> Forman parte de este contrato los documentos siguientes: a) Especificaciones técnicas; b) La Oferta Global; c) Declaración jurada de cumplimiento de especificaciones técnicas, plazo y lugar de entrega firmada por el contratista; d) Listados de Recepción de los bienes o servicios por parte de los padres, madres de familia, estudiantes de tercer ciclo o bachillerato o responsables de los estudiantes que contengan nombre, firma y número de DUI o NIE, de haber recibido a satisfacción los bienes o servicios objeto de este contrato; e) Solicitud de cotización y cotización; f) Garantías; y g) otros documentos que emanen del presente contrato. En caso de controversia entre estos documentos y el contrato, prevalecerá éste último. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA X: SUPERVISION Y CONTROL:</style> La supervisión y control de éste contrato será ejercida por <style isBold='true' pdfFontName='Helvetica-Bold'>el Organismo que administra el Centro educativo,</style> quien será el encargado de la ejecución de este contrato y tendrá el derecho a inspeccionar los servicios o bienes, a fin de verificar su conformidad con las especificaciones del contrato. Cuando los servicios o adquisiciones inspeccionados no se sujeten a los términos contractuales, el centro educativo podrá rechazarlos previo informe del <style isBold='true' pdfFontName='Helvetica-Bold'>Organismo a través del Presidente quien ejercerá la administración del contrato</style> y el contratista deberá, sin cargo para el centro educativo, reemplazarlos o hacer todas las modificaciones necesarias para que ellas cumplan con las especificaciones del contrato. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA XI: GARANTIA:</style> Para garantizar el cumplimiento de las obligaciones emanadas del presente contrato, el contratista deberá rendir a satisfacción del Organismo de Administración Escolar, la garantía siguiente: <style isBold='true' pdfFontName='Helvetica-Bold'>PAGARE (SIN PROTESTO) - PARA GARANTIA DE CUMPLIMIENTO DEL CONTRATO</style> equivalente al doce por ciento (12%) del valor total de este contrato, con vigencia de VEINTICUATRO MESES). En el caso de servicios de confección de uniformes, PAGARE (SIN PROTESTO) - POR LA ENTREGA DE TELA (equivalente al valor total de este contrato, con vigencia de VEINTICUATRO MESES). ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA XII: PLAZO DE RECLAMOS.</style> A partir de la entrega del suministro al centro educativo, éste tendrá un plazo de treinta días, para efectuar cualquier reclamo respecto de deficiencias o mala calidad del producto entregado y el contratista deberá subsanar esas deficiencias o reponer el producto, en un plazo no mayor a ocho días, después de efectuado el reclamo. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA XIII: INTERPRETACION DEL CONTRATO.</style> De conformidad al artículo ochenta y cuatro incisos primero y segundo de la LACAP, el Organismo se reserva la facultad de interpretar el presente contrato, de conformidad a la Constitución de la República, la LACAP, demás legislación aplicable y los Principios Generales del Derecho Administrativo y de la forma que más convenga al interés público que se pretende satisfacer de forma directa o indirecta con la prestación, objeto del presente instrumento, pudiendo en tal caso girar las instrucciones por escrito que al respecto considere convenientes. El contratista expresamente acepta tal disposición y se obliga a dar estricto cumplimiento a las instrucciones que al respecto dicte el Organismo, las cuales le serán comunicadas por medio de éste. Ver clausula VIII. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA XIV: MODIFICACION.</style> El presente contrato podrá ser modificado de común acuerdo. En tal caso, la institución contratante emitirá la correspondiente Resolución, y para que surta efecto legal, esta modificativa debe ser firmada por el Presidente del Organismo contratante y el Contratista, la cual formará parte integrante del presente contrato, <style isBold='true' pdfFontName='Helvetica-Bold'> según Art. 83-A inc. 4to. de la LACAP.</style> ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA XV: SOLUCIONES DE CONFLICTO.</style> Para resolver cualquier disputa o controversia que surja en cuanto a la interpretación o cumplimiento del presente contrato, las partes se someten a los tribunales comunes de este país, y a las disposiciones de las Leyes Salvadoreñas. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA XVI: TERMINACION BILATERAL.</style> Las partes contratantes siempre y cuando no concurra causa de terminación imputable al contratista, podrán de conformidad al artículo noventa y cinco de la LACAP, dar por terminado bilateralmente la relación jurídica que emana del presente contrato, debiendo en tal caso emitirse el acta correspondiente y notificarse por el Organismo a la oficina de la Dirección Departamental de Educación correspondiente, en un plazo no mayor de ocho días hábiles. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA XVII: JURISDICCION Y LEGISLACION APLICABLE.</style> Para los efectos jurisdiccionales de este contrato las partes se someten a la legislación vigente de la República de El Salvador cuya aplicación se realizará de conformidad a lo establecido en el artículo cinco de la LACAP. Asimismo, señalan como domicilio especial el de esta ciudad a la competencia de cuyos tribunales se someten. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA XVIII: NOTIFICACION.</style> Todas las notificaciones referentes a la ejecución de este contrato, serán válidas solamente cuando sean hechas por medio de comunicación escrita a las direcciones de las partes contratantes, para cuyos efectos las partes señalan como lugar para recibir notificaciones los siguientes: Para el ").concat($F{NOMBRE}).concat(", Dirección: ").concat($F{DIRECCION_CE}).concat(". ").
+concat((($F{TELEFONO_CE}==null)?"":","+$F{TELEFONO_CE})).concat(" ").concat((($F{FAX_CE}==null)?"":","+$F{FAX_CE})+", "+$P{telDirector}).
+concat(". Para el Contratista ").concat($F{RAZON_SOCIAL}).concat(", Dirección: ").concat($F{DIRECCION_EMP}).concat(" ").concat((($F{TELEFONO_EMP}==null)?"":","+$F{TELEFONO_EMP})).
+concat(" ").concat((($F{CELULAR_EMP}==null)?"":","+$F{CELULAR_EMP})).concat(", de igual forma se señala como Domicilio Especial, en el caso de que no se pueda localizar al contratista, la cartelera de la Dirección Departamental de Educación del departamento que corresponda el Centro Educativo contratante, de conformidad al Código de Procedimientos Civiles y Mercantiles, las esquelas de notificación, estarán colocadas en la misma, por un periodo de 10 días hábiles, después de ese plazo, el contratista se dará por legalmente notificado. ").
+concat("El presente contrato entrará en vigencia a partir de la fecha de su firma. Así nos expresamos los comparecientes, quienes enterados y conscientes de los términos y efectos legales del presente contrato por convenir así a los intereses de nuestros representados, ratificamos su contenido. En fe de lo cual firmamos en la ciudad de ").concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FECHA_EMISION})).
+concat(" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).concat(" del año  ").concat(Herramientas.getNumAnyo($F{FECHA_EMISION})).concat(".")]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<componentElement>
+				<reportElement uuid="81e96ba0-e0ff-4299-8ae6-757ab1fa58d1" key="table 2" style="table 2" x="56" y="0" width="423" height="17">
+					<printWhenExpression><![CDATA[$P{bachillerato}]]></printWhenExpression>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="dsDetalleBac" uuid="c2252c31-a1d8-4158-97f9-2fad7401e6b3">
+						<datasetParameter name="idResolucionAdj">
+							<datasetParameterExpression><![CDATA[$P{idResolucion}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="montoTotal">
+							<datasetParameterExpression><![CDATA[$F{VALOR}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="cantidadTotal">
+							<datasetParameterExpression><![CDATA[$F{CANTIDAD}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:columnGroup width="230" uuid="70eec056-76db-4c55-bea3-c07fbd8de80e">
+						<jr:tableFooter style="table_TD" height="14" rowSpan="1">
+							<staticText>
+								<reportElement uuid="6fd4ff1d-5c2c-4e84-9a96-fd6dc3b4bd5c" x="2" y="0" width="228" height="14"/>
+								<textElement>
+									<font fontName="Arial" isBold="true"/>
+								</textElement>
+								<text><![CDATA[TOTAL CONTRATADO (IVA INCLUIDO)]]></text>
+							</staticText>
+						</jr:tableFooter>
+						<jr:columnFooter height="14" rowSpan="1">
+							<staticText>
+								<reportElement uuid="e9a7771c-4086-4739-9ca6-d5b2abb1f91e" x="13" y="0" width="217" height="14"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Sub Total Bachillerato]]></text>
+							</staticText>
+						</jr:columnFooter>
+						<jr:column width="40" uuid="6709b441-d7f1-47b4-b035-95525049eef1">
+							<jr:detailCell style="table 2_TD" height="13" rowSpan="1">
+								<textField>
+									<reportElement uuid="9f9a412a-ed26-4ed0-a7df-22963c586ac8" x="0" y="0" width="40" height="13"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{NO_ITEM}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="190" uuid="56333d78-c0f4-416f-aa6d-831c4138ff90">
+							<jr:detailCell style="table 2_TD" height="13" rowSpan="1">
+								<textField>
+									<reportElement uuid="ef6fc621-a203-4eb7-ad6f-3bf82f2e8948" x="1" y="0" width="188" height="13"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Arial" size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{CONSOLIDADO_ESP_TEC}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:columnGroup>
+					<jr:column width="48" uuid="2c90d037-cc35-4da1-8d58-cdd73732beb0">
+						<jr:tableFooter style="table_TD" height="14" rowSpan="1">
+							<textField pattern="#,##0">
+								<reportElement uuid="f638cccc-09ad-475d-9e85-b4926103a7d3" x="0" y="0" width="48" height="14"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{cantidadTotal}]]></textFieldExpression>
+							</textField>
+						</jr:tableFooter>
+						<jr:columnFooter style="table 1_TD" height="14" rowSpan="1">
+							<textField pattern="#,##0">
+								<reportElement uuid="4f5605d6-6d1e-4b34-96bd-c803b0cefdc1" x="0" y="0" width="48" height="14"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{vCantidadBac}]]></textFieldExpression>
+							</textField>
+						</jr:columnFooter>
+						<jr:detailCell style="table 2_TD" height="13" rowSpan="1">
+							<textField pattern="#,##0">
+								<reportElement uuid="6d1267bb-7fb1-471a-945c-abc72bf5daad" x="0" y="0" width="48" height="13"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{CANTIDAD}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="74" uuid="62fc639c-31a5-4f39-b9fb-cb3189c6bc7e">
+						<jr:tableFooter style="table_TD" height="14" rowSpan="1"/>
+						<jr:columnFooter style="table 1_TD" height="14" rowSpan="1"/>
+						<jr:detailCell style="table 2_TD" height="13" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement uuid="bb1f071d-6639-4439-9e6f-2ad770f98855" x="0" y="0" width="72" height="13"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{PRECIO_UNITARIO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="74" uuid="37e4af18-7531-4126-a133-6391bd2d80f4">
+						<jr:tableFooter style="table_TD" height="14" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement uuid="3a93ebae-5452-4193-8915-181c5e554a6d" x="0" y="0" width="72" height="14"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{montoTotal}]]></textFieldExpression>
+							</textField>
+						</jr:tableFooter>
+						<jr:columnFooter style="table 1_TD" height="14" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement uuid="a1658aa9-122a-48e8-9452-150d62592620" x="0" y="0" width="72" height="14"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="9" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{vMontoBac}]]></textFieldExpression>
+							</textField>
+						</jr:columnFooter>
+						<jr:detailCell style="table 2_TD" height="13" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement uuid="28b77480-82b9-4434-b13e-0ea8da563a50" x="0" y="0" width="72" height="13"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{SUB_TOTAL}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="11">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="3d6b28a7-95e5-4c29-b564-f64f0ab5cf93" key="textField-10" x="0" y="0" width="341" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{USUARIO_INSERCION}+" - "+(new SimpleDateFormat("HH:mm dd/MM/yyyy")).format(new Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="11">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="3d6b28a7-95e5-4c29-b564-f64f0ab5cf93" key="textField-10" x="0" y="0" width="341" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{USUARIO_INSERCION}+" - "+(new SimpleDateFormat("HH:mm dd/MM/yyyy")).format(new Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

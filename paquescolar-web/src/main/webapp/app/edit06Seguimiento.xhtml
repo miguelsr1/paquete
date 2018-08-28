@@ -1,0 +1,196 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" 
+                                    update="pnlFiltro pnlEstado " disabled="true"/>
+                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar"
+                                    update="pnlFiltro pnlEstado " disabled="true"/>
+                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>  
+
+                        <f:facet  name="options">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+
+                    <p:panel id="pnlFiltro" header="Seleccionar Contrato" visible="#{segFisicoController.showPnlNewSeguimiento}" >
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Contrato:"/>
+                            <h:panelGrid columns="3" id="codigoContrato" >
+                                <p:commandButton id="btoBuscarC" icon="fa fa-plus" actionListener="#{segFisicoController.showDlgFiltroContrato}">
+                                    <p:ajax event="dialogReturn" listener="#{segFisicoController.onContratoChosen}" update="pnlContrato itemContrato pnlDetalle"/>
+                                </p:commandButton>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                    </p:panel>
+
+
+                    <p:panelGrid columns="2" styleClass="ui-panelgrid-blank form-group form-elements"
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 columnClasses="ui-g-12 ui-md-7,ui-g-12 ui-md-5">
+                        <p:outputPanel>
+                            <h4>                                
+                                <i class="fa fa-list-ol verde" aria-hidden="true"></i>
+                                <p:spacer width="10"/>
+                                <h:outputText value="Detalles del contrato"  style="font-style: italic; font-weight: bold;"/>
+                                <p:separator />
+                            </h4>
+                            <p:panelGrid id="pnlContrato" columns="2" columnClasses="col4_label,col8" 
+                                         styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+                                <h:outputText value="#{bundle['compra.rubroAdq']}: "/>
+                                <p:outputLabel value="#{segFisicoController.rubroAdquisicion}" style="font-weight: bold;"/>
+                                <h:outputText value="Nombre del Proveedor: "/>
+                                <p:outputLabel value="#{segFisicoController.contratoSelecionado.razonSocial}" style="font-weight: bold;"/>
+                                <h:outputText value="Numero de Contrato: "/>
+                                <p:outputLabel value="ME-#{segFisicoController.contratoSelecionado.numeroContrato}/#{segFisicoController.contratoSelecionado.anhoContrato}/COD:#{segFisicoController.contratoSelecionado.codigoEntidad}" style="font-weight: bold;"/>
+                                <h:outputText value="Nombre Centro escolar: "/>
+                                <p:outputLabel value="#{segFisicoController.contratoSelecionado.codigoEntidad} #{segFisicoController.contratoSelecionado.nombreCe}"  style="font-weight: bold;"/>
+                                <h:outputText value="Cantidad: "/>
+                                <h:panelGrid columns="5">
+                                    <h:outputText style="font-weight: bold;" value="#{segFisicoController.contratoSelecionado.cantidad}"/>
+                                    <p:spacer width="30" height="4"/>
+                                    <h:outputText value="Monto: "/>
+                                    <p:spacer width="20" height="4"/>
+                                    <h:outputText style="font-weight: bold;" value="#{segFisicoController.contratoSelecionado.monto}">
+                                        <f:convertNumber pattern="$ #,###.00"/>
+                                    </h:outputText>
+                                </h:panelGrid>
+                                <h:outputText value="Estado del Seguimiento: "/>
+                                <h:outputText value="#{segFisicoController.estadoSeguimiento}" rendered="#{segFisicoController.estadoSeguimiento eq 'EN PROCESO'}" style="color:green; font-weight: bold;"/>
+                                <h:outputText value="#{segFisicoController.estadoSeguimiento}" rendered="#{segFisicoController.estadoSeguimiento eq 'ENTREGADO'}" style="color:red; font-weight: bold;"/>
+                            </p:panelGrid>
+
+                            <h4>
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                                <p:spacer width="10"/>
+                                <h:outputText value="Fechas de Orden de Inicio"  style="font-style: italic; font-weight: bold;"/>
+                                <p:separator />
+                            </h4>
+                            <p:outputPanel style="height: 100%;">
+                                <p:panelGrid columns="2" columnClasses="col6,col6" 
+                                             styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+                                    <h:outputLabel value="#{segFisicoController.esDosUniformes ? 'Fecha Inicio Primera Entrega:':'Fecha:'}"/>
+                                    <p:calendar value="#{segFisicoController.fechaEntregaUno}" pattern="dd/MM/yyyy" size="10" id="fechaUno" locale="es" navigator="true" >
+                                        <p:ajax event="dateSelect" listener="#{segFisicoController.onDateSelect}" />
+                                    </p:calendar>
+                                </p:panelGrid>
+                                <p:panelGrid columns="2" columnClasses="col6,col6" rendered="#{segFisicoController.esDosUniformes}"
+                                             styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+                                    <h:outputLabel value="Fecha Inicio Segunda Entrega:"/>
+                                    <p:calendar value="#{segFisicoController.fechaEntregaDos}" pattern="dd/MM/yyyy" size="10" id="fechaDos" locale="es" navigator="true" >
+                                        <p:ajax event="dateSelect" listener="#{segFisicoController.onDateSelect}" />
+                                    </p:calendar>
+                                </p:panelGrid>
+                            </p:outputPanel>      
+                        </p:outputPanel>
+
+                        <p:outputPanel id="itemContrato">
+                            <h4>
+                                <i class="fa fa-cubes blue" aria-hidden="true"></i>
+                                <p:spacer width="10"/>
+                                <h:outputText value="Items del contrato"  style="font-style: italic; font-weight: bold;"/>
+                                <p:separator />
+                            </h4>
+                            <p:dataTable id="tbl" var="item" value="#{segFisicoController.listaOfertas}">
+
+                                <p:column width="40" style="text-align: center;">
+                                    <f:facet name="header">
+                                        <h:outputText value="No Item" />
+                                    </f:facet>
+                                    <h:outputText value="#{item.noItem}" />
+                                </p:column>
+                                <p:column width="50">
+                                    <f:facet name="header">
+                                        <h:outputText value="Cantidad" />
+                                    </f:facet>
+                                    <h:outputText value="#{item.cantidad}" />
+                                </p:column>
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Descripción"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item.consolidadoEspTec}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:outputPanel>                  
+                    </p:panelGrid>
+                </div>
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Detalle del Seguimiento"/>
+                    </h1>
+
+                    <p:outputPanel id="pnlDetalle">
+                        <p:dataTable value="#{segFisicoController.lstDetalleRecepcion}" var="detalle" editable="true" editMode="cell" id="tblDetalleSegF"
+                                     rowKey="#{detalle.idDetalleRecepcion}" widgetVar="tblDetalleSegItems" rowIndexVar="rowId"
+                                     sortBy="#{detalle.fechaRecepcion}">
+                            <f:facet name="header">  
+                                <p:commandButton value="Agregar" icon="fa fa-plus-circle" action="#{segFisicoController.showDlgAgregarRecepcion}" disabled="#{segFisicoController.disableBtnTotal}">
+                                    <p:ajax event="dialogReturn" listener="#{segFisicoController.actualizarTblDetalleRecepcion}" update="tblDetalleSegF" />
+                                    <f:param value="1" name="nuevo"/>
+                                </p:commandButton>
+                                <p:commandButton value="Entrega Total" icon="fa fa-plus-circle" action="#{segFisicoController.showDlgEntregaTotal}" disabled="#{segFisicoController.disableBtnTotal}">
+                                    <p:ajax event="dialogReturn" listener="#{segFisicoController.actualizarTblDetalleRecepcion}" update="tblDetalleSegF pnlContrato"/>
+                                    <f:param value="1" name="total"/>
+                                </p:commandButton>
+                            </f:facet>
+
+                            <p:column headerText="No Item" style="text-align: center;" width="50">
+                                <p:outputLabel value="#{detalle.noItem}"  id="noItem"/>
+                            </p:column>
+                            <p:column headerText="Descripción">
+                                <p:outputLabel value="#{detalle.consolidadoEspTec}"  id="descripcionItem"/>
+                            </p:column>
+                            <p:column headerText="Cantidad" width="70" style="text-align: right;">
+                                <p:outputLabel value="#{detalle.cantidadEntregada}"  id="cantidadItem"/>
+                            </p:column>
+                            <p:column headerText="Observación" >
+                                <p:outputLabel value="#{detalle.observaciones}"  id="observacionItem"/>
+                            </p:column>
+                            <p:column headerText="Tipo Entrega" style="text-align: right;" width="100">
+                                <p:outputLabel value="#{detalle.tipoEntrega}"  id="tipoentregaItem"/>
+                            </p:column>
+                            <p:column width="12">
+                                <p:commandLink action="#{segFisicoController.showDlgAgregarRecepcion}">
+                                    <f:setPropertyActionListener value="#{detalle}" target="#{segFisicoController.detalleRecepcion}" />  
+                                    <i class="fa fa-pencil-square-o" style="font-size: 17px;"></i>
+                                    <p:ajax event="dialogReturn" listener="#{segFisicoController.actualizarTblDetalleRecepcion}" update="pnlDetalle"/>
+                                    <f:param value="0" name="nuevo"/>
+                                </p:commandLink>
+                            </p:column>
+                            <p:column width="12">
+                                <p:commandLink action="#{segFisicoController.eliminarDetalleSeguimientoSeg}">
+                                    <f:setPropertyActionListener value="#{detalle}" target="#{segFisicoController.detalleRecepcion}" />  
+                                    <i class="fa fa-minus-circle" style="font-size: 17px;"></i>
+                                    <p:ajax event="dialogReturn" listener="#{segFisicoController.actualizarTblDetalleRecepcion}" update="pnlDetalle pnlContrato"/>
+                                    <f:param value="1" name="eliminar"/>
+                                </p:commandLink>
+                            </p:column>
+                            <p:summaryRow>
+                                <p:column style="text-align:right" colspan="7">
+                                    <h:outputText value="Fecha recepción: "/>
+                                    <h:outputText value="#{detalle.fechaRecepcion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </p:column>
+                            </p:summaryRow>
+                        </p:dataTable>
+                    </p:outputPanel>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

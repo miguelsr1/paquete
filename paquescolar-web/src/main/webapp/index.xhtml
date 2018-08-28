@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>Sistema de Paquetes Escolares</title>
+        <h:outputScript name="funciones-1.js" library="js"/>
+    </h:head>
+
+    <h:body styleClass="login-body">
+        <h:form>
+            <p:growl id="growl" showDetail="true" escape="false">
+                <p:autoUpdate />
+            </p:growl>
+            <div class="login-panel ui-fluid">
+                <div class="ui-g">
+                    <div class="ui-g-12 logo-container">
+                        <p:graphicImage name="logo_mined.png" library="images" />
+                        <p:outputLabel value="Sistema de Paquetes Escolares" style="float: right; font-size: 25px; width: 230px; padding-top: 15px;  text-align: right;"/>
+                    </div>
+                    <div class="ui-g-12">
+                        <p:outputLabel for="username" value="Usuario" />
+                        <div class="input-wrapper">
+                            <p:inputText id="username" styleClass="textMayuscula" onkeyup="return cUpper(this);" placeholder="USUARIO" value="#{loginController.usuario}"/>
+                            <i class="fa fa-user" />
+                        </div>
+                    </div>
+                    <div class="ui-g-12">
+                        <p:outputLabel for="password" value="Clave de acceso" />
+                        <div class="input-wrapper">
+                            <p:password id="password" placeholder="CLAVE DE ACCESO" feedback="false" value="#{loginController.clave}" />
+                            <i class="fa fa-lock" />
+                        </div>
+                    </div>
+                    <div class="ui-g-12 button-container">
+                        <p:commandButton id="btnIngresar" value="Ingresar" styleClass="blue-btn raised-btn" action="#{loginController.isUsuarioValido}"/>
+                        
+                        <p:blockUI block="btnIngresar" trigger="btnIngresar"  />
+                        
+                        <p:ajaxStatus style="width:400px;height:16px;text-align: center;">
+                            <f:facet name="default">
+
+                            </f:facet>
+
+                            <f:facet name="start">
+                                Espere por favor <i class="fa fa-spinner fa-spin" style="font-size: 20px;"></i>
+                            </f:facet>
+
+                            <f:facet name="complete">
+                                <h:outputText value="" />
+                            </f:facet>
+                        </p:ajaxStatus>
+                    </div>
+
+                    <div class="ui-g-12">
+                        <p:outputLabel value="versión #{catalogosGeneralesController.version}" style="font-size: 10px;text-align: center;"/>
+                    </div>
+
+                    <h:outputStylesheet name="css/layout-blue.css" library="paradise-layout" />
+                    <h:outputStylesheet name="css/personalizadas.css" library="paradise-layout" />
+                </div>
+            </div>
+        </h:form>
+    </h:body>
+
+</html>

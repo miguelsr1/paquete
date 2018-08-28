@@ -1,0 +1,86 @@
+
+/**
+Barra de herramientas
+**/
+.fa {
+    display: inline-block;
+    font-family: FontAwesome;
+    font-feature-settings: normal;
+    font-kerning: auto;
+    font-language-override: normal;
+    font-size: inherit;
+    font-size-adjust: none;
+    font-stretch: normal;
+    font-style: normal;
+    font-synthesis: weight style;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 1;
+    padding-left: 2px;
+    padding-right: 2px;
+    text-rendering: auto;
+}
+
+.fa-plus::before {
+    content: "";
+    font-size: 14px;
+}
+.fa-file-o::before {
+    content: "";
+    font-size: 14px;
+    color: #33afde;
+}
+.fa-edit::before, .fa-pencil-square-o::before {
+    content: "";
+    font-size: 14px;
+    color: #f7941e;
+}
+.fa-save::before, .fa-floppy-o::before {
+    content: "";
+    font-size: 14px;
+    color: #ff5722;
+}
+.fa-print::before {
+    content: "";
+    font-size: 14px;
+    color: #2e7d32;
+}
+.fa-home::before {
+    content: "";
+    font-size: 14px;
+    color: #4527a0;
+}
+.fa-search::before {
+    content: "";
+    font-size: 14px;
+    color: #33afde;
+}
+.fa-check::before {
+    content: "";
+    font-size: 14px;
+}
+.fa-plus-circle::before {
+    content: "";
+    font-size: 14px;
+    color: #50bb6f;
+}
+.fa-check-circle::before {
+    content: "";
+    font-size: 14px;
+    color: #5fcf80;
+}
+.fa-sign-out::before {
+    content: "";
+    font-size: 14px;
+    color: red;
+}
+.fa-times-circle::before {
+    content: "";
+    font-size: 14px;
+    color: red;
+}
+.fa-minus-circle::before {
+    content: "";
+    font-size: 14px;
+    color: #d0525d;
+}

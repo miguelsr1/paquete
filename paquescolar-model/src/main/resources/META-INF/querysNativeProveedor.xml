@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings 
+    xmlns="http://java.sun.com/xml/ns/persistence/orm" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm  http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    <description>Native queries para Paquete Escolar</description>
+    
+   
+    <named-native-query name="Proveedor.MunicipiosDisponiblesDeIntegeres" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.proveedor.MunicipioDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                  as idRow,
+                mun.id_municipio        as idMunicipio,
+                mun.codigo_departamento as codigoDepartamento,
+                depa.nombre_departamento || ' : ' ||mun.codigo_municipio|| ' - ' || mun.nombre_municipio    as nombreMunicipio,
+                mun.codigo_municipio    as codigoMunicipio
+            from 
+                municipio mun
+                inner join departamento depa              on depa.codigo_departamento = mun.codigo_departamento
+                left outer join DIS_MUNICIPIO_INTERES dis on mun.id_municipio = dis.id_municipio
+                                                            and dis.ID_CAPA_DISTRIBUCION = ?1 
+            where 
+                mun.id_municipio is not null and id_municipio_interes is null 
+            order by
+                mun.id_municipio
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="Proveedor.MunicipiosDeIntegeres" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.proveedor.MunicipioDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                  as idRow,
+                mun.id_municipio        as idMunicipio,
+                mun.codigo_departamento as codigoDepartamento,
+                depa.nombre_departamento || ' : ' ||mun.codigo_municipio|| ' - ' || mun.nombre_municipio    as nombreMunicipio,
+                mun.codigo_municipio    as codigoMunicipio
+            from 
+                municipio mun
+                inner join departamento depa              on depa.codigo_departamento = mun.codigo_departamento
+                inner join DIS_MUNICIPIO_INTERES dis on mun.id_municipio = dis.id_municipio 
+            where 
+                mun.id_municipio is not null and dis.ID_CAPA_DISTRIBUCION = ?1
+                 and dis.estado_eliminacion = 0
+            order by
+                mun.id_municipio
+            ]]>
+        </query>
+    </named-native-query>
+</entity-mappings>

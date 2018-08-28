@@ -1,0 +1,285 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
+    xmlns:jsf="http://xmlns.jcp.org/jsf">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar id="mbMenu"> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+                        <p:menuitem value="Modificar" icon="fa fa-edit" action="#{participantesController.prepareEdit}" actionListener="#{ofertaBienesServiciosController.limpiarCampos}" update="pnlFiltro dvDetalle"/>
+                        <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" action="#{participantesController.update}" includeViewParams="true"
+                                    disabled="#{menuController.usuarioSoloLectura || participantesController.modifDesac}">
+                            <f:param name="idParticipante" value="#{participantesController.idParticipante}"/>
+                        </p:menuitem>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" disabled="true"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+                    <p:blockUI block="mbMenu" trigger="mGuardar" />
+
+                    <h3>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h3>
+
+                    <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10"
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <p:outputLabel value="Rubro de adquisicion:" />
+                        <p:selectOneMenu id="cboRubro" value="#{ofertaBienesServiciosController.rubro}" disabled="#{participantesController.deshabilitado}" onkeydown="setaFoco(this);">
+                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
+                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <p:ajax update="pnlFiltro dvDetalle" listener="#{ofertaBienesServiciosController.limpiarFiltros}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
+                        <h:panelGrid columns="3" id="codigoEntidad" >
+                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaBienesServiciosController.codigoEntidad}" size="6" disabled="#{participantesController.deshabilitado}" autocomplete="off" requiredMessage="Código de infraestructura" onkeyup="queryEntidad(this.value);"/>
+                            <p:outputLabel id="nombreCE" value="#{ofertaBienesServiciosController.entidadEducativa.nombre}" style="font-weight: bold"/>
+                        </h:panelGrid>
+
+                        <p:outputLabel value="Proveedor:" />
+                        <p:selectOneMenu id="cboProveedor" value="#{participantesController.idParticipante}" disabled="#{participantesController.deshabilitado}" onkeydown="setaFoco(this);" >
+                            <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
+                            <f:selectItems value="#{ofertaBienesServiciosController.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{par.idEmpresa.razonSocial}" />
+                            <p:ajax update="mbMenu dvDetalle btnAgregar" listener="#{participantesController.buscarItemsProveedor}" />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                </div>
+
+                <div class="card card-w-title">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10" />
+                        <p:outputLabel value="Lista de Items adjudicados"/>
+                        <p:commandButton id="btnAgregar" value="Agregar" icon="fa fa-plus-circle" action="#{participantesController.prepareNewDetalle}" disabled="#{participantesController.modifDesac}" update="tblDetalleOferta" style="float: right; font-size: 12px;"/>
+                    </h1>
+                    <h:panelGroup id="dvDetalle">
+                        <h:panelGrid id="pngMsj" columns="1" rendered="#{participantesController.mostrarMsj}">
+                            <p:spacer height="10"/>
+                            <p:outputLabel value="Al proveedor seleccionado NO se le han ingresado los precios de referencia." style="font-size: 16px; color: #FF0000;"/>
+                            <p:spacer height="10"/>
+                        </h:panelGrid>
+                        <p:dataTable id="tblDetalleOferta" value="#{participantesController.lstDetalleOferta}" var="detalle" 
+                                     editable="true" editMode="cell" emptyMessage="No hay registros" sortBy="#{detalle.estadoEliminacion}"
+                                     rowKey="#{detalle.idDetalleOfe}" widgetVar="tblDetalleOferta" rowIndexVar="rowId"
+                                     rowStyleClass="#{detalle.estadoEliminacion eq 1 ? 'filaEliminada' : null}">
+
+                            <p:ajax event="cellEdit" listener="#{participantesController.onCellEdit}" onsuccess="updDetalleOferta();"/>
+
+                            <p:column headerText="Id" width="45" style="text-align: center;">
+                                <p:outputLabel value="#{detalle.idDetalleOfe}" />
+                            </p:column>
+
+                            <p:column headerText="No Item" width="30" id="item">
+                                <p:cellEditor>  
+                                    <f:facet name="output">
+                                        <p:inputNumber inputStyle="text-align: right;" size="2" minValue="0" maxValue="13" decimalPlaces="0" value="#{detalle.noItem}" disabled="#{detalle.estadoEliminacion eq 1}" readonly="#{participantesController.modifDesac}" />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputNumber inputStyle="text-align: right;" minValue="0" maxValue="13" decimalPlaces="0" value="#{detalle.noItem}" disabled="#{detalle.estadoEliminacion eq 1}" readonly="#{participantesController.modifDesac}" />
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Descripción Item">
+                                <h:outputText value="#{detalle.consolidadoEspTec}" id="descripcionItem" />
+                            </p:column>
+
+                            <p:column headerText="Cantidad" id="cantidad" width="45" style="text-align: right">
+                                <p:cellEditor>  
+                                    <f:facet name="output">
+                                        <h:outputText value="#{detalle.cantidad}" >
+                                            <f:convertNumber pattern="#,##0"  />
+                                        </h:outputText>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{detalle.cantidad}" disabled="#{detalle.estadoEliminacion eq 1}" size="8"
+                                                     style="text-align: right" readonly="#{participantesController.modifDesac}" />
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Precio Uni." style="text-align: right" width="40">
+                                <h:outputText value="#{detalle.precioUnitario}" id="precioUnitario" >
+                                    <f:convertNumber pattern="#,##0.00"  />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Estilo" style="text-align: center" width="50" rendered="#{participantesController.showEstilo}">
+                                <p:cellEditor>  
+                                    <f:facet name="output">
+                                        <h:outputText value="#{detalle.estiloZapato}" />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:selectOneMenu value="#{detalle.estiloZapato}" >
+                                            <f:selectItems value="#{participantesController.lstEstilos}"/>
+                                        </p:selectOneMenu>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Sub. Total" style="text-align: right" width="70">
+                                <h:outputText value="#{detalle.cantidad*detalle.precioUnitario}" id="subTotal" >
+                                    <f:convertNumber pattern="#,##0.00"  />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Borrar" width="30" style="text-align: center;">
+                                <p:commandLink  action="#{participantesController.eliminarDetalle(false)}" update="tblDetalleOferta" disabled="#{participantesController.modifDesac}">
+                                    <p:outputLabel rendered="#{!detalle.eliminar}"> <i class="fa fa-check-circle"></i></p:outputLabel>
+                                    <p:outputLabel rendered="#{detalle.eliminar}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
+                                    <f:setPropertyActionListener value="#{detalle}" target="#{participantesController.detalleSeleccionado}"/>  
+                                    <f:setPropertyActionListener value="#{rowId}" target="#{participantesController.rowEdit}"/>  
+                                </p:commandLink>
+                            </p:column>
+
+                            <p:summaryRow>
+                                <p:column colspan="3" style="text-align:right">
+                                    <h:outputText value="Total:" />
+                                </p:column>
+                                <p:column style="text-align: right;">
+                                    <h:outputText value="#{participantesController.cantidadActual}" style="font-weight: bold;" id="totalCantidad">
+                                        <f:convertNumber pattern="#,##0"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column/>
+                                <p:column style="text-align: right;">
+                                    <h:outputText value="$ #{participantesController.montoActual}" style="font-weight: bold;" id="total">
+                                        <f:convertNumber pattern="$ #,##0.00"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column/>
+                            </p:summaryRow>
+                        </p:dataTable>
+
+                        <p:spacer width="10" height="50" style="display:#{(participantesController.mostraTblLibros)?'block':'none'}"/>
+                        <h3 style="display:#{(participantesController.mostraTblLibros)?'block':'none'}">
+                            <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                            <p:spacer width="10" />
+                            <h:outputText value="Detalle de Libros"/>
+                            <p:commandButton id="btnAgregarLibro" value="Agregar Libro" icon="fa fa-plus-circle" action="#{participantesController.prepareNewDetalleLibro}" disabled="#{participantesController.modifDesac}" update="tblDetalleOfertaLibros" style="float: right; font-size: 12px;"/>
+                        </h3>
+
+                        <p:dataTable id="tblDetalleOfertaLibros" value="#{participantesController.lstDetalleOfertaLibros}" var="detalle" 
+                                     editable="true" editMode="cell" emptyMessage="No hay registros" sortBy="#{detalle.estadoEliminacion}"
+                                     rowKey="#{detalle.idDetalleOfe}" widgetVar="tblDetalleOfertaLibros" rowIndexVar="rowId"
+                                     rowStyleClass="#{detalle.estadoEliminacion eq 1 ? 'filaEliminada' : null}" style="display:#{(participantesController.mostraTblLibros)?'block':'none'}">
+
+                            <p:ajax event="cellEdit" listener="#{participantesController.onCellEditLibros}" onsuccess="updDetalleOfertaLibros();"/>
+
+                            <p:column headerText="Id" width="45" style="text-align: center;">
+                                <p:outputLabel value="#{detalle.idDetalleOfe}" />
+                            </p:column>
+
+                            <p:column headerText="No Item" width="30" id="item">
+                                <p:cellEditor>  
+                                    <f:facet name="output">
+                                        <p:inputNumber inputStyle="text-align: right;" size="2" minValue="0" maxValue="13" decimalPlaces="1" value="#{detalle.noItem}" disabled="#{detalle.estadoEliminacion eq 1}" readonly="#{participantesController.modifDesac}" />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputNumber minValue="0" maxValue="13" decimalPlaces="1" value="#{detalle.noItem}" disabled="#{detalle.estadoEliminacion eq 1}" readonly="#{participantesController.modifDesac}" />
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Descripción Item">
+                                <h:outputText value="#{detalle.consolidadoEspTec}" id="descripcionItem" />
+                            </p:column>
+
+                            <p:column headerText="Cantidad" id="cantidad" width="45" style="text-align: right">
+                                <p:cellEditor>  
+                                    <f:facet name="output">
+                                        <h:outputText value="#{detalle.cantidad}" >
+                                            <f:convertNumber pattern="#,##0"  />
+                                        </h:outputText>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{detalle.cantidad}" disabled="#{detalle.estadoEliminacion eq 1}" size="8"
+                                                     style="text-align: right" readonly="#{participantesController.modifDesac}" />
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Precio Uni." style="text-align: right" width="40">
+                                <h:outputText value="#{detalle.precioUnitario}" id="precioUnitario" >
+                                    <f:convertNumber pattern="#,##0.00"  />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Estilo" style="text-align: center" width="50" rendered="#{participantesController.showEstilo}">
+                                <p:cellEditor>  
+                                    <f:facet name="output">
+                                        <h:outputText value="#{detalle.estiloZapato}" />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:selectOneMenu value="#{detalle.estiloZapato}" >
+                                            <f:selectItems value="#{participantesController.lstEstilos}"/>
+                                        </p:selectOneMenu>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Sub. Total" style="text-align: right" width="70">
+                                <h:outputText value="#{detalle.cantidad*detalle.precioUnitario}" id="subTotal" >
+                                    <f:convertNumber pattern="#,##0.00"  />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Borrar" width="30" style="text-align: center;">
+                                <p:commandLink  action="#{participantesController.eliminarDetalle(true)}" update="tblDetalleOfertaLibros" disabled="#{participantesController.modifDesac}">
+                                    <p:outputLabel rendered="#{!detalle.eliminar}"> <i class="fa fa-check-circle"></i></p:outputLabel>
+                                    <p:outputLabel rendered="#{detalle.eliminar}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
+                                    <f:setPropertyActionListener value="#{detalle}" target="#{participantesController.detalleSeleccionado}"/>  
+                                    <f:setPropertyActionListener value="#{rowId}" target="#{participantesController.rowEdit}"/>  
+                                </p:commandLink>
+                            </p:column>
+
+                            <p:summaryRow>
+                                <p:column colspan="3" style="text-align:right">
+                                    <h:outputText value="Total:" />
+                                </p:column>
+                                <p:column style="text-align: right;">
+                                    <h:outputText value="#{participantesController.cantidadActualLibros}" style="font-weight: bold;" id="totalCantidad">
+                                        <f:convertNumber pattern="#,##0"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column/>
+                                <p:column style="text-align: right;">
+                                    <h:outputText value="$ #{participantesController.montoActualLibros}" style="font-weight: bold;" id="total">
+                                        <f:convertNumber pattern="$ #,##0.00"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column/>
+                            </p:summaryRow>
+                        </p:dataTable>
+                    </h:panelGroup>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIALOGOS -->
+        <p:confirmDialog widgetVar="confirmacion" header="Confirmación" showEffect="puff" closable="false" severity="alert" 
+                         message="¿Desea eliminar el detalle seleccionado?" hideEffect="puff" appendTo="@(body)" > 
+            <p:commandButton value="Si" styleClass="ui-confirmdialog-yes" icon="fa fa-check-circle" process="@this" 
+                             update="dvDetalle" actionListener="#{participantesController.eliminarDetalle}" 
+                             ajax="true" oncomplete="confirmacion.hide();tblDetalleOfertas.unselectAllRows();"/>
+            <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="fa fa-times-circle" process="@this"
+                             onclick="PF('confirmacion').hide();" update="dvDetalle" />
+        </p:confirmDialog> 
+
+        <p:remoteCommand name="updDetalleOferta" action="#{participantesController.updateFilaDetalle('tblDetalleOferta')}"/>
+        <p:remoteCommand name="updDetalleOfertaLibros" action="#{participantesController.updateFilaDetalle('tblDetalleOfertaLibros')}"/>
+        <p:remoteCommand name="findEntidad" update="nombreCE cboProveedor tblDetalleOferta" actionListener="#{ofertaBienesServiciosController.buscarEntidadEducativa}"/>
+    </ui:define>
+</ui:composition>

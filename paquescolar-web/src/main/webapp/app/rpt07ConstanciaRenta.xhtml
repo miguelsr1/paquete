@@ -1,0 +1,162 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" disabled="true"/>
+                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true"/>
+                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options" class="centradoVertical">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+
+                    <p:panel id="pnlDatos"> 
+                        <p:tabView>
+                            <p:tab title="Constancia Retención">
+                                <p:panelGrid columns="2" columnClasses="col5_label,col7" 
+                                             styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+                                    <h:outputText value="N.I.T.:" />
+                                    <p:inputMask mask="9999-999999-999-9"  value="#{pagoProveedoresController.numeroNit}" />
+                                    <h:outputText value="Año de Pago:"/>
+                                    <p:selectOneMenu id="cboAnhoRptAnual" value="#{pagoProveedoresController.anhoRptAnual}" >
+                                        <f:selectItem itemValue="" itemLabel="----"/>
+                                        <f:selectItems value="#{catalogosGeneralesController.lstAnho}" var="anho" itemValue="#{anho.anho}" itemLabel="#{anho.anho}"/>
+                                        <p:ajax listener="#{pagoProveedoresController.asignarAnhoDeReporte(true)}"/>
+                                    </p:selectOneMenu>
+                                    <p:commandButton value="Buscar" action="#{pagoProveedoresController.buscarLstRentaProve}" update="pngInfoEmpresa tblDatos"/>
+                                </p:panelGrid>
+                                <p:spacer width="8" height="15"/>
+                                <p:panelGrid id="pngInfoEmpresa" columns="2" columnClasses="col6_label,col6" 
+                                             styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+                                    <p:outputLabel value="Empresa:"/>
+                                    <p:outputLabel styleClass="negrita" value="#{pagoProveedoresController.empresa.razonSocial}" />
+                                    <p:outputLabel value="Municipio y Departamento:"/>
+                                    <p:outputLabel styleClass="negrita" value="#{pagoProveedoresController.empresa.idMunicipio.nombreMunicipio}, #{pagoProveedoresController.empresa.idMunicipio.codigoDepartamento.nombreDepartamento}" />
+                                    <p:outputLabel value="Domicilio: "/>
+                                    <p:outputLabel styleClass="negrita" value="#{pagoProveedoresController.empresa.direccionCompleta}" />
+                                    <p:outputLabel value="Teléfonos: "/>
+                                    <p:outputLabel styleClass="negrita" value="#{pagoProveedoresController.empresa.telefonos}, #{pagoProveedoresController.empresa.numeroCelular}" />
+                                </p:panelGrid>
+
+                                <p:dataTable id="tblDatos" value="#{pagoProveedoresController.lstRentaProve}" var="renta" sortBy="#{pagoProveedoresController.numeroNit}" rowIndexVar="row">
+                                    <f:facet name="header" class="centradoVertical">
+                                        <p:spacer width="10" height="8"/>
+                                        <h:commandLink action="#{pagoProveedoresController.generarCertificacion}" style="float: right;">
+                                            <i class="fa fa-download"></i>
+                                            <p:spacer width="10" height="8"/>
+                                            <h:outputText value="Generar Constancia"/>
+                                        </h:commandLink>
+                                    </f:facet>
+                                    <p:column headerText="#" style="text-align: center;" width="30">
+                                        <h:outputText value="#{row+1}"/>
+                                    </p:column>
+                                    <p:column headerText="Num.Cheque">
+                                        #{renta.numCheque}
+                                    </p:column>
+                                    <p:column headerText="Fecha Cheque">
+                                        <h:outputText value="#{renta.fechaCheque}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Monto a Pagar" style="text-align: right;">
+                                        <h:outputText value="#{renta.montoActual}">
+                                            <f:convertNumber pattern="#,#00.00"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Monto Sujeto Retención" style="text-align: right;">
+                                        <h:outputText value="#{renta.montoRetencion}">
+                                            <f:convertNumber pattern="#,#00.00"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Monto Renta" style="text-align: right;">
+                                        <h:outputText value="#{renta.montoRenta}">
+                                            <f:convertNumber pattern="#,#00.00"/>
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:summaryRow>
+                                        <p:column colspan="3" style="text-align:right">
+                                            <h:outputText value="Total:" />
+                                        </p:column>
+                                        <p:column style="text-align: right;">
+                                            <h:outputText value="#{pagoProveedoresController.montoTotal}">
+                                                <f:convertNumber type="currency" currencySymbol="$" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column style="text-align: right;">
+                                            <h:outputText value="#{pagoProveedoresController.montoSujetoRenta}">
+                                                <f:convertNumber type="currency" currencySymbol="$" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column style="text-align: right;">
+                                            <h:outputText value="#{pagoProveedoresController.montoRenta}">
+                                                <f:convertNumber type="currency" currencySymbol="$" />
+                                            </h:outputText>
+                                        </p:column>
+                                    </p:summaryRow>
+                                </p:dataTable>
+                            </p:tab>
+                            <p:tab title="Reporte de Renta Mensual">
+                                <p:commandButton value="Generar Reporte" icon="fa fa-file-excel-o" style="float: right;" action="#{pagoProveedoresController.generarRptRentaMensual}" ajax="false"/>                                
+                                <h3>Datos de mes y año de pago:</h3>
+                                <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col6_label,col6"
+                                             style="width: 100%; border:0px none; background-color:transparent;"
+                                             styleClass="form-group ui-panelgrid-blank">
+                                    <h:outputText value="Seleccione un mes (*):"/>
+                                    <p:selectOneMenu value="#{pagoProveedoresController.idMes}" >
+                                        <f:selectItem itemValue="0" itemLabel="-----"/>
+                                        <f:selectItem itemValue="1" itemLabel="ENERO"/>
+                                        <f:selectItem itemValue="2" itemLabel="FEBRERO"/>
+                                        <f:selectItem itemValue="3" itemLabel="MARZO"/>
+                                        <f:selectItem itemValue="4" itemLabel="ABRIL"/>
+                                        <f:selectItem itemValue="5" itemLabel="MAYO"/>
+                                        <f:selectItem itemValue="6" itemLabel="JUNIO"/>
+                                        <f:selectItem itemValue="7" itemLabel="JULIO"/>
+                                        <f:selectItem itemValue="8" itemLabel="AGOSTO"/>
+                                        <f:selectItem itemValue="9" itemLabel="SEPTIEMBRE"/>
+                                        <f:selectItem itemValue="10" itemLabel="OCTUBRE"/>
+                                        <f:selectItem itemValue="11" itemLabel="NOVIEMBRE"/>
+                                        <f:selectItem itemValue="12" itemLabel="DICIEMBRE"/>
+                                    </p:selectOneMenu>
+                                    <h:outputText value="Seleccione un año (*):"/>
+                                    <p:selectOneMenu id="cboAnhoRptMensual" value="#{pagoProveedoresController.anhoRptMensual}" >
+                                        <f:selectItem itemValue="" itemLabel="----"/>
+                                        <f:selectItems value="#{catalogosGeneralesController.lstAnho}" var="anho" itemValue="#{anho.anho}" itemLabel="#{anho.anho}"/>
+                                        <p:ajax listener="#{pagoProveedoresController.asignarAnhoDeReporte(false)}"/>
+                                    </p:selectOneMenu>
+                                    <h:outputText value="Número de Requerimiento"/>
+                                    <h:panelGroup>
+                                        <p:inputMask value="#{pagoProveedoresController.numeroRequerimiento}" mask="P99-999999-99"/>
+                                        <p:spacer width="10"/>
+                                        <p:outputLabel value="(filtro opcional)"/>
+                                    </h:panelGroup>
+                                    
+                                    <f:facet name="footer">
+                                        <p:outputLabel value="(*) Filtros requeridos"/>
+                                    </f:facet>
+                                </p:panelGrid>
+                            </p:tab>
+                            <p:tab title="F910 - Renta Anual">
+                                <p:commandButton value="Archivo F910" icon="fa fa-download" style="float: right;" action="#{pagoProveedoresController.generarArchivoF910}" ajax="false"/>
+                                <h:panelGrid columns="2">
+                                    <h:outputText value="Presione el botón para descargar el archivo:"/>
+                                </h:panelGrid>
+                            </p:tab>
+                        </p:tabView>
+                    </p:panel>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

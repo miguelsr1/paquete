@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings 
+    xmlns="http://java.sun.com/xml/ns/persistence/orm" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm  http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    <description>Native queries para Paquete Escolar</description>
+    
+   
+    <named-native-query name="Modificativa.BusquedaContratoById" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.modificativa.VwBusquedaContratos">
+        <query>
+            <![CDATA[
+            SELECT 
+                ROWNUM              as idRow, 
+                CODIGO_DEPARTAMENTO as codigoDepartamento,
+                NOMBRE_DEPARTAMENTO as nombreDepartamento,
+                CODIGO_ENTIDAD      as codigoEntidad,
+                NOMBRE              as nombreCe,
+                CANTIDAD            as cantidad,
+                MONTO               as monto,
+                ID_CONTRATO         as idContrato,
+                NUMERO_CONTRATO     as numeroContrato,
+                RAZON_SOCIAL        as razonSocial,
+                NUMERO_NIT          as numeroNit,
+                FECHA_INSERCION     as fechaInsercion,
+                ID_DET_PROCESO_ADQ  as idDetProcesoAdq,
+                DESCRIPCION_RESERVA as descripcionReserva,
+                ID_RESOLUCION_ADJ   as idResolucionAdj,
+                ID_ESTADO_RESERVA   as idEstadoReserva,
+                ANHO                as anhoContrato,
+                ID_RUBRO_ADQ        as idRubroAdq
+            FROM vw_busqueda_contratos 
+            WHERE id_contrato=?1
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="Modificativa.BusquedaContratoOriginal" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.modificativa.VwContratoModificatoria">
+        <query>
+            <![CDATA[
+            SELECT 
+                rownum              as idRow,
+                ID_RESOLUCION_ADJ   as idResolucionAdj,
+                ID_ESTADO_RESERVA   as idEstadoReserva,
+                DESCRIPCION_RESERVA as descripcionReserva,
+                FECHA_INSERCION     as fechaInsercion,
+                CANTIDAD            as cantidad,
+                MONTO               as monto,
+                ID_CONTRATO         as idContrato,
+                ID_RESOLUCION_MODIF as idResolucionModif,
+                ID_RES_MODIF_PADRE  AS idResModifPadre 
+            FROM 
+                vw_MO_Busqueda_contrato 
+            WHERE id_contrato = ?1
+            ORDER BY ID_RESOLUCION_MODIF
+            ]]>
+        </query>
+    </named-native-query>
+    
+    
+</entity-mappings>

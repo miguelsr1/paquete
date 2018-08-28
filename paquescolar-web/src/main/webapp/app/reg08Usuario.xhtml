@@ -1,0 +1,159 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar id="menuBar"> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" ajax="true" process="@this" 
+                                    action="#{personaController.prepareCreate}" update="pnlUsuario menuBar">
+                            <p:resetInput target="pnlUsuario" /> 
+                        </p:menuitem>
+
+                        <p:menuitem value="Modificar" icon="fa fa-edit" ajax="true" process="@this" 
+                                    action="#{personaController.prepareEdit}" 
+                                    update="pnlUsuario dialogFiltro">
+                            <p:resetInput target="pnlUsuario" /> 
+                        </p:menuitem>
+                        <p:menuitem value="Guardar" icon="fa fa-save" update="pngUsuario menuBar" action="#{personaController.guardarUsuario}"
+                                    disabled="#{menuController.usuarioSoloLectura || personaController.deshabilitado}"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined" />
+                        <f:facet  name="options">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+
+                    <h3>
+                        <i class="fa fa-user blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Registro de Usuarios" />
+                    </h3>
+
+                    <p:outputPanel id="pnlUsuario" >
+                        <p:panelGrid id="pngUsuario" columns="2" columnClasses="col2_label,col10" 
+                                     style="width: 100%; border:0px none; background-color:transparent;"
+                                     styleClass="form-group ui-panelgrid-blank">
+                            <p:outputLabel value="Genero" for="genero" />
+                            <p:selectOneMenu id="genero" value="#{personaController.idGenero}" disabled="#{personaController.deshabilitado}" required="true" requiredMessage="Debe seleccionar un Genero">
+                                <f:selectItem itemLabel="Seleccione un Genero" itemValue="" />
+                                <f:selectItems value="#{personaController.lstGenero}" var="gen" itemValue="#{gen.idGenero}" itemLabel="#{gen.descripcionGenero}"/>
+                            </p:selectOneMenu>                    
+
+                            <p:outputLabel value="Nombres " for="primernombre"/>
+                            <h:panelGroup style="">
+                                <p:inputText id="primernombre" placeholder="Primer Nombre" value="#{personaController.edicion.primerNombre}" disabled="#{personaController.deshabilitado}" required="true" requiredMessage="Debe ingresar por lo menos un NOMBRE" />
+                                <p:spacer width="10" height="8"/>
+                                <p:inputText id="segundonombre" placeholder="Segundo Nombre" value="#{personaController.edicion.segundoNombre}" disabled="#{personaController.deshabilitado}"/>
+                                <p:spacer width="10" height="8"/>
+                                <p:inputText id="primerapellido" placeholder="Primer Apellido" value="#{personaController.edicion.primerApellido}" disabled="#{personaController.deshabilitado}" required="true" requiredMessage="Debe ingresar por lo menos un APELLIDO"/>
+                                <p:spacer width="10" height="8"/>
+                                <p:inputText id="segundoapellido" placeholder="Segundo Apellido" value="#{personaController.edicion.segundoApellido}" disabled="#{personaController.deshabilitado}"/>
+                            </h:panelGroup>
+                            <p:outputLabel value="Dui:" for="txtDui" />
+                            <p:inputMask id="txtDui" value="#{personaController.edicion.numeroDui}" mask="99999999-9" disabled="#{personaController.deshabilitado}" required="true" requiredMessage="Debe ingresar el DUI"/>
+
+                            <p:outputLabel value="NIT:" for="txtNit"/>
+                            <p:inputMask id="txtNit" value="#{personaController.edicion.numeroNit}" mask="9999-999999-999-9" disabled="#{personaController.deshabilitado}" required="true" requiredMessage="Debe ingresar el NIT"/>
+
+                            <p:outputLabel value="Tipo Usuario:" for="cboTipoUsuario"/>
+                            <p:selectOneMenu id="cboTipoUsuario" value="#{personaController.idTipoUsuario}" disabled="#{personaController.deshabilitado}" required="true" requiredMessage="Debe seleccionar un Tipo de Usuario" converter="genericConverter">
+                                <f:selectItem itemLabel="Seleccione un Tipo de Usuario" itemValue="" />
+                                <f:selectItems value="#{personaController.lstTipoUsuario}"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="Departamento:" style="font-weight: bold; font-size: 10px" />
+                            <p:selectOneMenu id="cboDepartamento" value="#{personaController.departamento}" disabled="#{personaController.deshabilitado}" converter="genericConverter">
+                                <f:selectItem itemLabel="Seleccione un departamento" itemValue="" /> 
+                                <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="Usuario:" for="usu"/>
+                            <p:inputText id="usu" value="#{personaController.usuario1}" disabled="#{not personaController.deshabilitadoModificar}" required="true" requiredMessage="Debe ingresar un Nombre de Usuario" />
+
+                            <p:outputLabel value="¿Actualizar contraseña?:" rendered="#{personaController.showCambiarClave}"/>
+                            <p:selectBooleanCheckbox value="#{personaController.cambiarClave}" rendered="#{personaController.showCambiarClave}">
+                                <p:ajax update="pass1, pass2" async="true"/>
+                            </p:selectBooleanCheckbox>
+
+                            <p:outputLabel for="pass1" value="Contraseña:" />  
+                            <h:panelGroup style="">
+                                <p:password id="pass1" value="#{personaController.clave1}" disabled="#{personaController.disableClave}" required="true" requiredMessage="Debe ingresar la Clave de Acceso" />
+                                <p:spacer width="10" height="8"/>
+                                <h:panelGroup >
+                                    <p:password id="pass2" value="#{personaController.clave2}" disabled="#{personaController.disableClave}" placeholder="Confirmación"> 
+                                        <p:ajax event="blur" process="@this,pass1,pass2" listener="#{personaController.validarPassword}" update="pngPassword" />
+                                    </p:password>
+
+                                    <h:panelGroup id="pngPassword">
+                                        <p:graphicImage value="#{pageContext.servletContext.contextPath}/resources/images/error.png" rendered="#{personaController.errorPassword}"/>
+                                        <p:outputLabel value="  Las contraseñas no coinciden!" style="color: red; vertical-align: top" rendered="#{personaController.errorPassword}"/>
+                                    </h:panelGroup>
+                                </h:panelGroup>
+                            </h:panelGroup>
+
+                            <p:outputLabel value="e-Mail: " />
+                            <p:inputText id="correo" value="#{personaController.edicion.email}" disabled="#{personaController.deshabilitado}" size="40"/>
+                        </p:panelGrid>
+                    </p:outputPanel>
+
+                </div>
+
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-lock blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Periodos de acceso" />
+                    </h1>
+                    <p:panelGrid id="pnlAcceso" columns="2" columnClasses="col2_label,col10" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <p:outputLabel value="Usuario Activo: " />
+                        <p:selectBooleanCheckbox value="#{personaController.usuarioActivo}">
+                            <p:ajax update="pnlAcceso" async="true"/>
+                        </p:selectBooleanCheckbox>
+
+                        <p:outputLabel value="¿Posee periodo de acceso?"/>
+                        <p:selectBooleanCheckbox value="#{personaController.periodoDeAcceso}" disabled="#{!personaController.usuarioActivo}"/>
+
+                        <p:outputLabel value="Fecha de Inicio: " />
+                        <h:panelGroup style="">
+                            <p:calendar pattern="dd/MM/yyyy" value="#{personaController.fechaInicioLogin}" navigator="true" disabled="#{!personaController.usuarioActivo}">
+                                <p:ajax event="dateSelect" update="cldFin"/>
+                            </p:calendar>
+                            <p:spacer width="20" height="8"/>
+                            <p:outputLabel value="Fecha de Fin " />                            
+                            <p:calendar id="cldFin" pattern="dd/MM/yyyy" value="#{personaController.fechaFinLogin}" mindate="#{personaController.fechaInicioLogin}" navigator="true" disabled="#{!personaController.usuarioActivo}"/>
+                        </h:panelGroup>
+                    </p:panelGrid>
+                </div>
+            </div>
+        </div>
+
+        <p:dialog id="dialogFiltro" widgetVar="dialogFiltro" header="Ingreso el NIT" resizable="false" 
+                  visible="#{personaController.dialogFiltroPersona}" modal="true" closable="false" showEffect="fade" hideEffect="fade">
+            <p:panel header="Parametros de búsqueda">
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="NIT del Usuario:" />
+                    <p:inputMask id="txtNitB" mask="9999-999999-999-9" value="#{personaController.nit}"/>
+                    <p:outputLabel value="Nombre (Usuario):" />
+                    <p:autoComplete value="#{personaController.edicion}" completeMethod="#{personaController.completeUser}" size="50"
+                                    var="usr" converter="personaConverter" itemValue="#{usr}" itemLabel="#{usr.nombreCompleto}"  forceSelection="true">
+                        <p:ajax event="itemSelect" listener="#{personaController.onItemSelect}"/>
+                        <p:column>
+                            <h:outputText value="#{usr.nombreCompleto}"/>
+                        </p:column>
+                    </p:autoComplete>
+                </h:panelGrid>
+            </p:panel>
+            <f:facet name="footer">
+                <p:commandButton process="@this,txtNitB" value="Buscar" icon="ui-icon-search" action="#{personaController.buscarUsuario}" update=":frmPrincipal:pnlUsuario pnlAcceso dialogFiltro menuBar"/>
+            </f:facet>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

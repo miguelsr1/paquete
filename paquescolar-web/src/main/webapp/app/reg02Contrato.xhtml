@@ -1,0 +1,144 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
+    xmlns:jsf="http://xmlns.jcp.org/jsf">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar id="mbMenu"> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" update="dvFiltro pnlContrato pnlCentroEscolar"
+                                    action="#{contratosOrdenesComprasController.prepareCreate}" process="@this"/>
+                        <p:menuitem value="Modificar" icon="fa fa-edit" update="dvFiltro pnlContrato dvOrganismo dvDocumentos"
+                                    action="#{contratosOrdenesComprasController.prepareEdit}" ajax="true" process="@this"/>
+                        <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" actionListener="#{contratosOrdenesComprasController.guardar}" disabled="#{menuController.usuarioSoloLectura}"  update="pnlContrato pnlCentroEscolar"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{contratosOrdenesComprasController.impDocumentos}" />
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options" >  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+                    <p:blockUI block="mbMenu" trigger="mGuardar" />
+
+                    <h:panelGroup id="dvFiltro" style="display:#{(contratosOrdenesComprasController.continuar)?'block':'none'}">
+                        <h3>
+                            <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                            <p:spacer width="10" height="8"/>
+                            <p:outputLabel value="Filtro de busqueda"/>
+                        </h3>
+
+                        <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10"
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                            <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
+                            <p:selectOneMenu id="cboRubro" value="#{contratosOrdenesComprasController.rubro}" onkeydown="setaFoco(this);" disabled="#{contratosOrdenesComprasController.deshabilitado}">
+                                <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
+                                <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                <p:ajax update="pnlFiltro " listener="#{ofertaBienesServiciosController.limpiarFiltros}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="#{bundle['ce.codEnt']}:" />
+                            <h:panelGrid columns="3" id="codigoEntidad" >
+                                <p:inputText maxlength="5" value="#{contratosOrdenesComprasController.codigoEntidad}" size="6" autocomplete="off" disabled="#{contratosOrdenesComprasController.deshabilitado}" onkeyup="queryEntidad(this.value);"/>
+                                <p:outputLabel id="nombreCE" value="#{contratosOrdenesComprasController.entidadEducativa.nombre}" style="font-weight: bold"/>
+                            </h:panelGrid>
+
+                            <p:outputLabel value="Proveedor:" />
+                            <p:selectOneMenu id="cboProveedor" value="#{contratosOrdenesComprasController.idParticipante}" 
+                                             disabled="#{contratosOrdenesComprasController.deshabilitado}" >
+                                <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
+                                <f:selectItems value="#{contratosOrdenesComprasController.oferta.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{par.idEmpresa.razonSocial}"/>
+                                <p:ajax listener="#{contratosOrdenesComprasController.buscarDocumentoLegal}" update="dvFiltro pnlContrato dvOrganismo dvDocumentos" />
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="pnlContrato" style="display:#{(!contratosOrdenesComprasController.continuar)?'block':'none'}">
+                        <h3>
+                            <i class="fa fa-home acua" style="font-size: 16px;"></i>
+                            <p:spacer width="10" height="8"/>
+                            <p:outputLabel value="Datos relativos al contrato"/>
+                        </h3>
+
+                        <p:panelGrid columns="1" style="margin-bottom:10px" layout="grid" styleClass="form-group ui-panelgrid-blank">
+                            <p:panelGrid columns="6" columnClasses="col2_label,col2,col2_label,col2,col2_label,col2"
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                                <p:outputLabel value="Id Contrato: " />
+                                <p:inputText id="txtIdContrato" disabled="true" size="6" value="#{contratosOrdenesComprasController.selected.idContrato}"/>
+                                <p:outputLabel value="Num. Contrato: " for="txtNumContrato"  />
+                                <p:inputText id="txtNumContrato" disabled="true" size="10" value="#{contratosOrdenesComprasController.selected.numeroContrato}"/>
+                                <p:outputLabel value="Año:" for="txtAnyo"/>
+                                <p:inputText id="txtAnyo" size="6" disabled="#{contratosOrdenesComprasController.deshabilitado}" value="#{contratosOrdenesComprasController.selected.anhoContrato}"/>
+                                
+                                <p:outputLabel value="Fecha Contrato: " for="cldFechaContrato" />
+                                <p:calendar id="cldFechaContrato" pattern="dd/MM/yyyy" size="12" disabled="#{contratosOrdenesComprasController.deshabilitado}" value="#{contratosOrdenesComprasController.selected.fechaEmision}" locale="es"/>
+                                <p:outputLabel value="Fecha Orden Inicio: " for="cldOrdenInicio" rendered="#{contratosOrdenesComprasController.showFechaOrdenInicio}" />
+                                <p:calendar id="cldOrdenInicio" pattern="dd/MM/yyyy" size="12" disabled="#{contratosOrdenesComprasController.deshabilitado}" value="#{contratosOrdenesComprasController.selected.fechaOrdenInicio}" rendered="#{contratosOrdenesComprasController.showFechaOrdenInicio}" locale="es"/>
+                                <p:outputLabel value="Plazo de entrega: " for="txtPlazo"/>
+                                <p:inputText id="txtPlazo" size="3" maxlength="2" readonly="true" onkeypress="soloNumeros(event);" disabled="#{contratosOrdenesComprasController.deshabilitado}" value="#{contratosOrdenesComprasController.selected.plazoPrevistoEntrega}"/>
+                            </p:panelGrid>
+
+                            <p:panelGrid columns="2" columnClasses="col2_label,col10"
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                                <p:outputLabel value="Ciudad de Firma: "  for="txtCiudadFirma"/>
+                                <h:panelGrid columns="2">
+                                    <p:inputText id="txtCiudadFirma" size="70" disabled="#{contratosOrdenesComprasController.deshabilitado}" value="#{contratosOrdenesComprasController.selected.ciudadFirma}" 
+                                                 readonly="#{!contratosOrdenesComprasController.cambiarCiudadFirma}" required="true" requiredMessage="Ciudad de firma"/>
+                                    <p:selectBooleanCheckbox value="#{contratosOrdenesComprasController.cambiarCiudadFirma}" >
+                                        <p:ajax update="txtCiudadFirma" async="true"/>
+                                    </p:selectBooleanCheckbox>
+                                </h:panelGrid>
+                                <p:outputLabel value="Proveedor: " />
+                                <p:inputText id="txtProveedor" size="70" disabled="#{contratosOrdenesComprasController.deshabilitado}" value="#{contratosOrdenesComprasController.razonSocial}" readonly="true"/>
+                            </p:panelGrid>
+                        </p:panelGrid>
+                    </h:panelGroup>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-lg-5 ui-fluid">
+                <p:panel id="dvOrganismo" style="display:#{(contratosOrdenesComprasController.continuar)?'none':'block'}">
+                    <f:facet name="header">
+                        <i class="fa fa-user naranja" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Otros Datos" />
+                    </f:facet>
+                    <p:panelGrid id="pnlCentroEscolar" columns="1" style="margin-bottom:10px" layout="grid" styleClass="form-group ui-panelgrid-blank card-w-title ">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Representante del O.A.E." for="txtPresidente" />
+                            <p:selectBooleanCheckbox value="#{contratosOrdenesComprasController.cambiarRepreCe}">
+                                <p:ajax update="txtPresidente" async="true"/>
+                            </p:selectBooleanCheckbox>
+                        </h:panelGrid>
+                        <p:inputText id="txtPresidente" disabled="#{contratosOrdenesComprasController.deshabilitado}" 
+                                     value="#{contratosOrdenesComprasController.selected.miembroFirma}" readonly="#{!contratosOrdenesComprasController.cambiarRepreCe}" styleClass="textMayuscula" onkeyup="return cUpper(this);" required="true" requiredMessage="Representante del Organismo de Administración Escolar"/>
+                        <p:outputLabel value="Representante legal del Proveedor: " />
+                        <p:inputText id="txtRepresentante" disabled="#{contratosOrdenesComprasController.deshabilitado}" 
+                                     value="#{contratosOrdenesComprasController.representanteLegal}" readonly="true"/>
+                    </p:panelGrid>
+                </p:panel>
+
+            </div>
+            <div class="ui-g-12 ui-lg-7">
+                <p:panel id="dvDocumentos" style="display:#{(contratosOrdenesComprasController.continuar)?'none':'block'}">
+                    <f:facet name="header">
+                        <i class="fa fa-file-text-o rosa" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Documentos contractuales" />
+                    </f:facet>
+
+                    <p:selectManyCheckbox value="#{contratosOrdenesComprasController.lstSelectDocumentosImp}" layout="responsive" columns="2" >
+                        <f:selectItems value="#{contratosOrdenesComprasController.lstDocumentosImp}" />
+                    </p:selectManyCheckbox>
+                </p:panel>
+            </div>
+        </div>
+
+        <p:remoteCommand name="findEntidad" update="cboRubro nombreCE cboProveedor" actionListener="#{contratosOrdenesComprasController.buscarEntidadEducativa}" />
+    </ui:define>
+</ui:composition>

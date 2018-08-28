@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings 
+    xmlns="http://java.sun.com/xml/ns/persistence/orm" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm  http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+    <description>Native queries para Paquete Escolar</description>
+    
+   
+    <named-native-query name="Ejecucion.ResumenContratacionesByProcesoAndDepa" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto">
+        <query>
+             <![CDATA[
+            SELECT 
+                rownum                  as idRow,
+                CODIGO_ENTIDAD          as codigoEntidad,
+                NOMBRE_CE               as nombreCe,
+                NOMBRE_DEPARTAMENTO_CE  as nombreDepartamentoCe,
+                NOMBRE_MUNICIPIO_CE     as nombreMunicipioCe,
+                DIRECCION_CE            as direccionCe,
+                RUBRO                   as rubro,
+                NUMERO_NIT              as numeroNit,
+                RAZON_SOCIAL            as razonSocial,
+                DIRECCION_EMP           as direccionEmp,
+                TELEFONO_EMP            as telefonoEmp,
+                CELULAR_EMP             as celularEmp,
+                NOMBRE_DEPARTAMENTO_EMP as nombreDepartamentoEmp,
+                NOMBRE_MUNICIPIO_EMP    as nombreMunicipioEmp,
+                CANTIDAD_CONTRATO       as cantidadContrato,
+                MONTO_CONTRATO          as montoContrato,
+                ID_CONTRATO             as idContrato
+            FROM 
+                VW_RPT_RESUMEN_CONTRATACION 
+            WHERE 
+                ID_DET_PROCESO_ADQ = ?1 AND 
+                CODIGO_DEPARTAMENTO = ?2
+            ]]>
+        </query>    
+    </named-native-query>
+    
+    <named-native-query name="TotalContratadoDto.resumenContratadoByDepa" result-class="sv.gob.mined.paquescolar.model.pojos.dashboard.TotalContratadoDto">
+        <query>
+            <![CDATA[
+            SELECT 
+                COD_DEP_CE                      as codDepCe, 
+                NOM_DEP_CE                      as nomDepCe, 
+                SUM(CANTIDAD)                   as cantidad, 
+                SUM(CANTIDAD*PRECIO_UNITARIO)   as monto 
+            FROM 
+                RESUMEN_COMPLETO 
+            WHERE 
+                ID_DET_PROCESO_ADQ = ?1 AND 
+                COD_DEP_CE = ?2
+            GROUP BY 
+                COD_DEP_CE, 
+                NOM_DEP_CE
+                ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="TotalContratadoDto.resumenContratado" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.dashboard.TotalContratadoDto">
+        <query>
+            <![CDATA[
+            SELECT
+                COD_DEP_CE          AS codDepCe,
+                NOM_DEP_CE          as nomDepCe,
+                SUM(CANTIDAD) AS cantidad,
+                SUM(NINA)           AS cantidadNina,  
+                SUM(NINO)           AS cantidadNino,
+                sum(MONTO)          as monto
+              FROM 
+              (SELECT 
+                COD_DEP_CE,
+                NOM_DEP_CE,
+                CANTIDAD, 
+                CASE  
+                  WHEN ID_PRODUCTO IN (21,30,32,44) THEN CANTIDAD
+                END NINA,
+                CASE  
+                  WHEN ID_PRODUCTO IN (43,29,31,34) THEN CANTIDAD
+                END NINO,
+                CANTIDAD*PRECIO_UNITARIO   AS MONTO 
+              FROM 
+                RESUMEN_COMPLETO 
+              WHERE 
+                ID_DET_PROCESO_ADQ = ?1) TBL
+              GROUP BY 
+                COD_DEP_CE,
+                NOM_DEP_CE
+              ORDER BY 
+                COD_DEP_CE
+                ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="TotalTipoEmpDto.resumenTipoEmpContratadoByDepa" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.dashboard.TotalTipoEmpDto">
+        <query>
+            <![CDATA[
+            SELECT   
+                ID_TIPO_EMP             as idTipoEmp, 
+                DESCRIPCION_TIPO_EMP    as descripcionTipoEmp,
+                SUM(MONTO)              as monto,
+                COUNT(NIT_EMP)          as cantidadEmp
+            FROM
+                (SELECT DISTINCT 
+                    COD_DEP_CE,
+                    NOM_DEP_CE,
+                    CODIGO_ENTIDAD,
+                    NIT_EMP,
+                    ID_TIPO_EMP,
+                    DESCRIPCION_TIPO_EMP,
+                    SUM(CANTIDAD) CANTIDAD,
+                    sum(cantidad*PRECIO_UNITARIO) monto
+                FROM 
+                    RESUMEN_COMPLETO
+                WHERE 
+                    ID_DET_PROCESO_ADQ = ?1 AND
+                    COD_DEP_CE = ?2
+                GROUP BY 
+                    COD_DEP_CE,
+                    NOM_DEP_CE,
+                    CODIGO_ENTIDAD,
+                    NIT_EMP,
+                    ID_TIPO_EMP,
+                    DESCRIPCION_TIPO_EMP) TBL
+            GROUP BY
+                ID_TIPO_EMP,
+                DESCRIPCION_TIPO_EMP
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="TotalTipoEmpDto.resumenTipoEmpContratado" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.dashboard.TotalTipoEmpDto">
+        <query>
+            <![CDATA[
+            SELECT   
+                ID_TIPO_EMP             as idTipoEmp, 
+                DESCRIPCION_TIPO_EMP    as descripcionTipoEmp,
+                SUM(MONTO)              as monto,
+                COUNT(NIT_EMP)          as cantidadEmp
+            FROM
+                (SELECT DISTINCT 
+                    COD_DEP_CE,
+                    NOM_DEP_CE,
+                    CODIGO_ENTIDAD,
+                    NIT_EMP,
+                    ID_TIPO_EMP,
+                    DESCRIPCION_TIPO_EMP,
+                    SUM(CANTIDAD) CANTIDAD,
+                    sum(cantidad*PRECIO_UNITARIO) monto
+                FROM 
+                    RESUMEN_COMPLETO
+                WHERE 
+                    ID_DET_PROCESO_ADQ = ?1
+                GROUP BY 
+                    COD_DEP_CE,
+                    NOM_DEP_CE,
+                    CODIGO_ENTIDAD,
+                    NIT_EMP,
+                    ID_TIPO_EMP,
+                    DESCRIPCION_TIPO_EMP) TBL
+            GROUP BY
+                ID_TIPO_EMP,
+                DESCRIPCION_TIPO_EMP
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="TotalResumenDto.resumenGeneroEmp" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.dashboard.TotalResumenDto">
+        <query>
+            <![CDATA[
+            SELECT 
+              ROWNUM        as idRow, 
+              ID_GENERO     AS idGenero,
+              ID_PERSONERIA AS idPersoneria,
+              MONTO         AS monto,
+              cantidad      as cantidadEmp
+            from
+            (SELECT   
+                ID_GENERO,
+                ID_PERSONERIA, 
+                SUM(MONTO) MONTO,
+                COUNT(NIT_EMP) cantidad
+            FROM
+                (SELECT DISTINCT 
+                    COD_DEP_CE,
+                    NOM_DEP_CE,
+                    CODIGO_ENTIDAD,
+                    NIT_EMP,
+                    ID_GENERO,
+                    id_personeria,
+                    ID_TIPO_EMP,
+                    DESCRIPCION_TIPO_EMP,
+                    SUM(CANTIDAD) CANTIDAD,
+                    sum(cantidad*PRECIO_UNITARIO) monto
+                FROM 
+                    RESUMEN_COMPLETO
+                WHERE 
+                    ID_DET_PROCESO_ADQ = ?1
+                GROUP BY 
+                    COD_DEP_CE,
+                    NOM_DEP_CE,
+                    CODIGO_ENTIDAD,
+                    NIT_EMP,
+                    ID_GENERO,
+                    ID_PERSONERIA,
+                    ID_TIPO_EMP,
+                    DESCRIPCION_TIPO_EMP) TBL
+            GROUP BY
+                ID_GENERO,
+                ID_PERSONERIA) tabla
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="TotalResumenDto.resumenGeneroEmpAndTipoEmp" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.dashboard.TotalResumenDto">
+        <query>
+            <![CDATA[
+            SELECT 
+              ROWNUM        as idRow, 
+              ID_GENERO     AS idGenero,
+              ID_PERSONERIA AS idPersoneria,
+              MONTO         AS monto,
+              cantidad      as cantidadEmp
+            from
+            (SELECT   
+                ID_GENERO,
+                ID_PERSONERIA, 
+                SUM(MONTO) MONTO,
+                COUNT(NIT_EMP) cantidad
+            FROM
+                (SELECT DISTINCT 
+                    COD_DEP_CE,
+                    NOM_DEP_CE,
+                    CODIGO_ENTIDAD,
+                    NIT_EMP,
+                    ID_GENERO,
+                    id_personeria,
+                    ID_TIPO_EMP,
+                    DESCRIPCION_TIPO_EMP,
+                    SUM(CANTIDAD) CANTIDAD,
+                    sum(cantidad*PRECIO_UNITARIO) monto
+                FROM 
+                    RESUMEN_COMPLETO
+                WHERE 
+                    ID_DET_PROCESO_ADQ = ?1 AND
+                    ID_TIPO_EMP = ?2
+                GROUP BY 
+                    COD_DEP_CE,
+                    NOM_DEP_CE,
+                    CODIGO_ENTIDAD,
+                    NIT_EMP,
+                    ID_GENERO,
+                    ID_PERSONERIA,
+                    ID_TIPO_EMP,
+                    DESCRIPCION_TIPO_EMP) TBL
+            GROUP BY
+                ID_GENERO,
+                ID_PERSONERIA) tabla
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="TotalResumenDto.resumenGeneroEmpByDepa" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.dashboard.TotalResumenDto">
+        <query>
+            <![CDATA[
+            SELECT 
+              ROWNUM        as idRow, 
+              ID_GENERO     AS idGenero,
+              ID_PERSONERIA AS idPersoneria,
+              MONTO         AS monto,
+              cantidad      as cantidadEmp
+            from
+            (SELECT   
+                ID_GENERO,
+                ID_PERSONERIA, 
+                SUM(MONTO) MONTO,
+                COUNT(NIT_EMP) cantidad
+            FROM
+                (SELECT DISTINCT 
+                    COD_DEP_CE,
+                    NOM_DEP_CE,
+                    CODIGO_ENTIDAD,
+                    NIT_EMP,
+                    ID_GENERO,
+                    id_personeria,
+                    ID_TIPO_EMP,
+                    DESCRIPCION_TIPO_EMP,
+                    SUM(CANTIDAD) CANTIDAD,
+                    sum(cantidad*PRECIO_UNITARIO) monto
+                FROM 
+                    RESUMEN_COMPLETO
+                WHERE 
+                    ID_DET_PROCESO_ADQ = ?1 AND
+                    COD_DEP_CE = ?2
+                GROUP BY 
+                    COD_DEP_CE,
+                    NOM_DEP_CE,
+                    CODIGO_ENTIDAD,
+                    NIT_EMP,
+                    ID_GENERO,
+                    ID_PERSONERIA,
+                    ID_TIPO_EMP,
+                    DESCRIPCION_TIPO_EMP) TBL
+            GROUP BY
+                ID_GENERO,
+                ID_PERSONERIA) tabla
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="TotalResumenDto.resumenGeneroEmpByDepaAndTipoEmp" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.dashboard.TotalResumenDto">
+        <query>
+            <![CDATA[
+            SELECT 
+              ROWNUM        as idRow, 
+              ID_GENERO     AS idGenero,
+              ID_PERSONERIA AS idPersoneria,
+              MONTO         AS monto,
+              cantidad      as cantidadEmp
+            from
+            (SELECT   
+                ID_GENERO,
+                ID_PERSONERIA, 
+                SUM(MONTO) MONTO,
+                COUNT(NIT_EMP) cantidad
+            FROM
+                (SELECT DISTINCT 
+                    COD_DEP_CE,
+                    NOM_DEP_CE,
+                    CODIGO_ENTIDAD,
+                    NIT_EMP,
+                    ID_GENERO,
+                    id_personeria,
+                    ID_TIPO_EMP,
+                    DESCRIPCION_TIPO_EMP,
+                    SUM(CANTIDAD) CANTIDAD,
+                    sum(cantidad*PRECIO_UNITARIO) monto
+                FROM 
+                    RESUMEN_COMPLETO
+                WHERE 
+                    ID_DET_PROCESO_ADQ = ?1 AND
+                    COD_DEP_CE = ?2 AND
+                    ID_TIPO_EMP = ?3
+                GROUP BY 
+                    COD_DEP_CE,
+                    NOM_DEP_CE,
+                    CODIGO_ENTIDAD,
+                    NIT_EMP,
+                    ID_GENERO,
+                    ID_PERSONERIA,
+                    ID_TIPO_EMP,
+                    DESCRIPCION_TIPO_EMP) TBL
+            GROUP BY
+                ID_GENERO,
+                ID_PERSONERIA) tabla
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="DatosProveDto.ofertaGlobal" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.OfertaGlobal">
+        <query>
+            <![CDATA[
+            SELECT 
+                ROWNUM                  as idRow, 
+                NOMBRE_DEPARTAMENTO     as departamento,
+                RAZON_SOCIAL            as razonSocial,
+                DESCRIPCION_RUBRO       as descripcionRubro,
+                NOMBRE_PRESENTANTE      as nombreRepresentante,
+                NUMERO_NIT              as nitRepresentante,
+                ID_DET_PROCESO_ADQ      as idDetProcesoAdq,
+                CAPACIDAD_ACREDITADA    as capacidadCalificada,
+                NUMERO_DUI              as duiRepresentante,
+                NIT_EMPRESA             as nitSociedad
+            FROM 
+                VW_RPT_CABECERA_OFERTA_GLOBAL 
+            WHERE 
+                nit_empresa=?1 and 
+                id_det_proceso_adq=?2
+            ]]>
+        </query>
+    </named-native-query>
+</entity-mappings>

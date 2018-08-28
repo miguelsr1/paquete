@@ -1,0 +1,94 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+                        <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options" class="centradoVertical">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+
+                    <h3>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h3>
+                    <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <p:outputLabel value="Departamento: " />
+                        <p:selectOneMenu id="codigoDepartamento" value="#{reportesWebController.codigoDepartamento}" >
+                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}: " />
+                        <p:selectOneMenu id="idRubroInteres" value="#{reportesWebController.idRubro}" >
+                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                        </p:selectOneMenu>
+
+                        <p:commandButton action="#{reportesWebController.generarRptResumenContrataciones}" value="Buscar" id="ingresar" update="pnlDatos"/>
+                    </p:panelGrid>
+                </div>
+
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Datos"/>
+                    </h1>
+                    <p:dataTable id="pnlDatos" value="#{reportesWebController.lstProveedoresHaciendaDto}" var="prov" rowIndexVar="rowId" sortBy="#{prov.nombreDepartamentoCe}">
+                        <p:column headerText="Id">
+                            #{rowId+1}
+                        </p:column>
+                        <p:column headerText="Departamento C.E.">
+                            #{prov.nombreDepartamentoCe}
+                        </p:column>
+                        <p:column headerText="Departamento Emp.">
+                            #{prov.nombreDepartamentoEmp}
+                        </p:column>
+                        <p:column headerText="N.I.T.">
+                            #{prov.numeroNit}
+                        </p:column>
+                        <p:column headerText="Cantidad" style="text-align: right;">
+                            #{prov.cantidadContrato}
+                        </p:column>
+                        <p:column headerText="Monto" style="text-align: right;">
+                            <h:outputText value="#{prov.montoContrato}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:summaryRow>
+                            <p:column colspan="4" style="text-align:right">
+                                <h:outputText value="Total:" />
+                            </p:column>
+                            <p:column style="text-align: right;">
+                                <h:outputText value="#{reportesWebController.cantidadTotal}">
+                                    <f:convertNumber type="currency" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column style="text-align: right;">
+                                <h:outputText value="#{reportesWebController.montoTotal}">
+                                    <f:convertNumber type="currency" currencySymbol="$" />
+                                </h:outputText>
+                            </p:column>
+                        </p:summaryRow>
+                    </p:dataTable>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

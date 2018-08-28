@@ -1,0 +1,105 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar>  
+                        <p:menuitem value="Nuevo" disabled="true" icon="fa fa-file-o"/>  
+                        <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+                        <p:menuitem value="Guardar" icon="fa fa-save" action="#{usuarioEntidadFinancieraController.guardar}"
+                                    disabled="#{menuController.usuarioSoloLectura}"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+                    </p:menubar>
+
+                    <h3>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Listado de Usuarios de tipo Entidad Financiera"/>
+                    </h3>
+
+                    <p:dataTable  value="#{usuarioEntidadFinancieraController.lstUsuario}" var="usuarioSelect"
+                                  rowKey="#{usuarioSelect.idUsuario}" selectionMode="single" selection="#{usuarioEntidadFinancieraController.usuario}" 
+                                  rows="10" paginator="true" paginatorPosition="top" >
+                        <p:ajax event="rowSelect" listener="#{usuarioEntidadFinancieraController.onRowSelect}" update="pnlDetalle"/>
+
+                        <p:column headerText="Id" width="50" >
+                            <p:outputLabel value="#{usuarioSelect.idUsuario}" />
+                        </p:column>
+
+                        <p:column headerText="Usuario" filterBy="#{usuarioSelect.idPersona.usuario}">
+                            <p:outputLabel value="#{usuarioSelect.idPersona.usuario}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre Usuario">
+                            <p:outputLabel value="#{usuarioSelect.idPersona.primerNombre} #{usuarioSelect.idPersona.segundoNombre} #{usuarioSelect.idPersona.primerApellido} #{usuarioSelect.idPersona.segundoApellido}" />
+                        </p:column>
+                    </p:dataTable>
+                </div>
+
+
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Listado de Entidades Financieras"/>
+                    </h1>
+
+                    <p:outputPanel id="pnlDetalle" style="display:#{(usuarioEntidadFinancieraController.mostrarDetalle)?'block':'none'}">
+                        <p:outputLabel value="Seleccione las entidades financieras que tendra derechos el usuario #{usuarioEntidadFinancieraController.usuario.idPersona.usuario}" />
+                        <br /><br />
+                        <p:commandButton  value="Guardar" action="#{usuarioEntidadFinancieraController.guardar}"/>
+
+                        <p:separator />
+
+                        <p:panelGrid id="pngListadoEntidades" columns="2"
+                                     columnClasses="col6,col6" 
+                                     style="width: 100%; border:0px none; background-color:transparent;"
+                                     styleClass="form-group ui-panelgrid-blank panelColumns">
+                            <p:fieldset legend="Entidades Disponibles ">
+                                <p:dataTable value="#{usuarioEntidadFinancieraController.lstEntDisponibles}" var="ent" style="width: 100%"
+                                             rowKey="#{ent.codEntFinanciera}" selectionMode="single" selection="#{usuarioEntidadFinancieraController.entSal}"
+                                             emptyMessage="No hay entidades financieras disponibles">
+
+                                    <p:ajax event="rowSelect" listener="#{usuarioEntidadFinancieraController.onRowSelectEntSal}" 
+                                            update="pnlDetalle pngListadoEntidades"/>
+
+                                    <p:column headerText="" width="20">
+                                        <h:outputText id="dragIcon" styleClass="ui-icon ui-icon-arrowthick-1-e" />  
+                                    </p:column>
+
+                                    <p:column headerText="Nombre">
+                                        <p:outputLabel value="#{ent.nombreEntFinan}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </p:fieldset>
+
+                            <p:fieldset legend="Entidades Asociadas al Usuario ">
+                                <p:dataTable value="#{usuarioEntidadFinancieraController.lstEntUsuario}" var="ent" style="width: 100%"
+                                             rowKey="#{ent.codEntFinanciera}" selectionMode="single" selection="#{usuarioEntidadFinancieraController.entEnt}"
+                                             emptyMessage="Este usuario no posee entidades financieras asociadas">
+                                    <p:ajax event="rowSelect" listener="#{usuarioEntidadFinancieraController.onRowSelectEntEnt}" 
+                                            update="pnlDetalle pngListadoEntidades"/>
+
+                                    <p:column headerText="" width="20">
+                                        <h:outputText id="dragIcon" styleClass="ui-icon ui-icon-arrowthick-1-w" />  
+                                    </p:column>
+
+                                    <p:column headerText="Nombre">
+                                        <p:outputLabel value="#{ent.nombreEntFinan}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </p:fieldset>
+                        </p:panelGrid>
+                    </p:outputPanel>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

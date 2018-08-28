@@ -1,0 +1,105 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" disabled="true" />
+                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" action="#{pagoProveedoresController.editarReintegro}" update="pnlFiltro" />
+                        <p:menuitem value="Guardar" icon="fa fa-save" action="#{pagoProveedoresController.guardarReintegro}"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{pagoProveedoresController.impRptReintegro}"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options" class="centradoVertical">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+
+                    <h3>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h3>
+                    <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col3_label,col9" 
+                                 styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+                        <h:outputText value="Departamento"/>
+                        <p:selectOneMenu id="codigoDepartamento" value="#{pagoProveedoresController.codigoDepartamento}" disabled="#{datosGeograficosController.usuarioDepartamental}" >
+                            <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
+                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
+                            <p:ajax listener="#{pagoProveedoresController.clearRubroAndRequerimiento}"  update="codigoDepartamento cboRubro cboRequerimiento"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
+                        <p:selectOneMenu id="cboRubro" value="#{pagoProveedoresController.idRubro}">
+                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="0" />
+                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <p:ajax listener="#{pagoProveedoresController.recuperarRequerimientos}" update="cboRequerimiento"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Requerimiento de Fondo:"/>
+                        <p:selectOneMenu id="cboRequerimiento" value="#{pagoProveedoresController.idReq}" autoWidth="true" >
+                            <f:selectItem itemLabel="Seleccione un requerimiento" itemValue="" />
+                            <f:selectItems value="#{pagoProveedoresController.lstRequerimientoFondos}" var="req" itemValue="#{req.idRequerimiento}" itemLabel="#{req.formatoRequerimiento} - #{req.componente}" />
+                        </p:selectOneMenu>
+
+                        <p:commandButton value="Filtrar" icon="fa fa-filter" action="#{pagoProveedoresController.buscarReintegro}" update="pnlCheque pnlDatos"/>
+                    </p:panelGrid>
+                </div>
+
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Datos del Cheque"/>
+                    </h1>
+                    <p:panelGrid id="pnlCheque" columns="6" columnClasses="col2_label,col2,col2_label,col2,col2_label,col2" 
+                                 styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+                        <p:outputLabel value="Número"/>
+                        <p:inputText value="#{pagoProveedoresController.reintegroRequerimiento.numeroCheque}"/>
+                        <p:outputLabel value="Fecha"/>
+                        <p:calendar value="#{pagoProveedoresController.reintegroRequerimiento.fechaCheque}"  size="10" pattern="dd/MM/yyyy" locale="es"/>
+                        <p:outputLabel value="Monto"/>
+                        <p:inputNumber value="#{pagoProveedoresController.reintegroRequerimiento.montoCheque}" inputStyle="ttext-align: right;"/>
+                    </p:panelGrid>
+
+                    
+                     <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Lista de Pagos"/>
+                    </h1>
+                    
+                    <h:panelGrid id="pnlDatos">
+                        <p:dataTable id="tblDatos" value="#{pagoProveedoresController.lstProveedores}" var="reg">
+                            
+                            <p:column headerText="No" style="text-align: center;" width="30">
+                                <p:outputLabel value="#{reg.idRow}"/>
+                            </p:column>
+                            <p:column headerText="#{bundle['tabla.codEnt']}" width="50" style="text-align: center;">
+                                <p:outputLabel value="#{reg.codigoEntidad}"/>
+                            </p:column>
+                            <p:column headerText="#{bundle['tabla.nomEnt']}" style="font-size: 10px;">
+                                <p:outputLabel value="#{reg.nombreCe}"/>
+                            </p:column>
+                            <p:column headerText="#{bundle['tabla.proveedor']}" style="font-size: 10px;">
+                                <p:outputLabel value="#{reg.razonSocial}"/>
+                            </p:column>
+                            <p:column headerText="#{bundle['tabla.monto$']}" style="text-align: right;" width="60">
+                                <p:outputLabel value="#{reg.montoReintegro}">
+                                    <f:convertNumber pattern="$ #,##0.00"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                </div>
+            </div>
+        </div>
+
+    </ui:define>
+</ui:composition>
