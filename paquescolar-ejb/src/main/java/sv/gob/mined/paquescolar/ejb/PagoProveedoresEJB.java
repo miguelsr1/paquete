@@ -281,20 +281,18 @@ public class PagoProveedoresEJB {
     }
 
     public void eliminarPlanilla(BigDecimal idPlanilla, String usuario) {
-        Query q = em.createQuery("UPDATE PlanillaPagoCheque p SET p.estadoEliminacion=1, p.fechaEliminacion=sysdate, p.usuarioModificacion=:usu WHERE p.idPlanilla.idPlanilla=:idPla");
-        q.setParameter("fecha", new Date());
-        q.setParameter("usu", usuario);
-        q.setParameter("idPla", idPlanilla);
+        Query q = em.createNativeQuery("UPDATE planilla_pago_cheque SET estado_eliminacion=1, fecha_eliminacion=sysdate, usuario_modificacion=?1 WHERE id_planilla=?2");
+        q.setParameter(1,usuario);
+        q.setParameter(2, idPlanilla);
         q.executeUpdate();
 
-        q = em.createQuery("Delete DetallePlanilla WHERE d.idPlanilla.idPlanilla=:idPla");
-        q.setParameter("idPla", idPlanilla);
+        q = em.createNativeQuery("Delete Detalle_Planilla WHERE id_Planilla=?1");
+        q.setParameter(1, idPlanilla);
         q.executeUpdate();
 
-        q = em.createQuery("UPDATE PlanillaPago p SET p.estadoEliminacion=1, p.fechaEliminacion=:fecha, p.usuarioModificacion=:usu WHERE p.idPlanilla=:idPla");
-        q.setParameter("fecha", new Date());
-        q.setParameter("usu", usuario);
-        q.setParameter("idPla", idPlanilla);
+        q = em.createNativeQuery("UPDATE Planilla_Pago SET estado_Eliminacion=1, fecha_Eliminacion=sysdate, usuario_Modificacion=?1 WHERE id_Planilla=?2");
+        q.setParameter(1, usuario);
+        q.setParameter(2, idPlanilla);
         q.executeUpdate();
     }
 

@@ -197,7 +197,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     private List<DetalleRequerimiento> lstDetalleRequerimientoSeleccionado = new ArrayList();
     private List<PlanillaPago> lstPlanillas = new ArrayList();
     private List<DetallePlanilla> lstDetallePlanilla = new ArrayList();
-    private List<DatosProveDto> lstProve = new ArrayList();
+    private List<DatosProveDto> lstProveedores = new ArrayList();
     private List<DatosBusquedaPlanillaDto> lstBusquedaPlanillas = new ArrayList();
 
     public PagoProveedoresController() {
@@ -871,7 +871,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     }
 
     public List<DatosProveDto> getLstRentaProve() {
-        return lstProve;
+        return lstProveedores;
     }
 
     public BigDecimal getMontoSujetoRenta() {
@@ -883,7 +883,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     }
 
     public List<DatosProveDto> getLstProveedores() {
-        return lstProve;
+        return lstProveedores;
     }
 
     public String getEmailUnico() {
@@ -1337,9 +1337,6 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         planillaPago.setFechaInsercion(new Date());
         planillaPago.setIdRequerimiento(requerimientoFondos);
         planillaPago.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-        chequeFinanProve = new PlanillaPagoCheque();
-        chequeUsefi = new PlanillaPagoCheque();
-        chequeRenta = new PlanillaPagoCheque();
     }
 
     public void editarPlanilla() {
@@ -1351,20 +1348,39 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     }
 
     private void inicializacionVariables(Boolean valor) {
-        planilla = false;
         seleccionRequerimiento = valor;
         seleccionPlanilla = !valor;
+
+        idTipoPlanilla = 0;
+        
+        planilla = false;
         filtro = true;
         showPnlCheques = false;
         showChequeUsefi = false;
         showChequeRenta = false;
         showChequeEntProv = false;
-        requerimientoFondos = new RequerimientoFondos();
-        lstRequerimientoFondos.clear();
         dlgDetallePlanilla = false;
+        contratoModificado = false;
+        
+        requerimientoFondos = new RequerimientoFondos();
         planillaPago = new PlanillaPago();
+        chequeFinanProve = new PlanillaPagoCheque();
+        chequeUsefi = new PlanillaPagoCheque();
+        chequeRenta = new PlanillaPagoCheque();
+        detPlanilla = new DetallePlanilla();
+        entidadFinanciera = new EntidadFinanciera();
+        
         proveedor = new DatosProveDto();
+        
         idRubro = BigDecimal.ZERO;
+        idReq = BigDecimal.ZERO;
+        lstRequerimientoFondos.clear();
+        lstPlanillas.clear();
+        lstDetalleRequerimiento.clear();
+        lstEntFinRequerimiento.clear();
+        lstProveedores.clear();
+        lstTipoDocImp.clear();
+        lstDetalleRequerimientoSeleccionado.clear();
     }
 
     public void selectRequerimiento() {
@@ -1373,7 +1389,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         dlgShowTipoPlanilla = false;
         dlgShowEntidadesFinancieras = false;
         lstEntFinRequerimiento.clear(); //limpiando listado de entidades financieras del requerimiento previamente seleccionado
-        lstProve.clear(); //limpiando listado de proveedores del requerimiento previamente seleccionado
+        lstProveedores.clear(); //limpiando listado de proveedores del requerimiento previamente seleccionado
 
         showChequeEntProv = (requerimientoFondos.getCredito().intValue() == 1);
         if (showChequeEntProv) {
@@ -1423,7 +1439,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         dlgShowSeleccionProveedor = true;
         //Se recuperar el listado de proveedores que conforman el requerimiento seleccionado y que estan pendientes de 
         //ser asociados a una planilla de pago
-        lstProve = pagoProveedoresEJB.getProveedoresPorIdRequerimiento(idReq);
+        lstProveedores = pagoProveedoresEJB.getProveedoresPorIdRequerimiento(idReq);
     }
 
     public void cerrarDlgSeleccioneProveedor() {
@@ -1681,6 +1697,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
 
     public void eliminarPlanilla() {
         pagoProveedoresEJB.eliminarPlanilla(idPlanilla, VarSession.getVariableSessionUsuario());
+        buscarPlanillas();
     }
 
     public void updateConcepto() {
@@ -1832,13 +1849,13 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     public void buscarReintegro() {
         if (idRubro != null) {
             if (idReq != null) {
-                lstProve = pagoProveedoresEJB.getDatosRptReintegroByIdReq(idReq);
-                if (lstProve.isEmpty()) {
+                lstProveedores = pagoProveedoresEJB.getDatosRptReintegroByIdReq(idReq);
+                if (lstProveedores.isEmpty()) {
                     JsfUtil.mensajeInformacion("El requerimiento seleccionado no tienen reintegro de fondos");
                 } else {
                     requerimientoFondos = utilEJB.find(RequerimientoFondos.class, idReq);
                     montoReintegro = BigDecimal.ZERO;
-                    for (DatosProveDto datosProveDto : lstProve) {
+                    for (DatosProveDto datosProveDto : lstProveedores) {
                         montoReintegro = montoReintegro.add(datosProveDto.getMontoReintegro());
                     }
                     reintegroRequerimiento = pagoProveedoresEJB.getReintegroByIdReq(idReq);
@@ -2053,7 +2070,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         param.put("pMontoCheque", reintegroRequerimiento.getMontoCheque());
 
         DatosProveDto datos = new DatosProveDto();
-        datos.setLstDetalle(lstProve);
+        datos.setLstDetalle(lstProveedores);
         List<DatosProveDto> lst = new ArrayList();
         lst.add(datos);
         jp = reportesEJB.getRpt(param, PagoProveedoresController.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoReintegro.jasper")), lst);
@@ -2274,19 +2291,19 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     public void buscarLstRentaProve() {
         if (!numeroNit.isEmpty()) {
             empresa = proveedorEJB.findEmpresaByNit(numeroNit);
-            lstProve = pagoProveedoresEJB.getLstDatosProveDto(anho, numeroNit, null);
+            lstProveedores = pagoProveedoresEJB.getLstDatosProveDto(anho, numeroNit, null);
         } else/* if (!numeroRequerimiento.isEmpty()) {
             lstProve = pagoProveedoresEJB.getLstDatosProveDtoByRequerimiento(anho, numeroRequerimiento, null);
         } else*/ {
             JsfUtil.mensajeInformacion("Debe de ingresar un NIT o un requerimiento de fondos");
         }
-        if (lstProve.isEmpty()) {
+        if (lstProveedores.isEmpty()) {
             JsfUtil.mensajeInformacion("No se encontraro información segun los datos de busqueda");
         } else {
             montoTotal = BigDecimal.ZERO;
             montoSujetoRenta = BigDecimal.ZERO;
             montoRenta = BigDecimal.ZERO;
-            for (DatosProveDto rentaProveDto : lstProve) {
+            for (DatosProveDto rentaProveDto : lstProveedores) {
                 montoTotal = montoTotal.add(rentaProveDto.getMontoActual());
                 montoSujetoRenta = montoSujetoRenta.add(rentaProveDto.getMontoRetencion());
                 montoRenta = montoRenta.add(rentaProveDto.getMontoRenta());
@@ -2301,15 +2318,15 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
             JsfUtil.mensajeAlerta("Debe de seleccionar un mes");
         } else {
             if (numeroRequerimiento.isEmpty()) {
-                lstProve = pagoProveedoresEJB.getDatosRptRentaMensual(codigoDepartamento, idMes, Integer.parseInt(anho));
+                lstProveedores = pagoProveedoresEJB.getDatosRptRentaMensual(codigoDepartamento, idMes, Integer.parseInt(anho));
             } else {
-                lstProve = pagoProveedoresEJB.getDatosRptRentaMensualByRequerimiento(codigoDepartamento, idMes, Integer.parseInt(anho), numeroRequerimiento);
+                lstProveedores = pagoProveedoresEJB.getDatosRptRentaMensualByRequerimiento(codigoDepartamento, idMes, Integer.parseInt(anho), numeroRequerimiento);
             }
-            if (lstProve.isEmpty()) {
+            if (lstProveedores.isEmpty()) {
                 JsfUtil.mensajeInformacion("No se encontraron datos");
 
             } else {
-                RptExcel.generarRptRentaMensual(lstProve, anho);
+                RptExcel.generarRptRentaMensual(lstProveedores, anho);
             }
         }
     }
@@ -2321,13 +2338,13 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
             if (anho.length() == 2) {
                 anho = "20" + anho;
             }
-            lstProve = pagoProveedoresEJB.getDatosF910(codigoDepartamento, Integer.parseInt(anho));
-            if (lstProve.isEmpty()) {
+            lstProveedores = pagoProveedoresEJB.getDatosF910(codigoDepartamento, Integer.parseInt(anho));
+            if (lstProveedores.isEmpty()) {
                 JsfUtil.mensajeInformacion("No se existen datos para el año seleccionado");
             } else {
                 StringBuilder sb = new StringBuilder();
 
-                for (DatosProveDto rentaProveDto : lstProve) {
+                for (DatosProveDto rentaProveDto : lstProveedores) {
                     sb.append(JsfUtil.formatearNumero(40, rentaProveDto.getRazonSocial().replace("ñ", "Ñ"), false));
                     sb.append(JsfUtil.formatearNumero(14, rentaProveDto.getNumeroNit().replace("-", ""), false));
                     sb.append("11");
@@ -2362,7 +2379,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     }
 
     public void generarCertificacion() {
-        if (lstProve.isEmpty()) {
+        if (lstProveedores.isEmpty()) {
             JsfUtil.mensajeAlerta("No hay datos para generar el reporte");
         } else {
             HashMap param = new HashMap();
