@@ -451,44 +451,52 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
     public void buscarEntidadEducativa() {
         limpiarCampos();
         if (codigoEntidad.length() == 5) {
-            detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro);
-            entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
-
-            if (entidadEducativa == null) {
-                JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + codigoEntidad);
+            /**
+             * Fecha: 30/08/2018 
+             * Comentario: Validación de seleccion del año y proceso de adquisición
+             */
+            if (super.getProcesoAdquisicion() == null) {
+                JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
+                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro);
+                entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
 
-                if (VarSession.getDepartamentoUsuarioSession() != null) {
-                    String dep = super.getDepartamento();
-                    if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep) || (int) VarSession.getVariableSession("idTipoUsuario") == 1) {
-                        oferta = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(codigoEntidad, detalleProceso);
+                if (entidadEducativa == null) {
+                    JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + codigoEntidad);
+                } else {
 
-                        if (oferta == null) {
-                            JsfUtil.mensajeError("No existe un proceso de contratación para este centro escolar.");
-                        } else {
-                            List<Participantes> lst = oferta.getParticipantesList();
+                    if (VarSession.getDepartamentoUsuarioSession() != null) {
+                        String dep = super.getDepartamento();
+                        if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep) || (int) VarSession.getVariableSession("idTipoUsuario") == 1) {
+                            oferta = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(codigoEntidad, detalleProceso);
 
-                            for (int i = lst.size() - 1; i >= 0; i--) {
-                                if (lst.get(i).getEstadoEliminacion().compareTo(BigInteger.ONE) == 0) {
-                                    oferta.getParticipantesList().remove(lst.get(i));
-                                }
-                            }
-
-                            //BUSCAR REPRESENTANTE DEL ORGANISMO DE ADMINISTRACION ESCOLAR
-                            representanteCe = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
-                            if (representanteCe == null) {
-                                JsfUtil.mensajeInformacion("No esta registrado el representante del organismo de administración escolar, pero lo puede registrar aqui.");
-                                crearRepresentante = true;
-                                noEditableRepCe = false;
+                            if (oferta == null) {
+                                JsfUtil.mensajeError("No existe un proceso de contratación para este centro escolar.");
                             } else {
-                                crearRepresentante = false;
-                            }
+                                List<Participantes> lst = oferta.getParticipantesList();
 
-                            showFechaOrdenInicio = !detalleProceso.getIdRubroAdq().getDescripcionRubro().contains("UNIFORME");
+                                for (int i = lst.size() - 1; i >= 0; i--) {
+                                    if (lst.get(i).getEstadoEliminacion().compareTo(BigInteger.ONE) == 0) {
+                                        oferta.getParticipantesList().remove(lst.get(i));
+                                    }
+                                }
+
+                                //BUSCAR REPRESENTANTE DEL ORGANISMO DE ADMINISTRACION ESCOLAR
+                                representanteCe = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
+                                if (representanteCe == null) {
+                                    JsfUtil.mensajeInformacion("No esta registrado el representante del organismo de administración escolar, pero lo puede registrar aqui.");
+                                    crearRepresentante = true;
+                                    noEditableRepCe = false;
+                                } else {
+                                    crearRepresentante = false;
+                                }
+
+                                showFechaOrdenInicio = !detalleProceso.getIdRubroAdq().getDescripcionRubro().contains("UNIFORME");
+                            }
+                        } else {
+                            JsfUtil.mensajeAlerta("El codigo del centro escolar no pertenece al departamento " + JsfUtil.getNombreDepartamentoByCodigo(dep) + "<br/>"
+                                    + "Departamento del CE: " + entidadEducativa.getCodigoEntidad() + " es " + entidadEducativa.getCodigoDepartamento().getNombreDepartamento());
                         }
-                    } else {
-                        JsfUtil.mensajeAlerta("El codigo del centro escolar no pertenece al departamento " + JsfUtil.getNombreDepartamentoByCodigo(dep) + "<br/>"
-                                + "Departamento del CE: " + entidadEducativa.getCodigoEntidad() + " es " + entidadEducativa.getCodigoDepartamento().getNombreDepartamento());
                     }
                 }
             }

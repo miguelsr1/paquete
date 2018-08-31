@@ -6,7 +6,6 @@
 package sv.gob.mined.paquescolar.ejb;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -198,7 +197,13 @@ public class PagoProveedoresEJB {
         q.setParameter(3, idDetRequerimiento);
         montoReqCodEntNuevo = (q.getSingleResult() == null) ? BigDecimal.ZERO : ((BigDecimal) q.getSingleResult());
 
-        return montoReqCodEntOriginal.compareTo(montoReqCodEntNuevo.add(montoNuevo)) != -1;
+        try {
+            return montoReqCodEntOriginal.compareTo(montoReqCodEntNuevo.add(montoNuevo)) != -1;
+        } catch (Exception e) {
+            java.util.logging.Logger.getLogger(PagoProveedoresEJB.class
+                    .getName()).log(Level.WARNING, "Ah ocurrido un error en la validaci\u00f3n de los montos. Centro escolar{0}, idRequerimiento: {1}, idDetRequerimiento: {2}, montoNuevo: {3}", new Object[]{codigoEntidad, IdRequerimiento, idDetRequerimiento, montoNuevo});
+            return false;
+        }
     }
 
     public PlanillaPagoCheque getPlanillaPagoCheque(PlanillaPago planillaPago, Short aFavorDe) {
@@ -282,7 +287,7 @@ public class PagoProveedoresEJB {
 
     public void eliminarPlanilla(BigDecimal idPlanilla, String usuario) {
         Query q = em.createNativeQuery("UPDATE planilla_pago_cheque SET estado_eliminacion=1, fecha_eliminacion=sysdate, usuario_modificacion=?1 WHERE id_planilla=?2");
-        q.setParameter(1,usuario);
+        q.setParameter(1, usuario);
         q.setParameter(2, idPlanilla);
         q.executeUpdate();
 

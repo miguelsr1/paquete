@@ -544,14 +544,23 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
                 JsfUtil.mensajeAlerta("No se han cargado los datos de este proveedor para el proceso de contratación del año " + proceso.getIdAnho().getAnho());
             } else {
                 departamentoCalif = proveedorEJB.findDetProveedor(proceso, empresa, CapaDistribucionAcre.class);
-                codigoDepartamentoCalificado = departamentoCalif.getCodigoDepartamento().getCodigoDepartamento();
-                detalleProcesoAdq = capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq();
-
-                deshabiliar = false;
-                if (empresa.getIdPersona().getUrlImagen() == null) {
-                    fileName = "fotoProveedores/profile.png";
+                /**
+                 * Fecha: 30/08/2018
+                 * Comentario: Adición de validación de departamento calificado para proveedor
+                 */
+                
+                if (departamentoCalif.getCodigoDepartamento() == null) {
+                    JsfUtil.mensajeAlerta("Este proveedor no posee departamento de calificación" + proceso.getIdAnho().getAnho());
                 } else {
-                    fileName = "fotoProveedores/" + empresa.getIdPersona().getUrlImagen();
+                    codigoDepartamentoCalificado = departamentoCalif.getCodigoDepartamento().getCodigoDepartamento();
+                    detalleProcesoAdq = capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq();
+
+                    deshabiliar = false;
+                    if (empresa.getIdPersona().getUrlImagen() == null) {
+                        fileName = "fotoProveedores/profile.png";
+                    } else {
+                        fileName = "fotoProveedores/" + empresa.getIdPersona().getUrlImagen();
+                    }
                 }
             }
         }

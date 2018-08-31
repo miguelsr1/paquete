@@ -210,7 +210,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         try {
             anho = controller.getAnho().getAnho().substring(2);
         } catch (Exception e) {
-            System.out.println("Error en el año");
+            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, "ERROR CONTROLADO: No se ha asignado el año de contratación");
         }
         concepto = "DOTACION DE UNIFORMES, ZAPATOS Y PAQUETES DE UTILES ESCOLARES " + controller.getAnho();
         codigoDepartamento = super.getDepartamento();
@@ -1343,10 +1343,6 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         inicializacionVariables(false);
     }
 
-    public void editarReintegro() {
-
-    }
-
     private void inicializacionVariables(Boolean valor) {
         seleccionRequerimiento = valor;
         seleccionPlanilla = !valor;
@@ -1746,7 +1742,8 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
                     VarSession.getVariableSessionUsuario(), credito == 1 ? "NO" : "SI",
                     getTotalRequerimiento(), idNivel, idDetProceso);
         } catch (Exception ex) {
-            System.out.println("ERROR CONTROLADO");
+            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, 
+                    "ERROR CONTROLADO: Se genero el requerimiento de fondos");
             JsfUtil.mensajeInsert();
         }
     }

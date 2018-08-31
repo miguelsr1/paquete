@@ -572,42 +572,47 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
 
     public void buscarEntidadEducativa() {
         if (codigoEntidad.length() == 5) {
-            detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro);
-            current.setIdDetProcesoAdq(detalleProceso);
-            abrirDialogCe = false;
-
-            //ejecutarCalculo(codigoEntidad);
-
-            entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
-            getSelected().setCodigoEntidad(entidadEducativa);
-            if (entidadEducativa == null) {
-                JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + current.getCodigoEntidad().getCodigoEntidad());
+            /**
+             * Fecha: 30/08/2018 Comentario: Validación de seleccion del año y
+             * proceso de adquisición
+             */
+            if (super.getProcesoAdquisicion() == null) {
+                JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
-                if (VarSession.getDepartamentoUsuarioSession() != null) {
-                    String dep = super.getDepartamento();
-                    if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep) || (Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {
-                        if (VarSession.getVariableSessionED() == 1) {
-                            if (ofertaBienesServiciosEJB.isOfertaRubro(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq())) {
-                                JsfUtil.mensajeError("Ya existe un proceso de contratación para este centro escolar.");
-                            } else {
-                                deshabilitar = false;
-                            }
-                        } else if (VarSession.getVariableSessionED() == 2) {
-                            current = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq());
-
-                            if (current == null) {
-                                JsfUtil.mensajeError("No existe un proceso de contratación para este centro escolar.");
-                            } else {
-                                deshabilitar = false;
-                            }
-                        }
-                    } else {
-                        JsfUtil.mensajeAlerta("El codigo del centro escolar no pertenece al departamento " + JsfUtil.getNombreDepartamentoByCodigo(dep) + "<br/>"
-                                + "Departamento del CE: " + entidadEducativa.getCodigoEntidad() + " es " + entidadEducativa.getCodigoDepartamento().getNombreDepartamento());
-                    }
-                    abrirDialogCe = true;
+                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro);
+                current.setIdDetProcesoAdq(detalleProceso);
+                abrirDialogCe = false;
+                entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
+                getSelected().setCodigoEntidad(entidadEducativa);
+                if (entidadEducativa == null) {
+                    JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + current.getCodigoEntidad().getCodigoEntidad());
                 } else {
-                    JsfUtil.mensajeAlerta("Debe de seleccionar un departamento y municipio.");
+                    if (VarSession.getDepartamentoUsuarioSession() != null) {
+                        String dep = super.getDepartamento();
+                        if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep) || (Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {
+                            if (VarSession.getVariableSessionED() == 1) {
+                                if (ofertaBienesServiciosEJB.isOfertaRubro(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq())) {
+                                    JsfUtil.mensajeError("Ya existe un proceso de contratación para este centro escolar.");
+                                } else {
+                                    deshabilitar = false;
+                                }
+                            } else if (VarSession.getVariableSessionED() == 2) {
+                                current = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq());
+
+                                if (current == null) {
+                                    JsfUtil.mensajeError("No existe un proceso de contratación para este centro escolar.");
+                                } else {
+                                    deshabilitar = false;
+                                }
+                            }
+                        } else {
+                            JsfUtil.mensajeAlerta("El codigo del centro escolar no pertenece al departamento " + JsfUtil.getNombreDepartamentoByCodigo(dep) + "<br/>"
+                                    + "Departamento del CE: " + entidadEducativa.getCodigoEntidad() + " es " + entidadEducativa.getCodigoDepartamento().getNombreDepartamento());
+                        }
+                        abrirDialogCe = true;
+                    } else {
+                        JsfUtil.mensajeAlerta("Debe de seleccionar un departamento y municipio.");
+                    }
                 }
             }
         } else {
@@ -777,14 +782,24 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
      */
     public void buscarEntidadEducativaRes() {
         if (codigoEntidad.length() == 5) {
-            recuperarDetProcesoAdq();
-
-            entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
-            if (entidadEducativa == null) {
-                JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + current.getCodigoEntidad());
+            /**
+             * Fecha: 30/08/2018 
+             * Comentario: Validación de seleccion del año y proceso de adquisición
+             */
+            if (super.getProcesoAdquisicion() == null) {
+                JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
-                ejecutarCalculo(codigoEntidad);
-                cargarOferta();
+                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro);
+                current.setIdDetProcesoAdq(detalleProceso);
+                abrirDialogCe = false;
+
+                entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
+                if (entidadEducativa == null) {
+                    JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + current.getCodigoEntidad());
+                } else {
+                    ejecutarCalculo(codigoEntidad);
+                    cargarOferta();
+                }
             }
         } else {
             if (current != null && current.getParticipantesList() != null) {
@@ -792,12 +807,6 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
             }
             entidadEducativa = null;
         }
-    }
-
-    private void recuperarDetProcesoAdq() {
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro);
-        current.setIdDetProcesoAdq(detalleProceso);
-        abrirDialogCe = false;
     }
 
     private void cargarOferta() {
