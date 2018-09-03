@@ -66,7 +66,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
 
     private Integer[] tipoDocumentoImp;
 
-    private Boolean cheque = false;
+    //private Boolean cheque = false;
     private Boolean isPlanillaLectura = false;
     private Boolean dlgDetallePlanilla = false;
     private Boolean showPnlCheques = false;
@@ -140,14 +140,6 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
 
     public void setRowEdit(int rowEdit) {
         this.rowEdit = rowEdit;
-    }
-
-    public Boolean getCheque() {
-        return cheque;
-    }
-
-    public void setCheque(Boolean cheque) {
-        this.cheque = cheque;
     }
 
     public Boolean getIsPlanillaLectura() {
@@ -425,18 +417,13 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
         if (detPlanilla.getIdDetalleDocPago().getIdDetalleDocPago() != null) {
             contratoModificado = detPlanilla.getIdDetalleDocPago().getContratoModif() == 1;
             detPlanilla.setMontoCheque(detPlanilla.getIdDetalleDocPago().getMontoActual());
-            cheque = (detPlanilla.getCheque() != null && detPlanilla.getCheque() == 1);
-            pagarCheque();
+            if (!contratoModificado && (detPlanilla.getCheque() != null && detPlanilla.getCheque() == 1)) {
+                detPlanilla.setMontoCheque(detPlanilla.getMontoOriginal());
+            } else if (contratoModificado && (detPlanilla.getCheque() != null && detPlanilla.getCheque() == 1)) {
+                detPlanilla.setMontoCheque(detPlanilla.getIdDetalleDocPago().getMontoActual());
+            }
             PrimeFaces.current().ajax().update("dlgEdtDetPlanilla");
             PrimeFaces.current().ajax().update("pngEdit");
-        }
-    }
-
-    public void pagarCheque() {
-        if (!contratoModificado && cheque) {
-            detPlanilla.setMontoCheque(detPlanilla.getMontoOriginal());
-        } else if (contratoModificado && cheque) {
-            detPlanilla.setMontoCheque(detPlanilla.getIdDetalleDocPago().getMontoActual());
         }
     }
 
@@ -580,16 +567,13 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
     }
 
     private void buscarRequerimientoqOrPlanilla() {
-        reiniciarVisibilidadCheques();
-        isRubroUniforme = ((idRubro.intValue() == 1) || (idRubro.intValue() == 4) || (idRubro.intValue() == 5));
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
-    }
-
-    public void reiniciarVisibilidadCheques() {
         showChequeEntProv = false;
         showChequeRenta = false;
         showChequeUsefi = false;
         showPnlCheques = false;
+
+        isRubroUniforme = ((idRubro.intValue() == 1) || (idRubro.intValue() == 4) || (idRubro.intValue() == 5));
+        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
     }
 
     private void documentosAImprimir() {
@@ -687,11 +671,11 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
     private void recuperarContratosByProveedor(BigDecimal idRequerimiento, String numeroNit) {
         lstDetalleRequerimiento = pagoProveedoresEJB.getLstProveedorByIdRequerimiento(idRequerimiento, numeroNit);
     }
-    
+
     private void recuperarContratosByIdRequerimiento(BigDecimal idRequerimiento) {
         lstDetalleRequerimiento = proveedorEJB.getDetRequerimientoPendiente(idRequerimiento);
     }
-    
+
     private void recuperarContratosByEntidadFinanciera(BigDecimal idRequerimiento, String nombreEntFinan) {
         lstDetalleRequerimiento = proveedorEJB.getDetRequerimientoPendienteByEntFinan(idRequerimiento, nombreEntFinan);
     }
