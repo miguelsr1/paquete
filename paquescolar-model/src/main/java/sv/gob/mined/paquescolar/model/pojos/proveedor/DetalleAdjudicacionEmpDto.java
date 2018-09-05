@@ -2,18 +2,32 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package sv.gob.mined.paquescolar.model.pojos;
+package sv.gob.mined.paquescolar.model.pojos.proveedor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.EntityResult;
+import javax.persistence.Id;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.Temporal;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author misanchez
+ * @author misanchez comentario: Antes de 05/09/2018 esta clase se llamó
+ * VwDetalleAdjudicacionEmpDto
  */
-public class VwDetalleAdjudicacionEmpDto implements Serializable {
+@Entity
+@XmlRootElement
+@SqlResultSetMapping(name = "defaultDetAdjudicaciones",
+        entities = @EntityResult(entityClass = DetalleAdjudicacionEmpDto.class))
+public class DetalleAdjudicacionEmpDto implements Serializable {
 
+    @Id
+    private BigDecimal idRow;
     private String nombreDepartamento;
     private String nombreMunicipio;
     private String codigoEntidad;
@@ -23,10 +37,20 @@ public class VwDetalleAdjudicacionEmpDto implements Serializable {
     private String nombreProducto;
     private BigDecimal cantidad;
     private BigDecimal monto;
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date fechaApertura;
+    @Transient
     private short estadoEliminacion = 0;
 
-    public VwDetalleAdjudicacionEmpDto() {
+    public DetalleAdjudicacionEmpDto() {
+    }
+
+    public BigDecimal getIdRow() {
+        return idRow;
+    }
+
+    public void setIdRow(BigDecimal idRow) {
+        this.idRow = idRow;
     }
 
     public String getNombreDepartamento() {

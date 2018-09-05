@@ -48,9 +48,10 @@ import sv.gob.mined.paquescolar.model.RequerimientoFondos;
 import sv.gob.mined.paquescolar.model.TipoPersoneria;
 import sv.gob.mined.paquescolar.model.pojos.ResumenPagosDto;
 import sv.gob.mined.paquescolar.model.pojos.ResumenRequerimientoDto;
-import sv.gob.mined.paquescolar.model.pojos.VwDetalleAdjudicacionEmpDto;
+import sv.gob.mined.paquescolar.model.pojos.proveedor.DetalleAdjudicacionEmpDto;
 import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
 import sv.gob.mined.paquescolar.model.view.DatosPreliminarRequerimiento;
+import sv.gob.mined.paquescolar.util.StringUtils;
 
 /**
  *
@@ -704,15 +705,15 @@ public class ProveedorEJB {
         return q.getResultList();
     }
 
-    public List<VwDetalleAdjudicacionEmpDto> resumenAdjProveedor(String nit, Integer idProceso) {
-        List<VwDetalleAdjudicacionEmpDto> lstResumen = new ArrayList();
-        String query = "select CODIGO_ENTIDAD, NOMBRE, CASE ID_DET_PROCESO_ADQ WHEN 32 THEN (CASE PRIMERO WHEN 1 THEN 'PRIMERO UNIFORME' ELSE 'SEGUNDO UNIFORME' END) WHEN 33 THEN 'UTILES' ELSE 'ZAPATOS' END RUBRO2, cantidad, monto from VW_RPT_PROVEEDORES_CONTRATADOS where NUMERO_NIT = ?1 and ID_DET_PROCESO_ADQ = ?2 ORDER BY CODIGO_ENTIDAD, PRIMERO";
+    public List<DetalleAdjudicacionEmpDto> resumenAdjProveedor(String nit, Integer idProceso) {
+        //List<DetalleAdjudicacionEmpDto> lstResumen = new ArrayList();
 
-        Query q = em.createNativeQuery(query);
+        Query q = em.createQuery(StringUtils.QUERY_PROVEEDOR_RESUMEN_ADJ_EMP, DetalleAdjudicacionEmpDto.class);
         q.setParameter(1, nit);
         q.setParameter(2, idProceso);
-        for (Object object : q.getResultList()) {
-            VwDetalleAdjudicacionEmpDto result = new VwDetalleAdjudicacionEmpDto();
+        return q.getResultList();
+        /*for (Object object : q.getResultList()) {
+            DetalleAdjudicacionEmpDto result = new DetalleAdjudicacionEmpDto();
             Object[] datos = (Object[]) object;
             result.setCodigoEntidad(datos[0].toString());
             result.setNombre(datos[1].toString());
@@ -722,7 +723,34 @@ public class ProveedorEJB {
             lstResumen.add(result);
         }
 
-        return lstResumen;
+        return lstResumen;*/
+    }
+    
+    public List<DetalleAdjudicacionEmpDto> detalleAdjProveedor(String nit, Integer idProceso) {
+        /*List<DetalleAdjudicacionEmpDto> salida = new ArrayList(0);
+        String query = "SELECT * FROM vw_detalle_adjudicacion_emp WHERE NUMERO_NIT=?1 AND ID_DET_PROCESO_ADQ=?2";*/
+
+        Query q = em.createQuery(StringUtils.QUERY_PROVEEDOR_DETALLE_ADJ_EMP, DetalleAdjudicacionEmpDto.class);
+        q.setParameter(1, nit);
+        q.setParameter(2, idProceso);
+        return q.getResultList();
+        /*for (Object object : q.getResultList()) {
+            DetalleAdjudicacionEmpDto result = new DetalleAdjudicacionEmpDto();
+            Object[] datos = (Object[]) object;
+            result.setNombreDepartamento(datos[0].toString());
+            result.setNombreMunicipio(datos[1].toString());
+            result.setCodigoEntidad(datos[2].toString());
+            result.setNombre(datos[3].toString());
+            result.setDescripcionNivel(datos[4].toString());
+            result.setNombreProducto(datos[5].toString());
+            result.setCantidad(new BigDecimal(datos[6].toString()));
+            result.setFechaApertura((Date) datos[7]);
+            result.setMonto(new BigDecimal(datos[8].toString()));
+
+            salida.add(result);
+        }
+
+        return salida;*/
     }
 
     public List<DetalleOfertas> getDetalleAdjProveedor(BigDecimal idEmpresa, Integer idDetProceso) {

@@ -279,17 +279,9 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                 if (idMunicipio != null) {
                     current.setCiudadFirma(VarSession.getNombreMunicipioSession());
                     current.setAnhoContrato(resolucionAdj.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho());
-                    switch (resolucionAdj.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue()) {
-                        case 1:
-                        case 3:
-                        case 4:
-                        case 5:
-                            current.setPlazoPrevistoEntrega(new BigInteger("60"));
-                            break;
-                        case 2:
-                            current.setPlazoPrevistoEntrega(new BigInteger("30"));
-                            break;
-                    }
+                    
+                    setPlazoPrevistoEntrega();
+                    
                     if (representanteCe != null) {
                         current.setMiembroFirma(representanteCe.getNombreMiembro());
                         noEditableRepCe = false;
@@ -297,6 +289,14 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                 }
             } else { //CARGAR CONTRATO EXISTENTE
                 current = contratoOrd;
+                /**
+                 * Fecha: 05/09/2018
+                 * Comentario: Validar que el contrato seleccionado tenga asignado el plazo previsto de entrega
+                 */
+                if(current.getPlazoPrevistoEntrega() == null){
+                    setPlazoPrevistoEntrega();
+                    resolucionAdjudicativaEJB.editContrato(current);
+                }
             }
         }
     }
@@ -452,8 +452,8 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
         limpiarCampos();
         if (codigoEntidad.length() == 5) {
             /**
-             * Fecha: 30/08/2018 
-             * Comentario: Validación de seleccion del año y proceso de adquisición
+             * Fecha: 30/08/2018 Comentario: Validación de seleccion del año y
+             * proceso de adquisición
              */
             if (super.getProcesoAdquisicion() == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
@@ -655,7 +655,6 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
 
                             nombreRpt = rptDoc.getNombreRpt().concat(perNatural ? "Nat" : "Jur");
                             rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(nombreRpt + ".jasper"), resolucionAdjudicativaEJB.generarContrato(current.getIdContrato(), current.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
-
                             lstRptAImprimir.add(rptTemp);
                             lstRptAImprimir.add(rptTemp);
                             break;

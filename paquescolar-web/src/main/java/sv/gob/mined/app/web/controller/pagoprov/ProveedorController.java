@@ -68,13 +68,12 @@ import sv.gob.mined.paquescolar.model.Empresa;
 import sv.gob.mined.paquescolar.model.EntidadFinanciera;
 import sv.gob.mined.paquescolar.model.Municipio;
 import sv.gob.mined.paquescolar.model.NivelEducativo;
-import sv.gob.mined.paquescolar.model.OfertaBienesServicios;
 import sv.gob.mined.paquescolar.model.PreciosRefRubro;
 import sv.gob.mined.paquescolar.model.PreciosRefRubroEmp;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.RubrosAmostrarInteres;
 import sv.gob.mined.paquescolar.model.pojos.OfertaGlobal;
-import sv.gob.mined.paquescolar.model.pojos.VwDetalleAdjudicacionEmpDto;
+import sv.gob.mined.paquescolar.model.pojos.proveedor.DetalleAdjudicacionEmpDto;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.MunicipioDto;
 
 /**
@@ -108,7 +107,6 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
     private BigDecimal totalMonto = BigDecimal.ZERO;
     private File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/");
 
-    //private Departamento departamento = new Departamento();
     private Municipio municipio = new Municipio();
     private DetalleProcesoAdq detalleProcesoAdq = new DetalleProcesoAdq();
     private ProcesoAdquisicion procesoAdquisicion = new ProcesoAdquisicion();
@@ -140,8 +138,8 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
     private List<MunicipioDto> lstMunTarget = new ArrayList();
     private List<CatalogoProducto> lstItem = new ArrayList();
     private List<PreciosRefRubroEmp> lstPreciosReferencia = new ArrayList();
-    private List<VwDetalleAdjudicacionEmpDto> lstResumenAdj = new ArrayList();
-    //private List<VwDetalleAdjudicacionEmpDto> lstDetalleAdj = new ArrayList();
+    private List<DetalleAdjudicacionEmpDto> lstResumenAdj = new ArrayList();
+    private List<DetalleAdjudicacionEmpDto> lstDetalleAdj = new ArrayList<DetalleAdjudicacionEmpDto>();
     private DualListModel<MunicipioDto> lstMunicipiosInteres = new DualListModel();
     @EJB
     private ProveedorEJB proveedorEJB;
@@ -192,6 +190,10 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">  
+    public List<DetalleAdjudicacionEmpDto> getLstDetalleAdj() {
+        return lstDetalleAdj;
+    }
+
     public CapaDistribucionAcre getDepartamentoCalif() {
         return departamentoCalif;
     }
@@ -394,7 +396,7 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
         this.lstItem = lstItem;
     }
 
-    public List<VwDetalleAdjudicacionEmpDto> getLstResumenAdj() {
+    public List<DetalleAdjudicacionEmpDto> getLstResumenAdj() {
         return lstResumenAdj;
     }
 
@@ -545,10 +547,10 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
             } else {
                 departamentoCalif = proveedorEJB.findDetProveedor(proceso, empresa, CapaDistribucionAcre.class);
                 /**
-                 * Fecha: 30/08/2018
-                 * Comentario: Adición de validación de departamento calificado para proveedor
+                 * Fecha: 30/08/2018 Comentario: Adición de validación de
+                 * departamento calificado para proveedor
                  */
-                
+
                 if (departamentoCalif.getCodigoDepartamento() == null) {
                     JsfUtil.mensajeAlerta("Este proveedor no posee departamento de calificación" + proceso.getIdAnho().getAnho());
                 } else {
@@ -594,14 +596,21 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
 
     private void cargarEmpresa(Boolean inicio) {
         cargarDetalleCalificacion(inicio);
-        PrimeFaces.current().ajax().update("frmPrincipal");
+        if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
+            PrimeFaces.current().ajax().update("frmPrincipal");
+        }
     }
 
     public void empSelecMuniInteres(SelectEvent event) {
         if (event.getObject() != null) {
-            empresa = (Empresa) event.getObject();
-            VarSession.setVariableSession("idEmpresa", empresa.getIdEmpresa());
-            cargarMunInteres(false);
+            if (event.getObject() instanceof Empresa) {
+                empresa = (Empresa) event.getObject();
+                VarSession.setVariableSession("idEmpresa", empresa.getIdEmpresa());
+                cargarMunInteres(false);
+            } else {
+                Logger.getLogger(ProveedorController.class
+                        .getName()).log(Level.INFO, "No se pudo convertir el objeto a la clase Empresa{0}", event.getObject());
+            }
         } else {
             deshabiliar = false;
             JsfUtil.mensajeAlerta("Debe de seleccionar una empresa");
@@ -624,7 +633,7 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
             fileName = "fotoProveedores/" + empresa.getIdPersona().getFoto();
             VarSession.setVariableSession("idEmpresa", empresa.getIdEmpresa());
             cargarDetalleCalificacion(false);
-            if (capacidadInst != null) {
+            if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
                 cargarPrecioRef();
             }
         }
@@ -1369,8 +1378,7 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
             FacesContext.getCurrentInstance().responseComplete();
 
         } catch (IOException | JRException ex) {
-            java.util.logging.Logger.getLogger(OfertaBienesServicios.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ProveedorController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -1379,17 +1387,24 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
             if (event.getObject() instanceof Empresa) {
                 empresa = (Empresa) event.getObject();
                 cargarDetalleCalificacion(true);
-                detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres());
+                /**
+                 * Fecha: 05/09/2018 Comentario: Validación para la capacidad
+                 * instalada del proveedor seleccionado
+                 */
+                if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
+                    detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres());
 
-                lstResumenAdj = proveedorEJB.resumenAdjProveedor(empresa.getNumeroNit(), detalleProcesoAdq.getIdDetProcesoAdq());
-                if (lstResumenAdj.isEmpty()) {
-                    JsfUtil.mensajeInformacion("No se encontrarón adjudicaciones para este proveedor.");
-                } else {
-                    totalItems = BigDecimal.ZERO;
-                    totalMonto = BigDecimal.ZERO;
-                    for (VwDetalleAdjudicacionEmpDto resumen : lstResumenAdj) {
-                        totalItems = totalItems.add(resumen.getCantidad());
-                        totalMonto = totalMonto.add(resumen.getMonto());
+                    lstResumenAdj = proveedorEJB.resumenAdjProveedor(empresa.getNumeroNit(), detalleProcesoAdq.getIdDetProcesoAdq());
+                    if (lstResumenAdj.isEmpty()) {
+                        JsfUtil.mensajeInformacion("No se encontrarón adjudicaciones para este proveedor.");
+                    } else {
+                        totalItems = BigDecimal.ZERO;
+                        totalMonto = BigDecimal.ZERO;
+                        for (DetalleAdjudicacionEmpDto resumen : lstResumenAdj) {
+                            totalItems = totalItems.add(resumen.getCantidad());
+                            totalMonto = totalMonto.add(resumen.getMonto());
+                        }
+                        lstDetalleAdj = proveedorEJB.detalleAdjProveedor(empresa.getNumeroNit(), detalleProcesoAdq.getIdDetProcesoAdq());
                     }
                 }
             }
