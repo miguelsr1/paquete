@@ -709,6 +709,8 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
             proveedorEJB.guardar(empresa);
         }
 
+        departamentoCalif.setCodigoDepartamento(utilEJB.find(Departamento.class, codigoDepartamentoCalificado));
+        
         if (proveedorEJB.guardar(departamentoCalif, capacidadInst)) {
             JsfUtil.mensajeUpdate();
         }
