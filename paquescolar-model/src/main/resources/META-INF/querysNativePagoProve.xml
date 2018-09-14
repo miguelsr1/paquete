@@ -271,6 +271,7 @@
                     RAZON_SOCIAL        as razonSocial,
                     NO_DOC_PAGO         as docPago,
                     FECHA_DOC_PAGO      as fechaDocPago,
+                    NUM_CHEQUE          as numCheque,
                     MONTO_ACTUAL        as montoActual
                 from
                     vw_rpt_pago_liquidacion_depa
