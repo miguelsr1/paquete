@@ -18,19 +18,16 @@ import java.util.Date;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.EJB;
 import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
-import sv.gob.mined.paquescolar.ejb.UtilEJB;
 
 public class JsfUtil {
 
@@ -62,11 +59,9 @@ public class JsfUtil {
 //        String theId = JsfUtil.getRequestParameter(requestParameterName);
 //        return converter.getAsObject(FacesContext.getCurrentInstance(), component, theId);
 //    }
-
 //    public static <T extends Object> T findEntityByKey(Class clase, BigDecimal id) {
 //        return (T) utilEJB.find(clase, id);
 //    }
-
     public static void mensajeUpdate() {
         msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "<big>Información</big>", "<big>Actualización exitosa.</big>");
         FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -299,8 +294,18 @@ public class JsfUtil {
     public static String getFechaGeneracionReporte() {
         return FORMAT_DATE_RPT.format(new Date());
     }
-    
+
     public static String getFechaString(Date date) {
         return FORMAT_DATE.format(date);
+    }
+
+    public static Boolean isExisteParametroUrl(String nombreParamentro) {
+        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        return params.containsKey(nombreParamentro);
+    }
+    
+    public static String getParametroUrl(String nombreParamentro) {
+        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        return params.get(nombreParamentro);
     }
 }

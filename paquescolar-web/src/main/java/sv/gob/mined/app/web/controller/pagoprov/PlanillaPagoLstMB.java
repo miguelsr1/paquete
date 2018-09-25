@@ -8,15 +8,14 @@ package sv.gob.mined.app.web.controller.pagoprov;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import org.primefaces.PrimeFaces;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProceso;
-import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.CreditosEJB;
 import sv.gob.mined.paquescolar.ejb.PagoProveedoresEJB;
@@ -78,6 +77,21 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
      * Creates a new instance of PlanillaPagoMB
      */
     public PlanillaPagoLstMB() {
+    }
+
+    @PostConstruct
+    public void ini() {
+        if (JsfUtil.isExisteParametroUrl("javax.faces.source")) {
+            switch (JsfUtil.getParametroUrl("javax.faces.source")) {
+                case "mtmNuevo":
+                    nuevoPlanilla();
+                    break;
+                case "mtmModificar":
+                    editarPlanilla();
+                    break;
+            }
+            PrimeFaces.current().ajax().update("pnlFiltro pnlDatos");
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
@@ -254,21 +268,17 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
 
     public void buscarRequerimientos() {
         if (idRubro != null && idRubro.intValue() > 0) {
-            buscarRequerimientoqOrPlanilla();
+            buscarReuerimientoqOrPlanilla();
             lstResumenRequerimiento = proveedorEJB.getLstResumenRequerimiento(codigoDepartamento, idDetProceso);
         } else {
             JsfUtil.mensajeAlerta("Debe de seleccionar un rubro de adquisición.");
         }
     }
 
-    private void buscarRequerimientoqOrPlanilla() {
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
-    }
-
     public void buscarPlanillas() {
         if (idRubro != null) {
             if (idReq != null) {
-                buscarRequerimientoqOrPlanilla();
+                buscarReuerimientoqOrPlanilla();
                 lstPlanillas = proveedorEJB.getLstPlanillaPagos(idReq);
                 if (lstPlanillas.isEmpty()) {
                     JsfUtil.mensajeInformacion("El requerimiento seleccionado no tienen planillas registradas");
@@ -281,10 +291,10 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
         }
     }
 
-    /**
-     * Método que se ejecuta al momento de seleccionar un requerimiento para la
-     * creación de una planilla de pago
-     */
+    private void buscarReuerimientoqOrPlanilla() {
+        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+    }
+
     public void selectRequerimiento() {
         RequerimientoFondos requerimientoFondos = utilEJB.find(RequerimientoFondos.class, idReq); //recuperacion del requerimiento de fondos
 
@@ -311,6 +321,8 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
 
     /**
      * Método que se ejecuta al seleccionar la planilla a editar.
+     *
+     * @return
      */
     public String selectPlanilla() {
         Boolean redireccionar = false;
@@ -362,42 +374,26 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
         lstProveedores = pagoProveedoresEJB.getProveedoresPorIdRequerimiento(idReq);
     }
 
-    public void cerrarDlgTipoPlanilla() {
-        PrimeFaces.current().executeScript("PF('dlgTipoPlanilla').hide()");
+    public String cerrarDlgTipoPlanilla() {
+        String url = "";
         switch (idTipoPlanilla) {
             case 1: //Planilla con un solo proveedor
+                PrimeFaces.current().executeScript("PF('dlgTipoPlanilla').hide()");
                 showDlgSeleccionProveedor();
                 break;
             case 2: //Planilla con más de 2 proveedores
-                dlgShowSeleccionProveedor = false;
-                crearPlanillaDePago();
+                url = "planillaPagoEdt.mined";
                 break;
         }
+        return url;
     }
 
-    public void crearPlanillaDePago() {
-        //validacion de requerimiento con credito y seleccion de entidad financiera
-        if (entidadFinanciera.getCodEntFinanciera() == null) {
-            JsfUtil.mensajeAlerta("Debe de seleccionar una entidad financiera");
-        } else {
-//            mostrarEditDePlanilla();
-//            if (showChequeEntProv) {
-//                recuperarContratosByEntidadFinanciera(requerimientoFondos.getIdRequerimiento(), entidadFinanciera.getNombreEntFinan());
-//            } else {
-//                recuperarContratosByIdRequerimiento(requerimientoFondos.getIdRequerimiento());
-//            }
-            PrimeFaces.current().executeScript("PF('dlgEntidadesFinancieras').hide()");
-        }
-    }
-
-    public void cerrarDlgSeleccioneProveedor() {
+    public String cerrarDlgSeleccioneProveedor() {
         if (proveedor == null || proveedor.getNumeroNit() == null || proveedor.getNumeroNit().isEmpty()) {
             JsfUtil.mensajeAlerta("Debe de seleccionar un proveedor");
+            return "";
+        } else {
+            return "planillaPagoEdt.mined?idReq=" + idReq + "&nit=" + proveedor.getNumeroNit() + "&idTipoPlanilla=" + idTipoPlanilla;
         }
-    }
-
-    public void eliminarPlanilla() {
-        pagoProveedoresEJB.eliminarPlanilla(planillaPago.getIdPlanilla(), VarSession.getVariableSessionUsuario());
-        buscarPlanillas();
     }
 }

@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptContratoPersonaNaturalUtiles" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="7dab6810-11a0-4fbc-b522-9ce09f52dce4">
 	<property name="ireport.zoom" value="2.1435888100000025"/>
 	<property name="ireport.x" value="132"/>
-	<property name="ireport.y" value="541"/>
+	<property name="ireport.y" value="397"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -318,8 +318,22 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 		<groupExpression><![CDATA[$F{NOMBRE}]]></groupExpression>
 		<groupHeader>
 			<band height="29" splitType="Stretch">
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="6d93ec90-8472-4f89-845a-41c96de922b0" key="textField-3" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="0" width="99" height="12" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Justified" verticalAlignment="Top" rotation="None" markup="styled">
+						<font fontName="Arial" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA["a) Paquete de Útiles"]]></textFieldExpression>
+				</textField>
 				<componentElement>
-					<reportElement uuid="88f9284b-a88f-4c1e-a9e0-49e13e19d83b" key="table 1" style="table 1" x="39" y="12" width="423" height="17"/>
+					<reportElement uuid="88f9284b-a88f-4c1e-a9e0-49e13e19d83b" key="table 1" style="table_TD" x="39" y="12" width="423" height="17"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 						<datasetRun subDataset="dsDetalle" uuid="ade2174e-9f54-4997-a896-35c9a9918f40">
 							<datasetParameter name="idResolucionAdj">
@@ -338,29 +352,29 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 								</staticText>
 							</jr:columnFooter>
 							<jr:column width="40" uuid="80510e31-8685-48c9-b51e-20680233d572">
-								<jr:columnHeader style="table_TD" height="13" rowSpan="1">
+								<jr:columnHeader style="table_TD" height="25" rowSpan="1">
 									<staticText>
-										<reportElement uuid="ad6f5bfc-cae5-4822-8ec3-901e068da4bb" x="0" y="0" width="40" height="13"/>
+										<reportElement uuid="ad6f5bfc-cae5-4822-8ec3-901e068da4bb" x="0" y="0" width="40" height="25"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
 											<font fontName="Arial" size="9" isBold="true"/>
 										</textElement>
-										<text><![CDATA[No Item]]></text>
+										<text><![CDATA[No Ítem]]></text>
 									</staticText>
 								</jr:columnHeader>
 								<jr:detailCell style="table_TD" height="13" rowSpan="1">
 									<textField>
 										<reportElement uuid="e13f35fa-da87-4cb4-9aef-5d3731cbc9a9" x="0" y="0" width="40" height="13"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
-											<font fontName="Arial" size="9"/>
+											<font fontName="Arial" size="8"/>
 										</textElement>
 										<textFieldExpression><![CDATA[$F{NO_ITEM}]]></textFieldExpression>
 									</textField>
 								</jr:detailCell>
 							</jr:column>
 							<jr:column width="190" uuid="a864ac78-1e6f-4940-86a2-a7452d49e045">
-								<jr:columnHeader style="table_TD" height="13" rowSpan="1">
+								<jr:columnHeader style="table_TD" height="25" rowSpan="1">
 									<staticText>
-										<reportElement uuid="2a07a1b0-1e9d-4426-9643-b7a27c8bb4ca" x="0" y="0" width="190" height="13"/>
+										<reportElement uuid="2a07a1b0-1e9d-4426-9643-b7a27c8bb4ca" x="0" y="0" width="190" height="25"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
 											<font fontName="Arial" size="9" isBold="true"/>
 										</textElement>
@@ -371,7 +385,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 									<textField>
 										<reportElement uuid="2478cffa-7d61-4cf3-a0ad-fe315d4f69d8" x="1" y="0" width="188" height="13"/>
 										<textElement textAlignment="Left" verticalAlignment="Middle">
-											<font fontName="Arial" size="9"/>
+											<font fontName="Arial" size="8"/>
 										</textElement>
 										<textFieldExpression><![CDATA[$F{CONSOLIDADO_ESP_TEC}]]></textFieldExpression>
 									</textField>
@@ -379,9 +393,9 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 							</jr:column>
 						</jr:columnGroup>
 						<jr:column width="48" uuid="105f2a39-cc02-457d-8f85-c621611c860a">
-							<jr:columnHeader style="table_TD" height="13" rowSpan="1">
+							<jr:columnHeader style="table_TD" height="25" rowSpan="1">
 								<staticText>
-									<reportElement uuid="287aff7f-266b-4686-8552-02cd9184d642" x="0" y="0" width="48" height="13"/>
+									<reportElement uuid="287aff7f-266b-4686-8552-02cd9184d642" x="0" y="0" width="48" height="25"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="9" isBold="true"/>
 									</textElement>
@@ -401,57 +415,78 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 								<textField pattern="#,##0">
 									<reportElement uuid="3806579c-4751-4d84-bca7-efdd6270faf2" x="0" y="0" width="48" height="13"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{CANTIDAD}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="74" uuid="3938206d-3304-4307-b00c-a145ad0ce56a">
-							<jr:columnHeader style="table_TD" height="13" rowSpan="1">
+						<jr:column width="61" uuid="3938206d-3304-4307-b00c-a145ad0ce56a">
+							<jr:columnHeader style="table_TD" height="25" rowSpan="1">
 								<staticText>
-									<reportElement uuid="d4c72b04-fecd-455f-b2dd-383c5625ee7d" x="0" y="0" width="74" height="13"/>
+									<reportElement uuid="d4c72b04-fecd-455f-b2dd-383c5625ee7d" x="0" y="0" width="61" height="25"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="9" isBold="true"/>
 									</textElement>
-									<text><![CDATA[Precio Unit. ($)]]></text>
+									<text><![CDATA[Precio Unit.]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:columnFooter style="table_TD" height="14" rowSpan="1"/>
 							<jr:detailCell style="table_TD" height="13" rowSpan="1">
-								<textField pattern="#,##0.00">
-									<reportElement uuid="01d09b67-96db-4b95-8a26-40e4eced46e9" x="0" y="0" width="72" height="13"/>
-									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+								<textField>
+									<reportElement uuid="47114f42-b205-422f-b0cf-54ae9e99e263" x="11" y="0" width="48" height="13"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{PRECIO_UNITARIO}]]></textFieldExpression>
 								</textField>
+								<staticText>
+									<reportElement uuid="287aff7f-266b-4686-8552-02cd9184d642" x="0" y="0" width="11" height="13"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="false"/>
+									</textElement>
+									<text><![CDATA[$]]></text>
+								</staticText>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="74" uuid="b700db3b-a508-4c7d-ad8c-1788c1ea67a7">
-							<jr:columnHeader style="table_TD" height="13" rowSpan="1">
+						<jr:column width="84" uuid="b700db3b-a508-4c7d-ad8c-1788c1ea67a7">
+							<jr:columnHeader style="table_TD" height="25" rowSpan="1">
 								<staticText>
-									<reportElement uuid="6c248f9f-4c8b-4d25-9d32-efdf785131f2" x="0" y="0" width="74" height="13"/>
+									<reportElement uuid="6c248f9f-4c8b-4d25-9d32-efdf785131f2" x="7" y="0" width="70" height="25"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="9" isBold="true"/>
 									</textElement>
-									<text><![CDATA[Precio Total ($)]]></text>
+									<text><![CDATA[Monto Total (Incluye IVA)]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:columnFooter style="table_TD" height="14" rowSpan="1">
 								<textField pattern="#,##0.00">
-									<reportElement uuid="12b2ce52-86bf-4acb-852f-afc407d11782" x="0" y="0" width="72" height="14"/>
+									<reportElement uuid="12b2ce52-86bf-4acb-852f-afc407d11782" x="10" y="0" width="72" height="14"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="10" isBold="true"/>
+										<font fontName="Arial" size="9" isBold="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$V{vMonto}]]></textFieldExpression>
 								</textField>
+								<staticText>
+									<reportElement uuid="287aff7f-266b-4686-8552-02cd9184d642" x="0" y="0" width="10" height="14"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="9" isBold="false"/>
+									</textElement>
+									<text><![CDATA[$]]></text>
+								</staticText>
 							</jr:columnFooter>
 							<jr:detailCell style="table_TD" height="13" rowSpan="1">
+								<staticText>
+									<reportElement uuid="287aff7f-266b-4686-8552-02cd9184d642" x="0" y="0" width="10" height="13"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="false"/>
+									</textElement>
+									<text><![CDATA[$]]></text>
+								</staticText>
 								<textField pattern="#,##0.00">
-									<reportElement uuid="5e680f15-8279-43bb-ba6a-e6a6ca129217" x="0" y="0" width="72" height="13"/>
+									<reportElement uuid="5e680f15-8279-43bb-ba6a-e6a6ca129217" x="10" y="0" width="72" height="13"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{SUB_TOTAL}]]></textFieldExpression>
 								</textField>
@@ -459,20 +494,6 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 						</jr:column>
 					</jr:table>
 				</componentElement>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-					<reportElement uuid="6d93ec90-8472-4f89-845a-41c96de922b0" key="textField-3" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="0" width="99" height="12" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Justified" verticalAlignment="Top" rotation="None" markup="styled">
-						<font fontName="Arial" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA["a) Paquete de Útiles"]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
@@ -528,8 +549,22 @@ concat(Herramientas.getNomMes($F{FECHA_EMISION})+" del año "+Herramientas.getNu
 	</columnHeader>
 	<detail>
 		<band height="32" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="6d93ec90-8472-4f89-845a-41c96de922b0" key="textField-3" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="0" width="99" height="12" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Arial" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["b) Libros de Matemática"]]></textFieldExpression>
+			</textField>
 			<componentElement>
-				<reportElement uuid="d7758c52-3f63-474f-912e-cd23e5141bf3" key="table 2" style="table" x="39" y="12" width="423" height="17">
+				<reportElement uuid="d7758c52-3f63-474f-912e-cd23e5141bf3" key="table 2" style="table_TD" x="39" y="12" width="423" height="17">
 					<printWhenExpression><![CDATA[$P{libros}]]></printWhenExpression>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
@@ -549,7 +584,7 @@ concat(Herramientas.getNomMes($F{FECHA_EMISION})+" del año "+Herramientas.getNu
 						<jr:tableFooter style="table_TD" height="14" rowSpan="1">
 							<staticText>
 								<reportElement uuid="849164e8-660d-4098-8ead-801cf6d366d9" x="2" y="0" width="228" height="14"/>
-								<textElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<text><![CDATA[TOTAL CONTRATADO]]></text>
@@ -616,32 +651,53 @@ concat(Herramientas.getNomMes($F{FECHA_EMISION})+" del año "+Herramientas.getNu
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="74" uuid="2df03095-9c76-4fbf-b701-04e5df0f4c9b">
+					<jr:column width="61" uuid="2df03095-9c76-4fbf-b701-04e5df0f4c9b">
 						<jr:tableFooter style="table_TD" height="14" rowSpan="1"/>
 						<jr:columnFooter style="table_TD" height="14" rowSpan="1"/>
 						<jr:detailCell style="table_TD" height="13" rowSpan="1">
+							<staticText>
+								<reportElement uuid="7450f3fc-14b6-4570-ab04-2a9401de2384" x="0" y="0" width="11" height="13"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="false"/>
+								</textElement>
+								<text><![CDATA[$]]></text>
+							</staticText>
 							<textField pattern="#,##0.00">
-								<reportElement uuid="3fff8d83-91a8-4a0f-951a-2d58af95f20f" x="0" y="0" width="72" height="13"/>
+								<reportElement uuid="3fff8d83-91a8-4a0f-951a-2d58af95f20f" x="11" y="0" width="48" height="13"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font fontName="Arial" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{PRECIO_UNITARIO}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="74" uuid="08547f43-732e-4f39-b6c2-f2ed4bf1469b">
+					<jr:column width="84" uuid="08547f43-732e-4f39-b6c2-f2ed4bf1469b">
 						<jr:tableFooter style="table_TD" height="14" rowSpan="1">
+							<staticText>
+								<reportElement uuid="7450f3fc-14b6-4570-ab04-2a9401de2384" x="0" y="0" width="10" height="14"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="9" isBold="false"/>
+								</textElement>
+								<text><![CDATA[$]]></text>
+							</staticText>
 							<textField pattern="#,##0.00">
-								<reportElement uuid="96a3f8a8-db60-41aa-8851-e4e8a008d2da" x="0" y="0" width="72" height="14"/>
+								<reportElement uuid="96a3f8a8-db60-41aa-8851-e4e8a008d2da" x="10" y="0" width="72" height="14"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font size="9" isBold="true"/>
+									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$P{montoTotal}]]></textFieldExpression>
 							</textField>
 						</jr:tableFooter>
 						<jr:columnFooter style="table_TD" height="14" rowSpan="1">
+							<staticText>
+								<reportElement uuid="7450f3fc-14b6-4570-ab04-2a9401de2384" x="0" y="0" width="10" height="14"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="9" isBold="false"/>
+								</textElement>
+								<text><![CDATA[$]]></text>
+							</staticText>
 							<textField pattern="#,##0.00">
-								<reportElement uuid="b445a23a-dfbf-4f65-af15-5509b0998bfd" x="0" y="0" width="72" height="14"/>
+								<reportElement uuid="b445a23a-dfbf-4f65-af15-5509b0998bfd" x="10" y="0" width="72" height="14"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
@@ -649,10 +705,17 @@ concat(Herramientas.getNomMes($F{FECHA_EMISION})+" del año "+Herramientas.getNu
 							</textField>
 						</jr:columnFooter>
 						<jr:detailCell style="table_TD" height="13" rowSpan="1">
+							<staticText>
+								<reportElement uuid="7450f3fc-14b6-4570-ab04-2a9401de2384" x="0" y="0" width="10" height="13"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="false"/>
+								</textElement>
+								<text><![CDATA[$]]></text>
+							</staticText>
 							<textField pattern="#,##0.00">
-								<reportElement uuid="b8799162-9eba-446b-9635-ed2196dd2d02" x="0" y="0" width="72" height="13"/>
+								<reportElement uuid="b8799162-9eba-446b-9635-ed2196dd2d02" x="10" y="0" width="72" height="13"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font fontName="Arial" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{SUB_TOTAL}]]></textFieldExpression>
 							</textField>
@@ -660,20 +723,6 @@ concat(Herramientas.getNomMes($F{FECHA_EMISION})+" del año "+Herramientas.getNu
 					</jr:column>
 				</jr:table>
 			</componentElement>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement uuid="6d93ec90-8472-4f89-845a-41c96de922b0" key="textField-3" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="0" width="99" height="12" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Justified" verticalAlignment="Top" rotation="None" markup="styled">
-					<font fontName="Arial" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA["b) Libros de Matemática"]]></textFieldExpression>
-			</textField>
 		</band>
 	</detail>
 	<columnFooter>

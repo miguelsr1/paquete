@@ -12,7 +12,7 @@
             <div class="ui-g-12">
                 <div class="card">
                     <p:menubar id="mbMenu"> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o"    id="mtmNuevo" action="#{planillaPagoLstMB.nuevoPlanilla}" update="pnlFiltro pnlDatos"/>
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o"   id="mtmNuevo" action="#{planillaPagoLstMB.nuevoPlanilla}" update="pnlFiltro pnlDatos"/>
                         <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" action="#{planillaPagoLstMB.editarPlanilla}" update="pnlFiltro pnlDatos"/>
                         <p:menuitem value="Guardar" icon="fa fa-save"   id="mGuardar" disabled="true"/>
                         <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
@@ -149,7 +149,6 @@
                             <p:column headerText="Seleccionar" width="70" style="text-align: center;">
                                 <p:commandLink action="#{planillaPagoLstMB.selectPlanilla}" update="pnlFiltro pnlDatos">
                                     <f:setPropertyActionListener value="#{pla}" target="#{planillaPagoLstMB.planillaPago}"/> 
-                                    <f:viewParam name="idPlanilla" value="#{pla.idPlanilla}"/>
                                     <f:param name="idPlanilla" value="#{pla.idPlanilla}"/>
                                     <i class="fa fa-hand-o-right blue" style="font-size: 17px;"></i>
                                 </p:commandLink> 
@@ -175,12 +174,13 @@
         <p:dialog id="dlgTipoPlanilla" visible="#{planillaPagoLstMB.dlgShowTipoPlanilla}" widgetVar="dlgTipoPlanilla" modal="true" width="400" header="Seleccione Tipo de Planilla" resizable="false" showEffect="fade" hideEffect="fade">
             <div class="bloque1 propiedadBloque1 textoConSombra" >
                 <div class="subItem2">
-                    <p:commandLink action="#{planillaPagoLstMB.cerrarDlgTipoPlanilla}" styleClass="secciones" update="pnlFiltro pnlDatos dlgSeleccionProveedor">
+                    <p:commandLink action="#{planillaPagoLstMB.cerrarDlgTipoPlanilla}"  styleClass="secciones" update="pnlFiltro pnlDatos dlgSeleccionProveedor">
                         <h:panelGrid columns="1" style="width: 100%;">
                             <i class="fa fa-user" style="font-size: 38px; color: #33afde;"></i>
                             <h:outputText value="Un proveedor" style="font-size: 12px;"/>
                         </h:panelGrid>
                         <f:setPropertyActionListener target="#{planillaPagoLstMB.idTipoPlanilla}" value="1" />
+
                     </p:commandLink>
                     <br/>
                     <h:outputText value="Se crea un solo cheque por planilla para el proveedor seleccionado"/>
@@ -191,6 +191,7 @@
                             <i class="fa fa-users" style="font-size: 38px; color: #00DD00;"></i>
                             <h:outputText value ="Más de un Proveedor" style="font-size: 12px;"/>
                         </h:panelGrid>
+                        <f:viewParam name="idTipoPlanilla" value="2"/>
                         <f:setPropertyActionListener target="#{planillaPagoLstMB.idTipoPlanilla}" value="2" />
                     </p:commandLink>
                     <br/>
@@ -202,7 +203,7 @@
         <!-- Dialogo - Seleccion del Unico Proveedor para creación de plantilla"-->
         <p:dialog id="dlgSeleccionProveedor" visible="#{planillaPagoLstMB.dlgShowSeleccionProveedor}" widgetVar="dlgSeleccionProveedor" modal="true" width="600" header="Seleccione un Proveedor" resizable="false" showEffect="fade" hideEffect="fade">
             <h:panelGrid columns="1">
-                <p:dataTable value="#{planillaPagoLstMB.lstProveedores}" var="prov" rowIndexVar="idRow" selection="#{planillaPagoLstMB.proveedor}" 
+                <p:dataTable id="tblProveedores" widgetVar="tblProveedores" value="#{planillaPagoLstMB.lstProveedores}" var="prov" rowIndexVar="idRow" selection="#{planillaPagoLstMB.proveedor}" 
                              selectionMode="single" rowKey="#{prov.numeroNit}" scrollable="true" scrollHeight="300">
                     <p:column headerText="Id" width="10" >
                         #{idRow+1}

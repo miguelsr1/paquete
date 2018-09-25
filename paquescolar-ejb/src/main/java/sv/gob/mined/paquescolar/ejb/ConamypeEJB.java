@@ -157,13 +157,13 @@ public class ConamypeEJB {
                                 if (rubro.intValue() == 4) {
                                     rubro = rubro.add(BigDecimal.ONE.negate());
                                 }
-                                switch(rubro.intValue()){
+                                switch (rubro.intValue()) {
                                     case 4:
                                     case 1:
                                         rubro = new BigDecimal(4);
                                         break;
                                 }
-                                DetalleProcesoAdq detalleProceso = anhoProcesoEJB.getDetProcesoAdq(String.valueOf(Integer.parseInt(js.get("anho").toString())+1), rubro);
+                                DetalleProcesoAdq detalleProceso = anhoProcesoEJB.getDetProcesoAdq(String.valueOf(Integer.parseInt(js.get("anho").toString()) + 1), rubro);
 
                                 DetRubroMuestraInteres detRubro = getDetRubroMuestraInteres(detalleProceso, empresa);
                                 if (detRubro == null) {
@@ -420,7 +420,7 @@ public class ConamypeEJB {
         }
     }
 
-    public DetCapaSegunRubro findDetCapaSegunRubro(BigDecimal idProducto, BigDecimal idNivelEducativo) {
+    private DetCapaSegunRubro findDetCapaSegunRubro(BigDecimal idProducto, BigDecimal idNivelEducativo) {
         Query q = em.createQuery("SELECT d FROM DetCapaSegunRubro d WHERE d.idProducto.idProducto=:idProducto AND d.idNivelEducativo.idNivelEducativo=:idNivelEducativo", DetCapaSegunRubro.class);
         q.setParameter("idProducto", idProducto);
         q.setParameter("idNivelEducativo", idNivelEducativo);
@@ -428,6 +428,27 @@ public class ConamypeEJB {
             return null;
         } else {
             return (DetCapaSegunRubro) q.getSingleResult();
+        }
+    }
+
+    /**
+     * Web service operation
+     * @param numeroNit
+     * @param idDet
+     * @param capacidad
+     */
+    @WebMethod(operationName = "updCapacidadByNitAndIdDet")
+    public void updCapacidadByNitAndIdDet(String numeroNit, Integer idDet, BigInteger capacidad) {
+        Query q = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa.numeroNit=:nit and c.idMuestraInteres.idDetProcesoAdq.idDetProcesoAdq =:idDet", CapaInstPorRubro.class);
+        q.setParameter("nit", numeroNit);
+        q.setParameter("idDet", idDet);
+        if (q.getResultList().isEmpty()) {
+            Logger.getLogger(ProveedorEJB.class.getName()).log(Level.INFO, "No se encontro la empresa con numero de nit: {0}", numeroNit);
+        } else {
+            CapaInstPorRubro capa = (CapaInstPorRubro) q.getResultList().get(0);
+            capa.setCapacidadAcreditada(BigInteger.ZERO);
+            capa.setCapacidadAdjudicada(capacidad);
+            em.merge(capa);
         }
     }
 }

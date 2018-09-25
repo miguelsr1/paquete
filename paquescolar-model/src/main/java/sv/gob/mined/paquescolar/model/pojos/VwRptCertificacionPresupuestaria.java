@@ -23,9 +23,17 @@ public class VwRptCertificacionPresupuestaria {
     private EstadisticaCenso ciclo1;
     private EstadisticaCenso ciclo2;
     private EstadisticaCenso ciclo3;
+    private EstadisticaCenso grado1;
+    private EstadisticaCenso grado2;
+    private EstadisticaCenso grado3;
+    private EstadisticaCenso grado4;
+    private EstadisticaCenso grado5;
+    private EstadisticaCenso grado6;
     private EstadisticaCenso grado7;
     private EstadisticaCenso grado8;
     private EstadisticaCenso grado9;
+    private EstadisticaCenso gradob1;
+    private EstadisticaCenso gradob2;
     private EstadisticaCenso bachillerato;
 
     public VwRptCertificacionPresupuestaria() {
@@ -141,5 +149,69 @@ public class VwRptCertificacionPresupuestaria {
 
     public void setGrado9(EstadisticaCenso grado9) {
         this.grado9 = grado9;
+    }
+
+    public EstadisticaCenso getGrado1() {
+        return grado1;
+    }
+
+    public void setGrado1(EstadisticaCenso grado1) {
+        this.grado1 = grado1;
+    }
+
+    public EstadisticaCenso getGrado2() {
+        return grado2;
+    }
+
+    public void setGrado2(EstadisticaCenso grado2) {
+        this.grado2 = grado2;
+    }
+
+    public EstadisticaCenso getGrado3() {
+        return grado3;
+    }
+
+    public void setGrado3(EstadisticaCenso grado3) {
+        this.grado3 = grado3;
+    }
+
+    public EstadisticaCenso getGrado4() {
+        return grado4;
+    }
+
+    public void setGrado4(EstadisticaCenso grado4) {
+        this.grado4 = grado4;
+    }
+
+    public EstadisticaCenso getGrado5() {
+        return grado5;
+    }
+
+    public void setGrado5(EstadisticaCenso grado5) {
+        this.grado5 = grado5;
+    }
+
+    public EstadisticaCenso getGrado6() {
+        return grado6;
+    }
+
+    public void setGrado6(EstadisticaCenso grado6) {
+        this.grado6 = grado6;
+    }
+
+    public EstadisticaCenso getGradob1() {
+        return gradob1;
+    }
+
+    public void setGradob1(EstadisticaCenso gradob1) {
+        this.gradob1 = gradob1;
+    }
+
+    public EstadisticaCenso getGradob2() {
+        return gradob2;
+    }
+
+    public void setGradob2(EstadisticaCenso gradob2) {
+        this.gradob2 = gradob2;
     }
 }

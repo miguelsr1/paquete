@@ -23,6 +23,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 /**
  *
@@ -33,6 +34,7 @@ import javax.persistence.TemporalType;
 @NamedQueries({
     @NamedQuery(name = "EstadisticaCenso.findAll", query = "SELECT e FROM EstadisticaCenso e")})
 public class EstadisticaCenso implements Serializable {
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -71,6 +73,9 @@ public class EstadisticaCenso implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     private NivelEducativo idNivelEducativo;
 
+    @Transient
+    private BigInteger totalMatricula = BigInteger.ZERO;
+
     public EstadisticaCenso() {
     }
 
@@ -101,7 +106,7 @@ public class EstadisticaCenso implements Serializable {
     }
 
     public BigInteger getMasculino() {
-        if(masculino == null){
+        if (masculino == null) {
             return BigInteger.ZERO;
         }
         return masculino;
@@ -112,7 +117,7 @@ public class EstadisticaCenso implements Serializable {
     }
 
     public BigInteger getFemenimo() {
-        if(femenimo == null){
+        if (femenimo == null) {
             return BigInteger.ZERO;
         }
         return femenimo;
@@ -210,5 +215,16 @@ public class EstadisticaCenso implements Serializable {
     public String toString() {
         return "sv.gob.mined.paquescolar.model.EstadisticaCenso[ idEstadistica=" + idEstadistica + " ]";
     }
-    
+
+    public BigInteger getTotalMatricula() {
+        if (masculino != null && femenimo != null) {
+            return masculino.add(femenimo);
+        } else if (masculino != null) {
+            return masculino;
+        } else if (femenimo != null) {
+            return femenimo;
+        } else {
+            return BigInteger.ZERO;
+        }
+    }
 }

@@ -954,10 +954,10 @@ public class EstadisticasCensoController implements Serializable {
                     reportes = "rptCertUni.jasper";
                 }
                 if (utiles) {
-                    if (detProAdqUti.getIdDetProcesoAdq() > 32) {
+                    if (detProAdqUti.getIdDetProcesoAdq() == 32) {
                         reportes += (reportes.isEmpty() ? "" : ",") + "rptCertUti2018.jasper";
-                    } else {
-                        reportes += (reportes.isEmpty() ? "" : ",") + "rptCertUti.jasper";
+                    } else if (detProAdqUti.getIdDetProcesoAdq() == 42) {
+                        reportes += (reportes.isEmpty() ? "" : ",") + "rptCertUti2019.jasper";
                     }
                 }
                 if (zapatos) {

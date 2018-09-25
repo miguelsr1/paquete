@@ -725,7 +725,7 @@ public class ProveedorEJB {
 
         return lstResumen;*/
     }
-    
+
     public List<DetalleAdjudicacionEmpDto> detalleAdjProveedor(String nit, Integer idProceso) {
         /*List<DetalleAdjudicacionEmpDto> salida = new ArrayList(0);
         String query = "SELECT * FROM vw_detalle_adjudicacion_emp WHERE NUMERO_NIT=?1 AND ID_DET_PROCESO_ADQ=?2";*/

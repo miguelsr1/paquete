@@ -12,9 +12,9 @@
             <div class="ui-g-12">
                 <div class="card">
                     <p:menubar id="mbMenu"> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" action="#{pagoProveedoresController.nuevoPlanilla}" update="pnlRequerimiento tbDetallePlanilla"/>
-                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" action="#{pagoProveedoresController.editarPlanilla}" update="pnlRequerimiento tbDetallePlanilla "/>
-                        <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" action="#{pagoProveedoresController.guardarPlanilla}" disabled="#{menuController.usuarioSoloLectura}" update="tbDetallePlanilla"/>
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" action="#{planillaPagoEdtMB.redirecionPlanillaLst}" update="pnlRequerimiento tbDetallePlanilla"/>
+                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" action="#{planillaPagoEdtMB.redirecionPlanillaLst}" update="pnlRequerimiento tbDetallePlanilla "/>
+                        <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" action="#{planillaPagoEdtMB.guardarPlanilla}" disabled="#{menuController.usuarioSoloLectura}" update="tbDetallePlanilla"/>
                         <p:menuitem value="Imprimir" icon="fa fa-print" onclick="PF('dlgImprimir').show();"/>
                         <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
 
@@ -33,36 +33,36 @@
 
         <!--DIALOGOS-->        
         <!-- ====================================================== -->
-        <p:dialog modal="true" header="Selección de centros escolares del requerimiento #{pagoProveedoresController.requerimientoFondos.formatoRequerimiento} para elaboración de la planilla" 
-                  id="dlgDetallePlanilla" widgetVar="dlgDetallePlanilla" width="1000" minHeight="400"  visible="#{pagoProveedoresController.dlgDetallePlanilla}" showEffect="fade" hideEffect="fade">
+        <p:dialog modal="true" header="Selección de centros escolares del requerimiento #{planillaPagoEdtMB.requerimientoFondos.formatoRequerimiento} para elaboración de la planilla" 
+                  id="dlgDetallePlanilla" widgetVar="dlgDetallePlanilla" width="1000" minHeight="400"  visible="#{planillaPagoEdtMB.dlgDetallePlanilla}" showEffect="fade" hideEffect="fade">
             <h:panelGrid columns="2">
                 <p:outputLabel value="Rubro de adquisión: "/>
-                <p:inputText value="#{pagoProveedoresController.nombreRubro}" size="70" style="font-weight: bold;" readonly="true"/>
+                <p:inputText value="#{planillaPagoEdtMB.nombreRubro}" size="70" style="font-weight: bold;" readonly="true"/>
                 <p:outputLabel value="Total de C.E. del Requermiento: "/>
                 <h:panelGrid columns="8">
-                    <p:inputText id="txtNumDetReq" value="#{pagoProveedoresController.numeroDetalle}" style="text-align: right;" size="5" readonly="true" />
+                    <p:inputText id="txtNumDetReq" value="#{planillaPagoEdtMB.numeroDetalle}" style="text-align: right;" size="5" readonly="true" />
                     <p:spacer width="8" height="8"/>
                     <p:outputLabel value="No de C.E. Seleccionados: "/>
-                    <p:outputLabel id="txtNumCe" value="#{pagoProveedoresController.cantidadCeSeleccionados}" style="text-align: right; font-weight: bold; color: #337ab7; font-size: 12px;">
+                    <p:outputLabel id="txtNumCe" value="#{planillaPagoEdtMB.cantidadCeSeleccionados}" style="text-align: right; font-weight: bold; color: #337ab7; font-size: 12px;">
                         <f:convertNumber pattern="#,##0"/>
                     </p:outputLabel>
                     <p:spacer width="8" height="8"/>
                     <p:outputLabel value="Monto total de Contratos: "/>
-                    <p:outputLabel id="txtMontoCe" value="#{pagoProveedoresController.montoCeSeleccionados}" style="text-align: right; font-weight: bold; color: #337ab7; font-size: 12px;">
+                    <p:outputLabel id="txtMontoCe" value="#{planillaPagoEdtMB.montoCeSeleccionados}" style="text-align: right; font-weight: bold; color: #337ab7; font-size: 12px;">
                         <f:convertNumber pattern="$ #,##0.00"/>
                     </p:outputLabel>
                 </h:panelGrid>
-                <p:outputLabel value="Entidad Financiera: " rendered="#{pagoProveedoresController.showChequeCredito}" />
-                <p:inputText disabled="true" value="#{pagoProveedoresController.nombreEntFinanciera}" rendered="#{pagoProveedoresController.showChequeCredito}" size="70"/>
+                <p:outputLabel value="Entidad Financiera: " rendered="#{planillaPagoEdtMB.showChequeCredito}" />
+                <p:inputText disabled="true" value="#{planillaPagoEdtMB.nombreEntFinanciera}" rendered="#{planillaPagoEdtMB.showChequeCredito}" size="70"/>
             </h:panelGrid>
             <p:spacer width="8" height="10"/>
             <p:outputLabel value="** &lt;b&gt;T&lt;/b&gt;: Todos, &lt;b&gt;C&lt;/b&gt;: Completo, &lt;b&gt;I&lt;/b&gt;: Incompleto" escape="false"/>
             <br/>
             <br/>
-            <p:dataTable id="tblSeleccionados" widgetVar="tblSeleccionados" value="#{pagoProveedoresController.lstDetalleRequerimiento}" var="detalleRequerimiento" rowKey="#{detalleRequerimiento.idDetRequerimiento}"
-                         selectionMode="multiple" selection="#{pagoProveedoresController.lstDetalleRequerimientoSeleccionado}" rowIndexVar="rowId" scrollable="true" scrollHeight="300" 
+            <p:dataTable id="tblSeleccionados" widgetVar="tblSeleccionados" value="#{planillaPagoEdtMB.lstDetalleRequerimiento}" var="detalleRequerimiento" rowKey="#{detalleRequerimiento.idDetRequerimiento}"
+                         selectionMode="multiple" selection="#{planillaPagoEdtMB.lstDetalleRequerimientoSeleccionado}" rowIndexVar="rowId" scrollable="true" scrollHeight="300" 
                          emptyMessage="Ya no hay contratos para asociar a la planilla">
-                <p:ajax event="rowSelect" listener="#{pagoProveedoresController.validarDetalleRequerimiento}" update="txtNumCe txtMontoCe"/>
+                <p:ajax event="rowSelect" listener="#{planillaPagoEdtMB.validarDetalleRequerimiento}" update="txtNumCe txtMontoCe"/>
 
                 <f:facet name="header">
                     <p:outputPanel>
@@ -106,12 +106,12 @@
             </p:dataTable>
 
             <f:facet name="footer">
-                <p:commandButton value="Aceptar"  icon="fa fa-check-circle" action="#{pagoProveedoresController.addCeSeleccionadosADetallePlanilla}"  update="tbDetallePlanilla" oncomplete="PF('dlgDetallePlanilla').hide();" />
-                <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{pagoProveedoresController.closeDlgDetallePlanilla}" onclick="PF('dlgDetallePlanilla').hide();" />
+                <p:commandButton value="Aceptar"  icon="fa fa-check-circle" action="#{planillaPagoEdtMB.addCeSeleccionadosADetallePlanilla}"  update="tbDetallePlanilla" oncomplete="PF('dlgDetallePlanilla').hide();" />
+                <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{planillaPagoEdtMB.closeDlgDetallePlanilla}" onclick="PF('dlgDetallePlanilla').hide();" />
             </f:facet>
         </p:dialog>
 
-        <p:dialog header="Informacion de proveedor" modal="true" id="dlgEdtDetPlanilla" widgetVar="dlgEdtDetPlanilla" visible="#{pagoProveedoresController.dlgEdtDetPlanilla}" closable="false" showEffect="fade" hideEffect="fade" >
+        <p:dialog header="Informacion de proveedor" modal="true" id="dlgEdtDetPlanilla" widgetVar="dlgEdtDetPlanilla" visible="#{planillaPagoEdtMB.dlgEdtDetPlanilla}" closable="false" showEffect="fade" hideEffect="fade" >
             <p:panelGrid id="pngEdit" style="width: 100%; border:0px none; background-color:transparent;"
                              styleClass="form-group ui-panelgrid-blank">
                     <p:row>
@@ -119,7 +119,7 @@
                             <p:outputLabel value="Tipo Doc. de Pago (*):"/>
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu value="#{pagoProveedoresController.detPlanilla.idDetalleDocPago.idTipoDocPago}">
+                            <p:selectOneMenu value="#{planillaPagoEdtMB.detPlanilla.idDetalleDocPago.idTipoDocPago}">
                                 <f:selectItem itemLabel="Seleccione un tipo"/>
                                 <f:selectItems value="#{catalogosGeneralesController.lstTipoDocPago}" var="tipo" itemValue="#{tipo.idTipoDocPago}" itemLabel="#{tipo.descripcionDocPago}"/>
                             </p:selectOneMenu>
@@ -134,7 +134,7 @@
                             <p:outputLabel value="No  Doc.:" for="txtNoDocPago"/>
                         </p:column>
                         <p:column>
-                            <p:inputText id="txtNoDocPago" value="#{pagoProveedoresController.detPlanilla.idDetalleDocPago.noDocPago}" onkeypress="return event.keyCode !== 13;"/>
+                            <p:inputText id="txtNoDocPago" value="#{planillaPagoEdtMB.detPlanilla.idDetalleDocPago.noDocPago}" onkeypress="return event.keyCode !== 13;"/>
                         </p:column>
                         <p:column>
                             <p:spacer width="15" height="8"/>
@@ -143,7 +143,7 @@
                             <p:outputLabel value="Fecha Doc. (*):"/>
                         </p:column>
                         <p:column>
-                            <p:calendar pattern="dd/MM/yyyy" size="10" showOn="button" navigator="true" value="#{pagoProveedoresController.detPlanilla.idDetalleDocPago.fechaDocPago}" onkeypress="return event.keyCode !== 13;"/>
+                            <p:calendar pattern="dd/MM/yyyy" size="10" showOn="button" navigator="true" value="#{planillaPagoEdtMB.detPlanilla.idDetalleDocPago.fechaDocPago}" onkeypress="return event.keyCode !== 13;"/>
                         </p:column>
                     </p:row>
                     <p:row>
@@ -156,7 +156,7 @@
                             <p:outputLabel value="Contrato con Modificaciones:"/>
                         </p:column>
                         <p:column>
-                            <p:inputSwitch onLabel="Si" offLabel="No" value="#{pagoProveedoresController.contratoModificado}" disabled="true"/>
+                            <p:inputSwitch onLabel="Si" offLabel="No" value="#{planillaPagoEdtMB.contratoModificado}" disabled="true"/>
                         </p:column>
                         <p:column colspan="3"/>
                     </p:row>
@@ -165,7 +165,7 @@
                             <p:outputLabel value="No de Resolucion modificativa (*):"/>
                         </p:column>
                         <p:column>
-                            <p:inputText id="txtNoResModif" value="#{pagoProveedoresController.detPlanilla.idDetalleDocPago.noResModificativa}" disabled="true" size="15" />
+                            <p:inputText id="txtNoResModif" value="#{planillaPagoEdtMB.detPlanilla.idDetalleDocPago.noResModificativa}" disabled="true" size="15" />
                         </p:column>
                         <p:column>
                             <p:spacer width="15" height="8"/>
@@ -174,7 +174,7 @@
                             <p:outputLabel value="Fecha Resolución:"/>
                         </p:column>
                         <p:column>
-                            <p:calendar id="cldFechaRes" pattern="dd/MM/yyyy" value="#{pagoProveedoresController.detPlanilla.idDetalleDocPago.fechaModificativa}" navigator="true" size="10" showOn="button" disabled="true"/>
+                            <p:calendar id="cldFechaRes" pattern="dd/MM/yyyy" value="#{planillaPagoEdtMB.detPlanilla.idDetalleDocPago.fechaModificativa}" navigator="true" size="10" showOn="button" disabled="true"/>
                         </p:column>
                     </p:row>
                     <p:row>
@@ -182,7 +182,7 @@
                             <p:outputLabel value="Cantidad Actual (*):"/>
                         </p:column>
                         <p:column>
-                            <p:inputText id="txtCantidadActual" value="#{pagoProveedoresController.detPlanilla.idDetalleDocPago.cantidadActual}" disabled="true" style="text-align: right;" size="15"/>
+                            <p:inputText id="txtCantidadActual" value="#{planillaPagoEdtMB.detPlanilla.idDetalleDocPago.cantidadActual}" disabled="true" style="text-align: right;" size="15"/>
                         </p:column>
                         <p:column>
                             <p:spacer width="15" height="8"/>
@@ -191,33 +191,33 @@
                             <p:outputLabel value="Monto Actual (*):"/>
                         </p:column>
                         <p:column>
-                            <p:inputText id="txtMontoActual" value="#{pagoProveedoresController.detPlanilla.idDetalleDocPago.montoActual}" disabled="true" style="text-align: right;" size="15"/>
+                            <p:inputText id="txtMontoActual" value="#{planillaPagoEdtMB.detPlanilla.idDetalleDocPago.montoActual}" disabled="true" style="text-align: right;" size="15"/>
                         </p:column>
                     </p:row>
-                    <p:row rendered="#{!pagoProveedoresController.showChequeCredito}">
+                    <p:row rendered="#{!planillaPagoEdtMB.showChequeCredito}">
                         <p:column colspan="5">
                             <p:separator/>
                         </p:column>
                     </p:row>
-                    <p:row rendered="#{!pagoProveedoresController.showChequeCredito}">
+                    <p:row rendered="#{!planillaPagoEdtMB.showChequeCredito}">
                         <p:column>
                             <p:outputLabel value="¿Se pagará con cheque?:" />
                         </p:column>
                         <p:column>
-                            <p:selectBooleanCheckbox value="#{pagoProveedoresController.cheque}">
-                                <p:ajax listener="#{pagoProveedoresController.pagarCheque}" update="txtNumCheque txtMontoCheque cdlFechaCheque cboBanco"/>
+                            <p:selectBooleanCheckbox value="#{planillaPagoEdtMB.cheque}">
+                                <p:ajax listener="#{planillaPagoEdtMB.pagarCheque}" update="txtNumCheque txtMontoCheque cdlFechaCheque cboBanco"/>
                             </p:selectBooleanCheckbox>
                         </p:column>
                         <p:column colspan="3">
                             <p:spacer width="15" height="8"/>
                         </p:column>
                     </p:row>
-                    <p:row rendered="#{!pagoProveedoresController.showChequeCredito}">
+                    <p:row rendered="#{!planillaPagoEdtMB.showChequeCredito}">
                         <p:column>
                             <p:outputLabel value="Número:" />
                         </p:column>
                         <p:column>
-                            <p:inputText id="txtNumCheque" value="#{pagoProveedoresController.detPlanilla.numCheque}" disabled="#{!pagoProveedoresController.cheque}"/>
+                            <p:inputText id="txtNumCheque" value="#{planillaPagoEdtMB.detPlanilla.numCheque}" disabled="#{!planillaPagoEdtMB.cheque}"/>
                         </p:column>
                         <p:column>
                             <p:spacer width="15" height="8" />
@@ -226,15 +226,15 @@
                             <p:outputLabel value="Monto:" />
                         </p:column>
                         <p:column>
-                            <p:inputText id="txtMontoCheque" value="#{pagoProveedoresController.detPlanilla.montoCheque}" style="text-align: right;" disabled="true"/>
+                            <p:inputText id="txtMontoCheque" value="#{planillaPagoEdtMB.detPlanilla.montoCheque}" style="text-align: right;" disabled="true"/>
                         </p:column>
                     </p:row>
-                    <p:row rendered="#{!pagoProveedoresController.showChequeCredito}">
+                    <p:row rendered="#{!planillaPagoEdtMB.showChequeCredito}">
                         <p:column>
                             <p:outputLabel value="Fecha:" />
                         </p:column>
                         <p:column>
-                            <p:calendar id="cdlFechaCheque" value="#{pagoProveedoresController.detPlanilla.fechaCheque}" pattern="dd/MM/yyyy" disabled="#{!pagoProveedoresController.cheque}" navigator="true" size="10" showOn="button"/>
+                            <p:calendar id="cdlFechaCheque" value="#{planillaPagoEdtMB.detPlanilla.fechaCheque}" pattern="dd/MM/yyyy" disabled="#{!planillaPagoEdtMB.cheque}" navigator="true" size="10" showOn="button"/>
                         </p:column>
                         <p:column>
                             <p:spacer width="15" height="8"/>
@@ -248,8 +248,8 @@
                     </p:row>
                 </p:panelGrid>
                 <f:facet name="footer">
-                    <p:commandButton value="Aceptar" action="#{pagoProveedoresController.editEdtDetPlanilla}" icon="fa fa-check-circle" oncomplete="PF('dlgEdtDetPlanilla').hide();"  update="tbDetallePlanilla" />
-                    <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{pagoProveedoresController.closeDlgEdtDetPlanilla}" onclick="PF('dlgEdtDetPlanilla').hide();" />
+                    <p:commandButton value="Aceptar" action="#{planillaPagoEdtMB.editEdtDetPlanilla}" icon="fa fa-check-circle" oncomplete="PF('dlgEdtDetPlanilla').hide();"  update="tbDetallePlanilla" />
+                    <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{planillaPagoEdtMB.closeDlgEdtDetPlanilla}" onclick="PF('dlgEdtDetPlanilla').hide();" />
                 </f:facet>
         </p:dialog>
 
@@ -258,14 +258,14 @@
             <p:panel>
                 <p:outputLabel value="¿Qué tipo de documento desea imprimir?"/>
                 <h:panelGrid id="cboTipoDocImp" columns="2">
-                    <p:selectManyCheckbox value="#{pagoProveedoresController.tipoDocumentoImp}">
-                        <f:selectItems value="#{pagoProveedoresController.lstTipoDocImp}"/>
+                    <p:selectManyCheckbox value="#{planillaPagoEdtMB.tipoDocumentoImp}">
+                        <f:selectItems value="#{planillaPagoEdtMB.lstTipoDocImp}"/>
                     </p:selectManyCheckbox>
                 </h:panelGrid>
             </p:panel>
             <f:facet name="footer">
                 <p:commandButton value="Aceptar" onclick="PF('dlgImprimir').hide();" ajax="false" icon="fa fa-check-circle"
-                                 action="#{pagoProveedoresController.imprimirDocumentos}"/>
+                                 action="#{planillaPagoEdtMB.imprimirDocumentos}"/>
                 <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgImprimir').hide();" icon="fa fa-times-circle"/>
             </f:facet>
         </p:dialog>
@@ -275,12 +275,12 @@
                   modal="true" showEffect="fade" hideEffect="fade">
             <h:panelGrid columns="2" columnClasses="col3,col9">
                 <h:outputText style="font-weight: bold;" value="Entidad Financiera: "/>
-                <p:inputText value="#{pagoProveedoresController.nombreEntFinanciera}" readonly="true" size="80"/>
+                <p:inputText value="#{planillaPagoEdtMB.nombreEntFinanciera}" readonly="true" size="80"/>
                 <h:outputText style="font-weight: bold;" value="Correo electrónico: "/>
-                <p:inputText value="#{pagoProveedoresController.emailUnico}" readonly="true" size="80"/>
+                <p:inputText value="#{planillaPagoEdtMB.emailUnico}" readonly="true" size="80"/>
             </h:panelGrid>
             <br/>
-            <p:dataTable value="#{pagoProveedoresController.lstEmailProveeCredito}" var="prov" rowIndexVar="rowId" scrollable="true" scrollHeight="300">
+            <p:dataTable value="#{planillaPagoEdtMB.lstEmailProveeCredito}" var="prov" rowIndexVar="rowId" scrollable="true" scrollHeight="300">
                 <f:facet name="header">
                     <h:outputText value="Listado de Proveedores a notificar."/>
                 </f:facet>
@@ -299,7 +299,7 @@
                 </p:column>
             </p:dataTable>
             <f:facet name="footer">
-                <p:commandButton value="Aceptar" action="#{pagoProveedoresController.enviarCorreos}" onclick="PF('dlgEMailNotificacion').hide();" icon="fa fa-check-circle"/>
+                <p:commandButton value="Aceptar" action="#{planillaPagoEdtMB.enviarCorreos}" onclick="PF('dlgEMailNotificacion').hide();" icon="fa fa-check-circle"/>
                 <p:commandButton value="Cancelar" onclick="PF('dlgEMailNotificacion').hide();" icon="fa fa-times-circle"/>
             </f:facet>
         </p:dialog>

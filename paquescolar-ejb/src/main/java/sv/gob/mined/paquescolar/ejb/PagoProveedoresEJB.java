@@ -305,7 +305,7 @@ public class PagoProveedoresEJB {
         String strWhere = StringUtils.addCampoToWhere("", "pp.ID_PLANILLA", idPlanilla);
         strWhere = StringUtils.addCampoToWhere(strWhere, "dp.MONTO_ACTUAL", monto);
         strWhere = StringUtils.addCampoToWhere(strWhere, "dr.NUMERO_NIT", numeroNit);
-        strWhere = StringUtils.addCampoToWhere(strWhere, "dr.NOMBRE_ENT_FINAN", nombreEntFinan);
+        strWhere = StringUtils.addCampoToWhere(strWhere, "upper(dr.NOMBRE_ENT_FINAN)", nombreEntFinan);
         strWhere = StringUtils.addCampoToWhere(strWhere, "pa.id_proceso_adq", idProcesoAdq);
         Query q = em.createNativeQuery(StringUtils.QUERY_PAGOS_BUSQUEDA_PLANILLA + strWhere + " ORDER BY pp.ID_PLANILLA", DatosBusquedaPlanillaDto.class);
         return q.getResultList();

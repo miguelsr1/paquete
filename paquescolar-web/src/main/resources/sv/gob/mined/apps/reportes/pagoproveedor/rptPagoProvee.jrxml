@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d04cfec0-fdb6-4498-beab-2c61f3e21ca5">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="599"/>
 	<property name="ireport.y" value="0"/>
 	<style name="table">
 		<box>
@@ -117,7 +117,7 @@
 	<detail>
 		<band height="62" splitType="Stretch">
 			<componentElement>
-				<reportElement uuid="a47cbd2e-b5c1-431f-b5cf-2dc4116f255b" key="table 1" style="table_TD" x="5" y="0" width="792" height="62"/>
+				<reportElement uuid="a47cbd2e-b5c1-431f-b5cf-2dc4116f255b" key="table 1" style="table_TD" x="17" y="0" width="772" height="62"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="dsDatos" uuid="cff3269f-0aef-4976-93c8-882b1d57081e">
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalle})]]></dataSourceExpression>
@@ -154,7 +154,7 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table 1_TD" height="10" rowSpan="1">
 							<textField isStretchWithOverflow="true">
-								<reportElement uuid="a00f96c7-2add-495b-b336-f7bbe96bd320" x="1" y="0" width="216" height="10"/>
+								<reportElement uuid="a00f96c7-2add-495b-b336-f7bbe96bd320" x="1" y="0" width="216" height="10" isPrintWhenDetailOverflows="true"/>
 								<textElement verticalAlignment="Middle">
 									<font size="6"/>
 								</textElement>
@@ -214,7 +214,7 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table 1_TD" height="10" rowSpan="1">
 							<textField isStretchWithOverflow="true">
-								<reportElement uuid="af3b81d0-8b93-4541-a583-085766b07b6d" x="1" y="0" width="226" height="10"/>
+								<reportElement uuid="af3b81d0-8b93-4541-a583-085766b07b6d" x="1" y="0" width="226" height="10" isPrintWhenDetailOverflows="true"/>
 								<textElement verticalAlignment="Middle">
 									<font size="6"/>
 								</textElement>
@@ -222,7 +222,7 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:columnGroup width="120" uuid="e6d4307e-4fca-4466-99d4-255968e2be37">
+					<jr:columnGroup width="121" uuid="e6d4307e-4fca-4466-99d4-255968e2be37">
 						<jr:columnHeader style="table 1_TD" height="12" rowSpan="1">
 							<staticText>
 								<reportElement uuid="6e97a4c4-af82-47a1-acf3-044c30dc81b4" x="0" y="0" width="120" height="12"/>
@@ -232,10 +232,10 @@
 								<text><![CDATA[Documento de Pago]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:column width="29" uuid="ce68b82b-15a0-4d6b-a4f7-6f0d6826cad6">
+						<jr:column width="33" uuid="ce68b82b-15a0-4d6b-a4f7-6f0d6826cad6">
 							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 								<staticText>
-									<reportElement uuid="0590db10-79a3-403b-8b8a-536177edbe14" x="0" y="0" width="29" height="20"/>
+									<reportElement uuid="0590db10-79a3-403b-8b8a-536177edbe14" x="0" y="0" width="33" height="20"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="7"/>
 									</textElement>
@@ -244,7 +244,7 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 1_TD" height="10" rowSpan="1">
 								<textField>
-									<reportElement uuid="3b52f9df-7f74-4761-bb3d-c24fc6b9eba6" x="1" y="0" width="28" height="10"/>
+									<reportElement uuid="3b52f9df-7f74-4761-bb3d-c24fc6b9eba6" x="1" y="0" width="32" height="10"/>
 									<textElement verticalAlignment="Middle">
 										<font size="6"/>
 									</textElement>
@@ -272,20 +272,20 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="51" uuid="f991055f-6ec1-4e7d-b2b8-20663fda1db8">
+						<jr:column width="48" uuid="f991055f-6ec1-4e7d-b2b8-20663fda1db8">
 							<jr:tableFooter height="0" rowSpan="1"/>
-							<jr:columnHeader height="20" rowSpan="1">
+							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 								<staticText>
-									<reportElement uuid="fdf82b64-10ff-44e3-90d8-e78b757abcc9" x="1" y="0" width="50" height="20"/>
+									<reportElement uuid="fdf82b64-10ff-44e3-90d8-e78b757abcc9" x="1" y="0" width="47" height="20"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="5"/>
 									</textElement>
 									<text><![CDATA[No Cheque o Abono a Cuenta]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:detailCell height="10" rowSpan="1">
+							<jr:detailCell style="table_TD" height="10" rowSpan="1">
 								<textField pattern="dd/MM/yyyy">
-									<reportElement uuid="2cb2e353-54e2-4066-9d87-6af256f56e97" x="0" y="0" width="48" height="10"/>
+									<reportElement uuid="2cb2e353-54e2-4066-9d87-6af256f56e97" x="0" y="0" width="45" height="10"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font size="6"/>
 									</textElement>

@@ -115,6 +115,10 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
 
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro);
+        
+        if (VarSession.getIdMunicipioSession() != null) {
+            idMunicipio = VarSession.getIdMunicipioSession();
+        }
 
         if (params.containsKey("txtCodigoEntidad")) {
             VarSession.setVariableSessionED("2");
@@ -124,9 +128,6 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
             }
         } else {
             VarSession.setVariableSessionED("0");
-        }
-        if (VarSession.getIdMunicipioSession() != null) {
-            idMunicipio = VarSession.getIdMunicipioSession();
         }
     }
 
