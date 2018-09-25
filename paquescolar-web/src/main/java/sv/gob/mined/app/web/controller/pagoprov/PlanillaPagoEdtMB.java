@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,7 +44,6 @@ import sv.gob.mined.paquescolar.model.Empresa;
 import sv.gob.mined.paquescolar.model.EntidadFinanciera;
 import sv.gob.mined.paquescolar.model.PlanillaPago;
 import sv.gob.mined.paquescolar.model.PlanillaPagoCheque;
-import sv.gob.mined.paquescolar.model.ReintegroRequerimiento;
 import sv.gob.mined.paquescolar.model.RequerimientoFondos;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
@@ -79,12 +77,10 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
     private int rowEdit = 0;
     private int idTipoPlanilla = 0;
     private int idDetProceso;
-    private int ajusteRenta = 0;
 
     private Integer[] tipoDocumentoImp;
 
     private Boolean cheque = false;
-    private Boolean contratoExtinguido = false;
     private Boolean isPlanillaLectura = false;
     private Boolean dlgDetallePlanilla = false;
     private Boolean showPnlCheques = false;
@@ -92,18 +88,14 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
     private Boolean showChequeUsefi = false;
     private Boolean showChequeRenta = false;
     private Boolean dlgEdtDetPlanilla = false;
-    private Boolean dlgEdtDetDocPago = false;
     private Boolean contratoModificado = false;
     private Boolean tipoPagoEntFinanciera = false;
-    private Boolean renderMontoRenta = false;
     private Boolean isRubroUniforme = false;
 
     private String anho;
     private String emailUnico;
-    private String codigoEntidad = "";
     private String nombreRubro = "";
     private String nombreEntFinanciera = "";
-    private String numeroRequerimiento = "";
     private String codigoDepartamento = "";
 
     private BigDecimal idReq = BigDecimal.ZERO;
@@ -112,21 +104,15 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
 
     private Empresa empresa = new Empresa();
     private EntidadFinanciera entidadFinanciera = new EntidadFinanciera();
-    private DetalleDocPago detalleDocPago = new DetalleDocPago();
     private DetallePlanilla detPlanilla = new DetallePlanilla();
-    private DetalleRequerimiento detalleRequerimiento = new DetalleRequerimiento();
     private PlanillaPago planillaPago = new PlanillaPago();
     private PlanillaPagoCheque chequeFinanProve = new PlanillaPagoCheque();
     private PlanillaPagoCheque chequeUsefi = new PlanillaPagoCheque();
     private PlanillaPagoCheque chequeRenta = new PlanillaPagoCheque();
     private RequerimientoFondos requerimientoFondos = new RequerimientoFondos();
-    private ReintegroRequerimiento reintegroRequerimiento = new ReintegroRequerimiento();
-
-    private DatosProveDto proveedor = new DatosProveDto();
 
     private List<DatosProveDto> lstEmailProveeCredito = new ArrayList();
     private List<DetallePlanilla> lstDetallePlanilla = new ArrayList();
-    private List<DatosProveDto> lstProveedores = new ArrayList();
     private List<PlanillaPago> lstPlanillas = new ArrayList();
     private List<DetalleRequerimiento> lstDetalleRequerimiento = new ArrayList();
     private List<DetalleRequerimiento> lstDetalleRequerimientoSeleccionado = new ArrayList();
@@ -146,15 +132,23 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
             planillaPago = utilEJB.find(PlanillaPago.class, new BigDecimal(JsfUtil.getParametroUrl("idPlanilla")));
             cargarPlanilla();
         } else {
-            switch (JsfUtil.getParametroUrl("idTipoPlanilla")) {
-                case "1":
-                    lstDetalleRequerimiento = pagoProveedoresEJB.getLstProveedorByIdRequerimiento(new BigDecimal(JsfUtil.getParametroUrl("idReq")), JsfUtil.getParametroUrl("nit"));
+            planillaPago = new PlanillaPago();
+            planillaPago.setIdTipoPlanilla(Short.parseShort(JsfUtil.getParametroUrl("idTipoPlanilla")));
+            planillaPago.setIdRequerimiento(utilEJB.find(RequerimientoFondos.class, new BigDecimal(JsfUtil.getParametroUrl("idReq"))));
+
+            switch (planillaPago.getIdTipoPlanilla()) {
+                case 1:
+                    lstDetalleRequerimiento = pagoProveedoresEJB.getLstProveedorByIdRequerimiento(planillaPago.getIdRequerimiento().getIdRequerimiento(), JsfUtil.getParametroUrl("nit"));
                     break;
-                case "2":
+                case 2:
+                    lstDetalleRequerimiento = pagoProveedoresEJB.getDetRequerimientoPendiente(planillaPago.getIdRequerimiento().getIdRequerimiento());
+                    break;
+                case 3:
+                    lstDetalleRequerimiento = pagoProveedoresEJB.getDetRequerimientoPendienteByEntFinan(planillaPago.getIdRequerimiento().getIdRequerimiento(), JsfUtil.getParametroUrl("nombreEntFinan"));
                     break;
             }
         }
-
+        codigoDepartamento = super.getDepartamento();
         documentosAImprimir();
     }
 
@@ -776,11 +770,11 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
     }
 
     private void recuperarContratosByIdRequerimiento(BigDecimal idRequerimiento) {
-        lstDetalleRequerimiento = proveedorEJB.getDetRequerimientoPendiente(idRequerimiento);
+        lstDetalleRequerimiento = pagoProveedoresEJB.getDetRequerimientoPendiente(idRequerimiento);
     }
 
     private void recuperarContratosByEntidadFinanciera(BigDecimal idRequerimiento, String nombreEntFinan) {
-        lstDetalleRequerimiento = proveedorEJB.getDetRequerimientoPendienteByEntFinan(idRequerimiento, nombreEntFinan);
+        lstDetalleRequerimiento = pagoProveedoresEJB.getDetRequerimientoPendienteByEntFinan(idRequerimiento, nombreEntFinan);
     }
 
     /**
@@ -1078,31 +1072,6 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
         return jp;
     }
 
-    public JasperPrint imprimirRptReintegro(String nombreDepartamento) {
-        JasperPrint jp;
-        ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-        HashMap param = new HashMap();
-        param.put("pEscudo", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
-        param.put("pNombreDepartamento", nombreDepartamento);
-        param.put("pAnho", "20" + anho);
-        param.put("pUsuario", VarSession.getVariableSessionUsuario());
-        param.put("pPagadorDepartamental", pagoProveedoresEJB.getNombrePagadorByCodDepa(super.getDepartamento()));
-
-        param.put("pConcepto", requerimientoFondos.getConcepto());
-        param.put("pFuenteFinanciamiento", requerimientoFondos.getFuenteFinanciamiento());
-        param.put("pFormatoRequerimiento", requerimientoFondos.getFormatoRequerimiento());
-        param.put("pNumeroCheque", reintegroRequerimiento.getNumeroCheque());
-        param.put("pFechaCheque", reintegroRequerimiento.getFechaCheque());
-        param.put("pMontoCheque", reintegroRequerimiento.getMontoCheque());
-
-        DatosProveDto datos = new DatosProveDto();
-        datos.setLstDetalle(lstProveedores);
-        List<DatosProveDto> lst = new ArrayList();
-        lst.add(datos);
-        jp = reportesEJB.getRpt(param, PagoProveedoresController.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoReintegro.jasper")), lst);
-        return jp;
-    }
-
     public void editEdtDetPlanilla() {
         Boolean montoValidado = true;
         detPlanilla.setIdBanco(proveedorEJB.getLstBancos().get(0));
@@ -1133,139 +1102,6 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
             contratoModificado = false;
             cheque = false;
             dlgEdtDetPlanilla = false;
-        }
-    }
-
-    public void editEdtDetDocPago() {
-        String msj = "";
-        boolean montoValidado = true;
-        boolean correcto = false;
-        if (contratoExtinguido) {
-            correcto = pagoProveedoresEJB.isDetalleRequerimeintoEnPlanilla(detalleRequerimiento.getIdDetRequerimiento());
-            if (correcto) {
-                JsfUtil.mensajeAlerta("No se puede registrar la extinsión de este contrato debido a que esta asociado a una planilla de pago.");
-            } else {
-                correcto = true;
-                detalleRequerimiento.setActivo((short) 1);
-                utilEJB.updateEntity(detalleRequerimiento);
-                PrimeFaces.current().executeScript("PF('dlgEdtDetDocPago').hide();");
-                PrimeFaces.current().ajax().update("tblDetRequerimiento");
-            }
-        } else if (detalleRequerimiento.getActivo() == 1) {
-            detalleRequerimiento.setActivo((short) 0);
-            utilEJB.updateEntity(detalleRequerimiento);
-            PrimeFaces.current().ajax().update("tblDetRequerimiento");
-        }
-
-        if (!correcto) {
-            if (detalleDocPago.getNoDocPago().trim().isEmpty()) {
-                msj += " - El número de documento.<br/>";
-            }
-            if (detalleDocPago.getFechaDocPago() == null) {
-                msj += " - La fecha de emisión del documento.<br/>";
-            }
-
-            if (contratoModificado) {
-                if (detalleDocPago.getNoResModificativa().trim().isEmpty()) {
-                    msj += " - El No Resolución modificativa.<br/>";
-                }
-                if (detalleDocPago.getFechaModificativa() == null) {
-                    msj += " - Fecha de Resolución.<br/>";
-                }
-                if (detalleDocPago.getCantidadActual() != null && detalleDocPago.getCantidadActual().intValue() < 0) {
-                    msj += " - Cantidad actual del contrato.<br/>";
-                }
-                if (detalleDocPago.getMontoActual() != null && detalleDocPago.getMontoActual().intValue() < 0) {
-                    msj += " - Monto ($) actual del contrato.<br/>";
-                }
-            }
-
-            if (msj.isEmpty()) {
-                //validar, si existe modificación, que el monto actual no supere el monto original del contrato
-                if (contratoModificado) {
-                    if (detalleDocPago.getCantidadActual() != null && detalleDocPago.getMontoActual() != null) {
-                        montoValidado = pagoProveedoresEJB.validarMontoRequerido(codigoEntidad,
-                                detalleDocPago.getIdDetRequerimiento().getIdRequerimiento().getIdRequerimiento(),
-                                detalleDocPago.getIdDetRequerimiento().getIdDetRequerimiento(),
-                                detalleDocPago.getMontoActual());
-                        msj = montoValidado ? "" : "El monto actual no puede superar al monto original!";
-                    } else {
-                        msj = "La cantidad actual o monto actual deben de tener un valor mayor que 0";
-                    }
-                }
-                if (montoValidado) {
-                    detalleDocPago.setContratoModif(contratoModificado ? (short) 1 : (short) 0);
-
-                    if (detalleDocPago.getIdDetalleDocPago() == null) {
-                        detalleDocPago.setFechaInsercion(new Date());
-                        detalleDocPago.setEstadoEliminacion((short) 0);
-                        detalleDocPago.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-                    } else {
-                        detalleDocPago.setFechaModificacion(new Date());
-                        detalleDocPago.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
-                    }
-
-                    pagoProveedoresEJB.guardarDetalleDocPago(detalleDocPago);
-
-                    contratoModificado = false;
-                    dlgEdtDetDocPago = false;
-
-                    if (!numeroRequerimiento.trim().isEmpty()) {
-                        requerimientoFondos = utilEJB.find(RequerimientoFondos.class, detalleRequerimiento.getIdRequerimiento().getIdRequerimiento());
-                    } else if (!codigoEntidad.trim().isEmpty()) {
-                        lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad, super.getProcesoAdquisicion(), VarSession.isVariableSession("departamentoUsuario") ? super.getDepartamento() : null);
-                    }
-
-                    PrimeFaces.current().executeScript("PF('dlgEdtDetDocPago').hide();");
-                    PrimeFaces.current().ajax().update("tblDetRequerimiento");
-                    JsfUtil.mensajeInsert();
-                } else {
-                    JsfUtil.mensajeAlerta(msj);
-                }
-            } else {
-                msj = "Los campos siguientes son requeridos:<br/>" + msj;
-                JsfUtil.mensajeAlerta(msj);
-            }
-        }
-    }
-
-    public void calculoDeRenta() {
-        if (renderMontoRenta) {
-            BigDecimal montoTotalContrato = BigDecimal.ZERO;
-            BigDecimal mRenta = BigDecimal.ZERO;
-
-            //CALCULA DE LA RENTA
-            if (contratoModificado) {
-                if (detalleDocPago.getMontoActual() != null) {
-                    montoTotalContrato = detalleDocPago.getMontoActual();
-                }
-            } else {
-                detalleDocPago.setMontoActual(null);
-                montoTotalContrato = detalleDocPago.getIdDetRequerimiento().getMontoTotal();
-            }
-            switch (detalleDocPago.getIdTipoDocPago()) {
-                case 1://FACTURA :: RENTA = (MONTO_TOTAL/1.13) * 0.10
-                    mRenta = (montoTotalContrato.divide(new BigDecimal(1.13), 2, RoundingMode.HALF_DOWN)).multiply(new BigDecimal(0.10)).setScale(2, RoundingMode.HALF_DOWN);
-                    break;
-                case 2://RECIBO :: RENTA = MONTO_TOTAL * 0.10
-                    mRenta = montoTotalContrato.multiply(new BigDecimal(0.1)).setScale(2, RoundingMode.HALF_DOWN);
-                    break;
-            }
-
-            switch (ajusteRenta) {
-                case 0:
-                    break;
-                case 1:
-                    mRenta = mRenta.add(new BigDecimal(0.01).negate());
-                    break;
-                case 2:
-                    mRenta = mRenta.add(new BigDecimal(0.01));
-                    break;
-            }
-
-            detalleDocPago.setMontoRenta(mRenta);
-        } else {
-            detalleDocPago.setMontoRenta(BigDecimal.ZERO);
         }
     }
 

@@ -16,6 +16,7 @@ import javax.faces.bean.ViewScoped;
 import org.primefaces.PrimeFaces;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProceso;
+import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.CreditosEJB;
 import sv.gob.mined.paquescolar.ejb.PagoProveedoresEJB;
@@ -393,7 +394,22 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
             JsfUtil.mensajeAlerta("Debe de seleccionar un proveedor");
             return "";
         } else {
-            return "planillaPagoEdt.mined?idReq=" + idReq + "&nit=" + proveedor.getNumeroNit() + "&idTipoPlanilla=" + idTipoPlanilla;
+            return "planillaPagoEdt.mined?faces-redirect=true&includeViewParams=true&idReq=" + idReq + "&nit=" + proveedor.getNumeroNit() + "&idTipoPlanilla=" + idTipoPlanilla;
         }
+    }
+
+    public String cerrarDlgEntFinanciera() {
+        //validacion de requerimiento con credito y seleccion de entidad financiera
+        if (entidadFinanciera.getCodEntFinanciera() == null) {
+            JsfUtil.mensajeAlerta("Debe de seleccionar una entidad financiera");
+            return "";
+        } else {
+            return "planillaPagoEdt.mined?faces-redirect=true&includeViewParams=true&idReq=" + idReq + "&nombreEntFinan=" + entidadFinanciera.getNombreEntFinan() + "&idTipoPlanilla=3";
+        }
+    }
+    
+    public void eliminarPlanilla() {
+        pagoProveedoresEJB.eliminarPlanilla(planillaPago.getIdPlanilla(), VarSession.getVariableSessionUsuario());
+        buscarPlanillas();
     }
 }

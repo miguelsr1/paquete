@@ -1405,7 +1405,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     }
 
     private void recuperarContratosByEntidadFinanciera(BigDecimal idRequerimiento, String nombreEntFinan) {
-        lstDetalleRequerimiento = proveedorEJB.getDetRequerimientoPendienteByEntFinan(idRequerimiento, nombreEntFinan);
+        lstDetalleRequerimiento = pagoProveedoresEJB.getDetRequerimientoPendienteByEntFinan(idRequerimiento, nombreEntFinan);
     }
 
     private void recuperarContratosByProveedor(BigDecimal idRequerimiento, String numeroNit) {
@@ -1413,7 +1413,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     }
 
     private void recuperarContratosByIdRequerimiento(BigDecimal idRequerimiento) {
-        lstDetalleRequerimiento = proveedorEJB.getDetRequerimientoPendiente(idRequerimiento);
+        lstDetalleRequerimiento = pagoProveedoresEJB.getDetRequerimientoPendiente(idRequerimiento);
     }
 
     public void cerrarDlgTipoPlanilla() {
