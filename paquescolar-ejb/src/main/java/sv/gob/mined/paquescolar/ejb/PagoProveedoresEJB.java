@@ -152,6 +152,26 @@ public class PagoProveedoresEJB {
         q.setParameter("numeroNit", numeroNit);
         return q.getResultList();
     }
+    
+    public List<DetalleRequerimiento> getDetRequerimientoPendienteByEntFinan(BigDecimal idRequerimiento, String nomEntFinanciera) {
+        List<DetalleRequerimiento> lst;
+        Query q = em.createQuery("select d from DetalleRequerimiento d where d.activo=0 and d.idRequerimiento.idRequerimiento =:idReq and d.nombreEntFinan=:nomEntFinanciera and d.idDetRequerimiento not in(select p.idDetalleDocPago.idDetRequerimiento.idDetRequerimiento from DetallePlanilla p where p.estadoEliminacion = 0 and p.idPlanilla.idRequerimiento.idRequerimiento=:idReq1 ) order by d.razonSocial, d.codigoEntidad", DetalleRequerimiento.class);
+        q.setParameter("idReq", idRequerimiento);
+        q.setParameter("idReq1", idRequerimiento);
+        q.setParameter("nomEntFinanciera", nomEntFinanciera);
+        lst = q.getResultList();
+
+        return lst;
+    }
+    public List<DetalleRequerimiento> getDetRequerimientoPendiente(BigDecimal idRequerimiento) {
+        List<DetalleRequerimiento> lst;
+        Query q = em.createQuery("select d from DetalleRequerimiento d where d.activo=0 and d.idRequerimiento.idRequerimiento =:idReq and d.idDetRequerimiento not in(select p.idDetalleDocPago.idDetRequerimiento.idDetRequerimiento from DetallePlanilla p where p.estadoEliminacion = 0 and p.idPlanilla.idRequerimiento.idRequerimiento=:idReq1 ) order by d.razonSocial, d.codigoEntidad", DetalleRequerimiento.class);
+        q.setParameter("idReq", idRequerimiento);
+        q.setParameter("idReq1", idRequerimiento);
+        lst = q.getResultList();
+
+        return lst;
+    }
 
     public Boolean isPlanillaConReintegro(BigDecimal idPlanilla) {
         Query q = em.createNamedQuery("PagoProve.IsPlanillaConReintegro", DatosProveDto.class);
