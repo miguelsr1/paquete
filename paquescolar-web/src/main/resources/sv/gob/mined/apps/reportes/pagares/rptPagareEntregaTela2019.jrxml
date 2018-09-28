@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.771561000000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="190"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -124,7 +124,7 @@ concat($F{nombre}).concat(", para que designe a la persona depositaria de los bi
 						<font fontName="Arial" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA["<style isBold='true' pdfFontName='Helvetica-Bold'>PAGARÉ SIN PROTESTO\n".
-concat("POR ENTREGA DE TELA PARA "+$P{descripcionRubro}+"</style>")]]></textFieldExpression>
+concat("POR ENTREGA DE TELA PARA SERVICIOS DE CONFECCIÓN DE UNIFORMES</style>")]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>

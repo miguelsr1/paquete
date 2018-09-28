@@ -294,6 +294,7 @@ public class OfertaBienesServiciosEJB {
             Object[] datos = (Object[]) object;
             VwCotizacion v = new VwCotizacion();
             v.setLstDetalleOferta(new ArrayList<DetalleOfertas>());
+            v.setLstDetalleOfertaLibros(new ArrayList<DetalleOfertas>());
             v.setFechaApertura(datos[0].toString());
             v.setRazonSocial(datos[1].toString());
             v.setModalidadAdministrativa(datos[2].toString());
@@ -336,7 +337,12 @@ public class OfertaBienesServiciosEJB {
                 det.setConsolidadoEspTec(datos1[0].toString().concat(", ").concat(datos1[1].toString()));
                 det.setCantidad(new BigInteger(datos1[2].toString()));
                 det.setPrecioUnitario(new BigDecimal(datos1[3].toString()));
-                v.getLstDetalleOferta().add(det);
+
+                if (det.getConsolidadoEspTec().contains("Libro")) {
+                    v.getLstDetalleOfertaLibros().add(det);
+                } else {
+                    v.getLstDetalleOferta().add(det);
+                }
             }
 
             lstCotizacion.add(v);

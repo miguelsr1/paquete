@@ -297,7 +297,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[SUB TOTAL CONTRATADO PARVULARIA + BASICA]]></text>
+				<text><![CDATA[MONTO TOTAL DEL CONTRATO (IVA INCLUIDO)]]></text>
 			</staticText>
 			<staticText>
 				<reportElement uuid="07a11a72-fd36-43e4-b00e-c3302bbefb56" key="staticText-4" x="340" y="1" width="11" height="12"/>

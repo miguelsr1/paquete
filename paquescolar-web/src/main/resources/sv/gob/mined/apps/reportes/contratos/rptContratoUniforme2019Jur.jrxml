@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptContratoPersonaJuridicaZapatos" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="d8a009d1-1894-4374-bb30-ceae652bb660">
 	<property name="ireport.zoom" value="1.9965000000000073"/>
-	<property name="ireport.x" value="87"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="150"/>
+	<property name="ireport.y" value="288"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -164,7 +164,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 						<font fontName="Arial" size="10"/>
 					</textElement>
-					<textFieldExpression><![CDATA["CONTRATO No. ME-".concat($F{NUMERO_CONTRATO}).concat("/").concat($F{ANHO_CONTRATO})+"/CE:"+$F{CODIGO_ENTIDAD}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["CONTRATO No. ME-".concat($F{NUMERO_CONTRATO}).concat("/").concat($F{ANHO_CONTRATO})+"/COD:"+$F{CODIGO_ENTIDAD}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 					<reportElement uuid="c58e8851-a45d-4a5c-bb38-9b76faf89c23" key="textField-8" mode="Opaque" x="0" y="98" width="510" height="94"/>
@@ -183,9 +183,9 @@ concat(", Departamento "+$F{NOMBRE_DEPARTAMENTO}+" que en lo sucesivo en este in
 concat(" u Organismo\"</style>; y por otra parte ").concat($F{NOMBRE_PRESENTANTE}).concat(", actuando en su calidad de representante legal de ").
 concat($F{RAZON_SOCIAL}).concat(", No. de NIT: "+$F{NUMERO_NIT}).concat(", que en lo sucesivo en este instrumento se denominará <style isBold='true' pdfFontName='Helvetica-Bold'>\"El Contratista\", CONVENIMOS</style> en celebrar ").
 concat("el presente contrato de ").concat($P{descripcionRubro}).concat(", conforme a las cláusulas que a continuación se especifican. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA I: OBJETO DEL CONTRATO.</style> El Organismo requiere la prestación del \""+$P{descripcionRubro}+" "+$F{ANHO_CONTRATO}).concat("\" para las entregas a los estudiantes del centro educativo que representa, de los bienes resultantes (prendas) de la prestación del servicio, que en adelante denominaremos “los productos”, correspondiente al Programa Paquetes Escolares. Para lo que el contratista declara ser proveedor acreditado por CONAMYPE, en el rubro requerido; razón por la que ambas partes suscriben el siguiente contrato. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA II: PRECIO Y FORMA DE PAGO.</style> El precio total por los servicios o adquisiciones objeto del presente contrato asciende a la suma de "+Herramientas.aLetras($F{VALOR}).trim()).concat(" DOLARES DE LOS ESTADOS UNIDOS DE AMERICA. (US$ ").
-concat((new DecimalFormat("#,###.00").format($F{VALOR}.doubleValue()))).concat(" ) IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones de ley aplicables; monto que será pagado por la Pagaduría Auxiliar Departamental de acuerdo al siguiente detalle:")]]></textFieldExpression>
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA I: OBJETO DEL CONTRATO.</style> El Organismo requiere la prestación del \""+$P{descripcionRubro}+" "+$F{ANHO_CONTRATO}).concat("\" para las entregas a los estudiantes del centro educativo que representa, de los bienes resultantes (prendas) de la prestación del servicio, que en adelante denominaremos “los productos”, correspondiente al Programa Paquetes Escolares. Para lo que el contratista declara ser proveedor acreditado por CONAMYPE, en el rubro requerido; razón por la que ambas partes suscriben el siguiente contrato. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA II: PRECIO Y FORMA DE PAGO.</style> El precio total por los servicios o adquisiciones objeto del presente contrato asciende a la suma de "+Herramientas.aLetras($F{VALOR}).trim()).concat(" DOLARES DE LOS ESTADOS UNIDOS DE AMERICA. (US$ ").
+concat((new DecimalFormat("#,###.00").format($F{VALOR}.doubleValue()))).concat(" ) IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones de ley aplicables; monto que será pagado por la Pagaduría Auxiliar Departamental o Pagaduría Adjunta de acuerdo al siguiente detalle:")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 					<reportElement uuid="11c0a387-7d95-4e82-89be-1b0571315263" key="textField-9" mode="Opaque" x="2" y="61" width="508" height="34"/>
@@ -276,6 +276,19 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 					<textFieldExpression><![CDATA[($F{DISTRIBUIDOR}.equals("1"))?($F{MOSTRAR_LEYENDA}.toString().equals("1")?"Nota: Este proveedor es contribuyente del IVA, y debe presentar fotocopia de la tarjeta del IVA, solvencia original o copia certificada por un notario de la Solvencia Municipal y Solvencia Tributaria":"Nota: Este proveedor debe presentar Solvencia Original o Copia certificada por un notario de la Solvencia Municipal y Solvencia Tributaria."):
 ($F{MOSTRAR_LEYENDA}.toString().equals("1")?"Nota: Este proveedor es contribuyente del IVA, y debe presentar fotocopia de la tarjeta del IVA, solvencia original o copia certificada por un notario de la Solvencia Municipal y Solvencia Tributaria":"")]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement uuid="c88d29b3-de73-4d88-bc77-1e6bce7d9fbf" key="staticText-4" x="182" y="42" width="63" height="13"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<text><![CDATA[(sello OAE)]]></text>
+				</staticText>
 			</band>
 		</groupFooter>
 	</group>
@@ -303,13 +316,13 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 								</staticText>
 							</jr:columnFooter>
 							<jr:column width="40" uuid="2b4c3a19-3782-4a42-ae80-a0edb238a787">
-								<jr:columnHeader style="table_TD" height="13" rowSpan="1">
+								<jr:columnHeader style="table_TD" height="24" rowSpan="1">
 									<staticText>
-										<reportElement uuid="ef60cd38-924b-46a1-aae5-9fca286b1da5" x="0" y="0" width="40" height="13"/>
+										<reportElement uuid="ef60cd38-924b-46a1-aae5-9fca286b1da5" x="0" y="0" width="40" height="24"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
 											<font fontName="Arial" size="9" isBold="true"/>
 										</textElement>
-										<text><![CDATA[No Item]]></text>
+										<text><![CDATA[No Ítem]]></text>
 									</staticText>
 								</jr:columnHeader>
 								<jr:detailCell style="table_TD" height="13" rowSpan="1">
@@ -323,13 +336,13 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 								</jr:detailCell>
 							</jr:column>
 							<jr:column width="190" uuid="e87139fa-ff39-46e3-a440-9a0aafb75177">
-								<jr:columnHeader style="table_TD" height="13" rowSpan="1">
+								<jr:columnHeader style="table_TD" height="24" rowSpan="1">
 									<staticText>
-										<reportElement uuid="fa975340-147b-49dc-be9d-0e317578a134" x="0" y="0" width="190" height="13"/>
+										<reportElement uuid="fa975340-147b-49dc-be9d-0e317578a134" x="0" y="0" width="190" height="24"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
 											<font fontName="Arial" size="9" isBold="true"/>
 										</textElement>
-										<text><![CDATA[Descripción del Item]]></text>
+										<text><![CDATA[Descripción del Ítem]]></text>
 									</staticText>
 								</jr:columnHeader>
 								<jr:detailCell style="table_TD" height="13" rowSpan="1">
@@ -344,9 +357,9 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 							</jr:column>
 						</jr:columnGroup>
 						<jr:column width="48" uuid="c3056c89-c6e5-49c4-9b7a-54e41051f47f">
-							<jr:columnHeader style="table_TD" height="13" rowSpan="1">
+							<jr:columnHeader style="table_TD" height="24" rowSpan="1">
 								<staticText>
-									<reportElement uuid="5cb029a2-27eb-44fe-9a5a-2e86f0d02d3a" x="0" y="0" width="48" height="13"/>
+									<reportElement uuid="5cb029a2-27eb-44fe-9a5a-2e86f0d02d3a" x="0" y="0" width="48" height="24"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="9" isBold="true"/>
 									</textElement>
@@ -372,54 +385,93 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="74" uuid="ceca2612-19f9-4622-a1f5-e971f3be3c8c">
-							<jr:columnHeader style="table_TD" height="13" rowSpan="1">
+						<jr:column width="59" uuid="ceca2612-19f9-4622-a1f5-e971f3be3c8c">
+							<jr:columnHeader style="table_TD" height="24" rowSpan="1">
 								<staticText>
-									<reportElement uuid="173fcf03-ea90-447f-8cd1-6a1bd5c8d6dc" x="0" y="0" width="74" height="13"/>
+									<reportElement uuid="173fcf03-ea90-447f-8cd1-6a1bd5c8d6dc" x="0" y="0" width="59" height="24"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="9" isBold="true"/>
 									</textElement>
-									<text><![CDATA[Precio Unit. ($)]]></text>
+									<text><![CDATA[Precio Unit.]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:columnFooter style="table_TD" height="14" rowSpan="1"/>
 							<jr:detailCell style="table_TD" height="13" rowSpan="1">
 								<textField pattern="#,##0.00">
-									<reportElement uuid="a1eb1612-8b0b-4f0d-a5a1-71a2b009bf3e" x="0" y="0" width="72" height="13"/>
+									<reportElement uuid="a1eb1612-8b0b-4f0d-a5a1-71a2b009bf3e" x="11" y="0" width="46" height="13"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Arial" size="9"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{PRECIO_UNITARIO}]]></textFieldExpression>
 								</textField>
+								<staticText>
+									<reportElement uuid="07a11a72-fd36-43e4-b00e-c3302bbefb56" key="staticText-4" x="0" y="0" width="11" height="13"/>
+									<box>
+										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+										<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+										<bottomPen lineWidth="0.0" lineColor="#000000"/>
+										<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									</box>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+									</textElement>
+									<text><![CDATA[$]]></text>
+								</staticText>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="74" uuid="d911643b-ade9-49d6-bfbc-531d5e1c311d">
-							<jr:columnHeader style="table_TD" height="13" rowSpan="1">
+						<jr:column width="84" uuid="d911643b-ade9-49d6-bfbc-531d5e1c311d">
+							<jr:columnHeader style="table_TD" height="24" rowSpan="1">
 								<staticText>
-									<reportElement uuid="11561727-1afd-4587-ab6f-35e853009f39" x="0" y="0" width="74" height="13"/>
+									<reportElement uuid="11561727-1afd-4587-ab6f-35e853009f39" x="11" y="0" width="62" height="24"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="9" isBold="true"/>
 									</textElement>
-									<text><![CDATA[Precio Total ($)]]></text>
+									<text><![CDATA[Monto Total (Incluye IVA)]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:columnFooter style="table_TD" height="14" rowSpan="1">
 								<textField pattern="#,##0.00">
-									<reportElement uuid="969b2900-31ed-4d33-9bee-442d8cfadbb3" x="0" y="0" width="72" height="14"/>
+									<reportElement uuid="969b2900-31ed-4d33-9bee-442d8cfadbb3" x="11" y="0" width="71" height="14"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="10" isBold="true"/>
+										<font fontName="Arial" size="9" isBold="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$V{vMonto}]]></textFieldExpression>
 								</textField>
+								<staticText>
+									<reportElement uuid="07a11a72-fd36-43e4-b00e-c3302bbefb56" key="staticText-4" x="0" y="0" width="11" height="14"/>
+									<box>
+										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+										<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+										<bottomPen lineWidth="0.0" lineColor="#000000"/>
+										<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									</box>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+									</textElement>
+									<text><![CDATA[$]]></text>
+								</staticText>
 							</jr:columnFooter>
 							<jr:detailCell style="table_TD" height="13" rowSpan="1">
 								<textField pattern="#,##0.00">
-									<reportElement uuid="94628a86-b211-4c3f-9f69-d1e60b05fd00" x="0" y="0" width="72" height="13"/>
+									<reportElement uuid="94628a86-b211-4c3f-9f69-d1e60b05fd00" x="11" y="0" width="71" height="13"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Arial" size="9"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{SUB_TOTAL}]]></textFieldExpression>
 								</textField>
+								<staticText>
+									<reportElement uuid="07a11a72-fd36-43e4-b00e-c3302bbefb56" key="staticText-4" x="0" y="0" width="11" height="13"/>
+									<box>
+										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+										<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+										<bottomPen lineWidth="0.0" lineColor="#000000"/>
+										<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									</box>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+									</textElement>
+									<text><![CDATA[$]]></text>
+								</staticText>
 							</jr:detailCell>
 						</jr:column>
 					</jr:table>
@@ -441,23 +493,23 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA["La cantidad mencionada anteriormente será pagada en forma total cuando el contratista haya realizado la entrega completa de los productos, a todos los estudiantes del centro educativo; y además se hayan efectuado todas las correcciones en las prendas que presentaron reclamos de confección y se hayan recibido a satisfacción por parte del Centro Educativo a través del Administrador de este contrato (Presidente del Organismo). Los documentos a presentar, para efectos de gestión de pago por parte del contratista son: I) Factura de Consumidor Final o Recibo, el cual debe ser emitido a nombre del Organismos del Centro Educativo, en el que se indique una descripción del servicio suministrado, la cantidad, el precio unitario  de la confección de las prendas y el monto total; II) Acta de Recepción firmada y sellada por parte del Presidente del Organismo, de haber recibido a satisfacción los productos objeto de este contrato; III) Cualquier resolución que se celebre y modifique lo acordado en el presente instrumento como Resoluciones de Prórroga, Resoluciones Modificativas, Resoluciones de Multa, e incluso Resoluciones de Extinción. ".
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA III: PLAZO.</style> El plazo máximo de entrega para los bienes objeto de este contrato, será de SESENTA DÍAS CALENDARIO, contados a partir de la fecha indicada en la orden de inicio, atendiendo en este mismo periodo reclamos de confección en cualquier prenda y realizar la entrega de éstas, ya corregidas. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA IV: FORMA DE ENTREGA Y RECEPCION.</style> De conformidad al artículo cuarenta y cuatro literal j) de la LACAP, el contratista garantiza que entregará los productos objeto del presente CONTRATO, con las mismas condiciones y especificaciones ofertadas, de acuerdo a lo establecido en las especificaciones técnicas a satisfacción del Organismo, en el centro educativo y de acuerdo a lo relativo a entrega y recepción de la Cláusula V del presente contrato, la entrega de los mismos podrá ser total o parcial, pero solo se tendrá por cumplida la obligación de entrega hasta haber completado el total de las piezas de uniformes que se estipulan, en el presente contrato. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA V: OBLIGACIONES DEL CONTRATISTA.</style> Son obligaciones del contratista las siguientes: a) El retiro de tela para la confección de uniformes se hará en el centro educativo; b) La toma de tallas, que también se realizará en el centro educativo; c) La entrega de los productos a padres o madres de familia, estudiantes de tercer ciclo o bachillerato, o responsables de los estudiantes, que de igual manera se realizará en el centro educativo; d) En el caso de reclamos en la confección de los uniformes, deberán ser solventados durante el plazo de ejecución del contrato; e) Deberá entregar los productos contra una lista de entrega a satisfacción del padre o madre de familia, estudiantes de tercer ciclo o bachillerato o responsables de los estudiantes; f) Los uniformes deberán ser empacados en bolsas plásticas transparentes y resistentes, especificando el nombre del estudiante, talla por prenda, nivel y ciclo educativo, nombre del centro educativo al que pertenece, así como el contenido de cada bolsa; g) Deberá dar buen uso y resguardo apropiado a la tela que reciba, así como también deberá devolver la tela sobrante, caso contrario el Contratante aplicará las sanciones correspondientes; h) Mantener datos de dirección y teléfonos actualizados, así como dar por recibida cualquier notificación escrita y recibir información por cualquier medio de comunicación. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA VI: INCUMPLIMIENTO.</style> En el caso de mora (atraso) en el cumplimiento por parte del contratista de las obligaciones emanadas del  presente Contrato, se aplicarán las multas establecidas en el Artículo Ochenta y Cinco de la LACAP o se dará por extinguido el mismo. El contratista expresamente se somete a las sanciones que emanan de la ley o del presente Contrato, cuando sean por razón imputable a él y serán impuestas por el Organismo que administra el Centro Educativo, a cuya competencia se somete a efectos de la imposición. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA VII: CESIÓN.</style> Únicamente podrán traspasar o ceder, los derechos y obligaciones que emanan del pago del presente contrato. La gestión y trámite de pago incluirá el retiro de los cheques y/o depósitos a cuentas bancarias correspondientes. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA VIII: DELEGACION ESPECIAL.</style> Por medio de este instrumento, el contratante faculta expresamente a la Pagaduría Auxiliar Departamental de la Dirección Departamental de Educación correspondiente a la ubicación del Contratante como Centro Educativo, para aceptar notificaciones de cesiones de beneficios económicos del presente contrato que el Contratista hiciere a favor de terceros de acuerdo a la cláusula precedente. En ese sentido, la Pagaduría Auxiliar Departamental podrá aceptar notificaciones y firmar cualquier documento relacionado a las mismas y extender los pagos derivados del presente contrato en base a la cláusula precedente, por medio de cheque a nombre del Cesionario o por medio de abonos a cuenta bancaria que el cesionario tuviere abiertas a su nombre con instituciones bancarias, o de acuerdo a las instrucciones que el Cesionario le emitiere por escrito. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA IX: DOCUMENTOS CONTRACTUALES.</style> Forman parte de este contrato los documentos siguientes: a) Especificaciones técnicas; b) La Oferta Global; c) Declaración jurada de cumplimiento de especificaciones técnicas, plazo y lugar de entrega firmada por el contratista; d) Solicitud de cotización y cotización; e) Garantías; y f) otros documentos que emanen del presente contrato. En caso de controversia entre estos documentos y el contrato, prevalecerá este último. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA X: SUPERVISION Y CONTROL.</style> La supervisión y control de este contrato será ejercida por el Organismo, quien será el encargado de la ejecución de este contrato y tendrá el derecho a inspeccionar los productos, a fin de verificar su conformidad con las especificaciones del contrato. Cuando los productos inspeccionados no se sujeten a los términos contractuales, el organismo podrá rechazarlos previo informe del Presidente, quien ejercerá la administración del contrato y el contratista deberá sin cargo para el centro educativo, reemplazarlos o hacer todas las modificaciones necesarias para que ellas cumplan con las especificaciones del contrato. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA XI: GARANTIA.</style> Para garantizar el cumplimiento de las obligaciones emanadas del presente contrato, el contratista deberá rendir a satisfacción del Organismo, las garantías siguientes:  <style isBold='true' pdfFontName='Helvetica-Bold'>PAGARE SIN PROTESTO - (PARA GARANTIA DE CUMPLIMIENTO DEL CONTRATO)</style> equivalente al doce por ciento (12%) del valor total de este contrato, con vigencia de VEINTICUATRO MESES. En el caso de servicios de confección de uniformes, PAGARE SIN PROTESTO - (POR LA ENTREGA DE TELA) equivalente al valor total de este contrato, con vigencia de VEINTICUATRO MESES. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA XII: PLAZO DE RECLAMOS.</style> A partir de la entrega del suministro al centro educativo, éste tendrá un plazo de treinta días, para efectuar cualquier reclamo respecto de deficiencias o mala calidad del producto entregado y el contratista deberá subsanar esas deficiencias o reponer el producto, en un plazo no mayor a ocho días, después de efectuado el reclamo. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA XIII: INTERPRETACION DEL CONTRATO.</style> De conformidad al artículo ochenta y cuatro incisos primero y segundo de la LACAP, el Organismo se reserva la facultad de interpretar el presente contrato, de conformidad a la Constitución de la República, la LACAP, demás legislación aplicable y los Principios Generales del Derecho Administrativo y de la forma que más convenga al interés público que se pretende satisfacer de forma directa o indirecta con la prestación, objeto del presente instrumento, pudiendo en tal caso girar las instrucciones por escrito que al respecto considere convenientes. El contratista expresamente acepta tal disposición y se obliga a dar estricto cumplimiento a las instrucciones que al respecto dicte el Organismo, las cuales le serán comunicadas por éste. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA XIV: MODIFICACION.</style> El presente contrato podrá ser modificado de común acuerdo. En tal caso, la institución contratante emitirá la correspondiente Resolución, y para que surta efecto legal, esta modificativa debe ser firmada por el Presidente del Organismo contratante y el Contratista, la cual formará parte integrante del presente contrato, de conformidad al Art. 83-A inc. 4to. de la LACAP. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA XV: SOLUCIONES DE CONFLICTO.</style> Para resolver cualquier disputa o controversia que surja en cuanto a la interpretación o cumplimiento del presente contrato, las partes se someten a los tribunales comunes de este país, y a las disposiciones de las Leyes Salvadoreñas. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA XVI: TERMINACION BILATERAL.</style> Las partes contratantes siempre y cuando no concurra causa de terminación imputable al contratista, podrán de conformidad al artículo noventa y cinco de la LACAP, dar por terminado bilateralmente la relación jurídica que emana del presente contrato, debiendo en tal caso emitir el acta correspondiente y notificarse por el Organismo a la oficina de la Dirección Departamental de Educación correspondiente, en un plazo no mayor de ocho días hábiles. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA XVII: JURISDICCION Y LEGISLACION APLICABLE.</style> Para los efectos jurisdiccionales de este contrato las partes se someten a la legislación vigente de la República de El Salvador cuya aplicación se realizará de conformidad a lo establecido en el artículo cinco de la LACAP. Asimismo, señalan como domicilio especial el de esta ciudad a la competencia de cuyos tribunales se someten. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLAUSULA XVIII: NOTIFICACION.</style> Todas las notificaciones referentes a la ejecución de este contrato, serán válidas solamente cuando sean hechas por medio de comunicación escrita a las direcciones de las partes contratantes, para cuyos efectos las partes señalan como lugar para recibir notificaciones los siguientes: Para el ").concat($F{NOMBRE}).concat(", Dirección: ").concat($F{DIRECCION_CE}+". ").
-concat((($F{TELEFONO_CE}==null)?"":$F{TELEFONO_CE})).concat((($F{FAX_CE}==null)?"":", "+$F{FAX_CE})+", "+$P{telDirector}).concat(". Para el Contratista ").concat($F{RAZON_SOCIAL}).concat(", Dirección: ").concat($F{DIRECCION_EMP}).concat((($F{TELEFONO_EMP}==null)?"":", "+$F{TELEFONO_EMP})).concat((($F{FAX_EMP}==null)?"":", "+$F{FAX_EMP})).concat((($F{CELULAR_EMP}==null)?"":", "+$F{CELULAR_EMP})).
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA III: PLAZO.</style> El plazo máximo de entrega para los bienes objeto de este contrato, será de SESENTA DÍAS CALENDARIO, contados a partir de la fecha indicada en la orden de inicio, atendiendo en este mismo periodo reclamos de confección en cualquier prenda y realizar la entrega de éstas, ya corregidas. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA IV: FORMA DE ENTREGA Y RECEPCIÓN.</style> De conformidad al artículo cuarenta y cuatro literal j) de la LACAP, el contratista garantiza que entregará los productos objeto del presente CONTRATO, con las mismas condiciones y especificaciones ofertadas, de acuerdo a lo establecido en las especificaciones técnicas a satisfacción del Organismo, en el centro educativo y de acuerdo a lo relativo a entrega y recepción de la Cláusula V del presente contrato, la entrega de los mismos podrá ser total o parcial, pero solo se tendrá por cumplida la obligación de entrega hasta haber completado el total de las piezas de uniformes que se estipulan, en el presente contrato. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA V: OBLIGACIONES DEL CONTRATISTA.</style> Son obligaciones del contratista las siguientes: a) El retiro de tela para la confección de uniformes se hará en el centro educativo; b) La toma de tallas, que también se realizará en el centro educativo; c) La entrega de los productos a padres o madres de familia, estudiantes de tercer ciclo o bachillerato, o responsables de los estudiantes, que de igual manera se realizará en el centro educativo; d) En el caso de reclamos en la confección de los uniformes, deberán ser solventados durante el plazo de ejecución del contrato; e) Deberá entregar los productos contra una lista de entrega a satisfacción del padre o madre de familia, estudiantes de tercer ciclo o bachillerato o responsables de los estudiantes; f) Los uniformes deberán ser empacados en bolsas plásticas transparentes y resistentes, especificando el nombre del estudiante, talla por prenda, nivel y ciclo educativo, nombre del centro educativo al que pertenece, así como el contenido de cada bolsa; g) Deberá dar buen uso y resguardo apropiado a la tela que reciba, así como también deberá devolver la tela sobrante, caso contrario el Contratante aplicará las sanciones correspondientes; h) Mantener datos de dirección y teléfonos actualizados, así como dar por recibida cualquier notificación escrita y recibir información por cualquier medio de comunicación. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA VI: INCUMPLIMIENTO.</style> En el caso de mora (atraso) en el cumplimiento por parte del contratista de las obligaciones emanadas del  presente Contrato, se aplicarán las multas establecidas en el Artículo Ochenta y Cinco de la LACAP o se dará por extinguido el mismo. El contratista expresamente se somete a las sanciones que emanan de la ley o del presente Contrato, cuando sean por razón imputable a él y serán impuestas por el Organismo que administra el Centro Educativo, a cuya competencia se somete a efectos de la imposición. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA VII: CESIÓN.</style> Únicamente podrán traspasar o ceder, los derechos y obligaciones que emanan del pago del presente contrato. La gestión y trámite de pago incluirá el retiro de los cheques y/o depósitos a cuentas bancarias correspondientes. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA VIII: DELEGACION ESPECIAL.</style> Por medio de este instrumento, el contratante faculta expresamente a la Pagaduría Auxiliar Departamental de la Dirección Departamental de Educación correspondiente a la ubicación del Contratante como Centro Educativo, para aceptar notificaciones de cesiones de beneficios económicos del presente contrato que el Contratista hiciere a favor de terceros de acuerdo a la cláusula precedente. En ese sentido, la Pagaduría Auxiliar Departamental podrá aceptar notificaciones y firmar cualquier documento relacionado a las mismas y extender los pagos derivados del presente contrato en base a la cláusula precedente, por medio de cheque a nombre del Cesionario o por medio de abonos a cuenta bancaria que el cesionario tuviere abiertas a su nombre con instituciones bancarias, o de acuerdo a las instrucciones que el Cesionario le emitiere por escrito. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA IX: DOCUMENTOS CONTRACTUALES.</style> Forman parte de este contrato los documentos siguientes: a) Especificaciones técnicas; b) La Oferta Global; c) Declaración jurada de cumplimiento de especificaciones técnicas, plazo y lugar de entrega firmada por el contratista; d) Solicitud de cotización y cotización; e) Garantías; y f) otros documentos que emanen del presente contrato. En caso de controversia entre estos documentos y el contrato, prevalecerá este último. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA X: SUPERVISIÓN Y CONTROL.</style> La supervisión y control de este contrato será ejercida por el Organismo, quien será el encargado de la ejecución de este contrato y tendrá el derecho a inspeccionar los productos, a fin de verificar su conformidad con las especificaciones del contrato. Cuando los productos inspeccionados no se sujeten a los términos contractuales, el organismo podrá rechazarlos previo informe del Presidente, quien ejercerá la administración del contrato y el contratista deberá sin cargo para el centro educativo, reemplazarlos o hacer todas las modificaciones necesarias para que ellas cumplan con las especificaciones del contrato. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA XI: GARANTÍA.</style> Para garantizar el cumplimiento de las obligaciones emanadas del presente contrato, el contratista deberá rendir a satisfacción del Organismo, las garantías siguientes:  <style isBold='true' pdfFontName='Helvetica-Bold'>PAGARE SIN PROTESTO - (PARA GARANTÍA DE CUMPLIMIENTO DEL CONTRATO)</style> equivalente al doce por ciento (12%) del valor total de este contrato, con vigencia de VEINTICUATRO MESES. En el caso de servicios de confección de uniformes, PAGARE SIN PROTESTO - (POR LA ENTREGA DE TELA) equivalente al valor total de este contrato, con vigencia de VEINTICUATRO MESES. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA XII: PLAZO DE RECLAMOS.</style> A partir de la entrega del suministro al centro educativo, éste tendrá un plazo de treinta días, para efectuar cualquier reclamo respecto de deficiencias o mala calidad del producto entregado y el contratista deberá subsanar esas deficiencias o reponer el producto, en un plazo no mayor a ocho días, después de efectuado el reclamo. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA XIII: INTERPRETACIÓN DEL CONTRATO.</style> De conformidad al artículo ochenta y cuatro incisos primero y segundo de la LACAP, el Organismo se reserva la facultad de interpretar el presente contrato, de conformidad a la Constitución de la República, la LACAP, demás legislación aplicable y los Principios Generales del Derecho Administrativo y de la forma que más convenga al interés público que se pretende satisfacer de forma directa o indirecta con la prestación, objeto del presente instrumento, pudiendo en tal caso girar las instrucciones por escrito que al respecto considere convenientes. El contratista expresamente acepta tal disposición y se obliga a dar estricto cumplimiento a las instrucciones que al respecto dicte el Organismo, las cuales le serán comunicadas por éste. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA XIV: MODIFICACIÓN.</style> El presente contrato podrá ser modificado de común acuerdo. En tal caso, la institución contratante emitirá la correspondiente Resolución, y para que surta efecto legal, esta modificativa debe ser firmada por el Presidente del Organismo contratante y el Contratista, la cual formará parte integrante del presente contrato, de conformidad al Art. 83-A inc. 4to. de la LACAP. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA XV: SOLUCIONES DE CONFLICTO.</style> Para resolver cualquier disputa o controversia que surja en cuanto a la interpretación o cumplimiento del presente contrato, las partes se someten a los tribunales comunes de este país, y a las disposiciones de las Leyes Salvadoreñas. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA XVI: TERMINACIÓN BILATERAL.</style> Las partes contratantes siempre y cuando no concurra causa de terminación imputable al contratista, podrán de conformidad al artículo noventa y cinco de la LACAP, dar por terminado bilateralmente la relación jurídica que emana del presente contrato, debiendo en tal caso emitir el acta correspondiente y notificarse por el Organismo a la oficina de la Dirección Departamental de Educación correspondiente, en un plazo no mayor de ocho días hábiles. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA XVII: JURISDICCIÓN Y LEGISLACIÓN APLICABLE.</style> Para los efectos jurisdiccionales de este contrato las partes se someten a la legislación vigente de la República de El Salvador cuya aplicación se realizará de conformidad a lo establecido en el artículo cinco de la LACAP. Asimismo, señalan como domicilio especial el de esta ciudad a la competencia de cuyos tribunales se someten. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA XVIII: NOTIFICACIÓN.</style> Todas las notificaciones referentes a la ejecución de este contrato, serán válidas solamente cuando sean hechas por medio de comunicación escrita a las direcciones de las partes contratantes, para cuyos efectos las partes señalan como lugar para recibir notificaciones los siguientes: Para el ").concat($F{NOMBRE}).concat(", Dirección: ").concat($F{DIRECCION_CE}+". ").
+concat((($F{TELEFONO_CE}==null)?"":$F{TELEFONO_CE})).concat((($F{FAX_CE}==null)?"":", "+$F{FAX_CE})+", "+$P{telDirector}).concat(". Para el Contratista ").concat($F{RAZON_SOCIAL}).concat(", Dirección: ").concat($F{DIRECCION_EMP}).concat((($F{TELEFONO_EMP}==null)?"":", con No. de teléfono: "+$F{TELEFONO_EMP})).concat((($F{FAX_EMP}==null)?"":", "+$F{FAX_EMP})).concat((($F{CELULAR_EMP}==null)?"":", "+$F{CELULAR_EMP})).
 concat(", de igual forma se señala como Domicilio Especial, en el caso de que no se pueda localizar al contratista, la cartelera de la Dirección Departamental de Educación del departamento que corresponda el Centro Educativo contratante, de conformidad al Código de Procedimientos Civiles y Mercantiles, las esquelas de notificación, estarán colocadas en la misma, por un periodo de diez días hábiles, después de ese plazo, el contratista se dará por legalmente notificado. El presente contrato entrará en vigencia a partir de la fecha de su firma. Así nos expresamos los comparecientes, quienes enterados y conscientes de los términos y efectos legales del presente contrato por convenir así a los intereses de nuestros representados, ratificamos su contenido. En fe de lo cual firmamos en la ciudad de ").
 concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FECHA_EMISION})+" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).concat(" del").concat(" año ").concat(Herramientas.getNumAnyo($F{FECHA_EMISION})+".")]]></textFieldExpression>
 				</textField>
@@ -498,9 +550,9 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 							<staticText>
 								<reportElement uuid="c9e424fd-32e8-462b-83d9-b2a160c16c89" x="2" y="0" width="228" height="14"/>
 								<textElement>
-									<font fontName="Arial" isBold="true"/>
+									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
-								<text><![CDATA[Total Contratado (IVA INCLUIDO)]]></text>
+								<text><![CDATA[MONTO TOTAL DEL CONTRATO (IVA INCLUIDO)]]></text>
 							</staticText>
 						</jr:tableFooter>
 						<jr:columnFooter style="table_TD" height="14" rowSpan="1">
@@ -564,46 +616,98 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="74" uuid="5ca82bb6-e4b2-4288-be66-570f85156c2e">
+					<jr:column width="59" uuid="5ca82bb6-e4b2-4288-be66-570f85156c2e">
 						<jr:tableFooter style="table_TD" height="14" rowSpan="1"/>
 						<jr:columnFooter style="table_TD" height="14" rowSpan="1"/>
 						<jr:detailCell style="table_TD" height="13" rowSpan="1">
 							<textField pattern="#,##0.00">
-								<reportElement uuid="b8f65985-bdfd-4db8-8249-1cc453abdf20" x="0" y="0" width="72" height="13"/>
+								<reportElement uuid="b8f65985-bdfd-4db8-8249-1cc453abdf20" x="11" y="0" width="46" height="13"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{PRECIO_UNITARIO}]]></textFieldExpression>
 							</textField>
+							<staticText>
+								<reportElement uuid="07a11a72-fd36-43e4-b00e-c3302bbefb56" key="staticText-4" x="0" y="0" width="11" height="13"/>
+								<box>
+									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									<bottomPen lineWidth="0.0" lineColor="#000000"/>
+									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+								</textElement>
+								<text><![CDATA[$]]></text>
+							</staticText>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="74" uuid="95d06f3c-649b-460f-91bb-98671671e5b2">
+					<jr:column width="84" uuid="95d06f3c-649b-460f-91bb-98671671e5b2">
 						<jr:tableFooter style="table_TD" height="14" rowSpan="1">
 							<textField pattern="#,##0.00">
-								<reportElement uuid="ef963319-8525-4e1d-b1d6-d24519afe77b" x="0" y="0" width="72" height="14"/>
+								<reportElement uuid="ef963319-8525-4e1d-b1d6-d24519afe77b" x="11" y="0" width="71" height="14"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$P{montoTotal}]]></textFieldExpression>
 							</textField>
+							<staticText>
+								<reportElement uuid="07a11a72-fd36-43e4-b00e-c3302bbefb56" key="staticText-4" x="0" y="0" width="11" height="14"/>
+								<box>
+									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									<bottomPen lineWidth="0.0" lineColor="#000000"/>
+									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+								</textElement>
+								<text><![CDATA[$]]></text>
+							</staticText>
 						</jr:tableFooter>
 						<jr:columnFooter style="table_TD" height="14" rowSpan="1">
 							<textField pattern="#,##0.00">
-								<reportElement uuid="15c68c64-ec5a-4f61-b76a-f57cbaaee2ac" x="0" y="0" width="72" height="14"/>
+								<reportElement uuid="15c68c64-ec5a-4f61-b76a-f57cbaaee2ac" x="11" y="0" width="71" height="14"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="Arial" size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$V{vMontoBac}]]></textFieldExpression>
 							</textField>
+							<staticText>
+								<reportElement uuid="07a11a72-fd36-43e4-b00e-c3302bbefb56" key="staticText-4" x="0" y="0" width="11" height="14"/>
+								<box>
+									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									<bottomPen lineWidth="0.0" lineColor="#000000"/>
+									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+								</textElement>
+								<text><![CDATA[$]]></text>
+							</staticText>
 						</jr:columnFooter>
 						<jr:detailCell style="table_TD" height="13" rowSpan="1">
 							<textField pattern="#,##0.00">
-								<reportElement uuid="07914fbf-931d-4eb4-a52c-8ef307a84b0f" x="0" y="0" width="72" height="13"/>
+								<reportElement uuid="07914fbf-931d-4eb4-a52c-8ef307a84b0f" x="11" y="0" width="71" height="13"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="Arial" size="9"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{SUB_TOTAL}]]></textFieldExpression>
 							</textField>
+							<staticText>
+								<reportElement uuid="07a11a72-fd36-43e4-b00e-c3302bbefb56" key="staticText-4" x="0" y="0" width="11" height="13"/>
+								<box>
+									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									<bottomPen lineWidth="0.0" lineColor="#000000"/>
+									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+								</textElement>
+								<text><![CDATA[$]]></text>
+							</staticText>
 						</jr:detailCell>
 					</jr:column>
 				</jr:table>

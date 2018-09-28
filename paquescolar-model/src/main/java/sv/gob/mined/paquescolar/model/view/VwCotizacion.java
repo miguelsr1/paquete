@@ -24,6 +24,7 @@ public class VwCotizacion implements Serializable{
     private String nombreRespresenanteEmp;
     private String usuarioInsercion;
     private List<DetalleOfertas> lstDetalleOferta;
+    private List<DetalleOfertas> lstDetalleOfertaLibros;
 
     public VwCotizacion() {
     }
@@ -114,5 +115,13 @@ public class VwCotizacion implements Serializable{
 
     public void setUsuarioInsercion(String usuarioInsercion) {
         this.usuarioInsercion = usuarioInsercion;
+    }
+
+    public List<DetalleOfertas> getLstDetalleOfertaLibros() {
+        return lstDetalleOfertaLibros;
+    }
+
+    public void setLstDetalleOfertaLibros(List<DetalleOfertas> lstDetalleOfertaLibros) {
+        this.lstDetalleOfertaLibros = lstDetalleOfertaLibros;
     }
 }
