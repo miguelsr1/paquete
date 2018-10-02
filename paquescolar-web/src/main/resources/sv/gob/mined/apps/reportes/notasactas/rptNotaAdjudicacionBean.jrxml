@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptNotaAdjudicacion" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="ad17c64a-0600-4c9a-b23f-e00788b53d02">
-	<property name="ireport.zoom" value="1.0000000000000004"/>
+	<property name="ireport.zoom" value="1.210000000000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="130"/>
+	<property name="ireport.y" value="36"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -157,7 +157,7 @@ concat("; notifica a la persona proveedora " ).concat($F{razonSocial}).concat(",
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="200" splitType="Stretch">
+			<band height="219" splitType="Stretch">
 				<staticText>
 					<reportElement uuid="de5dc715-d3ad-42f1-9a81-f35d862f6093" key="staticText-1" x="1" y="74" width="163" height="22"/>
 					<box>
@@ -204,7 +204,7 @@ concat("; notifica a la persona proveedora " ).concat($F{razonSocial}).concat(",
 					<reportElement uuid="911b008c-fa46-427f-a1d2-3fff370bf44c" key="line-2" x="293" y="86" width="150" height="1"/>
 				</line>
 				<staticText>
-					<reportElement uuid="bd483124-6657-4b1a-8249-fee170a5089f" key="staticText-6" x="1" y="8" width="101" height="33"/>
+					<reportElement uuid="bd483124-6657-4b1a-8249-fee170a5089f" key="staticText-6" x="1" y="20" width="101" height="33"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -231,22 +231,6 @@ concat("; notifica a la persona proveedora " ).concat($F{razonSocial}).concat(",
 concat("\nDUI: ").concat((($F{numeroDui}==null)?"":$F{numeroDui})).
 concat("\nSello (aplica para Sociedades)")]]></textFieldExpression>
 				</textField>
-				<textField pattern="" isBlankWhenNull="false">
-					<reportElement uuid="70986635-b782-4246-8541-0f78ae9a6b61" key="textField-8" x="1" y="186" width="176" height="11"/>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement>
-						<font fontName="Arial" size="7"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{usuarioInsercion}.concat(" - "+(new SimpleDateFormat("HH:mm dd/MM/yyyy")).format(new Date()))]]></textFieldExpression>
-				</textField>
-				<line>
-					<reportElement uuid="509cb70a-e23e-4e20-8e45-8022dd6c60bb" key="line-1" x="102" y="24" width="407" height="1"/>
-				</line>
 				<staticText>
 					<reportElement uuid="c88d29b3-de73-4d88-bc77-1e6bce7d9fbf" key="staticText-4" x="164" y="74" width="63" height="13"/>
 					<box>
@@ -261,7 +245,7 @@ concat("\nSello (aplica para Sociedades)")]]></textFieldExpression>
 					<text><![CDATA[(sello OAE)]]></text>
 				</staticText>
 				<staticText>
-					<reportElement uuid="71233b6c-e2ca-4368-be1c-35135931dd26" x="1" y="160" width="167" height="20"/>
+					<reportElement uuid="71233b6c-e2ca-4368-be1c-35135931dd26" x="1" y="151" width="167" height="29"/>
 					<textElement>
 						<font fontName="Arial" size="11"/>
 					</textElement>
@@ -470,7 +454,21 @@ concat("\nSello (aplica para Sociedades)")]]></textFieldExpression>
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="11" splitType="Stretch"/>
+		<band height="11" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="70986635-b782-4246-8541-0f78ae9a6b61" key="textField-8" x="-1" y="0" width="176" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{usuarioInsercion}.concat(" - "+(new SimpleDateFormat("HH:mm dd/MM/yyyy")).format(new Date()))]]></textFieldExpression>
+			</textField>
+		</band>
 	</pageFooter>
 	<summary>
 		<band splitType="Stretch"/>

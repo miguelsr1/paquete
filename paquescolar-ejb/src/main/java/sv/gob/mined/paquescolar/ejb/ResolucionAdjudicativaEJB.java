@@ -119,12 +119,14 @@ public class ResolucionAdjudicativaEJB {
         if (resAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 4) {
             param.put("error", "Esta reserva se encuentra anulada y no se puede modificar.");
         } else {
+            //recuperar techo presupuestario del centro escolar
             techoCE = findTechoRubroEntEdu(codigoEntidad, resAdj.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq());
 
             //DIGITADA -> APLICADA  y  REVERTIDAD -> APLICADA
             if (techoCE != null) {
                 if ((resAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 1 && estadoReserva.intValue() == 2)
                         || (resAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 3 && estadoReserva.intValue() == 2)) {
+                    //verificar disponibilidad presupuestaria del C.E. y capacidad calificada del proveedor
                     param = existeDiponibilidad(techoCE, resAdj, param);
                     if (usuario.equals("RMINERO") || usuario.equals("RAFAARIAS") || usuario.equals("CVILLEGAS") || !param.containsKey("error")) {
                         param = aplicarSaldos(resAdj, techoCE, estadoReserva, cantidad, comentarioReversion, usuario, param);
@@ -235,9 +237,9 @@ public class ResolucionAdjudicativaEJB {
     }
 
     public List getAdjudicacionParticipante(Participantes par) {
-        String sql = String.format("SELECT NVL(FN_GETADJPROVEEDOR(%d, %d), 0) FROM EMPRESA WHERE id_empresa=%d",
-                par.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho().intValue(),
-                par.getIdEmpresa().getIdEmpresa().intValue(),
+        //String sql = String.format("SELECT NVL(FN_GETADJPROVEEDOR(%d, %d), 0) FROM EMPRESA WHERE id_empresa=%d",
+        String sql = String.format("SELECT NVL(FN_GET_CANT_ADJ_PROVE(%d, %d), 0) FROM DUAL",
+                par.getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq(),
                 par.getIdEmpresa().getIdEmpresa().intValue());
 
         Query q = em.createNativeQuery(sql);
@@ -282,10 +284,9 @@ public class ResolucionAdjudicativaEJB {
     }
 
     public List getSaldoParticipante(ResolucionesAdjudicativas res) {
-        String sql = String.format("SELECT NVL(FN_GETSALDOPROVEEDOR(%d, %d, %d), 0) FROM EMPRESA WHERE id_empresa=%d",
-                res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho().intValue(),
-                res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho().intValue(),
-                res.getIdParticipante().getIdEmpresa().getIdEmpresa().intValue(),
+        //String sql = String.format("SELECT NVL(FN_GETSALDOPROVEEDOR(%d, %d, %d), 0) FROM EMPRESA WHERE id_empresa=%d",
+        String sql = String.format("SELECT NVL(FN_VERIFICAR_SALDO_PROVEEDOR(%d, %d), 0) FROM DUAL",
+                res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq(),
                 res.getIdParticipante().getIdEmpresa().getIdEmpresa().intValue());
 
         Query q = em.createNativeQuery(sql);

@@ -36,12 +36,12 @@ public class Reportes {
     public static final String PATH_IMAGENES = File.separator + "resources" + File.separator + "images" + File.separator;
 
     /**
-     * 
+     *
      * @param lst
      * @param param
      * @param paqueteRpt
      * @param nombreRpt
-     * @param nombrePdfGenerado 
+     * @param nombrePdfGenerado
      */
     public static void generarRptBeanConnection(List lst, HashMap param, String paqueteRpt, String nombreRpt, String nombrePdfGenerado) {
         try {
@@ -55,12 +55,12 @@ public class Reportes {
     }
 
     /**
-     * 
+     *
      * @param reportesEJB
      * @param param
      * @param paqueteRpt
      * @param nombreRpt
-     * @param nombrePdfGenerado 
+     * @param nombrePdfGenerado
      */
     public static void generarRptSQLConnection(ReportesEJB reportesEJB, HashMap param, String paqueteRpt, String nombreRpt, String nombrePdfGenerado) {
         try {
@@ -74,11 +74,11 @@ public class Reportes {
     }
 
     /**
-     * 
+     *
      * @param jp
      * @param nombrePdfGenerado
      * @throws JRException
-     * @throws IOException 
+     * @throws IOException
      */
     private static void responseRptPdf(JasperPrint jp, String nombrePdfGenerado) throws JRException, IOException {
         HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
@@ -94,14 +94,14 @@ public class Reportes {
     }
 
     /**
-     * 
+     *
      * @param lst
      * @param param
      * @param codigoEntidad
      * @param sobredemanda
      * @param reportesEJB
      * @param anho
-     * @param lstRpts 
+     * @param lstRpts
      */
     public static void generarRptsContractuales(List<?> lst, HashMap param, String codigoEntidad, Boolean sobredemanda, ReportesEJB reportesEJB, String anho, String... lstRpts) {
         try {
@@ -121,7 +121,7 @@ public class Reportes {
                     jasperPrintList.add(reportesEJB.getRpt(param, Reportes.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/sispaqescolar/reporte" + File.separator + rpt)));
                 } else {
                     if (rpt.contains("rptCertUni")) {
-                        if (anho.equals("2018")) {
+                        if (Integer.parseInt(anho) > 2017) {
                             param.put("descripcionRubro", "SERVICIOS DE CONFECCION DEL PRIMER UNIFORME");
                             jasperPrintList.add(JasperFillManager.fillReport(Reportes.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/sispaqescolar/reporte" + File.separator + rpt), param, new JRBeanCollectionDataSource(lst)));
                             param.put("descripcionRubro", "SERVICIOS DE CONFECCION DEL SEGUNDO UNIFORME");
@@ -141,9 +141,9 @@ public class Reportes {
     }
 
     /**
-     * 
+     *
      * @param jasperPrintList
-     * @param nombreRpt 
+     * @param nombreRpt
      */
     public static void generarReporte(List<JasperPrint> jasperPrintList, String nombreRpt) {
         try {

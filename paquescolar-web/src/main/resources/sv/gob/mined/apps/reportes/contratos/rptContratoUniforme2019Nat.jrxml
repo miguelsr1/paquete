@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptContratoPersonaNaturalZapatos" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="b3d27ee3-cc8d-4284-9900-697f3963c735">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="384"/>
+	<property name="ireport.y" value="192"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -470,7 +470,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 								<textField pattern="#,##0.00">
 									<reportElement uuid="92e9f26d-3d77-4544-8bbe-c96647eaebfa" x="11" y="0" width="71" height="14"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="6" isBold="true"/>
+										<font fontName="Arial" size="9" isBold="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$V{vMonto}]]></textFieldExpression>
 								</textField>
@@ -483,7 +483,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 										<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									</box>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="6" isBold="false" pdfFontName="Helvetica-Bold"/>
+										<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
 									</textElement>
 									<text><![CDATA[$]]></text>
 								</staticText>
@@ -492,7 +492,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 								<textField pattern="#,##0.00">
 									<reportElement uuid="ecda2035-890b-4b66-9977-de7c7dda1eaa" x="11" y="0" width="71" height="13"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="5"/>
+										<font fontName="Arial" size="9"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{SUB_TOTAL}]]></textFieldExpression>
 								</textField>
@@ -505,7 +505,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 										<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									</box>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="5" isBold="false" pdfFontName="Helvetica-Bold"/>
+										<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
 									</textElement>
 									<text><![CDATA[$]]></text>
 								</staticText>
@@ -535,7 +535,7 @@ concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA IV: FORMA DE
 concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA V: OBLIGACIONES DEL CONTRATISTA.</style> Son obligaciones del contratista las siguientes: a) El retiro de tela para la confección de uniformes, que se hará en el centro educativo; b) La toma de tallas, que también se realizará en el centro educativo; c) La entrega de los productos, a padres o madres de familia, estudiantes de tercer ciclo o bachillerato, o responsables de los estudiantes, que de igual manera se realizará en el centro educativo; d) En el caso de reclamos en la confección de los uniformes, deberán ser solventados por el contratista durante el plazo de ejecución del contrato; e) Deberá entregar los productos contra una lista de entrega a satisfacción del padre o madre de familia, estudiantes de tercer ciclo o bachillerato o responsables de los estudiantes; f) Los uniformes deberán ser empacados en bolsas plásticas transparentes y resistentes, especificando el nombre del estudiante, talla por prenda, nivel y ciclo educativo, nombre del centro escolar al que pertenece, así como el contenido de cada bolsa; g) Deberá dar buen uso y resguardo apropiado a la tela que reciba, así como también deberá devolver la tela sobrante, caso contrario el Contratante aplicará las sanciones correspondientes; h) Mantener datos de dirección y teléfonos actualizados, así como dar por recibida cualquier notificación escrita y recibir información por cualquier medio de comunicación. ").
 concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA VI: INCUMPLIMIENTO.</style> En el caso de mora (atraso) en el cumplimiento por parte del contratista de las obligaciones emanadas del  presente Contrato, se aplicarán las multas establecidas en el Artículo Ochenta y Cinco de la LACAP o se dará por extinguido el mismo. El contratista expresamente se somete a las sanciones que emanan de la ley o del presente Contrato, cuando sean por razón imputable a él y serán impuestas por el Organismo que administra el Centro Educativo, a cuya competencia se somete a efectos de la imposición. ").
 concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA VII: CESIÓN DE DERECHOS.</style> Únicamente podrán traspasar o ceder, los derechos y obligaciones que emanan del pago del presente contrato. La gestión y trámite de pago incluirá el retiro de los cheques y/o depósitos a cuentas bancarias correspondientes. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA VIII: DELEGACIÓN ESPECIAL.</style> Por medio de este instrumento, el contratante faculta expresamente a la Pagaduría Auxiliar Departamental de la Dirección Departamental de Educación correspondiente a la ubicación del Contratante, como Centro Educativo, para aceptar notificaciones de cesiones de beneficios económicos del presente contrato que el Contratista hiciere a favor de terceros de acuerdo a la cláusula precedente. En ese sentido, la Pagaduría Auxiliar Departamental podrá aceptar notificaciones y firmar cualquier documento relacionado a las mismas y extender los pagos derivados del presente contrato en base a la cláusula precedente, por medio de cheque a nombre del Cesionario o por medio de abonos a cuenta bancaria que el cesionario tuviere abiertas a su nombre con instituciones bancarias, o de acuerdo a las instrucciones que el Cesionario le emitiere por escrito. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA VIII: DELEGACIÓN ESPECIAL.</style> Por medio de este instrumento, el contratante faculta expresamente a la Pagaduría Auxiliar Departamental o Pagaduría Adjunta de la Dirección Departamental de Educación correspondiente a la ubicación del Contratante, como Centro Educativo, para aceptar notificaciones de cesiones de beneficios económicos del presente contrato que el Contratista hiciere a favor de terceros de acuerdo a la cláusula precedente. En ese sentido, la Pagaduría Auxiliar Departamental o Pagaduría Adjunta podrá aceptar notificaciones y firmar cualquier documento relacionado a las mismas y extender los pagos derivados del presente contrato en base a la cláusula precedente, por medio de cheque a nombre del Cesionario o por medio de abonos a cuenta bancaria que el cesionario tuviere abiertas a su nombre con instituciones bancarias, o de acuerdo a las instrucciones que el Cesionario le emitiere por escrito. ").
 concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA IX: DOCUMENTOS CONTRACTUALES.</style> Forman parte de este contrato los documentos siguientes: a) Especificaciones técnicas; b) La Oferta Global; c) Declaración jurada de cumplimiento de especificaciones técnicas, plazo y lugar de entrega firmada por el contratista; d) Solicitud de cotización y cotización; e) Garantías; y f) otros documentos que emanen del presente contrato. En caso de controversia entre estos documentos y el contrato, prevalecerá éste último. ").
 concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA X: SUPERVISIÓN Y CONTRÓL.</style> La supervisión y control de éste contrato será ejercida por el Organismo, quien será el encargado de la ejecución de este contrato y tendrá el derecho a inspeccionar los productos, a fin de verificar su conformidad con las especificaciones del contrato. Cuando los productos inspeccionados no se sujeten a los términos contractuales, el organismo podrá rechazarlos previo informe del Presidente quien ejercerá la administración del contrato y el contratista deberá, sin cargo para el centro educativo, reemplazarlos o hacer todas las modificaciones necesarias para que ellas cumplan con las especificaciones del contrato. ").
 concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA XI: GARANTÍA.</style> Para garantizar el cumplimiento de las obligaciones emanadas del presente contrato, el contratista deberá rendir a satisfacción del Organismo de Administración Escolar, las garantías siguientes: <style isBold='true' pdfFontName='Helvetica-Bold'>PAGARE (SIN PROTESTO) - PARA GARANTÍA DE CUMPLIMIENTO DEL CONTRATO</style> equivalente al doce por ciento del valor total de este contrato, con vigencia de VEINTICUATRO MESES. En el caso de servicios de confección de uniformes, <style isBold='true' pdfFontName='Helvetica-Bold'>PAGARE (SIN PROTESTO) - POR LA ENTREGA DE TELA</style> equivalente al valor total de este contrato, con vigencia de VEINTICUATRO MESES. ").

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptContratoPersona" pageWidth="424" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="424" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6e2983d7-63c3-4094-bcce-5fe808faaf7f">
-	<property name="ireport.zoom" value="4.000000000000009"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.zoom" value="5.856400000000033"/>
+	<property name="ireport.x" value="1375"/>
+	<property name="ireport.y" value="19"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -225,18 +225,6 @@
 					<pen lineWidth="0.75"/>
 				</graphicElement>
 			</line>
-			<line>
-				<reportElement uuid="57911c2f-ee12-4c4c-9700-6d334ad49567" key="line-8" stretchType="RelativeToBandHeight" x="276" y="0" width="1" height="14"/>
-				<graphicElement>
-					<pen lineWidth="0.75"/>
-				</graphicElement>
-			</line>
-			<line>
-				<reportElement uuid="2eb595a0-768c-481d-9423-5b6f47030f28" key="line-6" stretchType="RelativeToBandHeight" x="229" y="0" width="1" height="14"/>
-				<graphicElement>
-					<pen lineWidth="0.75"/>
-				</graphicElement>
-			</line>
 			<staticText>
 				<reportElement uuid="07a11a72-fd36-43e4-b00e-c3302bbefb56" key="staticText-4" x="278" y="1" width="11" height="12"/>
 				<box>
@@ -263,6 +251,18 @@
 				</textElement>
 				<text><![CDATA[$]]></text>
 			</staticText>
+			<line>
+				<reportElement uuid="2eb595a0-768c-481d-9423-5b6f47030f28" key="line-6" stretchType="RelativeToBandHeight" x="229" y="0" width="1" height="14"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement uuid="57911c2f-ee12-4c4c-9700-6d334ad49567" key="line-8" stretchType="RelativeToBandHeight" x="276" y="0" width="1" height="14"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
 		</band>
 	</detail>
 	<columnFooter>
@@ -273,6 +273,12 @@
 					<pen lineWidth="0.75"/>
 				</graphicElement>
 			</rectangle>
+			<line>
+				<reportElement uuid="ef8fb027-6445-45ff-ad72-ad339a6d9f86" x="276" y="0" width="1" height="15"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
 			<textField pattern="$ #,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="a9f24009-5576-423e-92ed-2a25eb729aba" key="textField-6" x="351" y="1" width="69" height="12"/>
 				<box>
@@ -312,6 +318,19 @@
 				</textElement>
 				<text><![CDATA[$]]></text>
 			</staticText>
+			<line>
+				<reportElement uuid="ef8fb027-6445-45ff-ad72-ad339a6d9f86" x="229" y="0" width="1" height="15"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement uuid="964930f5-30dd-4400-93c2-ca079da03f22" x="231" y="1" width="44" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vSubCantidad}]]></textFieldExpression>
+			</textField>
 		</band>
 	</columnFooter>
 	<pageFooter>
