@@ -124,7 +124,7 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
             VarSession.setVariableSessionED("2");
             if (detalleProceso != null) {
                 cargaInicialDeDatos(params);
-                lstDocumentosImp = utilEJB.getLstDocumentosImp(rubro.intValueExact() == 1);
+                lstDocumentosImp = utilEJB.getLstDocumentosImp(rubro.intValueExact() == 1 || rubro.intValueExact() == 4 || rubro.intValueExact() == 5);
             }
         } else {
             VarSession.setVariableSessionED("0");

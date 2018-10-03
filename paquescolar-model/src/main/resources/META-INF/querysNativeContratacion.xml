@@ -65,7 +65,7 @@
             where 
                 ID_OFERTA = ?1
             order by 
-                no_item
+                TO_NUMBER(NO_ITEM)
             ]]>
         </query>
     </named-native-query>
