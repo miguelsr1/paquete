@@ -297,7 +297,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 		<groupHeader>
 			<band height="22" splitType="Stretch">
 				<componentElement>
-					<reportElement uuid="fc463159-f1e5-4716-b166-344f0b15d454" key="table 1" style="table" x="35" y="5" width="423" height="17"/>
+					<reportElement uuid="fc463159-f1e5-4716-b166-344f0b15d454" key="table 1" style="table_TD" x="35" y="5" width="423" height="17"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 						<datasetRun subDataset="dsDetalle" uuid="5b38cc07-8ef2-4aed-9027-0e7e22c44cb5">
 							<datasetParameter name="idResolucionAdj">
@@ -310,7 +310,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 								<staticText>
 									<reportElement uuid="fcb95c74-b29f-4ef3-8fbc-bb3fbd782796" x="13" y="0" width="217" height="14"/>
 									<textElement verticalAlignment="Middle">
-										<font fontName="Arial" size="10" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Sub Total Parvularia + Básica]]></text>
 								</staticText>
@@ -320,7 +320,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 									<staticText>
 										<reportElement uuid="ef60cd38-924b-46a1-aae5-9fca286b1da5" x="0" y="0" width="40" height="24"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
-											<font fontName="Arial" size="9" isBold="true"/>
+											<font fontName="Arial" size="8" isBold="true"/>
 										</textElement>
 										<text><![CDATA[No Ítem]]></text>
 									</staticText>
@@ -329,7 +329,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 									<textField>
 										<reportElement uuid="aa013631-c70d-44e4-9554-00598924df98" x="0" y="0" width="40" height="13"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
-											<font fontName="Arial" size="9"/>
+											<font fontName="Arial" size="8"/>
 										</textElement>
 										<textFieldExpression><![CDATA[$F{NO_ITEM}]]></textFieldExpression>
 									</textField>
@@ -340,7 +340,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 									<staticText>
 										<reportElement uuid="fa975340-147b-49dc-be9d-0e317578a134" x="0" y="0" width="190" height="24"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
-											<font fontName="Arial" size="9" isBold="true"/>
+											<font fontName="Arial" size="8" isBold="true"/>
 										</textElement>
 										<text><![CDATA[Descripción del Ítem]]></text>
 									</staticText>
@@ -349,7 +349,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 									<textField>
 										<reportElement uuid="1c4bd148-63de-4b5a-a3ce-c5f91b241560" x="1" y="0" width="188" height="13"/>
 										<textElement textAlignment="Left" verticalAlignment="Middle">
-											<font fontName="Arial" size="9"/>
+											<font fontName="Arial" size="8"/>
 										</textElement>
 										<textFieldExpression><![CDATA[$F{CONSOLIDADO_ESP_TEC}]]></textFieldExpression>
 									</textField>
@@ -361,7 +361,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 								<staticText>
 									<reportElement uuid="5cb029a2-27eb-44fe-9a5a-2e86f0d02d3a" x="0" y="0" width="48" height="24"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Cantidad]]></text>
 								</staticText>
@@ -370,7 +370,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 								<textField pattern="#,##0">
 									<reportElement uuid="b985c543-3f51-4443-98d1-6b71d67b6be9" x="0" y="0" width="48" height="14"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="10" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$V{vCantidad}]]></textFieldExpression>
 								</textField>
@@ -379,7 +379,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 								<textField pattern="#,##0">
 									<reportElement uuid="050f8f39-58ba-40fc-887f-da6c0bb5b33e" x="0" y="0" width="48" height="13"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{CANTIDAD}]]></textFieldExpression>
 								</textField>
@@ -390,7 +390,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 								<staticText>
 									<reportElement uuid="173fcf03-ea90-447f-8cd1-6a1bd5c8d6dc" x="0" y="0" width="59" height="24"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Precio Unit.]]></text>
 								</staticText>
@@ -400,7 +400,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 								<textField pattern="#,##0.00">
 									<reportElement uuid="a1eb1612-8b0b-4f0d-a5a1-71a2b009bf3e" x="11" y="0" width="46" height="13"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{PRECIO_UNITARIO}]]></textFieldExpression>
 								</textField>
@@ -413,7 +413,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 										<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									</box>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+										<font fontName="Arial" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
 									</textElement>
 									<text><![CDATA[$]]></text>
 								</staticText>
@@ -424,7 +424,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 								<staticText>
 									<reportElement uuid="11561727-1afd-4587-ab6f-35e853009f39" x="11" y="0" width="62" height="24"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Monto Total (Incluye IVA)]]></text>
 								</staticText>
@@ -433,7 +433,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 								<textField pattern="#,##0.00">
 									<reportElement uuid="969b2900-31ed-4d33-9bee-442d8cfadbb3" x="11" y="0" width="71" height="14"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$V{vMonto}]]></textFieldExpression>
 								</textField>
@@ -446,7 +446,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 										<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									</box>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+										<font fontName="Arial" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
 									</textElement>
 									<text><![CDATA[$]]></text>
 								</staticText>
@@ -455,7 +455,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 								<textField pattern="#,##0.00">
 									<reportElement uuid="94628a86-b211-4c3f-9f69-d1e60b05fd00" x="11" y="0" width="71" height="13"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{SUB_TOTAL}]]></textFieldExpression>
 								</textField>
@@ -468,7 +468,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 										<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									</box>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+										<font fontName="Arial" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
 									</textElement>
 									<text><![CDATA[$]]></text>
 								</staticText>
@@ -531,7 +531,7 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 	<detail>
 		<band height="16" splitType="Stretch">
 			<componentElement>
-				<reportElement uuid="e4cb441e-ffab-488e-9f1e-52d5ddf2e2b3" key="table 2" style="table" x="35" y="0" width="423" height="15"/>
+				<reportElement uuid="e4cb441e-ffab-488e-9f1e-52d5ddf2e2b3" key="table 2" style="table_TD" x="35" y="0" width="423" height="15"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="dsDetalleBac" uuid="652fa82f-6345-4ea8-9ac6-4c049680803a">
 						<datasetParameter name="idResolucionAdj">
@@ -550,7 +550,7 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 							<staticText>
 								<reportElement uuid="c9e424fd-32e8-462b-83d9-b2a160c16c89" x="2" y="0" width="228" height="14"/>
 								<textElement>
-									<font fontName="Arial" size="9" isBold="true"/>
+									<font fontName="Arial" size="8" isBold="true"/>
 								</textElement>
 								<text><![CDATA[MONTO TOTAL DEL CONTRATO (IVA INCLUIDO)]]></text>
 							</staticText>
@@ -559,7 +559,7 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 							<staticText>
 								<reportElement uuid="62c30873-19db-49e3-8550-a3465278a855" x="13" y="0" width="217" height="14"/>
 								<textElement verticalAlignment="Middle">
-									<font fontName="Arial" isBold="true"/>
+									<font fontName="Arial" size="8" isBold="true"/>
 								</textElement>
 								<text><![CDATA[Sub Total Bachillerato]]></text>
 							</staticText>
@@ -569,7 +569,7 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 								<textField>
 									<reportElement uuid="1b03a2bd-191b-435c-9093-01109029d02a" x="0" y="0" width="40" height="13"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{NO_ITEM}]]></textFieldExpression>
 								</textField>
@@ -580,7 +580,7 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 								<textField>
 									<reportElement uuid="acc9a94f-f02b-4f8c-987d-19aadbd7388d" x="1" y="0" width="188" height="13"/>
 									<textElement verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{CONSOLIDADO_ESP_TEC}]]></textFieldExpression>
 								</textField>
@@ -592,7 +592,7 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 							<textField pattern="#,##0">
 								<reportElement uuid="ccf0a3ce-64c5-43df-9d49-9846b54b509b" x="0" y="0" width="48" height="14"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="true"/>
+									<font fontName="Arial" size="8" isBold="true"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$P{cantidadTotal}]]></textFieldExpression>
 							</textField>
@@ -601,7 +601,7 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 							<textField pattern="#,##0">
 								<reportElement uuid="ce607026-36f4-479e-8494-0a4002c3cb5f" x="0" y="0" width="48" height="14"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="true"/>
+									<font fontName="Arial" size="8" isBold="true"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$V{vCantidadBac}]]></textFieldExpression>
 							</textField>
@@ -610,7 +610,7 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 							<textField pattern="#,##0">
 								<reportElement uuid="fb2891d4-df4e-4b01-945c-5dbc4f4025a8" x="0" y="0" width="48" height="13"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font fontName="Arial" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{CANTIDAD}]]></textFieldExpression>
 							</textField>
@@ -623,7 +623,7 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 							<textField pattern="#,##0.00">
 								<reportElement uuid="b8f65985-bdfd-4db8-8249-1cc453abdf20" x="11" y="0" width="46" height="13"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font fontName="Arial" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{PRECIO_UNITARIO}]]></textFieldExpression>
 							</textField>
@@ -636,7 +636,7 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+									<font fontName="Arial" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
 								</textElement>
 								<text><![CDATA[$]]></text>
 							</staticText>
@@ -647,7 +647,7 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 							<textField pattern="#,##0.00">
 								<reportElement uuid="ef963319-8525-4e1d-b1d6-d24519afe77b" x="11" y="0" width="71" height="14"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="true"/>
+									<font fontName="Arial" size="8" isBold="true"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$P{montoTotal}]]></textFieldExpression>
 							</textField>
@@ -660,7 +660,7 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+									<font fontName="Arial" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
 								</textElement>
 								<text><![CDATA[$]]></text>
 							</staticText>
@@ -669,7 +669,7 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 							<textField pattern="#,##0.00">
 								<reportElement uuid="15c68c64-ec5a-4f61-b76a-f57cbaaee2ac" x="11" y="0" width="71" height="14"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="true"/>
+									<font fontName="Arial" size="8" isBold="true"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$V{vMontoBac}]]></textFieldExpression>
 							</textField>
@@ -682,7 +682,7 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+									<font fontName="Arial" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
 								</textElement>
 								<text><![CDATA[$]]></text>
 							</staticText>
@@ -691,7 +691,7 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 							<textField pattern="#,##0.00">
 								<reportElement uuid="07914fbf-931d-4eb4-a52c-8ef307a84b0f" x="11" y="0" width="71" height="13"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font fontName="Arial" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{SUB_TOTAL}]]></textFieldExpression>
 							</textField>
@@ -704,7 +704,7 @@ concat($F{CIUDAD_FIRMA}).concat(" a los ").concat(Herramientas.getNumDia($F{FE
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+									<font fontName="Arial" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
 								</textElement>
 								<text><![CDATA[$]]></text>
 							</staticText>

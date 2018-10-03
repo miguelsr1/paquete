@@ -334,7 +334,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 		<groupHeader>
 			<band height="21" splitType="Stretch">
 				<componentElement>
-					<reportElement uuid="9f6eda63-3937-4b7c-8014-ea7b5b8a13ec" key="table 1" style="table 1" x="56" y="4" width="423" height="17"/>
+					<reportElement uuid="9f6eda63-3937-4b7c-8014-ea7b5b8a13ec" key="table 1" style="table 1_TD" x="56" y="4" width="423" height="17"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 						<datasetRun subDataset="dsDetalle" uuid="0fd94d9f-b897-4c36-b1c1-22d112e1be13">
 							<datasetParameter name="idResolucionAdj">
@@ -347,7 +347,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 								<staticText>
 									<reportElement uuid="c918e665-b3de-463a-b2f8-b5ff8b3f421a" x="13" y="0" width="217" height="14"/>
 									<textElement verticalAlignment="Middle">
-										<font fontName="Arial" size="10" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Sub Total Parvularia + Básica]]></text>
 								</staticText>
@@ -357,7 +357,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 									<staticText>
 										<reportElement uuid="f52b5324-27d3-4b50-b134-cc1e4f4ae913" x="0" y="0" width="40" height="26"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
-											<font fontName="Arial" size="9" isBold="true"/>
+											<font fontName="Arial" size="8" isBold="true"/>
 										</textElement>
 										<text><![CDATA[No Ítem]]></text>
 									</staticText>
@@ -366,7 +366,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 									<textField>
 										<reportElement uuid="50a90186-ebeb-49a0-82df-d92d7657619c" x="0" y="0" width="40" height="13"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
-											<font fontName="Arial" size="9"/>
+											<font fontName="Arial" size="8"/>
 										</textElement>
 										<textFieldExpression><![CDATA[$F{NO_ITEM}]]></textFieldExpression>
 									</textField>
@@ -377,7 +377,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 									<staticText>
 										<reportElement uuid="ad3af154-24f0-4868-a50b-97d9626d7aa5" x="0" y="0" width="190" height="26"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
-											<font fontName="Arial" size="9" isBold="true"/>
+											<font fontName="Arial" size="8" isBold="true"/>
 										</textElement>
 										<text><![CDATA[Descripción del Ítem]]></text>
 									</staticText>
@@ -386,7 +386,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 									<textField>
 										<reportElement uuid="d6e97019-7dfa-4a42-bf80-487f2c735a58" x="1" y="0" width="188" height="13"/>
 										<textElement textAlignment="Left" verticalAlignment="Middle">
-											<font fontName="Arial" size="9"/>
+											<font fontName="Arial" size="8"/>
 										</textElement>
 										<textFieldExpression><![CDATA[$F{CONSOLIDADO_ESP_TEC}]]></textFieldExpression>
 									</textField>
@@ -398,7 +398,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 								<staticText>
 									<reportElement uuid="f004ebed-ede7-4cd5-99be-7cb8e550cb29" x="0" y="0" width="48" height="26"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Cantidad]]></text>
 								</staticText>
@@ -407,7 +407,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 								<textField pattern="#,##0">
 									<reportElement uuid="fd5c6c81-7c44-4c3c-bb81-7c78ccb00179" x="0" y="0" width="48" height="14"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="10" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$V{vCantidad}]]></textFieldExpression>
 								</textField>
@@ -416,7 +416,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 								<textField pattern="#,##0">
 									<reportElement uuid="d016e686-0006-4bb6-b620-db0d750b4cc0" x="0" y="0" width="48" height="13"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{CANTIDAD}]]></textFieldExpression>
 								</textField>
@@ -427,7 +427,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 								<staticText>
 									<reportElement uuid="e82af698-5ed9-4a6c-a97f-4d8be8c0d964" x="0" y="0" width="59" height="26"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Precio Unit.]]></text>
 								</staticText>
@@ -437,7 +437,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 								<textField pattern="#,##0.00">
 									<reportElement uuid="17173372-ec80-4006-9596-d5ec9e242bb3" x="11" y="0" width="46" height="13"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{PRECIO_UNITARIO}]]></textFieldExpression>
 								</textField>
@@ -450,7 +450,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 										<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									</box>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+										<font fontName="Arial" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
 									</textElement>
 									<text><![CDATA[$]]></text>
 								</staticText>
@@ -461,7 +461,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 								<staticText>
 									<reportElement uuid="70128808-3f92-4226-9caf-948533cfcd9f" x="12" y="0" width="59" height="26"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Monto Total (Incluye IVA)]]></text>
 								</staticText>
@@ -470,7 +470,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 								<textField pattern="#,##0.00">
 									<reportElement uuid="92e9f26d-3d77-4544-8bbe-c96647eaebfa" x="11" y="0" width="71" height="14"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$V{vMonto}]]></textFieldExpression>
 								</textField>
@@ -483,7 +483,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 										<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									</box>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+										<font fontName="Arial" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
 									</textElement>
 									<text><![CDATA[$]]></text>
 								</staticText>
@@ -492,7 +492,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 								<textField pattern="#,##0.00">
 									<reportElement uuid="ecda2035-890b-4b66-9977-de7c7dda1eaa" x="11" y="0" width="71" height="13"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{SUB_TOTAL}]]></textFieldExpression>
 								</textField>
@@ -505,7 +505,7 @@ concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones d
 										<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									</box>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+										<font fontName="Arial" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
 									</textElement>
 									<text><![CDATA[$]]></text>
 								</staticText>
@@ -570,7 +570,7 @@ concat(" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).
 	<detail>
 		<band height="17" splitType="Stretch">
 			<componentElement>
-				<reportElement uuid="81e96ba0-e0ff-4299-8ae6-757ab1fa58d1" key="table 2" style="table 2" x="56" y="0" width="423" height="17">
+				<reportElement uuid="81e96ba0-e0ff-4299-8ae6-757ab1fa58d1" key="table 2" style="table_TD" x="56" y="0" width="423" height="17">
 					<printWhenExpression><![CDATA[$P{bachillerato}]]></printWhenExpression>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
@@ -591,7 +591,7 @@ concat(" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).
 							<staticText>
 								<reportElement uuid="6fd4ff1d-5c2c-4e84-9a96-fd6dc3b4bd5c" x="2" y="0" width="228" height="14"/>
 								<textElement>
-									<font fontName="Arial" size="9" isBold="true"/>
+									<font fontName="Arial" size="8" isBold="true"/>
 								</textElement>
 								<text><![CDATA[MONTO TOTAL DEL CONTRATO (IVA INCLUIDO)]]></text>
 							</staticText>
@@ -600,7 +600,7 @@ concat(" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).
 							<staticText>
 								<reportElement uuid="e9a7771c-4086-4739-9ca6-d5b2abb1f91e" x="13" y="0" width="217" height="14"/>
 								<textElement verticalAlignment="Middle">
-									<font fontName="Arial" isBold="true"/>
+									<font fontName="Arial" size="8" isBold="true"/>
 								</textElement>
 								<text><![CDATA[Sub Total Bachillerato]]></text>
 							</staticText>
@@ -610,7 +610,7 @@ concat(" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).
 								<textField>
 									<reportElement uuid="9f9a412a-ed26-4ed0-a7df-22963c586ac8" x="0" y="0" width="40" height="13"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{NO_ITEM}]]></textFieldExpression>
 								</textField>
@@ -621,7 +621,7 @@ concat(" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).
 								<textField>
 									<reportElement uuid="ef6fc621-a203-4eb7-ad6f-3bf82f2e8948" x="1" y="0" width="188" height="13"/>
 									<textElement verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{CONSOLIDADO_ESP_TEC}]]></textFieldExpression>
 								</textField>
@@ -633,7 +633,7 @@ concat(" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).
 							<textField pattern="#,##0">
 								<reportElement uuid="f638cccc-09ad-475d-9e85-b4926103a7d3" x="0" y="0" width="48" height="14"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="true"/>
+									<font fontName="Arial" size="8" isBold="true"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$P{cantidadTotal}]]></textFieldExpression>
 							</textField>
@@ -642,7 +642,7 @@ concat(" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).
 							<textField pattern="#,##0">
 								<reportElement uuid="4f5605d6-6d1e-4b34-96bd-c803b0cefdc1" x="0" y="0" width="48" height="14"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="true"/>
+									<font fontName="Arial" size="8" isBold="true"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$V{vCantidadBac}]]></textFieldExpression>
 							</textField>
@@ -651,7 +651,7 @@ concat(" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).
 							<textField pattern="#,##0">
 								<reportElement uuid="6d1267bb-7fb1-471a-945c-abc72bf5daad" x="0" y="0" width="48" height="13"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font fontName="Arial" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{CANTIDAD}]]></textFieldExpression>
 							</textField>
@@ -664,7 +664,7 @@ concat(" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).
 							<textField pattern="#,##0.00">
 								<reportElement uuid="bb1f071d-6639-4439-9e6f-2ad770f98855" x="11" y="0" width="48" height="13"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font fontName="Arial" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{PRECIO_UNITARIO}]]></textFieldExpression>
 							</textField>
@@ -677,7 +677,7 @@ concat(" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+									<font fontName="Arial" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
 								</textElement>
 								<text><![CDATA[$]]></text>
 							</staticText>
@@ -688,7 +688,7 @@ concat(" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).
 							<textField pattern="#,##0.00">
 								<reportElement uuid="3a93ebae-5452-4193-8915-181c5e554a6d" x="11" y="0" width="71" height="14"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="true"/>
+									<font fontName="Arial" size="8" isBold="true"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$P{montoTotal}]]></textFieldExpression>
 							</textField>
@@ -701,7 +701,7 @@ concat(" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+									<font fontName="Arial" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
 								</textElement>
 								<text><![CDATA[$]]></text>
 							</staticText>
@@ -710,7 +710,7 @@ concat(" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).
 							<textField pattern="#,##0.00">
 								<reportElement uuid="a1658aa9-122a-48e8-9452-150d62592620" x="11" y="0" width="71" height="14"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="true"/>
+									<font fontName="Arial" size="8" isBold="true"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$V{vMontoBac}]]></textFieldExpression>
 							</textField>
@@ -723,7 +723,7 @@ concat(" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+									<font fontName="Arial" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
 								</textElement>
 								<text><![CDATA[$]]></text>
 							</staticText>
@@ -732,7 +732,7 @@ concat(" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).
 							<textField pattern="#,##0.00">
 								<reportElement uuid="28b77480-82b9-4434-b13e-0ea8da563a50" x="11" y="0" width="71" height="13"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font fontName="Arial" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{SUB_TOTAL}]]></textFieldExpression>
 							</textField>
@@ -745,7 +745,7 @@ concat(" días del mes de ").concat(Herramientas.getNomMes($F{FECHA_EMISION})).
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+									<font fontName="Arial" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
 								</textElement>
 								<text><![CDATA[$]]></text>
 							</staticText>

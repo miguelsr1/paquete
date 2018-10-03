@@ -285,13 +285,13 @@ concat("\nSello (aplica para Sociedades)")]]></textFieldExpression>
 	<detail>
 		<band height="39" splitType="Stretch">
 			<componentElement>
-				<reportElement uuid="a55f229a-affd-4e28-9328-95ad03e99f06" key="table" style="table" x="32" y="0" width="450" height="39"/>
+				<reportElement uuid="a55f229a-affd-4e28-9328-95ad03e99f06" key="table" style="table_TD" x="32" y="0" width="450" height="39"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="dsDetalleItem" uuid="3a2213dd-47a6-4b63-b4f7-2f8233725fc2">
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleItem})]]></dataSourceExpression>
 					</datasetRun>
 					<jr:columnGroup width="372" uuid="68e3fc1e-6bb2-4150-bc49-786b89ea039c">
-						<jr:columnFooter style="table_TD" height="17" rowSpan="1">
+						<jr:columnFooter style="table_TD" height="15" rowSpan="1">
 							<staticText>
 								<reportElement uuid="cc8730c7-f3a0-475c-b4bb-f73d94748d30" key="staticText-6" x="0" y="0" width="360" height="15"/>
 								<box>
