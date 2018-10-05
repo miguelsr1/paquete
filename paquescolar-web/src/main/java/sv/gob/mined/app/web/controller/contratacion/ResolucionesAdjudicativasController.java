@@ -76,18 +76,14 @@ public class ResolucionesAdjudicativasController implements Serializable {
             VarSession.setVariableSessionED("2");
             current = resolucionAdjudicativaEJB.findResolucionesAdjudicativasByIdParticipante(new BigDecimal(params.get("idParticipante")));
             codigoEntidad = params.get("txtCodigoEntidad");
-            //participante = current.getIdParticipante();
             idParticipante = current.getIdParticipante().getIdParticipante();
             deshabilitar = false;
             idEstadoReserva = current.getIdEstadoReserva().getIdEstadoReserva();
-            //mostrarSaldoProveedor = true;
             buscarSaldoPresupuestoCE(current.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq());
             saldoPro = resolucionAdjudicativaEJB.getSaldoProveedor(current);
-            //saldoProveedor.add(resolucionAdjudicativaEJB.getSaldoProveedor(current));
         } else {
             VarSession.setVariableSessionED("0");
         }
-        //PrimeFaces.current().ajax().update("frmPrincipal");
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">

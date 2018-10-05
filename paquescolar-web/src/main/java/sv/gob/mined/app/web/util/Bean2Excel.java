@@ -122,7 +122,7 @@ public class Bean2Excel {
             LinkedHashMap<String, Integer> mapaItems = (LinkedHashMap) listado.get(0);
             LinkedHashMap<String, Integer> mapaRazonSocial = (LinkedHashMap) listado.get(1);
             Bean[][] data = (Bean[][]) listado.get(2);
-            LinkedHashMap<String, Integer> mapaItemsIndex = (LinkedHashMap) listado.get(3);
+            LinkedHashMap<String, String> mapaItemsIndex = (LinkedHashMap) listado.get(3);
             LinkedHashMap<String, Integer> mapaCantidadItems = (LinkedHashMap) listado.get(4);
 
             HSSFFont hSSFFont = workbook.createFont();

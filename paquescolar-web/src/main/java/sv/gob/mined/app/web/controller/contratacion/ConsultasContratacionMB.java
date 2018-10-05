@@ -9,23 +9,28 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.BarChartModel;
 import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.PieChartModel;
+import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProceso;
 import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
+import sv.gob.mined.paquescolar.ejb.ServiciosJsonEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.pojos.AvanceFeriaDTO;
 import sv.gob.mined.paquescolar.model.pojos.GraficoTipoEmpresaDTO;
+import sv.gob.mined.paquescolar.model.pojos.SaldoProveedorDto;
 
 /**
  *
@@ -35,6 +40,8 @@ import sv.gob.mined.paquescolar.model.pojos.GraficoTipoEmpresaDTO;
 @ViewScoped
 public class ConsultasContratacionMB extends RecuperarProceso implements Serializable {
 
+    @EJB
+    public ServiciosJsonEJB serviciosJsonEJB;
     @EJB
     public ProveedorEJB proveedorEJB;
     @EJB
@@ -61,10 +68,14 @@ public class ConsultasContratacionMB extends RecuperarProceso implements Seriali
     private boolean mostrarGrafico = false;
     private boolean mostrarTabla = false;
 
+    private BigDecimal idRubro = new BigDecimal(0);
     private BigDecimal parametroMayor = new BigDecimal(0);
+
+    private DetalleProcesoAdq detalleProceso = new DetalleProcesoAdq();
 
     private List<AvanceFeriaDTO> listaAvance = new ArrayList();
     private List<GraficoTipoEmpresaDTO> listaCapacidad = new ArrayList();
+    private List<SaldoProveedorDto> lstSaldos = new ArrayList();
 
     private PieChartModel pieModelUni;
     private PieChartModel pieModelUti;
@@ -79,7 +90,38 @@ public class ConsultasContratacionMB extends RecuperarProceso implements Seriali
     public ConsultasContratacionMB() {
     }
 
+    @PostConstruct
+    public void ini() {
+        idRubro = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getRubro();
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
+    }
+
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public List<SaldoProveedorDto> getLstSaldos() {
+        return lstSaldos;
+    }
+
+    public void setLstSaldos(List<SaldoProveedorDto> lstSaldos) {
+        this.lstSaldos = lstSaldos;
+    }
+
+    public String getCodigoDepartamento() {
+        return codigoDepartamento;
+    }
+
+    public void setCodigoDepartamento(String codigoDepartamento) {
+        this.codigoDepartamento = codigoDepartamento;
+    }
+
+    public BigDecimal getIdRubro() {
+        return idRubro;
+    }
+
+    public void setIdRubro(BigDecimal idRubro) {
+        this.idRubro = idRubro;
+    }
+
     public String getDepa() {
         return codigoDepartamento;
     }
@@ -366,5 +408,14 @@ public class ConsultasContratacionMB extends RecuperarProceso implements Seriali
             mostrarGrafico = false;
             JsfUtil.mensajeInformacion("No se encontraron registros ");
         }
+    }
+
+    public void consultaSaldo() {
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
+        lstSaldos = serviciosJsonEJB.getLstSaldoProveedores(detalleProceso.getIdDetProcesoAdq());
+    }
+    
+    public String nombreDepartamento(String codigoDepartamento){
+        return JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento);
     }
 }

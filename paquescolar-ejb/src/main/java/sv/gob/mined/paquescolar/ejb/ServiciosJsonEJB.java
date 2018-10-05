@@ -12,6 +12,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import sv.gob.mined.paquescolar.model.pojos.SaldoProveedorDto;
 import sv.gob.mined.paquescolar.model.pojos.dashboard.TotalContratadoDto;
 import sv.gob.mined.paquescolar.model.pojos.dashboard.TotalResumenDto;
 import sv.gob.mined.paquescolar.model.pojos.dashboard.TotalTipoEmpDto;
@@ -34,7 +35,7 @@ public class ServiciosJsonEJB {
         q.setParameter(2, idDetProcesoAdq);
         return q.getResultList();
     }
-    
+
     public List<DatosResumenPagosDto> getResumenPagoJsonByDetProcesoAdq(Integer idDetProcesoAdq) {
         Query q = em.createNamedQuery("PagoProve.ResumenPagoByDetProcesoAdq", DatosResumenPagosDto.class);
         q.setParameter(1, idDetProcesoAdq);
@@ -84,13 +85,20 @@ public class ServiciosJsonEJB {
                 q = em.createNamedQuery("TotalResumenDto.resumenGeneroEmpByDepa", TotalResumenDto.class);
                 q.setParameter(1, idDetProcesoAdq);
                 q.setParameter(2, codigoDepartamento);
-            }else{
+            } else {
                 q = em.createNamedQuery("TotalResumenDto.resumenGeneroEmpByDepaAndTipoEmp", TotalResumenDto.class);
                 q.setParameter(1, idDetProcesoAdq);
                 q.setParameter(2, codigoDepartamento);
                 q.setParameter(3, idTipoEmp);
             }
         }
+        return q.getResultList();
+    }
+
+    public List<SaldoProveedorDto> getLstSaldoProveedores(Integer idDet1) {
+        Query q = em.createNamedQuery("Contratacion.RptSaldoProveedor", SaldoProveedorDto.class);
+        q.setParameter(1, idDet1);
+
         return q.getResultList();
     }
 }

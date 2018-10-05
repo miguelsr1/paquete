@@ -192,4 +192,62 @@
             ]]>
         </query>
     </named-native-query>
+    <named-native-query name="Contratacion.RptSaldoProveedor" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.SaldoProveedorDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                  as idRow,
+                tbl1.id_empresa                                             as idEmpresa,
+                tbl1.razon_social                                           as razonSocial,
+                tbl1.numero_nit                                             as numeroNit,
+                tbl1.capacidad_acreditada                                   as capacidadCalificada,
+                nvl(tbl2.cantidad_adjudicada,0)                             as capacidadAdjudicada,
+                tbl1.capacidad_acreditada-nvl(tbl2.cantidad_adjudicada,0)   as saldoCapacidad,
+                decode(tbl1.id_det_proceso_adq,40,'1er UNIFORME',
+                    41,'2do UNIFORME',42,'UTILES',43,'ZAPATOS')             as rubro
+            from
+                (select 
+                    emp.id_empresa,
+                    emp.razon_social,
+                    emp.numero_nit,
+                    capa.capacidad_acreditada,
+                    dis.codigo_departamento,
+                    det.id_det_proceso_adq
+                from
+                    det_rubro_muestra_interes det
+                    inner join empresa emp                  on emp.id_empresa = det.id_empresa
+                    inner join capa_inst_por_rubro capa     on det.id_muestra_interes = capa.id_muestra_interes
+                    inner join capa_distribucion_acre dis   on dis.id_muestra_interes = det.id_muestra_interes
+                where 
+                    capa.estado_eliminacion = 0 and
+                    det.estado_eliminacion = 0 and
+                    dis.estado_eliminacion = 0 and
+                    det.id_det_proceso_adq in (?1)) tbl1
+                left outer join
+                (select 
+                    par.id_empresa,
+                    ofe.id_det_proceso_adq,
+                    sum(det.cantidad) cantidad_adjudicada
+                from 
+                    resoluciones_adjudicativas res
+                    inner join participantes par            on res.id_participante = par.id_participante
+                    inner join detalle_ofertas det          on par.id_participante = det.id_participante
+                    inner join oferta_bienes_servicios ofe  on par.id_oferta = ofe.id_oferta
+                where   
+                    det.estado_eliminacion = 0 and
+                    ofe.estado_eliminacion = 0 and
+                    par.estado_eliminacion = 0 and
+                    res.estado_eliminacion = 0 and
+                    res.id_estado_reserva = 2 and
+                    det.id_producto not in (1) and
+                    ofe.id_det_proceso_adq in (?1)
+                group by 
+                    par.id_empresa,
+                    ofe.id_det_proceso_adq) tbl2 on tbl1.id_empresa = tbl2.id_empresa and tbl1.id_det_proceso_adq = tbl2.id_det_proceso_adq
+            order by 
+                tbl1.capacidad_acreditada-nvl(tbl2.cantidad_adjudicada,0)  ASC
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>

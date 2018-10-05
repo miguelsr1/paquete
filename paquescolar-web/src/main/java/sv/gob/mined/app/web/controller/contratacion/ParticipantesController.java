@@ -542,8 +542,10 @@ public class ParticipantesController implements Serializable {
     }
 
     public void onCellEdit(CellEditEvent event) {
-        DetalleOfertas det = ((List<DetalleOfertas>) ((DataTable) event.getSource()).getValue()).get(event.getRowIndex());
-        edicionCellItem(det, event, false);
+        if (event.getRowIndex() > ((List<DetalleOfertas>) ((DataTable) event.getSource()).getValue()).size()) {
+            DetalleOfertas det = ((List<DetalleOfertas>) ((DataTable) event.getSource()).getValue()).get(event.getRowIndex());
+            edicionCellItem(det, event, false);
+        }
     }
 
     public void onCellEditLibros(CellEditEvent event) {

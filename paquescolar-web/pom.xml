@@ -5,7 +5,7 @@
     <groupId>sv.gob.mined</groupId>
     <artifactId>paquescolar-web</artifactId>
     <packaging>war</packaging>
-    <version>2.1.11</version>
+    <version>2.1.12</version>
 
     <name>paquescolar-web</name>
     <url>http://maven.apache.org</url>
@@ -74,6 +74,11 @@
             <groupId>com.lowagie</groupId>
             <artifactId>itext</artifactId>
             <version>2.1.7</version>
+        </dependency>
+        <dependency>
+            <groupId>net.bull.javamelody</groupId>
+            <artifactId>javamelody-core</artifactId>
+            <version>1.74.0</version>
         </dependency>
     </dependencies>
 
@@ -149,7 +154,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netbeans.hint.deploy.server>JBoss4</netbeans.hint.deploy.server>
         <version.maven-compiler-plugin>2.3.2</version.maven-compiler-plugin>
-        <display_version>2.1.7</display_version>
+        <display_version>2.1.12</display_version>
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
     </properties>

@@ -41,8 +41,18 @@ public class RptDocumentos implements Serializable {
     @JoinColumn(name = "ID_TIPO_RPT", referencedColumnName = "ID_TIPO_RPT")
     @ManyToOne
     private TipoRpt idTipoRpt;
+    @Column(name = "ORDEN")
+    private Short orden;
 
     public RptDocumentos() {
+    }
+
+    public Short getOrden() {
+        return orden;
+    }
+
+    public void setOrden(Short orden) {
+        this.orden = orden;
     }
 
     public RptDocumentos(Integer idRpt) {

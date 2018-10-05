@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptContratoPersona" pageWidth="424" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="424" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6e2983d7-63c3-4094-bcce-5fe808faaf7f">
-	<property name="ireport.zoom" value="5.856400000000033"/>
-	<property name="ireport.x" value="1375"/>
-	<property name="ireport.y" value="19"/>
+	<property name="ireport.zoom" value="3.005259203606327"/>
+	<property name="ireport.x" value="331"/>
+	<property name="ireport.y" value="0"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -26,11 +26,11 @@
 	<field name="subTotal" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[subTotal]]></fieldDescription>
 	</field>
-	<variable name="vSubCantidad" class="java.math.BigInteger" calculation="Sum">
-		<variableExpression><![CDATA[$F{cantidad}]]></variableExpression>
-	</variable>
 	<variable name="Total" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{subTotal}]]></variableExpression>
+	</variable>
+	<variable name="totalItem" class="java.math.BigInteger" calculation="Sum">
+		<variableExpression><![CDATA[$F{cantidad}]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -324,12 +324,12 @@
 					<pen lineWidth="0.75"/>
 				</graphicElement>
 			</line>
-			<textField>
-				<reportElement uuid="964930f5-30dd-4400-93c2-ca079da03f22" x="231" y="1" width="44" height="12"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="9"/>
+			<textField pattern="#,##0">
+				<reportElement uuid="c0830cee-2e48-4525-b479-6ed22fae4bc7" x="231" y="1" width="44" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{vSubCantidad}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalItem}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnFooter>

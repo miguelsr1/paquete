@@ -89,19 +89,19 @@ public class StringUtils {
             + "                mun.id_municipio";
 
     public static final String QUERY_PROVEEDOR_RESUMEN_ADJ_EMP = "SELECT \n"
-            + "    rownum,\n"
+            + "    rownum          as idRow,\n"
             + "    codigo_entidad  as codigoEntidad,\n"
-            + "    nombre,\n"
-            + "    rubro,\n"
-            + "    cantidad,\n"
-            + "    monto\n"
+            + "    nombre          as nombre,\n"
+            + "    rubro           as rubro,\n"
+            + "    cantidad        as cantidad,\n"
+            + "    monto           as monto\n"
             + "FROM \n"
             + "    VW_RPT_PROVEEDORES_CONTRATADOS \n"
             + "WHERE \n"
-            + "    NUMERO_NIT = '0210-020588-102-8' AND \n"
-            + "    ID_DET_PROCESO_ADQ = 27";
+            + "    NUMERO_NIT = ?1 AND \n"
+            + "    ID_DET_PROCESO_ADQ = ?2";
     public static final String QUERY_PROVEEDOR_DETALLE_ADJ_EMP = "SELECT \n"
-            + "    rownum,\n"
+            + "    rownum              as idRow,\n"
             + "    nombre_departamento as nombreDepartamento,\n"
             + "    nombre_municipio    as nombreMunicipio,\n"
             + "    codigo_entidad      as codigoEntidad,\n"
@@ -113,7 +113,7 @@ public class StringUtils {
             + "    monto,\n"
             + "    fecha_apertura      as fechaApertura\n"
             + "FROM \n"
-            + "     vw_detalle_adjudicacion_emp WHERE NUMERO_NIT=?1 AND ID_DET_PROCESO_ADQ=?";
+            + "     vw_detalle_adjudicacion_emp WHERE NUMERO_NIT=?1 AND ID_DET_PROCESO_ADQ=?2";
 
     public static String addCampoToWhere(String cadenaWhere, String nombreCampo, Object objeto) {
         if (objeto != null) {

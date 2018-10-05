@@ -50,7 +50,7 @@
                             <p:commandButton action="#{consultasContratacionMB.buscarAvance}"  update="pnlGraficos" value="Buscar" ajax="true" id="ingresar" icon="ui-icon-search"/>
                         </h:panelGrid>
                     </div>
-                    <p:poll interval="30" listener="#{consultasContratacionMB.buscarAvance}" update="pnlGraficos"/>
+                    <p:poll interval="60" listener="#{consultasContratacionMB.buscarAvance}" update="pnlGraficos"/>
                     <div class="card">
                         <h:panelGroup>
                             <p:panelGrid id="pnlGraficos" columns="3" columnClasses="col4,col4,col4" 

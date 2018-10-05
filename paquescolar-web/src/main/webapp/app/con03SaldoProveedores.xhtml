@@ -1,0 +1,85 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+                        <p:menuitem value="Consultar" icon="fa fa-search" disabled="false" onclick="onClick('btnModificar');"/>
+                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+
+                    <h3>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h3>
+
+                    <p:panelGrid id="panel"  columns="2" columnClasses="col2_label,col10" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <p:outputLabel value="Rubro de adquisición: " />
+                        <p:selectOneMenu id="idRubroInteres" value="#{consultasContratacionMB.idRubro}" required="true" requiredMessage="El rubro es requerido">
+                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="0" />  
+                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Departamento: " />
+                        <p:selectOneMenu id="cboDepartamento" value="#{consultasContratacionMB.codigoDepartamento}"  required="true" requiredMessage="El departamento es requerido">
+                            <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
+                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.nombreDepartamento}"/>
+                        </p:selectOneMenu>
+
+                        <p:commandButton action="#{consultasContratacionMB.consultaSaldo}" value="Buscar" ajax="true" id="ingresar"
+                                         update="tblDetalleAdj"/>
+                    </p:panelGrid>
+                </div>
+
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-dollar verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Saldo Actuales"/>
+                    </h1>
+
+                    <p:dataTable  id="tblDetalleAdj" var="saldo" value="#{consultasContratacionMB.lstSaldos}" >  
+                        <p:column headerText="NIT" >  
+                            <h:outputText value="#{saldo.numeroNit}" />  
+                        </p:column>
+                        <p:column headerText="Empresa" >  
+                            <h:outputText value="#{saldo.razonSocial}" />  
+                        </p:column>  
+
+                        <p:column headerText="Capacidad Calificada" width="70">  
+                            <h:outputText value="#{saldo.capacidadCalificada}" />  
+                        </p:column>  
+
+                        <p:column headerText="Capacidad Adjudicada" width="70">  
+                            <h:outputText value="#{saldo.capacidadAdjudicada}" />  
+                        </p:column>  
+
+                        <p:column headerText="Saldo" width="70">  
+                            <h:outputText value="#{saldo.saldoCapacidad}" />  
+                        </p:column>  
+
+                        <p:column headerText="Departamento">  
+                            <h:outputText value="#{consultasContratacionMB.nombreDepartamento(saldo.codigoDepartamento)}" /> 
+                        </p:column> 
+                    </p:dataTable>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

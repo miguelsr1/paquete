@@ -446,8 +446,8 @@ public class ConamypeEJB {
             Logger.getLogger(ProveedorEJB.class.getName()).log(Level.INFO, "No se encontro la empresa con numero de nit: {0}", numeroNit);
         } else {
             CapaInstPorRubro capa = (CapaInstPorRubro) q.getResultList().get(0);
-            capa.setCapacidadAcreditada(BigInteger.ZERO);
-            capa.setCapacidadAdjudicada(capacidad);
+            capa.setCapacidadAcreditada(capacidad);
+            capa.setCapacidadAdjudicada(BigInteger.ZERO);
             em.merge(capa);
         }
     }

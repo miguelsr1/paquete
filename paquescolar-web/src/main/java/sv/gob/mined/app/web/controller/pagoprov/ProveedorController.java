@@ -1388,8 +1388,7 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
         if (event.getObject() != null) {
             if (event.getObject() instanceof Empresa) {
                 empresa = (Empresa) event.getObject();
-                cargarDetalleCalificacion(true);
-                /**
+                cargarDetalleCalificacion(true);                /**
                  * Fecha: 05/09/2018 Comentario: Validación para la capacidad
                  * instalada del proveedor seleccionado
                  */

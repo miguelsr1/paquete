@@ -324,7 +324,7 @@ public class ProveedorEJB {
         if (q.getResultList().isEmpty()) {
             return null;
         } else {
-            return (T) q.getSingleResult();
+            return (T) q.getResultList().get(0);
         }
     }
 
@@ -687,7 +687,7 @@ public class ProveedorEJB {
     public List<DetalleAdjudicacionEmpDto> resumenAdjProveedor(String nit, Integer idProceso) {
         //List<DetalleAdjudicacionEmpDto> lstResumen = new ArrayList();
 
-        Query q = em.createQuery(StringUtils.QUERY_PROVEEDOR_RESUMEN_ADJ_EMP, DetalleAdjudicacionEmpDto.class);
+        Query q = em.createNativeQuery(StringUtils.QUERY_PROVEEDOR_RESUMEN_ADJ_EMP, DetalleAdjudicacionEmpDto.class);
         q.setParameter(1, nit);
         q.setParameter(2, idProceso);
         return q.getResultList();
@@ -709,7 +709,7 @@ public class ProveedorEJB {
         /*List<DetalleAdjudicacionEmpDto> salida = new ArrayList(0);
         String query = "SELECT * FROM vw_detalle_adjudicacion_emp WHERE NUMERO_NIT=?1 AND ID_DET_PROCESO_ADQ=?2";*/
 
-        Query q = em.createQuery(StringUtils.QUERY_PROVEEDOR_DETALLE_ADJ_EMP, DetalleAdjudicacionEmpDto.class);
+        Query q = em.createNativeQuery(StringUtils.QUERY_PROVEEDOR_DETALLE_ADJ_EMP, DetalleAdjudicacionEmpDto.class);
         q.setParameter(1, nit);
         q.setParameter(2, idProceso);
         return q.getResultList();

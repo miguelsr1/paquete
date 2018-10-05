@@ -236,7 +236,7 @@ public class OfertaBienesServiciosEJB {
             ResultSet rs = stmt.executeQuery(query);
 
             LinkedHashMap<String, Integer> mapaItems = new LinkedHashMap<>();
-            LinkedHashMap<String, Integer> mapaItemsIndex = new LinkedHashMap<>();
+            LinkedHashMap<String, String> mapaItemsIndex = new LinkedHashMap<>();
             LinkedHashMap<String, Integer> mapaRazonSocial = new LinkedHashMap<>();
             LinkedHashMap<String, Integer> mapaCantidades = new LinkedHashMap<>();
 
@@ -245,7 +245,7 @@ public class OfertaBienesServiciosEJB {
             while (rs.next()) {
                 if (!mapaItems.containsKey(rs.getString("descripcion_item"))) {
                     mapaItems.put(rs.getString("descripcion_item"), itemIndex);
-                    mapaItemsIndex.put(rs.getString("descripcion_item"), rs.getInt("no_item"));
+                    mapaItemsIndex.put(rs.getString("descripcion_item"), rs.getString("no_item"));
                     mapaCantidades.put(rs.getString("descripcion_item"), rs.getInt("num_alumno"));
                     itemIndex++;
                 }

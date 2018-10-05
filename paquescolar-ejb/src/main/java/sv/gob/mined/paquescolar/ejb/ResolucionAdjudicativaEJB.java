@@ -696,7 +696,7 @@ public class ResolucionAdjudicativaEJB {
     }
 
     public List<RptDocumentos> getDocumentosAImprimir(Integer idDetProcesoAdq, List<Integer> lstNumDoc) {
-        Query q = em.createQuery("SELECT r FROM RptDocumentos r WHERE r.idDetProcesoAdq.idDetProcesoAdq=:idDet and r.idTipoRpt.idTipoRpt in :lst ORDER BY r.idRpt", RptDocumentos.class);
+        Query q = em.createQuery("SELECT r FROM RptDocumentos r WHERE r.idDetProcesoAdq.idDetProcesoAdq=:idDet and r.idTipoRpt.idTipoRpt in :lst ORDER BY r.orden", RptDocumentos.class);
         q.setParameter("idDet", idDetProcesoAdq);
         q.setParameter("lst", lstNumDoc);
 
