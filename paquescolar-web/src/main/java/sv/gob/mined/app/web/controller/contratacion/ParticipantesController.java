@@ -349,7 +349,9 @@ public class ParticipantesController implements Serializable {
         if (tmplista != null) {
             for (DetalleOfertas detalle : tmplista) {
                 if (detalle.getEstadoEliminacion().compareTo(BigInteger.ZERO) == 0) {
-                    total = total.add(new BigDecimal(detalle.getCantidad()).multiply(detalle.getPrecioUnitario()));
+                    if (detalle.getCantidad() != null && detalle.getPrecioUnitario() != null) {
+                        total = total.add(new BigDecimal(detalle.getCantidad()).multiply(detalle.getPrecioUnitario()));
+                    }
                 }
             }
         }
@@ -542,7 +544,7 @@ public class ParticipantesController implements Serializable {
     }
 
     public void onCellEdit(CellEditEvent event) {
-        if (event.getRowIndex() > ((List<DetalleOfertas>) ((DataTable) event.getSource()).getValue()).size()) {
+        if (event.getRowIndex() < ((List<DetalleOfertas>) ((DataTable) event.getSource()).getValue()).size()) {
             DetalleOfertas det = ((List<DetalleOfertas>) ((DataTable) event.getSource()).getValue()).get(event.getRowIndex());
             edicionCellItem(det, event, false);
         }

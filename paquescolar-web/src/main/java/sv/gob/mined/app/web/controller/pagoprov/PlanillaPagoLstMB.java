@@ -82,6 +82,7 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
 
     @PostConstruct
     public void ini() {
+        codigoDepartamento = super.getDepartamento();
         if (JsfUtil.isExisteParametroUrl("javax.faces.source")) {
             switch (JsfUtil.getParametroUrl("javax.faces.source")) {
                 case "mtmNuevo":

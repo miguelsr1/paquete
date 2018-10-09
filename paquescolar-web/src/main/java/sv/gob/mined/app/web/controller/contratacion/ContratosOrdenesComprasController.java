@@ -7,6 +7,7 @@ package sv.gob.mined.app.web.controller.contratacion;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
 import net.sf.jasperreports.engine.JasperPrint;
 import sv.gob.mined.app.web.controller.AnhoProcesoController;
+import sv.gob.mined.app.web.util.Bean2Excel;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProceso;
 import sv.gob.mined.app.web.util.Reportes;
@@ -115,7 +117,7 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
 
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro);
-        
+
         if (VarSession.getIdMunicipioSession() != null) {
             idMunicipio = VarSession.getIdMunicipioSession();
         }
@@ -280,9 +282,9 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                 if (idMunicipio != null) {
                     current.setCiudadFirma(VarSession.getNombreMunicipioSession());
                     current.setAnhoContrato(resolucionAdj.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho());
-                    
+
                     setPlazoPrevistoEntrega();
-                    
+
                     if (representanteCe != null) {
                         current.setMiembroFirma(representanteCe.getNombreMiembro());
                         noEditableRepCe = false;
@@ -291,10 +293,10 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
             } else { //CARGAR CONTRATO EXISTENTE
                 current = contratoOrd;
                 /**
-                 * Fecha: 05/09/2018
-                 * Comentario: Validar que el contrato seleccionado tenga asignado el plazo previsto de entrega
+                 * Fecha: 05/09/2018 Comentario: Validar que el contrato
+                 * seleccionado tenga asignado el plazo previsto de entrega
                  */
-                if(current.getPlazoPrevistoEntrega() == null){
+                if (current.getPlazoPrevistoEntrega() == null) {
                     setPlazoPrevistoEntrega();
                     resolucionAdjudicativaEJB.editContrato(current);
                 }
@@ -570,7 +572,7 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                                 } else {
                                     JsfUtil.mensajeAlerta("Esta reserva de fondo se encuentra en estado de " + resolucionAdj.getIdEstadoReserva().getDescripcionReserva());
                                     current = contratoOrd;
-                                    continuar = false;
+                                    continuar = true;
                                     deshabilitado = true;
                                 }
                             }
@@ -721,7 +723,7 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
         List<RptDocumentos> lstRptDocumentos;
         Boolean isPersonaNat;
 
-        if (getSelected() != null) {
+        if (getSelected() != null && getSelected().getIdContrato() != null) {
             if (lstSelectDocumentosImp.isEmpty()) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un documento para poder ser impreso.");
             } else {
@@ -734,10 +736,28 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                 if (lstRptDocumentos.isEmpty()) {
                     JsfUtil.mensajeAlerta("No se han definidos los documentos a imprimir para este proceso.");
                 } else {
-                    isPersonaNat = (current.getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdPersoneria().getIdPersoneria().intValue() == 1);
-                    Reportes.generarReporte(imprimir(lstRptDocumentos, isPersonaNat), "documentos_" + codigoEntidad);
+                    try {
+                        isPersonaNat = (current.getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdPersoneria().getIdPersoneria().intValue() == 1);
+                        Reportes.generarReporte(imprimir(lstRptDocumentos, isPersonaNat), "documentos_" + codigoEntidad);
+                    } catch (Exception ex) {
+                        System.out.println("idresolucion: " + current.getIdResolucionAdj().getIdResolucionAdj());
+                    }
                 }
             }
+        } else {
+            JsfUtil.mensajeAlerta("Primero debe de guardar el contrato antes de imprimirlo");
+        }
+    }
+
+    public void imprimirAnalisisEconomico() {
+        OfertaBienesServicios ofe = getSelected().getIdResolucionAdj().getIdParticipante().getIdOferta();
+        if (ofe == null) {
+            JsfUtil.mensajeAlerta("Primero debe de guardar la oferta!!!");
+        } else {
+            SimpleDateFormat sd = new SimpleDateFormat("dd/MM/yyyy");
+            List lst = ofertaBienesServiciosEJB.getDatosRptAnalisisEconomico(ofe.getCodigoEntidad().getCodigoEntidad(), ofe.getIdDetProcesoAdq());
+            Bean2Excel oReport = new Bean2Excel(lst, detalleProceso.getIdRubroAdq().getDescripcionRubro(), entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(), "", sd.format(ofe.getFechaApertura()), getSelected().getUsuarioInsercion());
+            oReport.createFile(ofe.getCodigoEntidad().getCodigoEntidad());
         }
     }
 

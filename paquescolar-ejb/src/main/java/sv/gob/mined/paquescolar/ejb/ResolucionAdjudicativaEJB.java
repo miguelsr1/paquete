@@ -160,10 +160,16 @@ public class ResolucionAdjudicativaEJB {
             BigInteger estadoAnterior = res.getIdEstadoReserva().getIdEstadoReserva().toBigInteger();
 
             //no devuelve nada cuando no hay registros
-            Query query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idAnho=:idAnho and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
-            query.setParameter("idEmpresa", res.getIdParticipante().getIdEmpresa());
-            query.setParameter("idAnho", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho());
-
+            Query query;
+            if (res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho().equals("2018")) {
+                query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idAnho=:idAnho and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
+                query.setParameter("idEmpresa", res.getIdParticipante().getIdEmpresa());
+                query.setParameter("idAnho", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho());
+            } else {
+                query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idDetProcesoAdq=:idDetProcesoAdq and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
+                query.setParameter("idEmpresa", res.getIdParticipante().getIdEmpresa());
+                query.setParameter("idDetProcesoAdq", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq());
+            }
             List<CapaInstPorRubro> lst = query.getResultList();
 
             if (!lst.isEmpty()) {

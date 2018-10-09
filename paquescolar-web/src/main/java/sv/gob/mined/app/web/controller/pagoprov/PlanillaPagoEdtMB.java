@@ -135,6 +135,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
             planillaPago = new PlanillaPago();
             planillaPago.setIdTipoPlanilla(Short.parseShort(JsfUtil.getParametroUrl("idTipoPlanilla")));
             planillaPago.setIdRequerimiento(utilEJB.find(RequerimientoFondos.class, new BigDecimal(JsfUtil.getParametroUrl("idReq"))));
+            planillaPago.setIdEstadoPlanilla((short) 1);
 
             switch (planillaPago.getIdTipoPlanilla()) {
                 case 1:

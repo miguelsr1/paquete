@@ -75,7 +75,9 @@
                                      rowKey="#{detalle.idDetalleOfe}" widgetVar="tblDetalleOferta" rowIndexVar="rowId"
                                      rowStyleClass="#{detalle.estadoEliminacion eq 1 ? 'filaEliminada' : null}">
 
-                            <p:ajax event="cellEdit" listener="#{participantesController.onCellEdit}" onsuccess="updDetalleOferta();"/>
+                            <p:ajax id="event" event="cellEdit" listener="#{participantesController.onCellEdit}" onsuccess="updDetalleOferta();"/>
+                            
+                            <p:blockUI block="dvDetalle" trigger="event" />
 
                             <p:column headerText="Id" width="45" style="text-align: center;">
                                 <p:outputLabel value="#{detalle.idDetalleOfe}" />
@@ -136,14 +138,12 @@
                             </p:column>
 
                             <p:column headerText="Borrar" width="30" style="text-align: center;">
-                                <p:commandLink id="lnk"  action="#{participantesController.eliminarDetalle(false)}" update="tblDetalleOferta" disabled="#{participantesController.modifDesac}">
+                                <p:commandLink action="#{participantesController.eliminarDetalle(false)}" update="tblDetalleOferta" disabled="#{participantesController.modifDesac}">
                                     <p:outputLabel rendered="#{!detalle.eliminar}"> <i class="fa fa-check-circle"></i></p:outputLabel>
                                     <p:outputLabel rendered="#{detalle.eliminar}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
                                     <f:setPropertyActionListener value="#{detalle}" target="#{participantesController.detalleSeleccionado}"/>  
                                     <f:setPropertyActionListener value="#{rowId}" target="#{participantesController.rowEdit}"/>  
                                 </p:commandLink>
-                                
-                                <p:blockUI block="tblDetalleOferta" trigger="lnk" />
                             </p:column>
 
                             <p:summaryRow>
