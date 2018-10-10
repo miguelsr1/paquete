@@ -30,6 +30,7 @@ import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.pojos.Bean;
 import sv.gob.mined.paquescolar.model.pojos.ReportPOIBean;
 import sv.gob.mined.paquescolar.model.view.VwCotizacion;
+import sv.gob.mined.paquescolar.util.StringUtils;
 
 /**
  *
@@ -96,143 +97,27 @@ public class OfertaBienesServiciosEJB {
                 case 1:
                 case 4:
                 case 5:
-                    Integer idDetEstadisticas;
-
-                    if (idDetProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 5) {
-                        Query q = em.createQuery("SELECT d FROM DetalleProcesoAdq d WHERE d.idRubroAdq.idRubroInteres=:idRubro and d.idProcesoAdq.idProcesoAdq=:idProcesoAdq", DetalleProcesoAdq.class);
-                        q.setParameter("idRubro", 4);
-                        q.setParameter("idProcesoAdq", idDetProceso.getIdProcesoAdq().getIdProcesoAdq());
-                        idDetEstadisticas = ((DetalleProcesoAdq) q.getSingleResult()).getIdDetProcesoAdq();
-                    } else {
-                        idDetEstadisticas = idDetProceso.getIdDetProcesoAdq();
+                    String idProcesos = "";
+                    for (DetalleProcesoAdq detalleProcesoAdq : idDetProceso.getIdProcesoAdq().getDetalleProcesoAdqList()) {
+                        if(detalleProcesoAdq.getIdRubroAdq().getIdRubroUniforme().intValue() == 1)
+                        if (idProcesos.isEmpty()) {
+                            idProcesos = detalleProcesoAdq.getIdDetProcesoAdq() + "";
+                        } else {
+                            idProcesos += "," + detalleProcesoAdq.getIdDetProcesoAdq();
+                        }
                     }
 
-                    query = "SELECT precios_ref_rubro_emp.no_item ,\n"
-                            + "      catalogo_producto.nombre_producto || ' para ' || nivel_educativo.DESCRIPCION_NIVEL descripcion_item, \n"
-                            + "                      case catalogo_producto.id_producto \n"
-                            + "                        when 30 then \n"
-                            + "                            case nivel_educativo.ID_NIVEL_EDUCATIVO\n"
-                            + "                            when 6 then VW_DETALLE_COTIZACION_UNIFORME.FEMENIMO\n"
-                            + "                            else VW_DETALLE_COTIZACION_UNIFORME.FEMENIMO\n"
-                            + "                            end\n"
-                            + "                        when 44 then \n"
-                            + "                            case nivel_educativo.ID_NIVEL_EDUCATIVO\n"
-                            + "                            when 6 then VW_DETALLE_COTIZACION_UNIFORME.FEMENIMO\n"
-                            + "                            else VW_DETALLE_COTIZACION_UNIFORME.FEMENIMO\n"
-                            + "                            end\n"
-                            + "                        when 32 then \n"
-                            + "                            case nivel_educativo.ID_NIVEL_EDUCATIVO\n"
-                            + "                            when 6 then VW_DETALLE_COTIZACION_UNIFORME.FEMENIMO\n"
-                            + "                            else VW_DETALLE_COTIZACION_UNIFORME.FEMENIMO\n"
-                            + "                            end\n"
-                            + "                        when 29 then \n"
-                            + "                            case nivel_educativo.ID_NIVEL_EDUCATIVO\n"
-                            + "                            when 6 then VW_DETALLE_COTIZACION_UNIFORME.MASCULINO\n"
-                            + "                            else VW_DETALLE_COTIZACION_UNIFORME.MASCULINO\n"
-                            + "                            end\n"
-                            + "                        when 34 then \n"
-                            + "                            case nivel_educativo.ID_NIVEL_EDUCATIVO\n"
-                            + "                            when 6 then VW_DETALLE_COTIZACION_UNIFORME.MASCULINO\n"
-                            + "                            else VW_DETALLE_COTIZACION_UNIFORME.MASCULINO\n"
-                            + "                            end\n"
-                            + "                        when 31 then \n"
-                            + "                            case nivel_educativo.ID_NIVEL_EDUCATIVO\n"
-                            + "                            when 6 then VW_DETALLE_COTIZACION_UNIFORME.MASCULINO\n"
-                            + "                            else VW_DETALLE_COTIZACION_UNIFORME.MASCULINO\n"
-                            + "                            end\n"
-                            + "                      end num_alumno,\n"
-                            + "                      precios_ref_rubro_emp.precio_referencia, \n"
-                            + "                      precios_ref_rubro_emp.precio_referencia*(VW_DETALLE_COTIZACION_UNIFORME.MASCULINO + VW_DETALLE_COTIZACION_UNIFORME.FEMENIMO) sub_total, \n"
-                            + "                      nivel_educativo.ID_NIVEL_EDUCATIVO, \n"
-                            + "                      VW_DETALLE_COTIZACION_UNIFORME.CODIGO_ENTIDAD, \n"
-                            + "                      precios_ref_rubro_emp.ID_DET_PROCESO_ADQ, \n"
-                            + "                      precios_ref_rubro_emp.id_empresa, \n"
-                            + "                      empresa.razon_social \n"
-                            + "FROM precios_ref_rubro_emp \n"
-                            + "  INNER JOIN VW_DETALLE_COTIZACION_UNIFORME ON precios_ref_rubro_emp.ID_NIVEL_EDUCATIVO = VW_DETALLE_COTIZACION_UNIFORME.ID_NIVEL_EDUCATIVO \n"
-                            + "  INNER JOIN catalogo_producto ON catalogo_producto.ID_PRODUCTO = precios_ref_rubro_emp.ID_PRODUCTO \n"
-                            + "  INNER JOIN nivel_educativo ON precios_ref_rubro_emp.ID_NIVEL_EDUCATIVO = nivel_educativo.ID_NIVEL_EDUCATIVO \n"
-                            + "  inner join empresa on precios_ref_rubro_emp.id_empresa = empresa.id_empresa \n"
-                            + "  inner join participantes on participantes.id_empresa = empresa.id_empresa \n"
-                            + "  inner join oferta_bienes_servicios on participantes.id_oferta = oferta_bienes_servicios.id_oferta \n"
-                            + "    and VW_DETALLE_COTIZACION_UNIFORME.codigo_entidad = oferta_bienes_servicios.codigo_entidad \n"
-                            + "WHERE VW_DETALLE_COTIZACION_UNIFORME.ID_DET_PROCESO_ADQ = " + idDetEstadisticas + " and  \n"
-                            + "  precios_ref_rubro_emp.estado_eliminacion = 0 and \n"
-                            + "  oferta_bienes_servicios.ID_DET_PROCESO_ADQ = " + idDetProceso.getIdDetProcesoAdq() + " and \n"
-                            + "  oferta_bienes_servicios.codigo_entidad in (" + codigoEntidad + ") and \n"
-                            + "  oferta_bienes_servicios.estado_eliminacion = 0 and "
-                            + "  participantes.estado_eliminacion = 0  and "
-                            + idDetEstadisticas + "  = precios_ref_rubro_emp.ID_DET_PROCESO_ADQ \n"
-                            + "order by to_number(precios_ref_rubro_emp.no_item), precios_ref_rubro_emp.id_empresa";
+                    query = String.format(StringUtils.QUERY_CONTRATACION_ANALISIS_ECONOMICO_UNIFORME, idProcesos, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
                     break;
                 case 2:
-
-                    query = "SELECT precios_ref_rubro_emp.no_item,"
-                            + "  catalogo_producto.nombre_producto || ' para ' || nivel_educativo.DESCRIPCION_NIVEL descripcion_item, "
-                            + "  estadistica_censo.MASCULINO + estadistica_censo.FEMENIMO num_alumno, "
-                            + "  precios_ref_rubro_emp.precio_referencia, "
-                            + "  precios_ref_rubro_emp.precio_referencia*(estadistica_censo.MASCULINO + estadistica_censo.FEMENIMO) sub_total, "
-                            + "  nivel_educativo.ID_NIVEL_EDUCATIVO, "
-                            + "  estadistica_censo.CODIGO_ENTIDAD, "
-                            + "  precios_ref_rubro_emp.ID_DET_PROCESO_ADQ, "
-                            + "  precios_ref_rubro_emp.id_empresa, "
-                            + "  empresa.razon_social "
-                            + "FROM precios_ref_rubro_emp "
-                            + "  INNER JOIN estadistica_censo ON precios_ref_rubro_emp.ID_NIVEL_EDUCATIVO = estadistica_censo.ID_NIVEL_EDUCATIVO "
-                            + "  INNER JOIN catalogo_producto ON catalogo_producto.ID_PRODUCTO = precios_ref_rubro_emp.ID_PRODUCTO "
-                            + "  INNER JOIN nivel_educativo ON precios_ref_rubro_emp.ID_NIVEL_EDUCATIVO = nivel_educativo.ID_NIVEL_EDUCATIVO "
-                            + "  inner join empresa on precios_ref_rubro_emp.id_empresa = empresa.id_empresa "
-                            + "  inner join participantes on participantes.id_empresa = empresa.id_empresa "
-                            + "  inner join oferta_bienes_servicios on participantes.id_oferta = oferta_bienes_servicios.id_oferta "
-                            + "    and estadistica_censo.codigo_entidad = oferta_bienes_servicios.codigo_entidad "
-                            + "  inner join detalle_proceso_adq on detalle_proceso_adq.ID_PROCESO_ADQ = estadistica_censo.ID_PROCESO_ADQ\n"
-                            + "    and oferta_bienes_servicios.id_det_proceso_adq = detalle_proceso_adq.id_det_proceso_adq\n"
-                            + "WHERE "
-                            + "  precios_ref_rubro_emp.estado_eliminacion = 0 and \n"
-                            + "  oferta_bienes_servicios.ID_DET_PROCESO_ADQ = " + idDetProceso.getIdDetProcesoAdq() + " and "
-                            + "  oferta_bienes_servicios.codigo_entidad in (" + codigoEntidad + ") and "
-                            + "  oferta_bienes_servicios.estado_eliminacion = 0 and"
-                            + "  participantes.estado_eliminacion = 0  and "
-                            + "  oferta_bienes_servicios.ID_DET_PROCESO_ADQ = precios_ref_rubro_emp.ID_DET_PROCESO_ADQ "
-                            + "order by  to_number(precios_ref_rubro_emp.no_item), precios_ref_rubro_emp.id_empresa";
+                    query = String.format(StringUtils.QUERY_CONTRATACION_ANALISIS_ECONOMICO_UTILES, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
                     break;
                 case 3:
-                    query = "SELECT \n"
-                            + "  precios_ref_rubro_emp.no_item,\n"
-                            + "  catalogo_producto.nombre_producto || ' para ' || nivel_educativo.DESCRIPCION_NIVEL descripcion_item,   \n"
-                            + "  CASE catalogo_producto.id_producto\n"
-                            + "    when 43 then estadistica_censo.MASCULINO\n"
-                            + "    when 21 then estadistica_censo.FEMENIMO \n"
-                            + "    end num_alumno,\n"
-                            + "  precios_ref_rubro_emp.precio_referencia,   \n"
-                            + "  precios_ref_rubro_emp.precio_referencia*(estadistica_censo.MASCULINO + estadistica_censo.FEMENIMO) sub_total,   \n"
-                            + "  nivel_educativo.ID_NIVEL_EDUCATIVO,   \n"
-                            + "  estadistica_censo.CODIGO_ENTIDAD,   \n"
-                            + "  precios_ref_rubro_emp.ID_DET_PROCESO_ADQ,   \n"
-                            + "  precios_ref_rubro_emp.id_empresa,   \n"
-                            + "  empresa.razon_social \n"
-                            + "FROM precios_ref_rubro_emp   \n"
-                            + "  INNER JOIN estadistica_censo ON precios_ref_rubro_emp.ID_NIVEL_EDUCATIVO = estadistica_censo.ID_NIVEL_EDUCATIVO   \n"
-                            + "  INNER JOIN catalogo_producto ON catalogo_producto.ID_PRODUCTO = precios_ref_rubro_emp.ID_PRODUCTO   \n"
-                            + "  INNER JOIN nivel_educativo ON precios_ref_rubro_emp.ID_NIVEL_EDUCATIVO = nivel_educativo.ID_NIVEL_EDUCATIVO   \n"
-                            + "  inner join empresa on precios_ref_rubro_emp.id_empresa = empresa.id_empresa   \n"
-                            + "  inner join participantes on participantes.id_empresa = empresa.id_empresa   \n"
-                            + "  inner join oferta_bienes_servicios on participantes.id_oferta = oferta_bienes_servicios.id_oferta    \n"
-                            + "    and estadistica_censo.codigo_entidad = oferta_bienes_servicios.codigo_entidad \n"
-                            + "  inner join detalle_proceso_adq on detalle_proceso_adq.ID_PROCESO_ADQ = estadistica_censo.ID_PROCESO_ADQ\n"
-                            + "    and oferta_bienes_servicios.id_det_proceso_adq = detalle_proceso_adq.id_det_proceso_adq\n"
-                            + "WHERE "
-                            + "  precios_ref_rubro_emp.estado_eliminacion = 0 and \n"
-                            + "  oferta_bienes_servicios.ID_DET_PROCESO_ADQ = " + idDetProceso.getIdDetProcesoAdq() + " and \n"
-                            + "  oferta_bienes_servicios.codigo_entidad in (" + codigoEntidad + ") \n"
-                            + "  and oferta_bienes_servicios.estado_eliminacion = 0 and"
-                            + "  participantes.estado_eliminacion = 0  and"
-                            + "  oferta_bienes_servicios.ID_DET_PROCESO_ADQ = precios_ref_rubro_emp.ID_DET_PROCESO_ADQ  \n"
-                            + "order by to_number(precios_ref_rubro_emp.no_item), \n"
-                            + "precios_ref_rubro_emp.id_empresa";
+                    query = String.format(StringUtils.QUERY_CONTRATACION_ANALISIS_ECONOMICO_ZAPATOS, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
                     break;
             }
             Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
             ResultSet rs = stmt.executeQuery(query);
 
             LinkedHashMap<String, Integer> mapaItems = new LinkedHashMap<>();
@@ -262,7 +147,7 @@ public class OfertaBienesServiciosEJB {
                 Bean bean = new Bean();
                 bean.setCantidadOfertada(rs.getInt("num_alumno"));
                 bean.setPrecioUnitario(rs.getDouble("precio_referencia"));
-                bean.setCantidadAdjudicada("");
+                bean.setCantidadAdjudicada(rs.getInt("adjudicada"));
                 datos[x][y] = bean;
             }
             listadoAExportar.add(mapaItems);

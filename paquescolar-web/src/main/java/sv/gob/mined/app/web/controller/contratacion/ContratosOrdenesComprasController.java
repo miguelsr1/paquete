@@ -749,7 +749,7 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
         }
     }
 
-    public void imprimirAnalisisEconomico() {
+    public void imprimirAnalisisEconomico() throws Exception {
         OfertaBienesServicios ofe = getSelected().getIdResolucionAdj().getIdParticipante().getIdOferta();
         if (ofe == null) {
             JsfUtil.mensajeAlerta("Primero debe de guardar la oferta!!!");

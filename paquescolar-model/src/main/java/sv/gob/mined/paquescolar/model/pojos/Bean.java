@@ -12,7 +12,7 @@ public class Bean {
 
     private Integer cantidadOfertada;
     private Double precioUnitario;
-    private String cantidadAdjudicada;
+    private Integer cantidadAdjudicada;
 
     public Integer getCantidadOfertada() {
         return cantidadOfertada;
@@ -30,11 +30,11 @@ public class Bean {
         this.precioUnitario = precioUnitario;
     }
 
-    public String getCantidadAdjudicada() {
+    public Integer getCantidadAdjudicada() {
         return cantidadAdjudicada;
     }
 
-    public void setCantidadAdjudicada(String cantidadAdjudicada) {
+    public void setCantidadAdjudicada(Integer cantidadAdjudicada) {
         this.cantidadAdjudicada = cantidadAdjudicada;
     }
 }

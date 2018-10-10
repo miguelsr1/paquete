@@ -303,7 +303,7 @@ public class JsfUtil {
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         return params.containsKey(nombreParamentro);
     }
-    
+
     public static String getParametroUrl(String nombreParamentro) {
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         return params.get(nombreParamentro);

@@ -521,7 +521,7 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
         }
     }
 
-    public void imprimir() {
+    public void imprimir() throws Exception {
         if (tipoDocumentoImp.equals("1")) {
             imprimirAnalisisEconomico();
         } else if (tipoDocumentoImp.equals("2")) {
@@ -529,7 +529,7 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
         }
     }
 
-    public void imprimirAnalisisEconomico() {
+    public void imprimirAnalisisEconomico() throws Exception {
         if (getSelected().getIdOferta() == null) {
             JsfUtil.mensajeAlerta("Primero debe de guardar la oferta!!!");
         } else {

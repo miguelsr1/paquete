@@ -5,14 +5,23 @@
 package sv.gob.mined.app.web.util;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
@@ -27,10 +36,15 @@ import org.apache.poi.hssf.util.HSSFCellUtil;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
+import org.w3c.dom.Document;
 import sv.gob.mined.paquescolar.model.pojos.Bean;
+
+import javax.xml.transform.Transformer;
+import org.xhtmlrenderer.pdf.ITextRenderer;
+
+import org.apache.poi.hssf.converter.ExcelToHtmlConverter;
 
 /**
  *
@@ -71,7 +85,7 @@ public class Bean2Excel {
         listado = listadoProv;
     }
 
-    public void createFile(String codigoEntidad) {
+    public void createFile(String codigoEntidad) throws ParserConfigurationException, Exception {
         HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
         try {
             ReportColumn[] reportColumns = new ReportColumn[]{
@@ -93,20 +107,72 @@ public class Bean2Excel {
             };
 
             this.addSheet(listado, reportColumns, reportColumns1, reportColumns2, "economico");
+
+            File test = new File("text.pdf");
+
             ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
             FacesContext fc = FacesContext.getCurrentInstance();
             workbook.write(outByteStream);
+
+            /*ExcelToHtmlConverter toHtml = ExcelToHtmlConverter.create(workbook, out);
+            toHtml.setCompleteHTML(true);
+            toHtml.printPage();*/
             byte[] outArray = outByteStream.toByteArray();
-            response.setContentType("application/vnd.ms-excel");
+
+            File file = new File("temp.pdf");
+
+            FileUtils.writeByteArrayToFile(file, outArray);
+
+            Document doc = ExcelToHtmlConverter.process(file);
+
+            writePdf(doc);
+
+            response.setContentType("application/pdf");
+            response.setContentLength(outArray.length);
+            response.setHeader("Content-disposition", "attachment; filename=analisis_" + codigoEntidad + ".pdf");
+            OutputStream outStream = response.getOutputStream();
+            
+            
+            //FileOutputStream out = new FileOutputStream("./test-xls.pdf");
+            ITextRenderer renderer = new ITextRenderer();
+            renderer.layout();
+            renderer.setDocument(doc, null);
+            renderer.createPDF(outStream);
+            outStream.write(outArray);
+            outStream.flush();
+            fc.responseComplete();
+
+
+            /*response.setContentType("application/vnd.ms-excel");
             response.setContentLength(outArray.length);
             response.setHeader("Content-disposition", "attachment; filename=analisis_" + codigoEntidad + ".xls");
             OutputStream outStream = response.getOutputStream();
             outStream.write(outArray);
             outStream.flush();
-            fc.responseComplete();
+            fc.responseComplete();*/
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void debugHtml(Document doc) throws Exception {
+        DOMSource source = new DOMSource(doc);
+        FileWriter writer = new FileWriter(new File("./test-xls.html"));
+        StreamResult result = new StreamResult(writer);
+
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.transform(source, result);
+    }
+
+    public static void writePdf(Document doc) throws Exception {
+        FileOutputStream out = new FileOutputStream("./test-xls.pdf");
+        ITextRenderer renderer = new ITextRenderer();
+        renderer.setDocument(doc, null);
+        renderer.layout();
+        renderer.createPDF(out);
+        out.flush();
+        out.close();
     }
 
     public void addSheet(List<?> listado, ReportColumn[] columns, ReportColumn[] columns1, ReportColumn[] columns2, String sheetName) {
@@ -353,15 +419,14 @@ public class Bean2Excel {
             sheet.setAutobreaks(false);
             sheet.setRowBreak(sheet.getLastRowNum());
             sheet.setColumnBreak(20);
-            generateTechnicalAnalisisSheet("ANALISIS_TECNICO", proveedoresAMostrar, rubro,
-                    "PRESENTACIÓN DEL DOCUMENTO DE LA DECLARACION JURADA GLOBAL DE CUMPLIMIENTO DEL TÉRMINO DE REFERENCIA PLAZO Y LUGAR DE ENTREGA.");
+            generateTechnicalAnalisisSheet("ANALISIS_TECNICO", proveedoresAMostrar, rubro);
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
 
     }
 
-    private void generateTechnicalAnalisisSheet(String pSheetName, String[] pProvAMostrar, String descripcionRubro, String medicion) {
+    private void generateTechnicalAnalisisSheet(String pSheetName, String[] pProvAMostrar, String descripcionRubro) {
         HSSFSheet sheet = workbook.createSheet(pSheetName);
         int currentRow = 0;
         HSSFRow row;
@@ -502,9 +567,13 @@ public class Bean2Excel {
             cell1.setCellValue(descripcionRubro);
             cell1 = row.createCell(1);
             cell1.setCellStyle(myNormalStyle);
-            cell1.setCellValue(medicion);
+            cell1.setCellValue("PRESENTACIÓN DEL DOCUMENTO DE LA DECLARACION JURADA GLOBAL DE CUMPLIMIENTO DEL TÉRMINO DE REFERENCIA PLAZO Y LUGAR DE ENTREGA.");
 
             for (int i = 2; i < (pProvAMostrar.length * 2) + 2; i++) {
+                if (i % 2 == 0) {
+                } else {
+                    cell1.setCellValue("X");
+                }
                 cell1 = row.createCell(i);
                 cell1.setCellStyle(myNormalStyle);
             }
@@ -524,8 +593,7 @@ public class Bean2Excel {
             currentRow++;
             row = sheet.createRow(currentRow);
             cell = row.createCell(0);
-            cell.setCellValue(
-                    "Representante Legal (Presidente del Organismo de Administración Escolar (a)");
+            cell.setCellValue("Representante Legal (Presidente del Organismo de Administración Escolar (a)");
             currentRow++;
             row = sheet.createRow(currentRow);
             cell = row.createCell(0);
