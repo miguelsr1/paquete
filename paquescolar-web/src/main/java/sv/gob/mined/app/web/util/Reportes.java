@@ -14,7 +14,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -81,16 +80,8 @@ public class Reportes {
      * @throws IOException
      */
     private static void responseRptPdf(JasperPrint jp, String nombrePdfGenerado) throws JRException, IOException {
-        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
         byte[] content = JasperExportManager.exportReportToPdf(jp);
-        response.setHeader("Content-disposition", "attachment;filename=" + nombrePdfGenerado + ".pdf");
-        response.setContentType("application/pdf");
-        response.setContentLength(content == null ? 0 : content.length);
-        response.getOutputStream().write(content, 0, content.length);
-        response.getOutputStream().flush();
-        response.getOutputStream().close();
-        FacesContext.getCurrentInstance().responseComplete();
-
+        UtilFile.downloadFileBytes(content, nombrePdfGenerado, UtilFile.CONTENIDO_PDF, UtilFile.EXTENSION_PDF);
     }
 
     /**
@@ -147,7 +138,6 @@ public class Reportes {
      */
     public static void generarReporte(List<JasperPrint> jasperPrintList, String nombreRpt) {
         try {
-            HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             JRPdfExporter exporter = new JRPdfExporter();
 
@@ -156,14 +146,7 @@ public class Reportes {
             exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
             exporter.exportReport();
 
-            response.setContentType("application/pdf");
-            response.setHeader("Content-disposition", "attachment;filename=" + nombreRpt + ".pdf");
-            response.setContentLength(baos == null ? 0 : baos.toByteArray().length);
-            response.getOutputStream().write(baos.toByteArray());
-
-            response.getOutputStream().flush();
-            response.getOutputStream().close();
-            FacesContext.getCurrentInstance().responseComplete();
+            UtilFile.downloadFileBytes(baos.toByteArray(), nombreRpt, UtilFile.CONTENIDO_PDF, UtilFile.EXTENSION_PDF);
         } catch (IOException | JRException ex) {
             Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, null, ex);
         }

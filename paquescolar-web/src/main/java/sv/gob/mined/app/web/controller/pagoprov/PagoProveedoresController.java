@@ -6,6 +6,7 @@
 package sv.gob.mined.app.web.controller.pagoprov;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -41,6 +42,7 @@ import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProceso;
 import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.RptExcel;
+import sv.gob.mined.app.web.util.UtilFile;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.CreditosEJB;
@@ -1348,7 +1350,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         seleccionPlanilla = !valor;
 
         idTipoPlanilla = 0;
-        
+
         planilla = false;
         filtro = true;
         showPnlCheques = false;
@@ -1357,7 +1359,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         showChequeEntProv = false;
         dlgDetallePlanilla = false;
         contratoModificado = false;
-        
+
         requerimientoFondos = new RequerimientoFondos();
         planillaPago = new PlanillaPago();
         chequeFinanProve = new PlanillaPagoCheque();
@@ -1365,9 +1367,9 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         chequeRenta = new PlanillaPagoCheque();
         detPlanilla = new DetallePlanilla();
         entidadFinanciera = new EntidadFinanciera();
-        
+
         proveedor = new DatosProveDto();
-        
+
         idRubro = BigDecimal.ZERO;
         idReq = BigDecimal.ZERO;
         lstRequerimientoFondos.clear();
@@ -1742,7 +1744,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
                     VarSession.getVariableSessionUsuario(), credito == 1 ? "NO" : "SI",
                     getTotalRequerimiento(), idNivel, idDetProceso);
         } catch (Exception ex) {
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, 
+            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING,
                     "ERROR CONTROLADO: Se genero el requerimiento de fondos");
             JsfUtil.mensajeInsert();
         }
@@ -2259,28 +2261,31 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
             }
 
             if (esCorrecto) {
-                switch (idTipoPlanilla) {
-                    case 1: //un solo proveedor
-                        sb.append(empresa.getNumeroCuenta()).append(",").
-                                append(empresa.getRazonSocial()).append(",").
-                                append(" ").append(",").
-                                append(chequeFinanProve.getMontoCheque()).append(",").
-                                append("1").append(",").
-                                append("Abono por pago de contrato de paquete escolar");
-                        break;
-                    case 3: //entidad financiera
-                        sb.append(entidadFinanciera.getNumeroCuenta()).append(";").
-                                append(entidadFinanciera.getNombreEntFinan()).append(";").
-                                append(" ").append(";").
-                                append(chequeFinanProve.getMontoCheque()).append(";").
-                                append("1").append(";").
-                                append("Abono por pago de contrato(s) de paquete(s) escolar(es) asociado(s) a un crédito otorgado");
-                        break;
+                try {
+                    switch (idTipoPlanilla) {
+                        case 1: //un solo proveedor
+                            sb.append(empresa.getNumeroCuenta()).append(",").
+                                    append(empresa.getRazonSocial()).append(",").
+                                    append(" ").append(",").
+                                    append(chequeFinanProve.getMontoCheque()).append(",").
+                                    append("1").append(",").
+                                    append("Abono por pago de contrato de paquete escolar");
+                            break;
+                        case 3: //entidad financiera
+                            sb.append(entidadFinanciera.getNumeroCuenta()).append(";").
+                                    append(entidadFinanciera.getNombreEntFinan()).append(";").
+                                    append(" ").append(";").
+                                    append(chequeFinanProve.getMontoCheque()).append(";").
+                                    append("1").append(";").
+                                    append("Abono por pago de contrato(s) de paquete(s) escolar(es) asociado(s) a un crédito otorgado");
+                            break;
+                    }
+                    notificacion();
+                    UtilFile.downloadFileTextoPlano(sb.toString(), "transferencia-" + planillaPago.getIdPlanilla(), UtilFile.EXTENSION_CSV);
+                    Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Archivo: Genera: {0}\n======================================\n{1}", new Object[]{VarSession.getVariableSessionUsuario(), sb.toString()});
+                } catch (IOException ex) {
+                    Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                notificacion();
-                JsfUtil.downloadFile(sb.toString(), "transferencia-" + planillaPago.getIdPlanilla(), "csv");
-                Logger.getLogger(PagoProveedoresController.class
-                        .getName()).log(Level.INFO, "Archivo: Genera: {0}\n======================================\n{1}", new Object[]{VarSession.getVariableSessionUsuario(), sb.toString()});
             }
         }
     }
@@ -2289,9 +2294,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         if (!numeroNit.isEmpty()) {
             empresa = proveedorEJB.findEmpresaByNit(numeroNit);
             lstProveedores = pagoProveedoresEJB.getLstDatosProveDto(anho, numeroNit, null);
-        } else/* if (!numeroRequerimiento.isEmpty()) {
-            lstProve = pagoProveedoresEJB.getLstDatosProveDtoByRequerimiento(anho, numeroRequerimiento, null);
-        } else*/ {
+        } else {
             JsfUtil.mensajeInformacion("Debe de ingresar un NIT o un requerimiento de fondos");
         }
         if (lstProveedores.isEmpty()) {
@@ -2358,20 +2361,15 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
                     sb.append(anho);
                     sb.append("\r\n");
                 }
-                JsfUtil.downloadFile(sb.toString(), "f910", "txt");
-                Logger.getLogger(PagoProveedoresController.class
-                        .getName()).log(Level.INFO, "Generacion de archivo F910 ver. WEB");
-                Logger.getLogger(PagoProveedoresController.class
-                        .getName()).log(Level.INFO, "Departamento: {0}", codigoDepartamento);
-                Logger.getLogger(PagoProveedoresController.class
-                        .getName()).log(Level.INFO, "Monto Total Sujeto Retencion: {0}", montoRetencionTotal);
-                Logger.getLogger(PagoProveedoresController.class
-                        .getName()).log(Level.INFO, "Monto Total Renta: {0}", montoRentaTotal);
+                UtilFile.downloadFileTextoPlano(sb.toString(), "f910", UtilFile.EXTENSION_TXT);
+                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Generacion de archivo F910 ver. WEB");
+                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Departamento: {0}", codigoDepartamento);
+                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Monto Total Sujeto Retencion: {0}", montoRetencionTotal);
+                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Monto Total Renta: {0}", montoRentaTotal);
 
             }
-        } catch (NumberFormatException e) {
-            Logger.getLogger(PagoProveedoresController.class
-                    .getName()).log(Level.WARNING, "Error en generacion de archivo F910 ver. WEB departamento {0}", codigoDepartamento);
+        } catch (NumberFormatException | IOException e) {
+            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, "Error en generacion de archivo F910 ver. WEB departamento {0}", codigoDepartamento);
         }
     }
 
@@ -2434,103 +2432,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         }
     }
 
-    /*public void rptPagoProveedores(Object document) {
-        if (lstEmailProveeCredito.isEmpty()) {
-            JsfUtil.mensajeInformacion("No hay datos para exportar");
-        } else {
-            HSSFWorkbook wb = (HSSFWorkbook) document;
-            HSSFSheet sheet = wb.getSheetAt(0);
-            sheet.getPrintSetup().setLandscape(true);
-            sheet.getPrintSetup().setPaperSize(HSSFPrintSetup.LETTER_PAPERSIZE);
-            sheet.setMargin(HSSFSheet.BottomMargin, 0.75);
-            sheet.setMargin(HSSFSheet.TopMargin, 0.75);
-            sheet.setMargin(HSSFSheet.LeftMargin, 0.75);
-            sheet.setMargin(HSSFSheet.RightMargin, 0.75);
-            
-            
-            sheet.shiftRows(0, 6, 6);
-
-            HSSFFont font = wb.createFont();
-            font.setFontName(HSSFFont.FONT_ARIAL);
-            font.setBold(true);
-            font.setFontHeight((short) (11 * 20));
-
-            HSSFFont fontDetalle = wb.createFont();
-            fontDetalle.setFontName(HSSFFont.FONT_ARIAL);
-            fontDetalle.setFontHeight((short) (8 * 20));
-
-            HSSFCellStyle styleDetalle = wb.createCellStyle();
-            styleDetalle.setWrapText(true);
-            styleDetalle.setFont(fontDetalle);
-            styleDetalle.setBorderBottom(BorderStyle.THIN);
-            styleDetalle.setBorderLeft(BorderStyle.THIN);
-            styleDetalle.setBorderRight(BorderStyle.THIN);
-            styleDetalle.setBorderTop(BorderStyle.THIN);
-            styleDetalle.setFont(fontDetalle);
-
-            HSSFCell celdaHead;
-
-            for (int j = 0; j <= sheet.getLastRowNum(); j++) {
-                HSSFRow row = sheet.getRow(j);
-                switch (j) {
-                    case 0:
-                    case 4:
-                        break;
-                    case 1:
-                        HSSFCellStyle styleLeft = wb.createCellStyle();
-                        styleLeft.setAlignment(HorizontalAlignment.LEFT);
-                        styleLeft.setFont(font);
-                        sheet.addMergedRegion(new CellRangeAddress(j, j, 0, 1));
-                        celdaHead = row.createCell(0);
-                        styleLeft.setWrapText(true);
-                        celdaHead.setCellStyle(styleLeft);
-                        celdaHead.setCellValue("DIRECCIÓN DEPARTAMENTAL DE ");
-                        break;
-                    case 2:
-                    case 3:
-                        HSSFCellStyle styleCenter = wb.createCellStyle();
-                        styleCenter.setAlignment(HorizontalAlignment.CENTER);
-                        styleCenter.setFont(font);
-
-                        sheet.addMergedRegion(new CellRangeAddress(j, j, 0, 7));
-                        celdaHead = row.createCell(0);
-                        styleCenter.setWrapText(true);
-                        celdaHead.setCellStyle(styleCenter);
-                        if (j == 2) {
-                            celdaHead.setCellValue("REPORTE DE PAGO A PROVEEDORES 20" + anho);
-                        } else {
-                            celdaHead.setCellValue("POR CENTRO EDUCATIVO");
-                        }
-                        break;
-                    default:
-                        for (int i = 0; i < row.getPhysicalNumberOfCells(); i++) {
-                            String valor = row.getCell(i).getRichStringCellValue().getString();
-                            HSSFCell celdaDetalle = row.createCell(i);
-                            celdaDetalle.setCellStyle(styleDetalle);
-
-                            //if (j == 6) {
-                                //celdaDetalle.setCellType(CellType.STRING);
-                                celdaDetalle.setCellValue(valor);
-                            //} else {
-                            //    if (i == 7) {
-                            //        if (!valor.isEmpty()) {
-                            //            celdaDetalle.setCellType(CellType.NUMERIC);
-                            //            celdaDetalle.setCellValue(new Double(valor.replace("$ ", "").replace(",", "")));
-                            //        }
-                            //    } else {
-                            //       celdaDetalle.setCellType(CellType.STRING);
-                            //        celdaDetalle.setCellValue(valor);
-                            //    }
-                            //}
-                        }
-                        break;
-                }
-            }
-            
-            sheet.setColumnWidth(0, 120);
-        }
-    }*/
     public String getFormatoFechaReporte() {
-        return JsfUtil.getFechaGeneracionReporte();
+        return UtilFile.getFechaGeneracionReporte();
     }
 }

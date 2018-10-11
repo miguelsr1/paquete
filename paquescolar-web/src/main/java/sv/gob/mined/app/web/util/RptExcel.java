@@ -8,15 +8,12 @@ package sv.gob.mined.app.web.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -26,9 +23,12 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -56,10 +56,10 @@ public class RptExcel {
             FORMATO_DATA = wb1.createDataFormat();
             style = wb1.createCellStyle();
             style.setWrapText(true);
-            style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-            style.setBorderTop(HSSFCellStyle.BORDER_THIN);
-            style.setBorderRight(HSSFCellStyle.BORDER_THIN);
-            style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+            style.setBorderBottom(BorderStyle.THIN);
+            style.setBorderTop(BorderStyle.THIN);
+            style.setBorderRight(BorderStyle.THIN);
+            style.setBorderLeft(BorderStyle.THIN);
 
             HSSFSheet s1 = wb1.getSheetAt(0);   //sheet by index
 
@@ -120,13 +120,15 @@ public class RptExcel {
     }
 
     private static void generarArchivo(Workbook wb, String nombreFile) {
-        FacesContext fc = FacesContext.getCurrentInstance();
-        OutputStream outStream;
+        //FacesContext fc = FacesContext.getCurrentInstance();
+        //OutputStream outStream;
         try (ByteArrayOutputStream outByteStream = new ByteArrayOutputStream()) {
-            HttpServletResponse response = (HttpServletResponse) fc.getExternalContext().getResponse();
+            //HttpServletResponse response = (HttpServletResponse) fc.getExternalContext().getResponse();
             wb.write(outByteStream);
             byte[] outArray = outByteStream.toByteArray();
-            response.setContentType("application / ms - excel");
+            UtilFile.downloadFileBytes(outArray, nombreFile, UtilFile.CONTENIDO_XLS, UtilFile.EXTENSION_XLS);
+            
+            /*response.setContentType("application /ms-excel");
             response.setContentLength(outArray.length);
             response.setHeader("Expires:", "0"); // eliminates browser caching
             response.setHeader("Content-Disposition", "attachment;filename =" + nombreFile + "-" + JsfUtil.getFechaGeneracionReporte() + ".xls");
@@ -135,11 +137,11 @@ public class RptExcel {
             outStream.flush();
             outStream.close();
             outByteStream.flush();
-            outByteStream.close();
+            outByteStream.close();*/
         } catch (IOException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
         }
-        fc.responseComplete();
+       // fc.responseComplete();
     }
 
     public static void generarRptRentaMensual(List<DatosProveDto> lst, String anho) {
@@ -150,10 +152,10 @@ public class RptExcel {
             FORMATO_DATA = wb1.createDataFormat();
             style = wb1.createCellStyle();
             style.setWrapText(true);
-            style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-            style.setBorderTop(HSSFCellStyle.BORDER_THIN);
-            style.setBorderRight(HSSFCellStyle.BORDER_THIN);
-            style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+            style.setBorderBottom(BorderStyle.THIN);
+            style.setBorderTop(BorderStyle.THIN);
+            style.setBorderRight(BorderStyle.THIN);
+            style.setBorderLeft(BorderStyle.THIN);
 
             HSSFSheet s1 = wb1.getSheetAt(0);   //sheet by index
 
@@ -181,15 +183,14 @@ public class RptExcel {
             HSSFSheet hoja = wb1.getSheetAt(0);
 
             HSSFFont font = (HSSFFont) wb1.createFont();
-            font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-            font.setColor(HSSFColor.BLACK.index);
+            font.setBold(true);
             font.setFontName(HSSFFont.FONT_ARIAL);
 
             HSSFCellStyle style = (HSSFCellStyle) wb1.createCellStyle();
-            style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-            style.setBorderTop(HSSFCellStyle.BORDER_THIN);
-            style.setBorderRight(HSSFCellStyle.BORDER_THIN);
-            style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+            style.setBorderBottom(BorderStyle.THIN);
+            style.setBorderTop(BorderStyle.THIN);
+            style.setBorderRight(BorderStyle.THIN);
+            style.setBorderLeft(BorderStyle.THIN);
             style.setFont(font);
 
             HSSFRow fila = hoja.createRow(0);
@@ -252,28 +253,28 @@ public class RptExcel {
             celda3.setCellStyle(style);
             String rango = "B4:B" + x + "";
             String StrFormula = "SUM(" + rango + ")";
-            celda3.setCellType(HSSFCell.CELL_TYPE_FORMULA);
+            celda3.setCellType(CellType.FORMULA);
             celda3.setCellFormula(StrFormula);
 
             Cell celda4 = fila.createCell(2);
             celda4.setCellStyle(style);
             String rango1 = "C4:C" + x + "";
             String StrFormula1 = "SUM(" + rango1 + ")";
-            celda4.setCellType(HSSFCell.CELL_TYPE_FORMULA);
+            celda4.setCellType(CellType.FORMULA);
             celda4.setCellFormula(StrFormula1);
 
             Cell celda5 = fila.createCell(3);
             celda5.setCellStyle(style);
             String rango2 = "D4:D" + x + "";
             String StrFormula2 = "SUM(" + rango2 + ")";
-            celda5.setCellType(HSSFCell.CELL_TYPE_FORMULA);
+            celda5.setCellType(CellType.FORMULA);
             celda5.setCellFormula(StrFormula2);
 
             Cell celda6 = fila.createCell(4);
             celda6.setCellStyle(style);
             String rango3 = "E4:E" + x + "";
             String StrFormula3 = "SUM(" + rango3 + ")";
-            celda6.setCellType(HSSFCell.CELL_TYPE_FORMULA);
+            celda6.setCellType(CellType.FORMULA);
             celda6.setCellFormula(StrFormula3);
 
             fila = hoja.createRow(x + 1);
@@ -301,25 +302,24 @@ public class RptExcel {
             HSSFSheet hoja = wb1.getSheetAt(0);
 
             HSSFFont font = (HSSFFont) wb1.createFont();
-            font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+            font.setBold(true);
             font.setColor(HSSFColor.BLACK.index);
             font.setFontName(HSSFFont.FONT_ARIAL);
 
             HSSFCellStyle style = (HSSFCellStyle) wb1.createCellStyle();
-            style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-            style.setBorderTop(HSSFCellStyle.BORDER_THIN);
-            style.setBorderRight(HSSFCellStyle.BORDER_THIN);
-            style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+            style.setBorderBottom(BorderStyle.THIN);
+            style.setBorderTop(BorderStyle.THIN);
+            style.setBorderRight(BorderStyle.THIN);
+            style.setBorderLeft(BorderStyle.THIN);
             style.setFont(font);
 
             HSSFCellStyle style2 = (HSSFCellStyle) wb1.createCellStyle();
-            style2.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-            style2.setBorderTop(HSSFCellStyle.BORDER_THIN);
-            style2.setBorderRight(HSSFCellStyle.BORDER_THIN);
-            style2.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+            style2.setBorderBottom(BorderStyle.THIN);
+            style2.setBorderTop(BorderStyle.THIN);
+            style2.setBorderRight(BorderStyle.THIN);
+            style2.setBorderLeft(BorderStyle.THIN);
             style2.setFont(font);
-            short alig = 2;
-            style2.setAlignment(alig);
+            style2.setAlignment(HorizontalAlignment.CENTER);
 
             HSSFRow fila = hoja.createRow(0);
             HSSFCell celda0 = fila.createCell(0);
@@ -413,7 +413,7 @@ public class RptExcel {
             celda5.setCellStyle(style);
             String rango2 = "J4:J" + x + "";
             String StrFormula2 = "SUM(" + rango2 + ")";
-            celda5.setCellType(HSSFCell.CELL_TYPE_FORMULA);
+            celda5.setCellType(CellType.FORMULA);
             celda5.setCellFormula(StrFormula2);
 
             generarArchivo(wb1, "Paquete" + anho + "-ResumenPorRubroYFinanciera");

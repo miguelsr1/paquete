@@ -2,10 +2,6 @@ package sv.gob.mined.app.web.util;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,10 +19,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.application.FacesMessage;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import javax.servlet.http.HttpServletResponse;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 
 public class JsfUtil {
@@ -34,7 +28,6 @@ public class JsfUtil {
     private static FacesMessage msg;
     private static final DecimalFormat FORMAT_DECIMAL = new DecimalFormat("#,##0.00");
     private static final DecimalFormat FORMAT_ENTERO = new DecimalFormat("#,##0");
-    private static final DateFormat FORMAT_DATE_RPT = new SimpleDateFormat("ddMMMyy_HHmmss");
     public static final DateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
 
     public static SelectItem[] getSelectItems(List<?> entities, boolean selectOne) {
@@ -55,13 +48,6 @@ public class JsfUtil {
         return FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(key);
     }
 
-//    public static Object getObjectFromRequestParameter(String requestParameterName, Converter converter, UIComponent component) {
-//        String theId = JsfUtil.getRequestParameter(requestParameterName);
-//        return converter.getAsObject(FacesContext.getCurrentInstance(), component, theId);
-//    }
-//    public static <T extends Object> T findEntityByKey(Class clase, BigDecimal id) {
-//        return (T) utilEJB.find(clase, id);
-//    }
     public static void mensajeUpdate() {
         msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "<big>Información</big>", "<big>Actualización exitosa.</big>");
         FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -259,40 +245,6 @@ public class JsfUtil {
             fmt.format("%-" + posisiones + "s", valor);
         }
         return fmt.toString();
-    }
-
-    public static void downloadFile(String contenido, String nombreFile, String extension) {
-        OutputStream out = null;
-        try {
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            ExternalContext externalContext = facesContext.getExternalContext();
-            HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-            response.reset();
-            response.setContentType("application/octet-stream");
-            response.setHeader("Content-Disposition", "attachment; filename=" + nombreFile + "." + extension);
-            out = response.getOutputStream();
-            Writer writer = new OutputStreamWriter(out, "ISO-8859-15");
-            try {
-                writer.write(contenido);
-            } finally {
-                if (writer != null) {
-                    writer.close();
-                }
-            }
-            facesContext.responseComplete();
-        } catch (IOException ex) {
-            Logger.getLogger(JsfUtil.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                out.close();
-            } catch (IOException ex) {
-                Logger.getLogger(JsfUtil.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    public static String getFechaGeneracionReporte() {
-        return FORMAT_DATE_RPT.format(new Date());
     }
 
     public static String getFechaString(Date date) {

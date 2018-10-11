@@ -6,15 +6,12 @@ package sv.gob.mined.app.web.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.parsers.ParserConfigurationException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
@@ -37,6 +34,8 @@ import sv.gob.mined.paquescolar.model.pojos.Bean;
 /**
  *
  * @author oamartinez
+ * Modificación: 11octubre2018
+ * Comentario: Ordenamiento de código y estandarización de generación de archivo a generar
  */
 public class Bean2Excel {
 
@@ -50,6 +49,7 @@ public class Bean2Excel {
     private String fechaElaboracion = "";
     private String digitador = "";
     private List listado;
+    private String[] proveedoresAMostrar;
 
     public Bean2Excel() {
         workbook = new HSSFWorkbook();
@@ -73,48 +73,40 @@ public class Bean2Excel {
         listado = listadoProv;
     }
 
-    public void createFile(String codigoEntidad) throws ParserConfigurationException, Exception {
-        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+    public void createFile(String codigoEntidad) {
         try {
-            ReportColumn[] reportColumns = new ReportColumn[]{
-                new ReportColumn("numItem", "ITEM", FormatType.TEXT),
-                new ReportColumn("item", "DESCRIPCION DEL ITEM", FormatType.TEXT),
-                new ReportColumn("cantidadRequerida", "CANTIDAD REQUERIDA", FormatType.INTEGER),
-                new ReportColumn("listadoProveedores", "NOMBRES DE LAS PERSONAS PROVEEDORAS", FormatType.OBJECT)
-            };
-
-            ReportColumn[] reportColumns1 = new ReportColumn[]{
-                new ReportColumn("nombreProveedor", "Nombre Proveedor", FormatType.TEXT),
-                new ReportColumn("listadoDatos", "", FormatType.OBJECT)
-            };
-
-            ReportColumn[] reportColumns2 = new ReportColumn[]{
-                new ReportColumn("cantidadOfertada", "Cantidad Ofertada", FormatType.TEXT),
-                new ReportColumn("precioUnitario", "Precio Unitario", FormatType.TEXT),
-                new ReportColumn("cantidadAdjudicada", "Cantidad Adjudicada", FormatType.TEXT)
-            };
-
-            this.addSheet(listado, reportColumns, reportColumns1, reportColumns2, "economico");
-
+            this.addSheetAnalisisEconomico(listado);
+            this.addSheetAnalisisTecnico();
             ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
             FacesContext fc = FacesContext.getCurrentInstance();
             workbook.write(outByteStream);
 
-            byte[] outArray = outByteStream.toByteArray();
-            response.setContentType("application/ms-excel");
-            response.setContentLength(outArray.length);
-            response.setHeader("Content-disposition", "attachment; filename=analisis_" + codigoEntidad + ".xls");
-            OutputStream outStream = response.getOutputStream();
-            outStream.write(outArray);
-            outStream.flush();
-            fc.responseComplete();
+            UtilFile.downloadFileBytes(outByteStream.toByteArray(), "analisis_" + codigoEntidad, UtilFile.CONTENIDO_XLS, UtilFile.EXTENSION_TXT);
         } catch (IOException e) {
             Logger.getLogger(Bean2Excel.class.getName()).log(Level.INFO, null, "Error creación de analisis tecnico y economico");
         }
     }
 
-    public void addSheet(List<?> listado, ReportColumn[] columns, ReportColumn[] columns1, ReportColumn[] columns2, String sheetName) {
-        HSSFSheet sheet = workbook.createSheet(sheetName);
+    private void addSheetAnalisisEconomico(List<?> listado) {
+        ReportColumn[] columns = new ReportColumn[]{
+            new ReportColumn("numItem", "ITEM", FormatType.TEXT),
+            new ReportColumn("item", "DESCRIPCION DEL ITEM", FormatType.TEXT),
+            new ReportColumn("cantidadRequerida", "CANTIDAD REQUERIDA", FormatType.INTEGER),
+            new ReportColumn("listadoProveedores", "NOMBRES DE LAS PERSONAS PROVEEDORAS", FormatType.OBJECT)
+        };
+
+        ReportColumn[] columns1 = new ReportColumn[]{
+            new ReportColumn("nombreProveedor", "Nombre Proveedor", FormatType.TEXT),
+            new ReportColumn("listadoDatos", "", FormatType.OBJECT)
+        };
+
+        ReportColumn[] columns2 = new ReportColumn[]{
+            new ReportColumn("cantidadOfertada", "Cantidad Ofertada", FormatType.TEXT),
+            new ReportColumn("precioUnitario", "Precio Unitario", FormatType.TEXT),
+            new ReportColumn("cantidadAdjudicada", "Cantidad Adjudicada", FormatType.TEXT)
+        };
+
+        HSSFSheet sheet = workbook.createSheet("económico");
         int numCols = columns.length;
         int numCols1 = columns1.length;
         int numCols2 = columns2.length;
@@ -181,7 +173,7 @@ public class Bean2Excel {
         myDataStyle.setBorderRight(BorderStyle.THIN);
         myDataStyle.setBorderLeft(BorderStyle.THIN);
 
-        String[] proveedoresAMostrar = new String[mapaRazonSocial.size()];
+        proveedoresAMostrar = new String[mapaRazonSocial.size()];
         String[] itemsAMostrar = new String[mapaItems.size()];
 
         mapaRazonSocial.keySet().toArray(proveedoresAMostrar);
@@ -354,12 +346,10 @@ public class Bean2Excel {
         sheet.setAutobreaks(false);
         sheet.setRowBreak(sheet.getLastRowNum());
         sheet.setColumnBreak(20);
-        generateTechnicalAnalisisSheet("ANALISIS_TECNICO", proveedoresAMostrar, rubro);
-
     }
 
-    private void generateTechnicalAnalisisSheet(String pSheetName, String[] pProvAMostrar, String descripcionRubro) {
-        HSSFSheet sheet = workbook.createSheet(pSheetName);
+    private void addSheetAnalisisTecnico() {
+        HSSFSheet sheet = workbook.createSheet("técnico");
         int currentRow = 0;
         HSSFRow row;
 
@@ -408,159 +398,147 @@ public class Bean2Excel {
         myDataStyle.setBorderRight(BorderStyle.THIN);
         myDataStyle.setBorderLeft(BorderStyle.THIN);
 
-        try {
-            Map<String, String> proveedores = new LinkedHashMap<>();
-            for (String provee : pProvAMostrar) {
-                if (!proveedores.containsKey(provee)) {
-                    proveedores.put(provee, provee);
-                }
+        Map<String, String> proveedores = new LinkedHashMap<>();
+        for (String provee : proveedoresAMostrar) {
+            if (!proveedores.containsKey(provee)) {
+                proveedores.put(provee, provee);
             }
-            pProvAMostrar = proveedores.keySet().toArray(new String[0]);
-            sheet.getPrintSetup().setLandscape(true);
-            sheet.getPrintSetup().setPaperSize(HSSFPrintSetup.LETTER_PAPERSIZE);
-            sheet.setMargin(HSSFSheet.BottomMargin, 0.75);
-            sheet.setMargin(HSSFSheet.TopMargin, 0.75);
-            sheet.setMargin(HSSFSheet.LeftMargin, 0.75);
-            sheet.setMargin(HSSFSheet.RightMargin, 0.75);
-
-            row = sheet.createRow(0);
-            HSSFCell cell1 = row.createCell(0);
-            cell1.setCellStyle(myBoldTitleStyle);
-            cell1.setCellValue(
-                    "MODELO DE FORMATO PARA ANALISIS TÉCNICO RUBRO " + rubro);
-            currentRow++;
-            row = sheet.createRow(1);
-            cell1 = row.createCell(0);
-            cell1.setCellStyle(myBoldTitleStyle);
-            cell1.setCellValue("NOMBRE DEL CENTRO EDUCATIVO : "
-                    + nombreCentroEducativo + " CODIGO : " + codigoCentroEducativo);
-            currentRow++;
-            row = sheet.createRow(2);
-            cell1 = row.createCell(0);
-            cell1.setCellStyle(myBoldTitleStyle);
-            cell1.setCellValue("FUENTE DE FINANCIAMIENTO : "
-                    + fuenteFinanciamiento + " FECHA DE ELABORACIÓN : " + fechaElaboracion);
-
-            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 1 + (pProvAMostrar.length * 2)));
-            sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 1 + (pProvAMostrar.length * 2)));
-            sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 1 + (pProvAMostrar.length * 2)));
-
-            currentRow++;
-            //Fila para el titulo de los nombres de proveedores
-            row = sheet.createRow(currentRow);
-            cell1 = row.createCell(2);
-            cell1.setCellStyle(myNormalStyle);
-            cell1.setCellValue("NOMBRES DE LOS PROVEEDORES");
-            sheet.addMergedRegion(new CellRangeAddress(currentRow,
-                    currentRow, 2, 1 + (pProvAMostrar.length * 2)));
-
-            currentRow++;
-            //Fila para ingresar en la hoja el nombre de los proveedores
-            row = sheet.createRow(currentRow);
-            int cellIndex = 2;
-            for (String prov : pProvAMostrar) {
-                cell1 = row.createCell(cellIndex);
-                cell1.setCellStyle(myNormalStyle);
-                cell1.setCellValue(prov);
-                sheet.addMergedRegion(new CellRangeAddress(currentRow,
-                        currentRow, cellIndex, cellIndex + 1));
-                cellIndex += 2;
-            }
-            currentRow++;
-            //Fila para ingresar leyendas de cumple y no cumple
-            row = sheet.createRow(currentRow);
-
-            cell1 = row.createCell(0);
-            cell1.setCellStyle(myBoldStyle);
-            cell1.setCellValue("DESCRIPCIÓN DEL RUBRO");
-            cell1 = row.createCell(1);
-            cell1.setCellStyle(myBoldStyle);
-            cell1.setCellValue("MEDICIÓN");
-
-            int cellIndexLabel = 2;
-            for (String prov : pProvAMostrar) {
-                cell1 = row.createCell(cellIndexLabel);
-                cell1.setCellStyle(myNormalStyle);
-                cell1.setCellValue("Cumple");
-
-                cell1 = row.createCell(cellIndexLabel + 1);
-                cell1.setCellStyle(myNormalStyle);
-                cell1.setCellValue("No Cumple");
-                cellIndexLabel += 2;
-            }
-            currentRow++;
-            //Fila para ingreso de usuario
-            row = sheet.createRow(currentRow);
-            cell1 = row.createCell(0);
-            cell1.setCellStyle(myNormalStyle);
-            cell1.setCellValue(descripcionRubro);
-            cell1 = row.createCell(1);
-            cell1.setCellStyle(myNormalStyle);
-            cell1.setCellValue("PRESENTACIÓN DEL DOCUMENTO DE LA DECLARACION JURADA GLOBAL DE CUMPLIMIENTO DEL TÉRMINO DE REFERENCIA PLAZO Y LUGAR DE ENTREGA.");
-
-            for (int i = 2; i < (pProvAMostrar.length * 2) + 2; i++) {
-                if (i % 2 == 0) {
-                } else {
-                    cell1.setCellValue("X");
-                }
-                cell1 = row.createCell(i);
-                cell1.setCellStyle(myNormalStyle);
-            }
-
-            currentRow++;
-            currentRow++;
-            currentRow++;
-            row = sheet.createRow(currentRow);
-            HSSFCell cell = row.createCell(0);
-            cell.setCellValue("RAZONAMIENTO:");
-
-            currentRow++;
-            currentRow++;
-            row = sheet.createRow(currentRow);
-            cell = row.createCell(0);
-            cell.setCellValue("F._____________________________________");
-            currentRow++;
-            row = sheet.createRow(currentRow);
-            cell = row.createCell(0);
-            cell.setCellValue("Representante Legal (Presidente del Organismo de Administración Escolar (a)");
-            currentRow++;
-            row = sheet.createRow(currentRow);
-            cell = row.createCell(0);
-            cell.setCellValue("CDE, CECE o CDI");
-
-            String leyenda = HSSFHeader.font("Arial", "Bold")
-                    + HSSFHeader.fontSize((short) 8) + "ANALISIS TÉCNICO RUBRO : " + rubro
-                    + ", CENTRO EDUCATIVO : " + nombreCentroEducativo + " CODIGO : "
-                    + codigoCentroEducativo;
-            sheet.getHeader().setCenter(leyenda);
-            sheet.getFooter().setLeft(digitador);
-            sheet.getFooter().setRight("Page " + HeaderFooter.page() + " of " + HeaderFooter.numPages());
-
-            sheet.getRow(4).setHeight(new Short("1000"));
-            sheet.getRow(5).setHeight(new Short("500"));
-            sheet.getRow(6).setHeight(new Short("2000"));
-            sheet.setColumnWidth(0, 6000);
-            sheet.setColumnWidth(1, 6000);
-            row = sheet.getRow(5);
-            for (int colNum = 2; colNum < row.getLastCellNum();
-                    colNum++) {
-                sheet.setColumnWidth(colNum, 2500);
-            }
-
-            sheet.setAutobreaks(false);
-            sheet.setRowBreak(sheet.getLastRowNum());
-            sheet.setColumnBreak(7);
-        } catch (NumberFormatException ex) {
-            ex.printStackTrace();
         }
-    }
+        proveedoresAMostrar = proveedores.keySet().toArray(new String[0]);
+        sheet.getPrintSetup().setLandscape(true);
+        sheet.getPrintSetup().setPaperSize(HSSFPrintSetup.LETTER_PAPERSIZE);
+        sheet.setMargin(HSSFSheet.BottomMargin, 0.75);
+        sheet.setMargin(HSSFSheet.TopMargin, 0.75);
+        sheet.setMargin(HSSFSheet.LeftMargin, 0.75);
+        sheet.setMargin(HSSFSheet.RightMargin, 0.75);
 
-    public HSSFFont boldFont() {
-        return boldFont;
-    }
+        row = sheet.createRow(0);
+        HSSFCell cell1 = row.createCell(0);
+        cell1.setCellStyle(myBoldTitleStyle);
+        cell1.setCellValue(
+                "MODELO DE FORMATO PARA ANALISIS TÉCNICO RUBRO " + rubro);
+        currentRow++;
+        row = sheet.createRow(1);
+        cell1 = row.createCell(0);
+        cell1.setCellStyle(myBoldTitleStyle);
+        cell1.setCellValue("NOMBRE DEL CENTRO EDUCATIVO : "
+                + nombreCentroEducativo + " CODIGO : " + codigoCentroEducativo);
+        currentRow++;
+        row = sheet.createRow(2);
+        cell1 = row.createCell(0);
+        cell1.setCellStyle(myBoldTitleStyle);
+        cell1.setCellValue("FUENTE DE FINANCIAMIENTO : "
+                + fuenteFinanciamiento + " FECHA DE ELABORACIÓN : " + fechaElaboracion);
 
-    public void write(OutputStream outputStream) throws Exception {
-        workbook.write(outputStream);
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 1 + (proveedoresAMostrar.length * 2)));
+        sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 1 + (proveedoresAMostrar.length * 2)));
+        sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 1 + (proveedoresAMostrar.length * 2)));
+
+        currentRow++;
+        //Fila para el titulo de los nombres de proveedores
+        row = sheet.createRow(currentRow);
+        cell1 = row.createCell(2);
+        cell1.setCellStyle(myNormalStyle);
+        cell1.setCellValue("NOMBRES DE LOS PROVEEDORES");
+        sheet.addMergedRegion(new CellRangeAddress(currentRow,
+                currentRow, 2, 1 + (proveedoresAMostrar.length * 2)));
+
+        currentRow++;
+        //Fila para ingresar en la hoja el nombre de los proveedores
+        row = sheet.createRow(currentRow);
+        int cellIndex = 2;
+        for (String prov : proveedoresAMostrar) {
+            cell1 = row.createCell(cellIndex);
+            cell1.setCellStyle(myNormalStyle);
+            cell1.setCellValue(prov);
+            sheet.addMergedRegion(new CellRangeAddress(currentRow,
+                    currentRow, cellIndex, cellIndex + 1));
+            cellIndex += 2;
+        }
+        currentRow++;
+        //Fila para ingresar leyendas de cumple y no cumple
+        row = sheet.createRow(currentRow);
+
+        cell1 = row.createCell(0);
+        cell1.setCellStyle(myBoldStyle);
+        cell1.setCellValue("DESCRIPCIÓN DEL RUBRO");
+        cell1 = row.createCell(1);
+        cell1.setCellStyle(myBoldStyle);
+        cell1.setCellValue("MEDICIÓN");
+
+        int cellIndexLabel = 2;
+        for (String prov : proveedoresAMostrar) {
+            cell1 = row.createCell(cellIndexLabel);
+            cell1.setCellStyle(myNormalStyle);
+            cell1.setCellValue("Cumple");
+
+            cell1 = row.createCell(cellIndexLabel + 1);
+            cell1.setCellStyle(myNormalStyle);
+            cell1.setCellValue("No Cumple");
+            cellIndexLabel += 2;
+        }
+        currentRow++;
+        //Fila para ingreso de usuario
+        row = sheet.createRow(currentRow);
+        cell1 = row.createCell(0);
+        cell1.setCellStyle(myNormalStyle);
+        cell1.setCellValue(rubro);
+        cell1 = row.createCell(1);
+        cell1.setCellStyle(myNormalStyle);
+        cell1.setCellValue("PRESENTACIÓN DEL DOCUMENTO DE LA DECLARACION JURADA GLOBAL DE CUMPLIMIENTO DEL TÉRMINO DE REFERENCIA PLAZO Y LUGAR DE ENTREGA.");
+
+        for (int i = 2; i < (proveedoresAMostrar.length * 2) + 2; i++) {
+            if (i % 2 == 0) {
+            } else {
+                cell1.setCellValue("X");
+            }
+            cell1 = row.createCell(i);
+            cell1.setCellStyle(myNormalStyle);
+        }
+
+        currentRow++;
+        currentRow++;
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        HSSFCell cell = row.createCell(0);
+        cell.setCellValue("RAZONAMIENTO:");
+
+        currentRow++;
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue("F._____________________________________");
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue("Representante Legal (Presidente del Organismo de Administración Escolar (a)");
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue("CDE, CECE o CDI");
+
+        String leyenda = HSSFHeader.font("Arial", "Bold")
+                + HSSFHeader.fontSize((short) 8) + "ANALISIS TÉCNICO RUBRO : " + rubro
+                + ", CENTRO EDUCATIVO : " + nombreCentroEducativo + " CODIGO : "
+                + codigoCentroEducativo;
+        sheet.getHeader().setCenter(leyenda);
+        sheet.getFooter().setLeft(digitador);
+        sheet.getFooter().setRight("Page " + HeaderFooter.page() + " of " + HeaderFooter.numPages());
+
+        sheet.getRow(4).setHeight(new Short("1000"));
+        sheet.getRow(5).setHeight(new Short("500"));
+        sheet.getRow(6).setHeight(new Short("2000"));
+        sheet.setColumnWidth(0, 6000);
+        sheet.setColumnWidth(1, 6000);
+        row = sheet.getRow(5);
+        for (int colNum = 2; colNum < row.getLastCellNum();
+                colNum++) {
+            sheet.setColumnWidth(colNum, 2500);
+        }
+
+        sheet.setAutobreaks(false);
+        sheet.setRowBreak(sheet.getLastRowNum());
+        sheet.setColumnBreak(7);
     }
 
     public enum FormatType {

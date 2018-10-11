@@ -50,6 +50,7 @@ import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProceso;
 import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.RptExcel;
+import sv.gob.mined.app.web.util.UtilFile;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.CreditosEJB;
@@ -139,7 +140,7 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
     private List<CatalogoProducto> lstItem = new ArrayList();
     private List<PreciosRefRubroEmp> lstPreciosReferencia = new ArrayList();
     private List<DetalleAdjudicacionEmpDto> lstResumenAdj = new ArrayList();
-    private List<DetalleAdjudicacionEmpDto> lstDetalleAdj = new ArrayList<DetalleAdjudicacionEmpDto>();
+    private List<DetalleAdjudicacionEmpDto> lstDetalleAdj = new ArrayList();
     private DualListModel<MunicipioDto> lstMunicipiosInteres = new DualListModel();
     @EJB
     private ProveedorEJB proveedorEJB;
@@ -710,7 +711,7 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
         }
 
         departamentoCalif.setCodigoDepartamento(utilEJB.find(Departamento.class, codigoDepartamentoCalificado));
-        
+
         if (proveedorEJB.guardar(departamentoCalif, capacidadInst)) {
             JsfUtil.mensajeUpdate();
         }
@@ -1350,18 +1351,12 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
             String muni = VarSession.getNombreMunicipioSession();
 
             if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
-                jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class
-                        .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurCumplimientoPerNat.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
-                jasperPrintList
-                        .add(JasperFillManager.fillReport(ProveedorController.class
-                                .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerNat2.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
+                jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurCumplimientoPerNat.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
+                jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerNat2.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
 
             } else {
-                jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class
-                        .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurCumplimientoPerJur.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
-                jasperPrintList
-                        .add(JasperFillManager.fillReport(ProveedorController.class
-                                .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerJur2.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
+                jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurCumplimientoPerJur.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
+                jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerJur2.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
             }
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -1371,14 +1366,7 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
             exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
             exporter.exportReport();
 
-            response.setContentType("application/pdf");
-            response.setHeader("Content-disposition", "attachment;filename=oferta_global_" + getEmpresa().getNumeroNit() + ".pdf");
-            response.setContentLength(baos == null ? 0 : baos.toByteArray().length);
-            response.getOutputStream().write(baos.toByteArray());
-
-            response.getOutputStream().flush();
-            FacesContext.getCurrentInstance().responseComplete();
-
+            UtilFile.downloadFileBytes(baos.toByteArray(), "oferta_global_" + getEmpresa().getNumeroNit(), UtilFile.CONTENIDO_PDF, UtilFile.EXTENSION_PDF);
         } catch (IOException | JRException ex) {
             Logger.getLogger(ProveedorController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1388,7 +1376,8 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
         if (event.getObject() != null) {
             if (event.getObject() instanceof Empresa) {
                 empresa = (Empresa) event.getObject();
-                cargarDetalleCalificacion(true);                /**
+                cargarDetalleCalificacion(true);
+                /**
                  * Fecha: 05/09/2018 Comentario: Validación para la capacidad
                  * instalada del proveedor seleccionado
                  */

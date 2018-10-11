@@ -6,6 +6,7 @@
 package sv.gob.mined.app.web.controller.pagoprov;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -30,6 +31,7 @@ import org.primefaces.event.SelectEvent;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProceso;
 import sv.gob.mined.app.web.util.Reportes;
+import sv.gob.mined.app.web.util.UtilFile;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.EMailEJB;
@@ -616,28 +618,32 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
             }
 
             if (esCorrecto) {
-                switch (idTipoPlanilla) {
-                    case 1: //un solo proveedor
-                        sb.append(empresa.getNumeroCuenta()).append(",").
-                                append(empresa.getRazonSocial()).append(",").
-                                append(" ").append(",").
-                                append(chequeFinanProve.getMontoCheque()).append(",").
-                                append("1").append(",").
-                                append("Abono por pago de contrato de paquete escolar");
-                        break;
-                    case 3: //entidad financiera
-                        sb.append(entidadFinanciera.getNumeroCuenta()).append(";").
-                                append(entidadFinanciera.getNombreEntFinan()).append(";").
-                                append(" ").append(";").
-                                append(chequeFinanProve.getMontoCheque()).append(";").
-                                append("1").append(";").
-                                append("Abono por pago de contrato(s) de paquete(s) escolar(es) asociado(s) a un crédito otorgado");
-                        break;
+                try {
+                    switch (idTipoPlanilla) {
+                        case 1: //un solo proveedor
+                            sb.append(empresa.getNumeroCuenta()).append(",").
+                                    append(empresa.getRazonSocial()).append(",").
+                                    append(" ").append(",").
+                                    append(chequeFinanProve.getMontoCheque()).append(",").
+                                    append("1").append(",").
+                                    append("Abono por pago de contrato de paquete escolar");
+                            break;
+                        case 3: //entidad financiera
+                            sb.append(entidadFinanciera.getNumeroCuenta()).append(";").
+                                    append(entidadFinanciera.getNombreEntFinan()).append(";").
+                                    append(" ").append(";").
+                                    append(chequeFinanProve.getMontoCheque()).append(";").
+                                    append("1").append(";").
+                                    append("Abono por pago de contrato(s) de paquete(s) escolar(es) asociado(s) a un crédito otorgado");
+                            break;
+                    }
+                    notificacion();
+                    UtilFile.downloadFileTextoPlano(sb.toString(), "transferencia-" + planillaPago.getIdPlanilla(), "csv");
+                    Logger.getLogger(PagoProveedoresController.class
+                            .getName()).log(Level.INFO, "Archivo: Genera: {0}\n======================================\n{1}", new Object[]{VarSession.getVariableSessionUsuario(), sb.toString()});
+                } catch (IOException ex) {
+                    Logger.getLogger(PlanillaPagoEdtMB.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                notificacion();
-                JsfUtil.downloadFile(sb.toString(), "transferencia-" + planillaPago.getIdPlanilla(), "csv");
-                Logger.getLogger(PagoProveedoresController.class
-                        .getName()).log(Level.INFO, "Archivo: Genera: {0}\n======================================\n{1}", new Object[]{VarSession.getVariableSessionUsuario(), sb.toString()});
             }
         }
     }

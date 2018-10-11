@@ -8,13 +8,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,27 +31,26 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.primefaces.model.chart.Axis;
-import org.primefaces.model.chart.AxisType;
-import org.primefaces.model.chart.BarChartModel;
-import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.PieChartModel;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProceso;
 import sv.gob.mined.app.web.util.RptExcel;
+import sv.gob.mined.app.web.util.UtilFile;
 import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.RecepcionEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
-import sv.gob.mined.paquescolar.model.pojos.AvanceFeriaDTO;
 import sv.gob.mined.paquescolar.model.pojos.DetalleContratacionDto;
 import sv.gob.mined.paquescolar.model.pojos.GraficoTipoEmpresaDTO;
 import sv.gob.mined.paquescolar.model.pojos.ReporteGeneralDTO;
@@ -360,10 +357,10 @@ public class GraficoController extends RecuperarProceso implements Serializable 
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             style = wb1.createCellStyle();
             style.setWrapText(true);
-            style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-            style.setBorderTop(HSSFCellStyle.BORDER_THIN);
-            style.setBorderRight(HSSFCellStyle.BORDER_THIN);
-            style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+            style.setBorderBottom(BorderStyle.THIN);
+            style.setBorderTop(BorderStyle.THIN);
+            style.setBorderRight(BorderStyle.THIN);
+            style.setBorderLeft(BorderStyle.THIN);
         }
         s1 = wb1.getSheetAt(0);   //sheet by index
         Integer B = 1;
@@ -399,22 +396,15 @@ public class GraficoController extends RecuperarProceso implements Serializable 
         }
     }
 
-    private void generarArchivo(Workbook wb, String tipo) throws IOException {
+    private void generarArchivo(Workbook wb, String nombreRpt) throws IOException {
         String patron = "dd-MM-yyyy";
         SimpleDateFormat formato = new SimpleDateFormat(patron);
         ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
         FacesContext fc = FacesContext.getCurrentInstance();
         HttpServletResponse response = (HttpServletResponse) fc.getExternalContext().getResponse();
         wb.write(outByteStream);
-        byte[] outArray = outByteStream.toByteArray();
-        response.setContentType("application / ms - excel");
-        response.setContentLength(outArray.length);
-        response.setHeader("Expires:", "0"); // eliminates browser caching
-        response.setHeader("Content-Disposition", "attachment;filename =" + tipo + formato.format(new Date()) + ".xls");
-        OutputStream outStream = response.getOutputStream();
-        outStream.write(outArray);
-        outStream.flush();
-        fc.responseComplete();
+
+        UtilFile.downloadFileBytes(outByteStream.toByteArray(), nombreRpt, UtilFile.CONTENIDO_XLS, UtilFile.EXTENSION_XLS);
     }
 
     public void postProcessXLS(Object document) {
@@ -423,7 +413,7 @@ public class GraficoController extends RecuperarProceso implements Serializable 
 
         HSSFCellStyle cellStyle = wb.createCellStyle();
         cellStyle.setFillForegroundColor(HSSFColor.GREEN.index);
-        cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         for (int j = 1; j <= sheet.getLastRowNum(); j++) {
             HSSFRow header2 = sheet.getRow(j);
@@ -434,14 +424,14 @@ public class GraficoController extends RecuperarProceso implements Serializable 
                         if (cell.getStringCellValue() != null && !cell.getStringCellValue().isEmpty()) {
                             String valor = cell.getStringCellValue();
                             cell.setCellValue(Integer.parseInt(valor));
-                            cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+                            cell.setCellType(CellType.NUMERIC);
                         }
                         break;
                     case 6:
                         if (cell.getStringCellValue() != null && !cell.getStringCellValue().isEmpty()) {
                             String valor = cell.getStringCellValue();
                             cell.setCellValue(Double.parseDouble(valor));
-                            cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+                            cell.setCellType(CellType.NUMERIC);
                         }
                         break;
                 }
@@ -456,10 +446,10 @@ public class GraficoController extends RecuperarProceso implements Serializable 
             FORMATO_DATA = wb1.createDataFormat();
             style = wb1.createCellStyle();
             style.setWrapText(true);
-            style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-            style.setBorderTop(HSSFCellStyle.BORDER_THIN);
-            style.setBorderRight(HSSFCellStyle.BORDER_THIN);
-            style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+            style.setBorderBottom(BorderStyle.THIN);
+            style.setBorderTop(BorderStyle.THIN);
+            style.setBorderRight(BorderStyle.THIN);
+            style.setBorderLeft(BorderStyle.THIN);
 
             s1 = wb1.getSheetAt(0);   //sheet by index
             Integer B = 1;
@@ -500,7 +490,7 @@ public class GraficoController extends RecuperarProceso implements Serializable 
             hrow.createCell(col);
             cell = hrow.getCell(col);
         }
-        cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+        cell.setCellType(CellType.NUMERIC);
         style.setDataFormat(entero ? FORMATO_DATA.getFormat("#,##0") : FORMATO_DATA.getFormat("#,##0.00"));
         cell.setCellStyle(style);
         cell.setCellValue(entero ? Integer.parseInt(text) : Double.parseDouble(text));
@@ -512,10 +502,10 @@ public class GraficoController extends RecuperarProceso implements Serializable 
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             style = wb1.createCellStyle();
             style.setWrapText(true);
-            style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-            style.setBorderTop(HSSFCellStyle.BORDER_THIN);
-            style.setBorderRight(HSSFCellStyle.BORDER_THIN);
-            style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+            style.setBorderBottom(BorderStyle.THIN);
+            style.setBorderTop(BorderStyle.THIN);
+            style.setBorderRight(BorderStyle.THIN);
+            style.setBorderLeft(BorderStyle.THIN);
         }
         s1 = wb1.getSheetAt(0);   //sheet by index
         Integer C = 2;
@@ -662,11 +652,7 @@ public class GraficoController extends RecuperarProceso implements Serializable 
 
     public void generarReportesDepartamentoExcel() {
         if (super.getProcesoAdquisicion().getIdProcesoAdq() != null) {
-            List<ReportePorDepartamentoDto> lista
-                    = recepcionEJB.
-                            getLstReporteGeneralDepartamento(super.getProcesoAdquisicion().getDetalleProcesoAdqList().get(0).getIdDetProcesoAdq(),
-                                    super.getProcesoAdquisicion().getDetalleProcesoAdqList().get(1).getIdDetProcesoAdq(),
-                                    super.getProcesoAdquisicion().getDetalleProcesoAdqList().get(2).getIdDetProcesoAdq());
+            List<ReportePorDepartamentoDto> lista = recepcionEJB.getLstReporteGeneralDepartamento(super.getProcesoAdquisicion().getDetalleProcesoAdqList().get(0).getIdDetProcesoAdq(), super.getProcesoAdquisicion().getDetalleProcesoAdqList().get(1).getIdDetProcesoAdq(), super.getProcesoAdquisicion().getDetalleProcesoAdqList().get(2).getIdDetProcesoAdq());
             dowloadDepartamentoFile(lista);
         }
     }
@@ -687,10 +673,10 @@ public class GraficoController extends RecuperarProceso implements Serializable 
                 wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
                 style = wb1.createCellStyle();
                 style.setWrapText(true);
-                style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-                style.setBorderTop(HSSFCellStyle.BORDER_THIN);
-                style.setBorderRight(HSSFCellStyle.BORDER_THIN);
-                style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+                style.setBorderBottom(BorderStyle.THIN);
+                style.setBorderTop(BorderStyle.THIN);
+                style.setBorderRight(BorderStyle.THIN);
+                style.setBorderLeft(BorderStyle.THIN);
                 HSSFFont txtFont = (HSSFFont) wb1.createFont();
                 txtFont.setFontName("Arial");
                 txtFont.setFontHeightInPoints((short) 10.0);
@@ -750,7 +736,7 @@ public class GraficoController extends RecuperarProceso implements Serializable 
             cell = hrow.getCell(col);
         }
         cell.setCellValue(entero ? Integer.parseInt(text) : Double.parseDouble(text));
-        cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+        cell.setCellType(CellType.NUMERIC);
         cell.setCellStyle(style);
     }
 
