@@ -5,23 +5,16 @@
 package sv.gob.mined.app.web.util;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
@@ -32,19 +25,14 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
-import org.apache.poi.hssf.util.HSSFCellUtil;
 import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellUtil;
-import org.w3c.dom.Document;
 import sv.gob.mined.paquescolar.model.pojos.Bean;
-
-import javax.xml.transform.Transformer;
-import org.xhtmlrenderer.pdf.ITextRenderer;
-
-import org.apache.poi.hssf.converter.ExcelToHtmlConverter;
 
 /**
  *
@@ -66,14 +54,14 @@ public class Bean2Excel {
     public Bean2Excel() {
         workbook = new HSSFWorkbook();
         boldFont = workbook.createFont();
-        boldFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        boldFont.setBold(true);
         format = workbook.createDataFormat();
     }
 
     public Bean2Excel(List listadoProv, String rubroCE, String nombreCE, String codigoCE, String fuenteFinCE, String fechaElabCE, String digitadorCE) {
         workbook = new HSSFWorkbook();
         boldFont = workbook.createFont();
-        boldFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        boldFont.setBold(true);
         format = workbook.createDataFormat();
 
         rubro = rubroCE.toUpperCase();
@@ -108,75 +96,24 @@ public class Bean2Excel {
 
             this.addSheet(listado, reportColumns, reportColumns1, reportColumns2, "economico");
 
-            File test = new File("text.pdf");
-
             ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
             FacesContext fc = FacesContext.getCurrentInstance();
             workbook.write(outByteStream);
 
-            /*ExcelToHtmlConverter toHtml = ExcelToHtmlConverter.create(workbook, out);
-            toHtml.setCompleteHTML(true);
-            toHtml.printPage();*/
             byte[] outArray = outByteStream.toByteArray();
-
-            File file = new File("temp.pdf");
-
-            FileUtils.writeByteArrayToFile(file, outArray);
-
-            Document doc = ExcelToHtmlConverter.process(file);
-
-            writePdf(doc);
-
-            response.setContentType("application/pdf");
-            response.setContentLength(outArray.length);
-            response.setHeader("Content-disposition", "attachment; filename=analisis_" + codigoEntidad + ".pdf");
-            OutputStream outStream = response.getOutputStream();
-            
-            
-            //FileOutputStream out = new FileOutputStream("./test-xls.pdf");
-            ITextRenderer renderer = new ITextRenderer();
-            renderer.layout();
-            renderer.setDocument(doc, null);
-            renderer.createPDF(outStream);
-            outStream.write(outArray);
-            outStream.flush();
-            fc.responseComplete();
-
-
-            /*response.setContentType("application/vnd.ms-excel");
+            response.setContentType("application/ms-excel");
             response.setContentLength(outArray.length);
             response.setHeader("Content-disposition", "attachment; filename=analisis_" + codigoEntidad + ".xls");
             OutputStream outStream = response.getOutputStream();
             outStream.write(outArray);
             outStream.flush();
-            fc.responseComplete();*/
+            fc.responseComplete();
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(Bean2Excel.class.getName()).log(Level.INFO, null, "Error creación de analisis tecnico y economico");
         }
     }
 
-    public static void debugHtml(Document doc) throws Exception {
-        DOMSource source = new DOMSource(doc);
-        FileWriter writer = new FileWriter(new File("./test-xls.html"));
-        StreamResult result = new StreamResult(writer);
-
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        transformer.transform(source, result);
-    }
-
-    public static void writePdf(Document doc) throws Exception {
-        FileOutputStream out = new FileOutputStream("./test-xls.pdf");
-        ITextRenderer renderer = new ITextRenderer();
-        renderer.setDocument(doc, null);
-        renderer.layout();
-        renderer.createPDF(out);
-        out.flush();
-        out.close();
-    }
-
     public void addSheet(List<?> listado, ReportColumn[] columns, ReportColumn[] columns1, ReportColumn[] columns2, String sheetName) {
-
         HSSFSheet sheet = workbook.createSheet(sheetName);
         int numCols = columns.length;
         int numCols1 = columns1.length;
@@ -184,245 +121,240 @@ public class Bean2Excel {
         int currentRow = 0;
         HSSFRow row;
 
-        try {
+        LinkedHashMap<String, Integer> mapaItems = (LinkedHashMap) listado.get(0);
+        LinkedHashMap<String, Integer> mapaRazonSocial = (LinkedHashMap) listado.get(1);
+        Bean[][] data = (Bean[][]) listado.get(2);
+        LinkedHashMap<String, String> mapaItemsIndex = (LinkedHashMap) listado.get(3);
+        LinkedHashMap<String, Integer> mapaCantidadItems = (LinkedHashMap) listado.get(4);
 
-            LinkedHashMap<String, Integer> mapaItems = (LinkedHashMap) listado.get(0);
-            LinkedHashMap<String, Integer> mapaRazonSocial = (LinkedHashMap) listado.get(1);
-            Bean[][] data = (Bean[][]) listado.get(2);
-            LinkedHashMap<String, String> mapaItemsIndex = (LinkedHashMap) listado.get(3);
-            LinkedHashMap<String, Integer> mapaCantidadItems = (LinkedHashMap) listado.get(4);
+        HSSFFont hSSFFont = workbook.createFont();
+        hSSFFont.setFontName(HSSFFont.FONT_ARIAL);
+        hSSFFont.setFontHeightInPoints((short) 8);
+        hSSFFont.setBold(true);
 
-            HSSFFont hSSFFont = workbook.createFont();
-            hSSFFont.setFontName(HSSFFont.FONT_ARIAL);
-            hSSFFont.setFontHeightInPoints((short) 8);
-            hSSFFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        sheet.getPrintSetup().setLandscape(true);
+        sheet.getPrintSetup().setPaperSize(HSSFPrintSetup.LETTER_PAPERSIZE);
+        sheet.setMargin(HSSFSheet.BottomMargin, 0.75);
+        sheet.setMargin(HSSFSheet.TopMargin, 0.75);
+        sheet.setMargin(HSSFSheet.LeftMargin, 0.75);
+        sheet.setMargin(HSSFSheet.RightMargin, 0.75);
 
-            sheet.getPrintSetup().setLandscape(true);
-            sheet.getPrintSetup().setPaperSize(HSSFPrintSetup.LETTER_PAPERSIZE);
-            sheet.setMargin(HSSFSheet.BottomMargin, 0.75);
-            sheet.setMargin(HSSFSheet.TopMargin, 0.75);
-            sheet.setMargin(HSSFSheet.LeftMargin, 0.75);
-            sheet.setMargin(HSSFSheet.RightMargin, 0.75);
+        HSSFCellStyle myBoldStyle = workbook.createCellStyle();
+        myBoldStyle.setFont(this.boldFont);
 
-            HSSFCellStyle myBoldStyle = workbook.createCellStyle();
-            myBoldStyle.setFont(this.boldFont);
+        HSSFCellStyle myNoParticipateStyle = workbook.createCellStyle();
+        myNoParticipateStyle.setAlignment(HorizontalAlignment.CENTER);
+        myNoParticipateStyle.setBorderBottom(BorderStyle.THIN);
+        myNoParticipateStyle.setBorderTop(BorderStyle.THIN);
+        myNoParticipateStyle.setBorderRight(BorderStyle.THIN);
+        myNoParticipateStyle.setBorderLeft(BorderStyle.THIN);
+        myNoParticipateStyle.setFillForegroundColor(IndexedColors.GREY_50_PERCENT.getIndex());
+        myNoParticipateStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
-            HSSFCellStyle myNoParticipateStyle = workbook.createCellStyle();
-            myNoParticipateStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-            myNoParticipateStyle.setBorderBottom(BorderStyle.THIN);
-            myNoParticipateStyle.setBorderTop(BorderStyle.THIN);
-            myNoParticipateStyle.setBorderRight(BorderStyle.THIN);
-            myNoParticipateStyle.setBorderLeft(BorderStyle.THIN);
-            myNoParticipateStyle.setFillForegroundColor(IndexedColors.GREY_50_PERCENT.getIndex());
-            myNoParticipateStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        HSSFCellStyle myNormalStyle = workbook.createCellStyle();
+        myNormalStyle.setFont(hSSFFont);
+        myNormalStyle.setWrapText(true);
+        myNormalStyle.setAlignment(HorizontalAlignment.CENTER);
+        myNormalStyle.setBorderBottom(BorderStyle.THIN);
+        myNormalStyle.setBorderTop(BorderStyle.THIN);
+        myNormalStyle.setBorderRight(BorderStyle.THIN);
+        myNormalStyle.setBorderLeft(BorderStyle.THIN);
 
-            HSSFCellStyle myNormalStyle = workbook.createCellStyle();
-            myNormalStyle.setFont(hSSFFont);
-            myNormalStyle.setWrapText(true);
-            myNormalStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-            myNormalStyle.setBorderBottom(BorderStyle.THIN);
-            myNormalStyle.setBorderTop(BorderStyle.THIN);
-            myNormalStyle.setBorderRight(BorderStyle.THIN);
-            myNormalStyle.setBorderLeft(BorderStyle.THIN);
+        HSSFCellStyle myParticularStyle = workbook.createCellStyle();
+        myParticularStyle.setAlignment(HorizontalAlignment.CENTER);
+        myParticularStyle.setBorderBottom(BorderStyle.NONE);
+        myParticularStyle.setBorderTop(BorderStyle.NONE);
+        myParticularStyle.setBorderRight(BorderStyle.NONE);
+        myParticularStyle.setBorderLeft(BorderStyle.NONE);
 
-            HSSFCellStyle myParticularStyle = workbook.createCellStyle();
-            myParticularStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-            myParticularStyle.setBorderBottom(BorderStyle.NONE);
-            myParticularStyle.setBorderTop(BorderStyle.NONE);
-            myParticularStyle.setBorderRight(BorderStyle.NONE);
-            myParticularStyle.setBorderLeft(BorderStyle.NONE);
+        HSSFCellStyle myStyle = workbook.createCellStyle();
+        myStyle.setRotation(new Short("90"));
+        myStyle.setFont(this.boldFont);
+        myStyle.setBorderBottom(BorderStyle.THIN);
+        myStyle.setBorderTop(BorderStyle.THIN);
+        myStyle.setBorderRight(BorderStyle.THIN);
+        myStyle.setBorderLeft(BorderStyle.THIN);
 
-            HSSFCellStyle myStyle = workbook.createCellStyle();
-            myStyle.setRotation(new Short("90"));
-            myStyle.setFont(this.boldFont);
-            myStyle.setBorderBottom(BorderStyle.THIN);
-            myStyle.setBorderTop(BorderStyle.THIN);
-            myStyle.setBorderRight(BorderStyle.THIN);
-            myStyle.setBorderLeft(BorderStyle.THIN);
+        HSSFCellStyle myDataStyle = workbook.createCellStyle();
+        myDataStyle.setBorderBottom(BorderStyle.THIN);
+        myDataStyle.setBorderTop(BorderStyle.THIN);
+        myDataStyle.setBorderRight(BorderStyle.THIN);
+        myDataStyle.setBorderLeft(BorderStyle.THIN);
 
-            HSSFCellStyle myDataStyle = workbook.createCellStyle();
-            myDataStyle.setBorderBottom(BorderStyle.THIN);
-            myDataStyle.setBorderTop(BorderStyle.THIN);
-            myDataStyle.setBorderRight(BorderStyle.THIN);
-            myDataStyle.setBorderLeft(BorderStyle.THIN);
+        String[] proveedoresAMostrar = new String[mapaRazonSocial.size()];
+        String[] itemsAMostrar = new String[mapaItems.size()];
 
-            String[] proveedoresAMostrar = new String[mapaRazonSocial.size()];
-            String[] itemsAMostrar = new String[mapaItems.size()];
+        mapaRazonSocial.keySet().toArray(proveedoresAMostrar);
+        mapaItems.keySet().toArray(itemsAMostrar);
 
-            mapaRazonSocial.keySet().toArray(proveedoresAMostrar);
-            mapaItems.keySet().toArray(itemsAMostrar);
+        currentRow++;
+        currentRow++;
+        currentRow++;
+        // Create the report header at row 0
+        row = sheet.createRow(currentRow);
+        // Loop over all the column beans and populate the report headers
+        for (int i = 0; i < numCols; i++) {
+            // Get the header text from the bean and write it to the cell
+            HSSFCell cell = row.createCell(i);
+            cell.setCellStyle(myNormalStyle);
+            cell.setCellValue(columns[i].getHeader());
+            cell.setCellType(CellType.STRING);
+        }
+        sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 3, 2 + (proveedoresAMostrar.length * numCols2)));
 
-            currentRow++;
-            currentRow++;
-            currentRow++;
-            // Create the report header at row 0
-            row = sheet.createRow(currentRow);
-            // Loop over all the column beans and populate the report headers
-            for (int i = 0; i < numCols; i++) {
+        currentRow++; // increment the spreadsheet row before we step into the data
+        // Create the report header at row 0
+        row = sheet.createRow(currentRow);
+        // Loop over all the column beans and populate the report headers
+        for (int l = 0; l < proveedoresAMostrar.length; l++) {
+            for (int m = 0; m < numCols1; m++) {
                 // Get the header text from the bean and write it to the cell
-                HSSFCell cell = row.createCell(i);
+                HSSFCell cell = row.createCell(m + 3 + (l * 3));
                 cell.setCellStyle(myNormalStyle);
-                cell.setCellValue(columns[i].getHeader());
-                cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+                cell.setCellValue(proveedoresAMostrar[l]);
+                cell.setCellType(CellType.STRING);
             }
-            sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 3, 2 + (proveedoresAMostrar.length * numCols2)));
+            sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 3 + (l * 3), 5 + (l * 3)));
+        }
 
-            currentRow++; // increment the spreadsheet row before we step into the data
-            // Create the report header at row 0
-            row = sheet.createRow(currentRow);
-            // Loop over all the column beans and populate the report headers
-            for (int l = 0; l < proveedoresAMostrar.length; l++) {
-                for (int m = 0; m < numCols1; m++) {
-                    // Get the header text from the bean and write it to the cell
-                    HSSFCell cell = row.createCell(m + 3 + (l * 3));
-                    cell.setCellStyle(myNormalStyle);
-                    cell.setCellValue(proveedoresAMostrar[l]);
-                    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-                }
-                sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 3 + (l * 3), 5 + (l * 3)));
+        currentRow++; // increment the spreadsheet row before we step into the data
+        // Create the report header at row 0
+        row = sheet.createRow(currentRow);
+        row.setHeight(new Short("2100"));
+        // Loop over all the column beans and populate the report headers           
+        for (int l = 0; l < proveedoresAMostrar.length; l++) {
+            for (int m = 0; m < numCols2; m++) {
+                // Get the header text from the bean and write it to the cell
+                HSSFCell cell = row.createCell(m + 3 + (l * 3));
+                cell.setCellStyle(myStyle);
+                cell.setCellValue(columns2[m].getHeader());
+                cell.setCellType(CellType.STRING);
             }
+        }
 
-            currentRow++; // increment the spreadsheet row before we step into the data
-            // Create the report header at row 0
-            row = sheet.createRow(currentRow);
-            row.setHeight(new Short("2100"));
-            // Loop over all the column beans and populate the report headers           
-            for (int l = 0; l < proveedoresAMostrar.length; l++) {
-                for (int m = 0; m < numCols2; m++) {
-                    // Get the header text from the bean and write it to the cell
-                    HSSFCell cell = row.createCell(m + 3 + (l * 3));
-                    cell.setCellStyle(myStyle);
-                    cell.setCellValue(columns2[m].getHeader());
-                    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-                }
-            }
-
-            currentRow++; // increment the spreadsheet row before we step into the data
-            for (String itemsAMostrar1 : itemsAMostrar) {
-                row = sheet.createRow(currentRow);
-                HSSFCell cell = row.createCell(0);
-                cell.setCellStyle(myDataStyle);
-                cell.setCellValue(mapaItemsIndex.get(itemsAMostrar1));
-                cell = row.createCell(1);
-                cell.setCellStyle(myDataStyle);
-                cell.setCellValue(itemsAMostrar1);
-                cell = row.createCell(2);
-                cell.setCellStyle(myDataStyle);
-                cell.setCellValue(mapaCantidadItems.get(itemsAMostrar1));
-                currentRow++;
-            }
-
-            for (int j = 0; j < itemsAMostrar.length; j++) {
-                HSSFCell cell;
-                row = sheet.getRow(j + 6);
-                for (int k = 0; k < proveedoresAMostrar.length; k++) {
-                    Bean bean = (Bean) data[j][k];
-                    if (bean != null) {
-                        cell = row.createCell((k * 3) + 3);
-                        cell.setCellStyle(myDataStyle);
-                        cell.setCellValue(bean.getCantidadOfertada());
-                        cell = row.createCell((k * 3) + 4);
-                        cell.setCellStyle(myDataStyle);
-                        cell.setCellValue(bean.getPrecioUnitario());
-                        cell = row.createCell((k * 3) + 5);
-                        cell.setCellStyle(myDataStyle);
-                        cell.setCellValue(bean.getCantidadAdjudicada());
-                    } else {
-                        cell = row.createCell((k * 3) + 3);
-                        cell.setCellStyle(myNoParticipateStyle);
-                        cell.setCellValue("");
-                        cell = row.createCell((k * 3) + 4);
-                        cell.setCellStyle(myNoParticipateStyle);
-                        cell.setCellValue("");
-                        cell = row.createCell((k * 3) + 5);
-                        cell.setCellStyle(myNoParticipateStyle);
-                        cell.setCellValue("");
-                    }
-                }
-            }
-
-            sheet.getRow(4).setHeight(new Short("1000"));
-            row = sheet.getRow(5);
-            for (int colNum = 0; colNum < row.getLastCellNum(); colNum++) {
-                sheet.autoSizeColumn(colNum);
-            }
-
-            currentRow++;
-            currentRow++;
+        currentRow++; // increment the spreadsheet row before we step into the data
+        for (String itemsAMostrar1 : itemsAMostrar) {
             row = sheet.createRow(currentRow);
             HSSFCell cell = row.createCell(0);
-            cell.setCellValue("RAZONAMIENTO:");
-
-            currentRow++;
-            currentRow++;
-            row = sheet.createRow(currentRow);
-            cell = row.createCell(0);
-            cell.setCellValue("F._____________________________________");
-            currentRow++;
-            row = sheet.createRow(currentRow);
-            cell = row.createCell(0);
-            cell.setCellValue("Representante Legal (Presidente del Organismo de Administración Escolar(a)");
-            currentRow++;
-            row = sheet.createRow(currentRow);
-            cell = row.createCell(0);
-            cell.setCellValue("CDE, CECE o CDI");
-
-            row = sheet.getRow(3);
-            cell = row.getCell(0);
-            cell.setCellValue("");
-            cell.setCellStyle(myParticularStyle);
-            cell = row.getCell(1);
-            cell.setCellValue("");
-            cell.setCellStyle(myParticularStyle);
-            cell = row.getCell(2);
-            cell.setCellValue("");
-            cell.setCellStyle(myParticularStyle);
-
-            row = sheet.getRow(5);
-            cell = row.createCell(0);
-            cell.setCellStyle(myNormalStyle);
-            cell.setCellValue("ITEM");
-            sheet.setColumnWidth(cell.getColumnIndex(), 1500);
+            cell.setCellStyle(myDataStyle);
+            cell.setCellValue(mapaItemsIndex.get(itemsAMostrar1));
             cell = row.createCell(1);
-            cell.setCellStyle(myNormalStyle);
-            cell.setCellValue("DESCRIPCIÓN DEL ITEM");
+            cell.setCellStyle(myDataStyle);
+            cell.setCellValue(itemsAMostrar1);
             cell = row.createCell(2);
-            cell.setCellStyle(myNormalStyle);
-            cell.setCellValue("CANTIDAD REQUERIDA");
-            sheet.setColumnWidth(cell.getColumnIndex(), 3000);
-
-            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 2 + (proveedoresAMostrar.length * numCols2)));
-            sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 2 + (proveedoresAMostrar.length * numCols2)));
-            sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 2 + (proveedoresAMostrar.length * numCols2)));
-
-            row = sheet.createRow(0);
-            HSSFCell cell1 = row.createCell(0);
-            cell1.setCellStyle(myBoldStyle);
-            cell1.setCellValue("ANALISIS ECONOMICO RUBRO " + rubro);
+            cell.setCellStyle(myDataStyle);
+            cell.setCellValue(mapaCantidadItems.get(itemsAMostrar1));
             currentRow++;
-            row = sheet.createRow(1);
-            cell1 = row.createCell(0);
-            cell1.setCellStyle(myBoldStyle);
-            cell1.setCellValue("NOMBRE DEL CENTRO EDUCATIVO : " + nombreCentroEducativo + " CODIGO : " + codigoCentroEducativo);
-            currentRow++;
-            row = sheet.createRow(2);
-            cell1 = row.createCell(0);
-            cell1.setCellStyle(myBoldStyle);
-            cell1.setCellValue("FUENTE DE FINANCIAMIENTO : " + fuenteFinanciamiento + " FECHA DE ELABORACIÓN : " + fechaElaboracion);
-            currentRow++;
-
-            String leyenda = HSSFHeader.font("Arial", "Bold") + HSSFHeader.fontSize((short) 8) + "ANALISIS TÉCNICO RUBRO : " + rubro + ", CENTRO EDUCATIVO : " + nombreCentroEducativo + " CODIGO : " + codigoCentroEducativo;
-            sheet.getHeader().setCenter(leyenda);
-            sheet.getFooter().setLeft(digitador);
-            sheet.getFooter().setRight("Page " + HeaderFooter.page() + " of " + HeaderFooter.numPages());
-
-            sheet.setAutobreaks(false);
-            sheet.setRowBreak(sheet.getLastRowNum());
-            sheet.setColumnBreak(20);
-            generateTechnicalAnalisisSheet("ANALISIS_TECNICO", proveedoresAMostrar, rubro);
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
         }
+
+        for (int j = 0; j < itemsAMostrar.length; j++) {
+            HSSFCell cell;
+            row = sheet.getRow(j + 6);
+            for (int k = 0; k < proveedoresAMostrar.length; k++) {
+                Bean bean = (Bean) data[j][k];
+                if (bean != null) {
+                    cell = row.createCell((k * 3) + 3);
+                    cell.setCellStyle(myDataStyle);
+                    cell.setCellValue(bean.getCantidadOfertada());
+                    cell = row.createCell((k * 3) + 4);
+                    cell.setCellStyle(myDataStyle);
+                    cell.setCellValue(bean.getPrecioUnitario());
+                    cell = row.createCell((k * 3) + 5);
+                    cell.setCellStyle(myDataStyle);
+                    cell.setCellValue(bean.getCantidadAdjudicada());
+                } else {
+                    cell = row.createCell((k * 3) + 3);
+                    cell.setCellStyle(myNoParticipateStyle);
+                    cell.setCellValue("");
+                    cell = row.createCell((k * 3) + 4);
+                    cell.setCellStyle(myNoParticipateStyle);
+                    cell.setCellValue("");
+                    cell = row.createCell((k * 3) + 5);
+                    cell.setCellStyle(myNoParticipateStyle);
+                    cell.setCellValue("");
+                }
+            }
+        }
+
+        sheet.getRow(4).setHeight(new Short("1000"));
+        row = sheet.getRow(5);
+        for (int colNum = 0; colNum < row.getLastCellNum(); colNum++) {
+            sheet.autoSizeColumn(colNum);
+        }
+
+        currentRow++;
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        HSSFCell cell = row.createCell(0);
+        cell.setCellValue("RAZONAMIENTO:");
+
+        currentRow++;
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue("F._____________________________________");
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue("Representante Legal (Presidente del Organismo de Administración Escolar(a)");
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue("CDE, CECE o CDI");
+
+        row = sheet.getRow(3);
+        cell = row.getCell(0);
+        cell.setCellValue("");
+        cell.setCellStyle(myParticularStyle);
+        cell = row.getCell(1);
+        cell.setCellValue("");
+        cell.setCellStyle(myParticularStyle);
+        cell = row.getCell(2);
+        cell.setCellValue("");
+        cell.setCellStyle(myParticularStyle);
+
+        row = sheet.getRow(5);
+        cell = row.createCell(0);
+        cell.setCellStyle(myNormalStyle);
+        cell.setCellValue("ITEM");
+        sheet.setColumnWidth(cell.getColumnIndex(), 1500);
+        cell = row.createCell(1);
+        cell.setCellStyle(myNormalStyle);
+        cell.setCellValue("DESCRIPCIÓN DEL ITEM");
+        cell = row.createCell(2);
+        cell.setCellStyle(myNormalStyle);
+        cell.setCellValue("CANTIDAD REQUERIDA");
+        sheet.setColumnWidth(cell.getColumnIndex(), 3000);
+
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 2 + (proveedoresAMostrar.length * numCols2)));
+        sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 2 + (proveedoresAMostrar.length * numCols2)));
+        sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 2 + (proveedoresAMostrar.length * numCols2)));
+
+        row = sheet.createRow(0);
+        HSSFCell cell1 = row.createCell(0);
+        cell1.setCellStyle(myBoldStyle);
+        cell1.setCellValue("ANALISIS ECONOMICO RUBRO " + rubro);
+        currentRow++;
+        row = sheet.createRow(1);
+        cell1 = row.createCell(0);
+        cell1.setCellStyle(myBoldStyle);
+        cell1.setCellValue("NOMBRE DEL CENTRO EDUCATIVO : " + nombreCentroEducativo + " CODIGO : " + codigoCentroEducativo);
+        currentRow++;
+        row = sheet.createRow(2);
+        cell1 = row.createCell(0);
+        cell1.setCellStyle(myBoldStyle);
+        cell1.setCellValue("FUENTE DE FINANCIAMIENTO : " + fuenteFinanciamiento + " FECHA DE ELABORACIÓN : " + fechaElaboracion);
+        currentRow++;
+
+        String leyenda = HSSFHeader.font("Arial", "Bold") + HSSFHeader.fontSize((short) 8) + "ANALISIS TÉCNICO RUBRO : " + rubro + ", CENTRO EDUCATIVO : " + nombreCentroEducativo + " CODIGO : " + codigoCentroEducativo;
+        sheet.getHeader().setCenter(leyenda);
+        sheet.getFooter().setLeft(digitador);
+        sheet.getFooter().setRight("Page " + HeaderFooter.page() + " of " + HeaderFooter.numPages());
+
+        sheet.setAutobreaks(false);
+        sheet.setRowBreak(sheet.getLastRowNum());
+        sheet.setColumnBreak(20);
+        generateTechnicalAnalisisSheet("ANALISIS_TECNICO", proveedoresAMostrar, rubro);
 
     }
 
@@ -434,7 +366,7 @@ public class Bean2Excel {
         HSSFFont hSSFFont = workbook.createFont();
         hSSFFont.setFontName(HSSFFont.FONT_ARIAL);
         hSSFFont.setFontHeightInPoints((short) 8);
-        hSSFFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        hSSFFont.setBold(true);
 
         HSSFCellStyle myBoldTitleStyle = workbook.createCellStyle();
         myBoldTitleStyle.setFont(this.boldFont);
@@ -442,21 +374,21 @@ public class Bean2Excel {
         HSSFCellStyle myBoldStyle = workbook.createCellStyle();
         myBoldStyle.setFont(this.boldFont);
         myBoldStyle.setWrapText(true);
-        myBoldStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-        myBoldStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_TOP);
+        myBoldStyle.setAlignment(HorizontalAlignment.CENTER);
+        myBoldStyle.setVerticalAlignment(VerticalAlignment.TOP);
 
         HSSFCellStyle myNormalStyle = workbook.createCellStyle();
         myNormalStyle.setFont(hSSFFont);
         myNormalStyle.setWrapText(true);
-        myNormalStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-        myNormalStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_TOP);
+        myNormalStyle.setAlignment(HorizontalAlignment.CENTER);
+        myNormalStyle.setVerticalAlignment(VerticalAlignment.TOP);
         myNormalStyle.setBorderBottom(BorderStyle.THIN);
         myNormalStyle.setBorderTop(BorderStyle.THIN);
         myNormalStyle.setBorderRight(BorderStyle.THIN);
         myNormalStyle.setBorderLeft(BorderStyle.THIN);
 
         HSSFCellStyle myParticularStyle = workbook.createCellStyle();
-        myParticularStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        myParticularStyle.setAlignment(HorizontalAlignment.CENTER);
         myParticularStyle.setBorderBottom(BorderStyle.NONE);
         myParticularStyle.setBorderTop(BorderStyle.NONE);
         myParticularStyle.setBorderRight(BorderStyle.NONE);
@@ -509,12 +441,9 @@ public class Bean2Excel {
             cell1.setCellValue("FUENTE DE FINANCIAMIENTO : "
                     + fuenteFinanciamiento + " FECHA DE ELABORACIÓN : " + fechaElaboracion);
 
-            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 1
-                    + (pProvAMostrar.length * 2)));
-            sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 1
-                    + (pProvAMostrar.length * 2)));
-            sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 1
-                    + (pProvAMostrar.length * 2)));
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 1 + (pProvAMostrar.length * 2)));
+            sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 1 + (pProvAMostrar.length * 2)));
+            sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 1 + (pProvAMostrar.length * 2)));
 
             currentRow++;
             //Fila para el titulo de los nombres de proveedores
@@ -632,73 +561,6 @@ public class Bean2Excel {
 
     public void write(OutputStream outputStream) throws Exception {
         workbook.write(outputStream);
-    }
-
-    private void writeCell(HSSFRow row, int col, Object value, FormatType formatType, Short bgColor, HSSFFont font)
-            throws Exception {
-
-        HSSFCell cell = HSSFCellUtil.createCell(row, col, null);
-
-        if (value == null) {
-            return;
-        }
-
-        if (font != null) {
-            HSSFCellStyle style = workbook.createCellStyle();
-            style.setFont(font);
-            cell.setCellStyle(style);
-        }
-
-        switch (formatType) {
-            case TEXT:
-                cell.setCellValue(value.toString());
-                break;
-            case INTEGER:
-                cell.setCellValue(((Number) value).intValue());
-                HSSFCellUtil.setCellStyleProperty(cell, workbook,
-                        CellUtil.DATA_FORMAT,
-                        HSSFDataFormat.getBuiltinFormat(("#,##0")));
-                break;
-            case FLOAT:
-                cell.setCellValue(((Number) value).doubleValue());
-                HSSFCellUtil.setCellStyleProperty(cell, workbook,
-                        CellUtil.DATA_FORMAT,
-                        HSSFDataFormat.getBuiltinFormat(("#,##0.00")));
-                break;
-            case DOUBLE:
-                cell.setCellValue(((Double) value));
-                HSSFCellUtil.setCellStyleProperty(cell, workbook,
-                        CellUtil.DATA_FORMAT,
-                        HSSFDataFormat.getBuiltinFormat(("$#,##0.00;$#,##0.00")));
-                break;
-            case DATE:
-                cell.setCellValue((Date) value);
-                HSSFCellUtil.setCellStyleProperty(cell, workbook,
-                        CellUtil.DATA_FORMAT,
-                        HSSFDataFormat.getBuiltinFormat(("m/d/yy")));
-                break;
-            case MONEY:
-                cell.setCellValue(((Number) value).intValue());
-                HSSFCellUtil.setCellStyleProperty(cell, workbook,
-                        CellUtil.DATA_FORMAT,
-                        format.getFormat("$#,##0.00;$#,##0.00"));
-                break;
-            case PERCENTAGE:
-                cell.setCellValue(((Number) value).doubleValue());
-                HSSFCellUtil.setCellStyleProperty(cell, workbook,
-                        CellUtil.DATA_FORMAT,
-                        HSSFDataFormat.getBuiltinFormat("0.00%"));
-            case OBJECT:
-                cell.setCellValue(value.toString());
-                break;
-        }
-        if (bgColor != null) {
-            HSSFCellUtil.setCellStyleProperty(cell, workbook,
-                    CellUtil.FILL_FOREGROUND_COLOR, bgColor);
-            HSSFCellUtil.setCellStyleProperty(cell, workbook,
-                    CellUtil.FILL_PATTERN, HSSFCellStyle.SOLID_FOREGROUND);
-        }
-
     }
 
     public enum FormatType {
