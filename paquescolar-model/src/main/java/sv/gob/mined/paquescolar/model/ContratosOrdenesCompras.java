@@ -275,14 +275,6 @@ public class ContratosOrdenesCompras implements Serializable {
     public void setIdResolucionAdj(ResolucionesAdjudicativas idResolucionAdj) {
         this.idResolucionAdj = idResolucionAdj;
     }
-
-    /*public List<ContratosOrdenesCompras> getContratosOrdenesComprasList() {
-        return contratosOrdenesComprasList;
-    }
-
-    public void setContratosOrdenesComprasList(List<ContratosOrdenesCompras> contratosOrdenesComprasList) {
-        this.contratosOrdenesComprasList = contratosOrdenesComprasList;
-    }*/
     
     @Override
     public int hashCode() {

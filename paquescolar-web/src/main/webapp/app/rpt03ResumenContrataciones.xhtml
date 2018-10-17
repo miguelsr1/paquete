@@ -50,22 +50,36 @@
                         <h:outputText value="Datos"/>
                     </h1>
                     <p:dataTable id="pnlDatos" value="#{reportesWebController.lstProveedoresHaciendaDto}" var="prov" rowIndexVar="rowId" sortBy="#{prov.nombreDepartamentoCe}">
+
+                        <f:facet name="header">
+                            <p:spacer width="10" height="8"/>
+                            <h:commandLink style="float:right;">
+                                <i class="fa fa-download"></i>
+                                <p:spacer width="10" height="8"/>
+                                <h:outputText value="Exportar"/>
+                                <p:dataExporter  type="xls" encoding="ISO-8859-1" target="pnlDatos" 
+                                                 fileName="lstResumeContrataciones_#{catalogosGeneralesController.formatoFechaReporte}"
+                                                 postProcessor="#{reportesWebController.resumenContratacionesXls}"/>  
+                            </h:commandLink>
+                        </f:facet>
+
+
                         <p:column headerText="Id">
-                            #{rowId+1}
+                            <p:outputLabel value="#{rowId+1}"/>
                         </p:column>
-                        <p:column headerText="Departamento C.E.">
-                            #{prov.nombreDepartamentoCe}
+                        <p:column headerText="#{bundle['tabla.departamento']}">
+                            <p:outputLabel value="#{prov.nombreDepartamentoCe}"/>
                         </p:column>
-                        <p:column headerText="Departamento Emp.">
-                            #{prov.nombreDepartamentoEmp}
+                        <p:column headerText="#{bundle['tabla.codEnt']}">
+                            <p:outputLabel value="#{prov.codigoEntidad}"/>
                         </p:column>
-                        <p:column headerText="N.I.T.">
-                            #{prov.numeroNit}
+                        <p:column headerText="#{bundle['tabla.nit']}">
+                            <p:outputLabel value="#{prov.numeroNit}"/>
                         </p:column>
-                        <p:column headerText="Cantidad" style="text-align: right;">
-                            #{prov.cantidadContrato}
+                        <p:column headerText="#{bundle['tabla.cantidad']}" style="text-align: right;">
+                            <p:outputLabel value="#{prov.cantidadContrato}"/>
                         </p:column>
-                        <p:column headerText="Monto" style="text-align: right;">
+                        <p:column headerText="#{bundle['tabla.monto']}" style="text-align: right;">
                             <h:outputText value="#{prov.montoContrato}">
                                 <f:convertNumber pattern="#,##0.00"/>
                             </h:outputText>

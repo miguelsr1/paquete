@@ -12,7 +12,9 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import sv.gob.mined.app.web.util.RecuperarProceso;
+import sv.gob.mined.app.web.util.RptExcel;
 import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
@@ -88,5 +90,11 @@ public class ReportesWebController extends RecuperarProceso implements Serializa
 
     public BigDecimal getCantidadTotal() {
         return cantidadTotal;
+    }
+    
+    public void resumenContratacionesXls(Object document) {
+        int[] numEnt = {0, 4};
+        int[] numDec = {5};
+        RptExcel.generarRptExcelGenerico((HSSFWorkbook) document, numEnt, numDec);
     }
 }

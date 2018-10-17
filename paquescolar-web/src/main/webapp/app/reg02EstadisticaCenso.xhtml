@@ -57,6 +57,8 @@
                 $("#lbl" + lblNivel + "Uni").val(intlRound((femM * preUniF) + (masM * preUniM)));
                 $("#lbl" + lblNivel + "Uti").val(intlRound((femM * preUtiF) + (masM * preUtiM)));
                 $("#lbl" + lblNivel + "Zap").val(intlRound((femM * preZapF) + (masM * preZapM)));
+                
+                calcularTotales();
             }
 
             function intlRound(numero) {

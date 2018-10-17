@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -73,6 +74,7 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
     private Boolean garantiaAnticipo = false;
     private Boolean garantiaUsoTela = false;
     private Boolean showGarantiaUsoTela = false;
+    private Boolean analisisTecEco = false;
     private String codigoEntidad;
     private String razonSocial;
     private String representanteLegal;
@@ -103,6 +105,8 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
     @EJB
     private UtilEJB utilEJB;
 
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("Bundle");
+
     /**
      * Creates a new instance of ContratosOrdenesComprasController
      */
@@ -131,6 +135,14 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
         } else {
             VarSession.setVariableSessionED("0");
         }
+    }
+
+    public Boolean getAnalisisTecEco() {
+        return analisisTecEco;
+    }
+
+    public void setAnalisisTecEco(Boolean analisisTecEco) {
+        this.analisisTecEco = analisisTecEco;
     }
 
     public Boolean getSoloLectura() {
@@ -446,7 +458,7 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
 
             JsfUtil.mensajeUpdate();
         } catch (Exception e) {
-            Logger.getLogger(OfertaBienesServiciosController.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(ContratosOrdenesCompras.class.getName()).log(Level.SEVERE, null, e);
             JsfUtil.mensajeError("Error en la actualización del contrato del C.E.");
         }
     }
@@ -690,6 +702,15 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                                 }
                             }
 
+                            //adición de aclaracion al contrato de 2do uniforme para el año 2019 
+                            if (detalleProceso.getIdProcesoAdq().getIdAnho().getAnho().equals("2019")) {
+                                if (detalleProceso.getIdDetProcesoAdq() == 41) {
+                                    param.put("pAclaracion", RESOURCE_BUNDLE.getString("aclaracionContrato2019") + " ");
+                                } else {
+                                    param.put("pAclaracion", ", conforme a las cláusulas que a continuación se especifican. ");
+                                }
+                            }
+
                             param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES + "contratos") + File.separator);
                             param.put("idContrato", current.getIdContrato());
                             param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
@@ -740,7 +761,7 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                         isPersonaNat = (current.getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdPersoneria().getIdPersoneria().intValue() == 1);
                         Reportes.generarReporte(imprimir(lstRptDocumentos, isPersonaNat), "documentos_" + codigoEntidad);
                     } catch (Exception ex) {
-                        System.out.println("idresolucion: " + current.getIdResolucionAdj().getIdResolucionAdj());
+                        Logger.getLogger(ContratosOrdenesCompras.class.getName()).log(Level.SEVERE, "id_resolucion: " + current, ex);
                     }
                 }
             }
@@ -749,7 +770,7 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
         }
     }
 
-    public void imprimirAnalisisEconomico() throws Exception {
+    public void imprimirAnalisisEconomico() {
         OfertaBienesServicios ofe = getSelected().getIdResolucionAdj().getIdParticipante().getIdOferta();
         if (ofe == null) {
             JsfUtil.mensajeAlerta("Primero debe de guardar la oferta!!!");

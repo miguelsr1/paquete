@@ -319,7 +319,7 @@ public class RptExcel {
             style2.setBorderRight(BorderStyle.THIN);
             style2.setBorderLeft(BorderStyle.THIN);
             style2.setFont(font);
-            style2.setAlignment(HorizontalAlignment.CENTER);
+            style2.setAlignment(HSSFCellStyle.ALIGN_CENTER);
 
             HSSFRow fila = hoja.createRow(0);
             HSSFCell celda0 = fila.createCell(0);

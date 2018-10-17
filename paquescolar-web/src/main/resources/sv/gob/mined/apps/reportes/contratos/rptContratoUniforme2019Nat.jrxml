@@ -128,6 +128,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 	</parameter>
 	<parameter name="idResolucion" class="java.math.BigDecimal"/>
 	<parameter name="bachillerato" class="java.lang.Boolean"/>
+	<parameter name="pAclaracion" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT * FROM VW_RPT_CONTRATO_JUR_CABECERA  WHERE ID_CONTRATO=$P{idContrato}]]>
 	</queryString>
@@ -217,7 +218,8 @@ concat(", Departamento "+$F{NOMBRE_DEPARTAMENTO}).concat(" que en lo sucesivo e
 concat("se denominará <style isBold='true' pdfFontName='Helvetica-Bold'>\"El Contratante u Organismo\";</style> y por otra parte ").concat($F{RAZON_SOCIAL}).
 concat(", No. de NIT: " + $F{NUMERO_NIT}).
 concat(", que en lo sucesivo en este instrumento se denominará <style isBold='true' pdfFontName='Helvetica-Bold'>\"El Contratista\", CONVENIMOS</style> en celebrar el presente").
-concat(" contrato de <style isBold='true' pdfFontName='Helvetica-Bold'>").concat($F{DESCRIPCION_RUBRO} + " " + $F{ANHO_CONTRATO}).concat(",</style> conforme a las cláusulas que a continuación se especifican. ").
+concat(" contrato de <style isBold='true' pdfFontName='Helvetica-Bold'>").concat($F{DESCRIPCION_RUBRO} + " " + $F{ANHO_CONTRATO}).concat("</style> ").
+concat($P{pAclaracion}).
 concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA I: OBJETO DEL CONTRATO.</style> El Organismo requiere la prestación del <style isBold='true' pdfFontName='Helvetica-Bold'>\"").concat($F{DESCRIPCION_RUBRO} + " " + $F{ANHO_CONTRATO}).concat("\"</style> para las entregas a los estudiantes del centro educativo que representa, de los bienes resultantes de la confección del servicios, que en adelante denominaremos \"los productos\", correspondiente al Programa Paquetes Escolares. Para lo que el contratista declara ser proveedor acreditado por CONAMYPE, en el rubro requerido; razón por la que ambas partes suscriben el siguiente contrato. ").
 concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA II: PRECIO Y FORMA DE PAGO.</style> El precio total por los servicios objeto del presente").
 concat(" contrato asciende a la suma de ").concat(Herramientas.aLetras($F{VALOR}).trim()).concat(" DOLARES DE LOS ESTADOS").

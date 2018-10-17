@@ -78,10 +78,9 @@ public class Bean2Excel {
             this.addSheetAnalisisEconomico(listado);
             this.addSheetAnalisisTecnico();
             ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
-            FacesContext fc = FacesContext.getCurrentInstance();
             workbook.write(outByteStream);
 
-            UtilFile.downloadFileBytes(outByteStream.toByteArray(), "analisis_" + codigoEntidad, UtilFile.CONTENIDO_XLS, UtilFile.EXTENSION_TXT);
+            UtilFile.downloadFileBytes(outByteStream.toByteArray(), "analisis_" + codigoEntidad, UtilFile.CONTENIDO_XLS, UtilFile.EXTENSION_XLS);
         } catch (IOException e) {
             Logger.getLogger(Bean2Excel.class.getName()).log(Level.INFO, null, "Error creación de analisis tecnico y economico");
         }
@@ -134,8 +133,8 @@ public class Bean2Excel {
         HSSFCellStyle myBoldStyle = workbook.createCellStyle();
         myBoldStyle.setFont(this.boldFont);
 
-        HSSFCellStyle myNoParticipateStyle = workbook.createCellStyle();
-        myNoParticipateStyle.setAlignment(HorizontalAlignment.CENTER);
+        HSSFCellStyle myNoParticipateStyle = workbook.createCellStyle(); 
+        myNoParticipateStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
         myNoParticipateStyle.setBorderBottom(BorderStyle.THIN);
         myNoParticipateStyle.setBorderTop(BorderStyle.THIN);
         myNoParticipateStyle.setBorderRight(BorderStyle.THIN);
@@ -146,14 +145,14 @@ public class Bean2Excel {
         HSSFCellStyle myNormalStyle = workbook.createCellStyle();
         myNormalStyle.setFont(hSSFFont);
         myNormalStyle.setWrapText(true);
-        myNormalStyle.setAlignment(HorizontalAlignment.CENTER);
+        myNormalStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
         myNormalStyle.setBorderBottom(BorderStyle.THIN);
         myNormalStyle.setBorderTop(BorderStyle.THIN);
         myNormalStyle.setBorderRight(BorderStyle.THIN);
         myNormalStyle.setBorderLeft(BorderStyle.THIN);
 
         HSSFCellStyle myParticularStyle = workbook.createCellStyle();
-        myParticularStyle.setAlignment(HorizontalAlignment.CENTER);
+        myParticularStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
         myParticularStyle.setBorderBottom(BorderStyle.NONE);
         myParticularStyle.setBorderTop(BorderStyle.NONE);
         myParticularStyle.setBorderRight(BorderStyle.NONE);
@@ -364,13 +363,13 @@ public class Bean2Excel {
         HSSFCellStyle myBoldStyle = workbook.createCellStyle();
         myBoldStyle.setFont(this.boldFont);
         myBoldStyle.setWrapText(true);
-        myBoldStyle.setAlignment(HorizontalAlignment.CENTER);
+        myBoldStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
         myBoldStyle.setVerticalAlignment(VerticalAlignment.TOP);
 
         HSSFCellStyle myNormalStyle = workbook.createCellStyle();
         myNormalStyle.setFont(hSSFFont);
         myNormalStyle.setWrapText(true);
-        myNormalStyle.setAlignment(HorizontalAlignment.CENTER);
+        myNormalStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
         myNormalStyle.setVerticalAlignment(VerticalAlignment.TOP);
         myNormalStyle.setBorderBottom(BorderStyle.THIN);
         myNormalStyle.setBorderTop(BorderStyle.THIN);
@@ -378,7 +377,7 @@ public class Bean2Excel {
         myNormalStyle.setBorderLeft(BorderStyle.THIN);
 
         HSSFCellStyle myParticularStyle = workbook.createCellStyle();
-        myParticularStyle.setAlignment(HorizontalAlignment.CENTER);
+        myParticularStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
         myParticularStyle.setBorderBottom(BorderStyle.NONE);
         myParticularStyle.setBorderTop(BorderStyle.NONE);
         myParticularStyle.setBorderRight(BorderStyle.NONE);
