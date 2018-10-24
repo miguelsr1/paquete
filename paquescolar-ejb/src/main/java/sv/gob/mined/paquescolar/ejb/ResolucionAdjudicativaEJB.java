@@ -130,6 +130,11 @@ public class ResolucionAdjudicativaEJB {
                     param = existeDiponibilidad(techoCE, resAdj, param);
                     if (usuario.equals("RMINERO") || usuario.equals("RAFAARIAS") || usuario.equals("CVILLEGAS") || !param.containsKey("error")) {
                         param = aplicarSaldos(resAdj, techoCE, estadoReserva, cantidad, comentarioReversion, usuario, param);
+
+                        //Si ya existe un contrato para esta reserva de fondos, se actualizan los datos del resumen de contrataciones
+                        if (!resAdj.getContratosOrdenesComprasList().isEmpty() || resAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 3) {
+                            agregarDatosAResumen(resAdj.getContratosOrdenesComprasList().get(0));
+                        }
                     }
                 } else //DIGITADA -> ANULADA y REVERTIDA -> ANULADA 
                 if ((resAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 1 && estadoReserva.intValue() == 4)
@@ -138,6 +143,7 @@ public class ResolucionAdjudicativaEJB {
                 } else //APLICADA -> REVERTIDA
                 if (resAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 2 && estadoReserva.intValue() == 3) {
                     param = aplicarSaldos(resAdj, techoCE, estadoReserva, cantidad, comentarioReversion, usuario, param);
+                    removerDatosResumen(resAdj);
                 }
             } else {
                 param.put("error", "Se ha generado un error en la aplicación de fondos.");
@@ -336,6 +342,8 @@ public class ResolucionAdjudicativaEJB {
         String numeroContrato = getNumContrato(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad(), contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho().intValue());
         contratosOrdenesCompras.setNumeroContrato(numeroContrato.length() == 1 ? "0" + numeroContrato : numeroContrato);
         em.persist(contratosOrdenesCompras);
+
+        agregarDatosAResumen(contratosOrdenesCompras);
 
         return contratosOrdenesCompras;
     }
@@ -711,5 +719,39 @@ public class ResolucionAdjudicativaEJB {
 
     public void enviarCorreoDeError(BigDecimal idResolucionAdj) {
         eMailEJB.enviarMailDeError("Contratos Múltiple", "miguel.sanchez@mined.gob.sv", "Duplicidad de contratos para idResolucionAdj: " + idResolucionAdj);
+    }
+
+    private void removerDatosResumen(ResolucionesAdjudicativas resAdj) {
+        Query q = em.createNativeQuery("delete RESUMEN_ADJ_EMP where id_det_proceso_adq = ?1 and codigo_entidad =?2 and id_empresa = ?3");
+        q.setParameter(1, resAdj.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq());
+        q.setParameter(2, resAdj.getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad());
+        q.setParameter(3, resAdj.getIdParticipante().getIdEmpresa().getIdEmpresa());
+
+        q.executeUpdate();
+
+        q = em.createNativeQuery("delete resumen_ce_procesados where id_det_proceso_adq = ?1 and codigo_entidad = ?2");
+        q.setParameter(1, resAdj.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq());
+        q.setParameter(2, resAdj.getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad());
+
+        q.executeUpdate();
+    }
+
+    private void agregarDatosAResumen(ContratosOrdenesCompras contrato) {
+        Query q = em.createNamedQuery("SP_ADD_RESUMEN_CE_PROCESADO");
+        q.setParameter("P_ID_DET_PROCESO_ADQ", contrato.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq());
+        q.setParameter("P_CODIGO_ENTIDAD", contrato.getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad());
+        q.setParameter("P_CODIGO_DEPARTAMENTO", contrato.getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoDepartamento().getCodigoDepartamento());
+        q.setParameter("P_CODIGO_MUNICIPIO", contrato.getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoMunicipio());
+        q.getResultList();
+
+        q = em.createNamedQuery("SP_ADD_RESUMEN_ADJ_EMP");
+        q.setParameter("P_ID_DET_PROCESO_ADQ", contrato.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq());
+        q.setParameter("P_ID_EMPRESA", contrato.getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdEmpresa());
+        q.setParameter("P_ID_TIPO_EMPRESA", contrato.getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdTipoEmpresa().getIdTipoEmp());
+        q.setParameter("P_CODIGO_DEPARTAMENTO", contrato.getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoDepartamento().getCodigoDepartamento());
+        q.setParameter("P_CODIGO_ENTIDAD", contrato.getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad());
+        q.setParameter("P_SUBTOTAL", contrato.getIdResolucionAdj().getIdParticipante().getMonto());
+        q.setParameter("P_CANTIDAD", contrato.getIdResolucionAdj().getIdParticipante().getCantidad());
+        q.getResultList();
     }
 }

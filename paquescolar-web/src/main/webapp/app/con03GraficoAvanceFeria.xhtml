@@ -50,7 +50,7 @@
                             <p:commandButton action="#{consultasContratacionMB.buscarAvance}"  update="pnlGraficos" value="Buscar" ajax="true" id="ingresar" icon="ui-icon-search"/>
                         </h:panelGrid>
                     </div>
-                    <p:poll interval="60" listener="#{consultasContratacionMB.buscarAvance}" update="pnlGraficos"/>
+                    <p:poll interval="30" listener="#{consultasContratacionMB.buscarAvance}" update="pnlGraficos"/>
                     <div class="card">
                         <h:panelGroup>
                             <p:panelGrid id="pnlGraficos" columns="3" columnClasses="col4,col4,col4" 
@@ -58,10 +58,19 @@
                                          styleClass="form-group ui-panelgrid-blank">
 
                                 <p:panel id="pnlUniformes" visible="#{consultasContratacionMB.mostrarGrafico}" header="Confección de Uniformes">
+                                    <p:commandButton value="Exportar a PNG" onclick="exportChart('grfAvanceUni', 'empUni');" icon="fa fa-download"/>
                                     <p:chart type="pie" id="grfAvanceUni" model="#{consultasContratacionMB.pieModelUni}" 
-                                             style="width:350px;height:300px;" /> 
-                                    <p:chart type="bar" id="empUni" model="#{consultasContratacionMB.barModelUni}" 
+                                             widgetVar="grfAvanceUni" style="width:350px;height:300px;" /> 
+                                    <p:chart type="bar" id="empUni" widgetVar="empUni" model="#{consultasContratacionMB.barModelUni}" 
                                              style="width:350px;height:300px" /> 
+                                    <p:dataTable value="#{consultasContratacionMB.listaCapacidad}" var="var">
+                                        <p:column headerText="Tipo Empresa">
+                                            <p:outputLabel value="#{var.nombretipoEmpresa}"/>
+                                        </p:column>
+                                        <p:column headerText="Monto Adjudicado ($)" style="text-align: right;">
+                                            <p:outputLabel value="#{var.totalFormatedo}"/>
+                                        </p:column>
+                                    </p:dataTable>
                                 </p:panel>
 
                                 <p:panel id="pnlUtiles" visible="#{consultasContratacionMB.mostrarGrafico}" header="Útiles Escolares">
@@ -69,6 +78,15 @@
                                              style="width:350px;height:300px;" /> 
                                     <p:chart type="bar" id="empUti" model="#{consultasContratacionMB.barModelUti}" 
                                              style="width:350px;height:300px" /> 
+
+                                    <p:dataTable value="#{consultasContratacionMB.listaCapacidad}" var="var">
+                                        <p:column headerText="Tipo Empresa">
+                                            <p:outputLabel value="#{var.nombretipoEmpresa}"/>
+                                        </p:column>
+                                        <p:column headerText="Monto Adjudicado ($)" style="text-align: right;">
+                                            <p:outputLabel value="#{var.totalFormatedo}"/>
+                                        </p:column>
+                                    </p:dataTable>
                                 </p:panel>
 
 
@@ -77,6 +95,15 @@
                                              style="width:350px;height:300px;" /> 
                                     <p:chart type="bar" id="empZap" model="#{consultasContratacionMB.barModelZap}" 
                                              style="width:350px;height:300px"/> 
+
+                                    <p:dataTable value="#{consultasContratacionMB.listaCapacidad}" var="var">
+                                        <p:column headerText="Tipo Empresa">
+                                            <p:outputLabel value="#{var.nombretipoEmpresa}"/>
+                                        </p:column>
+                                        <p:column headerText="Monto Adjudicado ($)" style="text-align: right;">
+                                            <p:outputLabel value="#{var.totalFormatedo}"/>
+                                        </p:column>
+                                    </p:dataTable>
                                 </p:panel>
 
                             </p:panelGrid>
@@ -84,6 +111,10 @@
                     </div>
                 </div>
             </div>
+
+            <p:dialog widgetVar="dlg" showEffect="fade" modal="true" header="Chart as an Image" resizable="false">
+                <p:outputPanel id="output" layout="block" style="width:500px;height:300px"/>
+            </p:dialog>
         </ui:define>
     </ui:composition>
 </html>

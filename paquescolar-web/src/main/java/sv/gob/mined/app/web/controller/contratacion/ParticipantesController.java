@@ -20,7 +20,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.primefaces.PrimeFaces;
-import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.VarSession;
@@ -544,14 +543,16 @@ public class ParticipantesController implements Serializable {
     }
 
     public void onCellEdit(CellEditEvent event) {
-        if (event.getRowIndex() < ((List<DetalleOfertas>) ((DataTable) event.getSource()).getValue()).size()) {
-            DetalleOfertas det = ((List<DetalleOfertas>) ((DataTable) event.getSource()).getValue()).get(event.getRowIndex());
+        FacesContext context = FacesContext.getCurrentInstance();
+        DetalleOfertas det = context.getApplication().evaluateExpressionGet(context, "#{detalle}", DetalleOfertas.class);
+        if (det != null) {
             edicionCellItem(det, event, false);
         }
     }
 
     public void onCellEditLibros(CellEditEvent event) {
-        DetalleOfertas det = ((List<DetalleOfertas>) ((DataTable) event.getSource()).getValue()).get(event.getRowIndex());
+        FacesContext context = FacesContext.getCurrentInstance();
+        DetalleOfertas det = context.getApplication().evaluateExpressionGet(context, "#{detalle}", DetalleOfertas.class);
         edicionCellItem(det, event, true);
     }
 

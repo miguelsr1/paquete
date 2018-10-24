@@ -19,8 +19,6 @@ import javax.ejb.EJB;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
-import sv.gob.mined.app.web.util.JsfUtil;
-import sv.gob.mined.app.web.util.RptExcel;
 import sv.gob.mined.app.web.util.UtilFile;
 import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.DatosGeograficosEJB;

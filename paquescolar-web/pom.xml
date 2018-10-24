@@ -5,7 +5,7 @@
     <groupId>sv.gob.mined</groupId>
     <artifactId>paquescolar-web</artifactId>
     <packaging>war</packaging>
-    <version>2.1.12</version>
+    <version>2.1.13</version>
 
     <name>paquescolar-web</name>
     <url>http://maven.apache.org</url>
@@ -125,12 +125,11 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.3</version>
                 <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                    <archive> 
-                        <manifest> 
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries> 
-                        </manifest> 
-                        <manifestEntries> 
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                        <manifestEntries>
                             <Implementation-Build>${display_version}</Implementation-Build>
                             <Implementation-Version>${project.version}</Implementation-Version>
                             <build-time>${timestamp}</build-time>
@@ -148,13 +147,33 @@
                     </webResources> 
                 </configuration>
             </plugin>
+            
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>yuicompressor-maven-plugin</artifactId>
+                <version>1.5.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compress</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <nosuffix>true</nosuffix>
+                    <webappDirectory>${project.build.directory}/min</webappDirectory>
+                    <excludes>
+                        <exclude>**/*.min.js</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>    
     <properties>        
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netbeans.hint.deploy.server>JBoss4</netbeans.hint.deploy.server>
         <version.maven-compiler-plugin>2.3.2</version.maven-compiler-plugin>
-        <display_version>2.1.12</display_version>
+        <display_version>${project.version}</display_version>
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
     </properties>

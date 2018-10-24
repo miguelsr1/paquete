@@ -1,4 +1,1 @@
 Manifest-Version: 1.0
-Implementation-Title: paquescolar-web
-Implementation-Version: 2.1.12
-Implementation-Build: 2.1.12

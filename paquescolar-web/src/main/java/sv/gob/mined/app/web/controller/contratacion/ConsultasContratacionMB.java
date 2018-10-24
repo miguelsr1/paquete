@@ -332,7 +332,7 @@ public class ConsultasContratacionMB extends RecuperarProceso implements Seriali
         barModelUti = new BarChartModel();
         barModelUti.setExtender("skinBar");
         if (codigoDepartamento != null) {
-            obtenerDatos(utilEJB.find(DetalleProcesoAdq.class, uniformes));
+            obtenerDatos(utilEJB.find(DetalleProcesoAdq.class, utiles));
 
             for (GraficoTipoEmpresaDTO graficoTipoEmpresaDTO : listaCapacidad) {
                 ChartSeries tipoEmp = new ChartSeries();

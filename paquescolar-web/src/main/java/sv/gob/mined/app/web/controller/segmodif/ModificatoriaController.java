@@ -423,7 +423,8 @@ public class ModificatoriaController extends RecuperarProceso implements Seriali
     }
 
     public void onCellEdit(CellEditEvent event) {
-        DetalleModificativa det = ((List<DetalleModificativa>) ((DataTable) event.getSource()).getValue()).get(event.getRowIndex());
+        FacesContext context = FacesContext.getCurrentInstance();
+        DetalleModificativa det = context.getApplication().evaluateExpressionGet(context, "#{detalle}", DetalleModificativa.class);
 
         if (event.getNewValue() != null) {
             rowEdit = event.getRowIndex();

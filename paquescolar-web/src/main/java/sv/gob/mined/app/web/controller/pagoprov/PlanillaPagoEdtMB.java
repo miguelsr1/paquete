@@ -26,6 +26,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
 import net.sf.jasperreports.engine.JasperPrint;
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.app.web.util.JsfUtil;
@@ -125,6 +126,18 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
      * Creates a new instance of PlanillaPagoEdtMB
      */
     public PlanillaPagoEdtMB() {
+    }
+
+    public String validarIdPlanilla() {
+        String url = "";
+        if (StringUtils.isNumeric(JsfUtil.getParametroUrl("idTipoPlanilla"))) {
+            url = "planillaPagoEdt.mined";
+        } else {
+            Logger.getLogger(PlanillaPagoEdtMB.class.getName()).log(Level.INFO, "Error en el tipo de variable idTipoPlanilla {0}", JsfUtil.getParametroUrl("idTipoPlanilla"));
+        }
+        
+        //no funciona este reddireccionamiento
+        return url;
     }
 
     @PostConstruct
@@ -471,13 +484,13 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
             emailUnico = pagoProveedoresEJB.getEMailEntidadFinancieraById(lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getCodEntFinanciera());
             lstEmailProveeCredito = pagoProveedoresEJB.getLstNitProveeByIdPlanilla(planillaPago.getIdPlanilla());
 
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
+            Logger.getLogger(PlanillaPagoEdtMB.class.getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
             for (DatosProveDto datosProveDto : lstEmailProveeCredito) {
-                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Email {0} Proveedor {1} {2}", new String[]{datosProveDto.getCorreoElectronico(), datosProveDto.getRazonSocial(), datosProveDto.getNumeroNit()});
+                Logger.getLogger(PlanillaPagoEdtMB.class.getName()).log(Level.INFO, "Email {0} Proveedor {1} {2}", new String[]{datosProveDto.getCorreoElectronico(), datosProveDto.getRazonSocial(), datosProveDto.getNumeroNit()});
             }
         } else if (planillaPago.getIdTipoPlanilla() == 1) {
             emailUnico = pagoProveedoresEJB.getEMailProveedorByNit(lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit());
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
+            Logger.getLogger(PlanillaPagoEdtMB.class.getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
         }
 
         if (emailUnico == null || emailUnico.isEmpty()) {
@@ -639,7 +652,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
                     }
                     notificacion();
                     UtilFile.downloadFileTextoPlano(sb.toString(), "transferencia-" + planillaPago.getIdPlanilla(), "csv");
-                    Logger.getLogger(PagoProveedoresController.class
+                    Logger.getLogger(PlanillaPagoEdtMB.class
                             .getName()).log(Level.INFO, "Archivo: Genera: {0}\n======================================\n{1}", new Object[]{VarSession.getVariableSessionUsuario(), sb.toString()});
                 } catch (IOException ex) {
                     Logger.getLogger(PlanillaPagoEdtMB.class.getName()).log(Level.SEVERE, null, ex);
@@ -1045,7 +1058,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
         param.put("pIdPlanilla", planillaPago.getIdPlanilla().intValue());
         param.put("pAFavorDe", (short) (planillaPago.getIdTipoPlanilla() == 1 ? 3 : 0));
         param.put("pNombreCheque", pNombreCheque);
-        jp = reportesEJB.getRpt(param, PagoProveedoresController.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + rpt + ".jasper")));
+        jp = reportesEJB.getRpt(param, PlanillaPagoEdtMB.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + rpt + ".jasper")));
         return jp;
     }
 
@@ -1058,7 +1071,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
         param.put("pUniforme", idDetProceso == 25 ? 1 : 0);
         param.put("pIdRequerimiento", req.getIdRequerimiento().intValue());
         param.put("pAnho", "20" + anho);
-        jp = reportesEJB.getRpt(param, PagoProveedoresController.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + nombreRpt)));
+        jp = reportesEJB.getRpt(param, PlanillaPagoEdtMB.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + nombreRpt)));
         return jp;
     }
 
@@ -1075,7 +1088,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
         datos.setLstDetalle(lstEmailProveeCredito);
         List<DatosProveDto> lst = new ArrayList();
         lst.add(datos);
-        jp = reportesEJB.getRpt(param, PagoProveedoresController.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoProvee.jasper")), lst);
+        jp = reportesEJB.getRpt(param, PlanillaPagoEdtMB.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoProvee.jasper")), lst);
         return jp;
     }
 

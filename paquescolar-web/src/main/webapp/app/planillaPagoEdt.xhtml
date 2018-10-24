@@ -6,11 +6,13 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:jsf="http://xmlns.jcp.org/jsf"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
-
+    
     <ui:define name="content">
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
+                    <f:event type="preRenderView" listener="#{planillaPagoEdtMB.validarIdPlanilla}"/> 
+                    
                     <p:menubar id="mbMenu"> 
                         <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" action="#{planillaPagoEdtMB.redirecionPlanillaLst}" update="pnlRequerimiento tbDetallePlanilla"/>
                         <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" action="#{planillaPagoEdtMB.redirecionPlanillaLst}" update="pnlRequerimiento tbDetallePlanilla "/>

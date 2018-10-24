@@ -103,6 +103,14 @@
                     }
                 };
             }
+
+            function exportChart(grafico1, grafico2) {
+                //export image
+                $('#output').empty().append(PF(grafico1).exportAsImage()).append(PF(grafico2).exportAsImage());
+
+                //show the dialog
+                PF('dlg').show();
+            }
         </script>
     </h:head>
 
@@ -166,12 +174,6 @@
         <h:outputStylesheet name="css/nanoscroller.css" library="paradise-layout" />
         <h:outputStylesheet name="css/animate.css" library="paradise-layout" />
         <h:outputStylesheet name="css/layout-default.css" library="paradise-layout" />
-
-        <!--p:ajaxExceptionHandler type="java.lang.Throwable"
-                                update="exceptionDialog"
-                                onexception="PF('exceptionDialog').show();" /-->
-
-
 
         <p:dialog id="exceptionDialog" header="A ocurrido un error!" widgetVar="exceptionDialog" width="800" height="200"
                   modal="true" showEffect="puff" hideEffect="puff">

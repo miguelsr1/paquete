@@ -771,14 +771,18 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
     }
 
     public void imprimirAnalisisEconomico() {
-        OfertaBienesServicios ofe = getSelected().getIdResolucionAdj().getIdParticipante().getIdOferta();
-        if (ofe == null) {
+        if (current.getIdContrato() != null) {
+            OfertaBienesServicios ofe = getSelected().getIdResolucionAdj().getIdParticipante().getIdOferta();
+            if (ofe == null) {
+                JsfUtil.mensajeAlerta("Primero debe de guardar la oferta!!!");
+            } else {
+                SimpleDateFormat sd = new SimpleDateFormat("dd/MM/yyyy");
+                List lst = ofertaBienesServiciosEJB.getDatosRptAnalisisEconomico(ofe.getCodigoEntidad().getCodigoEntidad(), ofe.getIdDetProcesoAdq());
+                Bean2Excel oReport = new Bean2Excel(lst, detalleProceso.getIdRubroAdq().getDescripcionRubro(), entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(), "", sd.format(ofe.getFechaApertura()), getSelected().getUsuarioInsercion());
+                oReport.createFile(ofe.getCodigoEntidad().getCodigoEntidad());
+            }
+        }else{
             JsfUtil.mensajeAlerta("Primero debe de guardar la oferta!!!");
-        } else {
-            SimpleDateFormat sd = new SimpleDateFormat("dd/MM/yyyy");
-            List lst = ofertaBienesServiciosEJB.getDatosRptAnalisisEconomico(ofe.getCodigoEntidad().getCodigoEntidad(), ofe.getIdDetProcesoAdq());
-            Bean2Excel oReport = new Bean2Excel(lst, detalleProceso.getIdRubroAdq().getDescripcionRubro(), entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(), "", sd.format(ofe.getFechaApertura()), getSelected().getUsuarioInsercion());
-            oReport.createFile(ofe.getCodigoEntidad().getCodigoEntidad());
         }
     }
 

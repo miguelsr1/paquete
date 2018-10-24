@@ -78,7 +78,7 @@
                                 <p:outputLabel value="Fecha Contrato: " for="cldFechaContrato" />
                                 <p:calendar id="cldFechaContrato" pattern="dd/MM/yyyy" size="12" disabled="#{contratosOrdenesComprasController.deshabilitado}" value="#{contratosOrdenesComprasController.selected.fechaEmision}" locale="es"/>
                                 <p:outputLabel value="Fecha Orden Inicio: " for="cldOrdenInicio" rendered="#{contratosOrdenesComprasController.showFechaOrdenInicio}" />
-                                <p:calendar id="cldOrdenInicio" pattern="dd/MM/yyyy" size="12" disabled="#{contratosOrdenesComprasController.deshabilitado}" value="#{contratosOrdenesComprasController.selected.fechaOrdenInicio}" rendered="#{contratosOrdenesComprasController.showFechaOrdenInicio}" locale="es"/>
+                                <p:calendar id="cldOrdenInicio" pattern="dd/MM/yyyy" size="12" navigator="true" disabled="#{contratosOrdenesComprasController.deshabilitado}" value="#{contratosOrdenesComprasController.selected.fechaOrdenInicio}" rendered="#{contratosOrdenesComprasController.showFechaOrdenInicio}" locale="es"/>
                                 <p:outputLabel value="Plazo de entrega: " for="txtPlazo"/>
                                 <p:inputText id="txtPlazo" size="3" maxlength="2" readonly="true" onkeypress="soloNumeros(event);" disabled="#{contratosOrdenesComprasController.deshabilitado}" value="#{contratosOrdenesComprasController.selected.plazoPrevistoEntrega}"/>
                             </p:panelGrid>

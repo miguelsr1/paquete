@@ -27,6 +27,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.eclipse.persistence.annotations.AdditionalCriteria;
+import org.eclipse.persistence.annotations.Direction;
+import org.eclipse.persistence.annotations.NamedStoredProcedureQueries;
+import org.eclipse.persistence.annotations.NamedStoredProcedureQuery;
+import org.eclipse.persistence.annotations.StoredProcedureParameter;
 
 /**
  *
@@ -37,6 +41,34 @@ import org.eclipse.persistence.annotations.AdditionalCriteria;
 @NamedQueries({
     @NamedQuery(name = "ContratosOrdenesCompras.findAll", query = "SELECT c FROM ContratosOrdenesCompras c")})
 @AdditionalCriteria("this.estadoEliminacion = 0")
+
+@NamedStoredProcedureQueries({
+    @NamedStoredProcedureQuery(
+            name = "SP_ADD_RESUMEN_CE_PROCESADO",
+            procedureName = "SP_ADD_RESUMEN_CE_PROCESADO",
+            returnsResultSet = false,
+            parameters = {
+                @StoredProcedureParameter(queryParameter = "P_ID_DET_PROCESO_ADQ", name = "P_ID_DET_PROCESO_ADQ", direction = Direction.IN, type = Integer.class),
+                @StoredProcedureParameter(queryParameter = "P_CODIGO_ENTIDAD", name = "P_CODIGO_ENTIDAD", direction = Direction.IN, type = String.class),
+                @StoredProcedureParameter(queryParameter = "P_CODIGO_DEPARTAMENTO", name = "P_CODIGO_DEPARTAMENTO", direction = Direction.IN, type = String.class),
+                @StoredProcedureParameter(queryParameter = "P_CODIGO_MUNICIPIO", name = "P_CODIGO_MUNICIPIO", direction = Direction.IN, type = String.class)
+            }
+    ),
+    @NamedStoredProcedureQuery(
+            name = "SP_ADD_RESUMEN_ADJ_EMP",
+            procedureName = "SP_ADD_RESUMEN_ADJ_EMP",
+            returnsResultSet = false,
+            parameters = {
+                @StoredProcedureParameter(queryParameter = "P_ID_DET_PROCESO_ADQ", name = "P_ID_DET_PROCESO_ADQ", direction = Direction.IN, type = Integer.class),
+                @StoredProcedureParameter(queryParameter = "P_ID_EMPRESA", name = "P_ID_EMPRESA", direction = Direction.IN, type = String.class),
+                @StoredProcedureParameter(queryParameter = "P_ID_TIPO_EMPRESA", name = "P_ID_TIPO_EMPRESA", direction = Direction.IN, type = String.class),
+                @StoredProcedureParameter(queryParameter = "P_CODIGO_DEPARTAMENTO", name = "P_CODIGO_DEPARTAMENTO", direction = Direction.IN, type = String.class),
+                @StoredProcedureParameter(queryParameter = "P_CODIGO_ENTIDAD", name = "P_CODIGO_ENTIDAD", direction = Direction.IN, type = String.class),
+                @StoredProcedureParameter(queryParameter = "P_SUBTOTAL", name = "P_SUBTOTAL", direction = Direction.IN, type = String.class),
+                @StoredProcedureParameter(queryParameter = "P_CANTIDAD", name = "P_CANTIDAD", direction = Direction.IN, type = String.class)
+            }
+    )
+})
 public class ContratosOrdenesCompras implements Serializable {
     @Column(name = "ID_CONTRATO_PADRE")
     private BigInteger idContratoPadre;

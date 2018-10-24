@@ -790,7 +790,8 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
     public void onCellEdit(CellEditEvent event) {
         msjError = "";
         DataTable tbl = (DataTable) event.getSource();
-        precioRef = ((List<PreciosRefRubroEmp>) tbl.getValue()).get(event.getRowIndex());
+        FacesContext context = FacesContext.getCurrentInstance();
+        precioRef = context.getApplication().evaluateExpressionGet(context, "#{precio}", PreciosRefRubroEmp.class);
         boolean valido = true;
         if (!valido) {
             precioRef.setIdProducto(null);
@@ -804,7 +805,6 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
                 agregarPrecio();
             }
         }
-        //updateFilaDetalle();
     }
 
     public void updateFilaDetalle() {
