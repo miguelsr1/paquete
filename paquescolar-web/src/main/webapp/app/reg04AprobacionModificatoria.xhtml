@@ -161,19 +161,19 @@
                         <p:column headerText="Descripción">
                             <p:outputLabel value="#{detalle.consolidadoEspTec}"  id="descripcionItem"/>
                         </p:column>
-                        <p:column headerText="Cantidad" style="text-align: right;">
+                        <p:column headerText="Cantidad" styleClass="numero">
                             <h:outputText value="#{detalle.cantidadOld}"/>
 
                             <f:facet name="footer">  
                                 <h:outputText value="#{modificatoriaController.cantidadOld}" style="font-weight: bold;" id="cantidadOld"/>
                             </f:facet>
                         </p:column>
-                        <p:column headerText="Precio Uni." style="text-align: right;">
+                        <p:column headerText="Precio Uni." styleClass="numero">
                             <h:outputText value="#{detalle.precioUnitarioOld}">
                                 <f:convertNumber pattern="#,##0.00"  />
                             </h:outputText>
                         </p:column>
-                        <p:column headerText="subTotal" style="text-align: right;">
+                        <p:column headerText="subTotal" styleClass="numero">
                             <h:outputText value="#{detalle.cantidadOld*detalle.precioUnitarioOld}" >
                                 <f:convertNumber pattern="#,##0.00"  />
                             </h:outputText>
@@ -184,7 +184,7 @@
                         </p:column>
 
                         <!-- NUEVAS CANTIDADES -->
-                        <p:column style="text-align: right;">
+                        <p:column styleClass="numero">
                             <h:outputText value="#{detalle.cantidadNew}" >
                                 <f:convertNumber pattern="#,##0"  />
                             </h:outputText>
@@ -193,12 +193,12 @@
                                 <h:outputText value="#{modificatoriaController.cantidadNew}" style="font-weight: bold;" id="cantidadNew"/>
                             </f:facet>
                         </p:column>
-                        <p:column style="text-align: right;">
+                        <p:column styleClass="numero">
                             <h:outputText value="#{detalle.precioUnitarioNew}" id="precioUnitario" >
                                 <f:convertNumber pattern="#,##0.00"  />
                             </h:outputText>
                         </p:column>
-                        <p:column style="text-align: right;">
+                        <p:column styleClass="numero">
                             <h:outputText value="#{detalle.cantidadNew*detalle.precioUnitarioNew}" id="subTotal" >
                                 <f:convertNumber pattern="#,##0.00"  />
                             </h:outputText>

@@ -26,7 +26,7 @@ import sv.gob.mined.paquescolar.model.DetallePlanilla;
 import sv.gob.mined.paquescolar.model.EntidadFinanciera;
 import sv.gob.mined.paquescolar.model.PlanillaPago;
 import sv.gob.mined.paquescolar.model.RequerimientoFondos;
-import sv.gob.mined.paquescolar.model.pojos.ResumenRequerimientoDto;
+import sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
 
 /**
@@ -395,7 +395,7 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
             JsfUtil.mensajeAlerta("Debe de seleccionar un proveedor");
             return "";
         } else {
-            return "planillaPagoEdt.mined?faces-redirect=true&includeViewParams=true&idReq=" + idReq + "&nit=" + proveedor.getNumeroNit() + "&idTipoPlanilla=" + idTipoPlanilla;
+            return "planillaPagoEdt.mined?faces-redirect=true&includeViewParams=true&idReq=" + idReq + "&nit=" + proveedor.getNumeroNit() + "&idTipoPlanilla=" + idTipoPlanilla+"&cboRubro_input="+idRubro;
         }
     }
 
@@ -405,7 +405,7 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
             JsfUtil.mensajeAlerta("Debe de seleccionar una entidad financiera");
             return "";
         } else {
-            return "planillaPagoEdt.mined?faces-redirect=true&includeViewParams=true&idReq=" + idReq + "&nombreEntFinan=" + entidadFinanciera.getNombreEntFinan() + "&idTipoPlanilla=3";
+            return "planillaPagoEdt.mined?faces-redirect=true&includeViewParams=true&idReq=" + idReq + "&nombreEntFinan=" + entidadFinanciera.getNombreEntFinan() + "&idTipoPlanilla=3&cboRubro_input="+idRubro;
         }
     }
     

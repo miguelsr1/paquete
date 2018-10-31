@@ -69,17 +69,17 @@
                                             <f:convertDateTime pattern="dd/MM/yyyy"/>
                                         </h:outputText>
                                     </p:column>
-                                    <p:column headerText="Monto a Pagar" style="text-align: right;">
+                                    <p:column headerText="Monto a Pagar" styleClass="numero">
                                         <h:outputText value="#{renta.montoActual}">
                                             <f:convertNumber pattern="#,#00.00"/>
                                         </h:outputText>
                                     </p:column>
-                                    <p:column headerText="Monto Sujeto Retención" style="text-align: right;">
+                                    <p:column headerText="Monto Sujeto Retención" styleClass="numero">
                                         <h:outputText value="#{renta.montoRetencion}">
                                             <f:convertNumber pattern="#,#00.00"/>
                                         </h:outputText>
                                     </p:column>
-                                    <p:column headerText="Monto Renta" style="text-align: right;">
+                                    <p:column headerText="Monto Renta" styleClass="numero">
                                         <h:outputText value="#{renta.montoRenta}">
                                             <f:convertNumber pattern="#,#00.00"/>
                                         </h:outputText>
@@ -89,17 +89,17 @@
                                         <p:column colspan="3" style="text-align:right">
                                             <h:outputText value="Total:" />
                                         </p:column>
-                                        <p:column style="text-align: right;">
+                                        <p:column styleClass="numero">
                                             <h:outputText value="#{pagoProveedoresController.montoTotal}">
                                                 <f:convertNumber type="currency" currencySymbol="$" />
                                             </h:outputText>
                                         </p:column>
-                                        <p:column style="text-align: right;">
+                                        <p:column styleClass="numero">
                                             <h:outputText value="#{pagoProveedoresController.montoSujetoRenta}">
                                                 <f:convertNumber type="currency" currencySymbol="$" />
                                             </h:outputText>
                                         </p:column>
-                                        <p:column style="text-align: right;">
+                                        <p:column styleClass="numero">
                                             <h:outputText value="#{pagoProveedoresController.montoRenta}">
                                                 <f:convertNumber type="currency" currencySymbol="$" />
                                             </h:outputText>

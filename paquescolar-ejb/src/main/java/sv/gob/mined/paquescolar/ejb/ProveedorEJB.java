@@ -47,7 +47,7 @@ import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.RequerimientoFondos;
 import sv.gob.mined.paquescolar.model.TipoPersoneria;
 import sv.gob.mined.paquescolar.model.pojos.ResumenPagosDto;
-import sv.gob.mined.paquescolar.model.pojos.ResumenRequerimientoDto;
+import sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.DetalleAdjudicacionEmpDto;
 import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
 import sv.gob.mined.paquescolar.model.view.DatosPreliminarRequerimiento;
@@ -117,7 +117,6 @@ public class ProveedorEJB {
                 where = " AND UPPER(trim(VW_FORMATO_PRE_CARGA.NOMBRE)) LIKE '%PARVULARIA%' ";
                 break;
             case 2:
-                //where = " AND (NOMBRE LIKE 'CENTRO ESCOLAR%' OR NOMBRE LIKE 'COMPLEJO EDU%') ";
                 where = " AND VW_FORMATO_PRE_CARGA.CODIGO_ENTIDAD NOT IN (SELECT VW_FORMATO_PRE_CARGA.codigo_entidad FROM VW_FORMATO_PRE_CARGA WHERE ID_DET_PROCESO_ADQ = " + idDetProcesoAdq + " AND TIENE_CREDITO = " + (credito == 1 ? "'NO'" : "'SI'") + " AND (UPPER(trim(NOMBRE)) like '%PARVULARIA%' or UPPER(trim(NOMBRE)) like 'INSTITUTO%')) ";
                 break;
             case 6:
@@ -685,51 +684,17 @@ public class ProveedorEJB {
     }
 
     public List<DetalleAdjudicacionEmpDto> resumenAdjProveedor(String nit, Integer idProceso) {
-        //List<DetalleAdjudicacionEmpDto> lstResumen = new ArrayList();
-
         Query q = em.createNativeQuery(StringUtils.QUERY_PROVEEDOR_RESUMEN_ADJ_EMP, DetalleAdjudicacionEmpDto.class);
         q.setParameter(1, nit);
         q.setParameter(2, idProceso);
         return q.getResultList();
-        /*for (Object object : q.getResultList()) {
-            DetalleAdjudicacionEmpDto result = new DetalleAdjudicacionEmpDto();
-            Object[] datos = (Object[]) object;
-            result.setCodigoEntidad(datos[0].toString());
-            result.setNombre(datos[1].toString());
-            result.setRubro(datos[2].toString());
-            result.setCantidad(new BigDecimal(datos[3].toString()));
-            result.setMonto(new BigDecimal(datos[4].toString()));
-            lstResumen.add(result);
-        }
-
-        return lstResumen;*/
     }
 
     public List<DetalleAdjudicacionEmpDto> detalleAdjProveedor(String nit, Integer idProceso) {
-        /*List<DetalleAdjudicacionEmpDto> salida = new ArrayList(0);
-        String query = "SELECT * FROM vw_detalle_adjudicacion_emp WHERE NUMERO_NIT=?1 AND ID_DET_PROCESO_ADQ=?2";*/
-
         Query q = em.createNativeQuery(StringUtils.QUERY_PROVEEDOR_DETALLE_ADJ_EMP, DetalleAdjudicacionEmpDto.class);
         q.setParameter(1, nit);
         q.setParameter(2, idProceso);
         return q.getResultList();
-        /*for (Object object : q.getResultList()) {
-            DetalleAdjudicacionEmpDto result = new DetalleAdjudicacionEmpDto();
-            Object[] datos = (Object[]) object;
-            result.setNombreDepartamento(datos[0].toString());
-            result.setNombreMunicipio(datos[1].toString());
-            result.setCodigoEntidad(datos[2].toString());
-            result.setNombre(datos[3].toString());
-            result.setDescripcionNivel(datos[4].toString());
-            result.setNombreProducto(datos[5].toString());
-            result.setCantidad(new BigDecimal(datos[6].toString()));
-            result.setFechaApertura((Date) datos[7]);
-            result.setMonto(new BigDecimal(datos[8].toString()));
-
-            salida.add(result);
-        }
-
-        return salida;*/
     }
 
     public List<DetalleOfertas> getDetalleAdjProveedor(BigDecimal idEmpresa, Integer idDetProceso) {
@@ -907,8 +872,8 @@ public class ProveedorEJB {
     }
 
     public List<ResumenRequerimientoDto> getLstResumenRequerimiento(String codigoDepartamento, int idDetProcesoAdq) {
-        List<ResumenRequerimientoDto> lstResumen = new ArrayList<>();
-        String sql = "SELECT \n"
+        List<ResumenRequerimientoDto> lstResumen = new ArrayList();
+        /*String sql = "SELECT \n"
                 + "  REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO,\n"
                 + "  REQUERIMIENTO_FONDOS.COMPONENTE,\n"
                 + "  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,\n"
@@ -932,12 +897,12 @@ public class ProveedorEJB {
                 + "  REQUERIMIENTO_FONDOS.COMPONENTE,\n"
                 + "  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,\n"
                 + "  REQUERIMIENTO_FONDOS.MONTO_TOTAL "
-                + "ORDER BY REQUERIMIENTO_FONDOS.NUMERO_REQUERIMIENTO";
-        Query q = em.createNativeQuery(sql);
+                + "ORDER BY REQUERIMIENTO_FONDOS.NUMERO_REQUERIMIENTO";*/
+        Query q = em.createNamedQuery("PagoProve.QueryConsultaRequerimiento", ResumenRequerimientoDto.class);
         q.setParameter(1, codigoDepartamento);
         q.setParameter(2, idDetProcesoAdq);
-        List lst = q.getResultList();
-        for (Object object : lst) {
+        lstResumen = q.getResultList();
+        /*for (Object object : lst) {
             Object[] datos = (Object[]) object;
             ResumenRequerimientoDto resumen = new ResumenRequerimientoDto();
             resumen.setIdRequerimiento((BigDecimal) datos[0]);
@@ -950,7 +915,7 @@ public class ProveedorEJB {
             resumen.setMontoReintegrar((BigDecimal) datos[7]);
             resumen.setSaldoRequerimiento((BigDecimal) datos[8]);
             lstResumen.add(resumen);
-        }
+        }*/
         return lstResumen;
     }
 

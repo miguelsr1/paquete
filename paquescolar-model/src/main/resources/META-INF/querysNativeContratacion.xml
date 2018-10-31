@@ -193,7 +193,7 @@
         </query>
     </named-native-query>
     <named-native-query name="Contratacion.RptSaldoProveedor" 
-                        result-class="sv.gob.mined.paquescolar.model.pojos.SaldoProveedorDto">
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.SaldoProveedorDto">
         <query>
             <![CDATA[
             select 
@@ -204,8 +204,9 @@
                 tbl1.capacidad_acreditada                                   as capacidadCalificada,
                 nvl(tbl2.cantidad_adjudicada,0)                             as capacidadAdjudicada,
                 tbl1.capacidad_acreditada-nvl(tbl2.cantidad_adjudicada,0)   as saldoCapacidad,
-                decode(tbl1.id_det_proceso_adq,40,'1er UNIFORME',
-                    41,'2do UNIFORME',42,'UTILES',43,'ZAPATOS')             as rubro
+                tbl1.nombre_corto                                           as rubro,
+                tbl1.codigo_departamento                                    as codigoDepartamento,
+                tbl2.codigo_departamento_ce                                 as codigoDepartamentoCe
             from
                 (select 
                     emp.id_empresa,
@@ -213,37 +214,36 @@
                     emp.numero_nit,
                     capa.capacidad_acreditada,
                     dis.codigo_departamento,
-                    det.id_det_proceso_adq
+                    det.id_det_proceso_adq,
+                    rub.nombre_corto
                 from
                     det_rubro_muestra_interes det
-                    inner join empresa emp                  on emp.id_empresa = det.id_empresa
-                    inner join capa_inst_por_rubro capa     on det.id_muestra_interes = capa.id_muestra_interes
-                    inner join capa_distribucion_acre dis   on dis.id_muestra_interes = det.id_muestra_interes
+                    inner join detalle_proceso_adq detp     on detp.id_det_proceso_adq = det.id_det_proceso_adq
+                    inner join rubros_amostrar_interes rub  on rub.id_rubro_interes = detp.id_rubro_adq
+                    inner join empresa emp                  on emp.id_empresa = det.id_empresa and det.estado_eliminacion = 0
+                    inner join capa_inst_por_rubro capa     on det.id_muestra_interes = capa.id_muestra_interes and capa.estado_eliminacion = 0
+                    inner join capa_distribucion_acre dis   on dis.id_muestra_interes = det.id_muestra_interes and dis.estado_eliminacion = 0
                 where 
-                    capa.estado_eliminacion = 0 and
-                    det.estado_eliminacion = 0 and
-                    dis.estado_eliminacion = 0 and
+                    dis.codigo_departamento in ('00',?3) and
                     det.id_det_proceso_adq in (?1)) tbl1
                 left outer join
                 (select 
                     par.id_empresa,
                     ofe.id_det_proceso_adq,
-                    sum(det.cantidad) cantidad_adjudicada
+                    sum(det.cantidad) cantidad_adjudicada,
+                    vw.codigo_departamento codigo_departamento_ce
                 from 
                     resoluciones_adjudicativas res
-                    inner join participantes par            on res.id_participante = par.id_participante
-                    inner join detalle_ofertas det          on par.id_participante = det.id_participante
-                    inner join oferta_bienes_servicios ofe  on par.id_oferta = ofe.id_oferta
-                where   
-                    det.estado_eliminacion = 0 and
-                    ofe.estado_eliminacion = 0 and
-                    par.estado_eliminacion = 0 and
-                    res.estado_eliminacion = 0 and
-                    res.id_estado_reserva = 2 and
-                    det.id_producto not in (1) and
-                    ofe.id_det_proceso_adq in (?1)
+                    inner join participantes par                on res.id_participante = par.id_participante and par.estado_eliminacion = 0 and res.estado_eliminacion = 0 and res.id_estado_reserva = 2
+                    inner join detalle_ofertas det              on par.id_participante = det.id_participante and det.estado_eliminacion = 0 and det.id_producto not in (1)
+                    inner join oferta_bienes_servicios ofe      on par.id_oferta = ofe.id_oferta             and ofe.estado_eliminacion = 0
+                    inner join vw_catalogo_entidad_educativa vw on vw.codigo_entidad = ofe.codigo_entidad
+                where
+                    ofe.id_det_proceso_adq in (?1) and
+                    vw.codigo_departamento in (?2)
                 group by 
                     par.id_empresa,
+                    vw.codigo_departamento,
                     ofe.id_det_proceso_adq) tbl2 on tbl1.id_empresa = tbl2.id_empresa and tbl1.id_det_proceso_adq = tbl2.id_det_proceso_adq
             order by 
                 tbl1.capacidad_acreditada-nvl(tbl2.cantidad_adjudicada,0)  ASC

@@ -300,4 +300,51 @@
             ]]>
         </query>
     </named-native-query>
+    
+    <named-native-query name="PagoProve.QueryConsultaRequerimiento" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                  as idRow,
+                id_requerimiento        as idRequerimiento,
+                componente              as concepto,
+                formato_requerimiento   as formatoRequerimiento,
+                monto_total             as montoTotal,
+                cantidad_planilla       as cantidadPlanilla,
+                monto_total_planilla    as montoTotalPlanilla,
+                monto_pendiente_pago    as montoPendientePago,
+                monto_reintegrar        as montoReintegrar,
+                saldo_requerimiento     as saldoRequerimiento
+            from (select 
+                    req.id_requerimiento,
+                    req.componente,
+                    req.formato_requerimiento,
+                    req.monto_total,
+                    count(distinct pp.id_planilla) cantidad_planilla,
+                    nvl(fn_rf_monto_pagado(req.id_requerimiento),0) monto_total_planilla,
+                    nvl(fn_rf_monto_pendiente(req.id_requerimiento), 0) monto_pendiente_pago,
+                    nvl(fn_rf_monto_reintegrar(req.id_requerimiento),0) monto_reintegrar,
+                    nvl((req.monto_total-fn_rf_monto_pagado(req.id_requerimiento)-fn_rf_monto_reintegrar(req.id_requerimiento)),0) saldo_requerimiento,
+                    req.numero_requerimiento
+                from 
+                    requerimiento_fondos req
+                    left outer join detalle_requerimiento detq  on req.id_requerimiento = detq.id_requerimiento
+                    left outer join planilla_pago pp            on pp.id_requerimiento = detq.id_requerimiento
+                    left outer join detalle_planilla detp       on pp.id_planilla = detp.id_planilla
+                where
+                    req.codigo_departamento = ?1 and
+                    req.id_det_proceso_adq = ?2 and 
+                    req.estado_eliminacion = 0 
+                group by 
+                    req.numero_requerimiento,
+                    req.id_requerimiento,
+                    req.componente,
+                    req.formato_requerimiento,
+                    req.monto_total) tbl
+            order by 
+                tbl.numero_requerimiento
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>

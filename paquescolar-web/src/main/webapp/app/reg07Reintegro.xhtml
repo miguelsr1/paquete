@@ -90,7 +90,7 @@
                             <p:column headerText="#{bundle['tabla.proveedor']}" style="font-size: 10px;">
                                 <p:outputLabel value="#{reg.razonSocial}"/>
                             </p:column>
-                            <p:column headerText="#{bundle['tabla.monto$']}" style="text-align: right;" width="60">
+                            <p:column headerText="#{bundle['tabla.monto$']}" styleClass="numero" width="60">
                                 <p:outputLabel value="#{reg.montoReintegro}">
                                     <f:convertNumber pattern="$ #,##0.00"/>
                                 </p:outputLabel>

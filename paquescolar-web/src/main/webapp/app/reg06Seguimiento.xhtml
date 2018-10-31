@@ -86,7 +86,7 @@
                         <p:column headerText="Proveedor" width="100">
                             <h:outputText value="#{seguimiento.razonSocial}"/>
                         </p:column>
-                        <p:column headerText="Monto $" style="text-align: right;"  width="60">
+                        <p:column headerText="Monto $" styleClass="numero"  width="60">
                             <h:outputText value="#{seguimiento.monto}">
                                 <f:convertNumber pattern="#,###.00"/>
                             </h:outputText>

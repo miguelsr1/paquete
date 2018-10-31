@@ -28,9 +28,9 @@ import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.ejb.ServiciosJsonEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
-import sv.gob.mined.paquescolar.model.pojos.AvanceFeriaDTO;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.AvanceFeriaDto;
 import sv.gob.mined.paquescolar.model.pojos.GraficoTipoEmpresaDTO;
-import sv.gob.mined.paquescolar.model.pojos.SaldoProveedorDto;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.SaldoProveedorDto;
 
 /**
  *
@@ -73,7 +73,7 @@ public class ConsultasContratacionMB extends RecuperarProceso implements Seriali
 
     private DetalleProcesoAdq detalleProceso = new DetalleProcesoAdq();
 
-    private List<AvanceFeriaDTO> listaAvance = new ArrayList();
+    private List<AvanceFeriaDto> listaAvance = new ArrayList();
     private List<GraficoTipoEmpresaDTO> listaCapacidad = new ArrayList();
     private List<SaldoProveedorDto> lstSaldos = new ArrayList();
 
@@ -220,7 +220,7 @@ public class ConsultasContratacionMB extends RecuperarProceso implements Seriali
             totalProcesadosZap = 0;
             if (!lista.isEmpty()) {
                 for (Object object : lista) {
-                    AvanceFeriaDTO result = new AvanceFeriaDTO();
+                    AvanceFeriaDto result = new AvanceFeriaDto();
                     Object[] datos = (Object[]) object;
                     result.setCodigoMunicipio(datos[0].toString());
                     result.setNombreMun(datos[1].toString());
@@ -412,7 +412,7 @@ public class ConsultasContratacionMB extends RecuperarProceso implements Seriali
 
     public void consultaSaldo() {
         detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
-        lstSaldos = serviciosJsonEJB.getLstSaldoProveedores(detalleProceso.getIdDetProcesoAdq());
+        lstSaldos = serviciosJsonEJB.getLstSaldoProveedoresByDepAndCodDepa(detalleProceso, codigoDepartamento);
     }
     
     public String nombreDepartamento(String codigoDepartamento){

@@ -6,13 +6,15 @@
 package sv.gob.mined.paquescolar.ejb;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import sv.gob.mined.paquescolar.model.pojos.SaldoProveedorDto;
+import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.SaldoProveedorDto;
 import sv.gob.mined.paquescolar.model.pojos.dashboard.TotalContratadoDto;
 import sv.gob.mined.paquescolar.model.pojos.dashboard.TotalResumenDto;
 import sv.gob.mined.paquescolar.model.pojos.dashboard.TotalTipoEmpDto;
@@ -95,9 +97,11 @@ public class ServiciosJsonEJB {
         return q.getResultList();
     }
 
-    public List<SaldoProveedorDto> getLstSaldoProveedores(Integer idDet1) {
+    public List<SaldoProveedorDto> getLstSaldoProveedoresByDepAndCodDepa(DetalleProcesoAdq idDet, String codigoDepartamentoCe) {
         Query q = em.createNamedQuery("Contratacion.RptSaldoProveedor", SaldoProveedorDto.class);
-        q.setParameter(1, idDet1);
+        q.setParameter(1, idDet.getIdDetProcesoAdq());
+        q.setParameter(2, codigoDepartamentoCe);
+        q.setParameter(3, codigoDepartamentoCe);
 
         return q.getResultList();
     }

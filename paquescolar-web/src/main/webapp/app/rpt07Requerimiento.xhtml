@@ -65,10 +65,10 @@
                             <p:column headerText="Número" width="80">
                                 <p:outputLabel value="#{req.formatoRequerimiento}"/>
                             </p:column>
-                            <p:column headerText="No C.E." width="40" style="text-align: right;">
+                            <p:column headerText="No C.E." width="40" styleClass="numero">
                                 <p:outputLabel value="#{req.detalleRequerimientoList.size()}"/>
                             </p:column>
-                            <p:column headerText="Monto ($)" width="90" style="text-align: right;">
+                            <p:column headerText="Monto ($)" width="90" styleClass="numero">
                                 <p:outputLabel value="#{req.montoTotal}">
                                     <f:convertNumber pattern="$ #,##0.00"/>
                                 </p:outputLabel>

@@ -55,7 +55,7 @@
                             <p:column width="23" style="text-align: center;" headerText="No Item">
                                 <h:outputText value="#{item.noItem}" />
                             </p:column>
-                            <p:column width="45" style="text-align: right;" headerText="Cantidad">
+                            <p:column width="45" styleClass="numero" headerText="Cantidad">
                                 <h:outputText value="#{edicionSeguimientoMB.dividirEntreDos?(item.cantidad.divide(2)):item.cantidad}" />
                             </p:column>
                             <p:column headerText="Descripción">

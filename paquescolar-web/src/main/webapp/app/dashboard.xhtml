@@ -148,12 +148,12 @@
                                     <p:column style="text-align:right">
                                         <h:outputText value="Total:" />
                                     </p:column>
-                                    <p:column style="text-align: right;">
+                                    <p:column styleClass="numero">
                                         <h:outputText value="#{dashboardMB.montoTotalRubro}">
                                             <f:convertNumber type="currency" currencySymbol="$" />
                                         </h:outputText>
                                     </p:column>
-                                    <p:column style="text-align: right;" colspan="#{dashboardMB.rubro eq 2?1:2}">
+                                    <p:column styleClass="numero" colspan="#{dashboardMB.rubro eq 2?1:2}">
                                         <h:outputText value="#{dashboardMB.cantidadTotalRubro/dashboardMB.divisor}" rendered="#{dashboardMB.rubro eq 1}">
                                             <f:convertNumber pattern="#,##0"/>
                                         </h:outputText>
@@ -197,7 +197,7 @@
                                             <f:convertNumber type="currency" currencySymbol="$" />
                                         </h:outputText>
                                     </p:column>
-                                    <p:column style="text-align: right;">
+                                    <p:column styleClass="numero">
                                         <h:outputText value="#{dashboardMB.cantidadTotalEmp}">
                                             <f:convertNumber pattern="#,##0"/>
                                         </h:outputText>
@@ -235,12 +235,12 @@
                                     <p:column style="text-align:right">
                                         <h:outputText value="Total:" />
                                     </p:column>
-                                    <p:column style="text-align: right;">
+                                    <p:column styleClass="numero">
                                         <h:outputText value="#{dashboardMB.montoTotalGenero}">
                                             <f:convertNumber type="currency" currencySymbol="$" />
                                         </h:outputText>
                                     </p:column>
-                                    <p:column style="text-align: right;">
+                                    <p:column styleClass="numero">
                                         <h:outputText value="#{dashboardMB.cantidadTotalGenero}">
                                             <f:convertNumber pattern="#,##0"/>
                                         </h:outputText>

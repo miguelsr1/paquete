@@ -26,7 +26,7 @@ import sv.gob.mined.paquescolar.model.Participantes;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.RptDocumentos;
 import sv.gob.mined.paquescolar.model.TechoRubroEntEdu;
-import sv.gob.mined.paquescolar.model.pojos.SaldoProveedorDto;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.SaldoProveedorDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ContratoDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ParticipanteDto;

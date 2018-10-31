@@ -11,8 +11,6 @@
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <f:event type="preRenderView" listener="#{planillaPagoEdtMB.validarIdPlanilla}"/> 
-                    
                     <p:menubar id="mbMenu"> 
                         <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" action="#{planillaPagoEdtMB.redirecionPlanillaLst}" update="pnlRequerimiento tbDetallePlanilla"/>
                         <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" action="#{planillaPagoEdtMB.redirecionPlanillaLst}" update="pnlRequerimiento tbDetallePlanilla "/>
@@ -89,7 +87,7 @@
                 <p:column headerText="Núm. Cuenta">
                     <h:outputText value="#{detalleRequerimiento.numeroCuenta}"/>
                 </p:column>
-                <p:column headerText="Monto Contrato" style="text-align: right;" width="60">
+                <p:column headerText="Monto Contrato" styleClass="numero" width="60">
                     <h:outputText value="#{detalleRequerimiento.montoTotal}">
                         <f:convertNumber pattern="$ #,##0.00"/>
                     </h:outputText>

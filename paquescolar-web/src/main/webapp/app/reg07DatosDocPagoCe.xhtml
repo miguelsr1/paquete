@@ -76,7 +76,7 @@
                             <p:column headerText="Num.Cuenta">
                                 <p:outputLabel value="#{detReq.numeroCuenta}"/>
                             </p:column>
-                            <p:column headerText="#{bundle['tabla.monto']}" width="70" style="text-align: right;">
+                            <p:column headerText="#{bundle['tabla.monto']}" width="70" styleClass="numero">
                                 <p:outputLabel value="#{detReq.montoTotal}">
                                     <f:convertNumber pattern="$ #,##0.00"/>
                                 </p:outputLabel>

@@ -80,33 +80,33 @@
                                 <p:column headerText="Núm. Req." width="80">
                                     <p:outputLabel value="#{pago.formatoRequerimiento}"/>
                                 </p:column>
-                                <p:column headerText="# Planillas" style="text-align: right;" width="45">
+                                <p:column headerText="# Planillas" styleClass="numero" width="45">
                                     <p:outputLabel value="#{pago.cantidadPlanilla}"/>
                                 </p:column>
-                                <p:column headerText="# CE" style="text-align: right;" width="30">
+                                <p:column headerText="# CE" styleClass="numero" width="30">
                                     <p:outputLabel value="#{pago.cantidadCe}"/>
                                 </p:column>
-                                <p:column headerText="Monto del Requerimiento" style="text-align: right;">
+                                <p:column headerText="Monto del Requerimiento" styleClass="numero">
                                     <p:outputLabel value="#{pago.montoTotal}">
                                         <f:convertNumber pattern="#,##0.00"/>
                                     </p:outputLabel>
                                 </p:column>
-                                <p:column headerText="Monto Pagado" style="text-align: right;">
+                                <p:column headerText="Monto Pagado" styleClass="numero">
                                     <p:outputLabel value="#{pago.montoPagado}">
                                         <f:convertNumber pattern="#,##0.00"/>
                                     </p:outputLabel>
                                 </p:column>
-                                <p:column headerText="Monto Pendiente" style="text-align: right;">
+                                <p:column headerText="Monto Pendiente" styleClass="numero">
                                     <p:outputLabel value="#{pago.montoPendiente}">
                                         <f:convertNumber pattern="#,##0.00"/>
                                     </p:outputLabel>
                                 </p:column>
-                                <p:column headerText="Monto Reintegro" style="text-align: right;">
+                                <p:column headerText="Monto Reintegro" styleClass="numero">
                                     <p:outputLabel value="#{pago.montoReintegro}">
                                         <f:convertNumber pattern="#,##0.00"/>
                                     </p:outputLabel>
                                 </p:column>
-                                <p:column headerText="Monto Saldo" style="text-align: right;">
+                                <p:column headerText="Monto Saldo" styleClass="numero">
                                     <p:outputLabel value="#{pago.montoSaldo}">
                                         <f:convertNumber pattern="#,##0.00"/>
                                     </p:outputLabel>
@@ -116,37 +116,37 @@
                                     <p:column style="text-align:right">
                                         <h:outputText value="Totales" />
                                     </p:column>
-                                    <p:column style="text-align: right;">
+                                    <p:column styleClass="numero">
                                         <h:outputText value="#{pagoProveedoresController.cantidadPlanilla}" style="font-weight: bold;">
                                             <f:convertNumber pattern="#,##0"/>
                                         </h:outputText>
                                     </p:column>
-                                    <p:column style="text-align: right;">
+                                    <p:column styleClass="numero">
                                         <h:outputText value="#{pagoProveedoresController.cantidadCe}" style="text-align: right; font-weight: bold;">
                                             <f:convertNumber pattern="#,##0"/>
                                         </h:outputText>
                                     </p:column>
-                                    <p:column style="text-align: right;">
+                                    <p:column styleClass="numero">
                                         <h:outputText value="#{pagoProveedoresController.montoTotal}" style="text-align: right; font-weight: bold;">
                                             <f:convertNumber pattern="$ #,##0.00"/>
                                         </h:outputText>
                                     </p:column>
-                                    <p:column style="text-align: right;">
+                                    <p:column styleClass="numero">
                                         <h:outputText value="#{pagoProveedoresController.montoPagado}" style="text-align: right; font-weight: bold;">
                                             <f:convertNumber pattern="$ #,##0.00"/>
                                         </h:outputText>
                                     </p:column>
-                                    <p:column style="text-align: right;">
+                                    <p:column styleClass="numero">
                                         <h:outputText value="#{pagoProveedoresController.montoPendiente}" style="text-align: right; font-weight: bold;">
                                             <f:convertNumber pattern="$ #,##0.00"/>
                                         </h:outputText>
                                     </p:column>
-                                    <p:column style="text-align: right;">
+                                    <p:column styleClass="numero">
                                         <h:outputText value="#{pagoProveedoresController.montoReintegro}" style="text-align: right; font-weight: bold;">
                                             <f:convertNumber pattern="$ #,##0.00"/>
                                         </h:outputText>
                                     </p:column>
-                                    <p:column style="text-align: right;">
+                                    <p:column styleClass="numero">
                                         <h:outputText value="#{pagoProveedoresController.montoSaldo}" style="text-align: right; font-weight: bold;">
                                             <f:convertNumber pattern="$ #,##0.00"/>
                                         </h:outputText>

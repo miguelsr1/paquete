@@ -98,7 +98,8 @@
     <class>sv.gob.mined.paquescolar.model.pojos.OfertaGlobal</class>
     <class>sv.gob.mined.paquescolar.model.ReintegroRequerimiento</class>
     <class>sv.gob.mined.paquescolar.model.pojos.proveedor.DetalleAdjudicacionEmpDto</class>
-    <class>sv.gob.mined.paquescolar.model.pojos.SaldoProveedorDto</class>
+    <class>sv.gob.mined.paquescolar.model.pojos.contratacion.SaldoProveedorDto</class>
+    <class>sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>

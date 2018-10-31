@@ -75,12 +75,12 @@
                                 <p:column colspan="4" style="text-align:right">
                                     <h:outputText value="Total:" />
                                 </p:column>
-                                <p:column style="text-align: right;">
+                                <p:column styleClass="numero">
                                     <h:outputText value="#{proveedorController.totalItems}" style="font-weight: bold;" id="totalCantidad">
                                         <f:convertNumber pattern="#,##0"/>
                                     </h:outputText>
                                 </p:column>
-                                <p:column style="text-align: right;">
+                                <p:column styleClass="numero">
                                     <h:outputText value="#{proveedorController.totalMonto}" style="font-weight: bold;" id="total">
                                         <f:convertNumber pattern="$ #,##0.00"/>
                                     </h:outputText>
@@ -118,7 +118,7 @@
                             <p:column headerText="Nivel Educativo">  
                                 <h:outputText value="#{empresa.descripcionNivel}" />  
                             </p:column>  
-                            <p:column headerText="Cantidad" style="text-align: right;" width="40">  
+                            <p:column headerText="Cantidad" styleClass="numero" width="40">  
                                 <h:outputText value="#{empresa.cantidad}" />  
                             </p:column> 
 

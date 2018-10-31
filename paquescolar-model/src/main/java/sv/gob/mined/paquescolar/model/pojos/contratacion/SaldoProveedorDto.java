@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package sv.gob.mined.paquescolar.model.pojos;
+package sv.gob.mined.paquescolar.model.pojos.contratacion;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -34,8 +34,17 @@ public class SaldoProveedorDto implements Serializable {
     private String numeroNit;
     private String razonSocial;
     private String codigoDepartamento;
+    private String codigoDepartamentoCe;
 
     public SaldoProveedorDto() {
+    }
+
+    public String getCodigoDepartamentoCe() {
+        return codigoDepartamentoCe;
+    }
+
+    public void setCodigoDepartamentoCe(String codigoDepartamentoCe) {
+        this.codigoDepartamentoCe = codigoDepartamentoCe;
     }
 
     public BigDecimal getIdRow() {

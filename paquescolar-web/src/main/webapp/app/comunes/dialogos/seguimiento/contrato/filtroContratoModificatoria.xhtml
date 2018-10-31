@@ -180,12 +180,12 @@
                                         <f:convertDateTime pattern="dd/MM/yyyy"/>
                                     </h:outputText>
                                 </p:column>
-                                <p:column headerText="Cantidad contratada" style="text-align: right;" width="50">
+                                <p:column headerText="Cantidad contratada" styleClass="numero" width="50">
                                     <h:outputText value="#{detalle.cantidad}">
                                         <f:convertNumber pattern="#,##0"/>
                                     </h:outputText>
                                 </p:column>
-                                <p:column headerText="Monto contratado" style="text-align: right;" width="50">
+                                <p:column headerText="Monto contratado" styleClass="numero" width="50">
                                     <h:outputText value="#{detalle.monto}">
                                         <f:convertNumber pattern="#,##0.00"/>
                                     </h:outputText>

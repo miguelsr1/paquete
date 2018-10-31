@@ -63,10 +63,10 @@
                         <p:column headerText="N.I.T.">
                             #{prov.numeroNit}
                         </p:column>
-                        <p:column headerText="Cantidad" style="text-align: right;" width="50">
+                        <p:column headerText="Cantidad" styleClass="numero" width="50">
                             #{prov.cantidadContrato}
                         </p:column>
-                        <p:column headerText="Monto ($)" style="text-align: right;" width="100">
+                        <p:column headerText="Monto ($)" styleClass="numero" width="100">
                             <h:outputText value="#{prov.montoContrato}">
                                 <f:convertNumber pattern="#,##0.00"/>
                             </h:outputText>
@@ -76,12 +76,12 @@
                             <p:column colspan="4" style="text-align:right">
                                 <h:outputText value="Total:" />
                             </p:column>
-                            <p:column style="text-align: right;">
+                            <p:column styleClass="numero">
                                 <h:outputText value="#{reportesWebController.cantidadTotal}">
                                     <f:convertNumber pattern="#,##0" />
                                 </h:outputText>
                             </p:column>
-                            <p:column style="text-align: right;">
+                            <p:column styleClass="numero">
                                 <h:outputText value="#{reportesWebController.montoTotal}">
                                     <f:convertNumber pattern="$ #,##0.00" />
                                 </h:outputText>

@@ -59,7 +59,7 @@
                     <p:outputPanel id="tblCeNoDisponibles">
                         <h:panelGrid columns="8">
                             <p:outputLabel value="Total de contratos:" />
-                            <p:inputText value="#{creditoBancarioController.numeroDeContratosEnCredito}" size="5" style="text-align: right;" readonly="true"/>
+                            <p:inputText value="#{creditoBancarioController.numeroDeContratosEnCredito}" size="5" styleClass="numero" readonly="true"/>
                             <p:spacer width="10" height="8"/>
                             <p:outputLabel value="Monto total de Creditos:"/>
                             <p:inputNumber thousandSeparator="," decimalSeparator="." decimalPlaces="2" value="#{creditoBancarioController.montoTotalEnCreditos}" inputStyle="text-align: right;" readonly="true"/>
@@ -100,7 +100,7 @@
                             <p:column headerText="Nombre C.E.">  
                                 <h:outputText value="#{ceNoDisponible.nombre}" />  
                             </p:column> 
-                            <p:column headerText="Monto Crédito ($)" width="55" style="text-align: right;">  
+                            <p:column headerText="Monto Crédito ($)" width="55" styleClass="numero">  
                                 <h:outputText value="#{ceNoDisponible.montoCredito}" >  
                                     <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputText>
@@ -111,7 +111,7 @@
                             <p:column headerText="Rubro">  
                                 <h:outputText value="#{ceNoDisponible.descripcionRubro}" />  
                             </p:column> 
-                            <p:column headerText="Monto Contrato($)" width="55" style="text-align: right;" >  
+                            <p:column headerText="Monto Contrato($)" width="55" styleClass="numero" >  
                                 <h:outputText value="#{ceNoDisponible.montoContrato}" >  
                                     <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputText>

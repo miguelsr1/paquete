@@ -3,17 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sv.gob.mined.paquescolar.model.pojos;
+package sv.gob.mined.paquescolar.model.pojos.pagoprove;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import javax.persistence.Entity;
+import javax.persistence.EntityResult;
+import javax.persistence.Id;
+import javax.persistence.SqlResultSetMapping;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author misanchez
  */
+@Entity
+@XmlRootElement
+@SqlResultSetMapping(name = "defaultResumenRequerimientoDto",
+        entities = @EntityResult(entityClass = ResumenRequerimientoDto.class))
 public class ResumenRequerimientoDto implements Serializable{
+    @Id
+    private BigDecimal idRow;
     private BigDecimal idRequerimiento;
     private String concepto;
     private String formatoRequerimiento;
@@ -25,6 +36,14 @@ public class ResumenRequerimientoDto implements Serializable{
     private BigDecimal saldoRequerimiento;
 
     public ResumenRequerimientoDto() {
+    }
+
+    public BigDecimal getIdRow() {
+        return idRow;
+    }
+
+    public void setIdRow(BigDecimal idRow) {
+        this.idRow = idRow;
     }
 
     public BigDecimal getIdRequerimiento() {

@@ -67,7 +67,7 @@ import sv.gob.mined.paquescolar.model.PlanillaPagoCheque;
 import sv.gob.mined.paquescolar.model.ReintegroRequerimiento;
 import sv.gob.mined.paquescolar.model.RequerimientoFondos;
 import sv.gob.mined.paquescolar.model.ResolucionesModificativas;
-import sv.gob.mined.paquescolar.model.pojos.ResumenRequerimientoDto;
+import sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosBusquedaPlanillaDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosResumenPagosDto;
@@ -2434,5 +2434,9 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
 
     public String getFormatoFechaReporte() {
         return UtilFile.getFechaGeneracionReporte();
+    }
+    
+    public void editarReintegro() {
+
     }
 }

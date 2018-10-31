@@ -150,13 +150,13 @@
                                 <p:column colspan="3" style="text-align:right">
                                     <h:outputText value="Total:" />
                                 </p:column>
-                                <p:column style="text-align: right;">
+                                <p:column styleClass="numero">
                                     <h:outputText value="#{participantesController.cantidadActual}" style="font-weight: bold;" id="totalCantidad">
                                         <f:convertNumber pattern="#,##0"/>
                                     </h:outputText>
                                 </p:column>
                                 <p:column/>
-                                <p:column style="text-align: right;">
+                                <p:column styleClass="numero">
                                     <h:outputText value="$ #{participantesController.montoActual}" style="font-weight: bold;" id="total">
                                         <f:convertNumber pattern="$ #,##0.00"/>
                                     </h:outputText>
@@ -251,13 +251,13 @@
                                 <p:column colspan="3" style="text-align:right">
                                     <h:outputText value="Total:" />
                                 </p:column>
-                                <p:column style="text-align: right;">
+                                <p:column styleClass="numero">
                                     <h:outputText value="#{participantesController.cantidadActualLibros}" style="font-weight: bold;" id="totalCantidad">
                                         <f:convertNumber pattern="#,##0"/>
                                     </h:outputText>
                                 </p:column>
                                 <p:column/>
-                                <p:column style="text-align: right;">
+                                <p:column styleClass="numero">
                                     <h:outputText value="$ #{participantesController.montoActualLibros}" style="font-weight: bold;" id="total">
                                         <f:convertNumber pattern="$ #,##0.00"/>
                                     </h:outputText>

@@ -24,7 +24,7 @@ import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.EstadoReserva;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.TechoRubroEntEdu;
-import sv.gob.mined.paquescolar.model.pojos.SaldoProveedorDto;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.SaldoProveedorDto;
 
 /**
  *

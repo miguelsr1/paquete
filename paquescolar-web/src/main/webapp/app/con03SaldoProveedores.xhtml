@@ -55,26 +55,30 @@
                     </h1>
 
                     <p:dataTable  id="tblDetalleAdj" var="saldo" value="#{consultasContratacionMB.lstSaldos}" >  
-                        <p:column headerText="NIT" >  
+                        <p:column headerText="NIT" width="110">
                             <h:outputText value="#{saldo.numeroNit}" />  
                         </p:column>
                         <p:column headerText="Empresa" >  
                             <h:outputText value="#{saldo.razonSocial}" />  
                         </p:column>  
 
-                        <p:column headerText="Capacidad Calificada" width="70">  
+                        <p:column headerText="Rubro" width="110">  
+                            <h:outputText value="#{saldo.rubro}" />  
+                        </p:column>
+                        
+                        <p:column headerText="Capacidad Calificada" width="70" styleClass="numero">
                             <h:outputText value="#{saldo.capacidadCalificada}" />  
-                        </p:column>  
+                        </p:column>
 
-                        <p:column headerText="Capacidad Adjudicada" width="70">  
+                        <p:column headerText="Capacidad Adjudicada" width="70" styleClass="numero">
                             <h:outputText value="#{saldo.capacidadAdjudicada}" />  
                         </p:column>  
 
-                        <p:column headerText="Saldo" width="70">  
+                        <p:column headerText="Saldo" width="70" styleClass="numero">
                             <h:outputText value="#{saldo.saldoCapacidad}" />  
                         </p:column>  
 
-                        <p:column headerText="Departamento">  
+                        <p:column headerText="Departamento" width="110">  
                             <h:outputText value="#{consultasContratacionMB.nombreDepartamento(saldo.codigoDepartamento)}" /> 
                         </p:column> 
                     </p:dataTable>

@@ -181,13 +181,13 @@
                                 <h:outputText value="#{detalleCredito.idContrato.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoDepartamento.nombreDepartamento}" />  
                             </p:column>  
 
-                            <p:column headerText="Cantidad"  style="text-align: right;" width="55">  
+                            <p:column headerText="Cantidad"  styleClass="numero" width="55">  
                                 <h:outputText value="#{detalleCredito.idContrato.idResolucionAdj.idParticipante.cantidad}" >  
                                     <f:convertNumber pattern="#,##0"  />
                                 </h:outputText>
                             </p:column>  
 
-                            <p:column headerText="Monto($)"  style="text-align: right;" width="55">  
+                            <p:column headerText="Monto($)"  styleClass="numero" width="55">  
                                 <h:outputText value="#{detalleCredito.idContrato.idResolucionAdj.idParticipante.monto}" >  
                                     <f:convertNumber pattern="#,##0.00"  />
                                 </h:outputText>
@@ -228,12 +228,12 @@
                             <p:column headerText="Departamento" width="110">
                                 <p:outputLabel value="#{contrato.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoDepartamento.nombreDepartamento}"/>
                             </p:column>
-                            <p:column headerText="Cantidad" style="text-align: right;" width="50">
+                            <p:column headerText="Cantidad" styleClass="numero" width="50">
                                 <h:outputText value="#{contrato.idResolucionAdj.idParticipante.cantidad}">
                                     <f:convertNumber pattern="#,###"/>
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="Monto ($)" style="text-align: right;" width="60">
+                            <p:column headerText="Monto ($)" styleClass="numero" width="60">
                                 <h:outputText value="#{contrato.idResolucionAdj.idParticipante.monto}">
                                     <f:convertNumber pattern="#,###.00"/>
                                 </h:outputText>

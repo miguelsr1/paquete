@@ -63,30 +63,30 @@
                         <p:column headerText="Banco">  
                             <h:outputText value="#{ceNoDisponible.nombreEntFinan}" />  
                         </p:column>  
-                        <p:column headerText="# Creditos" style="text-align: right;" width="80">  
+                        <p:column headerText="# Creditos" styleClass="numero" width="80">  
                             <h:outputText value="#{ceNoDisponible.cantidadCreditos}" />  
                         </p:column>  
-                        <p:column headerText="$ Uniformes" style="text-align: right;" width="80" visible="#{creditoBancarioController.anho le 5}">
+                        <p:column headerText="$ Uniformes" styleClass="numero" width="80" visible="#{creditoBancarioController.anho le 5}">
                             <h:outputText value="#{ceNoDisponible.montoCreditoUniforme}" > 
                                 <f:convertNumber pattern="#,##0.00" />
                             </h:outputText>
                         </p:column>
-                        <p:column headerText="$ 1er Uniforme" style="text-align: right;" width="80" visible="#{creditoBancarioController.anho gt 5}">
+                        <p:column headerText="$ 1er Uniforme" styleClass="numero" width="80" visible="#{creditoBancarioController.anho gt 5}">
                             <h:outputText value="#{ceNoDisponible.montoCreditoUniforme2}" > 
                                 <f:convertNumber pattern="#,##0.00" />
                             </h:outputText>
                         </p:column>
-                        <p:column headerText="$ 2do Uniforme" style="text-align: right;" width="80" visible="#{creditoBancarioController.anho gt 5}">
+                        <p:column headerText="$ 2do Uniforme" styleClass="numero" width="80" visible="#{creditoBancarioController.anho gt 5}">
                             <h:outputText value="#{ceNoDisponible.montoCreditoUniforme2}" > 
                                 <f:convertNumber pattern="#,##0.00" />
                             </h:outputText>
                         </p:column>
-                        <p:column headerText="$ Utiles" style="text-align: right;" width="80">  
+                        <p:column headerText="$ Utiles" styleClass="numero" width="80">  
                             <h:outputText value="#{ceNoDisponible.montoCreditoUtiles}" > 
                                 <f:convertNumber pattern="#,##0.00" />
                             </h:outputText>
                         </p:column>
-                        <p:column headerText="$ Zapatos" style="text-align: right;" width="80">  
+                        <p:column headerText="$ Zapatos" styleClass="numero" width="80">  
                             <h:outputText value="#{ceNoDisponible.montoCreditoZapatos}" > 
                                 <f:convertNumber pattern="#,##0.00" />
                             </h:outputText>

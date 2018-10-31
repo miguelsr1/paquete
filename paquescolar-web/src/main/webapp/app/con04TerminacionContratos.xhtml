@@ -101,7 +101,7 @@
                             <p:column headerText="Num. Contrato">
                                 <h:outputText value="#{detalle.numContrato}"/>
                             </p:column>
-                            <p:column headerText="Monto ($)" style="text-align: right;">
+                            <p:column headerText="Monto ($)" styleClass="numero">
                                 <h:outputText value="#{detalle.montoContratoActual}">
                                     <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputText>
@@ -121,7 +121,7 @@
                             <p:column headerText="5" style="text-align: center;">
                                 <p:selectBooleanCheckbox value="#{detalle.tipoExtinsion5}" disabled="true"/>
                             </p:column>
-                            <p:column headerText="Fecha resolucion" style="text-align: right;">
+                            <p:column headerText="Fecha resolucion" styleClass="numero">
                                 <h:outputText value="#{detalle.fechaResolucion}"/>
                             </p:column>
                         </p:dataTable>

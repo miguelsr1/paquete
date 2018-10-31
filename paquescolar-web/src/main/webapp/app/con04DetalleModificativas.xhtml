@@ -94,7 +94,7 @@
                                 <p:column headerText="Num. Contrato">
                                     <h:outputText value="#{detalle.numContrato}"/>
                                 </p:column>
-                                <p:column headerText="Monto ($)" style="text-align: right;">
+                                <p:column headerText="Monto ($)" styleClass="numero">
                                     <h:outputText value="#{detalle.montoContratoActual}">
                                         <f:convertNumber pattern="#,##0.00"/>
                                     </h:outputText>
@@ -108,12 +108,12 @@
                                 <p:column headerText="Prorroga" style="text-align: center;">
                                     <p:selectBooleanCheckbox value="#{detalle.prorroga}" disabled="true"/>
                                 </p:column>
-                                <p:column headerText="Cant. modif." style="text-align: right;">
+                                <p:column headerText="Cant. modif." styleClass="numero">
                                     <h:outputText value="#{detalle.cantidadModificada}">
                                         <f:convertNumber pattern="#,##0"/>
                                     </h:outputText>
                                 </p:column>
-                                <p:column headerText="Monto($) modif." style="text-align: right;">
+                                <p:column headerText="Monto($) modif." styleClass="numero">
                                     <h:outputText value="#{detalle.montoContratoModificado}">
                                         <f:convertNumber pattern="#,##0.00"/>
                                     </h:outputText>
@@ -170,7 +170,7 @@
                             <p:column headerText="Num. Contrato">
                                 <h:outputText value="#{detalle.numContrato}"/>
                             </p:column>
-                            <p:column headerText="Monto ($)" style="text-align: right;">
+                            <p:column headerText="Monto ($)" styleClass="numero">
                                 <h:outputText value="#{detalle.montoContratoActual}">
                                     <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputText>
@@ -184,12 +184,12 @@
                             <p:column headerText="Prorroga" style="text-align: center;">
                                 <p:selectBooleanCheckbox value="#{detalle.prorroga}" disabled="true"/>
                             </p:column>
-                            <p:column headerText="Cant. modif." style="text-align: right;">
+                            <p:column headerText="Cant. modif." styleClass="numero">
                                 <h:outputText value="#{detalle.cantidadModificada}">
                                     <f:convertNumber pattern="#,##0"/>
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="Monto($) modif." style="text-align: right;">
+                            <p:column headerText="Monto($) modif." styleClass="numero">
                                 <h:outputText value="#{detalle.montoContratoModificado}">
                                     <f:convertNumber pattern="#,##0"/>
                                 </h:outputText>

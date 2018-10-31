@@ -102,12 +102,12 @@
                             <p:column headerText="#{bundle['tabla.nomEntCorto']}" width="180">
                                 <p:outputLabel value="#{ce.nombre}"/>
                             </p:column>
-                            <p:column headerText="#{bundle['tabla.cantidad']}" width="25" style="text-align: right;">
+                            <p:column headerText="#{bundle['tabla.cantidad']}" width="25" styleClass="numero">
                                 <h:outputText value="#{ce.cantidadTotal}">
                                     <f:convertNumber pattern="#,##0"/>
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="#{bundle['tabla.monto']}" width="25" style="text-align: right;">
+                            <p:column headerText="#{bundle['tabla.monto']}" width="25" styleClass="numero">
                                 <h:outputText value="#{ce.montoTotal}">
                                     <f:convertNumber pattern="$ #,##0.00"/>
                                 </h:outputText>

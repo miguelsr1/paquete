@@ -94,7 +94,7 @@
                     <p:column headerText="Proveedor">
                         <h:outputText value="#{contrato.razonSocial}"/>
                     </p:column>
-                    <p:column headerText="Monto $" style="text-align: right;"  width="60">
+                    <p:column headerText="Monto $" styleClass="numero"  width="60">
                         <h:outputText value="#{contrato.monto}">
                             <f:convertNumber pattern="#,##0.00"/>
                         </h:outputText>

@@ -135,13 +135,17 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
         } else {
             Logger.getLogger(PlanillaPagoEdtMB.class.getName()).log(Level.INFO, "Error en el tipo de variable idTipoPlanilla {0}", JsfUtil.getParametroUrl("idTipoPlanilla"));
         }
-        
+
         //no funciona este reddireccionamiento
         return url;
     }
 
     @PostConstruct
     public void ini() {
+        idRubro = new BigDecimal(JsfUtil.getParametroUrl("cboRubro_input"));
+        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        isRubroUniforme = idRubro.intValue() == 1 || idRubro.intValue() == 4 || idRubro.intValue() == 5;
+        
         if (JsfUtil.isExisteParametroUrl("idPlanilla")) {
             //editando planilla
             planillaPago = utilEJB.find(PlanillaPago.class, new BigDecimal(JsfUtil.getParametroUrl("idPlanilla")));
@@ -154,12 +158,14 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
 
             switch (planillaPago.getIdTipoPlanilla()) {
                 case 1:
+                    showChequeEntProv = true;
                     lstDetalleRequerimiento = pagoProveedoresEJB.getLstProveedorByIdRequerimiento(planillaPago.getIdRequerimiento().getIdRequerimiento(), JsfUtil.getParametroUrl("nit"));
                     break;
                 case 2:
                     lstDetalleRequerimiento = pagoProveedoresEJB.getDetRequerimientoPendiente(planillaPago.getIdRequerimiento().getIdRequerimiento());
                     break;
                 case 3:
+                    showChequeEntProv = (planillaPago.getIdRequerimiento().getCredito() == 1);
                     lstDetalleRequerimiento = pagoProveedoresEJB.getDetRequerimientoPendienteByEntFinan(planillaPago.getIdRequerimiento().getIdRequerimiento(), JsfUtil.getParametroUrl("nombreEntFinan"));
                     break;
             }
@@ -661,37 +667,37 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
         }
     }
 
-    public void eliminarPlanilla() {
-        pagoProveedoresEJB.eliminarPlanilla(idPlanilla, VarSession.getVariableSessionUsuario());
-        buscarPlanillas();
-    }
+//    public void eliminarPlanilla() {
+//        pagoProveedoresEJB.eliminarPlanilla(idPlanilla, VarSession.getVariableSessionUsuario());
+//        buscarPlanillas();
+//    }
 
-    public void buscarPlanillas() {
-        if (idRubro != null) {
-            if (idReq != null) {
-                buscarRequerimientoqOrPlanilla();
-                lstPlanillas = proveedorEJB.getLstPlanillaPagos(idReq);
-                if (lstPlanillas.isEmpty()) {
-                    JsfUtil.mensajeInformacion("El requerimiento seleccionado no tienen planillas registradas");
-                }
-                documentosAImprimir();
-            } else {
-                JsfUtil.mensajeInformacion("Debe de seleccionar un requerimiento.");
-            }
-        } else {
-            JsfUtil.mensajeAlerta("Debe de seleccionar un rubro de adquisición.");
-        }
-    }
+//    public void buscarPlanillas() {
+//        if (idRubro != null) {
+//            if (idReq != null) {
+//                buscarRequerimientoqOrPlanilla();
+//                lstPlanillas = proveedorEJB.getLstPlanillaPagos(idReq);
+//                if (lstPlanillas.isEmpty()) {
+//                    JsfUtil.mensajeInformacion("El requerimiento seleccionado no tienen planillas registradas");
+//                }
+//                documentosAImprimir();
+//            } else {
+//                JsfUtil.mensajeInformacion("Debe de seleccionar un requerimiento.");
+//            }
+//        } else {
+//            JsfUtil.mensajeAlerta("Debe de seleccionar un rubro de adquisición.");
+//        }
+//    }
 
-    private void buscarRequerimientoqOrPlanilla() {
-        showChequeEntProv = false;
-        showChequeRenta = false;
-        showChequeUsefi = false;
-        showPnlCheques = false;
-
-        isRubroUniforme = ((idRubro.intValue() == 1) || (idRubro.intValue() == 4) || (idRubro.intValue() == 5));
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
-    }
+//    private void buscarRequerimientoqOrPlanilla() {
+//        showChequeEntProv = false;
+//        showChequeRenta = false;
+//        showChequeUsefi = false;
+//        showPnlCheques = false;
+//
+//        isRubroUniforme = ((idRubro.intValue() == 1) || (idRubro.intValue() == 4) || (idRubro.intValue() == 5));
+//        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+//    }
 
     private void documentosAImprimir() {
         lstTipoDocImp.clear();
@@ -828,25 +834,27 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
             }
         }
 
-        if (planillaPago.getIdPlanilla() == null) {
+        if (guardarNuevo) {
             planillaPago.setFechaInsercion(new Date());
             planillaPago.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
             planillaPago.setEstadoEliminacion((short) 0);
+        
+            //Habilitar visibilidad de cheques
+            showChequeRenta = isRubroUniforme;
+            showPnlCheques = (showChequeEntProv || showChequeRenta || showChequeUsefi);
         } else {
             planillaPago.setFechaModificacion(new Date());
             planillaPago.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
         }
 
-        //Habilitar visibilidad de cheques
-        if (guardarNuevo) {
-            showChequeRenta = isRubroUniforme;
-            showPnlCheques = (showChequeEntProv || showChequeRenta || showChequeUsefi);
-        }
-
         planillaPago = pagoProveedoresEJB.guardarPlanillaPago(planillaPago);
+        
+        //guardar detalle de planilla
         for (DetallePlanilla detPla : lstDetallePlanilla) {
-            pagoProveedoresEJB.guardarDetallePlanilla(detPla);
+            detPla = pagoProveedoresEJB.guardarDetallePlanilla(detPla);
         }
+        
+        //cargar nuevamente la plantilla junto con el detalle
         planillaPago = utilEJB.find(PlanillaPago.class, planillaPago.getIdPlanilla());
         lstDetallePlanilla = planillaPago.getDetallePlanillaList();
 
@@ -871,7 +879,6 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
      * Almacenar datos de los cheques necesarios
      */
     private void guardarCheques() {
-        planillaPago = utilEJB.find(PlanillaPago.class, planillaPago.getIdPlanilla());
         BigDecimal mRenta = BigDecimal.ZERO;
         BigDecimal montoTotalActual;
 

@@ -82,27 +82,27 @@
                     <p:column headerText="Razon Social">
                         <h:outputText value="#{detalle.idDetalleDocPago.idDetRequerimiento.razonSocial}"/>
                     </p:column>
-                    <p:column headerText="Cant. Original" style="text-align: right;" width="45" rendered="false">
+                    <p:column headerText="Cant. Original" styleClass="numero" width="45" rendered="false">
                         <h:outputText value="#{detalle.cantidadOriginal}">
                             <f:convertNumber pattern="#,##0"/>
                         </h:outputText>
                     </p:column>
-                    <p:column headerText="Monto Original ($)" style="text-align: right;" width="75" rendered="false">
+                    <p:column headerText="Monto Original ($)" styleClass="numero" width="75" rendered="false">
                         <h:outputText value="#{detalle.montoOriginal}">
                             <f:convertNumber pattern="$ #,##0.00"/>
                         </h:outputText>
                     </p:column>
-                    <p:column headerText="Cant. Actual" style="text-align: right;" width="45">
+                    <p:column headerText="Cant. Actual" styleClass="numero" width="45">
                         <h:outputText value="#{detalle.cantidadActual}">
                             <f:convertNumber pattern="#,##0"/>
                         </h:outputText>
                     </p:column>
-                    <p:column headerText="Monto Actual ($)" style="text-align: right;" width="75">
+                    <p:column headerText="Monto Actual ($)" styleClass="numero" width="75">
                         <h:outputText value="#{detalle.montoActual}">
                             <f:convertNumber pattern="$ #,##0.00"/>
                         </h:outputText>
                     </p:column>
-                    <p:column headerText="Monto Renta ($)" style="text-align: right;" width="70" rendered="#{planillaPagoEdtMB.showChequeRenta}">
+                    <p:column headerText="Monto Renta ($)" styleClass="numero" width="70" rendered="#{planillaPagoEdtMB.showChequeRenta}">
                         <h:outputText value="#{detalle.idDetalleDocPago.montoRenta}">
                             <f:convertNumber pattern="$ #,##0.00"/>
                         </h:outputText>
@@ -129,27 +129,27 @@
                         <p:column colspan="5" style="text-align:right">
                             <h:outputText value="Totales" />
                         </p:column>
-                        <p:column style="text-align: right;" rendered="false">
+                        <p:column styleClass="numero" rendered="false">
                             <h:outputText value="#{planillaPagoEdtMB.cantidadOriginalTotal}" style="font-weight: bold;">
                                 <f:convertNumber pattern="#,##0"/>
                             </h:outputText>
                         </p:column>
-                        <p:column style="text-align: right;" rendered="false">
+                        <p:column styleClass="numero" rendered="false">
                             <h:outputText value="#{planillaPagoEdtMB.montoOriginalTotal}" style="text-align: right; font-weight: bold;">
                                 <f:convertNumber pattern="$ #,##0.00"/>
                             </h:outputText>
                         </p:column>
-                        <p:column style="text-align: right;">
+                        <p:column styleClass="numero">
                             <h:outputText value="#{planillaPagoEdtMB.cantidadActualTotal}" style="font-weight: bold;">
                                 <f:convertNumber pattern="#,##0"/>
                             </h:outputText>
                         </p:column>
-                        <p:column style="text-align: right;">
+                        <p:column styleClass="numero">
                             <h:outputText value="#{planillaPagoEdtMB.montoActualTotal}" style="text-align: right; font-weight: bold;">
                                 <f:convertNumber pattern="$ #,##0.00"/>
                             </h:outputText>
                         </p:column>
-                        <p:column style="text-align: right;" rendered="#{planillaPagoEdtMB.showChequeRenta}">
+                        <p:column styleClass="numero" rendered="#{planillaPagoEdtMB.showChequeRenta}">
                             <h:outputText value="#{planillaPagoEdtMB.montoRentaTotal}" style="text-align: right; font-weight: bold;">
                                 <f:convertNumber pattern="$ #,##0.00"/>
                             </h:outputText>

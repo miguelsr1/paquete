@@ -55,7 +55,7 @@ import sv.gob.mined.paquescolar.model.RptDocumentos;
 import sv.gob.mined.paquescolar.model.TechoRubroEntEdu;
 import sv.gob.mined.paquescolar.model.TipoModifContrato;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ContratoDto;
-import sv.gob.mined.paquescolar.model.pojos.SaldoProveedorDto;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.SaldoProveedorDto;
 import sv.gob.mined.paquescolar.model.pojos.VwDepartamentoModificativas;
 import sv.gob.mined.paquescolar.model.pojos.VwDetalleModificativas;
 import sv.gob.mined.paquescolar.model.pojos.modificativa.VwBusquedaContratos;
@@ -537,7 +537,8 @@ public class ModificatoriaController extends RecuperarProceso implements Seriali
             if (resolucionesModificativas.getIdResModifPadre() == null) {
                 //primera modificativa
                 total = modificativaEJB.getMontoContrato(resolucionesModificativas.getIdContrato().getIdContrato(), true);
-            } else {
+            } 
+        }else {
                 //modificativa n
                 if (lstDetalleModificativas != null) {
                     for (DetalleModificativa detalle : lstDetalleModificativas) {
@@ -547,7 +548,6 @@ public class ModificatoriaController extends RecuperarProceso implements Seriali
                     }
                 }
             }
-        }
 
         return total;
     }
