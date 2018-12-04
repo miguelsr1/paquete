@@ -11,5 +11,5 @@
     String codigoDepa = (String) request.getParameter("codigoDepa");
     String idDetProcesoAdq = (String) request.getParameter("idDetProcesoAdq");
     Gson gson = new Gson();
-    String usuarios = gson.toJson(serviciosEJB.getResumenPagoJson(codigoDepa, Integer.parseInt(idDetProcesoAdq)));
+    String usuarios = gson.toJson(serviciosEJB.getResumenPagoJsonByDepaAndDetProcesoAdq(codigoDepa, Integer.parseInt(idDetProcesoAdq)));
     out.println(usuarios);%>
