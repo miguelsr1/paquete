@@ -31,7 +31,7 @@ import sv.gob.mined.paquescolar.model.pojos.credito.ResumenCreditosDto;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 import sv.gob.mined.paquescolar.model.pojos.credito.DatosProveedoresFinanDto;
 import sv.gob.mined.paquescolar.util.Fechas;
-import sv.gob.mined.paquescolar.util.StringUtils;
+import sv.gob.mined.paquescolar.util.Constantes;
 
 /**
  *
@@ -226,21 +226,21 @@ public class CreditosEJB {
     }
 
     public List<DatosProveedoresFinanDto> buscarListadoProveedor(BigDecimal rubro, EntidadFinanciera entidadSeleccionado, DetalleProcesoAdq proceso, BigInteger estadoCredito) {
-        String cadenaWhere = StringUtils.addCampoToWhere("", "id_rubro_interes", rubro);
+        String cadenaWhere = Constantes.addCampoToWhere("", "id_rubro_interes", rubro);
 
         if (entidadSeleccionado != null && !entidadSeleccionado.getCodEntFinanciera().equals("00000")) {
-            cadenaWhere = StringUtils.addCampoToWhere(cadenaWhere, "cod_ent_financiera", entidadSeleccionado.getCodEntFinanciera());
+            cadenaWhere = Constantes.addCampoToWhere(cadenaWhere, "cod_ent_financiera", entidadSeleccionado.getCodEntFinanciera());
         }
 
-        cadenaWhere = StringUtils.addCampoToWhere(cadenaWhere, "ID_DET_PROCESO_ADQ", proceso.getIdDetProcesoAdq());
-        cadenaWhere = StringUtils.addCampoToWhere(cadenaWhere, "credito_activo", estadoCredito);
+        cadenaWhere = Constantes.addCampoToWhere(cadenaWhere, "ID_DET_PROCESO_ADQ", proceso.getIdDetProcesoAdq());
+        cadenaWhere = Constantes.addCampoToWhere(cadenaWhere, "credito_activo", estadoCredito);
 
         if (!cadenaWhere.isEmpty()) {
             cadenaWhere = cadenaWhere + " AND monto_credito is not null";
         }
 
         em.clear();
-        Query q = em.createNativeQuery(StringUtils.QUERY_RPT_PROVEEDOR_ENT_FINAN + cadenaWhere, DatosProveedoresFinanDto.class);
+        Query q = em.createNativeQuery(Constantes.QUERY_RPT_PROVEEDOR_ENT_FINAN + cadenaWhere, DatosProveedoresFinanDto.class);
         return q.getResultList();
     }
 

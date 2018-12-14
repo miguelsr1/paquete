@@ -69,7 +69,7 @@ public class PlanillaPago implements Serializable {
     @JoinColumn(name = "ID_REQUERIMIENTO", referencedColumnName = "ID_REQUERIMIENTO")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private RequerimientoFondos idRequerimiento;
-    @OneToMany(mappedBy = "idPlanilla", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "idPlanilla", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<DetallePlanilla> detallePlanillaList;
     @Column(name = "ID_TIPO_PLANILLA")
     private Short idTipoPlanilla;

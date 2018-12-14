@@ -160,6 +160,23 @@
                 </p:row>
                 <p:row>
                     <p:column>
+                        <p:outputLabel value="Cantidad Original:"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputNumber id="txtCantidadOrg" decimalPlaces="0" decimalSeparator="." thousandSeparator="," disabled="true" value="#{pagoProveedoresController.detalleDocPago.idDetRequerimiento.cantidadTotal}" inputStyle="text-align: right;" size="15"/>
+                    </p:column>
+                    <p:column>
+                        <p:spacer width="5" height="8"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Monto Original:"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputNumber id="txtMontoOrg" decimalPlaces="2" decimalSeparator="." thousandSeparator="," readonly="true" value="#{pagoProveedoresController.detalleDocPago.idDetRequerimiento.montoTotal}" inputStyle="text-align: right;" size="15"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
                         <p:outputLabel value="Contrato con Modificaciones:"/>
                     </p:column>
                     <p:column>
@@ -173,6 +190,11 @@
                     <p:column/>
                     <p:column/>
                 </p:row>
+                <p:row>
+                    <p:column colspan="5">
+                        <p:separator/>
+                    </p:column>
+                </p:row>                
                 <p:row>
                     <p:column>
                         <p:outputLabel value="No de Resolucion modificativa (*):"/>
@@ -188,24 +210,6 @@
                     </p:column>
                     <p:column>
                         <p:calendar id="cldFechaModif" locale="es" value="#{pagoProveedoresController.detalleDocPago.fechaModificativa}" pattern="dd/MM/yyyy" size="10" showOn="button" navigator="true" disabled="#{!pagoProveedoresController.contratoModificado || pagoProveedoresController.contratoExtinguido}"/>
-                    </p:column>
-                </p:row>
-
-                <p:row>
-                    <p:column>
-                        <p:outputLabel value="Cantidad Original:"/>
-                    </p:column>
-                    <p:column>
-                        <p:inputNumber id="txtCantidadOrg" decimalPlaces="0" decimalSeparator="." thousandSeparator="," disabled="true" value="#{pagoProveedoresController.detalleDocPago.idDetRequerimiento.cantidadTotal}" inputStyle="text-align: right;" size="15"/>
-                    </p:column>
-                    <p:column>
-                        <p:spacer width="5" height="8"/>
-                    </p:column>
-                    <p:column>
-                        <p:outputLabel value="Monto Original:"/>
-                    </p:column>
-                    <p:column>
-                        <p:inputNumber id="txtMontoOrg" decimalPlaces="2" decimalSeparator="." thousandSeparator="," readonly="true" value="#{pagoProveedoresController.detalleDocPago.idDetRequerimiento.montoTotal}" inputStyle="text-align: right;" size="15"/>
                     </p:column>
                 </p:row>
 

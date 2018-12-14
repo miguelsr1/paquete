@@ -30,7 +30,7 @@ import sv.gob.mined.paquescolar.model.pojos.recepcion.ReportePorDepartamentoDto;
 import sv.gob.mined.paquescolar.model.pojos.modificativa.VwBusquedaContratos;
 import sv.gob.mined.paquescolar.model.view.VwBusquedaSeguimientos;
 import sv.gob.mined.paquescolar.model.view.VwSeguimientoRptCentroEscolar;
-import sv.gob.mined.paquescolar.util.StringUtils;
+import sv.gob.mined.paquescolar.util.Constantes;
 
 /**
  *
@@ -64,20 +64,20 @@ public class RecepcionEJB {
     }
 
     public List<VwBusquedaContratos> getLstBusquedaContratosFisico(DetalleProcesoAdq proceso, String codigoEntidad, String codigoDepartamento, String numeroNit, String numeroContrato, String nombreProveedor) {
-        String cadenaWhere = StringUtils.addCampoToWhere("", "ID_DET_PROCESO_ADQ", proceso.getIdDetProcesoAdq());
-        cadenaWhere = StringUtils.addCampoToWhere(cadenaWhere, "codigo_entidad", codigoEntidad);
+        String cadenaWhere = Constantes.addCampoToWhere("", "ID_DET_PROCESO_ADQ", proceso.getIdDetProcesoAdq());
+        cadenaWhere = Constantes.addCampoToWhere(cadenaWhere, "codigo_entidad", codigoEntidad);
         if (codigoDepartamento != null && !codigoDepartamento.equals("00")) {
-            cadenaWhere = StringUtils.addCampoToWhere(cadenaWhere, "codigo_departamento", codigoDepartamento);
+            cadenaWhere = Constantes.addCampoToWhere(cadenaWhere, "codigo_departamento", codigoDepartamento);
         }
-        cadenaWhere = StringUtils.addCampoToWhere(cadenaWhere, "numero_nit", numeroNit);
+        cadenaWhere = Constantes.addCampoToWhere(cadenaWhere, "numero_nit", numeroNit);
 
         if (!nombreProveedor.isEmpty() && nombreProveedor.length() > 0) {
             nombreProveedor = nombreProveedor.toUpperCase();
             cadenaWhere += (cadenaWhere.isEmpty() ? "" : " AND ").concat(" razon_social like'%" + nombreProveedor + "%'");
         }
-        cadenaWhere = StringUtils.addCampoToWhere(cadenaWhere, "numero_contrato", numeroContrato);
+        cadenaWhere = Constantes.addCampoToWhere(cadenaWhere, "numero_contrato", numeroContrato);
 
-        Query query = em.createNativeQuery(StringUtils.QUERY_RECEPCION_FIND_CONTRATOS_FISICOS + cadenaWhere, VwBusquedaContratos.class);
+        Query query = em.createNativeQuery(Constantes.QUERY_RECEPCION_FIND_CONTRATOS_FISICOS + cadenaWhere, VwBusquedaContratos.class);
         return query.getResultList();
     }
 

@@ -6,6 +6,8 @@
 package sv.gob.mined.paquescolar.ejb;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,7 +26,7 @@ import sv.gob.mined.paquescolar.model.ResolucionesModificativas;
 import sv.gob.mined.paquescolar.model.TipoDocPago;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosBusquedaPlanillaDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
-import sv.gob.mined.paquescolar.util.StringUtils;
+import sv.gob.mined.paquescolar.util.Constantes;
 
 /**
  *
@@ -84,6 +86,14 @@ public class PagoProveedoresEJB {
         return q.getResultList();
     }
 
+    /**
+     * Este metodo se dejara de utilizar a partir de 05/12/2018
+     *
+     * @param planillaPago
+     * @return
+     * @deprecated
+     */
+    @Deprecated
     public PlanillaPago guardarPlanillaPago(PlanillaPago planillaPago) {
         try {
             if (planillaPago.getIdPlanilla() == null) {
@@ -96,6 +106,160 @@ public class PagoProveedoresEJB {
             Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, null, e);
             return new PlanillaPago();
         }
+    }
+
+    public HashMap<String, Object> guardarPlanillaPago(PlanillaPago planillaPago, Boolean tipoPagoEntFinanciera,
+            Boolean showChequeEntProv, Boolean showChequeRenta, Boolean showChequeUsefi,
+            PlanillaPagoCheque chequeFinanProve, PlanillaPagoCheque chequeUsefi, PlanillaPagoCheque chequeRenta, String usuario) {
+
+        boolean isRubroUniforme = planillaPago.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroUniforme().intValue() == 1;
+        boolean guardarNuevo = (planillaPago.getIdPlanilla() == null);
+        boolean showPnlCheques = false;
+        int idTipoPlanilla = planillaPago.getIdTipoPlanilla();
+
+        HashMap<String, Object> mapDeRetorno = new HashMap();
+
+        //Verificar que los montos (actual y original) sean diferentes para ingreso de los datos del cheque USEFI
+        //Esta validacion se realiza unicamente cuando la planilla se esta creando
+        if (!showChequeUsefi) {
+            for (DetallePlanilla detPla : planillaPago.getDetallePlanillaList()) {
+                if (detPla.getIdDetalleDocPago().getMontoActual() != null && detPla.getIdDetalleDocPago().getContratoModif() == 1) {
+                    showChequeUsefi = (detPla.getIdDetalleDocPago().getMontoActual().compareTo(detPla.getMontoOriginal()) == -1);
+                    if (showChequeUsefi) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        //guardar datos de fecha y numero de cheque en el detalle de planilla
+        if (isRubroUniforme && chequeFinanProve.getFechaCheque() != null && chequeFinanProve.getNumeroCheque() != null) {
+            for (DetallePlanilla detPla : planillaPago.getDetallePlanillaList()) {
+                detPla.setFechaCheque(chequeFinanProve.getFechaCheque());
+                detPla.setNumCheque(chequeFinanProve.getNumeroCheque());
+            }
+        }
+
+        if (guardarNuevo) {
+            planillaPago.setFechaInsercion(new Date());
+            planillaPago.setUsuarioInsercion(usuario);
+            planillaPago.setEstadoEliminacion((short) 0);
+
+            //Habilitar visibilidad de cheques
+            showChequeRenta = isRubroUniforme;
+            showPnlCheques = (showChequeEntProv || showChequeRenta || showChequeUsefi);
+        } else {
+            planillaPago.setFechaModificacion(new Date());
+            planillaPago.setUsuarioModificacion(usuario);
+        }
+
+        mapDeRetorno.put("showChequeEntProv", showChequeEntProv);
+        mapDeRetorno.put("showChequeRenta", showChequeRenta);
+        mapDeRetorno.put("showChequeUsefi", showChequeUsefi);
+        mapDeRetorno.put("showPnlCheques", showPnlCheques);
+
+        if (guardarNuevo) {
+            em.persist(planillaPago);
+        } else {
+            em.merge(planillaPago);
+        }
+
+        if (planillaPago.getIdPlanilla() != null) {
+            //mensaje
+            mapDeRetorno.put(Constantes.MSJ_INFO, "Datos almacenados satisfactoriamente.");
+
+            //Persistiendo los datos de los cheques
+            BigDecimal mRenta = BigDecimal.ZERO;
+            BigDecimal montoTotalActual;
+
+            if (isRubroUniforme) {
+                for (DetallePlanilla detPla : planillaPago.getDetallePlanillaList()) {
+                    if (detPla.getIdDetalleDocPago().getMontoRenta() != null) {
+                        mRenta = mRenta.add(detPla.getIdDetalleDocPago().getMontoRenta());
+                    }
+                }
+                montoTotalActual = getMontoActualTotal(planillaPago).add(mRenta.negate());
+            } else {
+                montoTotalActual = getMontoActualTotal(planillaPago);
+            }
+
+            if (showChequeEntProv) {
+                chequeFinanProve.setMontoCheque(montoTotalActual);
+                if (chequeFinanProve.getIdPlanillaCheque() == null) {
+                    chequeFinanProve.setaFavorDe((short) (idTipoPlanilla == 1 ? 3 : 0));
+                    chequeFinanProve.setUsuarioInsercion(usuario);
+                    chequeFinanProve.setFechaInsercion(new Date());
+                    chequeFinanProve.setEstadoEliminacion((short) 0);
+                    chequeFinanProve.setTransferencia((short) 0);
+                    chequeFinanProve.setIdPlanilla(planillaPago);
+                } else {
+                    chequeFinanProve.setTransferencia(tipoPagoEntFinanciera ? 1 : (short) 0);
+                    chequeFinanProve.setUsuarioModificacion(usuario);
+                    chequeFinanProve.setFechaModificacion(new Date());
+                }
+
+                mapDeRetorno.put("chequeFinanProve", guardarPlanillaPagoCheque(chequeFinanProve));
+            }
+
+            if (showChequeUsefi) {
+                chequeUsefi.setMontoCheque(getMontoOriginalTotal(planillaPago).add(montoTotalActual.negate()).add(mRenta.negate()));
+                if (chequeUsefi.getIdPlanillaCheque() == null) {
+                    chequeUsefi.setaFavorDe((short) 1);
+                    chequeUsefi.setUsuarioInsercion(usuario);
+                    chequeUsefi.setFechaInsercion(new Date());
+                    chequeUsefi.setEstadoEliminacion((short) 0);
+                    chequeUsefi.setIdPlanilla(planillaPago);
+                } else {
+                    chequeUsefi.setUsuarioModificacion(usuario);
+                    chequeUsefi.setFechaModificacion(new Date());
+                }
+                mapDeRetorno.put("chequeUsefi", guardarPlanillaPagoCheque(chequeUsefi));
+            }
+
+            if (showChequeRenta) {
+                if (chequeRenta.getIdPlanillaCheque() == null) {
+                    chequeRenta.setaFavorDe((short) 2);
+                    chequeRenta.setUsuarioInsercion(usuario);
+                    chequeRenta.setFechaInsercion(new Date());
+                    chequeRenta.setEstadoEliminacion((short) 0);
+                    chequeRenta.setIdPlanilla(planillaPago);
+                } else {
+                    chequeRenta.setUsuarioModificacion(usuario);
+                    chequeRenta.setFechaModificacion(new Date());
+                }
+
+                chequeRenta.setMontoCheque(mRenta);
+                mapDeRetorno.put("chequeRenta", guardarPlanillaPagoCheque(chequeRenta));
+            }
+            mapDeRetorno.put(Constantes.ERROR, false);
+        } else {
+            //mensaje
+            mapDeRetorno.clear();
+            mapDeRetorno.put(Constantes.ERROR, true);
+            mapDeRetorno.put(Constantes.MSJ_ERROR, "Ocurrio un error en la operación. Comuniquese con el administrador del sistema");
+        }
+
+        return mapDeRetorno;
+    }
+
+    private BigDecimal getMontoActualTotal(PlanillaPago planillaPago) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (DetallePlanilla detPla : planillaPago.getDetallePlanillaList()) {
+            if (detPla.getCantidadActual() != null && detPla.getEstadoEliminacion() == 0) {
+                total = total.add(detPla.getMontoActual());
+            }
+        }
+        return total;
+    }
+
+    private BigDecimal getMontoOriginalTotal(PlanillaPago planillaPago) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (DetallePlanilla detPla : planillaPago.getDetallePlanillaList()) {
+            if (detPla.getCantidadOriginal() != null) {
+                total = total.add(detPla.getMontoOriginal());
+            }
+        }
+        return total;
     }
 
     public ReintegroRequerimiento guardarReintegro(ReintegroRequerimiento reintegro) {
@@ -152,7 +316,7 @@ public class PagoProveedoresEJB {
         q.setParameter("numeroNit", numeroNit);
         return q.getResultList();
     }
-    
+
     public List<DetalleRequerimiento> getDetRequerimientoPendienteByEntFinan(BigDecimal idRequerimiento, String nomEntFinanciera) {
         List<DetalleRequerimiento> lst;
         Query q = em.createQuery("select d from DetalleRequerimiento d where d.activo=0 and d.idRequerimiento.idRequerimiento =:idReq and d.nombreEntFinan=:nomEntFinanciera and d.idDetRequerimiento not in(select p.idDetalleDocPago.idDetRequerimiento.idDetRequerimiento from DetallePlanilla p where p.estadoEliminacion = 0 and p.idPlanilla.idRequerimiento.idRequerimiento=:idReq1 ) order by d.razonSocial, d.codigoEntidad", DetalleRequerimiento.class);
@@ -163,6 +327,7 @@ public class PagoProveedoresEJB {
 
         return lst;
     }
+
     public List<DetalleRequerimiento> getDetRequerimientoPendiente(BigDecimal idRequerimiento) {
         List<DetalleRequerimiento> lst;
         Query q = em.createQuery("select d from DetalleRequerimiento d where d.activo=0 and d.idRequerimiento.idRequerimiento =:idReq and d.idDetRequerimiento not in(select p.idDetalleDocPago.idDetRequerimiento.idDetRequerimiento from DetallePlanilla p where p.estadoEliminacion = 0 and p.idPlanilla.idRequerimiento.idRequerimiento=:idReq1 ) order by d.razonSocial, d.codigoEntidad", DetalleRequerimiento.class);
@@ -322,12 +487,12 @@ public class PagoProveedoresEJB {
     }
 
     public List<DatosBusquedaPlanillaDto> buscarPlanillas(BigDecimal idPlanilla, BigDecimal monto, String numeroNit, String nombreEntFinan, Integer idProcesoAdq) {
-        String strWhere = StringUtils.addCampoToWhere("", "pp.ID_PLANILLA", idPlanilla);
-        strWhere = StringUtils.addCampoToWhere(strWhere, "dp.MONTO_ACTUAL", monto);
-        strWhere = StringUtils.addCampoToWhere(strWhere, "dr.NUMERO_NIT", numeroNit);
-        strWhere = StringUtils.addCampoToWhere(strWhere, "upper(dr.NOMBRE_ENT_FINAN)", nombreEntFinan);
-        strWhere = StringUtils.addCampoToWhere(strWhere, "pa.id_proceso_adq", idProcesoAdq);
-        Query q = em.createNativeQuery(StringUtils.QUERY_PAGOS_BUSQUEDA_PLANILLA + strWhere + " ORDER BY pp.ID_PLANILLA", DatosBusquedaPlanillaDto.class);
+        String strWhere = Constantes.addCampoToWhere("", "pp.ID_PLANILLA", idPlanilla);
+        strWhere = Constantes.addCampoToWhere(strWhere, "dp.MONTO_ACTUAL", monto);
+        strWhere = Constantes.addCampoToWhere(strWhere, "dr.NUMERO_NIT", numeroNit);
+        strWhere = Constantes.addCampoToWhere(strWhere, "upper(dr.NOMBRE_ENT_FINAN)", nombreEntFinan);
+        strWhere = Constantes.addCampoToWhere(strWhere, "pa.id_proceso_adq", idProcesoAdq);
+        Query q = em.createNativeQuery(Constantes.QUERY_PAGOS_BUSQUEDA_PLANILLA + strWhere + " ORDER BY pp.ID_PLANILLA", DatosBusquedaPlanillaDto.class);
         return q.getResultList();
     }
 

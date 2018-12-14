@@ -14,7 +14,7 @@ import javax.persistence.Query;
 import sv.gob.mined.paquescolar.model.Departamento;
 import sv.gob.mined.paquescolar.model.Municipio;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.MunicipioDto;
-import sv.gob.mined.paquescolar.util.StringUtils;
+import sv.gob.mined.paquescolar.util.Constantes;
 
 /**
  *
@@ -54,7 +54,7 @@ public class DatosGeograficosEJB {
     }
 
     public List<MunicipioDto> getLstMunicipiosDisponiblesDeInteres(BigDecimal idCapaDistribucion, String codigoDepartamento) {
-        String sql = StringUtils.QUERY_PROVEEDOR_MUNICIPIOS_DISPONIBLES_DE_INTERES;
+        String sql = Constantes.QUERY_PROVEEDOR_MUNICIPIOS_DISPONIBLES_DE_INTERES;
         sql = codigoDepartamento.equals("00") ? sql.replace("COMODIN_DEPARTAMENTO", "")
                 : sql.replace("COMODIN_DEPARTAMENTO", "and depa.codigo_departamento = '" + codigoDepartamento + "'");
         Query q = em.createNativeQuery(sql, MunicipioDto.class);

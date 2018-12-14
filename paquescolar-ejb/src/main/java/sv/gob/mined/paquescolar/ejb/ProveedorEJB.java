@@ -46,12 +46,11 @@ import sv.gob.mined.paquescolar.model.PreciosRefRubroEmp;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.RequerimientoFondos;
 import sv.gob.mined.paquescolar.model.TipoPersoneria;
-import sv.gob.mined.paquescolar.model.pojos.ResumenPagosDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.DetalleAdjudicacionEmpDto;
 import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
 import sv.gob.mined.paquescolar.model.view.DatosPreliminarRequerimiento;
-import sv.gob.mined.paquescolar.util.StringUtils;
+import sv.gob.mined.paquescolar.util.Constantes;
 
 /**
  *
@@ -684,14 +683,14 @@ public class ProveedorEJB {
     }
 
     public List<DetalleAdjudicacionEmpDto> resumenAdjProveedor(String nit, Integer idProceso) {
-        Query q = em.createNativeQuery(StringUtils.QUERY_PROVEEDOR_RESUMEN_ADJ_EMP, DetalleAdjudicacionEmpDto.class);
+        Query q = em.createNativeQuery(Constantes.QUERY_PROVEEDOR_RESUMEN_ADJ_EMP, DetalleAdjudicacionEmpDto.class);
         q.setParameter(1, nit);
         q.setParameter(2, idProceso);
         return q.getResultList();
     }
 
     public List<DetalleAdjudicacionEmpDto> detalleAdjProveedor(String nit, Integer idProceso) {
-        Query q = em.createNativeQuery(StringUtils.QUERY_PROVEEDOR_DETALLE_ADJ_EMP, DetalleAdjudicacionEmpDto.class);
+        Query q = em.createNativeQuery(Constantes.QUERY_PROVEEDOR_DETALLE_ADJ_EMP, DetalleAdjudicacionEmpDto.class);
         q.setParameter(1, nit);
         q.setParameter(2, idProceso);
         return q.getResultList();
@@ -830,13 +829,6 @@ public class ProveedorEJB {
         return q.getResultList();
     }
 
-    @Deprecated
-    public List<String> getNombreEntidadesFromRequerimiento(BigDecimal idRequerimiento) {
-        Query q = em.createQuery("SELECT DISTINCT d.nombreEntFinan FROM DetalleRequerimiento d WHERE d.idRequerimiento.idRequerimiento =:idReq", String.class);
-        q.setParameter("idReq", idRequerimiento);
-        return q.getResultList();
-    }
-
     public List<RequerimientoFondos> getLstRequerimientoFondos() {
         Query q = em.createQuery("SELECT r FROM RequerimientoFondos r", RequerimientoFondos.class);
         return q.getResultList();
@@ -872,188 +864,12 @@ public class ProveedorEJB {
     }
 
     public List<ResumenRequerimientoDto> getLstResumenRequerimiento(String codigoDepartamento, int idDetProcesoAdq) {
-        List<ResumenRequerimientoDto> lstResumen = new ArrayList();
-        /*String sql = "SELECT \n"
-                + "  REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO,\n"
-                + "  REQUERIMIENTO_FONDOS.COMPONENTE,\n"
-                + "  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,\n"
-                + "  REQUERIMIENTO_FONDOS.MONTO_TOTAL,\n"
-                + "  COUNT(DISTINCT PLANILLA_PAGO.ID_PLANILLA) CANTIDAD_PLANILLA,\n"
-                + "  NVL(FN_RF_MONTO_PAGADO(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_TOTAL_PLANILLA,\n"
-                + "  NVL(FN_rf_monto_pendiente(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO), 0),\n"
-                + "  NVL(FN_RF_MONTO_REINTEGRAR(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_REINTEGRAR,\n"
-                + "  NVL((REQUERIMIENTO_FONDOS.MONTO_TOTAL-FN_RF_MONTO_PAGADO(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO)-FN_RF_MONTO_REINTEGRAR(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO)),0) SALDO_REQUERIMIENTO\n"
-                + "FROM REQUERIMIENTO_FONDOS\n"
-                + "  left outer JOIN DETALLE_REQUERIMIENTO ON REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO\n"
-                + "  left outer JOIN PLANILLA_PAGO ON PLANILLA_PAGO.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO\n"
-                + "  LEFT OUTER JOIN DETALLE_PLANILLA ON PLANILLA_PAGO.ID_PLANILLA = DETALLE_PLANILLA.ID_PLANILLA\n"
-                + "WHERE\n"
-                + "  REQUERIMIENTO_FONDOS.CODIGO_DEPARTAMENTO = ?1 AND\n"
-                + "  REQUERIMIENTO_FONDOS.ID_DET_PROCESO_ADQ = ?2 AND \n"
-                + "  REQUERIMIENTO_FONDOS.ESTADO_ELIMINACION = 0 \n"
-                + "group by \n"
-                + "  REQUERIMIENTO_FONDOS.NUMERO_REQUERIMIENTO,\n"
-                + "  REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO,\n"
-                + "  REQUERIMIENTO_FONDOS.COMPONENTE,\n"
-                + "  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,\n"
-                + "  REQUERIMIENTO_FONDOS.MONTO_TOTAL "
-                + "ORDER BY REQUERIMIENTO_FONDOS.NUMERO_REQUERIMIENTO";*/
+        List<ResumenRequerimientoDto> lstResumen;
         Query q = em.createNamedQuery("PagoProve.QueryConsultaRequerimiento", ResumenRequerimientoDto.class);
         q.setParameter(1, codigoDepartamento);
         q.setParameter(2, idDetProcesoAdq);
         lstResumen = q.getResultList();
-        /*for (Object object : lst) {
-            Object[] datos = (Object[]) object;
-            ResumenRequerimientoDto resumen = new ResumenRequerimientoDto();
-            resumen.setIdRequerimiento((BigDecimal) datos[0]);
-            resumen.setConcepto((String) datos[1]);
-            resumen.setFormatoRequerimiento((String) datos[2]);
-            resumen.setMontoTotal((BigDecimal) datos[3]);
-            resumen.setCantidadPlanilla(((BigDecimal) datos[4]).toBigInteger());
-            resumen.setMontoTotalPlanilla((BigDecimal) datos[5]);
-            resumen.setMontoPendientePago((BigDecimal) datos[6]);
-            resumen.setMontoReintegrar((BigDecimal) datos[7]);
-            resumen.setSaldoRequerimiento((BigDecimal) datos[8]);
-            lstResumen.add(resumen);
-        }*/
         return lstResumen;
-    }
-
-    public List<ResumenPagosDto> getLstResumenPagosPorRequermiento(String codigoDepartamento, Integer idDetProcesoAdq) {
-        List<ResumenPagosDto> lst = new ArrayList<>();
-        Boolean isNacional = codigoDepartamento.equals("00");
-        String sql = "SELECT \n"
-                + "  REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO,\n"
-                + "  REQUERIMIENTO_FONDOS.CODIGO_DEPARTAMENTO,\n"
-                + "  DETALLE_REQUERIMIENTO.NOMBRE_DEPARTAMENTO,\n"
-                + "  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,\n"
-                + "  REQUERIMIENTO_FONDOS.MONTO_TOTAL,\n"
-                + "  count(distinct detalle_requerimiento.codigo_entidad) CE,\n"
-                + "  COUNT(DISTINCT PLANILLA_PAGO.ID_PLANILLA) CANTIDAD_PLANILLA,\n"
-                + "  NVL(FN_RF_MONTO_PAGADO(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_TOTAL_PLANILLA,\n"
-                + "  NVL((REQUERIMIENTO_FONDOS.MONTO_TOTAL - SUM(DISTINCT DETALLE_PLANILLA.MONTO_ACTUAL)),0) MONTO_PENDIENTE_PAGO,\n"
-                + "  NVL(FN_RF_MONTO_REINTEGRAR(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_REINTEGRAR,\n"
-                + "  NVL((REQUERIMIENTO_FONDOS.MONTO_TOTAL-FN_RF_MONTO_PAGADO(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO)-FN_RF_MONTO_REINTEGRAR(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO)),0) SALDO_REQUERIMIENTO\n"
-                + "FROM REQUERIMIENTO_FONDOS\n"
-                + "  INNER JOIN DETALLE_REQUERIMIENTO ON REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO\n"
-                + "  left outer JOIN PLANILLA_PAGO ON PLANILLA_PAGO.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO\n"
-                + "  LEFT OUTER JOIN DETALLE_PLANILLA ON PLANILLA_PAGO.ID_PLANILLA = DETALLE_PLANILLA.ID_PLANILLA\n"
-                + "WHERE\n"
-                + "  REQUERIMIENTO_FONDOS.ID_DET_PROCESO_ADQ = ?1 \n"
-                + "  %s \n"
-                + "  AND (PLANILLA_PAGO.ESTADO_ELIMINACION IS NULL OR PLANILLA_PAGO.ESTADO_ELIMINACION=0)\n"
-                + "  AND (DETALLE_PLANILLA.ESTADO_ELIMINACION IS NULL or DETALLE_PLANILLA.ESTADO_ELIMINACION = 0)\n"
-                + "GROUP BY \n"
-                + "  REQUERIMIENTO_FONDOS.CODIGO_DEPARTAMENTO,\n"
-                + "  DETALLE_REQUERIMIENTO.NOMBRE_DEPARTAMENTO,\n"
-                + "  REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO,\n"
-                + "  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,\n"
-                + "  REQUERIMIENTO_FONDOS.MONTO_TOTAL\n"
-                + "ORDER BY \n"
-                + "  REQUERIMIENTO_FONDOS.CODIGO_DEPARTAMENTO,\n"
-                + "  REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO";
-        if (isNacional) {
-            sql = String.format(sql, " ");
-        } else {
-            sql = String.format(sql, "and REQUERIMIENTO_FONDOS.CODIGO_DEPARTAMENTO = ?2");
-        }
-        Query q = em.createNativeQuery(sql);
-        q.setParameter(1, idDetProcesoAdq);
-        if (!isNacional) {
-            q.setParameter(2, codigoDepartamento);
-        }
-        for (Object object : q.getResultList()) {
-            Object[] datos = (Object[]) object;
-            ResumenPagosDto resumen = new ResumenPagosDto();
-            resumen.setIdRequerimiento((BigDecimal) datos[0]);
-            resumen.setCodigoDepartamento((String) datos[1]);
-            resumen.setNombreDepartamento((String) datos[2]);
-            resumen.setFormatoRequerimiento((String) datos[3]);
-            resumen.setMontoTotal((BigDecimal) datos[4]);
-            resumen.setNumeroCe((BigInteger) datos[5]);
-            resumen.setCantidadPlanilla((BigInteger) datos[6]);
-            resumen.setMontoTotalPlanilla((BigDecimal) datos[7]);
-            resumen.setMontoPendientePago((BigDecimal) datos[8]);
-            resumen.setMontoReintegrar((BigDecimal) datos[9]);
-            resumen.setSaldoRequerimiento((BigDecimal) datos[10]);
-            lst.add(resumen);
-        }
-        return lst;
-    }
-
-    /**
-     * @DEPRECATE @param codigoDepartamento
-     * @param idDetProcesoAdq
-     * @return
-     */
-    public List<ResumenPagosDto> getLstResumenPagoPorProceso(String codigoDepartamento, Integer idDetProcesoAdq) {
-        List<ResumenPagosDto> lst = new ArrayList<>();
-        Boolean isNacional = codigoDepartamento.equals("00");
-        String sql = "SELECT \n"
-                + "  TBL.CODIGO_DEPARTAMENTO,\n"
-                + "  TBL.NOMBRE_DEPARTAMENTO,\n"
-                + "  SUM(TBL.MONTO_TOTAL) MONTO_TOTAL,\n"
-                + "  SUM(TBL.CE) CANTIDAD_CE,\n"
-                + "  SUM(TBL.CANTIDAD_PLANILLA) CANTIDAD_PLANILLA,\n"
-                + "  SUM(MONTO_TOTAL_PLANILLA) MONTO_TOTAL_PLANILLA,\n"
-                + "  SUM(TBL.MONTO_PENDIENTE_PAGO) MONTO_PENDIENTE_PAGO,\n"
-                + "  SUM(TBL.MONTO_REINTEGRAR) MONTO_REINTEGRAR,\n"
-                + "  sum(tbl.SALDO_REQUERIMIENTO) SALDO_REQUERIMIENTO\n"
-                + "FROM\n"
-                + "(SELECT \n"
-                + "  REQUERIMIENTO_FONDOS.CODIGO_DEPARTAMENTO,\n"
-                + "  DETALLE_REQUERIMIENTO.NOMBRE_DEPARTAMENTO,\n"
-                + "  REQUERIMIENTO_FONDOS.MONTO_TOTAL,\n"
-                + "  count(distinct detalle_requerimiento.codigo_entidad) CE,\n"
-                + "  COUNT(DISTINCT PLANILLA_PAGO.ID_PLANILLA) CANTIDAD_PLANILLA,\n"
-                + "  NVL(FN_RF_MONTO_PAGADO(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_TOTAL_PLANILLA,\n"
-                + "  REQUERIMIENTO_FONDOS.MONTO_TOTAL-NVL((SUM(DISTINCT DETALLE_PLANILLA.MONTO_ACTUAL)),0) MONTO_PENDIENTE_PAGO,\n"
-                + "  NVL(FN_RF_MONTO_REINTEGRAR(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_REINTEGRAR,\n"
-                + "  REQUERIMIENTO_FONDOS.MONTO_TOTAL-NVL((FN_RF_MONTO_PAGADO(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO)+FN_RF_MONTO_REINTEGRAR(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO)),0) SALDO_REQUERIMIENTO\n"
-                + "FROM REQUERIMIENTO_FONDOS\n"
-                + "  INNER JOIN DETALLE_REQUERIMIENTO ON REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO\n"
-                + "  left outer JOIN PLANILLA_PAGO ON PLANILLA_PAGO.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO\n"
-                + "  LEFT OUTER JOIN DETALLE_PLANILLA ON PLANILLA_PAGO.ID_PLANILLA = DETALLE_PLANILLA.ID_PLANILLA\n"
-                + "WHERE\n"
-                + "  REQUERIMIENTO_FONDOS.ID_DET_PROCESO_ADQ = ?1 \n"
-                + "  %s \n"
-                + "  AND (PLANILLA_PAGO.ESTADO_ELIMINACION IS NULL OR PLANILLA_PAGO.ESTADO_ELIMINACION=0)\n"
-                + "  AND (DETALLE_PLANILLA.ESTADO_ELIMINACION IS NULL or DETALLE_PLANILLA.ESTADO_ELIMINACION = 0)\n"
-                + "GROUP BY \n"
-                + "  REQUERIMIENTO_FONDOS.CODIGO_DEPARTAMENTO,\n"
-                + "  DETALLE_REQUERIMIENTO.NOMBRE_DEPARTAMENTO,\n"
-                + "  REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO,\n"
-                + "  REQUERIMIENTO_FONDOS.MONTO_TOTAL\n"
-                + "ORDER BY \n"
-                + "  REQUERIMIENTO_FONDOS.CODIGO_DEPARTAMENTO) TBL\n"
-                + "GROUP BY \n"
-                + "  TBL.CODIGO_DEPARTAMENTO,\n"
-                + "  TBL.NOMBRE_DEPARTAMENTO";
-        if (isNacional) {
-            sql = String.format(sql, " ");
-        } else {
-            sql = String.format(sql, "and REQUERIMIENTO_FONDOS.CODIGO_DEPARTAMENTO = ?2");
-        }
-        Query q = em.createNativeQuery(sql);
-        q.setParameter(1, idDetProcesoAdq);
-        if (!isNacional) {
-            q.setParameter(2, codigoDepartamento);
-        }
-        for (Object object : q.getResultList()) {
-            Object[] datos = (Object[]) object;
-            ResumenPagosDto resumen = new ResumenPagosDto();
-            resumen.setCodigoDepartamento((String) datos[0]);
-            resumen.setNombreDepartamento((String) datos[1]);
-            resumen.setMontoTotal((BigDecimal) datos[2]);
-            resumen.setNumeroCe(((BigDecimal) datos[3]).toBigInteger());
-            resumen.setCantidadPlanilla(((BigDecimal) datos[4]).toBigInteger());
-            resumen.setMontoTotalPlanilla((BigDecimal) datos[5]);
-            resumen.setMontoPendientePago((BigDecimal) datos[6]);
-            resumen.setMontoReintegrar((BigDecimal) datos[7]);
-            resumen.setSaldoRequerimiento((BigDecimal) datos[8]);
-            lst.add(resumen);
-        }
-        return lst;
     }
 
     /**
@@ -1064,19 +880,7 @@ public class ProveedorEJB {
      * @return
      */
     public List<String> getEntidadesPorRequerimiento(BigDecimal idRequerimiento) {
-        Query q = em.createNativeQuery("SELECT distinct NOMBRE_ENT_FINAN \n"
-                + "FROM DETALLE_REQUERIMIENTO\n"
-                + "WHERE \n"
-                + "  ID_DET_REQUERIMIENTO not in(\n"
-                + "    SELECT DR.ID_DET_REQUERIMIENTO \n"
-                + "    FROM DETALLE_PLANILLA DP\n"
-                + "      INNER JOIN DETALLE_DOC_PAGO DDP ON DP.ID_DETALLE_DOC_PAGO = DDP.ID_DETALLE_DOC_PAGO\n"
-                + "      INNER JOIN DETALLE_REQUERIMIENTO DR ON DR.ID_DET_REQUERIMIENTO = DDP.ID_DET_REQUERIMIENTO\n"
-                + "    WHERE DP.ESTADO_ELIMINACION = 0\n"
-                + "      AND DDP.ESTADO_ELIMINACION = 0\n"
-                + "      AND DR.ID_REQUERIMIENTO = ?1) AND\n"
-                + "  ID_REQUERIMIENTO = ?1\n"
-                + "ORDER BY NOMBRE_ENT_FINAN");
+        Query q = em.createNativeQuery(Constantes.QUERY_PAGOS_ENTIDADES_POR_REQUERIMIENTO);
         q.setParameter(1, idRequerimiento);
         return q.getResultList();
     }

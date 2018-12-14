@@ -181,18 +181,16 @@
                             <h:outputText value="Un proveedor" style="font-size: 12px;"/>
                         </h:panelGrid>
                         <f:setPropertyActionListener target="#{planillaPagoLstMB.idTipoPlanilla}" value="1" />
-
                     </p:commandLink>
                     <br/>
                     <h:outputText value="Se crea un solo cheque por planilla para el proveedor seleccionado"/>
                 </div>
                 <div class="subItem2">
-                    <p:commandLink action="#{planillaPagoLstMB.cerrarDlgTipoPlanilla}" styleClass="secciones" update="pnlFiltro pnlDatos">
+                    <p:commandLink action="#{planillaPagoLstMB.cerrarDlgTipoPlanilla}" styleClass="secciones" update="pnlFiltro pnlDatos" >
                         <h:panelGrid columns="1" style="width: 100%;">
                             <i class="fa fa-users" style="font-size: 38px; color: #00DD00;"></i>
                             <h:outputText value ="Más de un Proveedor" style="font-size: 12px;"/>
                         </h:panelGrid>
-                        <f:viewParam name="idTipoPlanilla" value="2"/>
                         <f:setPropertyActionListener target="#{planillaPagoLstMB.idTipoPlanilla}" value="2" />
                     </p:commandLink>
                     <br/>

@@ -55,7 +55,7 @@
                 </h:panelGrid>
                 <br/>
                 <!-- DETALLE DE PLANILLA -->
-                <p:dataTable id="tblDetallePlanilla" widgetVar="tblDetallePlanilla" value="#{planillaPagoEdtMB.lstDetallePlanilla}" var="detalle" 
+                <p:dataTable id="tblDetallePlanilla" widgetVar="tblDetallePlanilla" value="#{planillaPagoEdtMB.planillaPago.detallePlanillaList}" var="detalle" 
                              rowKey="#{detalle.idDetallePlanilla}" rowIndexVar="rowId" sortBy="#{detalle.estadoEliminacion}"
                              rowStyleClass="#{detalle.estadoEliminacion eq 1 ? 'filaEliminada' : null}"
                              emptyMessage="Esta planilla todavia no tiene contratos asociados">

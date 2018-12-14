@@ -1227,10 +1227,10 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
                 if (detalleDocPago.getFechaModificativa() == null) {
                     msj += " - Fecha de Resolución.<br/>";
                 }
-                if (detalleDocPago.getCantidadActual() != null && detalleDocPago.getCantidadActual().intValue() < 0) {
+                if (detalleDocPago.getCantidadActual() == null || (detalleDocPago.getCantidadActual() != null && detalleDocPago.getCantidadActual().intValue() < 0)) {
                     msj += " - Cantidad actual del contrato.<br/>";
                 }
-                if (detalleDocPago.getMontoActual() != null && detalleDocPago.getMontoActual().intValue() < 0) {
+                if (detalleDocPago.getMontoActual() == null || (detalleDocPago.getMontoActual() != null && detalleDocPago.getMontoActual().intValue() < 0)) {
                     msj += " - Monto ($) actual del contrato.<br/>";
                 }
             }
@@ -2435,7 +2435,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     public String getFormatoFechaReporte() {
         return UtilFile.getFechaGeneracionReporte();
     }
-    
+
     public void editarReintegro() {
 
     }

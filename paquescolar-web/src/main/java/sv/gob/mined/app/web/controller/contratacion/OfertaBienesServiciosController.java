@@ -45,7 +45,8 @@ import sv.gob.mined.paquescolar.model.PreciosRefRubroEmp;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.pojos.VwRptCertificacionPresupuestaria;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
-import sv.gob.mined.paquescolar.model.view.VwCotizacion;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.VwCotizacion;
+import sv.gob.mined.paquescolar.util.Constantes;
 
 /**
  *
@@ -457,34 +458,15 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
     }
 
     public void create() {
-        try {
-            OfertaBienesServicios oferta = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(current.getCodigoEntidad().getCodigoEntidad(), detalleProceso);
-            if (oferta != null) {
-                if (oferta.getUsuarioInsercion().equals(VarSession.getVariableSessionUsuario())) {
-                } else {
-                    JsfUtil.mensajeError("Otro usuario ya creo una oferta para este centro escolar y proceso de contratación.");
-                }
-            } else {
-                if (current.getParticipantesList() == null || current.getParticipantesList().isEmpty()) {
-                    JsfUtil.mensajeAlerta("Primero debe de agregar por lo menos un proveedor a esta oferta.");
-                } else {
-                    current.setEstadoEliminacion(BigInteger.ZERO);
-                    current.setFechaInsercion(new Date());
-                    current.setUsuarioInsercion(VarSession.getVariableSession("Usuario").toString());
-                    SimpleDateFormat sdf = new SimpleDateFormat("hh");
-                    current.setHoraApertura(new BigInteger(sdf.format(new Date())));
-                    sdf = new SimpleDateFormat("mm");
-                    current.setMinutoApertura(new BigInteger(sdf.format(new Date())));
+        HashMap<String, Object> parametros = ofertaBienesServiciosEJB.create(current, VarSession.getVariableSessionUsuario());
 
-                    ofertaBienesServiciosEJB.create(current);
-
-                    VarSession.setVariableSessionED("2");
-
-                    JsfUtil.mensajeInsert();
-                }
-            }
-        } catch (Exception e) {
-            JsfUtil.mensajeError("Error en el registro de la oferta.");
+        if ((Boolean) parametros.get(Constantes.ERROR)) {
+            JsfUtil.mensajeError(parametros.get(Constantes.MSJ_ERROR).toString());
+        } else if ((Boolean) parametros.get(Constantes.WARNING)) {
+            JsfUtil.mensajeError(parametros.get(Constantes.MSJ_WARNING).toString());
+        } else {
+            JsfUtil.mensajeInsert();
+            VarSession.setVariableSessionED("2");
         }
     }
 
@@ -783,8 +765,8 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
     public void buscarEntidadEducativaRes() {
         if (codigoEntidad.length() == 5) {
             /**
-             * Fecha: 30/08/2018 
-             * Comentario: Validación de seleccion del año y proceso de adquisición
+             * Fecha: 30/08/2018 Comentario: Validación de seleccion del año y
+             * proceso de adquisición
              */
             if (super.getProcesoAdquisicion() == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");

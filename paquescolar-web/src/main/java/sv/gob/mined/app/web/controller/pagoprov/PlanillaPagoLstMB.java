@@ -384,7 +384,7 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
                 showDlgSeleccionProveedor();
                 break;
             case 2: //Planilla con más de 2 proveedores
-                url = "planillaPagoEdt.mined";
+                url = "planillaPagoEdt.mined?faces-redirect=true&includeViewParams=true&idTipoPlanilla=" + idTipoPlanilla + "&cboRubro_input=" + idRubro + "&idReq=" + idReq;
                 break;
         }
         return url;
@@ -395,7 +395,7 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
             JsfUtil.mensajeAlerta("Debe de seleccionar un proveedor");
             return "";
         } else {
-            return "planillaPagoEdt.mined?faces-redirect=true&includeViewParams=true&idReq=" + idReq + "&nit=" + proveedor.getNumeroNit() + "&idTipoPlanilla=" + idTipoPlanilla+"&cboRubro_input="+idRubro;
+            return "planillaPagoEdt.mined?faces-redirect=true&includeViewParams=true&idReq=" + idReq + "&nit=" + proveedor.getNumeroNit() + "&idTipoPlanilla=" + idTipoPlanilla + "&cboRubro_input=" + idRubro;
         }
     }
 
@@ -405,10 +405,10 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
             JsfUtil.mensajeAlerta("Debe de seleccionar una entidad financiera");
             return "";
         } else {
-            return "planillaPagoEdt.mined?faces-redirect=true&includeViewParams=true&idReq=" + idReq + "&nombreEntFinan=" + entidadFinanciera.getNombreEntFinan() + "&idTipoPlanilla=3&cboRubro_input="+idRubro;
+            return "planillaPagoEdt.mined?faces-redirect=true&includeViewParams=true&idReq=" + idReq + "&nombreEntFinan=" + entidadFinanciera.getNombreEntFinan() + "&idTipoPlanilla=3&cboRubro_input=" + idRubro;
         }
     }
-    
+
     public void eliminarPlanilla() {
         pagoProveedoresEJB.eliminarPlanilla(planillaPago.getIdPlanilla(), VarSession.getVariableSessionUsuario());
         buscarPlanillas();

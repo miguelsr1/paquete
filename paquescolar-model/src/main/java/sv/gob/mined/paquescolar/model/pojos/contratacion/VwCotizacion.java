@@ -2,17 +2,31 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package sv.gob.mined.paquescolar.model.view;
+package sv.gob.mined.paquescolar.model.pojos.contratacion;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.EntityResult;
+import javax.persistence.Id;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
 import sv.gob.mined.paquescolar.model.DetalleOfertas;
 
 /**
  *
  * @author misanchez
  */
-public class VwCotizacion implements Serializable{
+@Entity
+@XmlRootElement
+@SqlResultSetMapping(name = "defaultVwContizacion",
+        entities = @EntityResult(entityClass = VwCotizacion.class))
+public class VwCotizacion implements Serializable {
+
+    @Id
+    private BigDecimal idRow;
     private String lugarFecha;
     private String modalidadAdministrativa;
     private String razonSocial;
@@ -23,10 +37,21 @@ public class VwCotizacion implements Serializable{
     private String nombreRepresentanteCe;
     private String nombreRespresenanteEmp;
     private String usuarioInsercion;
+    
+    @Transient
     private List<DetalleOfertas> lstDetalleOferta;
+    @Transient
     private List<DetalleOfertas> lstDetalleOfertaLibros;
 
     public VwCotizacion() {
+    }
+
+    public BigDecimal getIdRow() {
+        return idRow;
+    }
+
+    public void setIdRow(BigDecimal idRow) {
+        this.idRow = idRow;
     }
 
     public String getLugarFecha() {

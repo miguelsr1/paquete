@@ -250,4 +250,27 @@
             ]]>
         </query>
     </named-native-query>
+    <named-native-query>
+        <query>
+            <![CDATA[
+            select 
+                rownum              as idRow,
+                fecha_apertura      as fechaApertura,
+                razon_social        as razonSocial,
+                iniciales_modalidad as modalidadAdministrativa
+                nombre              as nombreCe
+                codigo_entidad      as codigoEntidad,
+                direccion_ce        as direccionCe,
+                nombre_presentante  as nombreRespresenanteEmp
+                nombre_miembro      as nombreRepresentanteCe,
+                usuario_insercion   as usuarioInsercion 
+            from 
+                vw_cabecera_cotizacion 
+            where 
+                codigo_entidad = ?1 and 
+                id_det_proceso_adq = ?2 and 
+                id_participante = ?3
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>

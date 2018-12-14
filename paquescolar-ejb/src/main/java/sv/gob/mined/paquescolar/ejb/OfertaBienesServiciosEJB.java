@@ -10,8 +10,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,8 +31,8 @@ import sv.gob.mined.paquescolar.model.Participantes;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.pojos.Bean;
 import sv.gob.mined.paquescolar.model.pojos.ReportPOIBean;
-import sv.gob.mined.paquescolar.model.view.VwCotizacion;
-import sv.gob.mined.paquescolar.util.StringUtils;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.VwCotizacion;
+import sv.gob.mined.paquescolar.util.Constantes;
 
 /**
  *
@@ -45,8 +47,44 @@ public class OfertaBienesServiciosEJB {
     @PersistenceContext
     private EntityManager em;
 
-    public void create(OfertaBienesServicios ofertaBienesServicios) {
-        em.persist(ofertaBienesServicios);
+    public HashMap<String, Object> create(OfertaBienesServicios current, String usuario) {
+        HashMap<String, Object> mapDeRetorno = new HashMap();
+
+        try {
+            OfertaBienesServicios oferta = getOfertaByProcesoCodigoEntidad(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq());
+            if (oferta != null) {
+                if (oferta.getUsuarioInsercion().equals(usuario)) {
+                } else {
+                    mapDeRetorno.put(Constantes.ERROR, true);
+                    mapDeRetorno.put(Constantes.MSJ_ERROR, "Otro usuario ya creo una oferta para este centro escolar y proceso de contratación.");
+                }
+            } else {
+                if (current.getParticipantesList() == null || current.getParticipantesList().isEmpty()) {
+                    mapDeRetorno.put(Constantes.WARNING, true);
+                    mapDeRetorno.put(Constantes.MSJ_WARNING, "Primero debe de agregar por lo menos un proveedor a esta oferta.");
+                } else {
+                    SimpleDateFormat sdf = new SimpleDateFormat("hh");
+
+                    current.setEstadoEliminacion(BigInteger.ZERO);
+                    current.setFechaInsercion(new Date());
+                    current.setUsuarioInsercion(usuario);
+                    current.setHoraApertura(new BigInteger(sdf.format(new Date())));
+
+                    sdf = new SimpleDateFormat("mm");
+                    current.setMinutoApertura(new BigInteger(sdf.format(new Date())));
+
+                    em.persist(current);
+
+                    mapDeRetorno.put(Constantes.ERROR, false);
+                    mapDeRetorno.put(Constantes.WARNING, false);
+                }
+            }
+        } catch (Exception e) {
+            mapDeRetorno.put(Constantes.ERROR, true);
+            mapDeRetorno.put(Constantes.MSJ_ERROR, "Error en el registro de la oferta. Comunicarse con el Administrador del Sistema.");
+            Logger.getLogger(OfertaBienesServiciosEJB.class.getName()).log(Level.WARNING, "Error al intentar registrar una oferta para el CE: " + current.getCodigoEntidad().getCodigoEntidad(), e);
+        }
+        return mapDeRetorno;
     }
 
     public OfertaBienesServicios edit(OfertaBienesServicios ofertaBienesServicios) {
@@ -99,21 +137,22 @@ public class OfertaBienesServiciosEJB {
                 case 5:
                     String idProcesos = "";
                     for (DetalleProcesoAdq detalleProcesoAdq : idDetProceso.getIdProcesoAdq().getDetalleProcesoAdqList()) {
-                        if(detalleProcesoAdq.getIdRubroAdq().getIdRubroUniforme().intValue() == 1)
-                        if (idProcesos.isEmpty()) {
-                            idProcesos = detalleProcesoAdq.getIdDetProcesoAdq() + "";
-                        } else {
-                            idProcesos += "," + detalleProcesoAdq.getIdDetProcesoAdq();
+                        if (detalleProcesoAdq.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
+                            if (idProcesos.isEmpty()) {
+                                idProcesos = detalleProcesoAdq.getIdDetProcesoAdq() + "";
+                            } else {
+                                idProcesos += "," + detalleProcesoAdq.getIdDetProcesoAdq();
+                            }
                         }
                     }
 
-                    query = String.format(StringUtils.QUERY_CONTRATACION_ANALISIS_ECONOMICO_UNIFORME, idProcesos, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
+                    query = String.format(Constantes.QUERY_CONTRATACION_ANALISIS_ECONOMICO_UNIFORME, idProcesos, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
                     break;
                 case 2:
-                    query = String.format(StringUtils.QUERY_CONTRATACION_ANALISIS_ECONOMICO_UTILES, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
+                    query = String.format(Constantes.QUERY_CONTRATACION_ANALISIS_ECONOMICO_UTILES, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
                     break;
                 case 3:
-                    query = String.format(StringUtils.QUERY_CONTRATACION_ANALISIS_ECONOMICO_ZAPATOS, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
+                    query = String.format(Constantes.QUERY_CONTRATACION_ANALISIS_ECONOMICO_ZAPATOS, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
                     break;
             }
             Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -161,9 +200,9 @@ public class OfertaBienesServiciosEJB {
             return listadoAExportar;
         } catch (SQLException ex) {
             Logger.getLogger(OfertaBienesServiciosEJB.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return listadoAExportar;
         }
+        
+        return listadoAExportar;
     }
 
     public List<VwCotizacion> getLstCotizacion(String municipio, String codigoEntidad, DetalleProcesoAdq idProceso, Participantes participante) {

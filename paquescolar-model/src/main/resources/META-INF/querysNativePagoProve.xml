@@ -123,7 +123,7 @@
                 numero_nit      as numeroNit
             FROM (SELECT distinct razon_social, numero_nit    
                 FROM detalle_requerimiento 
-                WHERE id_requerimiento = ?1 and  
+                WHERE id_requerimiento = ?1 and  activo = 0 and
                     id_contrato NOT IN (SELECT dr.id_contrato
                                     FROM detalle_planilla dp 
                                         inner join detalle_doc_pago ddp on dp.ID_DETALLE_DOC_PAGO = ddp.ID_DETALLE_DOC_PAGO 
@@ -330,7 +330,7 @@
                 from 
                     requerimiento_fondos req
                     left outer join detalle_requerimiento detq  on req.id_requerimiento = detq.id_requerimiento
-                    left outer join planilla_pago pp            on pp.id_requerimiento = detq.id_requerimiento
+                    left outer join planilla_pago pp            on pp.id_requerimiento = detq.id_requerimiento and pp.estado_eliminacion = 0
                     left outer join detalle_planilla detp       on pp.id_planilla = detp.id_planilla
                 where
                     req.codigo_departamento = ?1 and
