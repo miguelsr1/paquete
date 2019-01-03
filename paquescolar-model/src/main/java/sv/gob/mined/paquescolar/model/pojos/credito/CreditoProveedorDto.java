@@ -4,16 +4,34 @@
  */
 package sv.gob.mined.paquescolar.model.pojos.credito;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.EntityResult;
+import javax.persistence.Id;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
 import sv.gob.mined.paquescolar.model.DetalleCredito;
 
 /**
  *
  * @author misanchez
  */
-public class CreditoProveedor {
+@Entity
+@XmlRootElement
+@SqlResultSetMapping(name = "defaultCreditoProveedorDto",
+        entities = @EntityResult(entityClass = CreditoProveedorDto.class))
+public class CreditoProveedorDto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    private BigDecimal idRow;
     private String numeroNit;
     private String razonSocial;
     private String nombreEntFinan;
@@ -23,6 +41,7 @@ public class CreditoProveedor {
     private String codigoDepartamento;
     private String codigoDepaEmp;
     private String nombreDepartamentoPro;
+    @Temporal(TemporalType.DATE)
     private Date fechaVencimiento;
     private BigDecimal idCredito;
     private BigDecimal idProceso;
@@ -31,10 +50,19 @@ public class CreditoProveedor {
     private BigDecimal montoContrato;
     private BigDecimal idDetalle;
     private Boolean cancelado = false;
-    
+
+    @Transient
     private DetalleCredito detalleCredito;
 
-    public CreditoProveedor() {
+    public CreditoProveedorDto() {
+    }
+
+    public BigDecimal getIdRow() {
+        return idRow;
+    }
+
+    public void setIdRow(BigDecimal idRow) {
+        this.idRow = idRow;
     }
 
     public BigDecimal getIdCredito() {

@@ -27,7 +27,6 @@ public class VwCotizacion implements Serializable {
 
     @Id
     private BigDecimal idRow;
-    private String lugarFecha;
     private String modalidadAdministrativa;
     private String razonSocial;
     private String nombreCe;
@@ -38,6 +37,8 @@ public class VwCotizacion implements Serializable {
     private String nombreRespresenanteEmp;
     private String usuarioInsercion;
     
+    @Transient
+    private String lugarFecha;
     @Transient
     private List<DetalleOfertas> lstDetalleOferta;
     @Transient

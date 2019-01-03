@@ -250,18 +250,19 @@
             ]]>
         </query>
     </named-native-query>
-    <named-native-query>
+    <named-native-query name="Contratacion.VwCotizacion" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.VwCotizacion">
         <query>
             <![CDATA[
             select 
                 rownum              as idRow,
                 fecha_apertura      as fechaApertura,
                 razon_social        as razonSocial,
-                iniciales_modalidad as modalidadAdministrativa
-                nombre              as nombreCe
+                iniciales_modalidad as modalidadAdministrativa,
+                nombre              as nombreCe,
                 codigo_entidad      as codigoEntidad,
                 direccion_ce        as direccionCe,
-                nombre_presentante  as nombreRespresenanteEmp
+                nombre_presentante  as nombreRespresenanteEmp,
                 nombre_miembro      as nombreRepresentanteCe,
                 usuario_insercion   as usuarioInsercion 
             from 
@@ -270,6 +271,75 @@
                 codigo_entidad = ?1 and 
                 id_det_proceso_adq = ?2 and 
                 id_participante = ?3
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Contratacion.VwCotizacionDetUniforme" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                                    as idRow,
+                no_item                                   as noItem,
+                nombre_producto ||', '||descripcion_nivel as consolidadoEspTec,
+                num_alumno                                as cantidad,
+                Precio_Referencia                         as precioUnitario
+            from 
+                vw_cotizacion_uniforme 
+            where 
+                id_empresa = ?1 and 
+                codigo_entidad = ?2 and 
+                id_proceso_estadistica = ?3 and 
+                (id_proceso_precio = ?3 or id_proceso_precio = ?3) 
+            order by 
+                to_number(no_item), 
+                id_nivel_educativo
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Contratacion.VwCotizacionDetUtiles" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                                    as idRow,
+                no_item                                   as noItem,
+                nombre_producto ||', '||descripcion_nivel as consolidadoEspTec,
+                num_alumno                                as cantidad,
+                Precio_Referencia                         as precioUnitario
+            from 
+                VW_COTIZACION_UTILES 
+            where 
+                id_empresa = ?1 and 
+                codigo_entidad = ?2 and 
+                id_proceso_estadistica = ?3 and 
+                (id_proceso_precio = ?3 or id_proceso_precio = ?3) 
+            order by 
+                to_number(no_item), 
+                id_nivel_educativo
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Contratacion.VwCotizacionDetZapatos" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                                    as idRow,
+                no_item                                   as noItem,
+                nombre_producto ||', '||descripcion_nivel as consolidadoEspTec,
+                num_alumno                                as cantidad,
+                Precio_Referencia                         as precioUnitario
+            from 
+                VW_COTIZACION_ZAPATOS 
+            where 
+                id_empresa = ?1 and 
+                codigo_entidad = ?2 and 
+                id_proceso_estadistica = ?3 and 
+                (id_proceso_precio = ?3 or id_proceso_precio = ?4) 
+            order by 
+                to_number(no_item), 
+                id_nivel_educativo
             ]]>
         </query>
     </named-native-query>

@@ -29,9 +29,9 @@
 
                     <h:panelGrid id="pnlFiltro" columns="2">  
                         <p:outputLabel value="Departamento del proveedor:" />  
-                        <p:selectOneMenu id="idEntFinan" effect="fade" value="#{creditoBancarioController.depa}" >  
+                        <p:selectOneMenu id="idEntFinan" effect="fade" value="#{creditoBancarioController.codigoDepartamento}" >  
                             <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />  
-                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}"/>
+                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}"/>
                         </p:selectOneMenu>
 
                         <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />  
@@ -40,8 +40,7 @@
                             <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}"/>
                         </p:selectOneMenu>
 
-                        <p:commandButton   value="Buscar" icon="ui-icon-search" 
-                                           action="#{creditoBancarioController.consultaCreditosActivosPorProveedor}" 
+                        <p:commandButton   value="Buscar" icon="ui-icon-search" action="#{creditoBancarioController.consultaCreditosActivosPorProveedor}" 
                                            update="lstProveedorConCredito" />  
                     </h:panelGrid>
                 </div>
@@ -52,58 +51,65 @@
                         <h:outputText value="Datos"/>
                     </h1>
                     <p:dataTable id="lstProveedorConCredito" value="#{creditoBancarioController.lstCreditosProveedor}" 
-                                 var="creditoPro" resizableColumns="true">
-                         <f:facet name="header">
+                                 var="creditoPro" >
+                        <f:facet name="header">
+                            <p:spacer width="10" height="8"/>
+                            <h:commandLink style="float:right;">
+                                <i class="fa fa-download"></i>
                                 <p:spacer width="10" height="8"/>
-                                <h:commandLink style="float:right;">
-                                    <i class="fa fa-download"></i>
-                                    <p:spacer width="10" height="8"/>
-                                    <h:outputText value="Exportar"/>
+                                <h:outputText value="Exportar"/>
                                 <p:dataExporter  type="xls" encoding="ISO-8859-1" target="lstProveedorConCredito" fileName="proveedoresConCredito" postProcessor="#{creditoBancarioController.postProcessXLS}"/>  
                             </h:commandLink>
                         </f:facet>
 
-                        <p:column headerText="NIT">  
-                            <h:outputText value="#{creditoPro.numeroNit}" />  
+                        <p:column headerText="NIT" width="110">  
+                            <p:outputLabel value="#{creditoPro.numeroNit}" />  
                         </p:column>
 
                         <p:column headerText="Razon Social">  
-                            <h:outputText value="#{creditoPro.razonSocial}" />  
+                            <p:outputLabel value="#{creditoPro.razonSocial}" />  
                         </p:column>
 
-                        <p:column headerText="Departamento Proveedor">  
-                            <h:outputText value="#{creditoPro.nombreDepartamentoPro}" />  
+                        <p:column headerText="Departamento Proveedor" width="100">  
+                            <p:outputLabel value="#{creditoPro.nombreDepartamentoPro}" />  
                         </p:column>
 
                         <p:column headerText="Entidad Financiera">  
-                            <h:outputText value="#{creditoPro.nombreEntFinan}" />  
+                            <p:outputLabel value="#{creditoPro.nombreEntFinan}" />  
                         </p:column>
 
-                        <p:column sortBy="#{creditoPro.montoCredito}" headerText="Monto crédito" footerText="Total: #{creditoBancarioController.totalDeCreditos}" style="text-align: right">    
-                            <h:outputText value="#{creditoPro.montoCredito}" >  
+                        <p:column headerText="Monto crédito" style="text-align: right" width="65">
+                            <p:outputLabel value="#{creditoPro.montoCredito}" >  
                                 <f:convertNumber pattern="#,##0.00"  />
-                            </h:outputText>
+                            </p:outputLabel>
                         </p:column>
 
-                        <p:column sortBy="#{creditoPro.fechaVencimiento}" headerText="Fecha vencimiento">  
-                            <h:outputText value="#{creditoPro.fechaVencimiento}" >
-                                <f:convertDateTime pattern="dd/MM/yyyy" />
-                            </h:outputText>
+                        <p:column headerText="Fecha vencimiento" style="text-align: center;" width="80">
+                            <p:outputLabel value="#{creditoPro.fechaVencimiento}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:outputLabel>
                         </p:column>
 
-                        <p:column headerText="Código CE">  
-                            <h:outputText value="#{creditoPro.codigoEntidad}" />  
+                        <p:column headerText="Código CE" width="40">  
+                            <p:outputLabel value="#{creditoPro.codigoEntidad}"/>  
                         </p:column>
 
                         <p:column headerText="Nombre CE">  
-                            <h:outputText value="#{creditoPro.nombreCE}" />  
+                            <p:outputLabel value="#{creditoPro.nombreCE}"/>  
                         </p:column>
 
-                        <p:column sortBy="#{creditoPro.montoContrato}" headerText="Monto Contrato" footerText="Total: #{creditoBancarioController.totalDeContratos}" style="text-align: right">  
-                            <h:outputText value="#{creditoPro.montoContrato}" >  
-                                <f:convertNumber pattern="#,##0.00"  />
-                            </h:outputText>
+                        <p:column headerText="Monto Contrato" style="text-align: right" width="70">
+                            <p:outputLabel value="#{creditoPro.montoContrato}" >  
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </p:outputLabel>
                         </p:column>
+
+                        <p:columnGroup type="footer">
+                            <p:column colspan="4" style="font-weight: bold; text-align: right;" footerText="Total"/>
+                            <p:column style="font-weight: bold; text-align: right;" footerText="#{creditoBancarioController.totalDeCreditos}"/>
+                            <p:column colspan="3"/>
+                            <p:column style="font-weight: bold; text-align: right;" footerText="#{creditoBancarioController.totalDeContratos}"/>
+                        </p:columnGroup>
                     </p:dataTable>
                 </div>
             </div>

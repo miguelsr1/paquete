@@ -15,8 +15,7 @@
                         <p:menuitem value="Modificar"  ajax="true" action="#{creditoBancarioController.editCredito}" 
                                     update="pnlFiltro" icon="fa fa-edit"/>
                         <p:menuitem value="Guardar"  ajax="true" actionListener="#{creditoBancarioController.guardarCredito}" 
-                                    disabled="#{menuController.usuarioSoloLectura}"
-                                    update="pnlFiltro pnlEdicion" icon="fa fa-save"/>
+                                    disabled="#{menuController.usuarioSoloLectura}" update="pnlFiltro pnlEdicion" icon="fa fa-save"/>
                         <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
                         <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
 
@@ -31,26 +30,24 @@
                             <p:outputLabel value="Filtro de busqueda"/>
                         </h3>
 
-                        <p:panelGrid columns="2" columnClasses="col2,col10" styleClass="ui-panelgrid-blank form-group form-elements" >
+                        <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2,ui-grid-col-10" styleClass="ui-panelgrid-blank form-group form-elements">
+                            <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />  
+                            <p:selectOneMenu id="idRubro" value="#{creditoBancarioController.rubro}" effect="fade" disabled="#{creditoBancarioController.deshabilitado}">
+                                <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
+                                <f:selectItems value="#{creditoBancarioController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                <p:ajax listener="#{creditoBancarioController.buscarDetProceso}" update="idEntFinan"/>
+                            </p:selectOneMenu>
+                            
                             <p:outputLabel value="Entidad Financiera:" />  
                             <p:panelGrid>
                                 <p:selectOneMenu id="idEntFinan" value="#{creditoBancarioController.entidadSeleccionado}" effect="fade" 
                                                  disabled="#{creditoBancarioController.deshabilitado}" converter="entidadFinancieraConverter" >
                                     <f:selectItems value="#{creditoBancarioController.lstEntidades}" />
-                                    <p:ajax listener="#{creditoBancarioController.updateRubro}" update="idRubro"/>
                                 </p:selectOneMenu>
                                 <p:spacer width="10"/>
-                                <p:outputLabel rendered="#{creditoBancarioController.usuarioEntidadFinanciera}" value="No posee ninguna entidad financiera asociada a su Usuario." style="color: red; font: bold"/>
+                                <p:outputLabel rendered="#{creditoBancarioController.usuarioEntidadFinanciera}" value="No posee ninguna entidad financiera asociada a su Usuario." style="color: red; font-weight: bold;"/>
                             </p:panelGrid>
-
-                            <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />  
-                            <p:selectOneMenu id="idRubro" value="#{creditoBancarioController.rubro}" effect="fade" 
-                                             disabled="#{creditoBancarioController.deshabilitado}">
-                                <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
-                                <f:selectItems value="#{creditoBancarioController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
-                                <f:ajax listener="#{creditoBancarioController.buscarDetProceso}"/>
-                            </p:selectOneMenu>
-
+                            
                             <p:outputLabel value="N.I.T.:" />
                             <p:inputMask id="nit" mask="9999-999999-999-9"  value="#{creditoBancarioController.numeroNit}" 
                                          disabled="#{creditoBancarioController.deshabilitado}" size="17"/> 

@@ -251,6 +251,27 @@ public class Constantes {
             + "     ID_REQUERIMIENTO = ?1\n"
             + " ORDER BY NOMBRE_ENT_FINAN";
 
+    public static final String QUERY_CREDITO_ACTIVOS_POR_PROVEEDOR = "SELECT\n"
+            + "                rownum              as idRow,\n"
+            + "                id_credito          as idCredito,\n"
+            + "                numero_nit          as numeroNit,\n"
+            + "                monto_credito       as montoCredito,\n"
+            + "                nombre_ent_finan    as nombreEntFinan,\n"
+            + "                fecha_vencimiento   as fechaVencimiento,\n"
+            + "                codigo_entidad      as codigoEntidad,\n"
+            + "                nombre              as nombreCe,\n"
+            + "                nombre_departamento as nombreDepartamento,\n"
+            + "                id_det_proceso_adq  as idProceso,\n"
+            + "                codigo_departamento as codigoDepartamento,\n"
+            + "                depa_emp            as codigoDepaEmp,\n"
+            + "                credito_activo      as creditoActivo,\n"
+            + "                monto               as montoContrato,\n"
+            + "                nom_depa_emp        as nombreDepartamentoPro,\n"
+            + "                razon_social        as razonSocial,\n"
+            + "                cod_depa_emp        as codigoDepaEmp\n"
+            + "            FROM\n"
+            + "                vw_creditos_proveedores ";
+
     public static String addCampoToWhere(String cadenaWhere, String nombreCampo, Object objeto) {
         if (objeto != null) {
             if (objeto instanceof String) {

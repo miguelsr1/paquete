@@ -532,24 +532,19 @@ public class ModificatoriaController extends RecuperarProceso implements Seriali
      * @return
      */
     private BigDecimal getMontoAdjudicadoOld() {
-        BigDecimal total = BigDecimal.ZERO;
-        if (resolucionesModificativas.getIdResolucionModif() != null) {
-            if (resolucionesModificativas.getIdResModifPadre() == null) {
-                //primera modificativa
-                total = modificativaEJB.getMontoContrato(resolucionesModificativas.getIdContrato().getIdContrato(), true);
-            } 
-        }else {
-                //modificativa n
-                if (lstDetalleModificativas != null) {
-                    for (DetalleModificativa detalle : lstDetalleModificativas) {
-                        if (detalle.getCantidadOld() != null && detalle.getPrecioUnitarioOld() != null) {
-                            total = total.add(new BigDecimal(detalle.getCantidadOld()).multiply(detalle.getPrecioUnitarioOld()));
-                        }
-                    }
+        if (resolucionesModificativas.getIdResolucionModif() == null) {
+            BigDecimal total = BigDecimal.ZERO;
+
+            if (resolucionesModificativas.getDetalleModificativaList() != null) {
+                for (DetalleModificativa detalle : resolucionesModificativas.getDetalleModificativaList()) {
+                    total = total.add(new BigDecimal(detalle.getCantidadOld()).multiply(detalle.getPrecioUnitarioOld()));
                 }
             }
 
-        return total;
+            return total;
+        } else {
+            return modificativaEJB.getMontoOldContrato(resolucionesModificativas.getIdResolucionModif());
+        }
     }
 
     private Integer getCantidadAdjudicadoOld() {
@@ -693,12 +688,8 @@ public class ModificatoriaController extends RecuperarProceso implements Seriali
     public void eliminarDetalle() {
         if (detalleSeleccionado != null) {
             if (detalleSeleccionado.getEstadoEliminacion() == 0) {
-                if (detalleSeleccionado.getIdDetalleModif() != null) {
-                    detalleSeleccionado.setEstadoEliminacion(Short.parseShort("1"));
-                    detalleSeleccionado.setCantidadNew(0);
-                } else {
-                    lstDetalleModificativas.remove(rowEdit);
-                }
+                detalleSeleccionado.setEstadoEliminacion(Short.parseShort("1"));
+                detalleSeleccionado.setCantidadNew(0);
             } else {
                 detalleSeleccionado.setEstadoEliminacion(Short.parseShort("0"));
             }
@@ -813,7 +804,9 @@ public class ModificatoriaController extends RecuperarProceso implements Seriali
 
                 lstTipoModifContratos = modificativaEJB.getLstTipoModifContrato(Short.valueOf("0"));
                 lstItem = proveedorEJB.findItemProveedor(contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdEmpresa(), detalleProceso);
-            } else if (vwContratoModificatoria.getIdResolucionAdj() != null && (vwContratoModificatoria.getIdResolucionAdj().longValue() == vwContratoModificatoria.getIdResolucionModif().longValue())) {
+            } else if (vwContratoModificatoria.getIdResolucionAdj() != null
+                    && vwContratoModificatoria.getIdResModifPadre() != null
+                    && (vwContratoModificatoria.getIdResModifPadre().longValue() == vwContratoModificatoria.getIdResolucionModif().longValue())) {
                 JsfUtil.mensajeInformacion("Ha seleccionado el contrato original, y no una modificativa ya creada.");
             } else {
                 vwBusquedaContrato = modificativaEJB.getContratosById(vwContratoModificatoria.getIdContrato());
@@ -840,14 +833,18 @@ public class ModificatoriaController extends RecuperarProceso implements Seriali
             contratoExtinsion.setIdContrato(utilEJB.find(ContratosOrdenesCompras.class, vwContratoModificatoria.getIdContrato()));
             idRubro = contratoExtinsion.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres();
             resolucionesModificativas = utilEJB.find(ResolucionesModificativas.class, vwContratoModificatoria.getIdResolucionModif());
-            idTipoModif = resolucionesModificativas.getIdModifContrato().getIdModifContrato();
-            lstDetalleModificativas = resolucionesModificativas.getDetalleModificativaList();
-            techoCE = resolucionAdjudicativaEJB.findTechoRubroEntEdu(resolucionesModificativas.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad(),
-                    resolucionesModificativas.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq());
-            idEstadoReserva = resolucionesModificativas.getIdEstadoReserva();
+            if (resolucionesModificativas == null) {
+                JsfUtil.mensajeInformacion("Ha seleccionado el contrato original, y no una modificativa ya creada.");
+            } else {
+                idTipoModif = resolucionesModificativas.getIdModifContrato().getIdModifContrato();
+                lstDetalleModificativas = resolucionesModificativas.getDetalleModificativaList();
+                techoCE = resolucionAdjudicativaEJB.findTechoRubroEntEdu(resolucionesModificativas.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad(),
+                        resolucionesModificativas.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq());
+                idEstadoReserva = resolucionesModificativas.getIdEstadoReserva();
 
-            montoAdjudicacionActual = getMontoAdjudicadoNew().add(getMontoAdjudicadoOld().negate());
-            montoSaldo = techoCE.getMontoAdjudicado().add(montoAdjudicacionActual);
+                montoAdjudicacionActual = getMontoAdjudicadoNew().add(getMontoAdjudicadoOld().negate());
+                montoSaldo = techoCE.getMontoAdjudicado().add(montoAdjudicacionActual);
+            }
         }
     }
 
@@ -1056,7 +1053,7 @@ public class ModificatoriaController extends RecuperarProceso implements Seriali
         List<RptDocumentos> lstRptDocumentos = new ArrayList();
         List<Integer> lstRpt = new ArrayList();
         lstRpt.add(7);
-        
+
         lstRptDocumentos = resolucionAdjudicativaEJB.getDocumentosAImprimir(detalleProceso.getIdDetProcesoAdq(), lstRpt);
 
         List<JasperPrint> jasperPrintList

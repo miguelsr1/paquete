@@ -216,14 +216,14 @@ public class ModificativaEJB {
         }
     }
 
-    public BigDecimal getMontoContrato(BigDecimal idContrato, Boolean contratoOriginal) {
-        Query query;
-        if (contratoOriginal) {
-            query = em.createNativeQuery("select monto FROM vw_MO_Busqueda_contrato WHERE id_contrato = ?1 and ID_RESOLUCION_ADJ > 0");
-        }else{
-            query = em.createNativeQuery("select monto FROM vw_MO_Busqueda_contrato WHERE id_contrato = ?1 and ID_RESOLUCION_ADJ > 0");
-        }
-        query.setParameter(1, idContrato);
+    /**
+     * Obtiene el monto original de la modificativa que recibe como parametro.
+     * @param idResModif
+     * @return 
+     */
+    public BigDecimal getMontoOldContrato(BigDecimal idResModif) {
+        Query query = em.createNativeQuery("SELECT FN_MO_GET_MONTO_CONTRATO_OLD(?1) FROM DUAL");
+        query.setParameter(1, idResModif);
         if (query.getResultList().isEmpty()) {
             return BigDecimal.ZERO;
         } else {

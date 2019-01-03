@@ -223,4 +223,37 @@
             ]]>
         </query>
     </named-native-query>
+    <named-native-query name="Credito.EntidadFinancieraByUsuarioAndIdDetProcesoAdq" 
+                        result-class="sv.gob.mined.paquescolar.model.EntidadFinanciera">
+        <query>
+            <![CDATA[
+            SELECT 
+                ent.* 
+            FROM entidad_financiera ent
+                INNER JOIN ent_finan_det_pro_adq efd     ON ent.cod_ent_financiera = efd.cod_ent_financiera
+                INNER JOIN usuario_entidad_financiera ue ON ue.cod_ent_financiera = ent.cod_ent_financiera
+                INNER JOIN usuario usu                   ON ue.id_usuario = usu.id_usuario
+                INNER JOIN persona PER                   ON PER.id_persona = usu.id_persona
+            WHERE 
+                efd.estado_eliminacion = 0 AND
+                per.usuario = ?1 AND
+                efd.id_det_proceso_adq = ?2
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Credito.EntidadFinancieraByIdDetProcesoAdq" 
+                        result-class="sv.gob.mined.paquescolar.model.EntidadFinanciera">
+        <query>
+            <![CDATA[
+            SELECT 
+                ent.* 
+            FROM entidad_financiera ent
+                INNER JOIN ent_finan_det_pro_adq efd     ON ent.cod_ent_financiera = efd.cod_ent_financiera
+                INNER JOIN usuario_entidad_financiera ue ON ue.cod_ent_financiera = ent.cod_ent_financiera
+            WHERE 
+                efd.estado_eliminacion = 0 AND
+                efd.id_det_proceso_adq = ?1
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>

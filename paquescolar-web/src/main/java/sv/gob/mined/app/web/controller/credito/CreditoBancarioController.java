@@ -35,14 +35,13 @@ import sv.gob.mined.paquescolar.ejb.UtilEJB;
 import sv.gob.mined.paquescolar.model.Anho;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.CreditoBancario;
-import sv.gob.mined.paquescolar.model.Departamento;
 import sv.gob.mined.paquescolar.model.DetalleCredito;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.Empresa;
 import sv.gob.mined.paquescolar.model.EntFinanDetProAdq;
 import sv.gob.mined.paquescolar.model.EntidadFinanciera;
 import sv.gob.mined.paquescolar.model.RubrosAmostrarInteres;
-import sv.gob.mined.paquescolar.model.pojos.credito.CreditoProveedor;
+import sv.gob.mined.paquescolar.model.pojos.credito.CreditoProveedorDto;
 import sv.gob.mined.paquescolar.model.pojos.credito.ResumenCreditosDto;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 import sv.gob.mined.paquescolar.model.pojos.credito.DatosProveedoresFinanDto;
@@ -69,13 +68,13 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
     private BigDecimal totalDeCreditos = BigDecimal.ZERO;
     private BigDecimal totalDeContratos = BigDecimal.ZERO;
     private BigDecimal anho = BigDecimal.ZERO;
-    private Departamento depa = new Departamento();
+    private String codigoDepartamento;
     private Empresa empresa;
     private DetalleProcesoAdq detalleProceso;
     private CreditoBancario credito;
     private CreditoBancario creditoConsultado;
     private EntidadFinanciera entidadSeleccionado;
-    private BigDecimal rubro = BigDecimal.ZERO;
+    private BigDecimal idRubro = BigDecimal.ZERO;
     private ContratosOrdenesCompras contrato;
     private DetalleCredito detalleSeleccionado;
     private List<VwCatalogoEntidadEducativa> lstDetalleCeCredito;
@@ -89,7 +88,7 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
     private List<DetalleCredito> lstDetalleCredito = new ArrayList();
     private List<CreditoBancario> lstCreditoActivos = new ArrayList();
     private List<EntidadFinanciera> lstEntidades = new ArrayList();
-    private List<CreditoProveedor> lstCreditosProveedor = new ArrayList();
+    private List<CreditoProveedorDto> lstCreditosProveedor = new ArrayList();
     private List<ContratosOrdenesCompras> lstContratosDisponibles = new ArrayList();
     private List<ContratosOrdenesCompras> lstContratos = new ArrayList();
     private List<DatosProveedoresFinanDto> listaProvGral = new ArrayList();
@@ -112,7 +111,6 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
 
     @PostConstruct
     public void ini() {
-        buscarEntFinanUsu();
         anho = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getAnho().getIdAnho();
         if (VarSession.getVariableSessionUsuario().equals("MSANCHEZ")) {
@@ -181,9 +179,9 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
         this.lstDetalleProcesoCredito = lstDetalleProcesoCredito;
     }
 
-    public void updateRubro() {
+    /*public void updateRubro() {
         lstRubros = creditosEJB.getLstRubrosHabilitados(super.getProcesoAdquisicion().getIdProcesoAdq(), entidadSeleccionado.getCodEntFinanciera());
-    }
+    }*/
 
     public void updateEntidadHabilitarCredito() {
         lstEntFinanDetProAdq = creditosEJB.getLstEntidadesCredito(detalleProceso.getIdDetProcesoAdq());
@@ -239,12 +237,12 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
         this.estadoCredito = estadoCredito;
     }
 
-    public Departamento getDepa() {
-        return depa;
+    public String getCodigoDepartamento() {
+        return codigoDepartamento;
     }
 
-    public void setDepa(Departamento depa) {
-        this.depa = depa;
+    public void setCodigoDepartamento(String codigoDepartamento) {
+        this.codigoDepartamento = codigoDepartamento;
     }
 
     public BigDecimal getAnho() {
@@ -299,9 +297,10 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
     }
 
     public void buscarDetProceso() {
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro);
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
         credito.setIdDetProcesoAdq(detalleProceso);
         credito.setCodEntFinanciera(entidadSeleccionado);
+        buscarEntFinanUsu();
     }
 
     public List<DetalleCredito> getLstDetalleCredito() {
@@ -327,21 +326,26 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
         return VarSession.getVariableSessionED() == 2;
     }
 
+    /**
+     * Método que recupera el listado de Entidades Financieras
+     */
     private void buscarEntFinanUsu() {
         BigInteger u = VarSession.getUsuarioSession().getIdTipoUsuario().getIdTipoUsuario().toBigInteger();
         if (u.compareTo(BigInteger.ONE) == 0) {
-            lstEntidades = creditosEJB.findEntidadFinancieraEntities((short) 0);
+            //Usuario del tipo Administrador
+            lstEntidades = creditosEJB.findEntidadFinancieraByIdDetProcesoAdq(detalleProceso.getIdDetProcesoAdq());
         } else {
-            lstEntidades = creditosEJB.getlstEntFinanUsuario(VarSession.getVariableSessionUsuario());
+            //Usuario del tipo Entidad Financiera. Una unica entidad por usuario
+            lstEntidades = creditosEJB.getlstEntFinanUsuario(VarSession.getVariableSessionUsuario(), detalleProceso.getIdDetProcesoAdq());
         }
     }
 
     public BigDecimal getRubro() {
-        return rubro;
+        return idRubro;
     }
 
     public void setRubro(BigDecimal rubro) {
-        this.rubro = rubro;
+        this.idRubro = rubro;
     }
 
     public String getNumeroNit() {
@@ -475,18 +479,10 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
                 || entidadSeleccionado.getCodEntFinanciera().equals(credito.getCodEntFinanciera().getCodEntFinanciera())) {
             setVisibleLista(false);
             setVisibleEdicion(true);
-            quitarEliminadosDetalleCredito();
+            //quitarEliminadosDetalleCredito();
             visibleEstadoCreditoActivo = true;
         } else {
             JsfUtil.mensajeAlerta("No posee derechos de ver registros de otras entidades financieras");
-        }
-    }
-
-    public void quitarEliminadosDetalleCredito() {
-        for (int i = credito.getDetalleCreditoList().size() - 1; i >= 0; i--) {
-            if (credito.getDetalleCreditoList().get(i).getEliminado()) {
-                credito.getDetalleCreditoList().remove(i);
-            }
         }
     }
 
@@ -542,9 +538,8 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
         if (VarSession.getVariableSessionED() == 1) {
             credito.setCodEntFinanciera(entidadSeleccionado);
         }
-        credito = creditosEJB.guardarCredito(credito, VarSession.getVariableSessionUsuario());
+        creditosEJB.guardarCredito(credito, VarSession.getVariableSessionUsuario());
         JsfUtil.mensajeInformacion("Operación realizada satisfactoriamente");
-        quitarEliminadosDetalleCredito();
     }
 
     public void eliminarDetalleCredito() {
@@ -633,11 +628,11 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
         this.listaResumenGen = listaResumenGen;
     }
 
-    public List<CreditoProveedor> getLstCreditosProveedor() {
+    public List<CreditoProveedorDto> getLstCreditosProveedor() {
         return lstCreditosProveedor;
     }
 
-    public void setLstCreditosProveedor(List<CreditoProveedor> lstCreditosProveedor) {
+    public void setLstCreditosProveedor(List<CreditoProveedorDto> lstCreditosProveedor) {
         this.lstCreditosProveedor = lstCreditosProveedor;
     }
 
@@ -645,10 +640,10 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
         if (super.getProcesoAdquisicion().getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de contratación");
         } else {
-            lstCreditosProveedor = creditosEJB.getCreditosActivosPorProveedor(depa.getCodigoDepartamento(), anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro));
+            lstCreditosProveedor = creditosEJB.getCreditosActivosPorProveedor(codigoDepartamento, anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro));
             totalDeCreditos = BigDecimal.ZERO;
             totalDeContratos = BigDecimal.ZERO;
-            for (CreditoProveedor cre : lstCreditosProveedor) {
+            for (CreditoProveedorDto cre : lstCreditosProveedor) {
                 totalDeCreditos = totalDeCreditos.add(cre.getMontoCredito() == null ? BigDecimal.ZERO : cre.getMontoCredito());
                 totalDeContratos = totalDeContratos.add(cre.getMontoContrato() == null ? BigDecimal.ZERO : cre.getMontoContrato());
             }
@@ -698,7 +693,7 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
 
     public void resetNit() {
         numeroNit = "";
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro);
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
     }
 
     public List<DatosProveedoresFinanDto> getListaProvGral() {
@@ -727,7 +722,7 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
 
     public void buscarListadoProveedor() {
         listaProvGral.clear();
-        listaProvGral = creditosEJB.buscarListadoProveedor(rubro, entidadSeleccionado, detalleProceso, estadoCredito);
+        listaProvGral = creditosEJB.buscarListadoProveedor(idRubro, entidadSeleccionado, detalleProceso, estadoCredito);
     }
 
     public List<SelectItem> getSelectEstadoCredito() {

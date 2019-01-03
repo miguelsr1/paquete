@@ -89,6 +89,7 @@
     <class>sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto</class>
     <class>sv.gob.mined.paquescolar.model.pojos.contratacion.ParticipanteDto</class>
     <class>sv.gob.mined.paquescolar.model.pojos.contratacion.RptDeAdjudicacionDto</class>
+    <class>sv.gob.mined.paquescolar.model.pojos.contratacion.VwCotizacion</class>
     <class>sv.gob.mined.paquescolar.model.pojos.modificativa.VwContratoModificatoria</class>
     <class>sv.gob.mined.paquescolar.model.pojos.modificativa.VwBusquedaContratos</class>
     <class>sv.gob.mined.paquescolar.model.pojos.credito.DatosProveedoresFinanDto</class>
@@ -100,6 +101,7 @@
     <class>sv.gob.mined.paquescolar.model.pojos.proveedor.DetalleAdjudicacionEmpDto</class>
     <class>sv.gob.mined.paquescolar.model.pojos.contratacion.SaldoProveedorDto</class>
     <class>sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto</class>
+    <class>sv.gob.mined.paquescolar.model.pojos.credito.CreditoProveedorDto</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>

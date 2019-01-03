@@ -24,6 +24,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import org.eclipse.persistence.annotations.AdditionalCriteria;
 
 /**
  *
@@ -33,6 +34,7 @@ import javax.persistence.Transient;
 @Table(name = "DETALLE_CREDITO")
 @NamedQueries({
     @NamedQuery(name = "DetalleCredito.findAll", query = "SELECT d FROM DetalleCredito d")})
+@AdditionalCriteria("this.estadoEliminacion = 0")
 public class DetalleCredito implements Serializable {
 
     private static final long serialVersionUID = 1L;

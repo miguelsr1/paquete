@@ -6,7 +6,6 @@ package sv.gob.mined.paquescolar.ejb;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -26,11 +25,10 @@ import sv.gob.mined.paquescolar.model.EntidadFinanciera;
 import sv.gob.mined.paquescolar.model.RubrosAmostrarInteres;
 import sv.gob.mined.paquescolar.model.Usuario;
 import sv.gob.mined.paquescolar.model.UsuarioEntidadFinanciera;
-import sv.gob.mined.paquescolar.model.pojos.credito.CreditoProveedor;
+import sv.gob.mined.paquescolar.model.pojos.credito.CreditoProveedorDto;
 import sv.gob.mined.paquescolar.model.pojos.credito.ResumenCreditosDto;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 import sv.gob.mined.paquescolar.model.pojos.credito.DatosProveedoresFinanDto;
-import sv.gob.mined.paquescolar.util.Fechas;
 import sv.gob.mined.paquescolar.util.Constantes;
 
 /**
@@ -60,8 +58,8 @@ public class CreditosEJB {
 
     /**
      * Devuelve un listado de entidades financieras (BANCOS o CAJAS DE CREDITO O
-     * PRESTAMO) dependiendo del parametro que reciba 0 - modulo de créditos 1 -
-     * Bancos asociados a cuentas de los proveedores 2 - las 2 anteriores
+     * PRESTAMO) dependiendo del parametro que reciba 0 - Modulo de créditos 1 -
+     * Bancos asociados a cuentas de los proveedores 2 - Las 2 anteriores
      *
      * @param tipoEntidad
      * @return
@@ -70,6 +68,23 @@ public class CreditosEJB {
         Query q = em.createQuery("SELECT e FROM EntidadFinanciera e WHERE e.estadoEliminacion=0 AND e.bandera=:tipoEntidad ORDER BY e.nombreEntFinan", EntidadFinanciera.class);
         q.setParameter("tipoEntidad", tipoEntidad);
         return q.getResultList();
+    }
+
+    public List<EntidadFinanciera> findEntidadFinancieraByIdDetProcesoAdq(Integer idDetProcesoAdq) {
+        Query query = em.createNamedQuery("Credito.EntidadFinancieraByIdDetProcesoAdq", EntidadFinanciera.class);
+        query.setParameter(1, idDetProcesoAdq);
+        return query.getResultList();
+    }
+
+    public List<EntidadFinanciera> getlstEntFinanUsuario(String usuario, Integer idDetProcesoAdq) {
+        Query query = em.createNamedQuery("Credito.EntidadFinancieraByUsuarioAndIdDetProcesoAdq", EntidadFinanciera.class);
+        query.setParameter(1, usuario);
+        query.setParameter(2, idDetProcesoAdq);
+        return query.getResultList();
+
+        /*Query query = em.createQuery("SELECT u.codEntFinanciera FROM UsuarioEntidadFinanciera u WHERE u.idUsuario.idPersona.usuario=:usuario", EntidadFinanciera.class);
+        query.setParameter("usuario", usuario);
+        return query.getResultList();*/
     }
 
     public List<EntidadFinanciera> findEntidadFinancieraEntitiesByName(List<String> nombres) {
@@ -116,12 +131,6 @@ public class CreditosEJB {
         }
     }
 
-    public List<EntidadFinanciera> getlstEntFinanUsuario(String usuario) {
-        Query query = em.createQuery("SELECT u.codEntFinanciera FROM UsuarioEntidadFinanciera u WHERE u.idUsuario.idPersona.usuario=:usuario", EntidadFinanciera.class);
-        query.setParameter("usuario", usuario);
-        return query.getResultList();
-    }
-
     public List<CreditoBancario> findCreditoBancarioByEmpresa(String numeroNit, DetalleProcesoAdq proceso) {
         Query q = em.createQuery("SELECT c FROM CreditoBancario c WHERE c.numeroNit=:numeroNit and c.estadoEliminacion=0 and c.idDetProcesoAdq=:proceso", CreditoBancario.class);
         q.setParameter("numeroNit", numeroNit);
@@ -138,14 +147,12 @@ public class CreditosEJB {
         return q.getResultList();
     }
 
-    public CreditoBancario guardarCredito(CreditoBancario creditoBancario, String usuario) {
+    public void guardarCredito(CreditoBancario creditoBancario, String usuario) {
         if (creditoBancario.getIdCredito() == null) {
             crearCredito(creditoBancario, usuario);
         } else {
-            creditoBancario = editCreditoBancario(creditoBancario, usuario);
+            editCreditoBancario(creditoBancario, usuario);
         }
-
-        return creditoBancario;
     }
 
     public void crearCredito(CreditoBancario creditoBancario, String usuario) {
@@ -178,51 +185,20 @@ public class CreditosEJB {
         return q.getResultList();
     }
 
-    public List<CreditoProveedor> getCreditosActivosPorProveedor(String codigoDepartamento, DetalleProcesoAdq idDetProceso) {
-        List<CreditoProveedor> lstCreditosProveedor = new ArrayList<>();
-        String sql = "SELECT * FROM vw_creditos_proveedores ";
+    public List<CreditoProveedorDto> getCreditosActivosPorProveedor(String codigoDepartamento, DetalleProcesoAdq idDetProceso) {
+        String strWhere = "";
         if (codigoDepartamento != null) {
             if (!codigoDepartamento.equals("00")) {
-                if (sql.contains("WHERE")) {
-                    sql = sql.concat(" COD_DEPA_EMP = ").concat(codigoDepartamento);
-                } else {
-                    sql = sql.concat(" WHERE COD_DEPA_EMP = ").concat(codigoDepartamento);
-                }
+                strWhere = Constantes.addCampoToWhere("", "COD_DEPA_EMP", codigoDepartamento);
             }
         }
         if (idDetProceso != null) {
-            if (sql.contains("WHERE")) {
-                sql = sql.concat(" and ID_DET_PROCESO_ADQ = ").concat(String.valueOf(idDetProceso.getIdDetProcesoAdq()));
-            } else {
-                sql = sql.concat(" WHERE ID_DET_PROCESO_ADQ = ").concat(String.valueOf(idDetProceso.getIdDetProcesoAdq()));
-            }
+            strWhere = Constantes.addCampoToWhere(strWhere, "ID_DET_PROCESO_ADQ", idDetProceso.getIdDetProcesoAdq());
         }
 
-        Query query = em.createNativeQuery(sql);
-        List lst = query.getResultList();
+        Query query = em.createNativeQuery(Constantes.QUERY_CREDITO_ACTIVOS_POR_PROVEEDOR + strWhere + " ORDER BY monto_credito,id_credito,codigo_entidad", CreditoProveedorDto.class);
 
-        for (Object object : lst) {
-            Object[] datos = (Object[]) object;
-            CreditoProveedor credito = new CreditoProveedor();
-            credito.setIdCredito(new BigDecimal(datos[0].toString()));
-            credito.setNumeroNit(datos[1].toString());
-            credito.setMontoCredito(datos[2] == null ? null : new BigDecimal(datos[2].toString()));
-            credito.setNombreEntFinan(datos[3].toString());
-            credito.setFechaVencimiento(datos[4] == null ? null : Fechas.getStringToDate(datos[4].toString()));
-            credito.setCodigoEntidad(datos[5].toString());
-            credito.setNombreCE(datos[6].toString());
-            credito.setNombreDepartamento(datos[7].toString());
-            credito.setIdProceso(new BigDecimal(datos[8].toString()));
-            credito.setCodigoDepartamento(datos[9].toString());
-            credito.setCodigoDepaEmp(datos[10].toString());
-            credito.setCreditoActivo(new BigInteger(datos[11].toString()));
-            credito.setMontoContrato(new BigDecimal(datos[12].toString()));
-            credito.setNombreDepartamentoPro(datos[13].toString());
-            credito.setRazonSocial(datos[14].toString());
-            credito.setCodigoDepaEmp(datos[15].toString());
-            lstCreditosProveedor.add(credito);
-        }
-        return lstCreditosProveedor;
+        return query.getResultList();
     }
 
     public List<DatosProveedoresFinanDto> buscarListadoProveedor(BigDecimal rubro, EntidadFinanciera entidadSeleccionado, DetalleProcesoAdq proceso, BigInteger estadoCredito) {
