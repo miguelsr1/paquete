@@ -135,7 +135,7 @@
                                         <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}"/>
                                     </p:selectOneMenu>
                                     <p:outputLabel value="Capacidad Calificada: "/>
-                                    <p:inputText id="txtCapacidad" value="#{proveedorController.capacidadInst.capacidadAcreditada}" styleClass="solo-numeros numero" size="10" disabled="true"/>
+                                    <p:inputText id="txtCapacidad" value="#{proveedorController.capacidadInst.capacidadAcreditada}" styleClass="solo-numeros numero" size="10"/>
                                     <p:outputLabel value="Capacidad Adjudicada: " rendered="#{proveedorController.showCapacidadAdjudicada}"/>
                                     <p:inputText id="txtCapacidadAdj" value="#{proveedorController.capacidadInst.capacidadAdjudicada}" styleClass="solo-numeros numero" size="10" disabled="true" rendered="#{proveedorController.showCapacidadAdjudicada}"/>
                                 </p:panelGrid>

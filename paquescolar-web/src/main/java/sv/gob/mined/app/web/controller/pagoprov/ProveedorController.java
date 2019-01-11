@@ -312,6 +312,9 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
     }
 
     public CapaInstPorRubro getCapacidadInst() {
+        if(capacidadInst == null){
+            capacidadInst = new CapaInstPorRubro();
+        }
         return capacidadInst;
     }
 
@@ -712,7 +715,7 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
 
         departamentoCalif.setCodigoDepartamento(utilEJB.find(Departamento.class, codigoDepartamentoCalificado));
 
-        if (proveedorEJB.guardar(departamentoCalif, capacidadInst)) {
+        if (proveedorEJB.guardarCapaInst(departamentoCalif, capacidadInst)) {
             JsfUtil.mensajeUpdate();
         }
     }

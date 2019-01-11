@@ -66,11 +66,11 @@
         <query>
             <![CDATA[
             select 
-                ROWNUM          as idRow, 
-                NOMBRE          as razonSocial,
-                NUMERO_NIT      as numeroNit,
-                MONTO_RETENCION as montoRetencion,
-                MONTO_RENTA     as montoRenta
+                ROWNUM                      as idRow, 
+                replace(NOMBRE, '  ',' ')   as razonSocial,
+                NUMERO_NIT                  as numeroNit,
+                MONTO_RETENCION             as montoRetencion,
+                MONTO_RENTA                 as montoRenta
             from
                 (select 
                     NOMBRE, NUMERO_NIT,

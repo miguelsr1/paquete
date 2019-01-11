@@ -356,6 +356,29 @@ public class ProveedorEJB {
         }
     }
 
+    public Boolean guardarCapaInst(CapaDistribucionAcre capaDistribucionAcre, CapaInstPorRubro capaInstPorRubro) {
+        try {
+            Query query = em.createQuery("UPDATE CapaInstPorRubro c SET c.capacidadAcreditada = :capaCalificada WHERE c.idMuestraInteres.idEmpresa.idEmpresa = :idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idAnho.idAnho = :idAnho ");
+            query.setParameter("capaCalificada", capaInstPorRubro.getCapacidadAcreditada());
+            query.setParameter("idEmpresa", capaInstPorRubro.getIdMuestraInteres().getIdEmpresa().getIdEmpresa());
+            query.setParameter("idAnho", capaInstPorRubro.getIdMuestraInteres().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
+            
+            query.executeUpdate();
+            
+            query = em.createQuery("UPDATE CapaDistribucionAcre c SET c.codigoDepartamento = :codigoDepartamento WHERE c.idMuestraInteres.idEmpresa.idEmpresa = :idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idAnho.idAnho = :idAnho ");
+            query.setParameter("codigoDepartamento", capaDistribucionAcre.getCodigoDepartamento());
+            query.setParameter("idEmpresa", capaInstPorRubro.getIdMuestraInteres().getIdEmpresa().getIdEmpresa());
+            query.setParameter("idAnho", capaInstPorRubro.getIdMuestraInteres().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
+            
+            query.executeUpdate();
+            
+            return true;
+        } catch (Exception e) {
+            Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, null, e);
+            return false;
+        }
+    }
+
     public PlanillaPagoCheque guardar(PlanillaPagoCheque entidad) {
         try {
             if (isNewRegistro(entidad)) {
@@ -455,7 +478,7 @@ public class ProveedorEJB {
     public List<PreciosRefRubroEmp> findPreciosRefRubroEmpRubro(Empresa idEmpresa, DetalleProcesoAdq idDetProceso) {
         Query q;
         if (idDetProceso.getIdRubroAdq().getDescripcionRubro().contains("2do") || idDetProceso.getIdRubroAdq().getDescripcionRubro().contains("1er")) {
-            q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p  WHERE p.idEmpresa=:idEmpresa and (p.idDetProcesoAdq.idRubroAdq.idRubroInteres=:idRubro AND p.idDetProcesoAdq.idProcesoAdq =:idProceso) and p.estadoEliminacion=0 ORDER BY FUNC('TO_NUMBER', p.noItem)", PreciosRefRubroEmp.class);
+            q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.idEmpresa=:idEmpresa and (p.idDetProcesoAdq.idRubroAdq.idRubroInteres=:idRubro AND p.idDetProcesoAdq.idProcesoAdq =:idProceso) and p.estadoEliminacion=0 ORDER BY FUNC('TO_NUMBER', p.noItem)", PreciosRefRubroEmp.class);
             q.setParameter("idEmpresa", idEmpresa);
             q.setParameter("idRubro", new BigDecimal(4));
 

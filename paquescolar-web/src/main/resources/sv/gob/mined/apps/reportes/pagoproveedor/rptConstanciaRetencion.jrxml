@@ -24,12 +24,12 @@
   VW_RPT_RENTA.NUMERO_NIT NUMERO_NIT_emp,
   sum(monto_retencion) monto_retencion,
   sum(MONTO_RENTA) MONTO_RENTA,
-  pagador_departamental,
-  anho.anho
+  pagador_departamental
+  --anho.anho
 from 
   VW_RPT_RENTA
   inner join DATOS_DEPA_PAGADURIA on VW_RPT_RENTA.CODIGO_DEPARTAMENTO = DATOS_DEPA_PAGADURIA.CODIGO_DEPARTAMENTO
-  inner join anho on VW_RPT_RENTA.ID_ANHO = anho.ID_ANHO
+  --inner join anho on VW_RPT_RENTA.ID_ANHO = anho.ID_ANHO
 where 
   extract(year from vw_rpt_renta.FECHA_CHEQUE) = $P{pAnho} and 
   VW_RPT_RENTA.NUMERO_NIT = $P{pNumeroNit}
@@ -38,8 +38,8 @@ group by
   DATOS_DEPA_PAGADURIA.NUMERO_NIT,
   RAZON_SOCIAL,
   VW_RPT_RENTA.NUMERO_NIT,
-  pagador_departamental,
-  anho.anho]]>
+  pagador_departamental
+  --anho.anho]]>
 	</queryString>
 	<field name="NOMBRE_DEPARTAMENTO" class="java.lang.String"/>
 	<field name="NUMERO_NIT" class="java.lang.String"/>
@@ -48,7 +48,6 @@ group by
 	<field name="MONTO_RETENCION" class="java.math.BigDecimal"/>
 	<field name="MONTO_RENTA" class="java.math.BigDecimal"/>
 	<field name="PAGADOR_DEPARTAMENTAL" class="java.lang.String"/>
-	<field name="ANHO" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -83,7 +82,7 @@ group by
 				</textElement>
 				<textFieldExpression><![CDATA["El Infrascrito Pagador Auxiliar Departamental de Educación de ".concat($F{NOMBRE_DEPARTAMENTO}).concat(", con NIT:").concat($F{NUMERO_NIT}).
 concat(", por este medio hace constar que: a él(la) Señor(a), ").concat($F{RAZON_SOCIAL}).concat(" de Nacionalidad Salvadoreña y con Número de NIT: ").
-concat($F{NUMERO_NIT_EMP}).concat(", se le efectúo pago durante el ejercicio fiscal ").concat($F{ANHO}+".\n\n").
+concat($F{NUMERO_NIT_EMP}).concat(", se le efectúo pago durante el ejercicio fiscal ").concat($P{pAnho}+".\n\n").
 concat("El monto sujeto de retención asciende a $ ").concat((new DecimalFormat("#,###.00").format($F{MONTO_RETENCION}))).
 concat(" reteniéndole la cantidad de $ ").concat((new DecimalFormat("#,###.00").format($F{MONTO_RENTA}))).
 concat(", en concepto de Impuesto de Renta por Servicios, según la Ley de Impuesto Sobre la Renta.\n\n").

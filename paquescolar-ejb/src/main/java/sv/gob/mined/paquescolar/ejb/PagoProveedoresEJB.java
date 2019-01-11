@@ -50,7 +50,7 @@ public class PagoProveedoresEJB {
     public List<DatosProveDto> getDatosF910(String codigoDepartamento, Integer anho) {
         Query q = em.createNamedQuery("PagoProve.FileF910", DatosProveDto.class);
         q.setParameter(1, codigoDepartamento);
-        q.setParameter(1, anho);
+        q.setParameter(2, anho);
         return q.getResultList();
     }
 
