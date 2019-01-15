@@ -6,6 +6,7 @@
 package sv.gob.mined.paquescolar.ejb;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -55,11 +56,17 @@ public class PagoProveedoresEJB {
     }
 
     public List<DatosProveDto> getDatosRptRentaMensual(String codigoDepartamento, Integer idMesPago, Integer anhoPago) {
-        Query q = em.createNamedQuery("PagoProve.ReporteRentaMensual", DatosProveDto.class);
-        q.setParameter(1, codigoDepartamento);
-        q.setParameter(2, idMesPago);
-        q.setParameter(3, anhoPago);
-        return q.getResultList();
+        try {
+            Query q = em.createNamedQuery("PagoProve.ReporteRentaMensual", DatosProveDto.class);
+            q.setParameter(1, codigoDepartamento);
+            q.setParameter(2, idMesPago);
+            q.setParameter(3, anhoPago);
+            return q.getResultList();
+        } catch (Exception e) {
+            System.out.println(String.format("Error generando el reporte de renta mensual: %s - %d - %d", codigoDepartamento, idMesPago, anhoPago));
+
+            return new ArrayList();
+        }
     }
 
     public List<DatosProveDto> getDatosRptRentaMensualByRequerimiento(String codigoDepartamento, Integer idMesPago, Integer anhoPago, String formatoRequerimiento) {

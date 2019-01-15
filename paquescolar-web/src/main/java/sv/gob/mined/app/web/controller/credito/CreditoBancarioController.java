@@ -113,15 +113,10 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
     public void ini() {
         anho = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getAnho().getIdAnho();
-        if (VarSession.getVariableSessionUsuario().equals("MSANCHEZ")) {
-            lstRubros = anhoProcesoEJB.getLstRubros(super.getProcesoAdquisicion());
-        } else {
-            if (lstEntidades.isEmpty()) {
-                usuarioEntidadFinanciera = true;
-            } else {
-                lstRubros = creditosEJB.getLstRubrosHabilitados(super.getProcesoAdquisicion().getIdProcesoAdq(), lstEntidades.get(0).getCodEntFinanciera());
-            }
-        }
+
+        lstRubros = anhoProcesoEJB.getLstRubros(super.getProcesoAdquisicion());
+        /*if (VarSession.getVariableSessionUsuario().equals("MSANCHEZ")) {
+        }*/
 
         SelectItem selectActivo = new SelectItem();
         selectActivo.setLabel("Credido Activo");
@@ -182,7 +177,6 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
     /*public void updateRubro() {
         lstRubros = creditosEJB.getLstRubrosHabilitados(super.getProcesoAdquisicion().getIdProcesoAdq(), entidadSeleccionado.getCodEntFinanciera());
     }*/
-
     public void updateEntidadHabilitarCredito() {
         lstEntFinanDetProAdq = creditosEJB.getLstEntidadesCredito(detalleProceso.getIdDetProcesoAdq());
     }
@@ -300,7 +294,16 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
         detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
         credito.setIdDetProcesoAdq(detalleProceso);
         credito.setCodEntFinanciera(entidadSeleccionado);
+
         buscarEntFinanUsu();
+
+        usuarioEntidadFinanciera = lstEntidades.isEmpty();
+
+        if (lstEntidades.isEmpty()) {
+        }
+        /*else {
+            lstRubros = creditosEJB.getLstRubrosHabilitados(super.getProcesoAdquisicion().getIdProcesoAdq(), lstEntidades.get(0).getCodEntFinanciera());
+        }*/
     }
 
     public List<DetalleCredito> getLstDetalleCredito() {
@@ -331,7 +334,9 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
      */
     private void buscarEntFinanUsu() {
         BigInteger u = VarSession.getUsuarioSession().getIdTipoUsuario().getIdTipoUsuario().toBigInteger();
-        if (u.compareTo(BigInteger.ONE) == 0) {
+        if (detalleProceso == null) {
+            lstEntidades.clear();
+        } else if (u.compareTo(BigInteger.ONE) == 0) {
             //Usuario del tipo Administrador
             lstEntidades = creditosEJB.findEntidadFinancieraByIdDetProcesoAdq(detalleProceso.getIdDetProcesoAdq());
         } else {

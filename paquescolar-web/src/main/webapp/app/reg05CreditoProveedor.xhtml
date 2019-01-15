@@ -136,12 +136,12 @@
 
                             <p:outputLabel value="Fecha de aprobación:" />
                             <p:calendar id="fechaAprobacion" pattern="dd/MM/yyyy" value="#{creditoBancarioController.credito.fechaAprobacion}"  
-                                        showOn="button" effect="fade" locale="es"
+                                        showOn="button" effect="fade" locale="es" navigator="true"
                                         converterMessage="Error en el formato de la fecha de aprobación, el formato debe de ser dd/MM/yyyy"  
                                         disabled="#{!creditoBancarioController.visibleEdicion}" size="10"/>
                             <p:outputLabel value="Fecha de vencimiento:" />
                             <p:calendar id="fechaVencimiento" pattern="dd/MM/yyyy" value="#{creditoBancarioController.credito.fechaVencimiento}" 
-                                        showOn="button" effect="fade" locale="es"
+                                        showOn="button" effect="fade" locale="es" navigator="true"
                                         converterMessage="Error en el formato de la fecha de vencimiento, el formato debe de ser dd/MM/yyyy" 
                                         disabled="#{!creditoBancarioController.visibleEdicion}" size="10" /> 
                         </p:panelGrid>

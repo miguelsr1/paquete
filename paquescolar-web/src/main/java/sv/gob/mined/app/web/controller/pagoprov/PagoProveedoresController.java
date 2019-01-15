@@ -1961,13 +1961,15 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     }
 
     public void imprimirDocumentos() {
-        boolean tempChequeEntPro;
+        boolean tempChequeEntPro = false;
         String rpt = "";
-        String pNombreCheque;
+        String pNombreCheque = "";
 
         List<JasperPrint> jasperPrintList = new ArrayList();
         //artificio para impresion de planillas creadas previo a la tipificación de planillas
-        if (planillaPago.getIdEstadoPlanilla() == 0) {
+        if (planillaPago == null || planillaPago.getIdEstadoPlanilla() == null) {
+            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Error en el estado de la planilla {0}", planillaPago);
+        } else if (planillaPago.getIdEstadoPlanilla() == 0) {
             tempChequeEntPro = planillaPago.getIdRequerimiento().getCredito() == 1;
             pNombreCheque = nombreEntFinanciera;
         } else {
@@ -2093,8 +2095,10 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
                 if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(super.getDepartamento())) {
 
                 } else {
-                    JsfUtil.mensajeAlerta("El codigo del centro escolar no pertenece al departamento " + JsfUtil.getNombreDepartamentoByCodigo(super.getDepartamento()) + "<br/>"
-                            + "Departamento del CE: " + entidadEducativa.getCodigoEntidad() + " es " + entidadEducativa.getCodigoDepartamento().getNombreDepartamento());
+                    if (super.getDepartamento() != null) {
+                        JsfUtil.mensajeAlerta("El codigo del centro escolar no pertenece al departamento " + JsfUtil.getNombreDepartamentoByCodigo(super.getDepartamento()) + "<br/>"
+                                + "Departamento del CE: " + entidadEducativa.getCodigoEntidad() + " es " + entidadEducativa.getCodigoDepartamento().getNombreDepartamento());
+                    }
                 }
             }
         } else {

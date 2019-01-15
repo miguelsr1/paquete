@@ -299,8 +299,16 @@ public class GraficoController extends RecuperarProceso implements Serializable 
     public void setDetalleCotizaciones(List<DetalleContratacionDto> detalleCotizaciones) {
         this.detalleCotizaciones = detalleCotizaciones;
     }
-    // </editor-fold>
 
+    public List<GraficoTipoEmpresaDTO> getListaCapacidad() {
+        return listaCapacidad;
+    }
+
+    public void setListaCapacidad(List<GraficoTipoEmpresaDTO> listaCapacidad) {
+        this.listaCapacidad = listaCapacidad;
+    }
+
+    // </editor-fold>
     public PieChartModel getPieModelSeguimientoProveedor() {
         createPieModelSeguimientoProveedor();
         return pieModelSeguimientoProveedor;
