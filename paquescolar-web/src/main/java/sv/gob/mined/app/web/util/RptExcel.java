@@ -5,6 +5,7 @@
  */
 package sv.gob.mined.app.web.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +29,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -79,6 +79,39 @@ public class RptExcel {
         }
     }
 
+    public static void generarRptRentaAnual(List<DatosProveDto> lstDatos, String anho) {
+        HSSFCellStyle style;
+        int row = 1;
+        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/excel/rptRentaAnual.xls")) {
+            wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
+            FORMATO_DATA = wb1.createDataFormat();
+            style = wb1.createCellStyle();
+
+            HSSFSheet s1 = wb1.getSheetAt(0);   //sheet by index
+
+            for (DatosProveDto dato : lstDatos) {
+                escribirTexto(JsfUtil.formatearNumero(40, dato.getRazonSocial().replace("ñ", "Ñ"), false), row, 0, style, s1);
+                escribirTexto(JsfUtil.formatearNumero(14, dato.getNumeroNit().replace("-", ""), false), row, 1, style, s1);
+                escribirTexto("11", row, 2, style, s1);
+                escribirNumero(dato.getMontoRetencion().toString(), row, 3, style, false, s1);
+                escribirNumero(dato.getMontoRenta().toString(), row, 4, style, false, s1);
+                escribirTexto(anho, row, 5, style, s1);
+                row++;
+            }
+
+            generarArchivo(wb1, "rptRentaAnual");
+
+            /*ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
+            wb1.write(outByteStream);
+
+            return new ByteArrayInputStream(outByteStream.toByteArray());*/
+        } catch (IOException | InvalidFormatException ex) {
+            Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
+            
+            //return null;
+        }
+    }
+
     private static void escribirTexto(String text, Integer row, Integer col, CellStyle style, HSSFSheet hoja) {
         HSSFRichTextString texto = new HSSFRichTextString(text);
         if (hoja.getRow(row) == null) {
@@ -120,28 +153,13 @@ public class RptExcel {
     }
 
     private static void generarArchivo(Workbook wb, String nombreFile) {
-        //FacesContext fc = FacesContext.getCurrentInstance();
-        //OutputStream outStream;
         try (ByteArrayOutputStream outByteStream = new ByteArrayOutputStream()) {
-            //HttpServletResponse response = (HttpServletResponse) fc.getExternalContext().getResponse();
             wb.write(outByteStream);
             byte[] outArray = outByteStream.toByteArray();
             UtilFile.downloadFileBytes(outArray, nombreFile, UtilFile.CONTENIDO_XLS, UtilFile.EXTENSION_XLS);
-            
-            /*response.setContentType("application /ms-excel");
-            response.setContentLength(outArray.length);
-            response.setHeader("Expires:", "0"); // eliminates browser caching
-            response.setHeader("Content-Disposition", "attachment;filename =" + nombreFile + "-" + JsfUtil.getFechaGeneracionReporte() + ".xls");
-            outStream = response.getOutputStream();
-            outStream.write(outArray);
-            outStream.flush();
-            outStream.close();
-            outByteStream.flush();
-            outByteStream.close();*/
         } catch (IOException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
         }
-       // fc.responseComplete();
     }
 
     public static void generarRptRentaMensual(List<DatosProveDto> lst, String anho) {

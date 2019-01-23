@@ -36,6 +36,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.chart.DonutChartModel;
 import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.util.JsfUtil;
@@ -202,6 +204,8 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     private List<DatosProveDto> lstProveedores = new ArrayList();
     private List<DatosBusquedaPlanillaDto> lstBusquedaPlanillas = new ArrayList();
 
+    private StreamedContent file;
+
     public PagoProveedoresController() {
     }
 
@@ -219,6 +223,14 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public StreamedContent getFile() {
+        return file;
+    }
+
+    public void setFile(StreamedContent file) {
+        this.file = file;
+    }
+
     public ReintegroRequerimiento getReintegroRequerimiento() {
         return reintegroRequerimiento;
     }
@@ -2336,44 +2348,20 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     }
 
     public void generarArchivoF910() {
-        BigDecimal montoRetencionTotal = BigDecimal.ZERO;
-        BigDecimal montoRentaTotal = BigDecimal.ZERO;
-        try {
-            if (anho.length() == 2) {
-                anho = "20" + anho;
-            }
-            lstProveedores = pagoProveedoresEJB.getDatosF910(codigoDepartamento, Integer.parseInt(anho));
-            if (lstProveedores.isEmpty()) {
-                JsfUtil.mensajeInformacion("No se existen datos para el año seleccionado");
-            } else {
-                StringBuilder sb = new StringBuilder();
+        if (anho.length() == 2) {
+            anho = "20" + anho;
+        }
+        lstProveedores = pagoProveedoresEJB.getDatosF910(codigoDepartamento, Integer.parseInt(anho));
+        if (lstProveedores.isEmpty()) {
+            JsfUtil.mensajeInformacion("No se existen datos para el año seleccionado");
+        } else {
+            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Generacion de archivo F910 ver. WEB");
+            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Departamento: {0}", codigoDepartamento);
 
-                for (DatosProveDto rentaProveDto : lstProveedores) {
-                    sb.append(JsfUtil.formatearNumero(40, rentaProveDto.getRazonSocial().replace("ñ", "Ñ"), false));
-                    sb.append(JsfUtil.formatearNumero(14, rentaProveDto.getNumeroNit().replace("-", ""), false));
-                    sb.append("11");
-                    montoRetencionTotal = montoRetencionTotal.add(rentaProveDto.getMontoRetencion());
-                    montoRentaTotal = montoRentaTotal.add(rentaProveDto.getMontoRenta());
-                    sb.append(JsfUtil.formatoNumeroF910(15, rentaProveDto.getMontoRetencion(), true));
-                    sb.append(JsfUtil.formatoNumeroF910(15, rentaProveDto.getMontoRenta(), true));
-                    sb.append(JsfUtil.formatearNumero(15, "0", true));
-                    sb.append(JsfUtil.formatearNumero(15, "0", true));
-                    sb.append(JsfUtil.formatearNumero(15, "0", true));
-                    sb.append(JsfUtil.formatearNumero(15, "0", true));
-                    sb.append(JsfUtil.formatearNumero(15, "0", true));
-                    sb.append(JsfUtil.formatearNumero(15, "0", true));
-                    sb.append(anho);
-                    sb.append("\r\n");
-                }
-                UtilFile.downloadFileTextoPlano(sb.toString(), "f910", UtilFile.EXTENSION_TXT);
-                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Generacion de archivo F910 ver. WEB");
-                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Departamento: {0}", codigoDepartamento);
-                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Monto Total Sujeto Retencion: {0}", montoRetencionTotal);
-                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Monto Total Renta: {0}", montoRentaTotal);
-
-            }
-        } catch (NumberFormatException | IOException e) {
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, "Error en generacion de archivo F910 ver. WEB departamento {0}", codigoDepartamento);
+            RptExcel.generarRptRentaAnual(lstProveedores, anho);
+//            file = new DefaultStreamedContent(RptExcel.generarRptRentaAnual(lstProveedores, anho),
+//                    UtilFile.CONTENIDO_XLS,
+//                    "rptRentaAnual_" + UtilFile.getFechaGeneracionReporte() + ".xls");
         }
     }
 
@@ -2395,7 +2383,11 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         planillaPago = utilEJB.find(PlanillaPago.class,
                 idPlanilla);
         idRubro = planillaPago.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres();
-        buscarReuerimientoqOrPlanilla();
+        
+        reiniciarVisibilidadCheques();
+        isRubroUniforme = ((idRubro.intValue() == 1) || (idRubro.intValue() == 4) || (idRubro.intValue() == 5));
+        idDetProceso = planillaPago.getIdRequerimiento().getIdDetProcesoAdq().getIdDetProcesoAdq();
+        
         selectPlanilla();
         isPlanillaLectura = true;
         PrimeFaces.current().ajax().update("dlgPlanillaPago");

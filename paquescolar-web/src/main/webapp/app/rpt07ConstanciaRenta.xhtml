@@ -5,6 +5,22 @@
     xmlns:p="http://primefaces.org/ui"
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="head">
+        <script type="text/javascript">
+            //<![CDATA[
+            function start() {
+                PF('dlgEsperar').show();
+                console.log('iniciar');
+            }
+
+            function stop() {
+                PF('dlgEsperar').hide();
+                console.log('generar');
+                onClick('btnRptRentaAnual');
+            }
+            //]]>
+        </script>
+    </ui:define>
     <ui:define name="content">
         <div class="ui-g">
             <div class="ui-g-12">
@@ -61,6 +77,11 @@
                                     <p:column headerText="#" style="text-align: center;" width="30">
                                         <h:outputText value="#{row+1}"/>
                                     </p:column>
+                                    <p:column headerText="id.Planilla" width="80">
+                                        <p:commandLink action="#{pagoProveedoresController.verPlanillaPago}" value="#{renta.idPlanilla}" oncomplete="PF('dlgPlanillaPago').show();">
+                                            <f:setPropertyActionListener value="#{renta.idPlanilla}" target="#{pagoProveedoresController.idPlanilla}"/>
+                                        </p:commandLink>
+                                    </p:column>
                                     <p:column headerText="Num.Cheque">
                                         #{renta.numCheque}
                                     </p:column>
@@ -86,7 +107,7 @@
                                     </p:column>
 
                                     <p:summaryRow>
-                                        <p:column colspan="3" style="text-align:right">
+                                        <p:column colspan="4" style="text-align:right">
                                             <h:outputText value="Total:" />
                                         </p:column>
                                         <p:column styleClass="numero">
@@ -141,15 +162,23 @@
                                         <p:spacer width="10"/>
                                         <p:outputLabel value="(filtro opcional)"/>
                                     </h:panelGroup>
-                                    
+
                                     <f:facet name="footer">
                                         <p:outputLabel value="(*) Filtros requeridos"/>
                                     </f:facet>
                                 </p:panelGrid>
                             </p:tab>
-                            <p:tab title="F910 - Renta Anual">
-                                <p:commandButton value="Archivo F910" icon="fa fa-download" style="float: right;" action="#{pagoProveedoresController.generarArchivoF910}" ajax="false"/>
-                                <h:panelGrid columns="2">
+                            <p:tab title="F910 - Renta Anual" >
+                                <p:commandButton value="Archivo F910" icon="fa fa-download" style="float: right;" 
+                                                 action="#{pagoProveedoresController.generarArchivoF910}" ajax="false" />
+
+                                <p:panel visible="false">
+                                    <p:commandButton id="btnRptRentaAnual" ajax="false">
+                                        <p:fileDownload value="#{pagoProveedoresController.file}" />
+                                    </p:commandButton>
+                                </p:panel>
+
+                                <h:panelGrid columns="2" style="height: 30px;">
                                     <h:outputText value="Presione el botón para descargar el archivo:"/>
                                 </h:panelGrid>
                             </p:tab>
@@ -158,5 +187,16 @@
                 </div>
             </div>
         </div>
+
+        <p:dialog id="dlgPlanillaPago" widgetVar="dlgPlanillaPago" header="Planilla de Pago" width="900" height="600" modal="true" resizable="false">
+            <ui:include src="/app/comunes/fragmentos/pagoProveedores/planillaPago.xhtml"/>
+        </p:dialog>
+
+        <p:dialog id="dlgEsperar" widgetVar="dlgEsperar" header="Información" modal="true" height="50">
+            <h:panelGrid columns="2" columnClasses="col8, col4" style="text-align: center;">
+                <p:outputLabel value="Se esta generando el archivo, por favor espere"/>
+                <i class="fa fa-refresh fa-spin ajax-loader" aria-hidden="true"></i>
+            </h:panelGrid>
+        </p:dialog>
     </ui:define>
 </ui:composition>

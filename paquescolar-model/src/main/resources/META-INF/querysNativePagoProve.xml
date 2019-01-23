@@ -25,7 +25,8 @@
                 VW_RPT_RENTA.CODIGO_DEPARTAMENTO as codigoDepartamento, 
                 VW_RPT_RENTA.ID_ANHO             as idAnho, 
                 VW_RPT_RENTA.MES_REGISTRO        as mesRegistro,
-                formato_requerimiento            as formatoRequerimiento
+                formato_requerimiento            as formatoRequerimiento,
+                VW_RPT_RENTA.id_planilla         as idPlanilla
             from 
                 VW_RPT_RENTA
                 inner join DATOS_DEPA_PAGADURIA on VW_RPT_RENTA.CODIGO_DEPARTAMENTO = DATOS_DEPA_PAGADURIA.CODIGO_DEPARTAMENTO
