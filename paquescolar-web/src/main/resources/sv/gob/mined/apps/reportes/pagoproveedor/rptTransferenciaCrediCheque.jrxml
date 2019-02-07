@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a8ea1f80-75bc-46f9-99cd-6308856e4784">
 	<property name="ireport.zoom" value="1.2722928551174544"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="122"/>
+	<property name="ireport.y" value="0"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -159,7 +159,7 @@ GROUP BY
 					<textElement verticalAlignment="Middle">
 						<font fontName="Arial" size="8"/>
 					</textElement>
-					<text><![CDATA[BANCO PAGADURIA:]]></text>
+					<text><![CDATA[BANCO PAGADURÍA:]]></text>
 				</staticText>
 				<staticText>
 					<reportElement uuid="fb09890e-4cc6-4ae0-b068-f7467394b779" x="279" y="136" width="37" height="20"/>
@@ -180,9 +180,9 @@ GROUP BY
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial" size="10"/>
 					</textElement>
-					<textFieldExpression><![CDATA["MINISTERIO DE EDUCACION\n"+
-"DIRECCION DEPARTAMENTAL DE EDUCACION DE "  + $P{pDepartamento} + "\n"+ 
-"PAGADURIA AUXILIAR DEPARTAMENTAL\n"+
+					<textFieldExpression><![CDATA["MINISTERIO DE EDUCACIÓN, CIENCIA Y TECNOLOGÍA\n"+
+"DIRECCIÓN DEPARTAMENTAL DE EDUCACIÓN DE "  + $P{pDepartamento} + "\n"+ 
+"PAGADURÍA AUXILIAR DEPARTAMENTAL\n"+
 "PLANILLA DE PAGO"]]></textFieldExpression>
 				</textField>
 				<textField>

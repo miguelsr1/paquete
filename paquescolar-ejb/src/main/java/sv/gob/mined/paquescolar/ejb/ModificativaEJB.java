@@ -218,8 +218,9 @@ public class ModificativaEJB {
 
     /**
      * Obtiene el monto original de la modificativa que recibe como parametro.
+     *
      * @param idResModif
-     * @return 
+     * @return
      */
     public BigDecimal getMontoOldContrato(BigDecimal idResModif) {
         Query query = em.createNativeQuery("SELECT FN_MO_GET_MONTO_CONTRATO_OLD(?1) FROM DUAL");
@@ -284,10 +285,17 @@ public class ModificativaEJB {
         try {
             BigDecimal cantidadAdjudicada = new BigDecimal(getCantidadAdjudicadaActual(res));
 
-            //no devuelve nada cuando no hay registros
-            Query query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq =:idProceso and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
-            query.setParameter("idEmpresa", res.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdEmpresa());
-            query.setParameter("idProceso", res.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq());
+            //no devuelve nada cuando no hay registros            
+            Query query;
+            if (res.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho().equals("2018")) {
+                query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idAnho=:idAnho and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
+                query.setParameter("idEmpresa", res.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdEmpresa());
+                query.setParameter("idAnho", res.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho());
+            } else {
+                query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idProcesoAdq=:idProcesoAdq and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
+                query.setParameter("idEmpresa", res.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdEmpresa());
+                query.setParameter("idProcesoAdq", res.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq() == null ? res.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq() : res.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq().getIdProcesoAdq());
+            }
 
             List<CapaInstPorRubro> lst = query.getResultList();
 
@@ -323,12 +331,12 @@ public class ModificativaEJB {
                 res.setFechaModificacion(new Date());
 
                 em.merge(techoCE);
-                res = em.merge(res);
+                em.merge(res);
             }
+            return param;
         } catch (Exception e) {
             Logger.getLogger(RecepcionEJB.class.getName()).log(Level.SEVERE, null, e);
             param.put("error", "Se ha generado un error en la aplicación de fondos.");
-        } finally {
             return param;
         }
     }
@@ -429,10 +437,9 @@ public class ModificativaEJB {
     }
 
     public List getSaldoParticipante(ResolucionesModificativas resModif) {
-        String sql = String.format("SELECT NVL(FN_GETSALDOPROVEEDOR(%d, %d, %d), 0) FROM EMPRESA WHERE id_empresa=%d",
+        String sql = String.format("SELECT NVL(FN_GETSALDOPROVEEDOR(%d, %d, %d), 0) FROM DUAL",
                 resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq(),
-                resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq(),
-                resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdEmpresa().intValue(),
+                resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq() == null ? resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq() : resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq().getIdProcesoAdq(),
                 resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdEmpresa().intValue());
 
         Query q = em.createNativeQuery(sql);

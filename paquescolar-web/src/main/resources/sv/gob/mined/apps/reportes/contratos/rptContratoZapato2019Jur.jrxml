@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="512" leftMargin="50" rightMargin="50" topMargin="36" bottomMargin="36" uuid="ef8b712b-d116-4f4b-aea0-28889f5df0a2">
 	<property name="ireport.zoom" value="1.464100000000001"/>
-	<property name="ireport.x" value="129"/>
-	<property name="ireport.y" value="263"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -284,7 +284,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo.jpg"]]></imageExpression>
 			</image>
 			<image onErrorType="Blank">
-				<reportElement uuid="0314fcdf-b505-4082-9ceb-db9a13df71f1" key="image-2" x="416" y="10" width="65" height="51"/>
+				<reportElement uuid="0314fcdf-b505-4082-9ceb-db9a13df71f1" key="image-2" x="423" y="4" width="90" height="57"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

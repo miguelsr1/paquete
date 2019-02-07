@@ -271,9 +271,9 @@ WHERE
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["MINISTERIO DE EDUCACION\n"+
-"DIRECCION DEPARTAMENTAL DE EDUCACION DE "  + $P{pDepartamento} + "\n"+ 
-"PAGADURIA AUXILIAR DEPARTAMENTAL\n"+
+				<textFieldExpression><![CDATA["MINISTERIO DE EDUCACIÓN, CIENCIA Y TECNOLOGÍA\n"+
+"DIRECCION DEPARTAMENTAL DE EDUCACIÓN DE "  + $P{pDepartamento} + "\n"+ 
+"PAGADURÍA AUXILIAR DEPARTAMENTAL\n"+
 "PLANILLA DE PAGO"]]></textFieldExpression>
 			</textField>
 			<textField>

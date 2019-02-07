@@ -16,52 +16,47 @@
 	<parameter name="pUsuario" class="java.lang.String">
 		<defaultValueExpression><![CDATA["MSANCHEZ"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="pCodigoDepartamento" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pRazonSocial" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pMontoRetencion" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pMontoRenta" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pNumeroNitEmp" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[select 
-  NOMBRE_DEPARTAMENTO,
-  DATOS_DEPA_PAGADURIA.NUMERO_NIT,
-  RAZON_SOCIAL,
-  VW_RPT_RENTA.NUMERO_NIT NUMERO_NIT_emp,
-  sum(monto_retencion) monto_retencion,
-  sum(MONTO_RENTA) MONTO_RENTA,
-  pagador_departamental
-  --anho.anho
+  ddp.numero_nit,
+  ddp.pagador_departamental,
+  dep.nombre_departamento
 from 
-  VW_RPT_RENTA
-  inner join DATOS_DEPA_PAGADURIA on VW_RPT_RENTA.CODIGO_DEPARTAMENTO = DATOS_DEPA_PAGADURIA.CODIGO_DEPARTAMENTO
-  --inner join anho on VW_RPT_RENTA.ID_ANHO = anho.ID_ANHO
+  datos_depa_pagaduria ddp
+  inner join departamento dep on ddp.codigo_departamento = dep.codigo_departamento
 where 
-  extract(year from vw_rpt_renta.FECHA_CHEQUE) = $P{pAnho} and 
-  VW_RPT_RENTA.NUMERO_NIT = $P{pNumeroNit}
-group by 
-  NOMBRE_DEPARTAMENTO,
-  DATOS_DEPA_PAGADURIA.NUMERO_NIT,
-  RAZON_SOCIAL,
-  VW_RPT_RENTA.NUMERO_NIT,
-  pagador_departamental
-  --anho.anho]]>
+  ddp.codigo_departamento = $P{pCodigoDepartamento}]]>
 	</queryString>
-	<field name="NOMBRE_DEPARTAMENTO" class="java.lang.String"/>
 	<field name="NUMERO_NIT" class="java.lang.String"/>
-	<field name="RAZON_SOCIAL" class="java.lang.String"/>
-	<field name="NUMERO_NIT_EMP" class="java.lang.String"/>
-	<field name="MONTO_RETENCION" class="java.math.BigDecimal"/>
-	<field name="MONTO_RENTA" class="java.math.BigDecimal"/>
 	<field name="PAGADOR_DEPARTAMENTAL" class="java.lang.String"/>
+	<field name="NOMBRE_DEPARTAMENTO" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
 		<band height="99" splitType="Stretch">
 			<textField>
-				<reportElement uuid="6768bcb2-0b99-4ea6-9251-a3344aceb041" x="5" y="48" width="498" height="20"/>
+				<reportElement uuid="6768bcb2-0b99-4ea6-9251-a3344aceb041" x="0" y="61" width="512" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["PAGADURIA AUXILIAR DEPARTAMENTAL DE "+$F{NOMBRE_DEPARTAMENTO}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["PAGADURÍA AUXILIAR DEPARTAMENTAL DE "+$F{NOMBRE_DEPARTAMENTO}]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement uuid="636b5c65-5cad-4348-bc81-43d99c89e6cf" x="0" y="0" width="89" height="48"/>
+				<reportElement uuid="636b5c65-5cad-4348-bc81-43d99c89e6cf" x="0" y="0" width="90" height="57"/>
 				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"logo_mined_rpt.png"]]></imageExpression>
 			</image>
 		</band>
@@ -81,10 +76,10 @@ group by
 					<paragraph lineSpacing="Double"/>
 				</textElement>
 				<textFieldExpression><![CDATA["El Infrascrito Pagador Auxiliar Departamental de Educación de ".concat($F{NOMBRE_DEPARTAMENTO}).concat(", con NIT:").concat($F{NUMERO_NIT}).
-concat(", por este medio hace constar que: a él(la) Señor(a), ").concat($F{RAZON_SOCIAL}).concat(" de Nacionalidad Salvadoreña y con Número de NIT: ").
-concat($F{NUMERO_NIT_EMP}).concat(", se le efectúo pago durante el ejercicio fiscal ").concat($P{pAnho}+".\n\n").
-concat("El monto sujeto de retención asciende a $ ").concat((new DecimalFormat("#,###.00").format($F{MONTO_RETENCION}))).
-concat(" reteniéndole la cantidad de $ ").concat((new DecimalFormat("#,###.00").format($F{MONTO_RENTA}))).
+concat(", por este medio hace constar que: a él(la) Señor(a), ").concat($P{pRazonSocial}).concat(" de Nacionalidad Salvadoreña y con Número de NIT: ").
+concat($P{pNumeroNitEmp}).concat(", se le efectúo pago durante el ejercicio fiscal ").concat($P{pAnho}+".\n\n").
+concat("El monto sujeto de retención asciende a $ ").concat((new DecimalFormat("#,###.00").format($P{pMontoRetencion}))).
+concat(" reteniéndole la cantidad de $ ").concat((new DecimalFormat("#,###.00").format($P{pMontoRenta}))).
 concat(", en concepto de Impuesto de Renta por Servicios, según la Ley de Impuesto Sobre la Renta.\n\n").
 concat("Y, para ser presentada a la Dirección General de Impuestos Internos, se extiende la presente en ").
 concat($P{pCiudad}).concat(", a los "+Herramientas.getNumDia(new Date())+" días del mes de ").
@@ -103,11 +98,11 @@ concat("PAGADURIA AUXILIAR DEPARTAMENTAL DE: ").concat($F{NOMBRE_DEPARTAMENTO})]
 				<textFieldExpression><![CDATA["Nombre: " + $F{PAGADOR_DEPARTAMENTAL}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="7356a6d9-f47f-4790-b221-47d2d9403126" x="0" y="20" width="512" height="20"/>
+				<reportElement uuid="7356a6d9-f47f-4790-b221-47d2d9403126" x="0" y="20" width="512" height="42"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["PAGADOR AUXILIAR DEPARTAMENTAL DE EDUCACION DE "+$F{NOMBRE_DEPARTAMENTO}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["PAGADOR AUXILIAR DEPARTAMENTAL DE EDUCACIÓN, CIENCIA Y TECNOLOGÍA DE "+$F{NOMBRE_DEPARTAMENTO}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnFooter>

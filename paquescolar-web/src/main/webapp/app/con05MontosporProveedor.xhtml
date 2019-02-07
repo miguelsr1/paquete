@@ -33,7 +33,7 @@
                         <p:selectOneMenu id="idRubro" value="#{creditoBancarioController.rubro}" effect="fade">
                             <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
                             <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}"/>
-                            <p:ajax listener="#{creditoBancarioController.resetNit}"/>
+                            <p:ajax listener="#{creditoBancarioController.resetNit}" update="idEntFinan"/>
                         </p:selectOneMenu>
                         <p:outputLabel value="Entidad Financiera:" />  
                         <p:selectOneMenu id="idEntFinan" value="#{creditoBancarioController.entidadSeleccionado}" effect="fade" converter="genericConverter"  >

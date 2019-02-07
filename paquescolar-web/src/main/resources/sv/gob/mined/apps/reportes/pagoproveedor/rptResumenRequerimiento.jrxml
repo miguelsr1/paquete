@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="29201a69-e491-4b63-8141-e362fa8536d7">
 	<property name="ireport.zoom" value="1.6500000000000004"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="96"/>
+	<property name="ireport.y" value="48"/>
 	<parameter name="pDepartamental" class="java.lang.String">
 		<defaultValueExpression><![CDATA["SAN MIGUEL"]]></defaultValueExpression>
 	</parameter>
@@ -89,9 +89,9 @@ GROUP BY
 					<font fontName="Arial" size="10" isBold="true"/>
 					<paragraph lineSpacing="Proportional" lineSpacingSize="1.3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["MINISTERIO DE EDUCACION\n"+
-"DIRECCION DEPARTAMENTAL DE EDUCACION DE "+$P{pDepartamental}+"\n"+
-"PAGADURIA AUXILIAR DEPARTAMENTAL"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["MINISTERIO DE EDUCACIÓN, CIENCIA Y TECNOLOGÍA\n"+
+"DIRECCIÓN DEPARTAMENTAL DE EDUCACIÓN DE "+$P{pDepartamental}+"\n"+
+"PAGADURÍA AUXILIAR DEPARTAMENTAL"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="1141926b-3343-45e9-b5ba-543ca2fbf24c" x="41" y="141" width="80" height="10"/>

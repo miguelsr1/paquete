@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptContratoPersonaJuridicaZapatos" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="d8a009d1-1894-4374-bb30-ceae652bb660">
 	<property name="ireport.zoom" value="1.9965000000000073"/>
-	<property name="ireport.x" value="150"/>
-	<property name="ireport.y" value="288"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -144,7 +144,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo.jpg"]]></imageExpression>
 				</image>
 				<image>
-					<reportElement uuid="66b411bd-0755-40ec-aa97-589e89c0782a" key="image-2" mode="Opaque" x="423" y="10" width="65" height="51"/>
+					<reportElement uuid="66b411bd-0755-40ec-aa97-589e89c0782a" key="image-2" mode="Opaque" x="420" y="4" width="90" height="57"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

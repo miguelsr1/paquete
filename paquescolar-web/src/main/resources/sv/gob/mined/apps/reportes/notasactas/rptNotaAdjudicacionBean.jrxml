@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptNotaAdjudicacion" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="ad17c64a-0600-4c9a-b23f-e00788b53d02">
 	<property name="ireport.zoom" value="1.210000000000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="36"/>
+	<property name="ireport.y" value="317"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -145,14 +145,14 @@ concat("; notifica a la persona proveedora " ).concat($F{razonSocial}).concat(",
 					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo.jpg"]]></imageExpression>
 				</image>
 				<image>
-					<reportElement uuid="2632783e-f28c-4bc6-9f4b-874e42a79b28" key="image-2" x="444" y="32" width="65" height="51"/>
+					<reportElement uuid="2632783e-f28c-4bc6-9f4b-874e42a79b28" key="image-2" x="410" y="29" width="90" height="57"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"logo.jpg"]]></imageExpression>
+					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"logo_mined_rpt.png"]]></imageExpression>
 				</image>
 			</band>
 		</groupHeader>
@@ -267,6 +267,19 @@ concat("\nSello (aplica para Sociedades)")]]></textFieldExpression>
 				<line>
 					<reportElement uuid="509cb70a-e23e-4e20-8e45-8022dd6c60bb" key="line-1" x="10" y="150" width="150" height="1"/>
 				</line>
+				<textField isBlankWhenNull="false">
+					<reportElement uuid="9d282fe1-047f-48cb-a0f3-03c54589dda1" key="textField-4" stretchType="RelativeToTallestObject" x="-1" y="204" width="232" height="15"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement>
+						<font fontName="Arial" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Nombre: ____________________________"]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupFooter>
 	</group>
@@ -291,7 +304,7 @@ concat("\nSello (aplica para Sociedades)")]]></textFieldExpression>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleItem})]]></dataSourceExpression>
 					</datasetRun>
 					<jr:columnGroup width="372" uuid="68e3fc1e-6bb2-4150-bc49-786b89ea039c">
-						<jr:columnFooter style="table_TD" height="15" rowSpan="1">
+						<jr:columnFooter style="table_TD" height="17" rowSpan="1">
 							<staticText>
 								<reportElement uuid="cc8730c7-f3a0-475c-b4bb-f73d94748d30" key="staticText-6" x="0" y="0" width="360" height="15"/>
 								<box>

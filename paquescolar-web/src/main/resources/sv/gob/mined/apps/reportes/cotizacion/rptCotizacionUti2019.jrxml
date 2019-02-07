@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptActaAdjudicacion" pageWidth="612" pageHeight="792" columnWidth="544" leftMargin="34" rightMargin="34" topMargin="34" bottomMargin="34" uuid="103cf057-2364-40f0-b590-3a80879be545">
 	<property name="ireport.zoom" value="1.2100000000000017"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="281"/>
+	<property name="ireport.y" value="589"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -196,8 +196,9 @@
 						<font fontName="Arial" size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Nombre: "+$F{nombreRepresentanteCe}
-+"\n\nF.____________________________(Sello OAE)"
-+"\n"+(new SimpleDateFormat("HH:mm, dd/MM/yyyy")).format(new Date())]]></textFieldExpression>
++"\nF.____________________________"
++"\n"+(new SimpleDateFormat("HH:mm, dd/MM/yyyy")).format(new Date())
++"\n(Sello OAE)"]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="d6ff2fb9-7bcc-4883-8818-85c593499b6c" x="282" y="46" width="100" height="14"/>
@@ -211,23 +212,23 @@
 	</group>
 	<group name="detail2">
 		<groupHeader>
-			<band height="275">
+			<band height="289">
 				<textField>
-					<reportElement uuid="e05e2e40-263b-4ffb-a0da-947cbfb43d7f" x="0" y="0" width="265" height="18"/>
+					<reportElement uuid="e05e2e40-263b-4ffb-a0da-947cbfb43d7f" x="0" y="20" width="265" height="16"/>
 					<textElement markup="styled">
 						<font fontName="Arial" size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA["<u><style isBold='true' pdfFontName='Helvetica-Bold'>II. COTIZACIÓN</style></u>\n"]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement uuid="17abccf8-e63d-4a28-a1b1-3359b4ee3163" x="0" y="18" width="544" height="20"/>
+					<reportElement uuid="17abccf8-e63d-4a28-a1b1-3359b4ee3163" x="0" y="36" width="544" height="16"/>
 					<textElement textAlignment="Center" markup="none">
-						<font fontName="Arial" size="12"/>
+						<font fontName="Arial" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["RUBRO "+$P{descripcionRubro}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement uuid="0079c472-84f4-4eb1-a434-f60775c71913" x="0" y="38" width="544" height="45"/>
+					<reportElement uuid="0079c472-84f4-4eb1-a434-f60775c71913" x="0" y="52" width="544" height="45"/>
 					<textElement textAlignment="Justified" markup="styled">
 						<font fontName="Arial" size="9"/>
 						<paragraph lineSpacing="1_1_2"/>
@@ -237,7 +238,7 @@
 +"a) Detalle de paquetes de útiles:"]]></textFieldExpression>
 				</textField>
 				<componentElement>
-					<reportElement uuid="4723575c-dec8-4265-8fc0-d4c1c6c928fd" key="table" style="table 2_TD" x="1" y="85" width="534" height="120"/>
+					<reportElement uuid="4723575c-dec8-4265-8fc0-d4c1c6c928fd" key="table" style="table 2_TD" x="1" y="99" width="534" height="120"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 						<datasetRun subDataset="dsDetCotizacion" uuid="26e476c9-6d30-47e4-8f15-ad0d734b2862">
 							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleOferta})]]></dataSourceExpression>
@@ -386,14 +387,14 @@ UNITARIO]]></text>
 					</jr:table>
 				</componentElement>
 				<staticText>
-					<reportElement uuid="e495f7bf-138f-41af-9099-ed448dbeec6b" x="1" y="216" width="157" height="17"/>
+					<reportElement uuid="e495f7bf-138f-41af-9099-ed448dbeec6b" x="1" y="230" width="157" height="17"/>
 					<textElement>
 						<font fontName="Arial" size="9"/>
 					</textElement>
 					<text><![CDATA[b) Libros de Matemática:]]></text>
 				</staticText>
 				<componentElement>
-					<reportElement uuid="4723575c-dec8-4265-8fc0-d4c1c6c928fd" key="table" style="table 2_TD" x="1" y="233" width="534" height="42"/>
+					<reportElement uuid="4723575c-dec8-4265-8fc0-d4c1c6c928fd" key="table" style="table 2_TD" x="1" y="247" width="534" height="42"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 						<datasetRun subDataset="dsDetCotizacion" uuid="26e476c9-6d30-47e4-8f15-ad0d734b2862">
 							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleOfertaLibros})]]></dataSourceExpression>
@@ -541,6 +542,13 @@ UNITARIO]]></text>
 						</jr:column>
 					</jr:table>
 				</componentElement>
+				<textField>
+					<reportElement uuid="982bf22c-0375-4c4d-a107-2f899a909e36" x="1" y="0" width="543" height="20"/>
+					<textElement textAlignment="Center" markup="none">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["COTIZACIÓN"]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupHeader>
 	</group>

@@ -699,6 +699,7 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
     public void resetNit() {
         numeroNit = "";
         detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
+        lstEntidades = creditosEJB.findEntidadFinancieraEntities((short) 0);
     }
 
     public List<DatosProveedoresFinanDto> getListaProvGral() {

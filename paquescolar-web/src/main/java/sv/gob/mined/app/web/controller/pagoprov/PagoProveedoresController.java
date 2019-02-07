@@ -2374,6 +2374,12 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
             param.put("pNumeroNit", numeroNit);
             param.put("pCiudad", VarSession.getNombreMunicipioSession());
             param.put("pUsuario", VarSession.getVariableSessionUsuario());
+            
+            param.put("pRazonSocial", empresa.getRazonSocial());
+            param.put("pNumeroNitEmp", empresa.getNumeroNit());
+            param.put("pMontoRetencion", getMontoSujetoRenta());
+            param.put("pMontoRenta", getMontoRenta());
+            param.put("pCodigoDepartamento", VarSession.getDepartamentoUsuarioSession());
 
             Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/pagoproveedor/", "rptConstanciaRetencion", "contacionRentencion" + numeroNit.replace("-", ""));
         }

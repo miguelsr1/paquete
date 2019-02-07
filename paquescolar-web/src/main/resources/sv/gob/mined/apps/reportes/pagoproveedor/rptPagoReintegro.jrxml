@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b175adb3-97cc-4e6e-bb76-0dccf5901f89">
 	<property name="ireport.zoom" value="2.1435888100000056"/>
-	<property name="ireport.x" value="137"/>
-	<property name="ireport.y" value="268"/>
+	<property name="ireport.x" value="29"/>
+	<property name="ireport.y" value="0"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -73,7 +73,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["DIRECCION DEPARTAMENTAL DE "  + $P{pNombreDepartamento} + "\n"+ 
+				<textFieldExpression><![CDATA["DIRECCIÓN DEPARTAMENTAL DE "  + $P{pNombreDepartamento} + "\n"+ 
 "REPORTE DE REINTEGRO DE PAGO A\n"+
 "PROVEEDORES " + $P{pAnho}]]></textFieldExpression>
 			</textField>
@@ -135,7 +135,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<text><![CDATA[BANCO PAGADURIA:]]></text>
+				<text><![CDATA[BANCO PAGADURÍA:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement uuid="fb09890e-4cc6-4ae0-b068-f7467394b779" x="10" y="149" width="37" height="12"/>

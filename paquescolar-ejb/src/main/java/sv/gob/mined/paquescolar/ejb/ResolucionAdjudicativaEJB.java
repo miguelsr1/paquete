@@ -172,9 +172,9 @@ public class ResolucionAdjudicativaEJB {
                 query.setParameter("idEmpresa", res.getIdParticipante().getIdEmpresa());
                 query.setParameter("idAnho", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho());
             } else {
-                query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idDetProcesoAdq=:idDetProcesoAdq and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
+                query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idProcesoAdq=:idProcesoAdq and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
                 query.setParameter("idEmpresa", res.getIdParticipante().getIdEmpresa());
-                query.setParameter("idDetProcesoAdq", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq());
+                query.setParameter("idProcesoAdq", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq() == null ? res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq() : res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq().getIdProcesoAdq());
             }
             List<CapaInstPorRubro> lst = query.getResultList();
 
@@ -211,10 +211,10 @@ public class ResolucionAdjudicativaEJB {
 
                 historialCambioEstado(res, estadoAnterior, idEstadoReserva.toBigInteger(), comentarioReversion, usuario);
             }
+            return param;
         } catch (Exception e) {
             param.put("error", "Se ha generado un error en la aplicación de fondos.");
             Logger.getLogger(ResolucionAdjudicativaEJB.class.getName()).log(Level.SEVERE, null, e);
-        } finally {
             return param;
         }
     }
@@ -249,7 +249,6 @@ public class ResolucionAdjudicativaEJB {
     }
 
     public List getAdjudicacionParticipante(Participantes par) {
-        //String sql = String.format("SELECT NVL(FN_GETADJPROVEEDOR(%d, %d), 0) FROM EMPRESA WHERE id_empresa=%d",
         String sql = String.format("SELECT NVL(FN_GET_CANT_ADJ_PROVE(%d, %d), 0) FROM DUAL",
                 par.getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq(),
                 par.getIdEmpresa().getIdEmpresa().intValue());
@@ -296,9 +295,9 @@ public class ResolucionAdjudicativaEJB {
     }
 
     public List getSaldoParticipante(ResolucionesAdjudicativas res) {
-        //String sql = String.format("SELECT NVL(FN_GETSALDOPROVEEDOR(%d, %d, %d), 0) FROM EMPRESA WHERE id_empresa=%d",
-        String sql = String.format("SELECT NVL(FN_VERIFICAR_SALDO_PROVEEDOR(%d, %d), 0) FROM DUAL",
+        String sql = String.format("SELECT NVL(FN_VERIFICAR_SALDO_PROVEEDOR(%d, %d, %d), 0) FROM DUAL",
                 res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq(),
+                res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq() == null ? res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq() : res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq().getIdProcesoAdq(),
                 res.getIdParticipante().getIdEmpresa().getIdEmpresa().intValue());
 
         Query q = em.createNativeQuery(sql);

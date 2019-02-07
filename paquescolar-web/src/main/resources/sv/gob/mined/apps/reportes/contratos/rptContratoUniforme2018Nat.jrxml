@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptContratoPersonaNaturalZapatos" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="b3d27ee3-cc8d-4284-9900-697f3963c735">
 	<property name="ireport.zoom" value="1.1269722013523735"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="121"/>
+	<property name="ireport.y" value="0"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -178,7 +178,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo.jpg"]]></imageExpression>
 				</image>
 				<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
-					<reportElement uuid="0af0e01a-e1bf-443f-9df6-1d5f8614f2da" key="image-2" x="408" y="4" width="98" height="60"/>
+					<reportElement uuid="0af0e01a-e1bf-443f-9df6-1d5f8614f2da" key="image-2" x="420" y="4" width="90" height="57"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
