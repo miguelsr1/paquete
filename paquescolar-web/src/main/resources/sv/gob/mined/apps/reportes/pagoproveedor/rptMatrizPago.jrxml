@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="1008" pageHeight="612" orientation="Landscape" columnWidth="968" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2c64dcb9-cec2-425a-8efd-5083d3230eb2">
-	<property name="ireport.zoom" value="1.3995221406292007"/>
-	<property name="ireport.x" value="72"/>
+	<property name="ireport.zoom" value="1.0514816984441775"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="table">
 		<box>
@@ -117,7 +117,8 @@
   monto_renta,
   ID_TIPO_DOC_PAGO,
   NO_DOC_PAGO,
-  FECHA_DOC_PAGO
+  FECHA_DOC_PAGO,
+  num_cheque
 FROM 
   VW_PAGO_PROV_MATRIZ_DET
 WHERE 
@@ -134,6 +135,7 @@ WHERE
 		<field name="ID_TIPO_DOC_PAGO" class="java.lang.String"/>
 		<field name="NO_DOC_PAGO" class="java.lang.String"/>
 		<field name="FECHA_DOC_PAGO" class="java.sql.Timestamp"/>
+		<field name="NUM_CHEQUE" class="java.lang.String"/>
 		<variable name="vTotalRenta" class="java.math.BigDecimal" calculation="Sum">
 			<variableExpression><![CDATA[$F{MONTO_RENTA}]]></variableExpression>
 		</variable>
@@ -253,7 +255,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{FORMATO_REQUERIMIENTO}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement uuid="c4eb7907-4798-48e4-918b-c8ce887663dc" x="867" y="16" width="100" height="20"/>
+				<reportElement uuid="c4eb7907-4798-48e4-918b-c8ce887663dc" x="868" y="33" width="100" height="20"/>
 				<textElement>
 					<font fontName="Arial" size="7"/>
 				</textElement>
@@ -274,7 +276,14 @@ WHERE
 				<textFieldExpression><![CDATA["MINISTERIO DE EDUCACIÓN, CIENCIA Y TECNOLOGÍA\n"+
 "DIRECCIÓN DEPARTAMENTAL DE EDUCACIÓN DE "  + $P{pDepartamento} + "\n"+ 
 "PAGADURÍA AUXILIAR DEPARTAMENTAL\n"+
-"PLANILLA DE PAGO"]]></textFieldExpression>
+"MATRIZ DE PAGO"]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement uuid="a40d0bb2-a4c4-4c32-8321-1dcada6e2c63" x="868" y="13" width="100" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pIdPlanilla}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -353,7 +362,7 @@ WHERE
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="12" rowSpan="1">
-								<textField>
+								<textField isStretchWithOverflow="true">
 									<reportElement uuid="9e03807a-4276-458e-b6d0-4c1d4a74ab9a" x="1" y="1" width="158" height="10" isPrintWhenDetailOverflows="true"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Arial" size="6"/>
@@ -373,7 +382,7 @@ WHERE
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="12" rowSpan="1">
-								<textField>
+								<textField isStretchWithOverflow="true">
 									<reportElement uuid="9c53f46d-732e-490c-856c-a0260bbbce45" x="1" y="1" width="118" height="10" isPrintWhenDetailOverflows="true"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Arial" size="6"/>
@@ -581,7 +590,7 @@ WHERE
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="7"/>
 								</textElement>
-								<text><![CDATA[Monto a Reintregrar]]></text>
+								<text><![CDATA[Monto a Reintegrar]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:columnFooter style="table_TD" height="14" rowSpan="1">
@@ -629,6 +638,29 @@ WHERE
 									<font fontName="Arial" size="6"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{MONTO_ACTUAL}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="65" uuid="ba1826a4-aa06-49b3-ae98-631588a59e06">
+						<jr:tableHeader height="0" rowSpan="1"/>
+						<jr:tableFooter height="0" rowSpan="1"/>
+						<jr:columnHeader style="table_TD" height="18" rowSpan="2">
+							<staticText>
+								<reportElement uuid="f44ae496-1e32-47df-80f9-bd5704776f6f" x="0" y="0" width="65" height="18"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="7" isBold="true"/>
+								</textElement>
+								<text><![CDATA[# cheque]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table_TD" height="14" rowSpan="1"/>
+						<jr:detailCell style="table_TD" height="12" rowSpan="1">
+							<textField pattern="$ #,##0.00">
+								<reportElement uuid="a473a884-7bd3-475c-b5c8-b06d88e50ddf" x="0" y="1" width="63" height="10"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{NUM_CHEQUE}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>

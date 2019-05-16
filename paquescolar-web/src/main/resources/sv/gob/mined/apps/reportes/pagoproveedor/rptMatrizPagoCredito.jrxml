@@ -262,7 +262,7 @@ WHERE
 									</staticText>
 								</jr:columnHeader>
 								<jr:detailCell style="table_TD" height="12" rowSpan="1">
-									<textField>
+									<textField isStretchWithOverflow="true">
 										<reportElement uuid="9e03807a-4276-458e-b6d0-4c1d4a74ab9a" x="1" y="1" width="158" height="10" isPrintWhenDetailOverflows="true"/>
 										<textElement verticalAlignment="Middle">
 											<font fontName="Arial" size="6"/>
@@ -282,7 +282,7 @@ WHERE
 									</staticText>
 								</jr:columnHeader>
 								<jr:detailCell style="table_TD" height="12" rowSpan="1">
-									<textField>
+									<textField isStretchWithOverflow="true">
 										<reportElement uuid="9c53f46d-732e-490c-856c-a0260bbbce45" x="1" y="1" width="149" height="10" isPrintWhenDetailOverflows="true"/>
 										<textElement verticalAlignment="Middle">
 											<font fontName="Arial" size="6"/>
@@ -622,7 +622,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{FORMATO_REQUERIMIENTO}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement uuid="c4eb7907-4798-48e4-918b-c8ce887663dc" x="867" y="16" width="100" height="20"/>
+				<reportElement uuid="c4eb7907-4798-48e4-918b-c8ce887663dc" x="868" y="33" width="100" height="20"/>
 				<textElement>
 					<font fontName="Arial" size="7"/>
 				</textElement>
@@ -640,10 +640,10 @@ WHERE
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["MINISTERIO DE EDUCACIÓ, CIENCIA Y TECNOLOGÍAN\n"+
+				<textFieldExpression><![CDATA["MINISTERIO DE EDUCACIÓN, CIENCIA Y TECNOLOGÍA\n"+
 "DIRECCIÓN DEPARTAMENTAL DE EDUCACIÓN DE "  + $P{pDepartamento} + "\n"+ 
 "PAGADURÍA AUXILIAR DEPARTAMENTAL\n"+
-"PLANILLA DE PAGO"]]></textFieldExpression>
+"MATRIZ DE PAGO"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement uuid="65c07728-3ead-4f0d-a182-11b8aff92a6a" x="357" y="107" width="132" height="12"/>
@@ -673,6 +673,13 @@ WHERE
 				</textElement>
 				<text><![CDATA[FECHA EMISIÓN:]]></text>
 			</staticText>
+			<textField pattern="###0">
+				<reportElement uuid="a40d0bb2-a4c4-4c32-8321-1dcada6e2c63" x="868" y="13" width="100" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pIdPlanilla}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -752,7 +759,7 @@ WHERE
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="12" rowSpan="1">
-								<textField>
+								<textField isStretchWithOverflow="true">
 									<reportElement uuid="9e03807a-4276-458e-b6d0-4c1d4a74ab9a" x="1" y="1" width="158" height="10" isPrintWhenDetailOverflows="true"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Arial" size="6"/>
@@ -772,7 +779,7 @@ WHERE
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="12" rowSpan="1">
-								<textField>
+								<textField isStretchWithOverflow="true">
 									<reportElement uuid="9c53f46d-732e-490c-856c-a0260bbbce45" x="1" y="1" width="118" height="10" isPrintWhenDetailOverflows="true"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Arial" size="6"/>
@@ -792,7 +799,7 @@ WHERE
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="12" rowSpan="1">
-								<textField>
+								<textField isStretchWithOverflow="true">
 									<reportElement uuid="b9d98353-7fea-488f-9be7-695f108f6ec0" x="1" y="1" width="113" height="10" isPrintWhenDetailOverflows="true"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Arial" size="6"/>
@@ -1000,7 +1007,7 @@ WHERE
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="7"/>
 								</textElement>
-								<text><![CDATA[Monto a Reintregrar]]></text>
+								<text><![CDATA[Monto a Reintegrar]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:columnFooter style="table_TD" height="14" rowSpan="1">

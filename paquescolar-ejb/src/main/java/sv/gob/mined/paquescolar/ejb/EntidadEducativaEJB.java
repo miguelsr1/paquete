@@ -259,9 +259,9 @@ public class EntidadEducativaEJB {
 
             return cabecera;
         } catch (Exception ex) {
-            Logger.getLogger(ConamypeEJB.class.getName()).log(Level.WARNING, null, "Error en obteniendo las estadisticas de censo rápido");
-            Logger.getLogger(ConamypeEJB.class.getName()).log(Level.WARNING, null, "Codigo Entidad: " + codigoEntidad);
-            Logger.getLogger(ConamypeEJB.class.getName()).log(Level.WARNING, null, "Proceso de compra: " + proceso.getIdAnho().getAnho());
+            Logger.getLogger(EntidadEducativaEJB.class.getName()).log(Level.WARNING, null, "Error en obteniendo las estadisticas de censo rápido");
+            Logger.getLogger(EntidadEducativaEJB.class.getName()).log(Level.WARNING, null, "Codigo Entidad: " + codigoEntidad);
+            Logger.getLogger(EntidadEducativaEJB.class.getName()).log(Level.WARNING, null, "Proceso de compra: " + proceso.getIdAnho().getAnho());
             return null;
         } finally {
         }

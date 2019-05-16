@@ -36,7 +36,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.chart.DonutChartModel;
 import sv.gob.mined.app.web.controller.AnhoProcesoController;
@@ -1280,9 +1279,12 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
                     if (!numeroRequerimiento.trim().isEmpty()) {
                         requerimientoFondos = utilEJB.find(RequerimientoFondos.class, detalleRequerimiento.getIdRequerimiento().getIdRequerimiento());
                     } else if (!codigoEntidad.trim().isEmpty()) {
-                        lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad, super.getProcesoAdquisicion(), VarSession.isVariableSession("departamentoUsuario") ? super.getDepartamento() : null);
+                        lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad, 
+                                super.getProcesoAdquisicion(), 
+                                VarSession.isVariableSession("departamentoUsuario") ? super.getDepartamento() : null, 
+                                numeroRequerimiento.isEmpty() ? null : numeroRequerimiento);
                     }
-
+                    
                     PrimeFaces.current().executeScript("PF('dlgEdtDetDocPago').hide();");
                     PrimeFaces.current().ajax().update("tblDetRequerimiento");
                     JsfUtil.mensajeInsert();
@@ -1924,14 +1926,18 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
 
     public void buscarRequerimiento() {
         if (!numeroRequerimiento.trim().isEmpty()) {
-            requerimientoFondos = proveedorEJB.getRequerimientoByNumero(numeroRequerimiento, super.getDepartamento(), super.getProcesoAdquisicion().getIdProcesoAdq());
+            requerimientoFondos = proveedorEJB.getRequerimientoByNumero(numeroRequerimiento, (VarSession.isVariableSession("departamentoUsuario") ? super.getDepartamento() : null), super.getProcesoAdquisicion().getIdProcesoAdq());
             if (requerimientoFondos == null) {
                 JsfUtil.mensajeInformacion("No se encontro el requerimiento con número: " + numeroRequerimiento);
+            } else if (!codigoEntidad.trim().isEmpty()) {
+                lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad, super.getProcesoAdquisicion(),
+                        VarSession.isVariableSession("departamentoUsuario") ? super.getDepartamento() : null,
+                        numeroRequerimiento);
             } else {
                 lstDetalleRequerimiento = requerimientoFondos.getDetalleRequerimientoList();
             }
         } else if (!codigoEntidad.trim().isEmpty()) {
-            lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad, super.getProcesoAdquisicion(), VarSession.isVariableSession("departamentoUsuario") ? super.getDepartamento() : null);
+            lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad, super.getProcesoAdquisicion(), VarSession.isVariableSession("departamentoUsuario") ? super.getDepartamento() : null, null);
         }
 
         if (lstDetalleRequerimiento.isEmpty()) {
@@ -2309,7 +2315,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     public void buscarLstRentaProve() {
         if (!numeroNit.isEmpty()) {
             empresa = proveedorEJB.findEmpresaByNit(numeroNit);
-            lstProveedores = pagoProveedoresEJB.getLstDatosProveDto(anho, numeroNit, null);
+            lstProveedores = pagoProveedoresEJB.getLstDatosProveDto(anho, numeroNit, null, VarSession.getVariableSessionUsuario());
         } else {
             JsfUtil.mensajeInformacion("Debe de ingresar un NIT o un requerimiento de fondos");
         }
@@ -2334,9 +2340,9 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
             JsfUtil.mensajeAlerta("Debe de seleccionar un mes");
         } else {
             if (numeroRequerimiento.isEmpty()) {
-                lstProveedores = pagoProveedoresEJB.getDatosRptRentaMensual(codigoDepartamento, idMes, Integer.parseInt(anho));
+                lstProveedores = pagoProveedoresEJB.getDatosRptRentaMensual(codigoDepartamento, idMes, Integer.parseInt(anho), VarSession.getVariableSessionUsuario());
             } else {
-                lstProveedores = pagoProveedoresEJB.getDatosRptRentaMensualByRequerimiento(codigoDepartamento, idMes, Integer.parseInt(anho), numeroRequerimiento);
+                lstProveedores = pagoProveedoresEJB.getDatosRptRentaMensualByRequerimiento(codigoDepartamento, idMes, Integer.parseInt(anho), numeroRequerimiento, VarSession.getVariableSessionUsuario());
             }
             if (lstProveedores.isEmpty()) {
                 JsfUtil.mensajeInformacion("No se encontraron datos");
@@ -2374,7 +2380,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
             param.put("pNumeroNit", numeroNit);
             param.put("pCiudad", VarSession.getNombreMunicipioSession());
             param.put("pUsuario", VarSession.getVariableSessionUsuario());
-            
+
             param.put("pRazonSocial", empresa.getRazonSocial());
             param.put("pNumeroNitEmp", empresa.getNumeroNit());
             param.put("pMontoRetencion", getMontoSujetoRenta());
@@ -2389,11 +2395,11 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         planillaPago = utilEJB.find(PlanillaPago.class,
                 idPlanilla);
         idRubro = planillaPago.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres();
-        
+
         reiniciarVisibilidadCheques();
         isRubroUniforme = ((idRubro.intValue() == 1) || (idRubro.intValue() == 4) || (idRubro.intValue() == 5));
         idDetProceso = planillaPago.getIdRequerimiento().getIdDetProcesoAdq().getIdDetProcesoAdq();
-        
+
         selectPlanilla();
         isPlanillaLectura = true;
         PrimeFaces.current().ajax().update("dlgPlanillaPago");

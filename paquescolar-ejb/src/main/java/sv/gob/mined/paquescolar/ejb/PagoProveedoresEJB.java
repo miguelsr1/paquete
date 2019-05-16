@@ -12,10 +12,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import sv.gob.mined.paquescolar.model.DetalleDocPago;
 import sv.gob.mined.paquescolar.model.DetallePlanilla;
@@ -37,15 +39,28 @@ import sv.gob.mined.paquescolar.util.Constantes;
 @LocalBean
 public class PagoProveedoresEJB {
 
+    @EJB
+    private EMailEJB eMailEJB;
+
     @PersistenceContext(unitName = "paquescolarUP")
     private EntityManager em;
 
-    public List<DatosProveDto> getLstDatosProveDto(String anhoPago, String numeroNit, String codigoDepartamento) {
-        Query q = em.createNamedQuery("PagoProve.ConstanciaRentencionByAnhoAndNitEmp", DatosProveDto.class);
-        q.setParameter(1, Integer.parseInt(anhoPago));
-        q.setParameter(2, numeroNit);
-        q.setParameter(3, codigoDepartamento);
-        return q.getResultList();
+    public List<DatosProveDto> getLstDatosProveDto(String anhoPago, String numeroNit, String codigoDepartamento, String usuario) {
+        try {
+            Query q = em.createNamedQuery("PagoProve.ConstanciaRentencionByAnhoAndNitEmp", DatosProveDto.class);
+            q.setParameter(1, Integer.parseInt(anhoPago));
+            q.setParameter(2, numeroNit);
+            q.setParameter(3, codigoDepartamento);
+            return q.getResultList();
+        } catch (Exception e) {
+            eMailEJB.enviarMailDeError("Paquete Escolar - Error - Modulo de pago",
+                    "Error en generacion de constancia de renta.\n"
+                            + "Anho " + anhoPago + "; NIT " + numeroNit + "; codigoDepartamento " + codigoDepartamento+ "; usuario " + usuario,
+                    e);
+            Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, "Error en generacion de constancia de renta.");
+            Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, "Anho {0} NIT {1} codigoDepartamento {2}", new Object[]{anhoPago, numeroNit, codigoDepartamento});
+            return new ArrayList();
+        }
     }
 
     public List<DatosProveDto> getDatosF910(String codigoDepartamento, Integer anho) {
@@ -55,7 +70,7 @@ public class PagoProveedoresEJB {
         return q.getResultList();
     }
 
-    public List<DatosProveDto> getDatosRptRentaMensual(String codigoDepartamento, Integer idMesPago, Integer anhoPago) {
+    public List<DatosProveDto> getDatosRptRentaMensual(String codigoDepartamento, Integer idMesPago, Integer anhoPago, String usuario) {
         try {
             Query q = em.createNamedQuery("PagoProve.ReporteRentaMensual", DatosProveDto.class);
             q.setParameter(1, codigoDepartamento);
@@ -63,19 +78,29 @@ public class PagoProveedoresEJB {
             q.setParameter(3, anhoPago);
             return q.getResultList();
         } catch (Exception e) {
-            System.out.println(String.format("Error generando el reporte de renta mensual: %s - %d - %d", codigoDepartamento, idMesPago, anhoPago));
+            eMailEJB.enviarMailDeError("Paquete Escolar - Error - Modulo de pago",
+                    "Error en generacion de constancia de renta mensual.\n"
+                    + "Anho " + anhoPago + "; idMesPago " + idMesPago + "; codigoDepartamento " + codigoDepartamento + "; usuario " + usuario,
+                    e);
+            Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, String.format("Error generando el reporte de renta mensual: %s - %d - %d", codigoDepartamento, idMesPago, anhoPago));
 
             return new ArrayList();
         }
     }
 
-    public List<DatosProveDto> getDatosRptRentaMensualByRequerimiento(String codigoDepartamento, Integer idMesPago, Integer anhoPago, String formatoRequerimiento) {
-        Query q = em.createNamedQuery("PagoProve.ReporteRentaMensualByRequerimiento", DatosProveDto.class);
-        q.setParameter(1, codigoDepartamento);
-        q.setParameter(2, idMesPago);
-        q.setParameter(3, anhoPago);
-        q.setParameter(4, formatoRequerimiento);
-        return q.getResultList();
+    public List<DatosProveDto> getDatosRptRentaMensualByRequerimiento(String codigoDepartamento, Integer idMesPago, Integer anhoPago, String formatoRequerimiento, String usuario) {
+        try {
+            Query q = em.createNamedQuery("PagoProve.ReporteRentaMensualByRequerimiento", DatosProveDto.class);
+            q.setParameter(1, codigoDepartamento);
+            q.setParameter(2, idMesPago);
+            q.setParameter(3, anhoPago);
+            q.setParameter(4, formatoRequerimiento);
+            return q.getResultList();
+        } catch (Exception e) {
+            Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, String.format("Error generando el reporte de renta mensual por requerimiento: %s - %d - %d", codigoDepartamento, idMesPago, anhoPago));
+
+            return new ArrayList();
+        }
     }
 
     public List<DatosProveDto> getDatosRptLiquidacion(String codigoDepartamento, String anho, Integer idDetProcesoAdq, String codigoEntidad) {

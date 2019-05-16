@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="19"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -105,11 +105,18 @@ concat(Herramientas.getNumAnyo($F{fechaEmision})).concat(".\n\n").
 concat("Por medio del presente PAGARÉ me obligo a pagar en forma incondicional a la orden del Centro Educativo ").concat($F{nombre}).
 concat(", o a quien le represente en sus derechos, la cantidad de ").
 concat(Herramientas.aLetras($F{valor}.multiply(new BigDecimal("0.12")).setScale(2, BigDecimal.ROUND_UP)).trim()).concat(" DÓLARES DE LOS ESTADOS UNIDOS DE AMÉRICA ($ "+
-$F{valor}.multiply(new BigDecimal("0.12")).setScale(2, BigDecimal.ROUND_UP)+") el cual corresponde al 12% del monto del contrato en concepto de <i><style isBold='true' pdfFontName='Helvetica-Bold'>Garantía de Cumplimiento de Contrato</style></i> del proceso de adquisición del rubro ").
+$F{valor}.multiply(new BigDecimal("0.12")).setScale(2, BigDecimal.ROUND_UP)+") el cual corresponde al 12% del monto del contrato en concepto de <i>").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>Garantía de Cumplimiento de Contrato</style></i> del proceso de adquisición del rubro ").
 concat($P{descripcionRubro}).concat(", del según contrato número ME - ").concat($F{numeroContrato}).concat("/").concat($F{anhoContrato}).
-concat(". Este PAGARÉ podrá ser ejecutado si: <style isBold='true' pdfFontName='Helvetica-Bold'> a) el/la contratista incumple alguna de las cláusulas establecidas en el contrato por causa imputable al contratista; b) si el servicio o el bien contratado no es entregado y recibido a entera satisfacción del contratante.</style> Este PAGARÉ será válido por VEINTICUATRO MESES a partir de esta fecha.\n\n").
-concat("Para los efectos legales de esta obligación mercantil, fijo como domicilio especial el de esta ciudad y en caso de acción judicial renuncio al derecho de apelar del decreto de embargo, sentencia de remate y de otras providencias que se dictaren en el Juicio Mercantil Ejecutivo o de sus incidentes, siendo a mi cargo cualquier gasto que el Organismo de Administración Escolar que administra el centro educativo ").concat($F{nombre}).
-concat(" hiciera en el cobro de este PAGARÉ, inclusive los llamados personales y fiscales, aun cuando por regla general no hubiere condenación en costas, asimismo faculto al Organismo de Administración Escolar que administra el Centro Educativo para que designe a la persona depositaria de los bienes que se embarguen, a quien relevo de la obligación de rendir fianza.")]]></textFieldExpression>
+concat(". Este PAGARÉ podrá ser ejecutado si: <style isBold='true' pdfFontName='Helvetica-Bold'> a) el/la contratista incumple alguna de las cláusulas ").
+concat("establecidas en el contrato por causa imputable al contratista; b) si el servicio o el bien contratado no es entregado y recibido a entera ").
+concat("satisfacción del contratante.</style> Este PAGARÉ será válido por VEINTICUATRO MESES a partir de esta fecha.\n\n").
+concat("Para los efectos legales de esta obligación mercantil, fijo como domicilio especial el de esta ciudad y en caso de acción judicial renuncio al derecho ").
+concat("de apelar del decreto de embargo, sentencia de remate y de otras providencias que se dictaren en el Juicio Mercantil Ejecutivo o de sus incidentes, ").
+concat("siendo a mi cargo cualquier gasto que el Organismo de Administración Escolar que administra el centro educativo ").concat($F{nombre}).
+concat(" hiciera en el cobro de este PAGARÉ, inclusive los llamados personales y fiscales, aun cuando por regla general no hubiere condenación en costas, ").
+concat("asimismo faculto al Organismo de Administración Escolar que administra el Centro Educativo para que designe a la persona depositaria de los bienes ").
+concat("que se embarguen, a quien relevo de la obligación de rendir fianza.")]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="false">
 					<reportElement uuid="03f9a77f-a671-4cab-81fb-ad9cf8c200d9" key="textField-6" x="78" y="15" width="342" height="56"/>

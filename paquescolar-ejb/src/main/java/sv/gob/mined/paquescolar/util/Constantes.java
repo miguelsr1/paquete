@@ -18,6 +18,29 @@ public class Constantes {
     public static final String ERROR = "error";
     public static final String WARNING = "alerta";
 
+    public static final String QUERY_CONTRATACION_RESUMEN_CONTRATACIONES = "SELECT \n"
+            + "                rownum                  as idRow,\n"
+            + "                CODIGO_ENTIDAD          as codigoEntidad,\n"
+            + "                NOMBRE_CE               as nombreCe,\n"
+            + "                NOMBRE_DEPARTAMENTO_CE  as nombreDepartamentoCe,\n"
+            + "                NOMBRE_MUNICIPIO_CE     as nombreMunicipioCe,\n"
+            + "                DIRECCION_CE            as direccionCe,\n"
+            + "                RUBRO                   as rubro,\n"
+            + "                NUMERO_NIT              as numeroNit,\n"
+            + "                RAZON_SOCIAL            as razonSocial,\n"
+            + "                DIRECCION_EMP           as direccionEmp,\n"
+            + "                TELEFONO_EMP            as telefonoEmp,\n"
+            + "                CELULAR_EMP             as celularEmp,\n"
+            + "                NOMBRE_DEPARTAMENTO_EMP as nombreDepartamentoEmp,\n"
+            + "                NOMBRE_MUNICIPIO_EMP    as nombreMunicipioEmp,\n"
+            + "                CANTIDAD_CONTRATO       as cantidadContrato,\n"
+            + "                MONTO_CONTRATO          as montoContrato,\n"
+            + "                ID_CONTRATO             as idContrato\n"
+            + "            FROM \n"
+            + "                VW_RPT_RESUMEN_CONTRATACION \n"
+            + "            WHERE \n"
+            + "                ID_DET_PROCESO_ADQ = ?1";
+
     public static final String QUERY_RPT_PROVEEDOR_ENT_FINAN = "SELECT "
             + "    rownum              as idRow, "
             + "    ID_DETALLE          as idDetalle, "

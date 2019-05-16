@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptActaAdjudicacion" pageWidth="612" pageHeight="792" columnWidth="544" leftMargin="34" rightMargin="34" topMargin="34" bottomMargin="34" uuid="103cf057-2364-40f0-b590-3a80879be545">
 	<property name="ireport.zoom" value="1.4641000000000017"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="333"/>
+	<property name="ireport.y" value="93"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -104,7 +104,7 @@
 .concat(", por este medio solicita cotización de los servicios o bienes detallados en el literal II Cotización, la cual deberá ser presentada el día ")
 .concat(Herramientas.getNumDia($F{fechaApertura})+" del mes "+Herramientas.getNomMes($F{fechaApertura})+" del año "+Herramientas.getNumAnyo($F{fechaApertura}))
 .concat(". La cotización deberá presentarse en original a nombre del (CDE, CECE, CIE) del centro educativo,  así como especificar las siguientes condiciones de compra: \n\n")
-.concat("<style isBold='true' pdfFontName='Helvetica-Bold'>1) PLAZO  DE ENTREGA DE LOS BIENES O SERVICIOS:</style> El plazo de entrega será de Sesenta días contados a partir de la fecha indicada en el contrato para cada uno de los uniformes.\n ")
+.concat("<style isBold='true' pdfFontName='Helvetica-Bold'>1) PLAZO  DE ENTREGA DE LOS BIENES O SERVICIOS:</style> El plazo de entrega será de Sesenta días contados a partir de la fecha indicada en el contrato.\n ")
 .concat("<style isBold='true' pdfFontName='Helvetica-Bold'>2) LUGAR DE ENTREGA:</style> En la dirección del Centro Educativo, anteriormente descrita.\n\n")
 .concat("<style isBold='true' pdfFontName='Helvetica-Bold'>3) CONDICIONES ESPECIALES:</style> Para presentar la cotización solicitada, tomar en cuenta:\n")
 .concat("a) Que los precios cotizados son los precios presentados al MINED y estos permanecerán firmes durante la ejecución del proceso de compra.\n")

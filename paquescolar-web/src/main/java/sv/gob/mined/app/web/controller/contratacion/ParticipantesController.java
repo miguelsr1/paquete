@@ -259,10 +259,19 @@ public class ParticipantesController implements Serializable {
 
     public String update() {
         String urlRed = "reg02ReservaFondos.mined?includeViewParams=true&codigoEntidad=" + codigoEntidad + "&idParticipante=" + idParticipante;
-
+        Boolean isError, isUtiles;
         try {
-            if (lstDetalleOferta == null || lstDetalleOferta.isEmpty()) {
-                JsfUtil.mensajeAlerta("Debe de agregar al menos un detalle a la oferta.");
+            isUtiles = (detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 2);
+            if (isUtiles) {
+                isError = !(lstDetalleOferta.isEmpty()
+                        || (lstDetalleOfertaLibros.isEmpty()));
+            } else {
+                isError = (lstDetalleOferta == null || lstDetalleOfertaLibros == null);
+            }
+
+            if (isError) {
+                JsfUtil.mensajeAlerta("Debe de agregar al menos un detalle a la oferta."
+                        + (isUtiles ? "\nDebe de agregar al menos un detalle a la oferta de libros" : ""));
                 return "";
             }
 
@@ -440,22 +449,40 @@ public class ParticipantesController implements Serializable {
                         //seleccionado con el objetivo de facilitar el ingreso de esta información
                         if (lstDetalleOferta.isEmpty()) {
                             for (PreciosRefRubroEmp preRefEmp : lstPreciosEmp) {
-                                DetalleOfertas det = new DetalleOfertas();
-                                det.setNoItem(preRefEmp.getNoItem());
-                                det.setIdNivelEducativo(preRefEmp.getIdNivelEducativo());
-                                det.setIdProducto(preRefEmp.getIdProducto());
-                                det.setConsolidadoEspTec(preRefEmp.getIdProducto().toString() + ", " + preRefEmp.getIdNivelEducativo().toString());
-                                det.setCantidad(BigInteger.ZERO);
-                                det.setPrecioUnitario(preRefEmp.getPrecioReferencia());
-                                det.setEstadoEliminacion(BigInteger.ZERO);
-                                det.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-                                det.setFechaInsercion(new Date());
-                                det.setModificativa(BigInteger.ZERO);
-                                det.setIdParticipante(current);
-
                                 if (preRefEmp.getIdProducto().getIdProducto().intValue() != 1) {
+                                    DetalleOfertas det = new DetalleOfertas();
+                                    det.setNoItem(preRefEmp.getNoItem());
+                                    det.setIdNivelEducativo(preRefEmp.getIdNivelEducativo());
+                                    det.setIdProducto(preRefEmp.getIdProducto());
+                                    det.setConsolidadoEspTec(preRefEmp.getIdProducto().toString() + ", " + preRefEmp.getIdNivelEducativo().toString());
+                                    det.setCantidad(BigInteger.ZERO);
+                                    det.setPrecioUnitario(preRefEmp.getPrecioReferencia());
+                                    det.setEstadoEliminacion(BigInteger.ZERO);
+                                    det.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+                                    det.setFechaInsercion(new Date());
+                                    det.setModificativa(BigInteger.ZERO);
+                                    det.setIdParticipante(current);
+
                                     lstDetalleOferta.add(det);
-                                } else {
+                                }
+                            }
+                        }
+                        if (lstDetalleOfertaLibros.isEmpty()) {
+                            for (PreciosRefRubroEmp preRefEmp : lstPreciosEmp) {
+                                if (preRefEmp.getIdProducto().getIdProducto().intValue() == 1) {
+                                    DetalleOfertas det = new DetalleOfertas();
+                                    det.setNoItem(preRefEmp.getNoItem());
+                                    det.setIdNivelEducativo(preRefEmp.getIdNivelEducativo());
+                                    det.setIdProducto(preRefEmp.getIdProducto());
+                                    det.setConsolidadoEspTec(preRefEmp.getIdProducto().toString() + ", " + preRefEmp.getIdNivelEducativo().toString());
+                                    det.setCantidad(BigInteger.ZERO);
+                                    det.setPrecioUnitario(preRefEmp.getPrecioReferencia());
+                                    det.setEstadoEliminacion(BigInteger.ZERO);
+                                    det.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+                                    det.setFechaInsercion(new Date());
+                                    det.setModificativa(BigInteger.ZERO);
+                                    det.setIdParticipante(current);
+
                                     lstDetalleOfertaLibros.add(det);
                                 }
                             }

@@ -49,7 +49,9 @@
                         <p:spacer width="10"/>
                         <h:outputText value="Datos"/>
                     </h1>
-                    <p:dataTable id="pnlDatos" value="#{reportesWebController.lstProveedoresHaciendaDto}" var="prov" rowIndexVar="rowId" sortBy="#{prov.nombreDepartamentoCe}">
+                    <p:dataTable id="pnlDatos" value="#{reportesWebController.lstProveedoresHaciendaDto}" var="prov" 
+                                 rowIndexVar="rowId" sortBy="#{prov.nombreDepartamentoCe}" 
+                                 scrollRows="20" scrollable="true" liveScroll="true" scrollHeight="150">>
 
                         <f:facet name="header">
                             <p:spacer width="10" height="8"/>
@@ -64,25 +66,25 @@
                         </f:facet>
 
 
-                        <p:column headerText="Id">
+                        <p:column headerText="Id" width="50">
                             <p:outputLabel value="#{rowId+1}"/>
                         </p:column>
-                        <p:column headerText="#{bundle['tabla.departamento']}">
+                        <p:column headerText="#{bundle['tabla.departamento']}" width="120">
                             <p:outputLabel value="#{prov.nombreDepartamentoCe}"/>
                         </p:column>
-                        <p:column headerText="#{bundle['tabla.codEnt']}">
+                        <p:column headerText="#{bundle['tabla.codEnt']}" width="40">
                             <p:outputLabel value="#{prov.codigoEntidad}"/>
                         </p:column>
-                        <p:column headerText="#{bundle['tabla.nit']}">
+                        <p:column headerText="#{bundle['tabla.nit']}" width="110">
                             <p:outputLabel value="#{prov.numeroNit}"/>
                         </p:column>
                         <p:column headerText="#{bundle['tabla.proveedor']}">
                             <p:outputLabel value="#{prov.razonSocial}"/>
                         </p:column>
-                        <p:column headerText="#{bundle['tabla.cantidad']}" styleClass="numero">
+                        <p:column headerText="#{bundle['tabla.cantidad']}" styleClass="numero" width="50">
                             <p:outputLabel value="#{prov.cantidadContrato}"/>
                         </p:column>
-                        <p:column headerText="#{bundle['tabla.monto']}" styleClass="numero">
+                        <p:column headerText="#{bundle['tabla.monto']}" styleClass="numero" width="50">
                             <h:outputText value="#{prov.montoContrato}">
                                 <f:convertNumber pattern="#,##0.00"/>
                             </h:outputText>

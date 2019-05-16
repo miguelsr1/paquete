@@ -302,7 +302,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\"SUMINISTRO DE ZAPATOS ESCOLARES "+$F{ANHO_CONTRATO}+
+				<textFieldExpression><![CDATA["\""+$P{descripcionRubro}+" "+$F{ANHO_CONTRATO}+
 "\"\nFUENTE DE FINANCIAMIENTO: GOES"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
@@ -332,9 +332,9 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 				<textFieldExpression><![CDATA["<style isBold='true' pdfFontName='Helvetica-Bold'>NOSOTROS,</style> "+$F{NOMBRE_MIEMBRO}+" actuando en nombre y representación del Organismo de Administración Escolar ".
 concat($F{INICIALES_MODALIDAD}).concat(" del ").concat($F{NOMBRE}).concat(" con código: ").concat($F{CODIGO_ENTIDAD}).concat(", Municipio "+$F{NOMBRE_MUNICIPIO}).
 concat(", Departamento "+$F{NOMBRE_DEPARTAMENTO}+", que en lo sucesivo en este instrumento se denominará <style isBold='true' pdfFontName='Helvetica-Bold'>\"El Contratante u Organismo\"</style>; y por otra parte ").
-concat($F{RAZON_SOCIAL}).concat(", No. de NIT: " + $F{NUMERO_NIT}+", que en lo sucesivo en este instrumento se denominará <style isBold='true' pdfFontName='Helvetica-Bold'>\"El Contratista\", CONVENIMOS</style> en celebrar el presente contrato de <style isBold='true' pdfFontName='Helvetica-Bold'>SUMINISTRO DE ZAPATOS ESCOLARES,</style> conforme a las cláusulas que a continuación se especifican. ").
+concat($F{RAZON_SOCIAL}).concat(", No. de NIT: " + $F{NUMERO_NIT}+", que en lo sucesivo en este instrumento se denominará <style isBold='true' pdfFontName='Helvetica-Bold'>\"El Contratista\", CONVENIMOS</style> en celebrar el presente contrato de <style isBold='true' pdfFontName='Helvetica-Bold'>"+$P{descripcionRubro}+",</style> conforme a las cláusulas que a continuación se especifican. ").
 concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA I: OBJETO DEL CONTRATO.</style> El Organismo requiere la adquisición de ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>\"SUMINISTRO DE ZAPATOS ESCOLARES " + $F{ANHO_CONTRATO} + "\"</style> para las entregas a los estudiantes del centro educativo que representa, correspondiente al Programa Paquetes Escolares. Para lo que el contratista declara ser proveedor acreditado por CONAMYPE, en el rubro requerido; razón por la que ambas partes suscriben el siguiente contrato.").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>\""+$P{descripcionRubro} + $F{ANHO_CONTRATO} + "\"</style> para las entregas a los estudiantes del centro educativo que representa, correspondiente al Programa Paquetes Escolares. Para lo que el contratista declara ser proveedor acreditado por CONAMYPE, en el rubro requerido; razón por la que ambas partes suscriben el siguiente contrato.").
 concat("<style isBold='true' pdfFontName='Helvetica-Bold'> CLÁUSULA II: PRECIO Y FORMA DE PAGO.</style> El precio total por la adquisiciones objeto del presente").
 concat(" contrato asciende a la suma de ").concat(Herramientas.aLetras($F{VALOR}).trim()).concat(" DOLARES DE LOS ESTADOS UNIDOS DE AMERICA. (US$ ").concat((new DecimalFormat("#,###.00").format($F{VALOR}))).concat(") IVA INCLUIDO; monto que será pagado por la Pagaduría Auxiliar Departamental o Pagaduría Adjunta de acuerdo al siguiente detalle:")]]></textFieldExpression>
 			</textField>

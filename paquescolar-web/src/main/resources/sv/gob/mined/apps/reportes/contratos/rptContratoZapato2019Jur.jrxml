@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="512" leftMargin="50" rightMargin="50" topMargin="36" bottomMargin="36" uuid="ef8b712b-d116-4f4b-aea0-28889f5df0a2">
 	<property name="ireport.zoom" value="1.464100000000001"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="53"/>
+	<property name="ireport.y" value="144"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -304,7 +304,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\"SUMINISTRO DE ZAPATOS ESCOLARES "+$F{ANHO_CONTRATO}+
+				<textFieldExpression><![CDATA["\""+$P{descripcionRubro}+" "+$F{ANHO_CONTRATO}+
 "\"\nFUENTE DE FINANCIAMIENTO: GOES"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
@@ -336,8 +336,8 @@ concat($F{INICIALES_MODALIDAD}).concat(" del ").concat($F{NOMBRE}).concat(" con 
 concat(", Departamento "+$F{NOMBRE_DEPARTAMENTO}).concat(", que en lo sucesivo en este instrumento se denominará <style isBold='true' pdfFontName='Helvetica-Bold'>\"El Contratante u Organismo\";</style> y por otra parte ").concat($F{NOMBRE_PRESENTANTE}).
 concat(" actuando en su calidad de Representante Legal de ").concat($F{RAZON_SOCIAL}).concat(", No. de NIT: "+$F{NUMERO_NIT}).
 concat(", que en lo sucesivo en este instrumento se denominará <style isBold='true' pdfFontName='Helvetica-Bold'>\"El Contratista\", CONVENIMOS</style> en celebrar el presente").
-concat(" contrato de <style isBold='true' pdfFontName='Helvetica-Bold'>SUMINISTRO DE ZAPATOS ESCOLARES,</style> conforme a las cláusulas que a continuación se especifican. ").
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA I: OBJETO DEL CONTRATO.</style> El Organismo requiere la adquisición de <style isBold='true' pdfFontName='Helvetica-Bold'>\"SUMINISTRO DE ZAPATOS ESCOLARES" + $F{ANHO_CONTRATO} + "\".</style> para las entregas a los estudiantes del centro educativo que representa, correspondiente al Programa Paquetes Escolares. Para lo que el contratista declara ser proveedor acreditado por CONAMYPE, en el rubro requerido; razón por la que ambas partes suscriben el siguiente contrato. ").
+concat(" contrato de <style isBold='true' pdfFontName='Helvetica-Bold'>"+$P{descripcionRubro}+",</style> conforme a las cláusulas que a continuación se especifican. ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA I: OBJETO DEL CONTRATO.</style> El Organismo requiere la adquisición de <style isBold='true' pdfFontName='Helvetica-Bold'>\""+$P{descripcionRubro} +" "+ $F{ANHO_CONTRATO} + "\".</style> para las entregas a los estudiantes del centro educativo que representa, correspondiente al Programa Paquetes Escolares. Para lo que el contratista declara ser proveedor acreditado por CONAMYPE, en el rubro requerido; razón por la que ambas partes suscriben el siguiente contrato. ").
 concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA II: PRECIO Y FORMA DE PAGO.</style> El precio total por la adquisiciones objeto del presente").
 concat(" contrato asciende a la suma de ").concat(Herramientas.aLetras($F{VALOR}).trim()).concat(" DOLARES DE LOS ESTADOS").
 concat(" UNIDOS DE AMERICA. (US$ ").concat((new DecimalFormat("#,###.00").format($F{VALOR}))).concat(") IVA INCLUIDO; así mismo a dicho precio se le harán las retenciones de ley ").

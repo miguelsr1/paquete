@@ -89,6 +89,7 @@ public class ModificativaEJB {
         }
 
         try {
+            Logger.getLogger(ModificativaEJB.class.getName()).log(Level.INFO, "SELECT * FROM VW_BUSQUEDA_CONTRATO WHERE {0}", where);
             Query q = em.createNativeQuery("SELECT * FROM VW_BUSQUEDA_CONTRATO WHERE " + where);
             if (fecha1 != null && fecha2 == null) {
                 q.setParameter(1, fecha1);

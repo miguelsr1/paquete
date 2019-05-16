@@ -93,8 +93,8 @@ public class ReportesWebController extends RecuperarProceso implements Serializa
     }
     
     public void resumenContratacionesXls(Object document) {
-        int[] numEnt = {0, 4};
-        int[] numDec = {5};
+        int[] numEnt = {0, 14};
+        int[] numDec = {15};
         RptExcel.generarRptExcelGenerico((HSSFWorkbook) document, numEnt, numDec);
     }
 }

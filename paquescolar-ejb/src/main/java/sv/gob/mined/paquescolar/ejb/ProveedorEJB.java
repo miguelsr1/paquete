@@ -81,17 +81,43 @@ public class ProveedorEJB {
         }
     }
 
-    public List<DetalleRequerimiento> getLstDetalleReqByCodEntidadAndProceso(String codigoEntidad, ProcesoAdquisicion procesoAdq, String codigoDepartamento) {
-        Query q;
-        if (codigoDepartamento != null) {
-            q = em.createQuery("SELECT d FROM DetalleRequerimiento d WHERE d.codigoEntidad=:codigoEntidad AND d.idRequerimiento.idDetProcesoAdq.idProcesoAdq=:idProcesoAdq and d.idRequerimiento.codigoDepartamento=:codDepa and d.idRequerimiento.estadoEliminacion = 0 ORDER BY d.idRequerimiento.idDetProcesoAdq, d.idRequerimiento.numeroRequerimiento", DetalleRequerimiento.class);
-            q.setParameter("codDepa", codigoDepartamento);
+    public List<DetalleRequerimiento> getLstDetalleReqByCodEntidadAndProceso(String codigoEntidad,
+            ProcesoAdquisicion procesoAdq,
+            String codigoDepartamento,
+            String formatoRequerimiento) {
+
+        String jpql = "SELECT d FROM DetalleRequerimiento d WHERE ";
+        if (formatoRequerimiento != null && codigoEntidad != null) {
+            jpql += "d.codigoEntidad=:codigoEntidad AND d.idRequerimiento.formatoRequerimiento=:formatoReq ";
+        } else if (formatoRequerimiento == null && codigoEntidad != null) {
+            jpql += "d.codigoEntidad=:codigoEntidad ";
         } else {
-            q = em.createQuery("SELECT d FROM DetalleRequerimiento d WHERE d.codigoEntidad=:codigoEntidad AND d.idRequerimiento.idDetProcesoAdq.idProcesoAdq=:idProcesoAdq and d.idRequerimiento.estadoEliminacion = 0 ORDER BY d.idRequerimiento.idDetProcesoAdq, d.idRequerimiento.numeroRequerimiento", DetalleRequerimiento.class);
+            jpql += "d.idRequerimiento.formatoRequerimiento=:formatoReq ";
         }
 
-        q.setParameter("codigoEntidad", codigoEntidad);
+        jpql += "and d.idRequerimiento.idDetProcesoAdq.idProcesoAdq=:idProcesoAdq ";
+
+        if (codigoDepartamento != null) {
+            jpql += "and d.idRequerimiento.codigoDepartamento=:codDepa ";
+        }
+
+        Query q = em.createQuery(jpql, DetalleRequerimiento.class);
+
+        if (formatoRequerimiento != null && codigoEntidad != null) {
+            q.setParameter("formatoReq", formatoRequerimiento);
+            q.setParameter("codigoEntidad", codigoEntidad);
+        } else if (formatoRequerimiento == null && codigoEntidad != null) {
+            q.setParameter("codigoEntidad", codigoEntidad);
+        } else {
+            q.setParameter("formatoReq", formatoRequerimiento);
+        }
+
+        if (codigoDepartamento != null) {
+            q.setParameter("codDepa", codigoDepartamento);
+        }
+
         q.setParameter("idProcesoAdq", procesoAdq);
+
         return q.getResultList();
     }
 
@@ -362,16 +388,16 @@ public class ProveedorEJB {
             query.setParameter("capaCalificada", capaInstPorRubro.getCapacidadAcreditada());
             query.setParameter("idEmpresa", capaInstPorRubro.getIdMuestraInteres().getIdEmpresa().getIdEmpresa());
             query.setParameter("idAnho", capaInstPorRubro.getIdMuestraInteres().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
-            
+
             query.executeUpdate();
-            
+
             query = em.createQuery("UPDATE CapaDistribucionAcre c SET c.codigoDepartamento = :codigoDepartamento WHERE c.idMuestraInteres.idEmpresa.idEmpresa = :idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idAnho.idAnho = :idAnho ");
             query.setParameter("codigoDepartamento", capaDistribucionAcre.getCodigoDepartamento());
             query.setParameter("idEmpresa", capaInstPorRubro.getIdMuestraInteres().getIdEmpresa().getIdEmpresa());
             query.setParameter("idAnho", capaInstPorRubro.getIdMuestraInteres().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
-            
+
             query.executeUpdate();
-            
+
             return true;
         } catch (Exception e) {
             Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, null, e);
@@ -839,9 +865,19 @@ public class ProveedorEJB {
     }
 
     public RequerimientoFondos getRequerimientoByNumero(String numeroRequerimiento, String codigoDepartamento, Integer idProcesoAdq) {
-        Query q = em.createQuery("SELECT r FROM RequerimientoFondos r WHERE r.idDetProcesoAdq.idProcesoAdq.idProcesoAdq =:id and r.codigoDepartamento=:codDep and r.formatoRequerimiento=:numReq and r.estadoEliminacion = 0 ORDER BY r.idRequerimiento ASC", RequerimientoFondos.class);
+        String sql = "SELECT r FROM RequerimientoFondos r WHERE r.idDetProcesoAdq.idProcesoAdq.idProcesoAdq =:id %s and r.formatoRequerimiento=:numReq and r.estadoEliminacion = 0 ORDER BY r.idRequerimiento ASC";
+
+        if (codigoDepartamento == null) {
+            sql = String.format(sql, "");
+        } else {
+            sql = String.format(sql, "and r.codigoDepartamento=:codDep");
+        }
+
+        Query q = em.createQuery(sql, RequerimientoFondos.class);
         q.setParameter("id", idProcesoAdq);
-        q.setParameter("codDep", codigoDepartamento);
+        if (codigoDepartamento != null) {
+            q.setParameter("codDep", codigoDepartamento);
+        }
         q.setParameter("numReq", numeroRequerimiento);
         return q.getResultList().isEmpty() ? null : (RequerimientoFondos) q.getSingleResult();
     }
@@ -937,7 +973,13 @@ public class ProveedorEJB {
 
     public List<VwRptProveedoresContratadosDto> getLstResumenContratacionByProcesoAndDepartamento(Integer idDetProceso, String codigoDepartamento) {
         try {
-            Query q = em.createNamedQuery("Ejecucion.ResumenContratacionesByProcesoAndDepa", VwRptProveedoresContratadosDto.class);
+            Query q;
+            if (codigoDepartamento.equals("00")) {
+                q = em.createNativeQuery(Constantes.QUERY_CONTRATACION_RESUMEN_CONTRATACIONES, VwRptProveedoresContratadosDto.class);
+            } else {
+                q = em.createNamedQuery("Ejecucion.ResumenContratacionesByProcesoAndDepa", VwRptProveedoresContratadosDto.class);
+            }
+
             q.setParameter(1, idDetProceso);
             q.setParameter(2, codigoDepartamento);
             return q.getResultList();

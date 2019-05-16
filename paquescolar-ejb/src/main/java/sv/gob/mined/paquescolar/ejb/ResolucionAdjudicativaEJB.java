@@ -717,7 +717,7 @@ public class ResolucionAdjudicativaEJB {
     }
 
     public void enviarCorreoDeError(BigDecimal idResolucionAdj) {
-        eMailEJB.enviarMailDeError("Contratos Múltiple", "miguel.sanchez@mined.gob.sv", "Duplicidad de contratos para idResolucionAdj: " + idResolucionAdj);
+        eMailEJB.enviarMailDeError("Contratos Múltiple", "Duplicidad de contratos para idResolucionAdj: " + idResolucionAdj, null);
     }
 
     private void removerDatosResumen(ResolucionesAdjudicativas resAdj) {
