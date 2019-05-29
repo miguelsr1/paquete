@@ -263,8 +263,7 @@ public class ParticipantesController implements Serializable {
         try {
             isUtiles = (detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 2);
             if (isUtiles) {
-                isError = !(lstDetalleOferta.isEmpty()
-                        || (lstDetalleOfertaLibros.isEmpty()));
+                isError = lstDetalleOferta.isEmpty() && lstDetalleOfertaLibros.isEmpty();
             } else {
                 isError = (lstDetalleOferta == null || lstDetalleOfertaLibros == null);
             }

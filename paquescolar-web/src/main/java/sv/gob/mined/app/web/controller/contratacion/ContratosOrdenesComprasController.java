@@ -603,7 +603,12 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                 current.setPlazoPrevistoEntrega(new BigInteger("60"));
                 break;
             case 2:
+                if(detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")){
+                    current.setPlazoPrevistoEntrega(new BigInteger("15"));
+                    
+                }else{
                 current.setPlazoPrevistoEntrega(new BigInteger("30"));
+                }
                 break;
             case 3:
                 current.setPlazoPrevistoEntrega(new BigInteger("60"));
@@ -640,12 +645,20 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                 case 0://JRBeanColletions
                     switch (rptDoc.getIdTipoRpt().getIdTipoRpt()) {
                         case 3://Acta Adjudicacion
+                            if(detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")){
+                                param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
+                            }
+                            
                             param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES + "notasactas") + File.separator);
                             rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptActaAdjudicacion(current.getIdResolucionAdj().getIdResolucionAdj()));
 
                             lstRptAImprimir.add(rptTemp);
                             break;
                         case 4://Nota Adjudicacion
+                            if(detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")){
+                                param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
+                            }
+                            
                             param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES + "notasactas") + File.separator);
                             rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptNotaAdjudicacion(current.getIdResolucionAdj().getIdResolucionAdj()));
 
@@ -654,9 +667,17 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                             break;
                         case 5://Garantia Cumplimiento
                         case 6://Garantia Uso Tela
+                            if(detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")){
+                                param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
+                            }
+                            
                             lstRptAImprimir.add(reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptGarantia(current.getIdResolucionAdj().getIdResolucionAdj(), current.getIdContrato())));
                             break;
                         case 7://Contrato
+                            if(detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")){
+                                param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
+                            }
+                            
                             param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES + "contratos") + File.separator);
                             param.put("idContrato", current.getIdContrato());
                             param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
@@ -724,6 +745,9 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                                 } else {
                                     param.put("P_FECHA_INICIO", "SIN DEFINIR");
                                 }
+                            }
+                            if(detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")){
+                                param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
                             }
                             nombreRpt = rptDoc.getNombreRpt().concat(perNatural ? "Nat" : "Jur");
                             rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(nombreRpt + ".jasper"));
