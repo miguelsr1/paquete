@@ -23,42 +23,50 @@
             <div class="login-panel ui-fluid">
                 <div class="ui-g">
                     <div class="ui-g-12 logo-container">
-                        <p:graphicImage name="logo_mined_rpt.png" library="images" width="180" height="112" />
-                        <p:outputLabel value="Sistema de Paquetes Escolares" style="float: right; font-size: 25px; width: 230px; padding-top: 15px;  text-align: right;"/>
-                    </div>
-                    <div class="ui-g-12">
-                        <p:outputLabel for="username" value="Usuario" />
-                        <div class="input-wrapper">
-                            <p:inputText id="username" styleClass="textMayuscula" onkeyup="return cUpper(this);" placeholder="USUARIO" value="#{loginController.usuario}"/>
-                            <i class="fa fa-user" />
+                        <div class="ui-g-5" style="margin-top: 100px; margin-left: 20px;">
+                            <p:graphicImage name="logo_mined_rpt.png" library="images" />
+                        </div>
+
+                        <div class="ui-g-1">
+                        </div>
+                        <div class="ui-g-6">
+                            <div class="ui-g-12">
+                                <p:outputLabel value="Sistema de Paquetes Escolares" style="font-size: 25px; padding-top: 25px; "/>
+                            </div>
+                            <div class="ui-g-12">
+                                <p:outputLabel for="username" value="Usuario" />
+                                <div class="input-wrapper">
+                                    <p:inputText id="username" styleClass="textMayuscula" onkeyup="return cUpper(this);" placeholder="USUARIO" value="#{loginController.usuario}"/>
+                                    <i class="fa fa-user" />
+                                </div>
+                            </div>
+                            <div class="ui-g-12">
+                                <p:outputLabel for="password" value="Clave de acceso" />
+                                <div class="input-wrapper">
+                                    <p:password id="password" placeholder="CLAVE DE ACCESO" feedback="false" value="#{loginController.clave}" />
+                                    <i class="fa fa-lock" />
+                                </div>
+                            </div>
+                            <div class="ui-g-12 button-container">
+                                <p:commandButton id="btnIngresar" value="Ingresar" styleClass="blue-btn raised-btn" action="#{loginController.isUsuarioValido}"/>
+
+                                <p:blockUI block="btnIngresar" trigger="btnIngresar"  />
+                                <p:ajaxStatus>
+                                    <f:facet name="default">
+                                    </f:facet>
+
+                                    <f:facet name="start">
+                                        Espere por favor <i class="fa fa-spinner fa-spin" style="font-size: 20px;"></i>
+                                    </f:facet>
+
+                                    <f:facet name="complete">
+                                        <h:outputText value="" />
+                                    </f:facet>
+                                </p:ajaxStatus>
+                            </div>
                         </div>
                     </div>
-                    <div class="ui-g-12">
-                        <p:outputLabel for="password" value="Clave de acceso" />
-                        <div class="input-wrapper">
-                            <p:password id="password" placeholder="CLAVE DE ACCESO" feedback="false" value="#{loginController.clave}" />
-                            <i class="fa fa-lock" />
-                        </div>
-                    </div>
-                    <div class="ui-g-12 button-container">
-                        <p:commandButton id="btnIngresar" value="Ingresar" styleClass="blue-btn raised-btn" action="#{loginController.isUsuarioValido}"/>
-                        
-                        <p:blockUI block="btnIngresar" trigger="btnIngresar"  />
-                        
-                        <p:ajaxStatus style="width:400px;height:16px;text-align: center;">
-                            <f:facet name="default">
 
-                            </f:facet>
-
-                            <f:facet name="start">
-                                Espere por favor <i class="fa fa-spinner fa-spin" style="font-size: 20px;"></i>
-                            </f:facet>
-
-                            <f:facet name="complete">
-                                <h:outputText value="" />
-                            </f:facet>
-                        </p:ajaxStatus>
-                    </div>
 
                     <div class="ui-g-12">
                         <p:outputLabel value="versión #{catalogosGeneralesController.version}" style="font-size: 10px;text-align: center;"/>
