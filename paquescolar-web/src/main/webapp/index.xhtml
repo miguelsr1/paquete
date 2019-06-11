@@ -20,28 +20,26 @@
             <p:growl id="growl" showDetail="true" escape="false">
                 <p:autoUpdate />
             </p:growl>
-            <div class="login-panel ui-fluid">
+            <div class="login-panel ui-fluid" style="background-color: #1d1d4c;">
                 <div class="ui-g">
-                    <div class="ui-g-12 logo-container">
-                        <div class="ui-g-5" style="margin-top: 100px; margin-left: 20px;">
-                            <p:graphicImage name="logo_mined_rpt.png" library="images" />
+                    <div class="ui-g-12">
+                        <div class="ui-g-6" style="margin-top: 70px; background-color: #1d1d4c;">
+                            <p:graphicImage name="logo_login.png" library="images" width="380" />
                         </div>
 
-                        <div class="ui-g-1">
-                        </div>
-                        <div class="ui-g-6">
+                        <div class="ui-g-6" style="background-color: #ffffff; border-radius: 2%;">
                             <div class="ui-g-12">
-                                <p:outputLabel value="Sistema de Paquetes Escolares" style="font-size: 25px; padding-top: 25px; "/>
+                                <p:outputLabel value="Sistema de Paquetes Escolares" style="font-size: 30px; padding-top: 25px; font-family: 'Bembo Std' !important"/>
                             </div>
                             <div class="ui-g-12">
-                                <p:outputLabel for="username" value="Usuario" />
+                                <p:outputLabel for="username" value="Usuario" style="font-size: 18px; font-family: 'Bembo Std' !important"/>
                                 <div class="input-wrapper">
                                     <p:inputText id="username" styleClass="textMayuscula" onkeyup="return cUpper(this);" placeholder="USUARIO" value="#{loginController.usuario}"/>
                                     <i class="fa fa-user" />
                                 </div>
                             </div>
                             <div class="ui-g-12">
-                                <p:outputLabel for="password" value="Clave de acceso" />
+                                <p:outputLabel for="password" value="Clave de acceso" style="font-size: 18px; font-family: Bembo Std !important" />
                                 <div class="input-wrapper">
                                     <p:password id="password" placeholder="CLAVE DE ACCESO" feedback="false" value="#{loginController.clave}" />
                                     <i class="fa fa-lock" />
@@ -49,28 +47,31 @@
                             </div>
                             <div class="ui-g-12 button-container">
                                 <p:commandButton id="btnIngresar" value="Ingresar" styleClass="blue-btn raised-btn" action="#{loginController.isUsuarioValido}"/>
-
                                 <p:blockUI block="btnIngresar" trigger="btnIngresar"  />
-                                <p:ajaxStatus>
-                                    <f:facet name="default">
-                                    </f:facet>
+                            </div>
+                            <div class="ui-g-12">
+                                <div class="ui-g-4" style="height: 50px;">
+                                    <h:outputText value="versión #{catalogosGeneralesController.version}" style="font-size: 14px; font-family: 'Bembo Std'"/>
+                                </div>
+                                <div class="ui-g-8" style="text-align: right;">
+                                    <p:ajaxStatus>
+                                        <f:facet name="default">
+                                        </f:facet>
 
-                                    <f:facet name="start">
-                                        Espere por favor <i class="fa fa-spinner fa-spin" style="font-size: 20px;"></i>
-                                    </f:facet>
+                                        <f:facet name="start">
+                                            <h:outputText value="Espere por favor" style="font-size: 14px; font-family: 'Bembo Std'" />
+                                            <i class="fa fa-spinner fa-spin" style="font-size: 20px;"></i>
+                                        </f:facet>
 
-                                    <f:facet name="complete">
-                                        <h:outputText value="" />
-                                    </f:facet>
-                                </p:ajaxStatus>
+                                        <f:facet name="complete">
+                                            <h:outputText value="" />
+                                        </f:facet>
+                                    </p:ajaxStatus>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-
-                    <div class="ui-g-12">
-                        <p:outputLabel value="versión #{catalogosGeneralesController.version}" style="font-size: 10px;text-align: center;"/>
-                    </div>
 
                     <h:outputStylesheet name="css/layout-blue.css" library="paradise-layout" />
                     <h:outputStylesheet name="css/personalizadas.css" library="paradise-layout" />

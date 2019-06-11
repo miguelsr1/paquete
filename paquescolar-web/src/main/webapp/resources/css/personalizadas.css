@@ -168,7 +168,8 @@ body .ui-inputfield {
     clear : none;
     text-align: center;
     height: 82px;
-    padding-top: 10px;
+    padding-top: 6px;
+    margin-left: 70px;
 }
 
 #ajax_gif{

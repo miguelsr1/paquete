@@ -95,6 +95,10 @@
         <extension>eot</extension>
         <mime-type>application/vnd.ms-fontobject</mime-type>
     </mime-mapping>
+     <mime-mapping>  
+        <extension>otf</extension>  
+        <mime-type>application/x-font-opentype</mime-type>  
+</mime-mapping> 
     <mime-mapping>
         <extension>eot?#iefix</extension>
         <mime-type>application/vnd.ms-fontobject</mime-type>

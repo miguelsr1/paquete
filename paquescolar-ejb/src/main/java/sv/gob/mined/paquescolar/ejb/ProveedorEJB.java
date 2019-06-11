@@ -49,6 +49,7 @@ import sv.gob.mined.paquescolar.model.TipoPersoneria;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.DetalleAdjudicacionEmpDto;
 import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleContratacionPorItemDto;
 import sv.gob.mined.paquescolar.model.view.DatosPreliminarRequerimiento;
 import sv.gob.mined.paquescolar.util.Constantes;
 
@@ -1176,5 +1177,11 @@ public class ProveedorEJB {
         Query q = em.createQuery("SELECT e FROM EntidadFinanciera e WHERE e.nombreEntFinan=:nombre", EntidadFinanciera.class);
         q.setParameter("nombre", nombre);
         return (EntidadFinanciera) q.getSingleResult();
+    }
+
+    public List<DetalleContratacionPorItemDto> getLstDetalleContratacionPorItem(Integer idDetalleProcesoAdq) {
+        Query q = em.createNamedQuery("Contratacion.DetalleContratacionPorItemDto", DetalleContratacionPorItemDto.class);
+        q.setParameter(1, idDetalleProcesoAdq);
+        return q.getResultList();
     }
 }

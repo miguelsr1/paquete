@@ -343,4 +343,121 @@
             ]]>
         </query>
     </named-native-query>
+    <named-native-query name="Contratacion.DetalleContratacionPorItemDto" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleContratacionPorItemDto">
+        <query>
+            <![CDATA[
+            select 
+                id_contrato         as idContrato,
+                codigo_entidad      as codigoEntidad,
+                nombre              as nombre,
+                codigo_departamento as codigoDepartamento,
+                nombre_departamento as nombreDepartamento,
+                codigo_municipio    as codigoMunicipio,
+                nombre_municipio    as nombreMunicipio,
+                sum(cantidad)       as cantidadContratada,
+                sum(monto)          as montoContratado,
+                numero_nit          as numeroNit,
+                razon_social        as razonSocial,
+                sum(item_1)         as item1,
+                sum(item_2)         as item2,
+                sum(item_3)         as item3,
+                sum(item_4)         as item4,
+                sum(item_5)         as item5,
+                sum(item_6)         as item6,
+                sum(item_7)         as item7,
+                sum(item_8)         as item8,
+                sum(item_9)         as item9,
+                sum(item_10)        as item10,
+                sum(item_11)        as item11,
+                sum(item_12)        as item12,
+                sum(item_13)        as item13,
+                sum(item_2_1)       as item21,
+                sum(item_2_2)       as item22,
+                sum(item_2_3)       as item23,
+                sum(item_3_1)       as item31,
+                sum(item_3_2)       as item32,
+                sum(item_3_3)       as item33,
+                sum(item_4_1)       as item41,
+                sum(item_4_2)       as item42,
+                sum(item_4_3)       as item43,
+                sum(item_5_1)       as item51,
+                sum(item_5_2)       as item52
+            from 
+                (select 
+                    con.id_contrato,
+                    OFE.CODIGO_ENTIDAD,
+                    VW.NOMBRE,
+                    DEP.codigo_DEPARTAMENTO,
+                    DEP.NOMBRE_DEPARTAMENTO,
+                    MUN.codigo_MUNICIPIO,
+                    MUN.NOMBRE_MUNICIPIO,
+                    case when det.id_producto not in (1)  then det.cantidad else 0 end cantidad,
+                    case when det.id_producto not in (1)  then det.cantidad*DET.PRECIO_UNITARIO else 0 end monto,
+                    EMP.NUMERO_NIT,
+                    EMP.RAZON_SOCIAL,
+                    case to_number(det.no_item) when 1 then (case when det.id_producto in (54) and det.id_nivel_educativo in (1) then det.cantidad when det.id_producto in (21) and det.id_nivel_educativo in (1) then det.cantidad when det.id_producto in (30) and det.id_nivel_educativo in (1) then det.cantidad else 0 end) else 0 end item_1,
+                    case to_number(det.no_item) when 2 then (case when det.id_producto in (54) and det.id_nivel_educativo in (3) then det.cantidad when det.id_producto in (43) and det.id_nivel_educativo in (1) then det.cantidad when det.id_producto in (44) and det.id_nivel_educativo in (1) then det.cantidad else 0 end) else 0 end item_2,
+                    case to_number(det.no_item) when 3 then (case when det.id_producto in (54) and det.id_nivel_educativo in (4) then det.cantidad when det.id_producto in (21) and det.id_nivel_educativo in (3) then det.cantidad when det.id_producto in (29) and det.id_nivel_educativo in (1) then det.cantidad else 0 end) else 0 end item_3,
+                    case to_number(det.no_item) when 4 then (case when det.id_producto in (54) and det.id_nivel_educativo in (5) then det.cantidad when det.id_producto in (43) and det.id_nivel_educativo in (3) then det.cantidad when det.id_producto in (31) and det.id_nivel_educativo in (1) then det.cantidad else 0 end) else 0 end item_4,
+                    case to_number(det.no_item) when 5 then (case when det.id_producto in (54) and det.id_nivel_educativo in (6) then det.cantidad when det.id_producto in (21) and det.id_nivel_educativo in (4) then det.cantidad when det.id_producto in (34) and det.id_nivel_educativo in (1) then det.cantidad else 0 end) else 0 end item_5,
+                    case to_number(det.no_item) when 6 then (case when det.id_producto in (43) and det.id_nivel_educativo in (4) then det.cantidad when det.id_producto in (30) and det.id_nivel_educativo in (2) then det.cantidad else 0 end) else 0 end item_6,
+                    case to_number(det.no_item) when 7 then (case when det.id_producto in (21) and det.id_nivel_educativo in (5) then det.cantidad when det.id_producto in (44) and det.id_nivel_educativo in (2) then det.cantidad else 0 end) else 0 end item_7,
+                    case to_number(det.no_item) when 8 then (case when det.id_producto in (43) and det.id_nivel_educativo in (5) then det.cantidad when det.id_producto in (29) and det.id_nivel_educativo in (2) then det.cantidad else 0 end) else 0 end item_8,
+                    case to_number(det.no_item) when 9 then (case when det.id_producto in (21) and det.id_nivel_educativo in (6) then det.cantidad when det.id_producto in (34) and det.id_nivel_educativo in (2) then det.cantidad else 0 end) else 0 end item_9,
+                    case to_number(det.no_item) when 10 then (case when det.id_producto in (43) and det.id_nivel_educativo in (6) then det.cantidad when det.id_producto in (30) and det.id_nivel_educativo in (6) then det.cantidad else 0 end) else 0 end item_10,
+                    case to_number(det.no_item) when 11 then (case when det.id_producto in (44) and det.id_nivel_educativo in (6) then det.cantidad else 0 end) else 0 end item_11,
+                    case to_number(det.no_item) when 12 then (case when det.id_producto in (29) and det.id_nivel_educativo in (6) then det.cantidad else 0 end) else 0 end item_12,
+                    case to_number(det.no_item) when 13 then (case when det.id_producto in (34) and det.id_nivel_educativo in (6) then det.cantidad else 0 end) else 0 end item_13,
+                    case to_number(det.no_item) when 2.1 then (case when det.id_producto in (1) and det.id_nivel_educativo in (10) then det.cantidad else 0 end) else 0 end item_2_1,
+                    case to_number(det.no_item) when 2.2 then (case when det.id_producto in (1) and det.id_nivel_educativo in (11) then det.cantidad else 0 end) else 0 end item_2_2,
+                    case to_number(det.no_item) when 2.3 then (case when det.id_producto in (1) and det.id_nivel_educativo in (12) then det.cantidad else 0 end) else 0 end item_2_3,
+                    case to_number(det.no_item) when 3.1 then (case when det.id_producto in (1) and det.id_nivel_educativo in (13) then det.cantidad else 0 end) else 0 end item_3_1,
+                    case to_number(det.no_item) when 3.2 then (case when det.id_producto in (1) and det.id_nivel_educativo in (14) then det.cantidad else 0 end) else 0 end item_3_2,
+                    case to_number(det.no_item) when 3.3 then (case when det.id_producto in (1) and det.id_nivel_educativo in (15) then det.cantidad else 0 end) else 0 end item_3_3,
+                    case to_number(det.no_item) when 4.1 then (case when det.id_producto in (1) and det.id_nivel_educativo in (7) then det.cantidad else 0 end) else 0 end item_4_1,
+                    case to_number(det.no_item) when 4.2 then (case when det.id_producto in (1) and det.id_nivel_educativo in (8) then det.cantidad else 0 end) else 0 end item_4_2,
+                    case to_number(det.no_item) when 4.3 then (case when det.id_producto in (1) and det.id_nivel_educativo in (9) then det.cantidad else 0 end) else 0 end item_4_3,
+                    case to_number(det.no_item) when 5.1 then (case when det.id_producto in (1) and det.id_nivel_educativo in (16) then det.cantidad else 0 end) else 0 end item_5_1,
+                    case to_number(det.no_item) when 5.2 then (case when det.id_producto in (1) and det.id_nivel_educativo in (17) then det.cantidad else 0 end) else 0 end item_5_2
+                from 
+                    CONTRATOS_ORDENES_COMPRAS con
+                    inner join RESOLUCIONES_ADJUDICATIVAS res   on res.id_resolucion_adj = con.ID_RESOLUCION_ADJ
+                    inner join PARTICIPANTES par                on res.id_participante = PAR.ID_PARTICIPANTE
+                    inner join empresa emp                      on par.id_empresa = EMP.ID_EMPRESA
+                    inner join DETALLE_OFERTAS det              on par.id_participante = DET.ID_PARTICIPANTE
+                    inner join NIVEL_EDUCATIVO niv              on niv.id_nivel_educativo = DET.ID_NIVEL_EDUCATIVO
+                    inner join CATALOGO_PRODUCTO cat            on det.id_producto = CAT.ID_PRODUCTO
+                    inner join OFERTA_BIENES_SERVICIOS ofe      on par.id_oferta = OFE.ID_OFERTA
+                    inner join detalle_proceso_adq dpa          on ofe.id_det_proceso_adq = dpa.id_det_proceso_adq
+                    inner join proceso_adquisicion pa           on pa.id_proceso_adq = dpa.id_proceso_adq
+                    inner join VW_CATALOGO_ENTIDAD_EDUCATIVA vw on vw.codigo_entidad = OFE.CODIGO_ENTIDAD
+                    inner join departamento dep                 on vw.codigo_departamento = DEP.CODIGO_DEPARTAMENTO
+                    inner join municipio mun                    on vw.codigo_municipio = MUN.CODIGO_MUNICIPIO
+                                                                and mun.codigo_departamento = DEP.CODIGO_DEPARTAMENTO
+                where 
+                    con.ESTADO_ELIMINACION = 0 and
+                    res.ESTADO_ELIMINACION  = 0 and
+                    RES.ID_ESTADO_RESERVA = 2 and
+                    PAR.ESTADO_ELIMINACION = 0 and
+                    DET.ESTADO_ELIMINACION = 0 and
+                    ofe.estado_eliminacion = 0 and
+                    OFE.ID_DET_PROCESO_ADQ = ?1)
+            group by 
+                id_contrato,
+                codigo_entidad,
+                nombre,
+                codigo_departamento,
+                nombre_departamento,
+                codigo_municipio,
+                nombre_municipio,
+                numero_nit,
+                razon_social
+            order by 
+                codigo_departamento,
+                codigo_municipio,
+                codigo_entidad
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>

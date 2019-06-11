@@ -13,11 +13,13 @@ import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProceso;
 import sv.gob.mined.app.web.util.RptExcel;
 import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleContratacionPorItemDto;
 
 /**
  *
@@ -72,8 +74,8 @@ public class ReportesWebController extends RecuperarProceso implements Serializa
             montoTotal = montoTotal.add((vwRptProveedoresHaciendaDto.getMontoContrato()));
         }
     }
-    
-    public void generarRptResumenContrataciones(){
+
+    public void generarRptResumenContrataciones() {
         montoTotal = BigDecimal.ZERO;
         cantidadTotal = BigDecimal.ZERO;
         idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
@@ -91,10 +93,23 @@ public class ReportesWebController extends RecuperarProceso implements Serializa
     public BigDecimal getCantidadTotal() {
         return cantidadTotal;
     }
-    
+
     public void resumenContratacionesXls(Object document) {
         int[] numEnt = {0, 14};
         int[] numDec = {15};
         RptExcel.generarRptExcelGenerico((HSSFWorkbook) document, numEnt, numDec);
+    }
+
+    public void generarReporte() {
+        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        List<DetalleContratacionPorItemDto> lst = proveedorEJB.getLstDetalleContratacionPorItem(idDetProceso);
+
+        if (codigoDepartamento != null) {
+            if (!lst.isEmpty()) {
+
+            } else {
+                JsfUtil.mensajeInformacion("No se encontraron registros.");
+            }
+        }
     }
 }

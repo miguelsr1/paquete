@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptContratoPersonaNaturalUtiles" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="7dab6810-11a0-4fbc-b522-9ce09f52dce4">
 	<property name="ireport.zoom" value="2.1435888100000025"/>
-	<property name="ireport.x" value="10"/>
+	<property name="ireport.x" value="413"/>
 	<property name="ireport.y" value="0"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -180,14 +180,14 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo.jpg"]]></imageExpression>
 				</image>
 				<image onErrorType="Icon">
-					<reportElement uuid="2fe36ff2-9703-4797-841b-c9366121cc68" key="image-2" x="421" y="4" width="90" height="57"/>
+					<reportElement uuid="2fe36ff2-9703-4797-841b-c9366121cc68" key="image-2" x="408" y="4" width="90" height="57"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"logo.jpg"]]></imageExpression>
+					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"logo_mined_rpt.png"]]></imageExpression>
 				</image>
 				<textField isBlankWhenNull="false">
 					<reportElement uuid="b8e02fbd-dc6f-4f84-96ff-02f4d4e7a2d9" key="textField-7" x="100" y="8" width="308" height="40"/>
