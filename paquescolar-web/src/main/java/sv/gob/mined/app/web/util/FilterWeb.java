@@ -61,7 +61,11 @@ public class FilterWeb implements Filter {
         try {
             String user = (String) session.getAttribute("Usuario");
             if (user != null) {
-                chain.doFilter(request, response);
+                try {
+                    chain.doFilter(request, response);
+                } catch (Exception e) {
+                    
+                }
             } else {
                 session.setAttribute("msg", "Error Autenticacion");
                 session.setAttribute("errorPag", req.getRequestURI());
@@ -177,7 +181,7 @@ public class FilterWeb implements Filter {
         filterConfig.getServletContext().log(msg);
     }
 
-   /* public Boolean verificarOpcion(String user, String urlPag) throws NamingException {
+    /* public Boolean verificarOpcion(String user, String urlPag) throws NamingException {
         Boolean autorizado = false;
         String query = "SELECT OPCION_MENU.NOMBRE_PANEL,PERSONA.USUARIO FROM OPCION_MENU "
                 + "INNER JOIN USUARIO_OPC_MENU ON OPCION_MENU.ID_OPC_MENU = USUARIO_OPC_MENU.ID_OPC_MENU "
@@ -188,11 +192,10 @@ public class FilterWeb implements Filter {
          PreparedStatement pstm = null;
          Context ctx = new InitialContext();
          Connection conn = null;*/
-        //EntityManager em = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
-
-        //DataSource origendatos = (DataSource) ctx.lookup(recurso);
-        //try {
-            /*synchronized (origendatos) {
+    //EntityManager em = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
+    //DataSource origendatos = (DataSource) ctx.lookup(recurso);
+    //try {
+    /*synchronized (origendatos) {
              conn = origendatos.getConnection();
              }
              if (conn != null) {
@@ -206,7 +209,7 @@ public class FilterWeb implements Filter {
              } else {
              System.out.println("Error al obtener la conexion");
              }*/
-           /* Query q = em.createNativeQuery(query);
+ /* Query q = em.createNativeQuery(query);
             q.setParameter(1, user);
             q.setParameter(2, urlPag);
 
