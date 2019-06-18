@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptActaAdjudicacion" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="244b56df-7b1c-4fca-9e9d-dde2f9b172eb">
 	<property name="ireport.zoom" value="1.9965000000000006"/>
-	<property name="ireport.x" value="64"/>
-	<property name="ireport.y" value="158"/>
+	<property name="ireport.x" value="237"/>
+	<property name="ireport.y" value="183"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -55,7 +55,7 @@
 		<groupHeader>
 			<band height="188" splitType="Stretch">
 				<textField isBlankWhenNull="false">
-					<reportElement uuid="c89610dd-e8b5-4071-a79e-c44be59352dc" key="textField-1" x="0" y="63" width="510" height="75"/>
+					<reportElement key="textField-1" x="0" y="65" width="510" height="75" uuid="c89610dd-e8b5-4071-a79e-c44be59352dc"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -75,7 +75,7 @@ concat("\n\nETAPAS DEL PROCESO:\n\n").
 concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{fechaApertura}+" a:")]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement uuid="5843cd26-1ae0-4edd-ac6d-bac74c0c756d" key="staticText-5" x="102" y="11" width="308" height="35"/>
+					<reportElement key="staticText-5" x="102" y="11" width="308" height="35" uuid="5843cd26-1ae0-4edd-ac6d-bac74c0c756d"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial" size="12"/>
 					</textElement>
@@ -83,17 +83,17 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 "\""+$F{descripcionRubro}+"\""]]></textFieldExpression>
 				</textField>
 				<image>
-					<reportElement uuid="d662ed9c-377b-4d74-87d4-2293e65456b4" key="image-1" x="0" y="0" width="60" height="60"/>
+					<reportElement key="image-1" x="0" y="0" width="60" height="60" uuid="d662ed9c-377b-4d74-87d4-2293e65456b4"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<imageExpression><![CDATA[$P{ubicacionImagenes}+"escudo.jpg"]]></imageExpression>
+					<imageExpression><![CDATA[$P{ubicacionImagenes}+"escudo_rpt.png"]]></imageExpression>
 				</image>
-				<image>
-					<reportElement uuid="a3a21642-5656-4bc8-9f47-63ca6738e700" key="image-2" x="420" y="0" width="90" height="57"/>
+				<image hAlign="Right">
+					<reportElement key="image-2" x="404" y="0" width="106" height="63" uuid="a3a21642-5656-4bc8-9f47-63ca6738e700"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -103,7 +103,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 					<imageExpression><![CDATA[$P{ubicacionImagenes} + "logo_mined_rpt.png"]]></imageExpression>
 				</image>
 				<subreport isUsingCache="true">
-					<reportElement uuid="263910dc-3ced-4c00-8594-5c09f8bce4e9" key="subreport-3" x="0" y="143" width="510" height="45"/>
+					<reportElement key="subreport-3" x="0" y="143" width="510" height="45" uuid="263910dc-3ced-4c00-8594-5c09f8bce4e9"/>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstParticipantes})]]></dataSourceExpression>
 					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subRptActaAdjudicacionProveedoresBean2019Libros.jasper"]]></subreportExpression>
 				</subreport>
@@ -112,7 +112,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 		<groupFooter>
 			<band height="198" splitType="Stretch">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-					<reportElement uuid="919a6134-db0d-4f42-b5bb-18e8d50d805f" key="textField-9" x="0" y="0" width="510" height="74"/>
+					<reportElement key="textField-9" x="0" y="0" width="510" height="74" uuid="919a6134-db0d-4f42-b5bb-18e8d50d805f"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -127,14 +127,14 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 "_____________________________________________________________________________________________"]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="8e37bd84-3b2d-4f23-8a63-b84c3d8d4fcb" x="0" y="74" width="237" height="13"/>
+					<reportElement x="0" y="74" width="237" height="13" uuid="8e37bd84-3b2d-4f23-8a63-b84c3d8d4fcb"/>
 					<textElement>
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<text><![CDATA[Nombres y Firmas de quienes realizaron el análisis:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552" key="staticText-1" x="261" y="74" width="14" height="13"/>
+					<reportElement key="staticText-1" x="261" y="74" width="14" height="13" uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -147,13 +147,13 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 					<text><![CDATA[F:]]></text>
 				</staticText>
 				<line>
-					<reportElement uuid="b817a9dc-45c9-4bfc-9eb3-aa7b3f30959f" key="line-1" x="275" y="83" width="168" height="1"/>
+					<reportElement key="line-1" x="275" y="83" width="168" height="1" uuid="b817a9dc-45c9-4bfc-9eb3-aa7b3f30959f"/>
 					<graphicElement>
 						<pen lineWidth="0.5"/>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552" key="staticText-1" x="261" y="147" width="14" height="13"/>
+					<reportElement key="staticText-1" x="261" y="147" width="14" height="13" uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -166,13 +166,13 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 					<text><![CDATA[F:]]></text>
 				</staticText>
 				<line>
-					<reportElement uuid="b817a9dc-45c9-4bfc-9eb3-aa7b3f30959f" key="line-1" x="275" y="156" width="168" height="1"/>
+					<reportElement key="line-1" x="275" y="156" width="168" height="1" uuid="b817a9dc-45c9-4bfc-9eb3-aa7b3f30959f"/>
 					<graphicElement>
 						<pen lineWidth="0.5"/>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement uuid="c88d29b3-de73-4d88-bc77-1e6bce7d9fbf" key="staticText-4" x="443" y="70" width="63" height="13"/>
+					<reportElement key="staticText-4" x="443" y="70" width="63" height="13" uuid="c88d29b3-de73-4d88-bc77-1e6bce7d9fbf"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -185,7 +185,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 					<text><![CDATA[(sello OAE)]]></text>
 				</staticText>
 				<textField isBlankWhenNull="false">
-					<reportElement uuid="c0454f5e-8535-40d2-8b13-3a4f14ad76ab" key="textField-4" x="277" y="87" width="201" height="52"/>
+					<reportElement key="textField-4" x="277" y="87" width="201" height="52" uuid="c0454f5e-8535-40d2-8b13-3a4f14ad76ab"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -200,14 +200,14 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 "\nAdministración Escolar del Centro Educativo"]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="8e37bd84-3b2d-4f23-8a63-b84c3d8d4fcb" x="277" y="160" width="201" height="13"/>
+					<reportElement x="277" y="160" width="201" height="13" uuid="8e37bd84-3b2d-4f23-8a63-b84c3d8d4fcb"/>
 					<textElement>
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<text><![CDATA[Encargado(a) de Compra del organismo]]></text>
 				</staticText>
 				<staticText>
-					<reportElement uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552" key="staticText-1" x="240" y="184" width="217" height="13"/>
+					<reportElement key="staticText-1" x="240" y="184" width="217" height="13" uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -237,7 +237,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 	<detail>
 		<band height="73" splitType="Stretch">
 			<subreport isUsingCache="true">
-				<reportElement uuid="ecbc3374-9c04-4546-b4f5-ef476e0008a1" key="subreport-2" x="0" y="3" width="510" height="67"/>
+				<reportElement key="subreport-2" x="0" y="3" width="510" height="67" uuid="ecbc3374-9c04-4546-b4f5-ef476e0008a1"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleItem})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subRptActaItemsBean.jasper"]]></subreportExpression>
 			</subreport>
@@ -249,7 +249,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 	<pageFooter>
 		<band height="12" splitType="Stretch">
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement uuid="894642a5-1048-41ab-b2b3-950c51cb091a" key="textField-10" x="0" y="0" width="328" height="12"/>
+				<reportElement key="textField-10" x="0" y="0" width="328" height="12" uuid="894642a5-1048-41ab-b2b3-950c51cb091a"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

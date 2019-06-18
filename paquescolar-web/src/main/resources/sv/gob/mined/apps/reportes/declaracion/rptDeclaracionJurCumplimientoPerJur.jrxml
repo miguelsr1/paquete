@@ -4,6 +4,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="pRubro" class="java.lang.String"/>
+	<parameter name="ubicacionImagenes" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -44,21 +45,33 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="79" splitType="Stretch">
-			<staticText>
-				<reportElement uuid="b4e04f70-5052-4537-8b79-19e95b964f34" x="45" y="30" width="469" height="38"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[DECLARACIÓN JURADA GLOBAL SOBRE EL CUMPLIMIENTO DE LAS ESPECIFICACIONES TÉCNICAS]]></text>
-			</staticText>
+		<band height="63" splitType="Stretch">
+			<image hAlign="Right">
+				<reportElement key="image-2" x="466" y="0" width="106" height="63" uuid="c6453045-2627-4a17-81cf-903d829edc3f"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"logo_mined_rpt.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement key="image-1" x="0" y="0" width="60" height="60" uuid="d4f34a6e-0045-40f1-986e-9cba8a1c946b"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo_rpt.png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="61" splitType="Stretch">
+		<band height="46" splitType="Stretch">
 			<textField>
-				<reportElement uuid="19876f79-7df9-4794-a033-eb3746e7c7dd" x="21" y="19" width="528" height="42"/>
-				<textElement/>
+				<reportElement x="21" y="4" width="528" height="42" uuid="19876f79-7df9-4794-a033-eb3746e7c7dd"/>
 				<textFieldExpression><![CDATA["DECLARACIÓN JURADA GLOBAL SOBRE EL CUMPLIMIENTO DE LAS ESPECIFICACIONES TÉCNICAS PLAZO Y LUGAR DE ENTREGA, DE: "+$P{pRubro}+"\n" +
 "(AÑO "+$F{anho}+ ")"]]></textFieldExpression>
 			</textField>
@@ -67,7 +80,7 @@
 	<columnHeader>
 		<band height="61" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="bdafee93-0adf-43a4-b29b-4052dc81284b" x="21" y="14" width="528" height="47"/>
+				<reportElement x="21" y="14" width="528" height="47" uuid="bdafee93-0adf-43a4-b29b-4052dc81284b"/>
 				<textElement textAlignment="Justified">
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
@@ -96,33 +109,27 @@ $F{anho}+"; G) Que para los efectos legales de esta declaración, señalo como d
 	<pageFooter>
 		<band height="177" splitType="Stretch">
 			<textField>
-				<reportElement uuid="a9c162c9-9b30-496d-b0e1-b810afdd01c8" x="21" y="34" width="512" height="25"/>
-				<textElement/>
+				<reportElement x="21" y="34" width="512" height="25" uuid="a9c162c9-9b30-496d-b0e1-b810afdd01c8"/>
 				<textFieldExpression><![CDATA["Nombre del Representante Legal: " + $F{representanteLegal}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="160cc708-7a0c-43a3-9ace-ea49e159e4ac" x="21" y="59" width="512" height="25"/>
-				<textElement/>
+				<reportElement x="21" y="59" width="512" height="25" uuid="160cc708-7a0c-43a3-9ace-ea49e159e4ac"/>
 				<text><![CDATA[Firma del Representante Legal: _____________________________________________]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="d3cf0a89-512a-498b-9f55-5b3b1582ab63" x="21" y="84" width="437" height="25"/>
-				<textElement/>
+				<reportElement x="21" y="84" width="437" height="25" uuid="d3cf0a89-512a-498b-9f55-5b3b1582ab63"/>
 				<textFieldExpression><![CDATA["No DUI del Representante Legal: "+$F{duiRepre}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="c99b2154-eed0-4c3a-a9bf-c0bde0363cc9" x="21" y="109" width="437" height="25"/>
-				<textElement/>
+				<reportElement x="21" y="109" width="437" height="25" uuid="c99b2154-eed0-4c3a-a9bf-c0bde0363cc9"/>
 				<textFieldExpression><![CDATA["No NIT del Representante Legal: "+$F{nitRepre}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="a9c162c9-9b30-496d-b0e1-b810afdd01c8" x="21" y="9" width="512" height="25"/>
-				<textElement/>
+				<reportElement x="21" y="9" width="512" height="25" uuid="a9c162c9-9b30-496d-b0e1-b810afdd01c8"/>
 				<textFieldExpression><![CDATA["Nombre de la Sociedad o Empresa: " + $F{razonSocial}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="c99b2154-eed0-4c3a-a9bf-c0bde0363cc9" x="21" y="134" width="437" height="25"/>
-				<textElement/>
+				<reportElement x="21" y="134" width="437" height="25" uuid="c99b2154-eed0-4c3a-a9bf-c0bde0363cc9"/>
 				<textFieldExpression><![CDATA["No NIT de la Sociedad: "+$F{nitEmpresa}]]></textFieldExpression>
 			</textField>
 		</band>

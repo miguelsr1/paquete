@@ -61,10 +61,10 @@
             <version>3.4</version>
         </dependency>
         <dependency>
-            <groupId>sv.gob.mined.apps</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>utilitario</artifactId>
             <version>1.2.1</version>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
@@ -93,11 +93,6 @@
             <name>PrimeFaces Maven Repository</name> 
             <url>http://repository.primefaces.org</url> 
             <layout>default</layout> 
-        </repository>
-        <repository>
-            <id>spring-snapshot</id>
-            <name>Spring Snapshot Repository</name>
-            <url>http://repo.springsource.org/snapshot</url>
         </repository>
         <repository>
             <id>maven.repository.redhat.com</id>
