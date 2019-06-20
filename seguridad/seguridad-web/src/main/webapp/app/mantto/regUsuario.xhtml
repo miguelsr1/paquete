@@ -1,0 +1,84 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Registro de Usuarios</ui:define>
+
+    <ui:define name="content">    
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12 ">
+                <!-- Left Side -->
+                <div class="card card-w-title">
+                    <h1>Datos Generales</h1>
+                    <p:outputPanel>
+                        <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                            <p:outputLabel value="#{bundle['usr.tipoUsuario']}:"/>
+                            <p:selectOneRadio value="#{usuarioView.usuario.tipoUsuario}" unselectable="true">
+                                <f:selectItem itemLabel="Centro Educativo" itemValue="C" />
+                                <f:selectItem itemLabel="Departamental" itemValue="D" />
+                                <f:selectItem itemLabel="Administrativo" itemValue="A" />
+                                <f:selectItem itemLabel="Externo" itemValue="E" />
+                            </p:selectOneRadio>
+                        </h:panelGrid>
+                    </p:outputPanel>
+
+                    <p:separator />
+
+                    <p:panelGrid style="width: 100%;" id="pngDatos" columns="2" columnClasses="ui-g-12 ui-md-2, ui-g-12 ui-md-10" styleClass="ui-panelgrid-blank form-group footerSinBorde">
+                        <p:outputLabel value="#{bundle['usr.genero']}"/>
+                        <p:selectOneRadio value="#{usuarioView.usuario.sexo}" unselectable="true">
+                            <f:selectItem itemLabel="Femenino" itemValue="F" />
+                            <f:selectItem itemLabel="Masculino" itemValue="M" />
+                        </p:selectOneRadio>
+                        <p:outputLabel value="#{bundle['usr.nombres']}"/>
+                        <p:inputText size="40" value="#{usuarioView.usuario.nombres}"/>
+                        <p:outputLabel value="#{bundle['usr.apellidos']}"/>
+                        <p:inputText size="40" value="#{usuarioView.usuario.apellidos}"/>
+                        <p:outputLabel value="#{bundle['usr.dui']}"/>
+                        <p:inputText size="9" value="#{usuarioView.usuario.dui}"/>
+                        <p:outputLabel value="#{bundle['usr.email']}"/>
+                        <p:inputText size="40" value="#{usuarioView.usuario.correElectronico}"/>
+                        <p:outputLabel for="txtLogin" value="#{bundle['usr.login']}"/>
+                        <p:inputText id="txtLogin" size="20" maxlength="30" value="#{usuarioView.usuario.login}"/>
+                    </p:panelGrid>
+
+                    <h:panelGrid style="width: 100%;" columns="2" columnClasses="ui-g-12 ui-md-2, ui-g-12 ui-md-10" id="pnlPasswords" cellpadding="5">
+                        <h:outputLabel for="pwd1" value="#{bundle['usr.pass1']}" />
+                        <p:password id="pwd1" size="20" maxlength="33" value="#{usuarioView.pass1}" match="pwd2" label="Password 1" required="true" />
+
+                        <h:outputLabel for="pwd2" value="#{bundle['usr.pass2']}" />
+                        <p:password id="pwd2" size="20" maxlength="33" value="#{usuarioView.pass1}" label="Password 2" required="true"/>
+                    </h:panelGrid>
+
+                    <p:separator />
+
+                    <h:panelGrid columns="1">
+                        <p:outputLabel value="Listo de aplicaciones y grupos"/>
+
+                        <p:pickList id="pickList" value="#{usuarioView.appGrpDualListModel}" var="appGrp" itemLabel="#{appGrp}" itemValue="#{appGrp}" converter="gruAppConverter" />
+                    </h:panelGrid>
+
+                    <p:outputPanel styleClass="footerSinBorde">
+                        <h:panelGrid columns="3" style="float: right;" >
+                            <p:commandButton value="#{bundle['boton.limpiar']}" icon="fa fa-eraser" action="#{usuarioView.limpiar()}" validateClient="true" process="@this" resetValues="true" update="pngDatos pnlPasswords" style="height: 30px"/>
+                            <p:commandButton value="#{bundle['boton.nuevo']}" icon="fa fa-file-o" action="#{usuarioView.nuevo()}" validateClient="true" process="@this" resetValues="true" update="pngDatos pnlPasswords" style="height: 30px"/>
+                            <p:commandButton value="#{bundle['boton.guardar']}" icon="fa fa-floppy-o" action="#{usuarioView.guardar()}" update="pngDatos pnlPasswords" style="height: 30px"/>
+                        </h:panelGrid>
+                    </p:outputPanel>
+                </div>
+
+                <p:messages id="messages" showSummary="false" showDetail="true" closable="true">
+                    <p:autoUpdate />
+                </p:messages>
+            </div>
+        </div>
+
+        <h:outputStylesheet name="personalizadas.css" library="css" />
+        <h:outputScript name="funciones.js" library="js" />
+    </ui:define>
+
+</ui:composition>

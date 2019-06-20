@@ -1,0 +1,42 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 06-19-2019, 11:13:34 AM
+    Author     : misanchez
+*/
+
+/* Tablas */
+
+.colCenter{
+    text-align: center;
+}
+
+.ui-panelgrid .ui-panelgrid-cell {
+
+    border-width: 0px !important;
+    border-style: solid;
+    border-color: inherit;
+    padding: 4px 10px;
+
+}
+
+.ui-widget-header {
+    background: #ffffff;
+    color: #757575;
+    border: none !important;
+    float: right;
+}
+
+
+
+.ui-picklist .ui-picklist-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+    height: 200px;
+    width: 350px;
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+  <persistence-unit name="seguridadv2-UP" transaction-type="JTA">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <jta-data-source>java:/SeguridadV2Ds</jta-data-source>
+    <mapping-file>META-INF/querysNativas.xml</mapping-file>
+    <class>sv.gob.mined.seguridad.model.GruApp</class>
+    <class>sv.gob.mined.seguridad.model.BitacoraAcceso</class>
+    <class>sv.gob.mined.seguridad.model.Usuario</class>
+    <class>sv.gob.mined.seguridad.model.AppOpcMenu</class>
+    <class>sv.gob.mined.seguridad.model.HistorialClavesAcceso</class>
+    <class>sv.gob.mined.seguridad.model.UsuGruApp</class>
+    <class>sv.gob.mined.seguridad.model.OpcionMenu</class>
+    <class>sv.gob.mined.seguridad.model.ParametrosGenerales</class>
+    <class>sv.gob.mined.seguridad.model.Aplicacion</class>
+    <class>sv.gob.mined.seguridad.model.Grupo</class>
+    <class>sv.gob.mined.seguridad.model.dto.AplicacionGrupoDto</class>
+    <properties>
+      <property name="eclipselink.cache.shared.default" value="false"/>
+      <property name="eclipselink.target-database" value="Oracle"/>
+      <property name="eclipselink.target-server" value="JBoss"/>
+    </properties>
+  </persistence-unit>
+</persistence>
