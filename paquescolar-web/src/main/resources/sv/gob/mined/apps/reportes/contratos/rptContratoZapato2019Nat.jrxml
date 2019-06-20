@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="512" leftMargin="50" rightMargin="50" topMargin="38" bottomMargin="38" uuid="7c473a5c-3c53-4531-bbd4-361793436e2f">
-	<property name="ireport.zoom" value="1.1269722013523666"/>
+	<property name="ireport.zoom" value="1.363636363636364"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="56"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -46,7 +46,9 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 			<variableExpression><![CDATA[$F{SUB_TOTAL}]]></variableExpression>
 		</variable>
 	</subDataset>
-	<parameter name="ubicacionImagenes" class="java.lang.String"/>
+	<parameter name="ubicacionImagenes" class="java.lang.String">
+		<defaultValueExpression><![CDATA["/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/"]]></defaultValueExpression>
+	</parameter>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[".\\"]]></defaultValueExpression>
 	</parameter>
@@ -272,17 +274,17 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 	<title>
 		<band height="224" splitType="Stretch">
 			<image onErrorType="Blank">
-				<reportElement uuid="767ec489-9367-41b2-859b-db8cfbe8ac29" key="image-1" x="10" y="4" width="60" height="60"/>
+				<reportElement uuid="767ec489-9367-41b2-859b-db8cfbe8ac29" key="image-1" x="1" y="0" width="60" height="60"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo.jpg"]]></imageExpression>
+				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo_rpt.png"]]></imageExpression>
 			</image>
-			<image onErrorType="Blank">
-				<reportElement uuid="eb0ca2fe-e2b0-4cff-ba82-84957e4667ef" key="image-2" x="422" y="4" width="90" height="57"/>
+			<image hAlign="Right" onErrorType="Blank">
+				<reportElement uuid="eb0ca2fe-e2b0-4cff-ba82-84957e4667ef" key="image-2" x="364" y="0" width="149" height="63"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -306,7 +308,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 "\"\nFUENTE DE FINANCIAMIENTO: GOES"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="323e93b0-72ec-4c90-a2b8-97ca9d51acef" key="textField-7" x="93" y="8" width="308" height="35"/>
+				<reportElement uuid="323e93b0-72ec-4c90-a2b8-97ca9d51acef" key="textField-7" x="90" y="8" width="308" height="35"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -314,7 +316,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="13"/>
+					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["CONTRATO No. ME-"+$F{NUMERO_CONTRATO}+"/"+$F{ANHO_CONTRATO}+"/COD:"+$F{CODIGO_ENTIDAD}]]></textFieldExpression>
 			</textField>

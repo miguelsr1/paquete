@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptActaAdjudicacion" pageWidth="612" pageHeight="792" columnWidth="544" leftMargin="34" rightMargin="34" topMargin="34" bottomMargin="34" uuid="103cf057-2364-40f0-b590-3a80879be545">
 	<property name="ireport.zoom" value="1.2100000000000017"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="109"/>
+	<property name="ireport.y" value="48"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -59,7 +59,9 @@
 			<variableExpression><![CDATA[$F{precioUnitario}.multiply(new java.math.BigDecimal($F{cantidad}))]]></variableExpression>
 		</variable>
 	</subDataset>
-	<parameter name="ubicacionImagenes" class="java.lang.String"/>
+	<parameter name="ubicacionImagenes" class="java.lang.String">
+		<defaultValueExpression><![CDATA["/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/"]]></defaultValueExpression>
+	</parameter>
 	<parameter name="descripcionRubro" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
@@ -103,17 +105,17 @@
 	<group name="reporte">
 		<groupExpression><![CDATA[]]></groupExpression>
 		<groupHeader>
-			<band height="233" splitType="Stretch">
+			<band height="282" splitType="Stretch">
 				<textField>
-					<reportElement uuid="982bf22c-0375-4c4d-a107-2f899a909e36" x="10" y="16" width="524" height="32"/>
+					<reportElement uuid="982bf22c-0375-4c4d-a107-2f899a909e36" x="10" y="60" width="524" height="32"/>
 					<textElement textAlignment="Center" markup="none">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Arial" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["SOLICITUD DE COTIZACIÓN Y COTIZACIÓN\n"+
  "(RUBRO: "+$P{descripcionRubro}+")"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-					<reportElement uuid="fdae72ee-5ca1-43d1-8d24-15869c832d7f" key="textField-8" x="0" y="48" width="544" height="185"/>
+					<reportElement uuid="fdae72ee-5ca1-43d1-8d24-15869c832d7f" key="textField-8" x="0" y="92" width="544" height="190"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -148,6 +150,26 @@
 .concat("d) Original o copia certificada por notario de Solvencia Municipal y Tributaria (<style isBold='true' pdfFontName='Helvetica-Bold'>aplica para la persona proveedora  natural ó jurídica que en el último año contratado, sus ventas fueron mayores de los $ 5,714.29</style>).\n\n")
 .concat("El no cumplimento de la presentación de los documentos anteriores será motivo para dejar sin efecto la adjudicación.\n\n\n\n\n\n")]]></textFieldExpression>
 				</textField>
+				<image>
+					<reportElement uuid="9f2d25ba-a67a-4b90-8657-c203af6a568c" key="image-1" x="0" y="0" width="60" height="60"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo_rpt.png"]]></imageExpression>
+				</image>
+				<image hAlign="Right">
+					<reportElement uuid="b108ab0a-f712-44fb-972b-a1b758535958" key="image-2" x="395" y="0" width="149" height="63"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"logo_mined_rpt.png"]]></imageExpression>
+				</image>
 			</band>
 			<band height="64">
 				<textField isStretchWithOverflow="true">

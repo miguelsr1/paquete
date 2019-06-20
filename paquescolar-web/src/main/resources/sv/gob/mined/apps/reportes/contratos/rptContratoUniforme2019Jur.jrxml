@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptContratoPersonaJuridicaZapatos" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="d8a009d1-1894-4374-bb30-ceae652bb660">
-	<property name="ireport.zoom" value="1.9965000000000073"/>
+	<property name="ireport.zoom" value="1.2396694214876076"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="ireport.scriptlethandling" value="0"/>
@@ -80,7 +80,9 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[".\\"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="ubicacionImagenes" class="java.lang.String"/>
+	<parameter name="ubicacionImagenes" class="java.lang.String">
+		<defaultValueExpression><![CDATA["/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/"]]></defaultValueExpression>
+	</parameter>
 	<parameter name="telDirector" class="java.lang.String"/>
 	<parameter name="descripcionRubro" class="java.lang.String"/>
 	<parameter name="idContrato" class="java.math.BigDecimal">
@@ -134,24 +136,14 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 		<groupHeader>
 			<band height="192" splitType="Stretch">
 				<image>
-					<reportElement uuid="0ca8b3e0-d4a4-4288-81a2-e56579e37b80" key="image-1" mode="Opaque" x="17" y="4" width="60" height="60"/>
+					<reportElement uuid="0ca8b3e0-d4a4-4288-81a2-e56579e37b80" key="image-1" mode="Opaque" x="0" y="0" width="60" height="60"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo.jpg"]]></imageExpression>
-				</image>
-				<image>
-					<reportElement uuid="66b411bd-0755-40ec-aa97-589e89c0782a" key="image-2" mode="Opaque" x="420" y="4" width="90" height="57"/>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"logo_mined_rpt.png"]]></imageExpression>
+					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo_rpt.png"]]></imageExpression>
 				</image>
 				<textField isBlankWhenNull="false">
 					<reportElement uuid="71378ec8-c632-48ef-be0c-0f1e90f7ab25" key="textField-7" mode="Opaque" x="100" y="18" width="308" height="35"/>
@@ -201,6 +193,16 @@ concat((new DecimalFormat("#,###.00").format($F{VALOR}.doubleValue()))).concat("
 					<textFieldExpression><![CDATA["\"".concat($P{descripcionRubro} + " " + $F{ANHO_CONTRATO}).
 concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 				</textField>
+				<image hAlign="Right">
+					<reportElement uuid="b108ab0a-f712-44fb-972b-a1b758535958" key="image-2" x="361" y="0" width="149" height="63"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"logo_mined_rpt.png"]]></imageExpression>
+				</image>
 			</band>
 		</groupHeader>
 		<groupFooter>
