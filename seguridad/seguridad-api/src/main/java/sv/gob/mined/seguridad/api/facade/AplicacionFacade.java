@@ -30,16 +30,17 @@ public class AplicacionFacade {
     @PersistenceContext(unitName = "seguridadv2-UP")
     private EntityManager em;
 
-    public void businessMethod() {
-    }
-
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
-    public List<Aplicacion> getLstAplicaciones() {
+        public List<Aplicacion> getLstAplicaciones() {
         Query q = em.createQuery("SELECT a FROM Aplicacion a", Aplicacion.class);
         return q.getResultList();
     }
 
+    public List<Grupo> getLstGruposNotInIdApp(Long idApp) {
+        Query q = em.createQuery("SELECT g.idGrupo FROM GruApp g WHERE g.idAplicacion.idAplicacion = :idApp ORDER BY g.idGrupo.idGrupo", Grupo.class);
+        q.setParameter("idApp", idApp);
+        return q.getResultList();
+    }
+    
     public List<Grupo> getLstGrupos() {
         Query q = em.createQuery("SELECT g FROM Grupo g", Grupo.class);
         return q.getResultList();
@@ -64,6 +65,12 @@ public class AplicacionFacade {
         return q.getResultList();
     }
 
+    public List<OpcionMenu> getLstOpcionMenuNotInIdApp(Long idApp) {
+        Query q = em.createNamedQuery("Seguridad.OpcMenuNotInIdApp", OpcionMenu.class);
+        q.setParameter(1, idApp);
+        return q.getResultList();
+    }
+    
     public List<OpcionMenu> getLstOpcionMenuByUsuAndApp(String login, BigDecimal idAplicacion) {
         Query q = em.createQuery("SELECT a.idOpcMenu FROM AplicacionOpcMenu a WHERE a.idGrupoApp", OpcionMenu.class);
         return q.getResultList();

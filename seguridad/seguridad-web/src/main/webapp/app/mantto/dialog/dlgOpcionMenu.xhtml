@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Listado de opciones de menu</title>
+        <h:outputScript name="js/nanoscroller.js" library="paradise-layout" />
+        <h:outputScript name="js/layout.js" library="paradise-layout" />
+    </h:head>
+    <h:body>
+        <h:form id="frmDialog">
+            <p:dataTable id="tblLstOpcMenu" value="#{gruOpcMenuView.lstOpcionMenu}" selection="#{gruOpcMenuView.lstOpcionMenuSelected}" var="opc" rowKey="#{opc.idOpcMenu}">
+
+                <p:column selectionMode="multiple" width="20" styleClass="colCenter"/>
+
+                <p:column headerText="#{bundle['gen.id']}" width="50" styleClass="colCenter">
+                    <p:outputLabel value="#{opc.idOpcMenu}"/>
+                </p:column>
+                <p:column headerText="#{bundle['gom.nombreOpcion']}">
+                    <p:outputLabel value="#{opc.nombreOpcion}"/>
+                </p:column>
+                <p:column headerText="#{bundle['gom.opcionPadre']}">
+                    <p:outputLabel value="#{opc.padreIdOpcMenu}"/>
+                </p:column>
+
+                <f:facet name="footer">
+                    <p:commandButton process="tblLstOpcMenu" value="#{bundle['boton.agregar']}" />
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+
+        <h:outputStylesheet name="css/nanoscroller.css" library="paradise-layout" />
+        <h:outputStylesheet name="css/animate.css" library="paradise-layout" />
+        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout" />
+    </h:body>
+</html>
+

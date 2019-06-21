@@ -70,7 +70,7 @@ public class OpcionMenu implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private OpcionMenu padreIdOpcMenu;
     @OneToMany(mappedBy = "idOpcMenu", fetch = FetchType.LAZY)
-    private List<AppOpcMenu> appOpcMenuList;
+    private List<GruOpcMenu> appOpcMenuList;
 
     public OpcionMenu() {
     }
@@ -199,11 +199,11 @@ public class OpcionMenu implements Serializable {
         this.padreIdOpcMenu = padreIdOpcMenu;
     }
 
-    public List<AppOpcMenu> getAppOpcMenuList() {
+    public List<GruOpcMenu> getAppOpcMenuList() {
         return appOpcMenuList;
     }
 
-    public void setAppOpcMenuList(List<AppOpcMenu> appOpcMenuList) {
+    public void setAppOpcMenuList(List<GruOpcMenu> appOpcMenuList) {
         this.appOpcMenuList = appOpcMenuList;
     }
 
@@ -229,7 +229,7 @@ public class OpcionMenu implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.gob.mined.seguridad.model.OpcionMenu[ idOpcMenu=" + idOpcMenu + " ]";
+        return nombreOpcion;
     }
     
 }

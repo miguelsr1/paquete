@@ -45,7 +45,7 @@ public class GruApp implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
     @OneToMany(mappedBy = "idGruApp", fetch = FetchType.LAZY)
-    private List<AppOpcMenu> appOpcMenuList;
+    private List<GruOpcMenu> appOpcMenuList;
     @JoinColumn(name = "ID_APLICACION", referencedColumnName = "ID_APLICACION")
     @ManyToOne(fetch = FetchType.LAZY)
     private Aplicacion idAplicacion;
@@ -94,11 +94,11 @@ public class GruApp implements Serializable {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public List<AppOpcMenu> getAppOpcMenuList() {
+    public List<GruOpcMenu> getAppOpcMenuList() {
         return appOpcMenuList;
     }
 
-    public void setAppOpcMenuList(List<AppOpcMenu> appOpcMenuList) {
+    public void setAppOpcMenuList(List<GruOpcMenu> appOpcMenuList) {
         this.appOpcMenuList = appOpcMenuList;
     }
 

@@ -7,17 +7,37 @@
     <description>Native queries para Paquete Escolar</description>
     
    
-    <named-native-query name="Seguridad.AppGrp" 
-                        result-class="sv.gob.mined.seguridad.model.dto.AplicacionGrupoDto">
+    <named-native-query name="Seguridad.OpcMenuNotInIdApp" 
+                        result-class="sv.gob.mined.seguridad.model.OpcionMenu">
         <query>
             <![CDATA[
             select 
-                gra.id_gru_app                                      as idGruApp,
-                app.nombre_aplicacion || ' - ' || grp.nombre_grupo  as nombreAplicacionGrupo
+                ID_OPC_MENU, 
+                CODIGO_OPC_MENU, 
+                ESTADO_ELIMINACION, 
+                FECHA_INSERCION, 
+                FECHA_MODIFICACION, 
+                ICONO, 
+                sys_connect_by_path(nombre_opcion,'>>') nombre_opcion, 
+                ORDEN, 
+                TIPO, 
+                URL, 
+                USUARIO_INSERCION, 
+                USUARIO_MODIFICACION, 
+                ROUTER_LINK, 
+                PADRE_ID_OPC_MENU
             from 
-                aplicacion app
-                inner join gru_app gra  on app.id_aplicacion = gra.id_aplicacion
-                inner join grupo grp    on grp.id_grupo = gra.id_grupo
+                opcion_menu
+            where id_opc_menu not in (select 
+                                            gom.id_opc_menu 
+                                        from 
+                                            gru_opc_menu gom 
+                                            inner join gru_app gap on gom.id_gru_app = gap.id_gru_app
+                                        where 
+                                            gap.id_aplicacion = ?1)
+            start with id_opc_menu in (select id_opc_menu from opcion_menu where padre_id_opc_menu is null) 
+            connect by prior 
+                id_opc_menu = padre_id_opc_menu
             ]]>
         </query>
     </named-native-query>

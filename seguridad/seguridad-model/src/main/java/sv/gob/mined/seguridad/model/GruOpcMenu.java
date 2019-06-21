@@ -22,16 +22,16 @@ import javax.persistence.Table;
  * @author misanchez
  */
 @Entity
-@Table(name = "APP_OPC_MENU")
+@Table(name = "GRU_OPC_MENU")
 @NamedQueries({
-    @NamedQuery(name = "AppOpcMenu.findAll", query = "SELECT a FROM AppOpcMenu a")})
-public class AppOpcMenu implements Serializable {
+    @NamedQuery(name = "GruOpcMenu.findAll", query = "SELECT a FROM GruOpcMenu a")})
+public class GruOpcMenu implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "ID_APP_OPC_MENU")
-    private Long idAppOpcMenu;
+    @Column(name = "ID_GRU_OPC_MENU")
+    private Long idGruOpcMenu;
     @JoinColumn(name = "ID_GRU_APP", referencedColumnName = "ID_GRU_APP")
     @ManyToOne(fetch = FetchType.LAZY)
     private GruApp idGruApp;
@@ -39,19 +39,19 @@ public class AppOpcMenu implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private OpcionMenu idOpcMenu;
 
-    public AppOpcMenu() {
+    public GruOpcMenu() {
     }
 
-    public AppOpcMenu(Long idAppOpcMenu) {
-        this.idAppOpcMenu = idAppOpcMenu;
+    public GruOpcMenu(Long idAppOpcMenu) {
+        this.idGruOpcMenu = idAppOpcMenu;
     }
 
-    public Long getIdAppOpcMenu() {
-        return idAppOpcMenu;
+    public Long getIdGruOpcMenu() {
+        return idGruOpcMenu;
     }
 
-    public void setIdAppOpcMenu(Long idAppOpcMenu) {
-        this.idAppOpcMenu = idAppOpcMenu;
+    public void setIdGruOpcMenu(Long idAppOpcMenu) {
+        this.idGruOpcMenu = idAppOpcMenu;
     }
 
     public GruApp getIdGruApp() {
@@ -73,26 +73,23 @@ public class AppOpcMenu implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (idAppOpcMenu != null ? idAppOpcMenu.hashCode() : 0);
+        hash += (idGruOpcMenu != null ? idGruOpcMenu.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof AppOpcMenu)) {
+        if (!(object instanceof GruOpcMenu)) {
             return false;
         }
-        AppOpcMenu other = (AppOpcMenu) object;
-        if ((this.idAppOpcMenu == null && other.idAppOpcMenu != null) || (this.idAppOpcMenu != null && !this.idAppOpcMenu.equals(other.idAppOpcMenu))) {
-            return false;
-        }
-        return true;
+        GruOpcMenu other = (GruOpcMenu) object;
+        return !((this.idGruOpcMenu == null && other.idGruOpcMenu != null) || (this.idGruOpcMenu != null && !this.idGruOpcMenu.equals(other.idGruOpcMenu)));
     }
 
     @Override
     public String toString() {
-        return "sv.gob.mined.seguridad.model.AppOpcMenu[ idAppOpcMenu=" + idAppOpcMenu + " ]";
+        return "sv.gob.mined.seguridad.model.GruOpcMenu[ idGruOpcMenu=" + idGruOpcMenu + " ]";
     }
     
 }

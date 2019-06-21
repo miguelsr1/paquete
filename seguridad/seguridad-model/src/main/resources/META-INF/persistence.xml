@@ -7,14 +7,13 @@
     <class>sv.gob.mined.seguridad.model.GruApp</class>
     <class>sv.gob.mined.seguridad.model.BitacoraAcceso</class>
     <class>sv.gob.mined.seguridad.model.Usuario</class>
-    <class>sv.gob.mined.seguridad.model.AppOpcMenu</class>
     <class>sv.gob.mined.seguridad.model.HistorialClavesAcceso</class>
     <class>sv.gob.mined.seguridad.model.UsuGruApp</class>
     <class>sv.gob.mined.seguridad.model.OpcionMenu</class>
     <class>sv.gob.mined.seguridad.model.ParametrosGenerales</class>
     <class>sv.gob.mined.seguridad.model.Aplicacion</class>
     <class>sv.gob.mined.seguridad.model.Grupo</class>
-    <class>sv.gob.mined.seguridad.model.dto.AplicacionGrupoDto</class>
+    <class>sv.gob.mined.seguridad.model.GruOpcMenu</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>
