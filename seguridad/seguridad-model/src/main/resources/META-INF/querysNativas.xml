@@ -8,36 +8,41 @@
     
    
     <named-native-query name="Seguridad.OpcMenuNotInIdApp" 
-                        result-class="sv.gob.mined.seguridad.model.OpcionMenu">
+                        result-class="sv.gob.mined.seguridad.model.dto.OpcionMenuDto">
         <query>
             <![CDATA[
             select 
-                ID_OPC_MENU, 
-                CODIGO_OPC_MENU, 
-                ESTADO_ELIMINACION, 
-                FECHA_INSERCION, 
-                FECHA_MODIFICACION, 
-                ICONO, 
-                sys_connect_by_path(nombre_opcion,'>>') nombre_opcion, 
-                ORDEN, 
-                TIPO, 
-                URL, 
-                USUARIO_INSERCION, 
-                USUARIO_MODIFICACION, 
-                ROUTER_LINK, 
-                PADRE_ID_OPC_MENU
+                id_opc_menu                             as idOpcMenu,
+                padre_id_opc_menu                       as padreIdOpcMenu, 
+                nombre_opcion                           as nombreOpcion,
+                sys_connect_by_path(nombre_opcion,'>>') as nombrePadre
             from 
                 opcion_menu
             where id_opc_menu not in (select 
-                                            gom.id_opc_menu 
-                                        from 
-                                            gru_opc_menu gom 
-                                            inner join gru_app gap on gom.id_gru_app = gap.id_gru_app
-                                        where 
-                                            gap.id_aplicacion = ?1)
+                                        gom.id_opc_menu 
+                                    from 
+                                        gru_opc_menu gom 
+                                        inner join gru_app gap on gom.id_gru_app = gap.id_gru_app
+                                    where 
+                                        gap.id_aplicacion = ?1)
             start with id_opc_menu in (select id_opc_menu from opcion_menu where padre_id_opc_menu is null) 
             connect by prior 
                 id_opc_menu = padre_id_opc_menu
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="Seguridad.isExisteOpcMenuToGruApp">
+        <query>
+            <![CDATA[
+                select 
+                    count(*)
+                from 
+                    gru_app gra
+                    inner join gru_opc_menu gom on gra.id_gru_app = gom.id_gru_app 
+                where 
+                    gom.id_opc_menu = ?1 and
+                    gra.id_gru_app = ?2
             ]]>
         </query>
     </named-native-query>

@@ -1,0 +1,67 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Aplicación</ui:define>
+
+    <ui:define name="content">    
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12 ">
+                <!-- Left Side -->
+                <div class="card card-w-title">
+                    <h1>Datos Generales</h1>
+                    <h:panelGrid columns="1" style="width: 100%;">
+                        <p:panelGrid style="width: 100%;" id="pngDatos" columns="2" columnClasses="ui-g-2, ui-g-10" styleClass="ui-panelgrid-blank form-group footerSinBorde">
+                            <p:outputLabel for="txtNombre" value="#{bundle['app.nombre']}"/>
+                            <p:inputText id="txtNombre" value="#{aplicacionView.aplicacion.nombreAplicacion}"/>
+                            <p:outputLabel for="txtUnidadDuenha" value="#{bundle['app.unidadDuenha']}"/>
+                            <p:inputText id="txtUnidadDuenha" value="#{aplicacionView.aplicacion.unidadDuena}"/>
+                            <p:outputLabel for="txtAdmin" value="#{bundle['app.admin']}"/>
+                            <p:inputText id="txtAdmin" value="#{aplicacionView.aplicacion.administradorAplicacion}"/>
+                            <p:outputLabel for="cboEstado" value="#{bundle['app.estado']}"/>
+                            <p:selectOneMenu id="cboEstado" value="#{aplicacionView.aplicacion.estadoAplicacion}">
+                                <f:selectItem itemLabel="#{bundle['gen.seleccionarUnaOpcion']}"/>
+                                <f:selectItem itemValue="D" itemLabel="Desarrollo"/>
+                                <f:selectItem itemValue="P" itemLabel="Producción"/>
+                                <f:selectItem itemValue="F" itemLabel="Fuera de Uso"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="cldFecha" value="#{bundle['app.fechaInicioPro']}"/>
+                            <p:calendar id="cldFecha" value="#{aplicacionView.aplicacion.fechaInicioProduccion}" pattern="dd/MM/yyyy" showOn="button"/> 
+                        </p:panelGrid>
+
+                        <p:outputPanel styleClass="footerSinBorde">
+                            <h:panelGrid columns="3" style="float: right;" >
+                                <p:commandButton value="#{bundle['boton.limpiar']}" icon="fa fa-eraser" action="#{aplicacionView.limpiar()}" validateClient="true" process="@this" resetValues="true" update="pngDatos" style="height: 30px"/>
+                                <p:commandButton value="#{bundle['boton.nuevo']}" icon="fa fa-file-o" action="#{aplicacionView.nuevo()}" validateClient="true" process="@this" resetValues="true" update="pngDatos" style="height: 30px"/>
+                                <p:commandButton value="#{bundle['boton.guardar']}" icon="fa fa-floppy-o" action="#{aplicacionView.guardar()}" update="pngDatos" style="height: 30px"/>
+                            </h:panelGrid>
+                        </p:outputPanel>
+                    </h:panelGrid>
+                </div>
+
+                <p:messages id="messages" showSummary="false" showDetail="true" closable="true" escape="false">
+                    <p:autoUpdate />
+                </p:messages>
+
+                <div class="card card-w-title">
+                    <h1>
+                        <p:outputLabel value="#{bundle['app.listadoModulo']}"/>
+                        <p:commandButton id="btnAgregar" value="Agregar" icon="fa fa-plus-circle" style="float: right; font-size: 12px; width: 100px;" action="#{aplicacionView.agregarModulo()}">
+                            <p:ajax event="dialogReturn"  />
+                        </p:commandButton>
+                    </h1> 
+                    <p:dataTable id="tblLstOpcMenu">
+
+                    </p:dataTable>
+                </div>
+            </div>
+        </div>
+
+        <h:outputStylesheet name="personalizadas.css" library="css" />
+    </ui:define>
+
+</ui:composition>

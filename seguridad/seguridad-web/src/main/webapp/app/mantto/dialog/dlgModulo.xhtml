@@ -5,11 +5,15 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>Listado de opciones de menu</title>
+        <title>Agregar Modulo</title>
         <h:outputScript name="js/nanoscroller.js" library="paradise-layout" />
         <h:outputScript name="js/layout.js" library="paradise-layout" />
 
         <style type="text/css">
+            tfoot {
+                text-align: right !important;
+            }
+
             .ui-datatable .ui-datatable-footer {
                 text-align: right !important;
             }
@@ -34,27 +38,17 @@
     </h:head>
     <h:body>
         <h:form id="frmDialog">
-            <p:dataTable id="tblLstOpcMenu" value="#{selectOpcionMenuView.lstOpcionMenu}" selection="#{selectOpcionMenuView.lstOpcionMenuSelected}" 
-                         var="opc" rowKey="#{opc.idOpcMenu}" scrollable="true" scrollHeight="327">
-
-                <p:column selectionMode="multiple" width="15" styleClass="colCenter"/>
-
-                <p:column headerText="#{bundle['gen.id']}" width="30" styleClass="colCenter">
-                    <p:outputLabel value="#{opc.idOpcMenu}"/>
-                </p:column>
-                <p:column headerText="#{bundle['gom.nombreOpcion']}" width="210">
-                    <p:outputLabel value="#{opc.nombreOpcion}"/>
-                </p:column>
-                <p:column headerText="#{bundle['gom.opcionPadre']}">
-                    <p:outputLabel value="#{opc.nombrePadre}"/>
-                </p:column>
-
-                <f:facet name="footer">
-                    <p:outputPanel>
-                        <p:commandButton process="tblLstOpcMenu" value="#{bundle['boton.agregar']}" action="#{selectOpcionMenuView.agregarOpciones()}"/>
-                    </p:outputPanel>
-                </f:facet>
-            </p:dataTable>
+            <p:panel>
+                <h:panelGrid columns="2" cellpadding="5" style="width: 100%;">
+                    <p:outputLabel for="txtNombre" value="#{bundle['app.nombre']}"/>
+                    <p:inputText id="txtNombre" value="#{agregarModuloView.modulo.nombreModulo}"/>
+                    <p:outputLabel for="txtOrden" value="#{bundle['app.orden']}"/>
+                    <p:inputText id="txtOrden" value="#{agregarModuloView.modulo.orden}"/>
+                    <f:facet name="footer">
+                        <p:commandButton value="#{bundle['gen.agregar']}"/>
+                    </f:facet>
+                </h:panelGrid>
+            </p:panel>
         </h:form>
 
         <h:outputStylesheet name="css/nanoscroller.css" library="paradise-layout" />
@@ -63,4 +57,3 @@
         <h:outputStylesheet name="personalizadas.css" library="css" />
     </h:body>
 </html>
-

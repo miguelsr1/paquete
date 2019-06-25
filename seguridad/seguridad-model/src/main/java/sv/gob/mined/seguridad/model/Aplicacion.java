@@ -9,13 +9,17 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -30,10 +34,15 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "Aplicacion.findAll", query = "SELECT a FROM Aplicacion a")})
 public class Aplicacion implements Serializable {
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idAplicacion", fetch = FetchType.LAZY)
+    private List<Modulo> moduloList;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @Column(name = "ID_APLICACION")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_APP")
+    @SequenceGenerator(name = "SEQ_APP", sequenceName = "SEQ_APP", allocationSize = 1, initialValue = 1)
     private Long idAplicacion;
     @Column(name = "ADMINISTRADOR_APLICACION")
     private String administradorAplicacion;
@@ -135,6 +144,14 @@ public class Aplicacion implements Serializable {
     @Override
     public String toString() {
         return "sv.gob.mined.seguridad.model.Aplicacion[ idAplicacion=" + idAplicacion + " ]";
+    }
+
+    public List<Modulo> getModuloList() {
+        return moduloList;
+    }
+
+    public void setModuloList(List<Modulo> moduloList) {
+        this.moduloList = moduloList;
     }
     
 }

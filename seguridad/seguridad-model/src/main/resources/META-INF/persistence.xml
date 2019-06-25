@@ -14,6 +14,9 @@
     <class>sv.gob.mined.seguridad.model.Aplicacion</class>
     <class>sv.gob.mined.seguridad.model.Grupo</class>
     <class>sv.gob.mined.seguridad.model.GruOpcMenu</class>
+    <class>sv.gob.mined.seguridad.model.dto.OpcionMenuDto</class>
+    <class>sv.gob.mined.seguridad.model.ModOpcMenu</class>
+    <class>sv.gob.mined.seguridad.model.Modulo</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>

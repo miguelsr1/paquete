@@ -10,11 +10,14 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -31,6 +34,8 @@ public class GruOpcMenu implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "ID_GRU_OPC_MENU")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GRUOPCMEN")
+    @SequenceGenerator(name = "SEQ_GRUOPCMEN", sequenceName = "SEQ_GRUOPCMEN", allocationSize = 1, initialValue = 1)
     private Long idGruOpcMenu;
     @JoinColumn(name = "ID_GRU_APP", referencedColumnName = "ID_GRU_APP")
     @ManyToOne(fetch = FetchType.LAZY)

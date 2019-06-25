@@ -39,7 +39,7 @@
                     </h:panelGrid>
                 </div>
 
-                <p:messages id="messages" showSummary="false" showDetail="true" closable="true">
+                <p:messages id="messages" showSummary="false" showDetail="true" closable="true" escape="false">
                     <p:autoUpdate />
                 </p:messages>
 
@@ -47,7 +47,7 @@
                     <h1>
                         <p:outputLabel value="#{bundle['gom.listadoGruAppOpcMenu']}"/>
                         <p:commandButton id="btnAgregar" value="Agregar" icon="fa fa-plus-circle" update="tblLstOpcMenu" style="float: right; font-size: 12px; width: 100px;" action="#{gruOpcMenuView.seleccionarOpcionMenu()}">
-                            <p:ajax event="dialogReturn"  />
+                            <p:ajax event="dialogReturn" listener="#{gruOpcMenuView.onAgregarOpcMenu}" />
                         </p:commandButton>
                     </h1> 
                     <p:dataTable id="tblLstOpcMenu">
@@ -56,17 +56,6 @@
                 </div>
             </div>
         </div>
-
-        <p:dialog id="dlgOpcionMenu" widgetVar="dlgOpcionMenu" width="700" height="400" header="Listado de Opciones disponibles">
-            <p:dataTable value="#{gruOpcMenuView.lstOpcionMenu}" var="opc">
-                <p:column headerText="#{bundle['gen.id']}">
-                    <p:outputLabel value="#{opc.idOpcMenu}"/>
-                </p:column>
-                <p:column headerText="#{bundle['gom.nombreOpcion']}">
-                    <p:outputLabel value="#{opc.nombreOpcion}"/>
-                </p:column>
-            </p:dataTable>
-        </p:dialog>
 
         <h:outputStylesheet name="personalizadas.css" library="css" />
     </ui:define>
