@@ -5,62 +5,46 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>Listado de opciones de menu</title>
+        <title>Agregar Modulo</title>
         <h:outputScript name="js/nanoscroller.js" library="paradise-layout" />
         <h:outputScript name="js/layout.js" library="paradise-layout" />
 
         <style type="text/css">
-            .ui-datatable .ui-datatable-footer {
+            .ui-panel-footer {
                 text-align: right !important;
-            }
-            .ui-button-text-only .ui-button-text {
-                padding: 0.3em 0.4em;
-            }
-
-            .ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-header .ui-chkbox {
-                visibility: hidden;
-            }
-
-            .ui-filter-column .ui-column-customfilter .custom-filter {
-                width: 100%;
-                box-sizing: border-box;
-            }
-
-            .year-spinner input {
-                width: 100%;
-                box-sizing: border-box;
             }
         </style>
     </h:head>
     <h:body>
-        <h:form id="frmDialog">
-            <p:dataTable id="tblLstOpcMenu" value="#{selectOpcionMenuView.lstOpcionMenu}" selection="#{selectOpcionMenuView.lstOpcionMenuSelected}" 
-                         var="opc" rowKey="#{opc.idOpcMenu}" scrollable="true" scrollHeight="327">
-
-                <p:column selectionMode="multiple" width="15" styleClass="colCenter"/>
-
-                <p:column headerText="#{bundle['gen.id']}" width="30" styleClass="colCenter">
-                    <p:outputLabel value="#{opc.idOpcMenu}"/>
-                </p:column>
-                <p:column headerText="#{bundle['gom.nombreOpcion']}" width="210">
-                    <p:outputLabel value="#{opc.nombreOpcion}"/>
-                </p:column>
-                <p:column headerText="#{bundle['gom.opcionPadre']}">
-                    <p:outputLabel value="#{opc.nombrePadre}"/>
-                </p:column>
+        <h:form id="frmDialog" prependId="false">
+            <p:panel id="pnlModulo">
+                <div class="ui-fluid">
+                    <p:panelGrid style="width: 100%;" columns="4" columnClasses="ui-g-12 ui-md-1 ui-grc-1,ui-g-12 ui-md-5,ui-g-12 ui-md-1 ui-grc-1,ui-g-12 ui-md-5" layout="grid"  styleClass="ui-panelgrid-blank form-group footerSinBorde">
+                        <p:outputLabel value="Código"/>
+                        <p:inputText value="#{agregarOpcionMenuView.opcionMenu.codigoOpcMenu}"/>
+                        <p:outputLabel value="Icono"/>
+                        <p:inputText value="#{agregarOpcionMenuView.opcionMenu.icono}"/>
+                        <p:outputLabel value="Nombre"/>
+                        <p:inputText value="#{agregarOpcionMenuView.opcionMenu.nombreOpcion}"/>
+                        <p:outputLabel value="URL"/>
+                        <p:inputText value="#{agregarOpcionMenuView.opcionMenu.url}"/>
+                        <p:outputLabel value="Orden"/>
+                        <p:inputNumber id="txtOrden" value="#{agregarOpcionMenuView.opcionMenu.orden}" required="true" inputStyle="text-align: right;" decimalPlaces="0" minValue="1" maxlength="15"/>
+                    </p:panelGrid>
+                </div>
 
                 <f:facet name="footer">
-                    <p:outputPanel>
-                        <p:commandButton process="tblLstOpcMenu" value="#{bundle['boton.agregar']}" action="#{selectOpcionMenuView.agregarOpciones()}"/>
-                    </p:outputPanel>
+                    <p:commandButton id="btnAgregar" value="#{bundle['gen.agregar']}" action="#{agregarModuloView.agregarModulo()}" update="pnlModulo"/>
+                    <p:commandButton id="btnCancelar" value="#{bundle['gen.cancelar']}" action="#{agregarModuloView.cerrarDlg()}" validateClient="true" process="@this" resetValues="true"/>
                 </f:facet>
-            </p:dataTable>
+            </p:panel>
+            <p:spacer width="20"/>
+            <p:outputLabel value="* Los Campos son requeridos"/>
         </h:form>
 
-        <h:outputStylesheet name="css/nanoscroller.css" library="paradise-layout" />
+        <h:outputStylesheet name="css/nanoscroller.css" library="paradise-layout"/>
         <h:outputStylesheet name="css/animate.css" library="paradise-layout" />
         <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout" />
         <h:outputStylesheet name="personalizadas.css" library="css" />
     </h:body>
 </html>
-

@@ -48,27 +48,27 @@ public class JsfUtil {
     }
 
     public static void mensajeUpdate() {
-        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "<big>Información</big>", "<big>Actualización exitosa.</big>");
+        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Información", "Actualización exitosa.");
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
     public static void mensajeInsert() {
-        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "<big>Información</big>", "<big>Registro almacenado satisfactoriamente</big>");
+        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Información", "Registro almacenado satisfactoriamente.");
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
     public static void mensajeAlerta(String mensaje) {
-        msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "<big>Alerta</big>", "<big>" + mensaje + "</big>");
+        msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Alerta", mensaje);
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
     public static void mensajeError(String mensaje) {
-        msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "<big>Error</big>", "<big>" + mensaje + "</big>");
+        msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", mensaje);
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
     public static void mensajeInformacion(String mensaje) {
-        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "<big>Información</big>", "<big>" + mensaje + "</big>");
+        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Información", mensaje);
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 

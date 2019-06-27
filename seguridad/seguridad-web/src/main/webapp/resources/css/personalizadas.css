@@ -22,11 +22,6 @@ and open the template in the editor.
     padding: 4px 10px;
 
 }
-
-
-
-
-
 .ui-picklist .ui-picklist-list {
     list-style-type: none;
     margin: 0;
@@ -35,3 +30,22 @@ and open the template in the editor.
     height: 200px;
     width: 350px;
 }
+
+.col12{width: 100%;}
+.col11{width: 91.67%;}
+.col10{width: 83.33%;}
+.col9{width: 75%;}
+.col8{width: 66.67%;}
+.col7{width: 58.33%;}
+.col6{width: 50%;}
+.col6_label{width: 50%;text-align: right;}
+.col5{width: 41.67%;}
+.col5_label{width: 41.67%;text-align: right;}
+.col4{width: 33.33%;}
+.col4_label{width: 33.33%;text-align: right;}
+.col3{width: 25%;}
+.col3_label{width: 25%;text-align: right;}
+.col2{width: 16.67%;}
+.col2_label{width: 16.67%;text-align: right;}
+.col1{width: 8.33%;}
+.col1_label{width: 8.33%;text-align: right;}

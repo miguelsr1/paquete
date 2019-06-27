@@ -41,7 +41,7 @@ public class Modulo implements Serializable {
     private String nombreModulo;
     @Basic(optional = false)
     @Column(name = "ORDEN")
-    private short orden;
+    private Short orden;
     @JoinColumn(name = "ID_APLICACION", referencedColumnName = "ID_APLICACION")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Aplicacion idAplicacion;
@@ -74,11 +74,11 @@ public class Modulo implements Serializable {
         this.nombreModulo = nombreModulo;
     }
 
-    public short getOrden() {
+    public Short getOrden() {
         return orden;
     }
 
-    public void setOrden(short orden) {
+    public void setOrden(Short orden) {
         this.orden = orden;
     }
 

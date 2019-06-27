@@ -1,0 +1,79 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Forms</ui:define>
+
+    <ui:define name="content">    
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12 ">
+                <!-- Left Side -->
+                <div class="card card-w-title">
+                    <h1>Datos Generales</h1>
+                    <h:panelGrid columns="1" style="width: 100%;">
+                        <p:panelGrid style="width: 100%;" id="pngDatos" columns="2" columnClasses="ui-g-2, ui-g-10" styleClass="ui-panelgrid-blank form-group footerSinBorde">
+                            <p:outputLabel for="cboAplicaciones" value="#{bundle['gom.aplicaciones']}"/>
+                            <p:selectOneMenu id="cboAplicaciones" value="#{opcionMenuView.idApp}" style="width: 300px;">
+                                <f:selectItem itemLabel="#{bundle['gen.seleccionarUnaOpcion']}"/>
+                                <f:selectItems value="#{opcionMenuView.lstAplicaciones}" var="app" itemValue="#{app.idAplicacion}" itemLabel="#{app.nombreAplicacion}"/>
+                                <p:ajax update="cboOpcMenu"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="cboOpcMenu" value="#{bundle['app.modulo']}"/>
+                            <p:selectOneMenu id="cboOpcMenu" value="#{opcionMenuView.idModulo}" style="width: 300px;">
+                                <f:selectItem itemLabel="#{bundle['gen.seleccionarUnaOpcion']}"/>
+                                <f:selectItems value="#{opcionMenuView.lstModulos}" var="modulo" itemValue="#{modulo.idModulo}" itemLabel="#{modulo.nombreModulo}"/>
+                                <p:ajax update="tblLstOpcMenu" listener="#{opcionMenuView.actualizarTabla()}"/>
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+
+                        <p:outputPanel styleClass="footerSinBorde">
+                            <h:panelGrid columns="3" style="float: right;" >
+                                <p:commandButton value="#{bundle['boton.limpiar']}" icon="fa fa-eraser" action="#{opcionMenuView.limpiar()}" validateClient="true" process="@this" resetValues="true" update="pngDatos" style="height: 30px"/>
+                                <p:commandButton value="#{bundle['boton.nuevo']}" icon="fa fa-file-o" action="#{opcionMenuView.nuevo()}" validateClient="true" process="@this" resetValues="true" update="pngDatos" style="height: 30px"/>
+                                <p:commandButton value="#{bundle['boton.guardar']}" icon="fa fa-floppy-o" action="#{opcionMenuView.guardar()}" update="pngDatos" style="height: 30px"/>
+                            </h:panelGrid>
+                        </p:outputPanel>
+                    </h:panelGrid>
+                </div>
+
+                <p:messages id="messages" showSummary="false" showDetail="true" closable="true" escape="false">
+                    <p:autoUpdate />
+                </p:messages>
+
+                <div class="card card-w-title">
+                    <h1>
+                        <p:outputLabel value="#{bundle['app.opcionMenu.listado']}"/>
+                        <p:commandButton id="btnAgregar" value="Agregar" icon="fa fa-plus-circle" update="tblLstOpcMenu" style="float: right; font-size: 12px; width: 100px;" action="#{opcionMenuView.agregarOpcionMenu()}">
+                            <p:ajax event="dialogReturn" listener="#{opcionMenuView.onAgregarOpcMenu}" />
+                        </p:commandButton>
+                    </h1> 
+                    <p:dataTable id="tblLstOpcMenu" value="#{opcionMenuView.lstOpcionMenu}" selection="#{selectOpcionMenuView.lstOpcionMenuSelected}" 
+                                 var="opc" rowKey="#{opc.idOpcMenu}" scrollable="true" scrollHeight="327">
+
+                        <p:column selectionMode="multiple" width="15" styleClass="colCenter"/>
+
+                        <p:column headerText="#{bundle['gen.id']}" width="30" styleClass="colCenter">
+                            <p:outputLabel value="#{opc.idOpcMenu}"/>
+                        </p:column>
+                        <p:column headerText="#{bundle['gom.nombreOpcion']}" width="210">
+                            <p:outputLabel value="#{opc.nombreOpcion}"/>
+                        </p:column>
+                        <p:column headerText="#{bundle['gom.opcionPadre']}">
+                            <p:outputLabel value="#{opc.nombrePadreIdOpcMenu}"/>
+                        </p:column>
+                        <p:column headerText="#{bundle['app.modulo.orden']}" width="50" styleClass="colCenter">
+                            <p:outputLabel value="#{opc.orden}"/>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+        </div>
+
+        <h:outputStylesheet name="personalizadas.css" library="css" />
+    </ui:define>
+
+</ui:composition>

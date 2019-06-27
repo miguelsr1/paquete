@@ -37,7 +37,7 @@
                             <h:panelGrid columns="3" style="float: right;" >
                                 <p:commandButton value="#{bundle['boton.limpiar']}" icon="fa fa-eraser" action="#{aplicacionView.limpiar()}" validateClient="true" process="@this" resetValues="true" update="pngDatos" style="height: 30px"/>
                                 <p:commandButton value="#{bundle['boton.nuevo']}" icon="fa fa-file-o" action="#{aplicacionView.nuevo()}" validateClient="true" process="@this" resetValues="true" update="pngDatos" style="height: 30px"/>
-                                <p:commandButton value="#{bundle['boton.guardar']}" icon="fa fa-floppy-o" action="#{aplicacionView.guardar()}" update="pngDatos" style="height: 30px"/>
+                                <p:commandButton value="#{bundle['boton.guardar']}" icon="fa fa-floppy-o" action="#{aplicacionView.guardar()}" update="pngDatos" style="height: 30px;"/>
                             </h:panelGrid>
                         </p:outputPanel>
                     </h:panelGrid>
@@ -54,8 +54,28 @@
                             <p:ajax event="dialogReturn"  />
                         </p:commandButton>
                     </h1> 
-                    <p:dataTable id="tblLstOpcMenu">
-
+                    <p:dataTable id="tblLstOpcMenu" value="#{aplicacionView.lstModulos}" var="modulo" rowIndexVar="rowId" editable="true" rowKey="#{modulo.idModulo}">
+                        <p:column headerText="#" width="25" styleClass="colCenter">
+                            <p:outputLabel value="#{rowId+1}"/>
+                        </p:column>
+                        <p:column headerText="#{bundle['app.modulo.nombre']}">
+                            <p:cellEditor>
+                                <f:facet name="output"><p:outputLabel value="#{modulo.nombreModulo}"/></f:facet>
+                                <f:facet name="input"><p:inputText value="#{modulo.nombreModulo}" /></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="#{bundle['app.modulo.orden']}" width="50" styleClass="colCenter">
+                            <p:cellEditor>
+                                <f:facet name="output"><p:outputLabel value="#{modulo.orden}"/></f:facet>
+                                <f:facet name="input"><p:inputNumber value="#{modulo.orden}" required="true" inputStyle="text-align: right;" decimalPlaces="0" minValue="1" maxlength="15"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column width="35" styleClass="colCenter">
+                            <p:rowEditor />
+                        </p:column>
+                        <p:column width="30">
+                            <p:commandButton icon="fa fa-trash-o" disabled="true"/>
+                        </p:column>
                     </p:dataTable>
                 </div>
             </div>

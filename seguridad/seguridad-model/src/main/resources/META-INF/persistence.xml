@@ -21,6 +21,7 @@
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>
       <property name="eclipselink.target-server" value="JBoss"/>
+      <property name="eclipselink.jpa.uppercase-column-names" value="false"/>
     </properties>
   </persistence-unit>
 </persistence>

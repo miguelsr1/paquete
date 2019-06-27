@@ -22,6 +22,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 /**
  *
@@ -195,6 +196,18 @@ public class OpcionMenu implements Serializable {
         return padreIdOpcMenu;
     }
 
+    public String getNombrePadreIdOpcMenu() {
+        return getNombrePadre(this, true);
+    }
+
+    private String getNombrePadre(OpcionMenu opc, Boolean valor) {
+        if (opc.getPadreIdOpcMenu() == null) {
+            return "";
+        } else {
+            return getNombrePadre(opc.getPadreIdOpcMenu(), false) + " >> " + opc.getPadreIdOpcMenu().getNombreOpcion();
+        }
+    }
+
     public void setPadreIdOpcMenu(OpcionMenu padreIdOpcMenu) {
         this.padreIdOpcMenu = padreIdOpcMenu;
     }
@@ -231,5 +244,5 @@ public class OpcionMenu implements Serializable {
     public String toString() {
         return nombreOpcion;
     }
-    
+
 }

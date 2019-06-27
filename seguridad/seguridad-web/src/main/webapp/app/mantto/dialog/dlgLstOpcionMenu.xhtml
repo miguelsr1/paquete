@@ -5,24 +5,27 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>Agregar Modulo</title>
+        <title>Listado de opciones de menu</title>
         <h:outputScript name="js/nanoscroller.js" library="paradise-layout" />
         <h:outputScript name="js/layout.js" library="paradise-layout" />
 
         <style type="text/css">
-            .ui-panel-footer {
+            .ui-datatable .ui-datatable-footer {
                 text-align: right !important;
             }
             .ui-button-text-only .ui-button-text {
                 padding: 0.3em 0.4em;
             }
+
             .ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-header .ui-chkbox {
                 visibility: hidden;
             }
+
             .ui-filter-column .ui-column-customfilter .custom-filter {
                 width: 100%;
                 box-sizing: border-box;
             }
+
             .year-spinner input {
                 width: 100%;
                 box-sizing: border-box;
@@ -30,22 +33,29 @@
         </style>
     </h:head>
     <h:body>
-        <h:form id="frmDialog" prependId="false">
-            <p:panel id="pnlModulo">
-                <h:panelGrid columns="2" cellpadding="5" style="width: 100%;">
-                    <p:outputLabel for="txtNombre" value="#{bundle['app.nombre']}"/>
-                    <p:inputText id="txtNombre" value="#{agregarModuloView.modulo.nombreModulo}" required="true"/>
-                    <p:outputLabel for="txtOrden" value="#{bundle['app.orden']}"/>
-                    <p:inputNumber id="txtOrden" value="#{agregarModuloView.modulo.orden}" required="true" inputStyle="text-align: right;" decimalPlaces="0" minValue="1" maxlength="15"/>
-                </h:panelGrid>
+        <h:form id="frmDialog">
+            <p:dataTable id="tblLstOpcMenu" value="#{selectOpcionMenuView.lstOpcionMenu}" selection="#{selectOpcionMenuView.lstOpcionMenuSelected}" 
+                         var="opc" rowKey="#{opc.idOpcMenu}" scrollable="true" scrollHeight="327">
+
+                <p:column selectionMode="multiple" width="15" styleClass="colCenter"/>
+
+                <p:column headerText="#{bundle['gen.id']}" width="30" styleClass="colCenter">
+                    <p:outputLabel value="#{opc.idOpcMenu}"/>
+                </p:column>
+                <p:column headerText="#{bundle['gom.nombreOpcion']}" width="210">
+                    <p:outputLabel value="#{opc.nombreOpcion}"/>
+                </p:column>
+                <p:column headerText="#{bundle['gom.opcionPadre']}">
+                    <p:outputLabel value="#{opc.nombrePadre}"/>
+                </p:column>
 
                 <f:facet name="footer">
-                    <p:commandButton id="btnAgregar" value="#{bundle['gen.agregar']}" action="#{agregarModuloView.agregarModulo()}" update="pnlModulo"/>
-                    <p:commandButton id="btnCancelar" value="#{bundle['gen.cancelar']}" action="#{agregarModuloView.cerrarDlg()}" validateClient="true" process="@this" resetValues="true"/>
+                    <p:outputPanel>
+                        <p:commandButton process="tblLstOpcMenu" value="#{bundle['gen.agregar']}" action="#{selectOpcionMenuView.agregarOpciones()}"/>
+                        <p:commandButton value="#{bundle['gen.agregar']}" action="#{selectOpcionMenuView.cerrarDlg()}"/>
+                    </p:outputPanel>
                 </f:facet>
-            </p:panel>
-            <p:spacer width="20"/>
-            <p:outputLabel value="* Los Campos son requeridos"/>
+            </p:dataTable>
         </h:form>
 
         <h:outputStylesheet name="css/nanoscroller.css" library="paradise-layout" />
@@ -54,3 +64,4 @@
         <h:outputStylesheet name="personalizadas.css" library="css" />
     </h:body>
 </html>
+

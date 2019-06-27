@@ -31,6 +31,24 @@
             ]]>
         </query>
     </named-native-query>
+    <named-native-query name="Seguridad.OpcMenuNotByIdAppAndIdMod" 
+                        result-class="sv.gob.mined.seguridad.model.OpcionMenu">
+        <query>
+            <![CDATA[
+                select 
+                    opc.* 
+                from modulo mod
+                    inner join aplicacion app   on mod.id_aplicacion = app.id_aplicacion
+                    inner join mod_opc_menu mom on mom.id_modulo = mod.id_modulo
+                    inner join opcion_menu opc  on opc.id_opc_menu = mom.id_opc_menu
+                where app.id_aplicacion = ?1 and
+                    mod.id_modulo = ?2
+                order by
+                    opc.padre_id_opc_menu desc,
+                    opc.orden
+            ]]>
+        </query>
+    </named-native-query>
     
     <named-native-query name="Seguridad.isExisteOpcMenuToGruApp">
         <query>

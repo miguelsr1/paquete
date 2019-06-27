@@ -16,6 +16,7 @@ import sv.gob.mined.seguridad.model.Aplicacion;
 import sv.gob.mined.seguridad.model.GruApp;
 import sv.gob.mined.seguridad.model.GruOpcMenu;
 import sv.gob.mined.seguridad.model.Grupo;
+import sv.gob.mined.seguridad.model.Modulo;
 import sv.gob.mined.seguridad.model.OpcionMenu;
 import sv.gob.mined.seguridad.model.UsuGruApp;
 import sv.gob.mined.seguridad.model.Usuario;
@@ -32,6 +33,10 @@ public class AplicacionFacade {
     @PersistenceContext(unitName = "seguridadv2-UP")
     private EntityManager em;
 
+    public <T extends Object> T findEntity(Class<T> clase, Object id) {
+        return em.find(clase, id);
+    }
+
     public List<Aplicacion> getLstAplicaciones() {
         Query q = em.createQuery("SELECT a FROM Aplicacion a", Aplicacion.class);
         return q.getResultList();
@@ -45,6 +50,12 @@ public class AplicacionFacade {
 
     public List<Grupo> getLstGrupos() {
         Query q = em.createQuery("SELECT g FROM Grupo g", Grupo.class);
+        return q.getResultList();
+    }
+
+    public List<Modulo> getLstModulosByIdApp(Long idApp) {
+        Query q = em.createQuery("SELECT m FROM Modulo m WHERE m.idAplicacion.idAplicacion=:idApp", Modulo.class);
+        q.setParameter("idApp", idApp);
         return q.getResultList();
     }
 
@@ -72,10 +83,30 @@ public class AplicacionFacade {
         q.setParameter(1, idApp);
         return q.getResultList();
     }
+    
+    public List<OpcionMenu> getLstOpcionMenuByIdAppAndIdMod(Long idApp, Long idModulo) {
+        Query q = em.createNamedQuery("Seguridad.OpcMenuNotByIdAppAndIdMod", OpcionMenu.class);
+        q.setParameter(1, idApp);
+        q.setParameter(2, idModulo);
+        return q.getResultList();
+    }
 
     public List<OpcionMenu> getLstOpcionMenuByUsuAndApp(String login, BigDecimal idAplicacion) {
         Query q = em.createQuery("SELECT a.idOpcMenu FROM AplicacionOpcMenu a WHERE a.idGrupoApp", OpcionMenu.class);
         return q.getResultList();
+    }
+
+    public Boolean guardarAplicacion(Aplicacion app) {
+        try {
+            if (app.getIdAplicacion() == null) {
+                em.persist(app);
+            } else {
+                em.merge(app);
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public void guardarGrupo(Grupo grp) {
@@ -203,7 +234,7 @@ public class AplicacionFacade {
         if (q.getResultList().isEmpty()) {
             lst.add(idOpcMenu);
             OpcionMenu opcionMenu = em.find(OpcionMenu.class, idOpcMenu);
-            if(opcionMenu.getPadreIdOpcMenu()!=null){
+            if (opcionMenu.getPadreIdOpcMenu() != null) {
                 validarOpcPadreToGruApp(opcionMenu.getPadreIdOpcMenu().getIdOpcMenu(), idGruApp, lst);
             }
         } else {

@@ -7,7 +7,6 @@ package sv.gob.mined.seguridad.web.view;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,28 +86,30 @@ public class GruOpcMenuView extends BundleView implements Serializable {
         values.add(idApp.toString());
         params.put("idApp", values);
 
-        PrimeFaces.current().dialog().openDynamic("/app/mantto/dialog/dlgOpcionMenu", options, params);
+        PrimeFaces.current().dialog().openDynamic("/app/mantto/dialog/dlgLstOpcionMenu", options, params);
     }
 
     public void onAgregarOpcMenu(SelectEvent event) {
-        GruApp gruApp = appFacade.getGruAppByIdAppAndIdGru(idApp, idGrupo, "MISANCHEZ");
+        if (event.getObject() != null) {
+            GruApp gruApp = appFacade.getGruAppByIdAppAndIdGru(idApp, idGrupo, "MISANCHEZ");
 
-        List<OpcionMenuDto> lst = (List<OpcionMenuDto>) event.getObject();
-        List<Long> lstIdsOpcMenuToUsuario = new ArrayList();
+            List<OpcionMenuDto> lst = (List<OpcionMenuDto>) event.getObject();
+            List<Long> lstIdsOpcMenuToUsuario = new ArrayList();
 
-        for (OpcionMenuDto opc : lst) {
-            //registrar la opción del menu al gruApp
-            lstIdsOpcMenuToUsuario.add(opc.getIdOpcMenu());
+            for (OpcionMenuDto opc : lst) {
+                //registrar la opción del menu al gruApp
+                lstIdsOpcMenuToUsuario.add(opc.getIdOpcMenu());
 
-            //verificar que el gruApp ya cuente con la opcion padre
-            if (opc.getPadreIdOpcMenu() != null) {
-                //si el gruApp no cuenta con la opción padre, se debe de agregar
-                lstIdsOpcMenuToUsuario.addAll(appFacade.validarOpcPadreToGruApp(opc.getPadreIdOpcMenu(), idGrupo, lstIdsOpcMenuToUsuario));
+                //verificar que el gruApp ya cuente con la opcion padre
+                if (opc.getPadreIdOpcMenu() != null) {
+                    //si el gruApp no cuenta con la opción padre, se debe de agregar
+                    lstIdsOpcMenuToUsuario.addAll(appFacade.validarOpcPadreToGruApp(opc.getPadreIdOpcMenu(), idGrupo, lstIdsOpcMenuToUsuario));
+                }
             }
+
+            appFacade.guardarOpcMenuToGruApp(lstIdsOpcMenuToUsuario, gruApp.getIdGruApp());
+
+            JsfUtil.mensajeInformacion(getBundle().getString("msj.insercion"));
         }
-
-        appFacade.guardarOpcMenuToGruApp(lstIdsOpcMenuToUsuario, gruApp.getIdGruApp());
-
-        JsfUtil.mensajeInformacion(getBundle().getString("msj.insercion"));
     }
 }

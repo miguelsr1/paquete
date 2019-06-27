@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import org.primefaces.PrimeFaces;
 import sv.gob.mined.seguridad.model.Modulo;
 
 /**
@@ -19,11 +20,10 @@ import sv.gob.mined.seguridad.model.Modulo;
 @ViewScoped
 public class AgregarModuloView implements Serializable{
     
-    public Modulo modulo;
+    public Modulo modulo = new Modulo();
     
     @PostConstruct
     public void init(){
-        modulo = new Modulo();
     }
 
     public Modulo getModulo() {
@@ -34,5 +34,11 @@ public class AgregarModuloView implements Serializable{
         this.modulo = modulo;
     }
     
+    public void agregarModulo() {
+        PrimeFaces.current().dialog().closeDynamic(modulo);
+    }
     
+    public void cerrarDlg(){
+        PrimeFaces.current().dialog().closeDynamic(null);
+    }
 }

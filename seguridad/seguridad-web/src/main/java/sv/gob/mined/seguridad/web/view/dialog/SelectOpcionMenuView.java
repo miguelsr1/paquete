@@ -58,4 +58,8 @@ public class SelectOpcionMenuView implements Serializable {
     public void agregarOpciones() {
         PrimeFaces.current().dialog().closeDynamic(lstOpcionMenuSelected);
     }
+    
+    public void cerrarDlg(){
+        PrimeFaces.current().dialog().closeDynamic(null);
+    }
 }
