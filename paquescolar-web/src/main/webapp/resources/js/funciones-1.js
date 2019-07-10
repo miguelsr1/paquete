@@ -111,3 +111,13 @@ function calcularCiclo3(fem, mas, lbl, gra7, gra8, gra9, lblCiclo3) {
     $("#" + lbl).text(Number(fem) + Number(mas));
     $("#" + lblCiclo3).text(Number(grado7) + Number(grado8) + Number(grado9));
 }
+$(document).ready(function () {
+    $(window).scroll(function () {
+        var scroll = $(window).scrollTop();
+        if (scroll > 1) {
+            $("#menuBar").css("-webkit-box-shadow", "0px 2px 4px 0px rgba(0,0,0,0.75)");
+        } else {
+            $("#menuBar").css("-webkit-box-shadow", "0px 0px 0px 0px rgba(0,0,0,0.75)");
+        }
+    })
+})

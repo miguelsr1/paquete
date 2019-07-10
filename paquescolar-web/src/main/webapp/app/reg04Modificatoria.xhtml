@@ -9,7 +9,7 @@
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar> 
+                    <p:menubar id="menuBar" styleClass="divSticky"> 
                         <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" oncomplete="onClick('btoBuscarC');"
                                     update="pnlFiltro" action="#{modificatoriaController.validarProcesoAdquisicion}"
                                     actionListener="#{modificatoriaController.prepararCreacion}"/>

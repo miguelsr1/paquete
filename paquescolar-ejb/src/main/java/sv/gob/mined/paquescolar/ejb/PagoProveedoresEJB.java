@@ -17,7 +17,6 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import sv.gob.mined.paquescolar.model.DetalleDocPago;
 import sv.gob.mined.paquescolar.model.DetallePlanilla;
@@ -52,7 +51,7 @@ public class PagoProveedoresEJB {
             q.setParameter(2, numeroNit);
             q.setParameter(3, codigoDepartamento);
             return q.getResultList();
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             eMailEJB.enviarMailDeError("Paquete Escolar - Error - Modulo de pago",
                     "Error en generacion de constancia de renta.\n"
                             + "Anho " + anhoPago + "; NIT " + numeroNit + "; codigoDepartamento " + codigoDepartamento+ "; usuario " + usuario,

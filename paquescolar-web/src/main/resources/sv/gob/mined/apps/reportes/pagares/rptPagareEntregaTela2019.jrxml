@@ -126,7 +126,8 @@ concat($F{nombre}).concat(", para que designe a la persona depositaria de los bi
 						<font fontName="Arial" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA["<style isBold='true' pdfFontName='Helvetica-Bold'>PAGARÉ SIN PROTESTO\n".
-concat("POR ENTREGA DE TELA PARA SERVICIOS DE CONFECCIÓN DE UNIFORMES</style>")]]></textFieldExpression>
+concat("POR ENTREGA DE TELA PARA SERVICIOS\n").
+concat("DE CONFECCIÓN DE UNIFORMES</style>")]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>

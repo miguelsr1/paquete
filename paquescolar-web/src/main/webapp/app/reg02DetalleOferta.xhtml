@@ -5,12 +5,12 @@
     xmlns:p="http://primefaces.org/ui"
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
-    xmlns:jsf="http://xmlns.jcp.org/jsf">
+    xmlns:jsf="http://xmlns.jcp.org/jsf">    
     <ui:define name="content">
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar id="mbMenu"> 
+                    <p:menubar id="menuBar" styleClass="divSticky"> 
                         <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
                         <p:menuitem value="Modificar" icon="fa fa-edit" action="#{participantesController.prepareEdit}" actionListener="#{ofertaBienesServiciosController.limpiarCampos}" update="pnlFiltro dvDetalle"/>
                         <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" action="#{participantesController.update}" includeViewParams="true"
@@ -24,7 +24,7 @@
                             <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
                         </f:facet>  
                     </p:menubar>
-                    <p:blockUI block="mbMenu" trigger="mGuardar" />
+                    <p:blockUI block="menuBar" trigger="mGuardar" />
 
                     <h3>
                         <i class="fa fa-filter blue" style="font-size: 16px;"></i>
@@ -52,7 +52,7 @@
                         <p:selectOneMenu id="cboProveedor" value="#{participantesController.idParticipante}" disabled="#{participantesController.deshabilitado}" onkeydown="setaFoco(this);" >
                             <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
                             <f:selectItems value="#{ofertaBienesServiciosController.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{par.idEmpresa.razonSocial}" />
-                            <p:ajax update="mbMenu dvDetalle btnAgregar" listener="#{participantesController.buscarItemsProveedor}" />
+                            <p:ajax update="menuBar dvDetalle btnAgregar" listener="#{participantesController.buscarItemsProveedor}" />
                         </p:selectOneMenu>
                     </p:panelGrid>
                 </div>
@@ -76,7 +76,7 @@
                                      rowStyleClass="#{detalle.estadoEliminacion eq 1 ? 'filaEliminada' : null}">
 
                             <p:ajax id="event" event="cellEdit" listener="#{participantesController.onCellEdit}" onsuccess="updDetalleOferta();"/>
-                            
+
                             <p:blockUI block="dvDetalle" trigger="event" />
 
                             <p:column headerText="Id" width="45" style="text-align: center;">

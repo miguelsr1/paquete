@@ -8,7 +8,7 @@
     <ui:define name="content">
         <div class="ui-g">
             <div class="ui-g-12">
-                <div class="card">
+                <div class="card divSticky">
                     <p:menubar id="mbMenu"> 
                         <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo"
                                     action="#{ofertaBienesServiciosController.prepareCreate}" 
@@ -83,7 +83,7 @@
 
                         <p:column headerText="Eliminar" width="40" style="text-align: center;">
                             <p:commandLink oncomplete="PF('confirmDialog').show();" process="@this" disabled="#{ofertaBienesServiciosController.deshabilitar}">
-                                <p:outputLabel rendered="#{!participante.eliminar}"> <i class="fa fa-check-circle"></i></p:outputLabel>
+                                <p:outputLabel rendered="#{!participante.eliminar}"> <i class="fa fa-trash"></i></p:outputLabel>
                                 <p:outputLabel rendered="#{participante.eliminar}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
                                 <f:setPropertyActionListener value="#{participante}" target="#{ofertaBienesServiciosController.participanteSeleccionado}"/>  
                                 <f:setPropertyActionListener value="#{rowId}" target="#{ofertaBienesServiciosController.rowEdit}"/>  
@@ -101,7 +101,7 @@
                         <p:column headerText="Ver Oferta" width="40" style="text-align: center;">
                             <p:commandLink action="#{ofertaBienesServiciosController.editarOfertaParticipante}" disabled="#{ofertaBienesServiciosController.selected.idOferta eq null}">
                                 <f:param name="idParticipante" value="#{participante.idParticipante}"/>
-                                <i class="fa fa-hand-o-right blue" style="font-size: 17px;"></i>
+                                <i class="fa fa-eye" style="font-size: 17px;"></i>
                             </p:commandLink>
                         </p:column>
                     </p:dataTable>

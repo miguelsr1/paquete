@@ -43,7 +43,7 @@
 .card.no-gutter {
     margin-bottom: 0; }
 .card h1 {
-    font-size: 16px;
+    font-size: 14x;
     font-weight: 400;
     margin: 20px 0; }
 .card h1:first-child {
@@ -52,7 +52,7 @@
     font-size: 18px;
     font-weight: 400; }
 .card h3 {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 400; }
 .card h4 {
     font-size: 14px;
