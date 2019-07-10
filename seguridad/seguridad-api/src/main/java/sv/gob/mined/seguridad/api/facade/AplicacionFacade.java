@@ -28,15 +28,17 @@ import sv.gob.mined.seguridad.model.dto.OpcionMenuDto;
  */
 @Stateless
 @LocalBean
-public class AplicacionFacade {
+public class AplicacionFacade implements AplicacionService {
 
     @PersistenceContext(unitName = "seguridadv2-UP")
     private EntityManager em;
 
+    @Override
     public <T extends Object> T findEntity(Class<T> clase, Object id) {
         return em.find(clase, id);
     }
 
+    @Override
     public List<Aplicacion> getLstAplicaciones() {
         Query q = em.createQuery("SELECT a FROM Aplicacion a", Aplicacion.class);
         return q.getResultList();
@@ -59,6 +61,7 @@ public class AplicacionFacade {
         return q.getResultList();
     }
 
+    @Override
     public Usuario getUsuarioByLogin(String login) {
         Query q = em.createQuery("SELECT u FROM Usuario u WHERE u.login=:login", Usuario.class);
         q.setParameter("login", login);
@@ -83,7 +86,7 @@ public class AplicacionFacade {
         q.setParameter(1, idApp);
         return q.getResultList();
     }
-    
+
     public List<OpcionMenu> getLstOpcionMenuByIdAppAndIdMod(Long idApp, Long idModulo) {
         Query q = em.createNamedQuery("Seguridad.OpcMenuNotByIdAppAndIdMod", OpcionMenu.class);
         q.setParameter(1, idApp);

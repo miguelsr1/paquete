@@ -10,17 +10,17 @@
         <h:link styleClass="topbar-logo">
             <p:graphicImage name="images/#{guestPreferences.layout == 'default' ? 'logo-black.png' : 'logo-white.png'}" style="border: 0px;" library="paradise-layout" />
         </h:link>
-        
+
         <a href="#" id="menu-button">
             <i class="fa fa-bars"></i>
         </a>
-        
+
         <a href="#" id="user-display">
             <span class="username">Emma Davis</span>
             <p:graphicImage name="images/avatar.png" library="paradise-layout" style="border: 0px;"/>
             <i class="fa fa-angle-down"></i>
         </a>
-        
+
         <label for="topbar-search">
             <i class="fa fa-search topbar-search-icon"></i>
         </label>
@@ -52,10 +52,11 @@
                         </a>
                     </li>
                     <li role="menuitem">
-                        <a href="#">
+                        <p:commandLink action="#{loginView.logout()}">
                             <i class="fa fa-fw fa-sign-out"></i>
-                            <span>Logout</span>
-                        </a>
+                            <h:outputText value="Logout"/>
+                        </p:commandLink>
+
                     </li>
                 </ul>
             </li>

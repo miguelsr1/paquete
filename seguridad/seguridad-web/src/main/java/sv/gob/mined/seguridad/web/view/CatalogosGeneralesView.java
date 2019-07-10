@@ -8,14 +8,12 @@ package sv.gob.mined.seguridad.web.view;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.List;
+import java.security.Principal;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
@@ -30,6 +28,8 @@ public class CatalogosGeneralesView implements Serializable {
 
     private String version;
 
+    
+    
     public CatalogosGeneralesView() {
     }
 
@@ -49,6 +49,8 @@ public class CatalogosGeneralesView implements Serializable {
         } catch (IOException ex) {
             Logger.getLogger(CatalogosGeneralesView.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        
     }
 
     public String getVersion() {

@@ -15,7 +15,7 @@
     </h:head>
 
     <h:body styleClass="login-body">
-        <h:form id="loginForm" onsubmit="document.getElementById('loginForm').action='j_security_check';" prependId="false">
+        <form id="loginForm" action="j_security_check" method="post" >
             <p:growl id="growl" showDetail="true" escape="false">
                 <p:autoUpdate />
             </p:growl>
@@ -33,14 +33,14 @@
                             <div class="ui-g-12">
                                 <p:outputLabel value="Usuario" style="font-size: 18px; font-family: 'Bembo Std' !important"/>
                                 <div class="input-wrapper">
-                                    <p:inputText id="j_username" styleClass="textMayuscula" onkeyup="return cUpper(this);"/>
+                                    <input type="text" name="j_username" class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all textMayuscula"/>
                                     <i class="fa fa-user" />
                                 </div>
                             </div>
                             <div class="ui-g-12">
                                 <p:outputLabel value="Clave de acceso" style="font-size: 18px; font-family: Bembo Std !important" />
                                 <div class="input-wrapper">
-                                    <p:password id="password" placeholder="CLAVE DE ACCESO" feedback="false"/>
+                                    <input type="password" name="j_password" class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all"/>  
                                     <i class="fa fa-lock" />
                                 </div>
                             </div>
@@ -75,7 +75,7 @@
                     <h:outputStylesheet name="personalizadas.css" library="css" />
                 </div>
             </div>
-        </h:form>
+        </form>
     </h:body>
 
 </html>
