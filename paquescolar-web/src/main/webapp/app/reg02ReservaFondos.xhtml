@@ -6,36 +6,32 @@
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
+        <p:menubar id="mbMenu"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"
+                        update="pnlFiltro pnlProveedores"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" 
+                        action="#{resolucionesAdjudicativasController.prepareEdit}" 
+                        update="pnlFiltro pnlProveedores pnlFondosCE"/>
+            <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" 
+                        action="#{resolucionesAdjudicativasController.update}" disabled="#{menuController.usuarioSoloLectura}" update="pnlIdResolucion"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+            </f:facet> 
+        </p:menubar>        
+        <p:blockUI block="mbMenu" trigger="mGuardar" />
+        <p:panel visible="false" id="pnlIdResolucion">
+            <f:viewParam name="idResolucion" value="#{resolucionesAdjudicativasController.idResolucionAdj}"/>
+        </p:panel>
         <div class="ui-g">
             <div class="ui-g-12">
-                <div class="card">
-                    <p:menubar id="mbMenu"> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"
-                                    update="pnlFiltro pnlProveedores"/>
-                        <p:menuitem value="Modificar" icon="fa fa-edit" 
-                                    action="#{resolucionesAdjudicativasController.prepareEdit}" 
-                                    update="pnlFiltro pnlProveedores pnlFondosCE"/>
-                        <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" 
-                                    action="#{resolucionesAdjudicativasController.update}" disabled="#{menuController.usuarioSoloLectura}" update="pnlIdResolucion"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
-
-                        <f:facet  name="options">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
-                        </f:facet> 
-                    </p:menubar>
-
-                    <p:panel visible="false" id="pnlIdResolucion">
-                        <f:viewParam name="idResolucion" value="#{resolucionesAdjudicativasController.idResolucionAdj}"/>
-                    </p:panel>
-                    
-                    <p:blockUI block="mbMenu" trigger="mGuardar" />
-
-                    <h3>
+                <div class="card"><h1>
                         <i class="fa fa-filter blue" style="font-size: 16px;"></i>
                         <p:spacer width="10" height="8"/>
                         <p:outputLabel value="Filtro de busqueda"/>
-                    </h3>
+                    </h1>
                     <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10"
                                  style="width: 100%; border:0px none; background-color:transparent;"
                                  styleClass="form-group ui-panelgrid-blank">

@@ -7,6 +7,9 @@
     <h:head>
         <title>Busqueda de Contratos</title>
         <style type="text/css">
+            body{
+                background-color: white !important;
+            }
             .col1{
                 height:auto;vertical-align: top; width: 100px;
             }
@@ -56,6 +59,7 @@
             .col1{width: 8.33%;}
         </style>
         <h:outputStylesheet name="css/layout-default.css" library="paradise-layout" />
+        <h:outputScript name="calendar-localization.js" library="js"/>
         <h:outputScript name="funciones-1.js" library="js"/>
     </h:head>
     <h:body>
@@ -66,7 +70,7 @@
                     <p:spacer width="10" height="8"/>
                     <p:outputLabel value="Filtro de busqueda"/>
                 </f:facet>
-                <p:panelGrid columns="2" columnClasses="col4_label,col8"
+                <p:panelGrid columns="4" columnClasses="col3_label,col4,col2_label,col3"
                              styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
                     <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
                     <p:selectOneMenu id="cboRubro" value="#{filtroContratoModificativaMB.idRubro}">
@@ -74,17 +78,14 @@
                         <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                         <p:ajax update="pnlFiltro" listener="#{filtroContratoModificativaMB.buscarProceso}" />
                     </p:selectOneMenu>
+                    <p:spacer />
+                    <p:spacer />
 
                     <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
-                    <h:panelGrid columns="3" id="codigoEntidad" >
-                        <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{filtroContratoModificativaMB.codigoEntidad}" size="5" autocomplete="off" requiredMessage="Codigo de infraestructura"/>
-                        <p:spacer width="10"/>
-                        <p:outputLabel id="nombreCE" value="#{filtroContratoModificativaMB.entidadEducativa.nombre}" style="font-weight: bold"/>
-                    </h:panelGrid>
-                </p:panelGrid>
+                    <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{filtroContratoModificativaMB.codigoEntidad}" size="5" autocomplete="off" requiredMessage="Codigo de infraestructura"/>
+                    <p:spacer />
+                    <p:spacer />
 
-                <p:panelGrid columns="4" columnClasses="col3_label,col4,col2_label,col3"
-                             styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
                     <h:outputText value="Departamento C.E.:" />
                     <p:selectOneMenu id="cboDepartamento" value="#{filtroContratoModificativaMB.codigoDepartamento}">
                         <f:selectItem noSelectionOption="true" itemLabel="Seleccione un departamento" />
@@ -94,9 +95,9 @@
                     <p:inputMask value="#{filtroContratoModificativaMB.numeroNit}" mask="9999-999999-999-9"/>
 
                     <h:outputText value="Fecha inicial:"/>
-                    <p:calendar value="#{filtroContratoModificativaMB.fecha1}" pattern="dd/MM/yyyy" size="10"/>
+                    <p:calendar value="#{filtroContratoModificativaMB.fecha1}" placeholder="dd/MM/yyyy" locale="es" pattern="dd/MM/yyyy" size="10" showOn="button"/>
                     <h:outputText value="Fecha fin:"/>
-                    <p:calendar value="#{filtroContratoModificativaMB.fecha2}" pattern="dd/MM/yyyy" size="10"/>
+                    <p:calendar value="#{filtroContratoModificativaMB.fecha2}" placeholder="dd/MM/yyyy" locale="es" pattern="dd/MM/yyyy" size="10" showOn="button"/>
                     <h:outputText value="Número de contrato:"/>
                     <p:inputText value="#{filtroContratoModificativaMB.numeroContrato}"/>
 
@@ -166,6 +167,7 @@
                                          rowKey="#{detalle.idRow}">
 
                                 <p:ajax event="rowSelect"  listener="#{filtroContratoModificativaMB.onContratoChosen}"/>
+                                <p:ajax event="rowDblselect"  listener="#{filtroContratoModificativaMB.onSelectedContrato}"/>
 
                                 <p:column headerText="#" width="5" style="text-align: center">
                                     #{rowIdDetalle eq 0 ? "" :(rowIdDetalle)}

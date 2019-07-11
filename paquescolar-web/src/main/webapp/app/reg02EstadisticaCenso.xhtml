@@ -119,26 +119,25 @@
     </ui:define>
 
     <ui:define name="content">  
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" update="pnlFiltro pnlPresupuesto" disabled="true"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" update="pnlFiltro pnlPresupuesto" action="#{estadisticasCensoController.prepareEdit}" />
+            <p:menuitem value="Guardar" icon="fa fa-save" action="#{estadisticasCensoController.guardar}" disabled="#{menuController.usuarioSoloLectura}"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" ajax="true" onclick="PF('dlgImprimir').show();" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+            </f:facet>  
+        </p:menubar>
         <div class="ui-g">
             <div class="ui-g-12">
-                <div class="card divSticky">
-                    <p:menubar> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" update="pnlFiltro pnlPresupuesto" disabled="true"/>
-                        <p:menuitem value="Modificar" icon="fa fa-edit" update="pnlFiltro pnlPresupuesto" action="#{estadisticasCensoController.prepareEdit}" />
-                        <p:menuitem value="Guardar" icon="fa fa-save" action="#{estadisticasCensoController.guardar}" disabled="#{menuController.usuarioSoloLectura}"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="true" onclick="PF('dlgImprimir').show();" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
-
-                        <f:facet  name="options">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-
-                    <h3>
+                <div class="card">
+                    <h1>
                         <i class="fa fa-filter blue" style="font-size: 16px;"></i>
                         <p:spacer width="10" height="8"/>
                         <p:outputLabel value="Filtro de busqueda"/>
-                    </h3>
+                    </h1>
 
                     <h:panelGrid id="pnlFiltro" columns="4" >
                         <p:outputLabel value="#{bundle['ce.codEnt']}:" />

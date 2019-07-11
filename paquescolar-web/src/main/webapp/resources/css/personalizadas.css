@@ -173,6 +173,21 @@ body .ui-widget-overlay {
     opacity: 0.3;
     filter: alpha(opacity=70);
 }
+.ui-growl {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 500px !important;
+}
+.ui-growl-message {
+    padding: 0 0 5px 0;
+    width: 422px !important;
+    float: right;
+}
+body .ui-growl {
+    top: 119px !important;
+}
+
 .panelColumns td {
     vertical-align: top; 
 }
@@ -255,7 +270,7 @@ body .ui-widget-overlay {
 .divSticky{
     position: sticky !important;
     position: -webkit-sticky !important; 
-    top: 71px; 
+    top: 70px; 
     z-index: 250; 
 }
 .divStickySombra{
@@ -273,11 +288,8 @@ body .ui-widget-overlay {
 .divStickyOAE{
     position: sticky;
     position: -webkit-sticky !important; 
-    top: 235px; 
-    z-index: 1000; 
-    -webkit-box-shadow: 5px 5px 5px 5px rgba(0,0,0,0.75);
-    -moz-box-shadow: 5px 5px 5px 5px rgba(0,0,0,0.75);
-    box-shadow: 5px 5px 5px 5px rgba(0,0,0,0.75);
+    top: 110px; 
+    z-index: 250;
 }
 
 body .ui-datatable .ui-datatable-data > tr td {

@@ -242,4 +242,11 @@ public class FiltroContratoModificativaMB extends RecuperarProceso implements Se
             }
         }
     }
+    
+    public void onSelectedContrato(SelectEvent event){
+        onContratoChosen(event);
+        if(vwContratoModificatoria != null){
+            selectContrato();
+        }
+    }
 }

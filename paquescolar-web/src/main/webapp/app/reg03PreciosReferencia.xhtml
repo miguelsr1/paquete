@@ -6,28 +6,26 @@
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
+        <p:menubar id="menuBar"  styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" ajax="true" process="@this" disabled="true"/>
+            <p:menuitem value="Modificar" update="frmPrincipal" icon="fa fa-edit" ajax="true"  onclick="onClick('btnModificar');"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="#{menuController.usuarioSoloLectura || proveedorController.deshabiliar}" 
+                        action="#{proveedorController.guardarPreciosRef}" update="tblDetallePrecio"/>
+            <p:menuitem value="Imprimir" ajax="false" icon="fa fa-print" action="#{proveedorController.impOfertaGlobal}" />
+            <p:menuitem value="Principal" icon="fa fa-home" action="#{anhoProcesoController.limpiarVariables}" />
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+            </f:facet>  
+        </p:menubar>
+        <p:panel visible="false">
+            <p:commandButton id="btnModificar" value="ok" actionListener="#{proveedorController.filtroProveedores}">
+                <p:ajax event="dialogReturn" listener="#{proveedorController.empSelecPrecioRef}"   update="frmPrincipal pnlFoto" />
+            </p:commandButton>
+        </p:panel>
         <div class="ui-g">
             <div class="ui-g-12">
-                <div class="card">
-                    <p:menubar id="menuBar"> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" ajax="true" process="@this" disabled="true"/>
-                        <p:menuitem value="Modificar" update="frmPrincipal" icon="fa fa-edit" ajax="true"  onclick="onClick('btnModificar');"/>
-                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="#{menuController.usuarioSoloLectura || proveedorController.deshabiliar}" 
-                                    action="#{proveedorController.guardarPreciosRef}" update="tblDetallePrecio"/>
-                        <p:menuitem value="Imprimir" ajax="false" icon="fa fa-print" action="#{proveedorController.impOfertaGlobal}" />
-                        <p:menuitem value="Principal" icon="fa fa-home" action="#{anhoProcesoController.limpiarVariables}" />
-
-                        <f:facet  name="options">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-                    <p:panel visible="false">
-                        <p:commandButton id="btnModificar" value="ok" actionListener="#{proveedorController.filtroProveedores}">
-                            <p:ajax event="dialogReturn" listener="#{proveedorController.empSelecPrecioRef}"   update="frmPrincipal pnlFoto" />
-                        </p:commandButton>
-                    </p:panel>
-
-                    <ui:include src="/app/comunes/datosGenProveedor.xhtml"/>
+                <div class="card"><ui:include src="/app/comunes/datosGenProveedor.xhtml"/>
                 </div>
 
                 <div class="card clearfix">

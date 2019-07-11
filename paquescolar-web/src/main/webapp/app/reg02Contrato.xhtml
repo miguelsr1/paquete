@@ -7,30 +7,30 @@
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
     xmlns:jsf="http://xmlns.jcp.org/jsf">
     <ui:define name="content">
+        <p:menubar id="mbMenu"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" update="dvFiltro pnlContrato pnlCentroEscolar"
+                        action="#{contratosOrdenesComprasController.prepareCreate}" process="@this"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" update="dvFiltro pnlContrato dvOrganismo dvDocumentos"
+                        action="#{contratosOrdenesComprasController.prepareEdit}" ajax="true" process="@this"/>
+            <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" actionListener="#{contratosOrdenesComprasController.guardar}" disabled="#{menuController.usuarioSoloLectura}"  update="pnlContrato pnlCentroEscolar"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{contratosOrdenesComprasController.impDocumentos}" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options" >  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+            </f:facet>  
+        </p:menubar>
+        <p:blockUI block="mbMenu" trigger="mGuardar" />
+
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar id="mbMenu"> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" update="dvFiltro pnlContrato pnlCentroEscolar"
-                                    action="#{contratosOrdenesComprasController.prepareCreate}" process="@this"/>
-                        <p:menuitem value="Modificar" icon="fa fa-edit" update="dvFiltro pnlContrato dvOrganismo dvDocumentos"
-                                    action="#{contratosOrdenesComprasController.prepareEdit}" ajax="true" process="@this"/>
-                        <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" actionListener="#{contratosOrdenesComprasController.guardar}" disabled="#{menuController.usuarioSoloLectura}"  update="pnlContrato pnlCentroEscolar"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{contratosOrdenesComprasController.impDocumentos}" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
-
-                        <f:facet  name="options" >  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-                    <p:blockUI block="mbMenu" trigger="mGuardar" />
-
                     <h:panelGroup id="dvFiltro" style="display:#{(contratosOrdenesComprasController.continuar)?'block':'none'}">
-                        <h3>
+                        <h1>
                             <i class="fa fa-filter blue" style="font-size: 16px;"></i>
                             <p:spacer width="10" height="8"/>
                             <p:outputLabel value="Filtro de busqueda"/>
-                        </h3>
+                        </h1>
 
                         <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10"
                                      style="width: 100%; border:0px none; background-color:transparent;"
@@ -76,7 +76,7 @@
                                 <p:inputText id="txtAnyo" size="6" disabled="#{contratosOrdenesComprasController.deshabilitado}" value="#{contratosOrdenesComprasController.selected.anhoContrato}"/>
 
                                 <p:outputLabel value="Fecha Contrato: " for="cldFechaContrato" />
-                                <p:calendar id="cldFechaContrato" pattern="dd/MM/yyyy" size="12" disabled="#{contratosOrdenesComprasController.deshabilitado}" value="#{contratosOrdenesComprasController.selected.fechaEmision}" locale="es"/>
+                                <p:calendar id="cldFechaContrato" pattern="dd/MM/yyyy" size="12" disabled="#{contratosOrdenesComprasController.deshabilitado}" value="#{contratosOrdenesComprasController.selected.fechaEmision}" locale="es" showOn="button" navigator="true"/>
                                 <p:outputLabel value="Fecha Orden Inicio: " for="cldOrdenInicio" rendered="#{contratosOrdenesComprasController.showFechaOrdenInicio}" />
                                 <p:calendar id="cldOrdenInicio" pattern="dd/MM/yyyy" size="12" navigator="true" disabled="#{contratosOrdenesComprasController.deshabilitado}" value="#{contratosOrdenesComprasController.selected.fechaOrdenInicio}" rendered="#{contratosOrdenesComprasController.showFechaOrdenInicio}" locale="es"/>
                                 <p:outputLabel value="Plazo de entrega: " for="txtPlazo"/>
