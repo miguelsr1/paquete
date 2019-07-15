@@ -25,7 +25,7 @@ public class EntidadEducativaFacade implements EntidadEducativaFacadeLocal {
 
     @Override
     public List<Departamento> getLstDepartamentos() {
-        Query q = em.createQuery("SELECT d FROM Departamento d ORDER BY d.codigoDepartamento", Departamento.class);
+        Query q = em.createQuery("SELECT d FROM Departamento d where D.codigoDepartamento NOT IN ('00') ORDER BY d.codigoDepartamento", Departamento.class);
         return q.getResultList();
     }
 

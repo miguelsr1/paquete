@@ -1,0 +1,63 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Consulta de directores de CE</ui:define>
+
+    <ui:define name="content">
+        <p:panel header="Filtro">
+            <p:panelGrid columns="2" columnClasses="col2_label,col10" 
+                         style="width: 100%; border:0px none; background-color:transparent;"
+                         styleClass="form-group ui-panelgrid-blank">
+                <p:outputLabel value="DUI"/>
+                <p:inputMask mask="99999999-9" value="#{consultasView.dui}"/>
+                <p:outputLabel value="NIP"/>
+                <p:inputMask mask="9999999999" value="#{consultasView.nip}"/>
+                <p:outputLabel value="Nombres"/>
+                <p:outputPanel>
+                    <p:inputText placeholder="Nombres" size="110" value="#{consultasView.nombre}"/>
+                </p:outputPanel>
+                <p:outputLabel value="Nombre del Centro Escolar"/>
+                <p:inputText size="66" value="#{consultasView.nombreCe}"/>
+                <p:outputLabel value="Departamento"/>
+                <p:selectOneMenu value="#{consultasView.codigoDepartamento}">
+                    <f:selectItem itemLabel="Seleccione un valor"/>
+                    <f:selectItems value="#{votacionView.lstDepartamentos}" var="dep" itemValue="#{dep.codigoDepartamento}" itemLabel="#{dep.nombreDepartamento}"/>
+                </p:selectOneMenu>
+            </p:panelGrid>
+
+            <f:facet name="footer">
+                <p:commandButton value="Buscar" icon="fa fa-search" action="#{consultasView.buscarDirectores()}" update="pnlListado" />
+            </f:facet>
+        </p:panel>
+        <p:spacer height="10"/>
+        <p:panel id="pnlListado" header="Lista de Directores">
+            <p:dataTable value="#{consultasView.lstDirectores}" var="director" rowIndexVar="rowId" rowKey="#{director.idDirector}">
+                <p:column headerText="DUI" width="80">
+                    <h:outputText value="#{director.dui}"/>
+                </p:column>
+                <p:column headerText="NIP" width="70">
+                    <h:outputText value="#{director.nip}"/>
+                </p:column>
+                <p:column headerText="Nombre Completo">
+                    <h:outputText value="#{director.nombre}"/>
+                </p:column>
+                <p:column headerText="Centro educativo">
+                    <h:outputText value="#{director.codigoEntidad} :: #{director.nombreCe}"/>
+                </p:column>
+                <p:column headerText="Departamento" width="120">
+                    <h:outputText value="#{director.nombreDepartamento}"/>
+                </p:column>
+                <p:column headerText="Ya votó" width="60">
+                    <h:outputText value="#{director.voto}"/>
+                </p:column>
+                <p:column headerText="A favor de">
+                    <h:outputText value="#{director.nomnbreCandidato}"/>
+                </p:column>
+            </p:dataTable>
+        </p:panel>
+    </ui:define>
+</ui:composition>

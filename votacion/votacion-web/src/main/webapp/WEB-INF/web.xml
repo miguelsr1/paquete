@@ -23,6 +23,14 @@
         <param-name>javax.faces.FACELETS_LIBRARIES</param-name>
         <param-value>/WEB-INF/primefaces-paradise.taglib.xml</param-value>
     </context-param>
+    <context-param>
+        <param-name>primefaces.PRIVATE_CAPTCHA_KEY</param-name>
+        <param-value>6LcTegATAAAAAPhlycQMzqja1Us42HnoGD4KnrTO</param-value>
+    </context-param>
+    <context-param>
+        <param-name>primefaces.PUBLIC_CAPTCHA_KEY</param-name>
+        <param-value>6LcTegATAAAAAOCD_GmUjRWjqJ97fPSny6SlJ2Fk</param-value>
+    </context-param>
     <listener>
         <listener-class>com.sun.faces.config.ConfigureListener</listener-class>
     </listener>
@@ -90,4 +98,8 @@
         <extension>svg#fontawesomeregular</extension>
         <mime-type>image/svg+xml</mime-type>
     </mime-mapping>
+    <mime-mapping>  
+        <extension>otf</extension>  
+        <mime-type>application/x-font-opentype</mime-type>  
+    </mime-mapping> 
 </web-app>

@@ -3,9 +3,10 @@
   <persistence-unit name="votacionUP" transaction-type="JTA">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <jta-data-source>java:/VotacionDS</jta-data-source>
-    <class>sv.gob.mined.votacion.api.votacion.entities.Candidato</class>
-    <class>sv.gob.mined.votacion.api.votacion.entities.Voto</class>
-    <class>sv.gob.mined.votacion.api.votacion.entities.Director</class>
+    <class>sv.gob.mined.votacion.model.votacion.entities.Candidato</class>
+    <class>sv.gob.mined.votacion.model.votacion.entities.Voto</class>
+    <class>sv.gob.mined.votacion.model.votacion.entities.Director</class>
+    <class>sv.gob.mined.votacion.model.votacion.dto.DirectorDto</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>
@@ -15,8 +16,8 @@
   <persistence-unit name="paquescolarUP" transaction-type="JTA">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <jta-data-source>java:/PaqueteDS</jta-data-source>
-    <class>sv.gob.mined.paquescolar.model.Departamento</class>
-    <class>sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa</class>
+    <class>sv.gob.mined.votacion.model.paquete.entities.Departamento</class>
+    <class>sv.gob.mined.votacion.model.paquete.entities.VwCatalogoEntidadEducativa</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>

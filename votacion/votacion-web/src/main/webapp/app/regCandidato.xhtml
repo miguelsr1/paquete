@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Registro de Candidato</ui:define>
+
+    <ui:define name="content">
+        <p:panel header="Datos Generales">
+            <p:panelGrid columns="2" columnClasses="col10,col2" 
+                         styleClass="ui-panelgrid-blank form-group form-elements" 
+                         style="border:0px none; background-color:transparent;">
+
+                <p:panelGrid columns="1" 
+                             style="width: 100%; border:0px none; background-color:transparent;" styleClass="form-group ui-panelgrid-blank">
+                    <p:outputLabel value="DUI"/>
+                    <p:inputMask mask="99999999-9"/>
+                    <p:outputLabel value="Nombres"/>
+                    <p:outputPanel>
+                        <p:inputText placeholder="Nombres" size="30"/><p:spacer width="5"/>
+                        <p:inputText placeholder="Apellidos" size="30"/>
+                    </p:outputPanel>
+                    <p:outputLabel value="Departamento"/>
+                    <p:selectOneMenu>
+                        <f:selectItems value="#{votacionView.lstDepartamentos}" var="dep" itemValue="#{dep.codigoDepartamento}" itemLabel="#{dep.nombreDepartamento}"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Hoja de vida"/>
+                    <p:outputPanel>
+                        <p:fileUpload value="#{fileUploadView.file}" mode="simple" skinSimple="true"/>
+                    </p:outputPanel>
+                    <p:outputLabel value="Resumen de hoja de vida"/>
+                    <p:inputTextarea rows="3" cols="100" />
+                </p:panelGrid>
+                <p:graphicImage name="foto.jpg" library="images" width="150"/>
+            </p:panelGrid>
+
+            <f:facet name="footer">
+                <p:commandButton value="Cancelar" icon="fa fa-ban" />
+                <p:commandButton value="Guardar" icon="fa fa-save" />
+            </f:facet>
+        </p:panel>
+    </ui:define>
+</ui:composition>

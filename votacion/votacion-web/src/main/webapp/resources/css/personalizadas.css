@@ -1,0 +1,307 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 4/08/2017, 11:49:29 AM
+    Author     : DesarrolloPc
+*/
+
+
+.fa-cogss::before {
+    content: "\f085";
+    font-size: 20px;
+    color: #33afde !important;
+}
+.fa-pie-chartt::before {
+    content: "\f200";
+    font-size: 22px;
+    color: #e17576;
+}
+.fa-address-cardd::before {
+    content: "\f2bb";
+    font-size: 22px;
+    color: #7e8dcd;
+}
+.fa-editt::before {
+    content: "\f044";
+    font-size: 22px;
+    color: #39b8b6;
+}
+.fa-universityy::before {
+    content: "\f19c";
+    font-size: 22px;
+    color: #e175a0;
+}
+.fa-truckk::before {
+    content: "\f0d1";
+    font-size: 22px;
+    color: #f7941e;
+}
+.fa-usdd::before {
+    content: "\f155";
+    font-size: 22px;
+    color: #1d9d74;
+}
+.fa-inboxx::before {
+    content: "\f01c";
+    font-size: 22px;
+    color: #3984b8;
+}
+
+.azul{
+    color: #3984b8;    
+}
+.yellow{
+    color: yellow;
+}
+.red {
+    color: #d0525d;
+}
+.blue {
+    color: #33afde;
+}
+.green {
+    color: #5fcf80;
+}
+.orange {
+    color: #f6ac2b;
+}
+.bloque1 {
+    width: 50%;
+}
+.propiedadBloque1 {
+    border-radius: 5px;
+    display: block;
+    float: left;
+    overflow: hidden;
+    padding: 2%;
+    text-align: center;
+    transition: all 0.5s ease 0s;
+    width: 99%;
+}
+.textoConSombra {
+    text-shadow: 0 1px 0 #ffffff;
+}
+.secciones {
+    border-radius: 4px;
+    display: block;
+    line-height: 1.42857;
+    margin-bottom: 20px;
+    padding: 4px;
+    transition: border 0.2s ease-in-out 0s;
+}
+a.secciones.active,a.secciones:focus,a.secciones:hover{
+    border-color:#337ab7;
+    background-color: #8ac7fe;
+}
+.subItem2 {
+    float: left;
+    width: 50%;
+}
+.textMayuscula {
+    text-transform: uppercase;
+}
+.filaEliminada {
+    background-color: #fe7878 !important;
+    background-image:none !important;
+    color:#000000 !important;
+}
+
+.filaCompletada{
+    background-color: #86b8f0  !important;
+    background-image: none !important;
+    color: #000000 !important; 
+}
+.celdaNumero{
+    text-align: right;
+}
+
+.celdaNumeroNegativo{
+    background: #fc6e2b !important;
+}
+
+
+
+.ui-picklist .ui-picklist-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+    height: 200px;
+    width: 350px;
+}
+
+.Animated05 {
+    transition: all 0.5s ease 0s;
+    margin-left: 25px; 
+}
+.CursPointer {
+    cursor: pointer;
+}
+.pageColumnMid{
+    float : left;
+    vertical-align: middle !important;
+    clear : none;
+    height: 82px;
+    padding-left: 30px;
+}
+.pageColumnLeft{
+    float : left;
+    clear : none;
+    text-align: center;
+    height: 82px;
+    padding-top: 6px;
+    margin-left: 70px;
+}
+
+#ajax_gif{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left:0;
+    right:0;
+    margin: auto;
+    width:60px;
+    height: 60px;
+    z-index:1000; text-align: center; background: white;
+}
+
+body .ui-widget-overlay {
+    background-color: #424242;
+    opacity: 0.3;
+    filter: alpha(opacity=70);
+}
+.ui-growl {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 500px !important;
+}
+.ui-growl-message {
+    padding: 0 0 5px 0;
+    width: 422px !important;
+    float: right;
+}
+body .ui-growl {
+    top: 119px !important;
+}
+
+.panelColumns td {
+    vertical-align: top; 
+}
+.col1InfoProv{
+    width: 500px; 
+}
+.col2InfoProv{
+    width: 300px; 
+}
+.colProv3{
+    height:auto;
+    width: 150px; 
+    text-align: center;
+}
+
+.colDProv1{
+    height:auto; 
+    width: 220px; 
+}
+.colDProv2{
+    height:auto;
+}
+
+.fa fa-handshake-o:before {
+    content: "\f2b5";
+}
+
+.negrita{
+    font-weight: bold;
+}
+.numero{
+    text-align: right;    
+}
+
+/*COLORES*/
+.linkDialog{
+    color: #3984b8; 
+}
+.blue{
+    color: #33afde; 
+}
+.lila{
+    color: #7e8dcd; 
+}
+.verde{
+    color: #1d9d74;
+}
+.naranja{
+    color: #f6ac2b;
+}
+.acua{
+    color: #39b8b6;
+}
+.rosa{
+    color: #e175a0;
+}
+.rojo{
+    color: #e17576;
+}
+
+.col12{width: 100%;}
+.col11{width: 91.67%;}
+.col10{width: 83.33%;}
+.col9{width: 75%;}
+.col8{width: 66.67%;}
+.col7{width: 58.33%;}
+.col6{width: 50%;}
+.col6_label{width: 50%;text-align: right;}
+.col5{width: 41.67%;}
+.col5_label{width: 41.67%;text-align: right;}
+.col4{width: 33.33%;}
+.col4_label{width: 33.33%;text-align: right;}
+.col3{width: 25%;}
+.col3_label{width: 25%;text-align: right;}
+.col2{width: 16.67%;}
+.col2{
+    width: 16.67%;
+    vertical-align: top;
+}
+.col2_label{width: 16.67%;text-align: right;}
+.col1{width: 8.33%;}
+.col1_label{width: 8.33%;text-align: right;}
+
+.divSticky{
+    position: sticky !important;
+    position: -webkit-sticky !important; 
+    top: 70px; 
+    z-index: 250; 
+}
+.divStickySombra{
+    -webkit-box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.75);
+}
+
+
+.divSticky.scrolled {
+    background-color: #fff !important;
+    transition: background-color 200ms linear;
+}
+
+.divStickyOAE{
+    position: sticky;
+    position: -webkit-sticky !important; 
+    top: 110px; 
+    z-index: 250;
+}
+
+
+
+body .ui-panel .ui-panel-footer {
+    padding: 6px 12px;
+    border: 0 none;
+    border-top: 1px solid #c7cdd1;
+    margin: 0;
+    text-align: right;
+}
