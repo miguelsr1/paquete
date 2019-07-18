@@ -136,7 +136,7 @@
                 </h:panelGrid>
                 <h:panelGroup rendered="#{ofertaBienesServiciosController.showProductos}">
                     <p:galleria value="#{ofertaBienesServiciosController.images}" var="image" panelHeight="500" style="width: auto;" autoPlay="false">
-                        <p:graphicImage value="/DynamicImageServlet?file=#{image}" style="max-height: 500px; width: auto;"/>
+                        <p:graphicImage value="/DynamicImageServlet?file=#{bundle['path_images']}#{image}" style="max-height: 500px; width: auto;"/>
                     </p:galleria>
                 </h:panelGroup>
             </p:outputPanel>
@@ -193,7 +193,7 @@
                                             <f:facet name="header">
                                                 <p:row>
                                                     <p:column colspan="2">
-                                                        <p:graphicImage value="/DynamicImageServlet?file=fotoProveedores/#{capaEmpresa.idMuestraInteres.idEmpresa.idPersona.urlImagen}"/>
+                                                        <p:graphicImage value="/DynamicImageServlet?file=#{bundle['path_images']}fotoProveedores/#{capaEmpresa.idMuestraInteres.idEmpresa.idPersona.urlImagen}"/>
                                                     </p:column>
                                                 </p:row>
                                             </f:facet>
@@ -344,7 +344,7 @@
                                             <f:facet name="header">
                                                 <p:row>
                                                     <p:column colspan="2">
-                                                        <p:graphicImage value="/DynamicImageServlet?file=fotoProveedores/#{capaEmpresa.idMuestraInteres.idEmpresa.idPersona.urlImagen}"/>
+                                                        <p:graphicImage value="/DynamicImageServlet?file=#{bundle['path_images']}fotoProveedores/#{capaEmpresa.idMuestraInteres.idEmpresa.idPersona.urlImagen}"/>
                                                     </p:column>
                                                 </p:row>
                                             </f:facet>

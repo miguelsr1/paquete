@@ -38,7 +38,6 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.chart.DonutChartModel;
-import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProceso;
 import sv.gob.mined.app.web.util.Reportes;
@@ -54,8 +53,6 @@ import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
 import sv.gob.mined.paquescolar.ejb.ServiciosJsonEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
-import sv.gob.mined.paquescolar.model.Bancos;
-import sv.gob.mined.paquescolar.model.CuentaBancaria;
 import sv.gob.mined.paquescolar.model.DetalleDocPago;
 import sv.gob.mined.paquescolar.model.DetalleModificativa;
 import sv.gob.mined.paquescolar.model.DetallePlanilla;
@@ -72,7 +69,6 @@ import sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosBusquedaPlanillaDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosResumenPagosDto;
-import sv.gob.mined.paquescolar.model.view.DatosPreliminarRequerimiento;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 
 /**
@@ -105,10 +101,6 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("Bundle");
 
     private int indexTab = 0;
-    private int idBanco;
-    private int idNivelEducativo;
-    private int credito = 0;
-    private int idDetProceso;
     private int rowEdit = 0;
     private int ajusteRenta = 0;
     private int idMes = 0;
@@ -142,10 +134,8 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     private String anho;
     private String anhoRptAnual;
     private String anhoRptMensual;
-    private String concepto;
     private String codigoEntidad = "";
     private String codigoDepartamento = "";
-    private String cuentaBancaria = "";
     private String numeroCheque = "";
     private String numeroRequerimiento = "";
     private String nombreEntFinanciera = "";
@@ -193,8 +183,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     private List<ResumenRequerimientoDto> lstResumenRequerimiento = new ArrayList();
     private List<DatosResumenPagosDto> lstResumenPago = new ArrayList();
     private List<EntidadFinanciera> lstEntFinRequerimiento = new ArrayList();
-    private List<CuentaBancaria> lstCuentaBancaria = new ArrayList();
-    private List<DatosPreliminarRequerimiento> lstDatos = new ArrayList();
+
     private List<RequerimientoFondos> lstRequerimientoFondos = new ArrayList();
     private List<DetalleRequerimiento> lstDetalleRequerimiento = new ArrayList();
     private List<DetalleRequerimiento> lstDetalleRequerimientoSeleccionado = new ArrayList();
@@ -210,15 +199,16 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
 
     @PostConstruct
     public void ini() {
-        AnhoProcesoController controller = (AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
+        /*AnhoProcesoController controller = (AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController");
         try {
             anho = controller.getAnho().getAnho().substring(2);
         } catch (Exception e) {
             Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, "ERROR CONTROLADO: No se ha asignado el año de contratación");
         }
-        concepto = "DOTACION DE UNIFORMES, ZAPATOS Y PAQUETES DE UTILES ESCOLARES " + controller.getAnho();
+        concepto = "DOTACION DE UNIFORMES, ZAPATOS Y PAQUETES DE UTILES ESCOLARES " + controller.getAnho();*/
         codigoDepartamento = super.getDepartamento();
+        //DynamicImageServlet
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
@@ -634,66 +624,6 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
 
     public void setCodigoDepartamento(String codigoDepartamento) {
         this.codigoDepartamento = codigoDepartamento;
-    }
-
-    public String getCuentaBancaria() {
-        return cuentaBancaria;
-    }
-
-    public void setCuentaBancaria(String cuentaBancaria) {
-        this.cuentaBancaria = cuentaBancaria;
-    }
-
-    public List<Bancos> getLstBancos() {
-        return proveedorEJB.getLstBancos();
-    }
-
-    public void updateCuentaBancaria() {
-        lstCuentaBancaria = proveedorEJB.getLstCuentaByDepa(codigoDepartamento);
-    }
-
-    public List<CuentaBancaria> getLstCuentaBancaria() {
-        return lstCuentaBancaria;
-    }
-
-    public int getIdBanco() {
-        return idBanco;
-    }
-
-    public void setIdBanco(int idBanco) {
-        this.idBanco = idBanco;
-    }
-
-    public List<DatosPreliminarRequerimiento> getLstDatos() {
-        return lstDatos;
-    }
-
-    public String getConcepto() {
-        return concepto;
-    }
-
-    public void setConcepto(String concepto) {
-        this.concepto = concepto;
-    }
-
-    public int getNumeroModalidades() {
-        return lstDatos.size();
-    }
-
-    public int getCredito() {
-        return credito;
-    }
-
-    public void setCredito(int credito) {
-        this.credito = credito;
-    }
-
-    public int getIdNivelEducativo() {
-        return idNivelEducativo;
-    }
-
-    public void setIdNivelEducativo(int idNivelEducativo) {
-        this.idNivelEducativo = idNivelEducativo;
     }
 
     public String getNombreRubro() {
@@ -1279,12 +1209,12 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
                     if (!numeroRequerimiento.trim().isEmpty()) {
                         requerimientoFondos = utilEJB.find(RequerimientoFondos.class, detalleRequerimiento.getIdRequerimiento().getIdRequerimiento());
                     } else if (!codigoEntidad.trim().isEmpty()) {
-                        lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad, 
-                                super.getProcesoAdquisicion(), 
-                                VarSession.isVariableSession("departamentoUsuario") ? super.getDepartamento() : null, 
+                        lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad,
+                                super.getProcesoAdquisicion(),
+                                VarSession.isVariableSession("departamentoUsuario") ? super.getDepartamento() : null,
                                 numeroRequerimiento.isEmpty() ? null : numeroRequerimiento);
                     }
-                    
+
                     PrimeFaces.current().executeScript("PF('dlgEdtDetDocPago').hide();");
                     PrimeFaces.current().ajax().update("tblDetRequerimiento");
                     JsfUtil.mensajeInsert();
@@ -1712,109 +1642,6 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         buscarPlanillas();
     }
 
-    public void updateConcepto() {
-        String rubroStr = "";
-        detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
-        if (idRubro != null) {
-            rubroStr = (idRubro.intValue() == 1 ? "UNIFORMES" : (idRubro.intValue() == 2 ? "UTILES" : "ZAPATOS"));
-        }
-        String nivel = (idNivelEducativo == 1 ? "PAR" : (idNivelEducativo == 2 ? "BAS" : "MEDI"));
-        String proceso = "";
-        switch (detalleProcesoAdq.getIdDetProcesoAdq()) {
-            case 28:
-            case 29:
-            case 30:
-                proceso = "SOBREDEMANDA-";
-                break;
-            case 31:
-                proceso = "COMPLEMENTO-";
-                break;
-        }
-
-        concepto = "DOTACION DE UNIFORMES, ZAPATOS Y PAQUETES DE UTILES ESCOLARES 20" + anho
-                + "(RB." + proceso + rubroStr + "-"
-                + nivel + "" + (credito == 1 ? "" : "-CREDI") + ")";
-
-        lstDatos.clear();
-    }
-
-    public void generarDatosPreliminares() {
-        detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
-        idDetProceso = detalleProcesoAdq.getIdDetProcesoAdq();
-        lstDatos = proveedorEJB.getLstPreRequerimiento(idDetProceso, codigoDepartamento, credito, idNivelEducativo);
-    }
-
-    public void generarRequerimiento() {
-        provisional(idNivelEducativo, credito);
-    }
-
-    public void provisional(Integer idNivel, Integer cre) {
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
-        credito = cre;
-        updateConcepto(idNivel);
-        try {
-            proveedorEJB.generarRequerimiento(anho, codigoDepartamento, idBanco, cuentaBancaria, concepto,
-                    concepto, "12 - 01 Dotación de Uniformes, Zapatos y Útiles Escolares",
-                    VarSession.getVariableSessionUsuario(), credito == 1 ? "NO" : "SI",
-                    getTotalRequerimiento(), idNivel, idDetProceso);
-        } catch (Exception ex) {
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING,
-                    "ERROR CONTROLADO: Se genero el requerimiento de fondos");
-            JsfUtil.mensajeInsert();
-        }
-    }
-
-    private void updateConcepto(Integer idNivel) {
-        String rubroStr = "";
-        if (idRubro != null) {
-            rubroStr = (idRubro.intValue() == 1 ? "UNIFORMES" : (idRubro.intValue() == 2 ? "UTILES" : "ZAPATOS"));
-        }
-        String nivel = (idNivel == 1 ? "PAR" : (idNivel == 2 ? "BAS" : "MEDI"));
-        String proceso = "";
-        if (detalleProcesoAdq.getIdProcesoAdq().getDescripcionProcesoAdq().contains("SOBREDEMANDA")) {
-            proceso = "SOBREDEMANDA-";
-        } else if (detalleProcesoAdq.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MINI")) {
-            proceso = "COMPLEMENTO-";
-        }
-
-        concepto = "DOTACION DE UNIFORMES, ZAPATOS Y PAQUETES DE UTILES ESCOLARES 20" + anho
-                + "(RB." + proceso + rubroStr + "-"
-                + nivel + "" + (credito == 1 ? "" : "-CREDI") + ")";
-
-        lstDatos.clear();
-    }
-
-    public int getNumeroMatricula() {
-        int matricula = 0;
-        for (DatosPreliminarRequerimiento lstDato : lstDatos) {
-            matricula += lstDato.getCantidadTotal().intValue();
-        }
-
-        if (idRubro != null && idRubro != BigDecimal.ZERO) {
-            if (idRubro.intValue() == 1) {
-                return matricula / 4;
-            } else {
-                return matricula;
-            }
-        } else {
-            return matricula;
-        }
-    }
-
-    public BigDecimal getTotalRequerimiento() {
-        BigDecimal monto = BigDecimal.ZERO;
-        for (DatosPreliminarRequerimiento datosPreliminarRequerimiento : lstDatos) {
-            monto = monto.add(datosPreliminarRequerimiento.getMontoTotal());
-        }
-        if (idRubro != null && idRubro.intValue() == 1
-                && !detalleProcesoAdq.getIdProcesoAdq().getDescripcionProcesoAdq().contains("SOBRE")
-                && !detalleProcesoAdq.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MINI")) {
-            return monto.divide(new BigDecimal(2));
-        } else {
-            return monto;
-        }
-    }
-
     private void documentosAImprimir() {
         lstTipoDocImp.clear();
         lstTipoDocImp.add(new SelectItem(1, "Planilla de Pago"));
@@ -1839,8 +1666,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
 
     public void buscarRequerimientosImp() {
         if (idRubro != null) {
-            idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
-            lstRequerimientoFondos = proveedorEJB.getLstRequerimientos(codigoDepartamento, idDetProceso);
+            lstRequerimientoFondos = proveedorEJB.getLstRequerimientos(codigoDepartamento, detalleProcesoAdq.getIdDetProcesoAdq());
         } else {
             JsfUtil.mensajeAlerta("Debe de seleccionar un rubro de adquisición.");
         }
@@ -1853,7 +1679,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     public void buscarRequerimientos() {
         if (idRubro != null && idRubro.intValue() > 0) {
             buscarReuerimientoqOrPlanilla();
-            lstResumenRequerimiento = proveedorEJB.getLstResumenRequerimiento(codigoDepartamento, idDetProceso);
+            lstResumenRequerimiento = proveedorEJB.getLstResumenRequerimiento(codigoDepartamento, detalleProcesoAdq.getIdDetProcesoAdq());
         } else {
             JsfUtil.mensajeAlerta("Debe de seleccionar un rubro de adquisición.");
         }
@@ -1896,9 +1722,9 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     }
 
     public void recuperarRequerimientos() {
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
         isRubroUniforme = idRubro.intValue() == 1 || idRubro.intValue() == 4 || idRubro.intValue() == 5;
-        lstRequerimientoFondos = proveedorEJB.getLstRequerimientos(codigoDepartamento, idDetProceso);
+        lstRequerimientoFondos = proveedorEJB.getLstRequerimientos(codigoDepartamento, detalleProcesoAdq.getIdDetProcesoAdq());
     }
 
     public void buscarPlanillas() {
@@ -1921,7 +1747,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     private void buscarReuerimientoqOrPlanilla() {
         reiniciarVisibilidadCheques();
         isRubroUniforme = ((idRubro.intValue() == 1) || (idRubro.intValue() == 4) || (idRubro.intValue() == 5));
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
     }
 
     public void buscarRequerimiento() {
@@ -1946,16 +1772,12 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     }
 
     public void imprimirRequerimiento() {
-        //if (requerimientoFondos.getIdRequerimiento() != null) {
         List<JasperPrint> jasperPrintList = new ArrayList();
 
         jasperPrintList.add(imprimirRpt(requerimientoFondos, JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento), "rptRequerimientoFondos.jasper", "requerimientoFondosDet"));
         jasperPrintList.add(imprimirRpt(requerimientoFondos, JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento), "rptResumenRequerimiento.jasper", "resumenRequerimientoFondos"));
 
         Reportes.generarReporte(jasperPrintList, "requerimiento_" + codigoDepartamento.replace(" ", ""));
-        /*} else {
-            JsfUtil.mensajeAlerta("Debe de seleccionar un requerimiento de fondos");
-        }*/
     }
 
     public void impRptPagoProve() {
@@ -2047,7 +1869,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         HashMap param = new HashMap();
         param.put("pEscudo", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
         param.put("pDepartamental", nombreDepartamento);
-        param.put("pUniforme", idDetProceso == 25 ? 1 : 0);
+        param.put("pUniforme", detalleProcesoAdq.getIdDetProcesoAdq() == 25 ? 1 : 0);
         param.put("pIdRequerimiento", req.getIdRequerimiento().intValue());
         param.put("pAnho", "20" + anho);
         jp = reportesEJB.getRpt(param, PagoProveedoresController.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + nombreRpt)));
@@ -2211,7 +2033,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     }
 
     public void createDonutModel() {
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
         renderGrafico = true;
 
         generarResumenPagos();
@@ -2243,9 +2065,9 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
 
     private void generarResumenPagos() {
         if (codigoDepartamento.equals("00") && (Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {
-            lstResumenPago = serviciosEJB.getResumenPagoJsonByDetProcesoAdq(idDetProceso);
+            lstResumenPago = serviciosEJB.getResumenPagoJsonByDetProcesoAdq(detalleProcesoAdq.getIdDetProcesoAdq());
         } else {
-            lstResumenPago = serviciosEJB.getResumenPagoJsonByDepaAndDetProcesoAdq(codigoDepartamento, idDetProceso);
+            lstResumenPago = serviciosEJB.getResumenPagoJsonByDepaAndDetProcesoAdq(codigoDepartamento, detalleProcesoAdq.getIdDetProcesoAdq());
         }
 
         cantidadCe = cantidadPlanilla = montoTotal = montoPagado = montoPendiente = montoReintegro = montoSaldo = BigDecimal.ZERO;
@@ -2392,13 +2214,12 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     }
 
     public void verPlanillaPago() {
-        planillaPago = utilEJB.find(PlanillaPago.class,
-                idPlanilla);
+        planillaPago = utilEJB.find(PlanillaPago.class, idPlanilla);
         idRubro = planillaPago.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres();
 
         reiniciarVisibilidadCheques();
         isRubroUniforme = ((idRubro.intValue() == 1) || (idRubro.intValue() == 4) || (idRubro.intValue() == 5));
-        idDetProceso = planillaPago.getIdRequerimiento().getIdDetProcesoAdq().getIdDetProcesoAdq();
+        detalleProcesoAdq = planillaPago.getIdRequerimiento().getIdDetProcesoAdq();
 
         selectPlanilla();
         isPlanillaLectura = true;

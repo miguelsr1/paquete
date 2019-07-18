@@ -30,7 +30,7 @@
                 </p:panelGrid>
                 <p:commandLink id="foto" action="#{proveedorController.dlgFotografia}" disabled="#{proveedorController.capacidadInst eq null}">
                     <p:ajax event="dialogReturn" listener="#{proveedorController.updateFrm}" update="foto"/>
-                    <p:graphicImage rendered="#{proveedorController.showFoto}" value="/DynamicImageServlet?file=#{proveedorController.fileName}"/>
+                    <p:graphicImage rendered="#{proveedorController.showFoto}" value="/DynamicImageServlet?file=#{bundle['path_images']}#{proveedorController.fileName}"/>
                     <p:graphicImage rendered="#{not proveedorController.showFoto}" url="#{pageContext.servletContext.contextPath}/resources/images/temp/#{proveedorController.fotoProveedor}"/>
                 </p:commandLink>
             </p:panelGrid>

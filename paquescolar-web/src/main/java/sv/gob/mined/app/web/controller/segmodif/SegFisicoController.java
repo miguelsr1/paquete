@@ -542,7 +542,7 @@ public class SegFisicoController extends RecuperarProceso implements Serializabl
             opt.put("modal", true);
             opt.put("draggable", true);
             opt.put("resizable", false);
-            opt.put("contentHeight", 340);
+            opt.put("contentHeight", 332);
             opt.put("contentWidth", 500);
             PrimeFaces.current().dialog().openDynamic("/app/comunes/dialogos/seguimiento/fisico/dlgDetalleSeguimientoNuevo.mined", opt, null);
         }

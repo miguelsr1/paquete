@@ -6,29 +6,29 @@
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky">  
+            <p:menuitem value="Nuevo"  ajax="true"  action="#{creditoBancarioController.newCredito}" 
+                        update="pnlFiltro" icon="fa fa-file-o"/>
+            <p:menuitem value="Modificar"  ajax="true" action="#{creditoBancarioController.editCredito}" 
+                        update="pnlFiltro" icon="fa fa-edit"/>
+            <p:menuitem value="Guardar"  ajax="true" actionListener="#{creditoBancarioController.guardarCredito}" 
+                        disabled="#{menuController.usuarioSoloLectura}" update="pnlFiltro pnlEdicion" icon="fa fa-save"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+            </f:facet>  
+        </p:menubar>
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar id="menuBar">  
-                        <p:menuitem value="Nuevo"  ajax="true"  action="#{creditoBancarioController.newCredito}" 
-                                    update="pnlFiltro" icon="fa fa-file-o"/>
-                        <p:menuitem value="Modificar"  ajax="true" action="#{creditoBancarioController.editCredito}" 
-                                    update="pnlFiltro" icon="fa fa-edit"/>
-                        <p:menuitem value="Guardar"  ajax="true" actionListener="#{creditoBancarioController.guardarCredito}" 
-                                    disabled="#{menuController.usuarioSoloLectura}" update="pnlFiltro pnlEdicion" icon="fa fa-save"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
-
-                        <f:facet  name="options">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
                     <p:outputPanel id="pnlFiltro" style="display:#{(!creditoBancarioController.visibleDatosGen)?'block':'none'}" >
-                        <h3>
+                        <h1>
                             <i class="fa fa-filter blue" style="font-size: 16px;"></i>
                             <p:spacer width="10" height="8"/>
                             <p:outputLabel value="Filtro de busqueda"/>
-                        </h3>
+                        </h1>
 
                         <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2,ui-grid-col-10" styleClass="ui-panelgrid-blank form-group form-elements">
                             <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />  
@@ -37,7 +37,7 @@
                                 <f:selectItems value="#{creditoBancarioController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                                 <p:ajax listener="#{creditoBancarioController.buscarDetProceso}" update="idEntFinan"/>
                             </p:selectOneMenu>
-                            
+
                             <p:outputLabel value="Entidad Financiera:" />  
                             <p:panelGrid>
                                 <p:selectOneMenu id="idEntFinan" value="#{creditoBancarioController.entidadSeleccionado}" effect="fade" 
@@ -47,7 +47,7 @@
                                 <p:spacer width="10"/>
                                 <p:outputLabel rendered="#{creditoBancarioController.usuarioEntidadFinanciera}" value="No posee ninguna entidad financiera asociada a su Usuario." style="color: red; font-weight: bold;"/>
                             </p:panelGrid>
-                            
+
                             <p:outputLabel value="N.I.T.:" />
                             <p:inputMask id="nit" mask="9999-999999-999-9"  value="#{creditoBancarioController.numeroNit}" 
                                          disabled="#{creditoBancarioController.deshabilitado}" size="17"/> 

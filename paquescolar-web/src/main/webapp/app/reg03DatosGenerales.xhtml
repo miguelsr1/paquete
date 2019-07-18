@@ -19,7 +19,7 @@
         </p:menubar>
         <p:panel visible="false">
             <p:commandButton id="btnModificar" value="ok" actionListener="#{proveedorController.filtroProveedores}">
-                <p:ajax event="dialogReturn" listener="#{proveedorController.empresaSeleccionada}"  update=":frmPrincipal:pnlFoto pnlModif" />
+                <p:ajax event="dialogReturn" listener="#{proveedorController.empresaSeleccionada}"  update="frmPrincipal pnlFoto pnlModif" />
             </p:commandButton>
         </p:panel>
         <div class="ui-g">

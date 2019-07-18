@@ -6,7 +6,7 @@
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
-        <p:menubar id="menuBar"  styleClass="divSticky"> 
+        <p:menubar id="menuBar" styleClass="divSticky"> 
             <p:menuitem value="Nuevo" icon="fa fa-file-o" ajax="true" process="@this" disabled="true"/>
             <p:menuitem value="Modificar" update="frmPrincipal" icon="fa fa-edit" ajax="true"  onclick="onClick('btnModificar');"/>
             <p:menuitem value="Guardar" icon="fa fa-save" disabled="#{menuController.usuarioSoloLectura || proveedorController.deshabiliar}" 
@@ -20,7 +20,7 @@
         </p:menubar>
         <p:panel visible="false">
             <p:commandButton id="btnModificar" value="ok" actionListener="#{proveedorController.filtroProveedores}">
-                <p:ajax event="dialogReturn" listener="#{proveedorController.empSelecPrecioRef}"   update="frmPrincipal pnlFoto" />
+                <p:ajax event="dialogReturn" listener="#{proveedorController.empSelecPrecioRef}" update="frmPrincipal pnlFoto" />
             </p:commandButton>
         </p:panel>
         <div class="ui-g">

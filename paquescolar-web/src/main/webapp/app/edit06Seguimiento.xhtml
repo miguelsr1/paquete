@@ -6,23 +6,22 @@
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" 
+                        update="pnlFiltro pnlEstado " disabled="true"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar"
+                        update="pnlFiltro pnlEstado " disabled="true"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>  
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+            </f:facet>  
+        </p:menubar>
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" 
-                                    update="pnlFiltro pnlEstado " disabled="true"/>
-                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar"
-                                    update="pnlFiltro pnlEstado " disabled="true"/>
-                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>  
-
-                        <f:facet  name="options">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-
                     <p:panel id="pnlFiltro" header="Seleccionar Contrato" visible="#{segFisicoController.showPnlNewSeguimiento}" >
                         <h:panelGrid columns="2">
                             <p:outputLabel value="Contrato:"/>
@@ -33,8 +32,6 @@
                             </h:panelGrid>
                         </h:panelGrid>
                     </p:panel>
-
-
                     <p:panelGrid columns="2" styleClass="ui-panelgrid-blank form-group form-elements"
                                  style="width: 100%; border:0px none; background-color:transparent;"
                                  columnClasses="ui-g-12 ui-md-7,ui-g-12 ui-md-5">
@@ -101,25 +98,14 @@
                                 <h:outputText value="Items del contrato"  style="font-style: italic; font-weight: bold;"/>
                                 <p:separator />
                             </h4>
-                            <p:dataTable id="tbl" var="item" value="#{segFisicoController.listaOfertas}">
-
-                                <p:column width="40" style="text-align: center;">
-                                    <f:facet name="header">
-                                        <h:outputText value="No Item" />
-                                    </f:facet>
+                            <p:dataTable var="item" value="#{segFisicoController.listaOfertas}">
+                                <p:column headerText="No Item" width="40" style="text-align: center;">
                                     <h:outputText value="#{item.noItem}" />
                                 </p:column>
-                                <p:column width="50">
-                                    <f:facet name="header">
-                                        <h:outputText value="Cantidad" />
-                                    </f:facet>
+                                <p:column width="50" headerText="Cantidad" style="text-align: center;">
                                     <h:outputText value="#{item.cantidad}" />
                                 </p:column>
-
-                                <p:column>
-                                    <f:facet name="header">
-                                        <h:outputText value="Descripción"/>
-                                    </f:facet>
+                                <p:column headerText="Descripción">
                                     <h:outputText value="#{item.consolidadoEspTec}" />
                                 </p:column>
                             </p:dataTable>

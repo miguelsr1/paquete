@@ -6,29 +6,28 @@
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky">  
+            <p:menuitem value="Nuevo"  ajax="true" action="edit06Seguimiento" actionListener="#{segFisicoController.nuevoSeguimiento}"
+                        disabled="#{menuController.usuarioSoloLectura}" update="pnlFiltro" icon="fa fa-file-o">
+                <f:param name="nuevoSeg" value="1"/>
+            </p:menuitem>
+            <p:menuitem value="Modificar"  ajax="true" update="pnlFiltro" icon="fa fa-edit" disabled="true"/>
+            <p:menuitem value="Guardar"  ajax="true" update="pnlFiltro" icon="fa fa-save" disabled="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+            </f:facet>  
+        </p:menubar>
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar id="menuBar">  
-                        <p:menuitem value="Nuevo"  ajax="true" action="edit06Seguimiento" actionListener="#{segFisicoController.nuevoSeguimiento}"
-                                    disabled="#{menuController.usuarioSoloLectura}" update="pnlFiltro" icon="fa fa-file-o">
-                            <f:param name="nuevoSeg" value="1"/>
-                        </p:menuitem>
-                        <p:menuitem value="Modificar"  ajax="true" update="pnlFiltro" icon="fa fa-edit" disabled="true"/>
-                        <p:menuitem value="Guardar"  ajax="true" update="pnlFiltro" icon="fa fa-save" disabled="true"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
-
-                        <f:facet  name="options">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-                    <h3>
+                    <h1>
                         <i class="fa fa-filter blue" style="font-size: 16px;"></i>
                         <p:spacer width="10" height="8"/>
                         <p:outputLabel value="Filtro de busqueda"/>
-                    </h3>
-
+                    </h1>
                     <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col3_label,col9" 
                                  styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
                         <p:outputLabel value="#{bundle['ce.codEnt']}:" />
@@ -98,12 +97,12 @@
                             <p:commandLink action="edit06Seguimiento.mined">
                                 <f:param name="idContrato" value="#{seguimiento.idContrato}"/>
                                 <f:param name="estadoSeguimiento" value="#{seguimiento.estado}"/>
-                                <i class="fa fa-hand-o-right blue" style="font-size: 17px;"></i>
+                                <i class="fa fa-eye" style="font-size: 17px;"></i>
                             </p:commandLink>
                         </p:column>
                         <p:column headerText="Borrar" style="text-align: center;" width="20">
                             <p:commandLink oncomplete="PF('confirmDialog').show();">
-                                <p:outputLabel rendered="#{!seguimiento.estadoEliminacion}"> <i class="fa fa-trash-o red" style="font-size: 16px;"></i></p:outputLabel>
+                                <p:outputLabel rendered="#{!seguimiento.estadoEliminacion}"> <i class="fa fa-trash-o" style="font-size: 16px;"></i></p:outputLabel>
                                 <f:setPropertyActionListener value="#{seguimiento.idRecepcion}" target="#{segFisicoController.idRecepcion}"/>  
                             </p:commandLink>
                         </p:column>

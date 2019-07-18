@@ -29,7 +29,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -110,7 +109,6 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
 
     private Municipio municipio = new Municipio();
     private DetalleProcesoAdq detalleProcesoAdq = new DetalleProcesoAdq();
-    private ProcesoAdquisicion procesoAdquisicion = new ProcesoAdquisicion();
     private RubrosAmostrarInteres rubrosAmostrarInteres = new RubrosAmostrarInteres();
     private Empresa empresa = new Empresa();
     private CapaDistribucionAcre departamentoCalif = new CapaDistribucionAcre();
@@ -165,23 +163,21 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
 
     @PostConstruct
     public void ini() {
-        recuperarProcesoAdq();
-
         HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         url = req.getRequestURL().toString();
 
         if (VarSession.isVariableSession("idEmpresa")) {
             empresa = proveedorEJB.findEmpresaByPk((BigDecimal) VarSession.getVariableSession("idEmpresa"));
             showUpdateEmpresa = ((Integer) VarSession.getVariableSession("idTipoUsuario") == 1);
-            cargarEmpresa(true);
+            cargarDetalleCalificacion(true);
             if (url.contains("DatosGenerales")) {
                 idMunicipio = empresa.getIdPersona().getIdMunicipio().getIdMunicipio();
                 codigoDepartamento = empresa.getIdPersona().getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
             } else if (url.contains("MunicipiosInteres")) {
                 cargarMunInteres(true);
-            } else if (url.contains("PreciosReferencia") && procesoAdquisicion != null && procesoAdquisicion.getIdProcesoAdq() != null) {
+            } else if (url.contains("PreciosReferencia") && getProcesoAdquisicion() != null && getProcesoAdquisicion().getIdProcesoAdq() != null) {
                 cargarPrecioRef();
-            } else if (url.contains("FotografiaMuestras") && procesoAdquisicion != null && procesoAdquisicion.getIdProcesoAdq() != null) {
+            } else if (url.contains("FotografiaMuestras") && getProcesoAdquisicion() != null && getProcesoAdquisicion().getIdProcesoAdq() != null) {
             }
         }
 
@@ -312,7 +308,7 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
     }
 
     public CapaInstPorRubro getCapacidadInst() {
-        if(capacidadInst == null){
+        if (capacidadInst == null) {
             capacidadInst = new CapaInstPorRubro();
         }
         return capacidadInst;
@@ -554,18 +550,19 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
                  * Fecha: 30/08/2018 Comentario: Adición de validación de
                  * departamento calificado para proveedor
                  */
-
-                if (departamentoCalif.getCodigoDepartamento() == null) {
-                    JsfUtil.mensajeAlerta("Este proveedor no posee departamento de calificación" + proceso.getIdAnho().getAnho());
-                } else {
-                    codigoDepartamentoCalificado = departamentoCalif.getCodigoDepartamento().getCodigoDepartamento();
-                    detalleProcesoAdq = capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq();
-
-                    deshabiliar = false;
-                    if (empresa.getIdPersona().getUrlImagen() == null) {
-                        fileName = "fotoProveedores/profile.png";
+                if (departamentoCalif != null) {
+                    if (departamentoCalif.getCodigoDepartamento() == null) {
+                        JsfUtil.mensajeAlerta("Este proveedor no posee departamento de calificación" + proceso.getIdAnho().getAnho());
                     } else {
-                        fileName = "fotoProveedores/" + empresa.getIdPersona().getUrlImagen();
+                        codigoDepartamentoCalificado = departamentoCalif.getCodigoDepartamento().getCodigoDepartamento();
+                        detalleProcesoAdq = capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq();
+
+                        deshabiliar = false;
+                        if (empresa.getIdPersona().getUrlImagen() == null) {
+                            fileName = "fotoProveedores/profile.png";
+                        } else {
+                            fileName = "fotoProveedores/" + empresa.getIdPersona().getUrlImagen();
+                        }
                     }
                 }
             }
@@ -589,19 +586,12 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
                     }
                 }
                 VarSession.setVariableSession("idEmpresa", empresa.getIdEmpresa());
-                cargarEmpresa(false);
+                cargarDetalleCalificacion(false);
                 showUpdateEmpresa = ((Integer) VarSession.getVariableSession("idTipoUsuario") == 1);
             }
         } else {
             deshabiliar = false;
             JsfUtil.mensajeAlerta("Debe de seleccionar una empresa");
-        }
-    }
-
-    private void cargarEmpresa(Boolean inicio) {
-        cargarDetalleCalificacion(inicio);
-        if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
-            PrimeFaces.current().ajax().update("frmPrincipal");
         }
     }
 
@@ -624,10 +614,11 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
     private void cargarMunInteres(Boolean inicio) {
         cargarDetalleCalificacion(inicio);
         if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
-            lstMunSource = datosGeograficosEJB.getLstMunicipiosDisponiblesDeInteres(departamentoCalif.getIdCapaDistribucion(), departamentoCalif.getCodigoDepartamento().getCodigoDepartamento());
-            lstMunTarget = datosGeograficosEJB.getLstMunicipiosDeInteres(departamentoCalif.getIdCapaDistribucion());
-            lstMunicipiosInteres = new DualListModel(lstMunSource, lstMunTarget);
-            PrimeFaces.current().ajax().update("frmPrincipal");
+            if (departamentoCalif != null && departamentoCalif.getCodigoDepartamento() != null) {
+                lstMunSource = datosGeograficosEJB.getLstMunicipiosDisponiblesDeInteres(departamentoCalif.getIdCapaDistribucion(), departamentoCalif.getCodigoDepartamento().getCodigoDepartamento());
+                lstMunTarget = datosGeograficosEJB.getLstMunicipiosDeInteres(departamentoCalif.getIdCapaDistribucion());
+                lstMunicipiosInteres = new DualListModel(lstMunSource, lstMunTarget);
+            }
         }
     }
 
@@ -1298,14 +1289,6 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
         }
     }
 
-    private void recuperarProcesoAdq() {
-        procesoAdquisicion = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getProceso();
-        if (procesoAdquisicion == null || procesoAdquisicion.getIdProcesoAdq() == null) {
-            JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de adquisición.");
-        }
-    }
-
     public void updateFrm(SelectEvent event) {
         fotoProveedor = (String) event.getObject();
         if (!fotoProveedor.contains("/")) {
@@ -1325,13 +1308,15 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
                     getValue(FacesContext.getCurrentInstance().getELContext(), null, "datosGeograficosController")).getUbicacion();
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-            HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+            //HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
             ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
             HashMap param = new HashMap();
             param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
+            param.put("pEscudo", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
             param.put("usuarioInsercion", VarSession.getVariableSessionUsuario());
             param.put("pLugar", lugar + ", " + sdf.format(new Date()));
             param.put("pRubro", JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
+            param.put("pIdRubro", capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue());
 
             List<OfertaGlobal> lstDatos = reportesEJB.getLstOfertaGlobal(empresa.getNumeroNit(), detalleProcesoAdq.getIdDetProcesoAdq(), detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue());
             lstDatos.get(0).setRubro(JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
@@ -1348,15 +1333,24 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
                 tmp = "2019";
 
             }
-            jasperPrintList.add(JasperFillManager.fillReport(Reportes.class
-                    .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobal" + tmp + ".jasper"), param, new JRBeanCollectionDataSource(lstDatos)));
+
+            if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() >= 8) {
+                jasperPrintList.add(JasperFillManager.fillReport(Reportes.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobal" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(lstDatos)));
+            } else {
+                jasperPrintList.add(JasperFillManager.fillReport(Reportes.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobal" + tmp + ".jasper"), param, new JRBeanCollectionDataSource(lstDatos)));
+            }
 
             String muni = VarSession.getNombreMunicipioSession();
 
-            if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
+            if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() >= 8) {
+                if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
+                    jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerNat" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
+                } else {
+                    jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerJur" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
+                }
+            } else if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
                 jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurCumplimientoPerNat.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
                 jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerNat2.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
-
             } else {
                 jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurCumplimientoPerJur.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
                 jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerJur2.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));

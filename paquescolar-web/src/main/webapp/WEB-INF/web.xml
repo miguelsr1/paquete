@@ -24,8 +24,7 @@
     <context-param>
         <param-name>javax.faces.FACELETS_BUFFER_SIZE</param-name>
         <param-value>500000</param-value>
-    </context-param> 
-    
+    </context-param>
     <filter>
         <filter-name>FilterWeb</filter-name>
         <filter-class>sv.gob.mined.app.web.util.FilterWeb</filter-class>
@@ -73,7 +72,7 @@
     </context-param>
     <servlet>
         <servlet-name>DynamicImageServlet</servlet-name>
-        <servlet-class>sv.gob.mined.app.web.servlet.DynamicImageServlet</servlet-class>
+        <servlet-class>sv.gob.mined.apps.utilitario.servlet.DynamicImageServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>DynamicImageServlet</servlet-name>
@@ -95,10 +94,10 @@
         <extension>eot</extension>
         <mime-type>application/vnd.ms-fontobject</mime-type>
     </mime-mapping>
-     <mime-mapping>  
-        <extension>otf</extension>  
-        <mime-type>application/x-font-opentype</mime-type>  
-</mime-mapping> 
+    <mime-mapping>
+        <extension>otf</extension>
+        <mime-type>application/x-font-opentype</mime-type>
+    </mime-mapping>
     <mime-mapping>
         <extension>eot?#iefix</extension>
         <mime-type>application/vnd.ms-fontobject</mime-type>
@@ -127,7 +126,6 @@
         <extension>svg#fontawesomeregular</extension>
         <mime-type>image/svg+xml</mime-type>
     </mime-mapping>
-    
     <filter>
         <filter-name>monitoring</filter-name>
         <filter-class>net.bull.javamelody.MonitoringFilter</filter-class>

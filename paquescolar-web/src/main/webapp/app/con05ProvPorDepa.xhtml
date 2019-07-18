@@ -6,28 +6,27 @@
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+            </f:facet>  
+        </p:menubar>
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
-                        <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
-                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
-
-                        <f:facet  name="options">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-
-                    <h3>
+                    <h1>
                         <i class="fa fa-filter blue" style="font-size: 16px;"></i>
                         <p:spacer width="10" height="8"/>
                         <p:outputLabel value="Filtro de busqueda"/>
-                    </h3>
+                    </h1>
 
-                    <h:panelGrid id="pnlFiltro" columns="2">  
+                    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2,ui-grid-col-10" styleClass="ui-panelgrid-blank form-group form-elements">
                         <p:outputLabel value="Departamento del proveedor:" />  
                         <p:selectOneMenu id="idEntFinan" effect="fade" value="#{creditoBancarioController.codigoDepartamento}" >  
                             <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />  
@@ -42,7 +41,7 @@
 
                         <p:commandButton   value="Buscar" icon="ui-icon-search" action="#{creditoBancarioController.consultaCreditosActivosPorProveedor}" 
                                            update="lstProveedorConCredito" />  
-                    </h:panelGrid>
+                    </p:panelGrid>
                 </div>
                 <div class="card clearfix">
                     <h1>
