@@ -12,6 +12,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
@@ -33,7 +34,7 @@ import sv.gob.mined.paquescolar.model.pojos.dashboard.TotalTipoEmpDto;
  */
 @ManagedBean
 @ViewScoped
-public class DashboardMB extends RecuperarProceso implements Serializable{
+public class DashboardMB implements Serializable{
 
     private Integer idDetProcesoAdq;
     private int divisor = 1;
@@ -59,6 +60,9 @@ public class DashboardMB extends RecuperarProceso implements Serializable{
     public ServiciosJsonEJB serviciosJsonEJB;
     @EJB
     private AnhoProcesoEJB anhoProcesoEJB;
+    
+    @ManagedProperty("#{recuperarProceso}")
+    private RecuperarProceso recuperarProceso;
 
     public DashboardMB() {
     }
@@ -68,6 +72,14 @@ public class DashboardMB extends RecuperarProceso implements Serializable{
         Usuario usuario = VarSession.getUsuarioSession();
         disabledDep = !usuario.getCodigoDepartamento().equals("00");
         updateDatos();
+    }
+    
+    public RecuperarProceso getRecuperarProceso() {
+        return recuperarProceso;
+    }
+
+    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
+        this.recuperarProceso = recuperarProceso;
     }
 
     public int getDivisor() {
@@ -103,7 +115,7 @@ public class DashboardMB extends RecuperarProceso implements Serializable{
         departamentoContratado = new TotalContratadoDto();
         tipoEmpresa = new TotalTipoEmpDto();
         codigoDepartamento = "00";
-        DetalleProcesoAdq detProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro);
+        DetalleProcesoAdq detProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubro);
         if (detProceso != null) {
             divisor = (detProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 1) ? 4 : 2;
             
@@ -139,19 +151,19 @@ public class DashboardMB extends RecuperarProceso implements Serializable{
         for (TotalTipoEmpDto totalTipoEmpDto : lstTotTipoEmp) {
             switch (totalTipoEmpDto.getIdTipoEmp().intValue()) {
                 case 1:
-                    microEmp.set(super.getProcesoAdquisicion().getIdAnho().getAnho(), totalTipoEmpDto.getMonto());
+                    microEmp.set(recuperarProceso.getProcesoAdquisicion().getIdAnho().getAnho(), totalTipoEmpDto.getMonto());
                     barModel.addSeries(microEmp);
                     break;
                 case 2:
-                    pequeEmp.set(super.getProcesoAdquisicion().getIdAnho().getAnho(), totalTipoEmpDto.getMonto());
+                    pequeEmp.set(recuperarProceso.getProcesoAdquisicion().getIdAnho().getAnho(), totalTipoEmpDto.getMonto());
                     barModel.addSeries(pequeEmp);
                     break;
                 case 3:
-                    mediaEmp.set(super.getProcesoAdquisicion().getIdAnho().getAnho(), totalTipoEmpDto.getMonto());
+                    mediaEmp.set(recuperarProceso.getProcesoAdquisicion().getIdAnho().getAnho(), totalTipoEmpDto.getMonto());
                     barModel.addSeries(mediaEmp);
                     break;
                 case 9:
-                    cuentaEmp.set(super.getProcesoAdquisicion().getIdAnho().getAnho(), totalTipoEmpDto.getMonto());
+                    cuentaEmp.set(recuperarProceso.getProcesoAdquisicion().getIdAnho().getAnho(), totalTipoEmpDto.getMonto());
                     barModel.addSeries(cuentaEmp);
                     break;
             }

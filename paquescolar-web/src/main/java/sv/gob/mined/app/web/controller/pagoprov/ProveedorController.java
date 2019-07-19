@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -82,7 +83,7 @@ import sv.gob.mined.paquescolar.model.pojos.proveedor.MunicipioDto;
  */
 @ManagedBean
 @ViewScoped
-public class ProveedorController extends RecuperarProceso implements Serializable {
+public class ProveedorController implements Serializable {
 
     private int idRow;
     private Boolean deshabiliar = true;
@@ -155,6 +156,9 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
     @EJB
     private PreciosReferenciaEJB preciosReferenciaEJB;
 
+    @ManagedProperty("#{recuperarProceso}")
+    private RecuperarProceso recuperarProceso;
+
     /**
      * Creates a new instance of ProveedorController
      */
@@ -175,9 +179,9 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
                 codigoDepartamento = empresa.getIdPersona().getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
             } else if (url.contains("MunicipiosInteres")) {
                 cargarMunInteres(true);
-            } else if (url.contains("PreciosReferencia") && getProcesoAdquisicion() != null && getProcesoAdquisicion().getIdProcesoAdq() != null) {
+            } else if (url.contains("PreciosReferencia") && recuperarProceso.getProcesoAdquisicion() != null && recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq() != null) {
                 cargarPrecioRef();
-            } else if (url.contains("FotografiaMuestras") && getProcesoAdquisicion() != null && getProcesoAdquisicion().getIdProcesoAdq() != null) {
+            } else if (url.contains("FotografiaMuestras") && recuperarProceso.getProcesoAdquisicion() != null && recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq() != null) {
             }
         }
 
@@ -187,6 +191,14 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">  
+    public RecuperarProceso getRecuperarProceso() {
+        return recuperarProceso;
+    }
+
+    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
+        this.recuperarProceso = recuperarProceso;
+    }
+
     public List<DetalleAdjudicacionEmpDto> getLstDetalleAdj() {
         return lstDetalleAdj;
     }
@@ -1379,7 +1391,7 @@ public class ProveedorController extends RecuperarProceso implements Serializabl
                  * instalada del proveedor seleccionado
                  */
                 if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
-                    detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres());
+                    detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres());
 
                     lstResumenAdj = proveedorEJB.resumenAdjProveedor(empresa.getNumeroNit(), detalleProcesoAdq.getIdDetProcesoAdq());
                     if (lstResumenAdj.isEmpty()) {

@@ -52,6 +52,12 @@
                         <div class="ui-g-12 ui-md-6 ui-lg-4">
                             <p:inputText value="#{pagoProveedoresController.nombreEntFinanciera}" style="width: 90%;"/>
                         </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-2">
+                            <p:outputLabel value="Número Cheque"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:inputText value="#{pagoProveedoresController.numeroCheque}" style="width: 90%;"/>
+                        </div>
                     </div>
                     <p:commandButton value="Buscar" action="#{pagoProveedoresController.buscarPlanilla}" icon="fa fa-search" update="tblDatos"/>
                 </div>

@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import sv.gob.mined.app.web.controller.AnhoProcesoController;
@@ -34,7 +35,7 @@ import sv.gob.mined.paquescolar.model.view.DatosPreliminarRequerimiento;
  */
 @ManagedBean
 @ViewScoped
-public class GenerarRequerimientoMB extends RecuperarProceso implements Serializable {
+public class GenerarRequerimientoMB implements Serializable {
 
     private int credito = 0;
     private int idNivelEducativo;
@@ -57,6 +58,9 @@ public class GenerarRequerimientoMB extends RecuperarProceso implements Serializ
     private PagoProveedoresEJB pagoProveedoresEJB;
     @EJB
     private ProveedorEJB proveedorEJB;
+    
+    @ManagedProperty("#{recuperarProceso}")
+    private RecuperarProceso recuperarProceso;
 
     @PostConstruct
     public void ini() {
@@ -68,7 +72,15 @@ public class GenerarRequerimientoMB extends RecuperarProceso implements Serializ
             Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, "ERROR CONTROLADO: No se ha asignado el año de contratación");
         }
         concepto = "DOTACION DE UNIFORMES, ZAPATOS Y PAQUETES DE UTILES ESCOLARES " + controller.getAnho();
-        codigoDepartamento = super.getDepartamento();
+        codigoDepartamento = recuperarProceso.getDepartamento();
+    }
+    
+    public RecuperarProceso getRecuperarProceso() {
+        return recuperarProceso;
+    }
+
+    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
+        this.recuperarProceso = recuperarProceso;
     }
 
     public String getCuentaBancaria() {
@@ -177,7 +189,7 @@ public class GenerarRequerimientoMB extends RecuperarProceso implements Serializ
     }
 
     public void obtenerDetalleProceso() {
-        detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
+        detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
     }
 
     public void generarDatosPreliminares() {

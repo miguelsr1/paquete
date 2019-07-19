@@ -13,6 +13,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -52,7 +53,7 @@ import sv.gob.mined.paquescolar.model.pojos.credito.DatosProveedoresFinanDto;
  */
 @ManagedBean
 @ViewScoped
-public class CreditoBancarioController extends RecuperarProceso implements Serializable {
+public class CreditoBancarioController implements Serializable {
 
     private int rowEdit = 0;
     private String numeroNit = "";
@@ -102,6 +103,9 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
     public AnhoProcesoEJB anhoProcesoEJB;
     @EJB
     private UtilEJB utilEJB;
+    
+    @ManagedProperty("#{recuperarProceso}")
+    private RecuperarProceso recuperarProceso;
 
     /**
      * Creates a new instance of CreditoBancarioController
@@ -114,9 +118,7 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
         anho = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getAnho().getIdAnho();
 
-        lstRubros = anhoProcesoEJB.getLstRubros(super.getProcesoAdquisicion());
-        /*if (VarSession.getVariableSessionUsuario().equals("MSANCHEZ")) {
-        }*/
+        lstRubros = anhoProcesoEJB.getLstRubros(recuperarProceso.getProcesoAdquisicion());
 
         SelectItem selectActivo = new SelectItem();
         selectActivo.setLabel("Credido Activo");
@@ -139,6 +141,14 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
             lstEntFinanDetProAdq.add(ent);
         }
         visibleDlgEntidades = false;
+    }
+    
+    public RecuperarProceso getRecuperarProceso() {
+        return recuperarProceso;
+    }
+
+    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
+        this.recuperarProceso = recuperarProceso;
     }
 
     public Boolean getUsuarioEntidadFinanciera() {
@@ -166,7 +176,7 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
     }
 
     public List<DetalleProcesoAdq> getLstDetalleProcesoCredito() {
-        lstDetalleProcesoCredito = creditosEJB.getLstDetalleProcesoCredito(super.getProcesoAdquisicion().getIdProcesoAdq());
+        lstDetalleProcesoCredito = creditosEJB.getLstDetalleProcesoCredito(recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq());
         return lstDetalleProcesoCredito;
     }
 
@@ -175,7 +185,7 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
     }
 
     /*public void updateRubro() {
-        lstRubros = creditosEJB.getLstRubrosHabilitados(super.getProcesoAdquisicion().getIdProcesoAdq(), entidadSeleccionado.getCodEntFinanciera());
+        lstRubros = creditosEJB.getLstRubrosHabilitados(recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq(), entidadSeleccionado.getCodEntFinanciera());
     }*/
     public void updateEntidadHabilitarCredito() {
         lstEntFinanDetProAdq = creditosEJB.getLstEntidadesCredito(detalleProceso.getIdDetProcesoAdq());
@@ -291,7 +301,7 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
     }
 
     public void buscarDetProceso() {
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
         credito.setIdDetProcesoAdq(detalleProceso);
         credito.setCodEntFinanciera(entidadSeleccionado);
 
@@ -302,7 +312,7 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
         if (lstEntidades.isEmpty()) {
         }
         /*else {
-            lstRubros = creditosEJB.getLstRubrosHabilitados(super.getProcesoAdquisicion().getIdProcesoAdq(), lstEntidades.get(0).getCodEntFinanciera());
+            lstRubros = creditosEJB.getLstRubrosHabilitados(recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq(), lstEntidades.get(0).getCodEntFinanciera());
         }*/
     }
 
@@ -394,7 +404,7 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
     }
 
     public String newCredito() {
-        if (super.getProcesoAdquisicion().getIdProcesoAdq() == null) {
+        if (recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de contratación");
         } else {
             credito = new CreditoBancario();
@@ -411,7 +421,7 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
     }
 
     public void editCredito() {
-        if (super.getProcesoAdquisicion().getIdProcesoAdq() == null) {
+        if (recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de contratación");
         } else {
             credito = new CreditoBancario();
@@ -441,7 +451,7 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
     }
 
     public void buscarEmpresa() {
-        if (super.getProcesoAdquisicion().getIdProcesoAdq() == null) {
+        if (recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de contratación");
         } else if (validacionFiltro()) {
             empresa = proveedorEJB.findEmpresaByNit(numeroNit);
@@ -642,10 +652,10 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
     }
 
     public void consultaCreditosActivosPorProveedor() {
-        if (super.getProcesoAdquisicion().getIdProcesoAdq() == null) {
+        if (recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de contratación");
         } else {
-            lstCreditosProveedor = creditosEJB.getCreditosActivosPorProveedor(codigoDepartamento, anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro));
+            lstCreditosProveedor = creditosEJB.getCreditosActivosPorProveedor(codigoDepartamento, anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro));
             totalDeCreditos = BigDecimal.ZERO;
             totalDeContratos = BigDecimal.ZERO;
             for (CreditoProveedorDto cre : lstCreditosProveedor) {
@@ -698,7 +708,7 @@ public class CreditoBancarioController extends RecuperarProceso implements Seria
 
     public void resetNit() {
         numeroNit = "";
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
         lstEntidades = creditosEJB.findEntidadFinancieraEntities((short) 0);
     }
 

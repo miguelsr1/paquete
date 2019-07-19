@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -54,7 +55,7 @@ import sv.gob.mined.paquescolar.util.Constantes;
  */
 @ManagedBean
 @ViewScoped
-public class OfertaBienesServiciosController extends RecuperarProceso implements Serializable {
+public class OfertaBienesServiciosController implements Serializable {
 
     private int rowEdit = 0;
     private String estiloSeleccionado = "-";
@@ -92,6 +93,9 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
     @EJB
     private AnhoProcesoEJB anhoProcesoEJB;
 
+    @ManagedProperty("#{recuperarProceso}")
+    private RecuperarProceso recuperarProceso;
+
     /**
      * Creates a new instance of OfertaBienesServiciosController
      */
@@ -102,7 +106,7 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
     public void ini() {
         rubro = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getRubro();
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro);
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubro);
 
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
 
@@ -114,6 +118,14 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public RecuperarProceso getRecuperarProceso() {
+        return recuperarProceso;
+    }
+
+    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
+        this.recuperarProceso = recuperarProceso;
+    }
+
     public Boolean getPageResolucion() {
         return pageResolucion;
     }
@@ -385,7 +397,7 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
         lstCapaEmpresas = new ArrayList();
         lstCapaEmpresasOtros = new ArrayList();
         limpiarCampos();
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro);
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubro);
     }
 
     public void onSelect() {
@@ -527,7 +539,7 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
         HashMap param = new HashMap();
 
         if (detalleProceso != null) {
-            VwRptCertificacionPresupuestaria vw = entidadEducativaEJB.getCertificacion(codigoEntidad, getProcesoAdquisicion(), (super.getProcesoAdquisicion().getIdProcesoAdq() >= 12));
+            VwRptCertificacionPresupuestaria vw = entidadEducativaEJB.getCertificacion(codigoEntidad, recuperarProceso.getProcesoAdquisicion(), (recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq() >= 12));
 
             if (vw != null) {
                 vw.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
@@ -558,10 +570,10 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
              * Fecha: 30/08/2018 Comentario: Validación de seleccion del año y
              * proceso de adquisición
              */
-            if (super.getProcesoAdquisicion() == null) {
+            if (recuperarProceso.getProcesoAdquisicion() == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
-                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro);
+                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubro);
                 current.setIdDetProcesoAdq(detalleProceso);
                 abrirDialogCe = false;
                 entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
@@ -570,7 +582,7 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
                     JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + current.getCodigoEntidad().getCodigoEntidad());
                 } else {
                     if (VarSession.getDepartamentoUsuarioSession() != null) {
-                        String dep = super.getDepartamento();
+                        String dep = recuperarProceso.getDepartamento();
                         if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep) || (Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {
                             if (VarSession.getVariableSessionED() == 1) {
                                 if (ofertaBienesServiciosEJB.isOfertaRubro(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq())) {
@@ -658,7 +670,7 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
         String nombreRpt = "";
         HashMap param = new HashMap();
         List<VwCotizacion> lst = ofertaBienesServiciosEJB.getLstCotizacion(VarSession.getNombreMunicipioSession(), getSelected().getCodigoEntidad().getCodigoEntidad(), getSelected().getIdDetProcesoAdq(), participanteSeleccionado);
-        Boolean sobredemanda = super.getProcesoAdquisicion().getDescripcionProcesoAdq().contains("SOBREDEMANDA");
+        Boolean sobredemanda = recuperarProceso.getProcesoAdquisicion().getDescripcionProcesoAdq().contains("SOBREDEMANDA");
 
         //Para contratos antes de 2016, se tomara los formatos de rpt que no incluyen el año en el nombre del archivo jasper
         if (Integer.parseInt(getSelected().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho()) > 2016) {
@@ -675,7 +687,7 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
                 nombreRpt = "rptCotizacionUti" + anho + ".jasper";
                 break;
             case 3:
-                if (getProcesoAdquisicion().getDescripcionProcesoAdq().contains("MINI")) {
+                if (recuperarProceso.getProcesoAdquisicion().getDescripcionProcesoAdq().contains("MINI")) {
                     nombreRpt = "rptCotizacionZap" + anho + "_mini.jasper";
                 } else {
                     nombreRpt = "rptCotizacionZap" + anho + ".jasper";
@@ -768,10 +780,10 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
              * Fecha: 30/08/2018 Comentario: Validación de seleccion del año y
              * proceso de adquisición
              */
-            if (super.getProcesoAdquisicion() == null) {
+            if (recuperarProceso.getProcesoAdquisicion() == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
-                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro);
+                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubro);
                 current.setIdDetProcesoAdq(detalleProceso);
                 abrirDialogCe = false;
 
@@ -794,7 +806,7 @@ public class OfertaBienesServiciosController extends RecuperarProceso implements
     private void cargarOferta() {
         getSelected().setCodigoEntidad(entidadEducativa);
         if (VarSession.getDepartamentoUsuarioSession() != null) {
-            String dep = super.getDepartamento();
+            String dep = recuperarProceso.getDepartamento();
             if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep)
                     || (Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {
                 if (VarSession.getVariableSessionED() == 1) {

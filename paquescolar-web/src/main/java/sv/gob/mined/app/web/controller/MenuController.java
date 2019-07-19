@@ -4,6 +4,7 @@
  */
 package sv.gob.mined.app.web.controller;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.logging.Level;
@@ -12,7 +13,6 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.context.FacesContext;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSubMenu;
@@ -28,7 +28,7 @@ import sv.gob.mined.paquescolar.model.Usuario;
  */
 @ManagedBean
 @SessionScoped
-public class MenuController {
+public class MenuController implements Serializable {
 
     private Boolean usuarioSoloLectura = false;
     private String app;
@@ -198,31 +198,6 @@ public class MenuController {
                 opPadre.addElement(subMenu);
             }
         }
-    }
-
-    @Deprecated
-    public String selectOpcion() {
-        String url = "";
-        if (VarSession.getUsuarioSession() == null) {
-            ((PersonaController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                    getValue(FacesContext.getCurrentInstance().getELContext(), null, "personaController")).logout();
-        } else {
-            int idPersona = usuario.getIdPersona().getIdPersona().intValue();
-            int appModulo = Integer.parseInt(app);
-            lstOpciones = menuEJB.getListaOpcionesByIdPersonaAndModulo(idPersona, appModulo);
-
-            if (lstOpciones.isEmpty()) {
-                JsfUtil.mensajeError("No tiene derechos para ingresar a este modulo");
-            } else {
-                Character tipoAcceso = menuEJB.getTipoAcceso(idPersona, appModulo);
-                if (tipoAcceso != null) {
-                    VarSession.setVariableSession("tipoAcceso", tipoAcceso);
-                }
-                url = ((Object[]) lstOpciones.get(0))[3].toString() + "?faces-redirect=true";
-                armarMenu();
-            }
-        }
-        return url;
     }
 
     public void refreshEntidad() {

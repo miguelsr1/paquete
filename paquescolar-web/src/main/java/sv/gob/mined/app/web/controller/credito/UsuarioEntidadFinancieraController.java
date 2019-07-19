@@ -31,9 +31,9 @@ public class UsuarioEntidadFinancieraController implements Serializable{
     private UsuarioEntidadFinanciera current;
     private Usuario usuario;
     private Boolean mostrarDetalle = false;
-    private List<EntidadFinanciera> lstEntUsuario = new ArrayList<EntidadFinanciera>();
-    private List<EntidadFinanciera> lstEntDisponibles = new ArrayList<EntidadFinanciera>();
-    private DualListModel<EntidadFinanciera> model = new DualListModel<EntidadFinanciera>();
+    private List<EntidadFinanciera> lstEntUsuario = new ArrayList();
+    private List<EntidadFinanciera> lstEntDisponibles = new ArrayList();
+    private DualListModel<EntidadFinanciera> model = new DualListModel();
     private EntidadFinanciera entEnt;
     private EntidadFinanciera entSal;
     @EJB

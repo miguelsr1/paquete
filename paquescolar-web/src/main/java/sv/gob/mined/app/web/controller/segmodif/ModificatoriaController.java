@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
@@ -30,7 +31,6 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.primefaces.PrimeFaces;
-import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.app.web.controller.AnhoProcesoController;
@@ -68,7 +68,7 @@ import sv.gob.mined.paquescolar.model.pojos.modificativa.VwContratoModificatoria
  */
 @ManagedBean(name = "modificatoriaController")
 @ViewScoped
-public class ModificatoriaController extends RecuperarProceso implements Serializable {
+public class ModificatoriaController implements Serializable {
 
     private Boolean deshabilitar = true;
     private Boolean deshabilitarAgregar = false;
@@ -126,6 +126,9 @@ public class ModificatoriaController extends RecuperarProceso implements Seriali
     private UtilEJB utilEJB;
     @EJB
     private ProveedorEJB proveedorEJB;
+    
+    @ManagedProperty("#{recuperarProceso}")
+    private RecuperarProceso recuperarProceso;
 
     /**
      * Creates a new instance of ModificatoriaController
@@ -137,10 +140,18 @@ public class ModificatoriaController extends RecuperarProceso implements Seriali
     public void ini() {
         idRubro = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getRubro();
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
         techoCE.setMontoAdjudicado(BigDecimal.ZERO);
         techoCE.setMontoDisponible(BigDecimal.ZERO);
         techoCE.setMontoPresupuestado(BigDecimal.ZERO);
+    }
+    
+    public RecuperarProceso getRecuperarProceso() {
+        return recuperarProceso;
+    }
+
+    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
+        this.recuperarProceso = recuperarProceso;
     }
 
     public String getMsjInformacion() {
@@ -396,7 +407,7 @@ public class ModificatoriaController extends RecuperarProceso implements Seriali
     }
 
     public void buscarProceso() {
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
     }
 
     public void buscarEntidadEducativa() {
@@ -709,7 +720,7 @@ public class ModificatoriaController extends RecuperarProceso implements Seriali
     }
 
     public void validarProcesoAdquisicion() {
-        if (super.getProcesoAdquisicion().getIdProcesoAdq() == null) {
+        if (recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de adquisición.");
         }
     }
@@ -723,7 +734,7 @@ public class ModificatoriaController extends RecuperarProceso implements Seriali
     }
 
     public void mostrarFiltroContrato(Boolean aprobacion) {
-        if (super.getProcesoAdquisicion().getIdProcesoAdq() != null) {
+        if (recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq() != null) {
             Map<String, Object> opt = new HashMap();
             opt.put("modal", true);
             opt.put("draggable", true);
@@ -745,7 +756,7 @@ public class ModificatoriaController extends RecuperarProceso implements Seriali
 
                 contratoOriginal = utilEJB.find(ContratosOrdenesCompras.class, vwContratoModificatoria.getIdContrato());
                 idRubro = contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres();
-                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
+                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
 
                 if (vwContratoModificatoria.getIdResolucionAdj() == null) {//modificación de una modificatoria
                     for (DetalleModificativa detalle : utilEJB.find(ResolucionesModificativas.class, vwContratoModificatoria.getIdResolucionModif()).getDetalleModificativaList()) {
@@ -817,7 +828,7 @@ public class ModificatoriaController extends RecuperarProceso implements Seriali
                     lstDetalleModificativas = resolucionesModificativas.getDetalleModificativaList();
                     contratoOriginal = resolucionesModificativas.getIdContrato();
                     idRubro = contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres();
-                    detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
+                    detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
                     lstTipoModifContratos = modificativaEJB.getLstTipoModifContrato(Short.valueOf("0"));
                     lstItem = proveedorEJB.findItemProveedor(contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdEmpresa(), detalleProceso);
                     idTipoModif = resolucionesModificativas.getIdModifContrato().getIdModifContrato();

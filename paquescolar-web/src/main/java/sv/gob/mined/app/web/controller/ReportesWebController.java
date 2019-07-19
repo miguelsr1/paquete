@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import sv.gob.mined.app.web.util.JsfUtil;
@@ -27,7 +28,7 @@ import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleContratacionPorI
  */
 @ManagedBean
 @ViewScoped
-public class ReportesWebController extends RecuperarProceso implements Serializable {
+public class ReportesWebController implements Serializable {
 
     private String codigoDepartamento;
     private Integer idDetProceso;
@@ -40,8 +41,19 @@ public class ReportesWebController extends RecuperarProceso implements Serializa
     ProveedorEJB proveedorEJB;
     @EJB
     AnhoProcesoEJB anhoProcesoEJB;
+    
+    @ManagedProperty("#{recuperarProceso}")
+    private RecuperarProceso recuperarProceso;
 
     public ReportesWebController() {
+    }
+    
+    public RecuperarProceso getRecuperarProceso() {
+        return recuperarProceso;
+    }
+
+    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
+        this.recuperarProceso = recuperarProceso;
     }
 
     public String getCodigoDepartamento() {
@@ -67,7 +79,7 @@ public class ReportesWebController extends RecuperarProceso implements Serializa
     public void generarRptProveedoresHacienda() {
         montoTotal = BigDecimal.ZERO;
         cantidadTotal = BigDecimal.ZERO;
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
         lstProveedoresHaciendaDto = proveedorEJB.getLstProveedoresHacienda(idDetProceso, codigoDepartamento);
         for (VwRptProveedoresContratadosDto vwRptProveedoresHaciendaDto : lstProveedoresHaciendaDto) {
             cantidadTotal = cantidadTotal.add(vwRptProveedoresHaciendaDto.getCantidadContrato());
@@ -78,7 +90,7 @@ public class ReportesWebController extends RecuperarProceso implements Serializa
     public void generarRptResumenContrataciones() {
         montoTotal = BigDecimal.ZERO;
         cantidadTotal = BigDecimal.ZERO;
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
         lstProveedoresHaciendaDto = proveedorEJB.getLstResumenContratacionByProcesoAndDepartamento(idDetProceso, codigoDepartamento);
         for (VwRptProveedoresContratadosDto vwRptProveedoresHaciendaDto : lstProveedoresHaciendaDto) {
             cantidadTotal = cantidadTotal.add(vwRptProveedoresHaciendaDto.getCantidadContrato());
@@ -101,7 +113,7 @@ public class ReportesWebController extends RecuperarProceso implements Serializa
     }
 
     public void generarReporte() {
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
         List<DetalleContratacionPorItemDto> lst = proveedorEJB.getLstDetalleContratacionPorItem(idDetProceso);
 
         if (codigoDepartamento != null) {

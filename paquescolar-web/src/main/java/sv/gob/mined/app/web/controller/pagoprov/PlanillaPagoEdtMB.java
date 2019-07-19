@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -60,7 +61,7 @@ import sv.gob.mined.paquescolar.util.Constantes;
  */
 @ManagedBean
 @ViewScoped
-public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable {
+public class PlanillaPagoEdtMB implements Serializable {
 
     @EJB
     private AnhoProcesoEJB anhoProcesoEJB;
@@ -122,6 +123,9 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
 
     private List<SelectItem> lstTipoDocImp = new ArrayList();
 
+    @ManagedProperty("#{recuperarProceso}")
+    private RecuperarProceso recuperarProceso;
+
     /**
      * Creates a new instance of PlanillaPagoEdtMB
      */
@@ -143,7 +147,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
     @PostConstruct
     public void ini() {
         idRubro = new BigDecimal(JsfUtil.getParametroUrl("cboRubro_input"));
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
         isRubroUniforme = idRubro.intValue() == 1 || idRubro.intValue() == 4 || idRubro.intValue() == 5;
 
         if (JsfUtil.isExisteParametroUrl("idPlanilla")) {
@@ -170,11 +174,19 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
                     break;
             }
         }
-        codigoDepartamento = super.getDepartamento();
+        codigoDepartamento = recuperarProceso.getDepartamento();
         documentosAImprimir();
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public RecuperarProceso getRecuperarProceso() {
+        return recuperarProceso;
+    }
+
+    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
+        this.recuperarProceso = recuperarProceso;
+    }
+
     public Boolean getCheque() {
         return cheque;
     }
@@ -865,7 +877,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
                     JsfUtil.getFormatoNum(getMontoActualTotal(), false)));
         }
         sb.append(RESOURCE_BUNDLE.getString("pagoprov.email.tablaDetalle.fin"));
-        sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.finNotificacion"), JsfUtil.getFechaString(planillaPago.getFechaInsercion()), JsfUtil.getNombreDepartamentoByCodigo(super.getDepartamento())));
+        sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.finNotificacion"), JsfUtil.getFechaString(planillaPago.getFechaInsercion()), JsfUtil.getNombreDepartamentoByCodigo(recuperarProceso.getDepartamento())));
 
         return sb.toString();
     }
@@ -956,7 +968,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
         param.put("pNombreDepartamento", nombreDepartamento);
         param.put("pAnho", "20" + anho);
         param.put("pUsuario", VarSession.getVariableSessionUsuario());
-        param.put("pPagadorDepartamental", pagoProveedoresEJB.getNombrePagadorByCodDepa(super.getDepartamento()));
+        param.put("pPagadorDepartamental", pagoProveedoresEJB.getNombrePagadorByCodDepa(recuperarProceso.getDepartamento()));
         DatosProveDto datos = new DatosProveDto();
         datos.setLstDetalle(lstEmailProveeCredito);
         List<DatosProveDto> lst = new ArrayList();
@@ -978,7 +990,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
                 detPlanilla.setCantidadActual(detPlanilla.getIdDetalleDocPago().getCantidadActual());
                 detPlanilla.setMontoActual(detPlanilla.getIdDetalleDocPago().getMontoActual());
             } else {
-                JsfUtil.mensajeAlerta("El monto actual no puede superar al monto original!");
+                JsfUtil.mensajeAlerta("El monto actual no puede recuperarProcesoar al monto original!");
             }
         } else {
             detPlanilla.setCantidadActual(detPlanilla.getCantidadOriginal());

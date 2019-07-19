@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
@@ -64,7 +65,7 @@ import sv.gob.mined.paquescolar.model.view.VwSeguimientoRptCentroEscolar;
  */
 @ManagedBean
 @ViewScoped
-public class GraficoController extends RecuperarProceso implements Serializable {
+public class GraficoController implements Serializable {
 
     @EJB
     public ProveedorEJB proveedorEJB;
@@ -72,8 +73,6 @@ public class GraficoController extends RecuperarProceso implements Serializable 
     public EntidadEducativaEJB entidadEducativaEJB;
     @EJB
     private AnhoProcesoEJB anhoProcesoEJB;
-    @EJB
-    private UtilEJB utilEJB;
     @EJB
     private RecepcionEJB recepcionEJB;
 
@@ -121,6 +120,9 @@ public class GraficoController extends RecuperarProceso implements Serializable 
     private Boolean mostrarGraficoCentroEducativo;
     private static DataFormat FORMATO_DATA;
 
+    @ManagedProperty("#{recuperarProceso}")
+    private RecuperarProceso recuperarProceso;
+
     public GraficoController() {
     }
 
@@ -130,6 +132,14 @@ public class GraficoController extends RecuperarProceso implements Serializable 
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">    
+    public RecuperarProceso getRecuperarProceso() {
+        return recuperarProceso;
+    }
+
+    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
+        this.recuperarProceso = recuperarProceso;
+    }
+
     public Boolean getMostrarGraficoCentroEducativo() {
         return mostrarGraficoCentroEducativo;
     }
@@ -349,12 +359,12 @@ public class GraficoController extends RecuperarProceso implements Serializable 
     }
 
     public void buscarProcesoSeg() {
-        detalleProcesoSeg = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubroSeg);
+        detalleProcesoSeg = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubroSeg);
     }
 
     public void generarReportesExcel() throws FileNotFoundException, IOException, InvalidFormatException, URISyntaxException {
-        if (super.getProcesoAdquisicion().getIdProcesoAdq() != null) {
-            List<ReporteProveedorDTO> lista = recepcionEJB.getLstReporteProveedores(super.getProcesoAdquisicion(), codigoDepartamento, rubroSeg);
+        if (recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq() != null) {
+            List<ReporteProveedorDTO> lista = recepcionEJB.getLstReporteProveedores(recuperarProceso.getProcesoAdquisicion(), codigoDepartamento, rubroSeg);
             dowloadProveedoresFile(lista);
         }
     }
@@ -655,25 +665,25 @@ public class GraficoController extends RecuperarProceso implements Serializable 
     }
 
     public void updateDetProcesoAdq() {
-        detalleProcesoSeg = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubroSeg);
+        detalleProcesoSeg = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubroSeg);
     }
 
     public void generarReportesDepartamentoExcel() {
-        if (super.getProcesoAdquisicion().getIdProcesoAdq() != null) {
-            List<ReportePorDepartamentoDto> lista = recepcionEJB.getLstReporteGeneralDepartamento(super.getProcesoAdquisicion().getDetalleProcesoAdqList().get(0).getIdDetProcesoAdq(), super.getProcesoAdquisicion().getDetalleProcesoAdqList().get(1).getIdDetProcesoAdq(), super.getProcesoAdquisicion().getDetalleProcesoAdqList().get(2).getIdDetProcesoAdq());
+        if (recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq() != null) {
+            List<ReportePorDepartamentoDto> lista = recepcionEJB.getLstReporteGeneralDepartamento(recuperarProceso.getProcesoAdquisicion().getDetalleProcesoAdqList().get(0).getIdDetProcesoAdq(), recuperarProceso.getProcesoAdquisicion().getDetalleProcesoAdqList().get(1).getIdDetProcesoAdq(), recuperarProceso.getProcesoAdquisicion().getDetalleProcesoAdqList().get(2).getIdDetProcesoAdq());
             dowloadDepartamentoFile(lista);
         }
     }
 
     public void generarReportesProveedoresExcel() throws FileNotFoundException, IOException, InvalidFormatException, URISyntaxException {
-        if (super.getProcesoAdquisicion().getIdProcesoAdq() != null) {
-            List<ReporteGeneralDTO> lista = recepcionEJB.getLstReporteGeneral(super.getProcesoAdquisicion(), codigoDepartamento);
+        if (recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq() != null) {
+            List<ReporteGeneralDTO> lista = recepcionEJB.getLstReporteGeneral(recuperarProceso.getProcesoAdquisicion(), codigoDepartamento);
             dowloadFile(lista);
         }
     }
 
     public void generarReportesCEExcel() throws FileNotFoundException, IOException, InvalidFormatException, URISyntaxException {
-        if (super.getProcesoAdquisicion().getIdProcesoAdq() != null) {
+        if (recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq() != null) {
             List<VwSeguimientoRptCentroEscolar> lista = recepcionEJB.getLstSeguimientoRptCE(detalleProcesoSeg.getIdDetProcesoAdq(), codigoDepartamento);
 
             HSSFCellStyle style;
@@ -753,7 +763,7 @@ public class GraficoController extends RecuperarProceso implements Serializable 
     }
 
     public void obtenerDatos() {
-        detalleProcesoSeg = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubroSeg);
+        detalleProcesoSeg = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubroSeg);
         List<Object> lista = proveedorEJB.findAvanceContratacionByDepartamento(detalleProcesoSeg, codigoDepartamento);
         listaCapacidad = new ArrayList(0);
         BigDecimal total1 = BigDecimal.ZERO;

@@ -5,6 +5,7 @@
 package sv.gob.mined.app.web.controller.contratacion;
 
 import java.io.File;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
@@ -19,6 +20,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -54,7 +56,7 @@ import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
  */
 @ManagedBean
 @ViewScoped
-public class ContratosOrdenesComprasController extends RecuperarProceso {
+public class ContratosOrdenesComprasController implements Serializable {
 
     private int estadoEdicion = 0;
     private int tipoRpt = 1;
@@ -107,6 +109,9 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("Bundle");
 
+    @ManagedProperty("#{recuperarProceso}")
+    private RecuperarProceso recuperarProceso;
+
     /**
      * Creates a new instance of ContratosOrdenesComprasController
      */
@@ -120,7 +125,7 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getRubro();
 
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro);
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubro);
 
         if (VarSession.getIdMunicipioSession() != null) {
             idMunicipio = VarSession.getIdMunicipioSession();
@@ -135,6 +140,14 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
         } else {
             VarSession.setVariableSessionED("0");
         }
+    }
+
+    public RecuperarProceso getRecuperarProceso() {
+        return recuperarProceso;
+    }
+
+    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
+        this.recuperarProceso = recuperarProceso;
     }
 
     public Boolean getAnalisisTecEco() {
@@ -470,10 +483,10 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
              * Fecha: 30/08/2018 Comentario: Validación de seleccion del año y
              * proceso de adquisición
              */
-            if (super.getProcesoAdquisicion() == null) {
+            if (recuperarProceso.getProcesoAdquisicion() == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
-                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubro);
+                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubro);
                 entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
 
                 if (entidadEducativa == null) {
@@ -481,7 +494,7 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                 } else {
 
                     if (VarSession.getDepartamentoUsuarioSession() != null) {
-                        String dep = super.getDepartamento();
+                        String dep = recuperarProceso.getDepartamento();
                         if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep) || (int) VarSession.getVariableSession("idTipoUsuario") == 1) {
                             oferta = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(codigoEntidad, detalleProceso);
 
@@ -603,11 +616,11 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                 current.setPlazoPrevistoEntrega(new BigInteger("60"));
                 break;
             case 2:
-                if(detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")){
+                if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
                     current.setPlazoPrevistoEntrega(new BigInteger("15"));
-                    
-                }else{
-                current.setPlazoPrevistoEntrega(new BigInteger("30"));
+
+                } else {
+                    current.setPlazoPrevistoEntrega(new BigInteger("30"));
                 }
                 break;
             case 3:
@@ -645,20 +658,20 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                 case 0://JRBeanColletions
                     switch (rptDoc.getIdTipoRpt().getIdTipoRpt()) {
                         case 3://Acta Adjudicacion
-                            if(detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")){
+                            if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
                                 param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
                             }
-                            
+
                             param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES + "notasactas") + File.separator);
                             rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptActaAdjudicacion(current.getIdResolucionAdj().getIdResolucionAdj()));
 
                             lstRptAImprimir.add(rptTemp);
                             break;
                         case 4://Nota Adjudicacion
-                            if(detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")){
+                            if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
                                 param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
                             }
-                            
+
                             param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES + "notasactas") + File.separator);
                             rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptNotaAdjudicacion(current.getIdResolucionAdj().getIdResolucionAdj()));
 
@@ -667,17 +680,17 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                             break;
                         case 5://Garantia Cumplimiento
                         case 6://Garantia Uso Tela
-                            if(detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")){
+                            if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
                                 param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
                             }
-                            
+
                             lstRptAImprimir.add(reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptGarantia(current.getIdResolucionAdj().getIdResolucionAdj(), current.getIdContrato())));
                             break;
                         case 7://Contrato
-                            if(detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")){
+                            if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
                                 param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
                             }
-                            
+
                             param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES + "contratos") + File.separator);
                             param.put("idContrato", current.getIdContrato());
                             param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
@@ -746,7 +759,7 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                                     param.put("P_FECHA_INICIO", "SIN DEFINIR");
                                 }
                             }
-                            if(detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")){
+                            if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
                                 param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
                             }
                             nombreRpt = rptDoc.getNombreRpt().concat(perNatural ? "Nat" : "Jur");
@@ -805,7 +818,7 @@ public class ContratosOrdenesComprasController extends RecuperarProceso {
                 Bean2Excel oReport = new Bean2Excel(lst, detalleProceso.getIdRubroAdq().getDescripcionRubro(), entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(), "", sd.format(ofe.getFechaApertura()), getSelected().getUsuarioInsercion());
                 oReport.createFile(ofe.getCodigoEntidad().getCodigoEntidad());
             }
-        }else{
+        } else {
             JsfUtil.mensajeAlerta("Primero debe de guardar la oferta!!!");
         }
     }

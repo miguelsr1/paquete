@@ -5,6 +5,7 @@
 package sv.gob.mined.app.web.controller;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +35,7 @@ import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
  */
 @ManagedBean
 @SessionScoped
-public class AnhoProcesoController {
+public class AnhoProcesoController implements Serializable {
 
     private String codigoEntidad = "";
     private Anho anho = new Anho();
@@ -177,6 +178,8 @@ public class AnhoProcesoController {
 
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
         ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
+        
+        //recuperarProceso.recuperarProcesoAdq();
     }
 
     private void crearCookies() {

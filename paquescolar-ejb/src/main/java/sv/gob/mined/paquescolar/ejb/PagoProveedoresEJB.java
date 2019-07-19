@@ -517,7 +517,7 @@ public class PagoProveedoresEJB {
         q.executeUpdate();
     }
 
-    public List<DatosBusquedaPlanillaDto> buscarPlanillas(BigDecimal idPlanilla, BigDecimal monto, String numeroNit, String nombreEntFinan, Integer idProcesoAdq) {
+    public List<DatosBusquedaPlanillaDto> buscarPlanillas(BigDecimal idPlanilla, BigDecimal monto, String numeroNit, String nombreEntFinan, Integer idProcesoAdq, String numeroCheque) {
         String strWhere = Constantes.addCampoToWhere("", "pp.ID_PLANILLA", idPlanilla);
         strWhere = Constantes.addCampoToWhere(strWhere, "dp.MONTO_ACTUAL", monto);
         strWhere = Constantes.addCampoToWhere(strWhere, "dr.NUMERO_NIT", numeroNit);

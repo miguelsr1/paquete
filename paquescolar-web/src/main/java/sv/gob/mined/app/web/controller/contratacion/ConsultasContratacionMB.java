@@ -12,6 +12,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import org.primefaces.model.chart.Axis;
@@ -38,7 +39,7 @@ import sv.gob.mined.paquescolar.model.pojos.contratacion.SaldoProveedorDto;
  */
 @ManagedBean
 @ViewScoped
-public class ConsultasContratacionMB extends RecuperarProceso implements Serializable {
+public class ConsultasContratacionMB implements Serializable {
 
     @EJB
     public ServiciosJsonEJB serviciosJsonEJB;
@@ -84,6 +85,9 @@ public class ConsultasContratacionMB extends RecuperarProceso implements Seriali
     private BarChartModel barModelUti;
     private BarChartModel barModelZap;
 
+    @ManagedProperty("#{recuperarProceso}")
+    private RecuperarProceso recuperarProceso;
+
     /**
      * Creates a new instance of ConsultasContratacionMB
      */
@@ -94,10 +98,18 @@ public class ConsultasContratacionMB extends RecuperarProceso implements Seriali
     public void ini() {
         idRubro = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getRubro();
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public RecuperarProceso getRecuperarProceso() {
+        return recuperarProceso;
+    }
+
+    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
+        this.recuperarProceso = recuperarProceso;
+    }
+
     public List<SaldoProveedorDto> getLstSaldos() {
         return lstSaldos;
     }
@@ -197,7 +209,7 @@ public class ConsultasContratacionMB extends RecuperarProceso implements Seriali
         this.porcentajeAvance = "";
         if (codigoDepartamento != null) {
             mostrarGrafico = true;
-            for (DetalleProcesoAdq det : super.getProcesoAdquisicion().getDetalleProcesoAdqList()) {
+            for (DetalleProcesoAdq det : recuperarProceso.getProcesoAdquisicion().getDetalleProcesoAdqList()) {
                 switch (det.getIdRubroAdq().getIdRubroInteres().intValue()) {
                     case 1:
                     case 4:
@@ -411,11 +423,11 @@ public class ConsultasContratacionMB extends RecuperarProceso implements Seriali
     }
 
     public void consultaSaldo() {
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
         lstSaldos = serviciosJsonEJB.getLstSaldoProveedoresByDepAndCodDepa(detalleProceso, codigoDepartamento);
     }
-    
-    public String nombreDepartamento(String codigoDepartamento){
+
+    public String nombreDepartamento(String codigoDepartamento) {
         return JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento);
     }
 }
