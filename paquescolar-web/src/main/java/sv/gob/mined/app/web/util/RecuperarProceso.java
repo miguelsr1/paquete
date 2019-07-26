@@ -42,18 +42,21 @@ public class RecuperarProceso implements Serializable {
     }
 
     public ProcesoAdquisicion getProcesoAdquisicion() {
+        procesoAdquisicion = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getProceso();
         return procesoAdquisicion;
     }
 
-    public void setProcesoAdquisicion(ProcesoAdquisicion procesoAdquisicion) {
-        this.procesoAdquisicion = procesoAdquisicion;
-    }
-
+//    public void setProcesoAdquisicion(ProcesoAdquisicion procesoAdquisicion) {
+//        this.procesoAdquisicion = procesoAdquisicion;
+//    }
     public String getDepartamento() {
+        departamento = ((DatosGeograficosController) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "datosGeograficosController")).getCodigoDepartamento();
         return departamento;
     }
 
-    public void setDepartamento(String departamento) {
-        this.departamento = departamento;
-    }
+//    public void setDepartamento(String departamento) {
+//        this.departamento = departamento;
+//    }
 }

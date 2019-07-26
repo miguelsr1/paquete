@@ -483,12 +483,13 @@
 
         <p:dialog id="dlgEMailNotificacion" widgetVar="dlgEMailNotificacion" header="Listado de Notificaciones a enviar" width="700" closable="false" resizable="false" 
                   modal="true" showEffect="fade" hideEffect="fade">
-            <h:panelGrid columns="2" columnClasses="col3,col9">
+            <p:panelGrid columns="2" columnClasses="col3,col9" 
+                         styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
                 <h:outputText style="font-weight: bold;" value="Entidad Financiera: "/>
-                <p:inputText value="#{pagoProveedoresController.nombreEntFinanciera}" readonly="true" size="80"/>
+                <p:inputText value="#{pagoProveedoresController.nombreEntFinanciera}" readonly="true" size="60"/>
                 <h:outputText style="font-weight: bold;" value="Correo electrónico: "/>
-                <p:inputText value="#{pagoProveedoresController.emailUnico}" readonly="true" size="80"/>
-            </h:panelGrid>
+                <p:inputText value="#{pagoProveedoresController.emailUnico}" readonly="true" size="60"/>
+            </p:panelGrid>
             <br/>
             <p:dataTable value="#{pagoProveedoresController.lstEmailProveeCredito}" var="prov" rowIndexVar="rowId" scrollable="true" scrollHeight="300">
                 <f:facet name="header">

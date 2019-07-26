@@ -81,7 +81,7 @@ ORDER BY DET.CODIGO_ENTIDAD]]>
 	<pageHeader>
 		<band height="132" splitType="Stretch">
 			<textField>
-				<reportElement uuid="8b6881fa-9b39-4e73-ad7b-8136abdf7006" x="17" y="0" width="496" height="44"/>
+				<reportElement uuid="8b6881fa-9b39-4e73-ad7b-8136abdf7006" x="9" y="0" width="496" height="44"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial" size="10" isBold="true"/>
 					<paragraph lineSpacing="Proportional" lineSpacingSize="1.3"/>

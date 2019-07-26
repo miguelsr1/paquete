@@ -43,7 +43,7 @@
                 </f:facet>
 
                 <p:commandButton value="Notificar" icon="fa fa-envelope-o" action="#{pagoProveedoresController.notificacion}" oncomplete="PF('dlgEMailNotificacion').show();" 
-                                 rendered="#{!pagoProveedoresController.isPlanillaLectura}" style="float: right;"/>
+                                 rendered="#{!pagoProveedoresController.isPlanillaLectura}" style="float: right;" update="dlgEMailNotificacion"/>
 
                 <h:panelGrid columns="2">
                     <h:outputText value="Estado de Planilla: "/>

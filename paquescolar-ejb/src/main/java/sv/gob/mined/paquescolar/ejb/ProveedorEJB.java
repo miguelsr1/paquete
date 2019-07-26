@@ -102,7 +102,7 @@ public class ProveedorEJB {
             jpql += "and d.idRequerimiento.codigoDepartamento=:codDepa ";
         }
 
-        Query q = em.createQuery(jpql+" d.idRequerimiento.estadoEliminacion=0 ", DetalleRequerimiento.class);
+        Query q = em.createQuery(jpql+ (jpql.contains("WHERE")?" and ": " WHERE ")+  " d.idRequerimiento.estadoEliminacion=0 ", DetalleRequerimiento.class);
 
         if (formatoRequerimiento != null && codigoEntidad != null) {
             q.setParameter("formatoReq", formatoRequerimiento);

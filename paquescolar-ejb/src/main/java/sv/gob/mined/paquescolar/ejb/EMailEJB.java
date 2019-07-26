@@ -41,7 +41,7 @@ public class EMailEJB {
 
     private void configuracionesDeSession() {
         config.put("mail.transport.protocol", "smtp");
-        config.put("mail.smtp.host", "smtp.office365.com");
+        config.put("mail.smtp.host", "svr2k13mail01.mined.gob.sv");
         config.put("mail.smtp.auth", "true");
         config.put("mail.smtp.starttls.enable", "true");
         config.put("mail.smtp.port", "587");
@@ -66,13 +66,13 @@ public class EMailEJB {
     @Asynchronous
     public void enviarMail(String subject, String remitente, String message) {
         try {
-            configuracionesDeSession();
+            //configuracionesDeSession();
             MimeMessage m = new MimeMessage(mailSession);
-            Address from = new InternetAddress("cesar.nieves@mined.edu.sv");
+            Address from = new InternetAddress("rafael.arias@mined.gob.sv");
 
             m.setFrom(from);
             m.setRecipients(Message.RecipientType.TO, remitente);
-            m.setRecipients(Message.RecipientType.BCC, "cesar.nieves@mined.edu.sv");
+            m.setRecipients(Message.RecipientType.BCC, "rafael.arias@mined.gob.sv");
             m.setSubject(subject, "UTF-8");
             m.setSentDate(new java.util.Date());
             m.setText(message, "UTF-8", "html");
