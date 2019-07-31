@@ -24,15 +24,15 @@
             <p:panel>
                 <h:panelGrid columns="4" >
                     <h:outputText value="Valor de busqueda:"/>
-                    <p:inputText value="#{proveedorController.valor}" styleClass="textMayuscula" size="40"/>
+                    <p:inputText value="#{busquedaProveedorMB.valor}" styleClass="textMayuscula" size="40"/>
                     <h:outputText value="(NIT o Nombre o Representante Legal)"/>
-                    <p:commandButton id="btnBuscar" value="Buscar" icon="fa fa-search" action="#{proveedorController.buscarEmpresas}" update="tblEmpresas growl1" />                    
+                    <p:commandButton id="btnBuscar" value="Buscar" icon="fa fa-search" action="#{busquedaProveedorMB.buscarEmpresas}" update="tblEmpresas growl1" />                    
                 </h:panelGrid>
                 <br/><h:outputText value="Resultado:"/><br/>
-                <p:dataTable id="tblEmpresas" value="#{proveedorController.lstEmpresas}" var="emp" paginator="true" paginatorPosition="top" 
-                             selectionMode="single" selection="#{proveedorController.empresa}" rowKey="#{emp.idEmpresa}" rows="11"
+                <p:dataTable id="tblEmpresas" value="#{busquedaProveedorMB.lstEmpresas}" var="emp" paginator="true" paginatorPosition="top" 
+                             selectionMode="single" selection="#{busquedaProveedorMB.empresa}" rowKey="#{emp.idEmpresa}" rows="11"
                              rowIndexVar="id" emptyMessage="Sin registros"  scrollable="true" scrollHeight="300">
-                    <p:ajax event="rowDblselect" listener="#{proveedorController.cerrarFiltro}"/>
+                    <p:ajax event="rowDblselect" listener="#{busquedaProveedorMB.cerrarFiltro}"/>
                     <p:column headerText="Datos Generales" width="300" >
                         <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col1,col2" 
                                      style="width: 100%; border:0px none; background-color:transparent;"
@@ -52,8 +52,8 @@
                     </p:column>
                 </p:dataTable>
                 <f:facet name="footer">
-                    <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{proveedorController.cerrarFiltro}"/>
-                    <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{proveedorController.cerrarFiltroPro}"/>
+                    <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{busquedaProveedorMB.cerrarFiltro}"/>
+                    <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{busquedaProveedorMB.cerrarFiltroPro}"/>
                 </f:facet>
             </p:panel>
         </h:form>

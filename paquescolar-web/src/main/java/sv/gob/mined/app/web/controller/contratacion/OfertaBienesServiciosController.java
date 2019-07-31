@@ -341,42 +341,6 @@ public class OfertaBienesServiciosController implements Serializable {
         }
     }
 
-    public void onRowToggle(ToggleEvent event) {
-        File carNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/");
-        String ok = "";
-        if (carNfs.list() != null) {
-            for (String directorio : carNfs.list()) {
-                ok = ok.concat("'").concat(directorio).concat("',");
-            }
-        }
-        tempEmpresaSeleccionada = ((CapaInstPorRubro) event.getData()).getIdMuestraInteres().getIdEmpresa();
-        File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + tempEmpresaSeleccionada.getNumeroNit() + "/");
-        lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(((CapaInstPorRubro) event.getData()).getIdMuestraInteres().getIdEmpresa(), detalleProceso);
-
-        if (carpetaNfs.list() != null) {
-            lstEstilos = new SelectItem[carpetaNfs.list().length + 1];
-            int i = 0;
-            lstEstilos[i] = new SelectItem("-", "Seleccione");
-            i++;
-            for (String string : carpetaNfs.list()) {
-                lstEstilos[i] = new SelectItem(string, string);
-                i++;
-            }
-        }
-    }
-
-    public void verFotosProductos() {
-        showProductos = true;
-        estiloSeleccionado = "-";
-        images = new ArrayList();
-        if (lstEstilos.length == 0) {
-            JsfUtil.mensajeAlerta("No posee fotografias del producto");
-        } else {
-            PrimeFaces.current().ajax().update("pnlProductos");
-            PrimeFaces.current().executeScript("PF('dlgProductos').show()");
-        }
-    }
-
     public void cargarFotosPorEstilo() {
         if (!estiloSeleccionado.equals("-")) {
             File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + tempEmpresaSeleccionada.getNumeroNit() + "/" + estiloSeleccionado + "/");
@@ -388,6 +352,23 @@ public class OfertaBienesServiciosController implements Serializable {
                 }
             }
         }
+    }
+
+    public String getFotoPrincipal(String nit) {
+        String imagen = "Fotos_Zapatos/sin_foto.png";
+        File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + nit + "/");
+        if (carpetaNfs.list() != null) {
+            for (String nombreCarpeta : carpetaNfs.list()) {
+                File carpetaImagenes = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + nit + "/" + nombreCarpeta + "/");
+                if (carpetaImagenes.list() != null) {
+                    for (String imagenes : carpetaImagenes.list()) {
+                        return "Fotos_Zapatos/" + nit + "/" + nombreCarpeta + "/" + imagenes;
+                    }
+                }
+            }
+        }
+
+        return imagen;
     }
 
     public void limpiarFiltros() {
@@ -827,6 +808,30 @@ public class OfertaBienesServiciosController implements Serializable {
             abrirDialogCe = true;
         } else {
             JsfUtil.mensajeAlerta("Debe de seleccionar un departamento y municipio.");
+        }
+    }
+
+    public void cargarDetalleProveedor() {
+        File carNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/");
+        String ok = "";
+        if (carNfs.list() != null) {
+            for (String directorio : carNfs.list()) {
+                ok = ok.concat("'").concat(directorio).concat("',");
+            }
+        }
+        tempEmpresaSeleccionada = capaInstSeleccionada.getIdMuestraInteres().getIdEmpresa();
+        File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + tempEmpresaSeleccionada.getNumeroNit() + "/");
+        lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(capaInstSeleccionada.getIdMuestraInteres().getIdEmpresa(), detalleProceso);
+
+        if (carpetaNfs.list() != null) {
+            lstEstilos = new SelectItem[carpetaNfs.list().length + 1];
+            int i = 0;
+            lstEstilos[i] = new SelectItem("-", "Seleccione");
+            i++;
+            for (String string : carpetaNfs.list()) {
+                lstEstilos[i] = new SelectItem(string, string);
+                i++;
+            }
         }
     }
 }

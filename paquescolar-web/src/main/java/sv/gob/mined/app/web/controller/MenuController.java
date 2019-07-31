@@ -213,4 +213,8 @@ public class MenuController implements Serializable {
         }
         return "";
     }
+
+    public Boolean getIsUsuarioDigitador() {
+        return (usuario.getIdTipoUsuario().getIdTipoUsuario().intValue() == 2);
+    }
 }

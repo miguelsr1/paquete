@@ -51,7 +51,7 @@
                         <p:outputLabel value="Proveedor:" />
                         <p:selectOneMenu id="cboProveedor" value="#{participantesController.idParticipante}" disabled="#{participantesController.deshabilitado}" onkeydown="setaFoco(this);" >
                             <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
-                            <f:selectItems value="#{ofertaBienesServiciosController.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{par.idEmpresa.razonSocial}" />
+                            <f:selectItems value="#{ofertaBienesServiciosController.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idEmpresa.idEmpresa)):par.idEmpresa.razonSocial}" rendered="#{!menuController.isUsuarioDigitador}"/>
                             <p:ajax update="menuBar dvDetalle btnAgregar" listener="#{participantesController.buscarItemsProveedor}" />
                         </p:selectOneMenu>
                     </p:panelGrid>

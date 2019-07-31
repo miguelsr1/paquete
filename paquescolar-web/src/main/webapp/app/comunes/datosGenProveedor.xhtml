@@ -26,7 +26,7 @@
                     <p:outputLabel value="Estado de registro: "/>
                     <p:outputLabel styleClass="negrita" value="#{proveedorController.empresa.idEstadoRegistro.descripcionEstado}" />
                     <p:outputLabel value="Rubro a participar: "/>
-                    <p:outputLabel styleClass="negrita" value="#{proveedorController.capacidadInst.idMuestraInteres.idDetProcesoAdq.idRubroAdq.descripcionRubro}" />
+                    <p:outputLabel styleClass="negrita" value="#{proveedorController.nombreRubroProveedor}" />
                 </p:panelGrid>
                 <p:commandLink id="foto" action="#{proveedorController.dlgFotografia}" disabled="#{proveedorController.capacidadInst eq null}">
                     <p:ajax event="dialogReturn" listener="#{proveedorController.updateFrm}" update="foto"/>

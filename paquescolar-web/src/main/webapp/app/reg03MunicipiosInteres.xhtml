@@ -38,7 +38,8 @@
                         </h1>
                         <p:outputLabel value="Seleccione los municipios en los que tiene interes de participar"/><br/>
                         <h:panelGrid columns="2">
-                            <p:pickList id="pickList" value="#{proveedorController.lstMunicipiosInteres}" converter="muniConverter" var="municipio" showSourceFilter="true" showTargetFilter="true"
+                            <p:pickList id="pickList" value="#{proveedorController.lstMunicipiosInteres}" converter="muniConverter" var="municipio" 
+                                        showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains"
                                         itemLabel=" #{municipio.nombreMunicipio}" itemValue="#{municipio}"/>
                         </h:panelGrid>
                     </p:outputPanel>

@@ -1,0 +1,69 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core">
+    <p:dataViewGridItem>
+        <p:panel header="#{capaEmpresa.idMuestraInteres.idEmpresa.numeroNit}" style="text-align:center">
+            <h:panelGrid columns="1" style="width: 100%;">
+                <p:graphicImage value="/DynamicImageServlet?file=#{bundle['path_images']}/#{ofertaBienesServiciosController.getFotoPrincipal(capaEmpresa.idMuestraInteres.idEmpresa.numeroNit)}" height="120"/>
+
+                <h:panelGrid columns="2">
+                    <h:outputText value="Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
+                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.razonSocial}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
+
+                    <h:outputText value="Tipo Proveedor" />
+                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.distribuidor eq 1 ? 'PRODUCTOR' : 'DISTRIBUIDOR'}" style="font-weight: bold"/>
+
+                    <h:outputText value="Municipio y Departamento:" />
+                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.nombreMunicipio}, #{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.codigoDepartamento.nombreDepartamento}" style="font-weight: bold"/>
+                </h:panelGrid>
+
+                <h:panelGrid columns="2">
+                    <p:commandLink title="Seleccionar" oncomplete="PF('dlgProveedor').hide()" action="#{ofertaBienesServiciosController.onSelect}" update="tblParticipantes tbEmpresas">
+                        <h:outputText styleClass="ui-icon fa fa-check-circle" style="margin:0 auto;" />
+                        <f:setPropertyActionListener value="#{capaEmpresa}" target="#{ofertaBienesServiciosController.capaInstSeleccionada}" />
+                    </p:commandLink>
+
+                    <p:commandLink title="Ver detalle" action="#{ofertaBienesServiciosController.cargarDetalleProveedor()}" oncomplete="PF('dlgDetalleProveedor').show()" update="dlgDetalleProveedor">
+                        <h:outputText styleClass="ui-icon fa fa-search" style="margin:0 auto;" />
+                        <f:setPropertyActionListener value="#{capaEmpresa}" target="#{ofertaBienesServiciosController.capaInstSeleccionada}" />
+                    </p:commandLink>
+                </h:panelGrid>
+            </h:panelGrid>
+        </p:panel>
+    </p:dataViewGridItem>
+
+    <p:dataViewListItem>
+        <h:panelGrid columns="3" style="width:100%" columnClasses="logo,detail">
+            <p:graphicImage value="/DynamicImageServlet?file=#{bundle['path_images']}/#{ofertaBienesServiciosController.getFotoPrincipal(capaEmpresa.idMuestraInteres.idEmpresa.numeroNit)}" height="120"/>
+
+            <p:outputPanel>
+                <h:panelGrid columns="2" cellpadding="5">
+                    <h:outputText value="Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
+                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.razonSocial}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
+
+                    <h:outputText value="Tipo Proveedor" />
+                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.distribuidor eq 1 ? 'PRODUCTOR' : 'DISTRIBUIDOR'}" style="font-weight: bold"/>
+
+                    <h:outputText value="Municipio y Departamento:" />
+                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.nombreMunicipio}, #{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.codigoDepartamento.nombreDepartamento}" style="font-weight: bold"/>
+                </h:panelGrid>
+            </p:outputPanel>
+
+            <p:outputPanel>
+                <h:panelGrid columns="2">
+                    <p:commandLink title="Seleccionar" oncomplete="PF('dlgProveedor').hide()" action="#{ofertaBienesServiciosController.onSelect}" update="tblParticipantes tbEmpresas">
+                        <h:outputText styleClass="ui-icon fa fa-check-circle" style="margin:0 auto;" />
+                        <f:setPropertyActionListener value="#{capaEmpresa}" target="#{ofertaBienesServiciosController.capaInstSeleccionada}" />
+                    </p:commandLink>
+
+                    <p:commandLink title="Ver detalle" action="#{ofertaBienesServiciosController.cargarDetalleProveedor()}" oncomplete="PF('dlgDetalleProveedor').show()" update="dlgDetalleProveedor">
+                        <h:outputText styleClass="ui-icon fa fa-search" style="margin:0 auto;" />
+                        <f:setPropertyActionListener value="#{capaEmpresa}" target="#{ofertaBienesServiciosController.capaInstSeleccionada}" />
+                    </p:commandLink>
+                </h:panelGrid>
+            </p:outputPanel>
+        </h:panelGrid>
+    </p:dataViewListItem>
+</ui:composition>

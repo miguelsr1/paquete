@@ -51,7 +51,7 @@
                             <p:selectOneMenu id="cboProveedor" value="#{contratosOrdenesComprasController.idParticipante}" 
                                              disabled="#{contratosOrdenesComprasController.deshabilitado}" >
                                 <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
-                                <f:selectItems value="#{contratosOrdenesComprasController.oferta.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{par.idEmpresa.razonSocial}"/>
+                                <f:selectItems value="#{ofertaBienesServiciosController.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idEmpresa.idEmpresa)):par.idEmpresa.razonSocial}" rendered="#{!menuController.isUsuarioDigitador}"/>
                                 <p:ajax listener="#{contratosOrdenesComprasController.buscarDocumentoLegal}" update="dvFiltro pnlContrato dvOrganismo dvDocumentos" />
                             </p:selectOneMenu>
                         </p:panelGrid>
