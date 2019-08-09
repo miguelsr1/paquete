@@ -102,7 +102,7 @@ public class ProveedorEJB {
             jpql += "and d.idRequerimiento.codigoDepartamento=:codDepa ";
         }
 
-        Query q = em.createQuery(jpql+ (jpql.contains("WHERE")?" and ": " WHERE ")+  " d.idRequerimiento.estadoEliminacion=0 ", DetalleRequerimiento.class);
+        Query q = em.createQuery(jpql + (jpql.contains("WHERE") ? " and " : " WHERE ") + " d.idRequerimiento.estadoEliminacion=0 ", DetalleRequerimiento.class);
 
         if (formatoRequerimiento != null && codigoEntidad != null) {
             q.setParameter("formatoReq", formatoRequerimiento);
@@ -601,12 +601,6 @@ public class ProveedorEJB {
         codMunicipio = ((Object[]) lst.get(0))[0].toString();
         codDepartamento = ((Object[]) lst.get(0))[1].toString();
 
-        if (municipioIgual) {
-            q = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idMuestraInteres in (  select d.idCapaDistribucion.idMuestraInteres.idMuestraInteres from DisMunicipioInteres d where d.idMunicipio.codigoMunicipio=:codMuni and d.idMunicipio.codigoDepartamento.codigoDepartamento=:codDepa and d.estadoEliminacion=0 and d.idCapaDistribucion.idMuestraInteres.idDetProcesoAdq.idRubroAdq.idRubroInteres=:rubro and d.idCapaDistribucion.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idAnho.idAnho=:idAnho and d.idCapaDistribucion.idMuestraInteres.estadoEliminacion=0 and d.idCapaDistribucion.idMuestraInteres.idEmpresa.idMunicipio.codigoMunicipio =:codMuni) ORDER BY c.idMuestraInteres.idEmpresa.razonSocial ", CapaInstPorRubro.class);
-        } else {
-            q = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idMuestraInteres in (  select d.idCapaDistribucion.idMuestraInteres.idMuestraInteres from DisMunicipioInteres d where d.idMunicipio.codigoMunicipio=:codMuni and d.idMunicipio.codigoDepartamento.codigoDepartamento=:codDepa and d.estadoEliminacion=0 and d.idCapaDistribucion.idMuestraInteres.idDetProcesoAdq.idRubroAdq.idRubroInteres=:rubro and d.idCapaDistribucion.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idAnho.idAnho=:idAnho and d.idCapaDistribucion.idMuestraInteres.estadoEliminacion=0 and d.idCapaDistribucion.idMuestraInteres.idEmpresa.idMunicipio.codigoMunicipio <> :codMuni) ORDER BY c.idMuestraInteres.idEmpresa.razonSocial", CapaInstPorRubro.class);
-        }
-
         if (rubro.getIdProcesoAdq().getPadreIdProcesoAdq() != null) {
             for (DetalleProcesoAdq object : rubro.getIdProcesoAdq().getPadreIdProcesoAdq().getDetalleProcesoAdqList()) {
                 if (object.getIdRubroAdq().getIdRubroInteres().compareTo(rubro.getIdRubroAdq().getIdRubroInteres()) == 0) {
@@ -618,17 +612,47 @@ public class ProveedorEJB {
             detTemp = rubro;
         }
 
-        q.setParameter("codMuni", codMunicipio);
-        q.setParameter("codDepa", codDepartamento);
+        BigDecimal idRubro, idAnho;
         if (detTemp.getIdRubroAdq().getDescripcionRubro().contains("2do")) {
-            q.setParameter("rubro", new BigDecimal(4));
+            idRubro = new BigDecimal(4);
         } else {
-            q.setParameter("rubro", detTemp.getIdRubroAdq().getIdRubroInteres());
+            idRubro = detTemp.getIdRubroAdq().getIdRubroInteres();
         }
-        q.setParameter("idAnho", detTemp.getIdProcesoAdq().getIdAnho().getIdAnho());
+        idAnho = detTemp.getIdProcesoAdq().getIdAnho().getIdAnho();
 
+        q = em.createNativeQuery("SELECT * FROM capa_inst_por_rubro WHERE id_muestra_interes in (" + findLstIdEmpresa(codMunicipio, codDepartamento, idRubro, idAnho, municipioIgual) + ") ORDER BY dbms_random.value", CapaInstPorRubro.class);
+        
         lstCapa.addAll(q.getResultList());
         return lstCapa;
+    }
+
+    private String findLstIdEmpresa(String codMun, String codDep, BigDecimal idRubro, BigDecimal idAnho, Boolean municipioIgual) {
+        String sql = "select det.id_muestra_interes \n"
+                + "from \n"
+                + "    det_rubro_muestra_interes det\n"
+                + "    inner join empresa emp                  on emp.id_empresa = det.id_empresa\n"
+                + "    inner join municipio mun_e              on mun_e.id_municipio = emp.id_municipio\n"
+                + "    inner join detalle_proceso_adq dpa      on dpa.id_det_proceso_adq = det.id_det_proceso_adq\n"
+                + "    inner join proceso_adquisicion pa       on pa.id_proceso_adq = dpa.id_proceso_adq\n"
+                + "    inner join capa_distribucion_acre cap   on det.id_muestra_interes = cap.id_muestra_interes\n"
+                + "    inner join dis_municipio_interes dis    on dis.id_capa_distribucion = cap.id_capa_distribucion\n"
+                + "    inner join municipio mun                on mun.id_municipio = dis.id_municipio\n"
+                + "    inner join departamento dep             on mun.codigo_departamento = dep.codigo_departamento\n"
+                + "where \n"
+                + "    mun.codigo_municipio = '" + codMun + "' and\n"
+                + "    dep.codigo_departamento = '" + codDep + "' and\n"
+                + "    dis.estado_eliminacion = 0 and\n"
+                + "    dpa.id_rubro_adq = " + idRubro + " and\n"
+                + "    pa.id_anho = " + idAnho + " and\n"
+                + "    det.estado_eliminacion = 0 and\n"
+                + "    mun_e.codigo_municipio " + (municipioIgual ? "=" : "<>") + "'" + codMun + "'";
+        /*Query q = em.createNativeQuery(sql);
+        q.setParameter(1, codMun);
+        q.setParameter(2, codDep);
+        q.setParameter(3, idRubro);
+        q.setParameter(4, idAnho);*/
+
+        return sql;
     }
 
     /**

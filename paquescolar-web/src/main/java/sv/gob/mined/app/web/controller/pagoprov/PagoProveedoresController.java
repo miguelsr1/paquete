@@ -70,6 +70,7 @@ import sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosBusquedaPlanillaDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosResumenPagosDto;
+import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosResumenPagosPorReqYProveedorDto;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 
 /**
@@ -125,6 +126,7 @@ public class PagoProveedoresController implements Serializable {
     private Boolean dlgDetallePlanilla = false;
     private Boolean dlgEdtDetPlanilla = false;
     private Boolean dlgEdtDetDocPago = false;
+    private Boolean dlgDetPagoProveedor = false;
     private Boolean contratoModificado = false;
     private Boolean renderGrafico = false;
     private Boolean renderMontoRenta = false;
@@ -161,6 +163,12 @@ public class PagoProveedoresController implements Serializable {
     private BigDecimal montoSujetoRenta = BigDecimal.ZERO;
     private BigDecimal montoRenta = BigDecimal.ZERO;
 
+    private BigDecimal ceContratados = BigDecimal.ZERO;
+    private BigDecimal totalContratado = BigDecimal.ZERO;
+    private BigDecimal totalPagado = BigDecimal.ZERO;
+    private BigDecimal totalPendiente = BigDecimal.ZERO;
+    private BigDecimal totalReintegro = BigDecimal.ZERO;
+
     private DonutChartModel donutModel = new DonutChartModel();
 
     private Empresa empresa = new Empresa();
@@ -183,6 +191,7 @@ public class PagoProveedoresController implements Serializable {
 
     private List<ResumenRequerimientoDto> lstResumenRequerimiento = new ArrayList();
     private List<DatosResumenPagosDto> lstResumenPago = new ArrayList();
+    private List<DatosResumenPagosPorReqYProveedorDto> lstResumenPagoPorProveedor = new ArrayList();
     private List<EntidadFinanciera> lstEntFinRequerimiento = new ArrayList();
 
     private List<RequerimientoFondos> lstRequerimientoFondos = new ArrayList();
@@ -216,6 +225,62 @@ public class PagoProveedoresController implements Serializable {
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public Boolean getDlgDetPagoProveedor() {
+        return dlgDetPagoProveedor;
+    }
+
+    public void setDlgDetPagoProveedor(Boolean dlgDetPagoProveedor) {
+        this.dlgDetPagoProveedor = dlgDetPagoProveedor;
+    }
+
+    public BigDecimal getCeContratados() {
+        return ceContratados;
+    }
+
+    public void setCeContratados(BigDecimal ceContratados) {
+        this.ceContratados = ceContratados;
+    }
+
+    public BigDecimal getTotalContratado() {
+        return totalContratado;
+    }
+
+    public void setTotalContratado(BigDecimal totalContratado) {
+        this.totalContratado = totalContratado;
+    }
+
+    public BigDecimal getTotalPagado() {
+        return totalPagado;
+    }
+
+    public void setTotalPagado(BigDecimal totalPagado) {
+        this.totalPagado = totalPagado;
+    }
+
+    public BigDecimal getTotalPendiente() {
+        return totalPendiente;
+    }
+
+    public void setTotalPendiente(BigDecimal totalPendiente) {
+        this.totalPendiente = totalPendiente;
+    }
+
+    public BigDecimal getTotalReintegro() {
+        return totalReintegro;
+    }
+
+    public void setTotalReintegro(BigDecimal totalReintegro) {
+        this.totalReintegro = totalReintegro;
+    }
+
+    public List<DatosResumenPagosPorReqYProveedorDto> getLstResumenPagoPorProveedor() {
+        return lstResumenPagoPorProveedor;
+    }
+
+    public void setLstResumenPagoPorProveedor(List<DatosResumenPagosPorReqYProveedorDto> lstResumenPagoPorProveedor) {
+        this.lstResumenPagoPorProveedor = lstResumenPagoPorProveedor;
+    }
+
     public RecuperarProceso getRecuperarProceso() {
         return recuperarProceso;
     }
@@ -2280,5 +2345,29 @@ public class PagoProveedoresController implements Serializable {
 
     public void editarReintegro() {
 
+    }
+
+    public void showDetalleRequerimientoPorProveedor() {
+        ceContratados = BigDecimal.ZERO;
+        totalContratado = BigDecimal.ZERO;
+        totalPagado = BigDecimal.ZERO;
+        totalPendiente = BigDecimal.ZERO;
+        totalReintegro = BigDecimal.ZERO;
+
+        nombreRubro = detalleProcesoAdq.getIdRubroAdq().getDescripcionRubro();
+        lstResumenPagoPorProveedor = serviciosEJB.getResumenPagoJsonByDetProcesoAdqAndRequerimiento(detalleProcesoAdq.getIdDetProcesoAdq(), numeroRequerimiento);
+
+        for (DatosResumenPagosPorReqYProveedorDto dato : lstResumenPagoPorProveedor) {
+            ceContratados = ceContratados.add(dato.getCantidadTotalContratos());
+            totalContratado = totalContratado.add(dato.getMontoTotalContratado());
+            totalPagado = totalPagado.add(dato.getMontoTotalPagado());
+            totalPendiente = totalPendiente.add(dato.getMontoTotalPendiente());
+            totalReintegro = totalReintegro.add(dato.getMontoTotalReintegrar());
+        }
+        dlgDetPagoProveedor = true;
+    }
+
+    public void cerrarDlgDetPagoProvee() {
+        dlgDetPagoProveedor = false;
     }
 }

@@ -258,6 +258,62 @@
             ]]>
         </query>
     </named-native-query>
+    
+    <named-native-query name="PagoProve.ResumenPagoByDetProcesoAdqAndRequerimiento"
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosResumenPagosPorReqYProveedorDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum as idRow,
+                formatoRequerimiento,codigoDepartamento, descripcionRubro,numeroNit,razonSocial,cantidadTotalContratos,montoTotalContratado,montoTotalPagado,
+                montoTotalPendiente,montoTotalReintegrar
+            from (
+                select 
+
+                    formato_requerimiento                           as formatoRequerimiento,
+                    codigo_departamento                             as codigoDepartamento,
+                    descripcion_rubro                               as descripcionRubro,
+                    numero_nit                                      as numeroNit,
+                    razon_social                                    as razonSocial,
+                    count(id_contrato)                              as cantidadTotalContratos,
+                    sum(monto_total)                                as montoTotalContratado,
+                    sum(monto_pagado)                               as montoTotalPagado,
+                    sum(monto_total-monto_pagado-monto_reintegrar)  as montoTotalPendiente,
+                    sum(monto_reintegrar)                           as montoTotalReintegrar
+                from
+                    (select 
+                        req.formato_requerimiento,
+                        dr.codigo_departamento,
+                        dr.descripcion_rubro,
+                        dr.numero_nit,
+                        dr.razon_social,
+                        dr.id_contrato,
+                        dr.monto_total,
+                        nvl(dp.MONTO_ACTUAL,0) monto_pagado,
+                        case nvl(ddp.contrato_modif,0) when 1 then nvl(dp.MONTO_ORIGINAL,0) - nvl(dp.monto_actual,0) else 0 end monto_reintegrar
+                    from 
+                        requerimiento_fondos req
+                        inner join detalle_requerimiento dr   on req.id_requerimiento = dr.id_requerimiento
+                        left outer join detalle_doc_pago ddp    on dr.id_det_requerimiento = ddp.id_det_requerimiento
+                        left outer join detalle_planilla dp   on dp.id_detalle_doc_pago = ddp.id_detalle_doc_pago
+                        left outer join planilla_pago pp        on pp.id_planilla = dp.id_planilla
+                    where
+                        req.id_det_proceso_adq = ?1 and
+                        req.estado_eliminacion = 0 and
+                        req.formato_requerimiento = ?2 and
+                        dr.activo = 0 
+                        ) tbl
+                group by 
+                    formato_requerimiento,
+                    codigo_departamento,
+                    descripcion_rubro,
+                    numero_nit,
+                    razon_social)
+            ]]>
+        </query>
+    </named-native-query>
+    
+    
     <named-native-query name="PagoProve.RptLiquidacionDePagos" 
                         result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto">
         <query>

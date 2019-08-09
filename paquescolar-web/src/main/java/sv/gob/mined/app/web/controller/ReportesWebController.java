@@ -111,6 +111,12 @@ public class ReportesWebController implements Serializable {
         int[] numDec = {15};
         RptExcel.generarRptExcelGenerico((HSSFWorkbook) document, numEnt, numDec);
     }
+    
+    public void resumenPagoRequerimientoPorProveedorXls(Object document) {
+        int[] numEnt = {2};
+        int[] numDec = {3,4,5,6,7};
+        RptExcel.generarRptExcelGenerico((HSSFWorkbook) document, numEnt, numDec);
+    }
 
     public void generarReporte() {
         idDetProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();

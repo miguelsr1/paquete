@@ -7,13 +7,48 @@ and open the template in the editor.
     Created on : 4/08/2017, 11:49:29 AM
     Author     : DesarrolloPc
 */
-.ui-dataview-list .ui-dataview-row {
-    border-bottom: 1px solid #A8A8A8;
-    padding: 25px 10px;
-    border-bottom-color: var(--input-border-color, #A8A8A8);
+
+
+.fa-cogss::before {
+    content: "\f085";
+    font-size: 20px;
+    color: #33afde !important;
 }
-.logo {width: 5%;}
-.detail {width: 85%;padding-left: 25px;}
+.fa-pie-chartt::before {
+    content: "\f200";
+    font-size: 22px;
+    color: #e17576;
+}
+.fa-address-cardd::before {
+    content: "\f2bb";
+    font-size: 22px;
+    color: #7e8dcd;
+}
+.fa-editt::before {
+    content: "\f044";
+    font-size: 22px;
+    color: #39b8b6;
+}
+.fa-universityy::before {
+    content: "\f19c";
+    font-size: 22px;
+    color: #e175a0;
+}
+.fa-truckk::before {
+    content: "\f0d1";
+    font-size: 22px;
+    color: #f7941e;
+}
+.fa-usdd::before {
+    content: "\f155";
+    font-size: 22px;
+    color: #1d9d74;
+}
+.fa-inboxx::before {
+    content: "\f01c";
+    font-size: 22px;
+    color: #3984b8;
+}
 
 .azul{
     color: #3984b8;    
@@ -246,8 +281,8 @@ body .ui-growl {
 
 
 .divSticky.scrolled {
-    background-color: #fff !important;
-    transition: background-color 200ms linear;
+  background-color: #fff !important;
+  transition: background-color 200ms linear;
 }
 
 .divStickyOAE{

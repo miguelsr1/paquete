@@ -234,10 +234,12 @@
                 INNER JOIN usuario_entidad_financiera ue ON ue.cod_ent_financiera = ent.cod_ent_financiera
                 INNER JOIN usuario usu                   ON ue.id_usuario = usu.id_usuario
                 INNER JOIN persona PER                   ON PER.id_persona = usu.id_persona
+                inner join detalle_proceso_Adq dpa       on dpa.id_det_proceso_adq = efd.id_det_proceso_adq
             WHERE 
                 efd.estado_eliminacion = 0 AND
                 per.usuario = ?1 AND
-                efd.id_det_proceso_adq = ?2
+                efd.id_det_proceso_adq = ?2 and
+                dpa.credito = 1
             ]]>
         </query>
     </named-native-query>

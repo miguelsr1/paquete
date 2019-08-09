@@ -6,7 +6,6 @@
 package sv.gob.mined.paquescolar.ejb;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -19,6 +18,7 @@ import sv.gob.mined.paquescolar.model.pojos.dashboard.TotalContratadoDto;
 import sv.gob.mined.paquescolar.model.pojos.dashboard.TotalResumenDto;
 import sv.gob.mined.paquescolar.model.pojos.dashboard.TotalTipoEmpDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosResumenPagosDto;
+import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosResumenPagosPorReqYProveedorDto;
 
 /**
  *
@@ -41,6 +41,13 @@ public class ServiciosJsonEJB {
     public List<DatosResumenPagosDto> getResumenPagoJsonByDetProcesoAdq(Integer idDetProcesoAdq) {
         Query q = em.createNamedQuery("PagoProve.ResumenPagoByDetProcesoAdq", DatosResumenPagosDto.class);
         q.setParameter(1, idDetProcesoAdq);
+        return q.getResultList();
+    }
+    
+    public List<DatosResumenPagosPorReqYProveedorDto> getResumenPagoJsonByDetProcesoAdqAndRequerimiento(Integer idDetProcesoAdq, String formatoRequerimiento) {
+        Query q = em.createNamedQuery("PagoProve.ResumenPagoByDetProcesoAdqAndRequerimiento", DatosResumenPagosPorReqYProveedorDto.class);
+        q.setParameter(1, idDetProcesoAdq);
+        q.setParameter(2, formatoRequerimiento);
         return q.getResultList();
     }
 
