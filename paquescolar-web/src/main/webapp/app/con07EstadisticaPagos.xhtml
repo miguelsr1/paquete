@@ -30,7 +30,7 @@
                         <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true"/>
                         <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
                         <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
                         <f:facet  name="options" class="centradoVertical">  
                             <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
@@ -77,10 +77,30 @@
                             <p:dataTable value="#{pagoProveedoresController.lstResumenPago}" var="pago" rendered="#{pagoProveedoresController.renderGrafico}"
                                          rowKey="#{pago.formatoRequerimiento}" rowIndexVar="rowId" sortBy="#{pago.codigoDepartamento}"
                                          rowStyleClass="#{pago.montoSaldo gt 0 ? null : 'filaCompletada'}">
-                                <p:column headerText="Núm. Req." width="80">
+
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column rowspan="2" headerText="Requerimiento" width="80"/>
+                                        <p:column rowspan="2" headerText="# Planillas" width="35"/>
+                                        <p:column rowspan="2" headerText="# C.E. de planillas" width="50"/>
+                                        <p:column colspan="5" headerText="Montos"/>
+                                        <p:column rowspan="2" headerText="Ver detalle" width="35"/>
+                                    </p:row>
+                                    <p:row>
+                                        
+                                        <p:column headerText="Del Requerimiento" />
+                                        <p:column headerText="Pagado" />
+                                        <p:column headerText="Pendiente" />
+                                        <p:column headerText="Para Reintegro" />
+                                        <p:column headerText="Saldo" />
+                                    </p:row>
+                                </p:columnGroup>
+
+
+                                <p:column headerText="Núm. Req." >
                                     <p:outputLabel value="#{pago.formatoRequerimiento}"/>
                                 </p:column>
-                                <p:column headerText="# Planillas" styleClass="numero" width="45">
+                                <p:column headerText="# Planillas" styleClass="numero" >
                                     <p:outputLabel value="#{pago.cantidadPlanilla}"/>
                                 </p:column>
                                 <p:column headerText="# CE en Planilla" styleClass="numero">

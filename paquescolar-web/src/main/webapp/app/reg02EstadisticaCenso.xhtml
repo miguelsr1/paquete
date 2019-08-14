@@ -124,7 +124,7 @@
             <p:menuitem value="Modificar" icon="fa fa-edit" update="pnlFiltro pnlPresupuesto" action="#{estadisticasCensoController.prepareEdit}" />
             <p:menuitem value="Guardar" icon="fa fa-save" action="#{estadisticasCensoController.guardar}" disabled="#{menuController.usuarioSoloLectura}"/>
             <p:menuitem value="Imprimir" icon="fa fa-print" ajax="true" onclick="PF('dlgImprimir').show();" />
-            <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
             <f:facet  name="options">  
                 <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>

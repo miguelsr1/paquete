@@ -2046,21 +2046,31 @@ public class PagoProveedoresController implements Serializable {
     }
 
     public void enviarCorreos() {
-        if (null == planillaPago.getIdTipoPlanilla()) {
+        String correoNotificacionAmbiente = utilEJB.getValorDeParametro("CORREO_NOTIFICACION_AMBIENTE");
+        String emailTemp = utilEJB.getValorDeParametro("CORREO_NOTIFICACION");
+
+        if (planillaPago.getIdTipoPlanilla() == null) {
         } else {
             switch (planillaPago.getIdTipoPlanilla()) {
                 case 1:
                 case 3:
                     //envio de notificacion a Entidad/Proveedor
-                    eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", "miguel.sanchez@mined.gob.sv", getMensajeDeNotificacion(planillaPago, planillaPago.getDetallePlanillaList(), false));
-                    //eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", emailUnico, getMensajeDeNotificacion(planillaPago, lstDetallePlanilla, false));
+                    if (correoNotificacionAmbiente.equals("PRODUCCION")) {
+                        emailTemp = emailUnico;
+                    }
+
+                    //eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ",        , getMensajeDeNotificacion(planillaPago, planillaPago.getDetallePlanillaList(), false));
+                    eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", emailTemp, getMensajeDeNotificacion(planillaPago, lstDetallePlanilla, false));
 
                     //Si es planilla tipo credito, enviar notificacion a proveedores incluidos en la planilla de pago
                     if (planillaPago.getIdTipoPlanilla() == 3) {
                         for (DatosProveDto datosProveDto : lstEmailProveeCredito) {
+                            if (correoNotificacionAmbiente.equals("PRODUCCION")) {
+                                emailTemp = datosProveDto.getCorreoElectronico();
+                            }
                             if (datosProveDto.getCorreoElectronico() != null && !datosProveDto.getCorreoElectronico().isEmpty()) {
-                                eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", "miguel.sanchez@mined.gob.sv", getMensajeDeNotificacion(planillaPago, pagoProveedoresEJB.getLstDetallePlanillaByIdPlanillaAndNit(planillaPago.getIdPlanilla(), datosProveDto.getNumeroNit()), true));
-                                //eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", datosProveDto.getCorreoElectronico(), getMensajeDeNotificacion(planillaPago, pagoProveedoresEJB.getLstDetallePlanillaByIdPlanillaAndNit(planillaPago.getIdPlanilla(), datosProveDto.getNumeroNit()), true));
+                                //eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ",        , getMensajeDeNotificacion(planillaPago, pagoProveedoresEJB.getLstDetallePlanillaByIdPlanillaAndNit(planillaPago.getIdPlanilla(), datosProveDto.getNumeroNit()), true));
+                                eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", emailTemp, getMensajeDeNotificacion(planillaPago, pagoProveedoresEJB.getLstDetallePlanillaByIdPlanillaAndNit(planillaPago.getIdPlanilla(), datosProveDto.getNumeroNit()), true));
                             }
                         }
                     }

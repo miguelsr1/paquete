@@ -82,4 +82,14 @@ public class UtilEJB {
 
         return lstDocumentosImp;
     }
+    
+    public String getValorDeParametro(String nombreParametro){
+        Query q = em.createNativeQuery("SELECT valor_parametro FROM parametros WHERE nombre_parametro = ?1");
+        q.setParameter(1, nombreParametro);
+        if(q.getResultList().isEmpty()){
+            return "";
+        }else{
+            return q.getResultList().get(0).toString();
+        }
+    }
 }

@@ -4,66 +4,59 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://java.sun.com/jsf/core">
     <p:dataViewGridItem>
-        <p:panel header="#{capaEmpresa.idMuestraInteres.idEmpresa.numeroNit}" style="text-align:center">
-            <h:panelGrid columns="1" style="width: 100%;">
-                <p:graphicImage value="/DynamicImageServlet?file=#{bundle['path_images']}/#{ofertaBienesServiciosController.getFotoPrincipal(capaEmpresa.idMuestraInteres.idEmpresa.numeroNit)}" height="120"/>
-
-                <h:panelGrid columns="2">
+        <p:panel header="PROVE-#{capaEmpresa.idMuestraInteres.idEmpresa.idEmpresa}" styleClass="panelStyle">
+            <h:panelGrid columns="1" style="width: 100%; text-align: left !important;">
+                <h:panelGrid columns="1">
                     <h:outputText value="Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
                     <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.razonSocial}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
 
-                    <h:outputText value="Tipo Proveedor" />
-                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.distribuidor eq 1 ? 'PRODUCTOR' : 'DISTRIBUIDOR'}" style="font-weight: bold"/>
+                    <h:outputText value="Tipo Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
+                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.distribuidor eq 1 ? 'PRODUCTOR' : 'DISTRIBUIDOR'}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
 
-                    <h:outputText value="Municipio y Departamento:" />
-                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.nombreMunicipio}, #{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.codigoDepartamento.nombreDepartamento}" style="font-weight: bold"/>
-                </h:panelGrid>
-
-                <h:panelGrid columns="2">
-                    <p:commandLink title="Seleccionar" oncomplete="PF('dlgProveedor').hide()" action="#{ofertaBienesServiciosController.onSelect}" update="tblParticipantes tbEmpresas">
-                        <h:outputText styleClass="ui-icon fa fa-check-circle" style="margin:0 auto;" />
-                        <f:setPropertyActionListener value="#{capaEmpresa}" target="#{ofertaBienesServiciosController.capaInstSeleccionada}" />
-                    </p:commandLink>
-
-                    <p:commandLink title="Ver detalle" action="#{ofertaBienesServiciosController.cargarDetalleProveedor()}" oncomplete="PF('dlgDetalleProveedor').show()" update="dlgDetalleProveedor">
-                        <h:outputText styleClass="ui-icon fa fa-search" style="margin:0 auto;" />
-                        <f:setPropertyActionListener value="#{capaEmpresa}" target="#{ofertaBienesServiciosController.capaInstSeleccionada}" />
-                    </p:commandLink>
+                    <h:outputText value="Capacidad disponible" />
+                    <h:outputText value="#{capaEmpresa.capacidadAcreditada - capaEmpresa.capacidadAdjudicada}" style="font-weight: bold"/>
                 </h:panelGrid>
             </h:panelGrid>
+            <f:facet name="footer">
+                <h:panelGrid columns="2" columnClasses="col6,col6" style="width: 100%; text-align: center !important;">
+                    <p:commandButton oncomplete="PF('dlgProveedor').hide()" action="#{ofertaBienesServiciosController.onSelect(capaEmpresa)}" 
+                                     update="tblParticipantes tbEmpresas" icon="fa fa-check-circle"/>
+
+                    <p:commandButton oncomplete="PF('dlgDetalleProveedor').show()" update="dlgDetalleProveedor" icon="fa fa-eye"
+                                     action="#{ofertaBienesServiciosController.cargarDetalleProveedor(capaEmpresa)}"/>
+                </h:panelGrid>
+            </f:facet>
         </p:panel>
     </p:dataViewGridItem>
 
     <p:dataViewListItem>
-        <h:panelGrid columns="3" style="width:100%" columnClasses="logo,detail">
-            <p:graphicImage value="/DynamicImageServlet?file=#{bundle['path_images']}/#{ofertaBienesServiciosController.getFotoPrincipal(capaEmpresa.idMuestraInteres.idEmpresa.numeroNit)}" height="120"/>
-
+        <h:panelGrid columns="2" style="width:100%" columnClasses="col8,col4">
             <p:outputPanel>
                 <h:panelGrid columns="2" cellpadding="5">
                     <h:outputText value="Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
                     <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.razonSocial}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
 
-                    <h:outputText value="Tipo Proveedor" />
-                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.distribuidor eq 1 ? 'PRODUCTOR' : 'DISTRIBUIDOR'}" style="font-weight: bold"/>
+                    <h:outputText value="Tipo Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
+                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.distribuidor eq 1 ? 'PRODUCTOR' : 'DISTRIBUIDOR'}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
 
-                    <h:outputText value="Municipio y Departamento:" />
-                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.nombreMunicipio}, #{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.codigoDepartamento.nombreDepartamento}" style="font-weight: bold"/>
+                    <h:outputText value="Capacidad disponible" style="#{menuController.isUsuarioDigitador?'font-size: 16px;':'font-size: 12px;'}"/>
+                    <h:outputText value="#{capaEmpresa.capacidadAcreditada - capaEmpresa.capacidadAdjudicada}" style="#{menuController.isUsuarioDigitador?'font-weight: bold;font-size: 16px;':'font-weight: bold;font-size: 12px;'}"/>
+
+                    <h:outputText value="Municipio y Departamento:" rendered="#{!menuController.isUsuarioDigitador}"/>
+                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.nombreMunicipio}, #{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.codigoDepartamento.nombreDepartamento}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
                 </h:panelGrid>
             </p:outputPanel>
 
             <p:outputPanel>
-                <h:panelGrid columns="2">
-                    <p:commandLink title="Seleccionar" oncomplete="PF('dlgProveedor').hide()" action="#{ofertaBienesServiciosController.onSelect}" update="tblParticipantes tbEmpresas">
-                        <h:outputText styleClass="ui-icon fa fa-check-circle" style="margin:0 auto;" />
-                        <f:setPropertyActionListener value="#{capaEmpresa}" target="#{ofertaBienesServiciosController.capaInstSeleccionada}" />
-                    </p:commandLink>
+                <h:panelGrid columns="2" style="width: 100%; text-align: center !important;">
+                    <p:commandButton oncomplete="PF('dlgProveedor').hide()" action="#{ofertaBienesServiciosController.onSelect(capaEmpresa)}" 
+                                     update="tblParticipantes tbEmpresas" icon="fa fa-check-circle"/>
 
-                    <p:commandLink title="Ver detalle" action="#{ofertaBienesServiciosController.cargarDetalleProveedor()}" oncomplete="PF('dlgDetalleProveedor').show()" update="dlgDetalleProveedor">
-                        <h:outputText styleClass="ui-icon fa fa-search" style="margin:0 auto;" />
-                        <f:setPropertyActionListener value="#{capaEmpresa}" target="#{ofertaBienesServiciosController.capaInstSeleccionada}" />
-                    </p:commandLink>
+                    <p:commandButton oncomplete="PF('dlgDetalleProveedor').show()" update="dlgDetalleProveedor" icon="fa fa-eye" 
+                                     action="#{ofertaBienesServiciosController.cargarDetalleProveedor(capaEmpresa)}"/>
                 </h:panelGrid>
             </p:outputPanel>
         </h:panelGrid>
+        <p:separator />
     </p:dataViewListItem>
 </ui:composition>

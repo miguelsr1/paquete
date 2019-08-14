@@ -447,16 +447,43 @@ public class ParticipantesController implements Serializable {
                     case 1://digitacion
                     case 3://revertida
                         lstPreciosEmp = proveedorEJB.findPreciosRefRubroEmpRubro(current.getIdEmpresa(), detalleProceso);
+                        lstNiveles = entidadEducativaEJB.getLstNivelesConMatriculaReportadaByIdProcesoAdqAndCodigoEntidad(detalleProceso.getIdProcesoAdq().getIdProcesoAdq(), current.getIdOferta().getCodigoEntidad().getCodigoEntidad());
 
                         //en el momento de creación del detalle de oferta, se agregaran todos los items calificados del proveedor
                         //seleccionado con el objetivo de facilitar el ingreso de esta información
                         if (lstDetalleOferta.isEmpty()) {
-                            lstNiveles = entidadEducativaEJB.getLstNivelesConMatriculaReportadaByIdProcesoAdqAndCodigoEntidad(detalleProceso.getIdProcesoAdq().getIdProcesoAdq(), current.getIdOferta().getCodigoEntidad().getCodigoEntidad());
-
                             for (PreciosRefRubroEmp preRefEmp : lstPreciosEmp) {
                                 if (preRefEmp.getIdProducto().getIdProducto().intValue() != 1) {
                                     for (BigDecimal idNivel : lstNiveles) {
-                                        if (preRefEmp.getIdNivelEducativo().getIdNivelEducativo().compareTo(idNivel) == 0) {
+                                        BigDecimal temIdNivel = BigDecimal.ZERO;
+                                        if(detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1){ //rubro uniforme
+                                            switch (idNivel.intValue()) {
+                                            case 1:
+                                            case 6:
+                                            case 16:
+                                            case 18:
+                                                temIdNivel = idNivel;
+                                                break;
+                                            case 3://primer ciclo
+                                            case 4://segundo ciclo
+                                            case 5://tercer ciclo
+                                            case 7://7o grado
+                                            case 8://8o grado
+                                            case 9://9o grado
+                                            case 10://1o grado
+                                            case 11://2o grado
+                                            case 12://3o grado
+                                            case 13://4o grado
+                                            case 14://5o grado
+                                            case 15://6o grado
+                                                temIdNivel = new BigDecimal(2);
+                                                break;
+                                        }
+                                        }else{//rubro de utiles o zapatos
+                                            temIdNivel = idNivel;
+                                        }
+
+                                        if (preRefEmp.getIdNivelEducativo().getIdNivelEducativo().compareTo(temIdNivel) == 0) {
                                             DetalleOfertas det = new DetalleOfertas();
                                             det.setNoItem(preRefEmp.getNoItem());
                                             det.setIdNivelEducativo(preRefEmp.getIdNivelEducativo());
@@ -673,13 +700,13 @@ public class ParticipantesController implements Serializable {
             if (precio.getNoItem().equals(numItem)) {
                 item = precio.getIdProducto();
                 nivel = precio.getIdNivelEducativo();
-                
+
                 for (BigDecimal idNivel : lstNiveles) {
-                    if(nivel.getIdNivelEducativo().compareTo(idNivel) == 0){
+                    if (nivel.getIdNivelEducativo().compareTo(idNivel) == 0) {
                         isNivel = false;
                     }
                 }
-                
+
                 error = isNivel;
                 break;
             }
@@ -687,7 +714,7 @@ public class ParticipantesController implements Serializable {
 
         if (error) {
             msjError = "El item ingresado no es válido.";
-            if(isNivel){
+            if (isNivel) {
                 msjError += "<br/>No se ha ingresado estadisticas en este nivel educativo.";
             }
             det.setConsolidadoEspTec("");

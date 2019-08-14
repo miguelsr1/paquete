@@ -16,7 +16,7 @@
                                     action="#{modificatoriaController.consultarExtinsionContrato}"/>
                         <p:menuitem value="Guardar" icon="fa fa-save" action="#{modificatoriaController.validarExtension}"/>
                         <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
                         <f:facet  name="options" class="centradoVertical">  
                             <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>

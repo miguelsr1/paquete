@@ -15,7 +15,7 @@
             <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" 
                         action="#{resolucionesAdjudicativasController.update}" disabled="#{menuController.usuarioSoloLectura}" update="pnlIdResolucion"/>
             <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
-            <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
             <f:facet  name="options">  
                 <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
@@ -51,7 +51,7 @@
                         <p:outputLabel value="Proveedor:" />
                         <p:selectOneMenu id="cboProveedor" value="#{resolucionesAdjudicativasController.idParticipante}" disabled="#{resolucionesAdjudicativasController.deshabilitar}" >
                             <f:selectItem itemLabel="Seleccione un proveedor" />  
-                            <f:selectItems value="#{ofertaBienesServiciosController.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idEmpresa.idEmpresa)):par.idEmpresa.razonSocial}" rendered="#{!menuController.isUsuarioDigitador}"/>
+                            <f:selectItems value="#{ofertaBienesServiciosController.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idEmpresa.idEmpresa)):par.idEmpresa.razonSocial}"/>
                             <p:ajax update="cboEstado pnlProveedores pnlSaldos idParticipante" listener="#{resolucionesAdjudicativasController.buscarResolucionAdjudicativa}" />
                         </p:selectOneMenu>
 

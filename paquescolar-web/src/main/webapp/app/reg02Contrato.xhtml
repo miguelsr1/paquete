@@ -14,7 +14,7 @@
                         action="#{contratosOrdenesComprasController.prepareEdit}" ajax="true" process="@this"/>
             <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" actionListener="#{contratosOrdenesComprasController.guardar}" disabled="#{menuController.usuarioSoloLectura}"  update="pnlContrato pnlCentroEscolar"/>
             <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{contratosOrdenesComprasController.impDocumentos}" />
-            <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
             <f:facet  name="options" >  
                 <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
@@ -51,7 +51,7 @@
                             <p:selectOneMenu id="cboProveedor" value="#{contratosOrdenesComprasController.idParticipante}" 
                                              disabled="#{contratosOrdenesComprasController.deshabilitado}" >
                                 <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
-                                <f:selectItems value="#{ofertaBienesServiciosController.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idEmpresa.idEmpresa)):par.idEmpresa.razonSocial}" rendered="#{!menuController.isUsuarioDigitador}"/>
+                                <f:selectItems value="#{contratosOrdenesComprasController.oferta.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idEmpresa.idEmpresa)):par.idEmpresa.razonSocial}" />
                                 <p:ajax listener="#{contratosOrdenesComprasController.buscarDocumentoLegal}" update="dvFiltro pnlContrato dvOrganismo dvDocumentos" />
                             </p:selectOneMenu>
                         </p:panelGrid>
@@ -95,7 +95,8 @@
                                     </p:selectBooleanCheckbox>
                                 </h:panelGrid>
                                 <p:outputLabel value="Proveedor: " />
-                                <p:inputText id="txtProveedor" size="70" disabled="#{contratosOrdenesComprasController.deshabilitado}" value="#{contratosOrdenesComprasController.razonSocial}" readonly="true"/>
+                                <p:inputText id="txtProveedor" size="70" disabled="#{contratosOrdenesComprasController.deshabilitado}" 
+                                             value="#{menuController.isUsuarioDigitador?('PROVE-'.concat(contratosOrdenesComprasController.participante.idEmpresa.idEmpresa)):contratosOrdenesComprasController.participante.idEmpresa.razonSocial}" readonly="true"/>
                             </p:panelGrid>
                         </p:panelGrid>
                     </h:panelGroup>

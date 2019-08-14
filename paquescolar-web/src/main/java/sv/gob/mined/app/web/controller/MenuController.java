@@ -20,6 +20,7 @@ import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.MenuEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
+import sv.gob.mined.paquescolar.model.OpcionMenu;
 import sv.gob.mined.paquescolar.model.Usuario;
 
 /**
@@ -153,12 +154,23 @@ public class MenuController implements Serializable {
 
             for (Object opc : lstOpciones) {
                 Object[] datos = (Object[]) opc;
-                DefaultSubMenu subMenu = new DefaultSubMenu();
-                subMenu.setIcon(datos[4] != null ? datos[4].toString() : null);
-                subMenu.setLabel(datos[2].toString());
-                subMenu.setId("sub" + datos[0].toString());
-                getHijo(subMenu, (BigDecimal) datos[0]);
-                menu.addElement(subMenu);
+                if (datos[1] == null && ((BigDecimal) datos[7]).intValue() == 0) {
+                    itemMenu = new DefaultMenuItem();
+
+                    itemMenu.setValue(" " + datos[2]);
+                    itemMenu.setOutcome(datos[3].toString());
+                    itemMenu.setIcon(datos[4] != null ? datos[4].toString() : null);
+                    itemMenu.setAjax(false);
+                    itemMenu.setId("item" + datos[0].toString());
+                    menu.addElement(itemMenu);
+                } else {
+                    DefaultSubMenu subMenu = new DefaultSubMenu();
+                    subMenu.setIcon(datos[4] != null ? datos[4].toString() : null);
+                    subMenu.setLabel(datos[2].toString());
+                    subMenu.setId("sub" + datos[0].toString());
+                    getHijo(subMenu, (BigDecimal) datos[0]);
+                    menu.addElement(subMenu);
+                }
             }
             model = menu;
 

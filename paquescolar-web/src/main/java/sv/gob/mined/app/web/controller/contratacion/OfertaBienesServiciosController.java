@@ -381,7 +381,8 @@ public class OfertaBienesServiciosController implements Serializable {
         detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubro);
     }
 
-    public void onSelect() {
+    public void onSelect(CapaInstPorRubro capa) {
+        capaInstSeleccionada = capa;
         try {
             if (capaInstSeleccionada == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un proveedor");
@@ -811,14 +812,8 @@ public class OfertaBienesServiciosController implements Serializable {
         }
     }
 
-    public void cargarDetalleProveedor() {
-        File carNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/");
-        String ok = "";
-        if (carNfs.list() != null) {
-            for (String directorio : carNfs.list()) {
-                ok = ok.concat("'").concat(directorio).concat("',");
-            }
-        }
+    public void cargarDetalleProveedor(CapaInstPorRubro capa) {
+        capaInstSeleccionada = capa;
         tempEmpresaSeleccionada = capaInstSeleccionada.getIdMuestraInteres().getIdEmpresa();
         File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + tempEmpresaSeleccionada.getNumeroNit() + "/");
         lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(capaInstSeleccionada.getIdMuestraInteres().getIdEmpresa(), detalleProceso);

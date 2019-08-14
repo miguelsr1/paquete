@@ -343,7 +343,7 @@ public class ProveedorEJB {
     }
 
     public <T extends Object> T findDetProveedor(ProcesoAdquisicion proceso, Empresa idEmpresa, Class clase) {
-        Query q = em.createQuery("SELECT d FROM " + clase.getSimpleName() + " d WHERE d.idMuestraInteres.idDetProcesoAdq.idProcesoAdq=:proceso and d.idMuestraInteres.idEmpresa=:idEmpresa and d.estadoEliminacion=0 and d.idMuestraInteres.estadoEliminacion=0", clase);
+        Query q = em.createQuery("SELECT d FROM " + clase.getSimpleName() + " d WHERE d.idMuestraInteres.idDetProcesoAdq.idProcesoAdq=:proceso and d.idMuestraInteres.idEmpresa=:idEmpresa and d.estadoEliminacion=0 and d.idMuestraInteres.estadoEliminacion=0 ORDER BY d.idMuestraInteres.idDetProcesoAdq", clase);
         q.setParameter("proceso", proceso);
         q.setParameter("idEmpresa", idEmpresa);
         if (q.getResultList().isEmpty()) {
@@ -646,11 +646,6 @@ public class ProveedorEJB {
                 + "    pa.id_anho = " + idAnho + " and\n"
                 + "    det.estado_eliminacion = 0 and\n"
                 + "    mun_e.codigo_municipio " + (municipioIgual ? "=" : "<>") + "'" + codMun + "'";
-        /*Query q = em.createNativeQuery(sql);
-        q.setParameter(1, codMun);
-        q.setParameter(2, codDep);
-        q.setParameter(3, idRubro);
-        q.setParameter(4, idAnho);*/
 
         return sql;
     }

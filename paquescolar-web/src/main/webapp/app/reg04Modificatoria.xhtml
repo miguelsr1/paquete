@@ -19,7 +19,7 @@
                                     update="pnlFiltro"/>
                         <p:menuitem value="Guardar" icon="fa fa-save" action="#{modificatoriaController.guardar}" ajax="true"/>
                         <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{ofertaBienesServiciosController.imprimirAnalisisEconomico}" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
                         <f:facet  name="options" class="centradoVertical">  
                             <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>

@@ -17,7 +17,7 @@
                         disabled="#{menuController.usuarioSoloLectura || ofertaBienesServiciosController.deshabilitar}"
                         update="tblParticipantes"/>
             <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
-            <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
             <f:facet  name="options">  
                 <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
@@ -80,10 +80,6 @@
                         <p:column headerText="Proveedor" rendered="#{!menuController.isUsuarioDigitador}">
                             <p:outputLabel value="#{participante.idEmpresa.razonSocial}" />
                         </p:column>
-
-                        <p:column headerText="Municipio y Departamento" rendered="#{menuController.isUsuarioDigitador}">
-                            <p:outputLabel value="#{participante.idEmpresa.idMunicipio.nombreMunicipio}, #{participante.idEmpresa.idMunicipio.codigoDepartamento.nombreDepartamento}" />
-                        </p:column>
                        
                         <p:column headerText="Eliminar" width="40" style="text-align: center;">
                             <p:commandLink oncomplete="PF('confirmDialog').show();" process="@this" disabled="#{ofertaBienesServiciosController.deshabilitar}">
@@ -135,7 +131,7 @@
             <p:tabView id="tbEmpresas">
                 <p:tab title="Municipio: #{ofertaBienesServiciosController.municipioCe}">
 
-                    <p:dataView id="tblEmpresas" var="capaEmpresa" value="#{ofertaBienesServiciosController.lstCapaEmpresas}" rows="2" paginator="true"
+                    <p:dataView id="tblEmpresas" var="capaEmpresa" value="#{ofertaBienesServiciosController.lstCapaEmpresas}" rows="3" paginator="true"
                                 paginatorPosition="top"
                                 gridIcon="fa fa-th-large" listIcon="fa fa-bars">
                         <ui:include src="/app/comunes/fragmentos/contrataciones/ofertaListadoProveedores.xhtml"/>
@@ -143,7 +139,7 @@
                 </p:tab>
                 
                 <p:tab title="Otros Municipios">
-                    <p:dataView id="tblEmpresasOtras" var="capaEmpresa" value="#{ofertaBienesServiciosController.lstCapaEmpresasOtros}" rows="2" paginator="true"
+                    <p:dataView id="tblEmpresasOtras" var="capaEmpresa" value="#{ofertaBienesServiciosController.lstCapaEmpresasOtros}" rows="3" paginator="true"
                                 paginatorPosition="top"
                                 gridIcon="fa fa-th-large" listIcon="fa fa-bars">
                         <ui:include src="/app/comunes/fragmentos/contrataciones/ofertaListadoProveedores.xhtml"/>
@@ -157,10 +153,11 @@
         </p:dialog>
 
 
-        <p:dialog id="dlgDetalleProveedor" showEffect="fade" hideEffect="fade"  widgetVar="dlgDetalleProveedor" width="670" height="550" modal="true" >
+        <p:dialog id="dlgDetalleProveedor" header="#{menuController.isUsuarioDigitador?('PROVE-'.concat(ofertaBienesServiciosController.capaInstSeleccionada.idMuestraInteres.idEmpresa.idEmpresa)):ofertaBienesServiciosController.capaInstSeleccionada.idMuestraInteres.idEmpresa.razonSocial}"
+                  showEffect="fade" hideEffect="fade"  widgetVar="dlgDetalleProveedor" width="670" height="550" modal="true" >
             <h:panelGrid columns="1" >
                 <p:tabView>
-                    <p:tab title="Fotos productos">
+                    <p:tab title="Fotos productos"  rendered="#{ofertaBienesServiciosController.rubro eq 3}">
                         <p:outputPanel id="pnlProductos">
                             <h:panelGrid columns="2">
                                 <h:outputText value="Seleccione el estilo:"/> 
@@ -169,7 +166,7 @@
                                     <p:ajax update="pnlProductos" listener="#{ofertaBienesServiciosController.cargarFotosPorEstilo}"/>
                                 </p:selectOneMenu>
                             </h:panelGrid>
-                            <h:panelGroup >
+                            <h:panelGroup>
                                 <p:galleria value="#{ofertaBienesServiciosController.images}" var="image" panelHeight="400" style="width: auto;" autoPlay="false">
                                     <p:graphicImage value="/DynamicImageServlet?file=#{bundle['path_images']}#{image}" />
                                 </p:galleria>

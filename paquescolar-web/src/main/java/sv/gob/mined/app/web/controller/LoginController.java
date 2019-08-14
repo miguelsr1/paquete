@@ -103,8 +103,8 @@ public class LoginController implements Serializable {
 
     private String usuarioOkRedireccionar(Usuario usu) {
         VarSession.setVariableSession("Usuario", usu.getIdPersona().getUsuario());
-        ((MenuController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "menuController")).init();
+        MenuController mc = ((MenuController) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "menuController"));
         return "/app/inicial?faces-redirect=true";
     }
 }

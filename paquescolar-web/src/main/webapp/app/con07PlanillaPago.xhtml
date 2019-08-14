@@ -14,7 +14,7 @@
                         <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true" />
                         <p:menuitem value="Guardar" icon="fa fa-save" disabled="true" />
                         <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
                         <f:facet  name="options" class="centradoVertical">  
                             <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
@@ -128,10 +128,13 @@
                 </div>
             </div>
         </div>
+        
 
         <p:dialog id="dlgPlanillaPago" widgetVar="dlgPlanillaPago" header="Planilla de Pago" width="900" height="600" modal="true" resizable="false">
             <ui:include src="/app/comunes/fragmentos/pagoProveedores/planillaPago.xhtml"/>
         </p:dialog>
         <p:panel id="pnlDatos" visible="false"></p:panel>
+        
+        <ui:include src="/app/comunes/fragmentos/pagoProveedores/dlgNotificacionEmail.xhtml"/>
     </ui:define>
 </ui:composition>

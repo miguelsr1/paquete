@@ -222,6 +222,11 @@ body .ui-growl {
     text-align: right;    
 }
 
+.panelStyle,.ui-panel-header{
+    text-align: center;
+}
+
+
 /*COLORES*/
 .linkDialog{
     color: #3984b8; 
@@ -281,8 +286,8 @@ body .ui-growl {
 
 
 .divSticky.scrolled {
-  background-color: #fff !important;
-  transition: background-color 200ms linear;
+    background-color: #fff !important;
+    transition: background-color 200ms linear;
 }
 
 .divStickyOAE{

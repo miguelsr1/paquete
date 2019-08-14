@@ -40,7 +40,6 @@ import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.primefaces.PrimeFaces;
-import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DualListModel;
@@ -91,7 +90,7 @@ public class ProveedorController implements Serializable {
     private Boolean showCapacidadAdjudicada = false;
     private Boolean showUpdateEmpresa = false;
     private String nit;
-    
+
     private String rowEdit;
     private String fotoProveedor;
     private String estiloZapato;
@@ -133,7 +132,7 @@ public class ProveedorController implements Serializable {
     private PreciosRefRubro preMaxRefB2 = new PreciosRefRubro();
 
     private List<String> images = new ArrayList();
-    
+
     private List<MunicipioDto> lstMunSource = new ArrayList();
     private List<MunicipioDto> lstMunTarget = new ArrayList();
     private List<CatalogoProducto> lstItem = new ArrayList();
@@ -549,7 +548,7 @@ public class ProveedorController implements Serializable {
                     JsfUtil.mensajeAlerta("Este proveedor no posee departamento de calificación " + proceso.getIdAnho().getAnho());
                 } else {
                     codigoDepartamentoCalificado = departamentoCalif.getCodigoDepartamento().getCodigoDepartamento();
-                    
+
                     deshabiliar = false;
                     if (empresa.getIdPersona().getUrlImagen() == null) {
                         fileName = "fotoProveedores/profile.png";
@@ -758,19 +757,17 @@ public class ProveedorController implements Serializable {
 
     public void onCellEdit(CellEditEvent event) {
         msjError = "";
-        DataTable tbl = (DataTable) event.getSource();
+        //DataTable tbl = (DataTable) event.getSource();
         FacesContext context = FacesContext.getCurrentInstance();
-        precioRef
-                = context.getApplication().evaluateExpressionGet(context, "#{precio}", PreciosRefRubroEmp.class
-                );
+        precioRef = context.getApplication().evaluateExpressionGet(context, "#{precio}", PreciosRefRubroEmp.class);
         boolean valido = true;
         if (!valido) {
             precioRef.setIdProducto(null);
             precioRef.setIdNivelEducativo(null);
         } else {
+            this.rowEdit = String.valueOf(event.getRowIndex());
             if (event.getColumn().getColumnKey().contains("item")) {
                 String numItem = event.getNewValue().toString();
-                this.rowEdit = String.valueOf(event.getRowIndex());
                 editarNumeroDeItem(event.getRowIndex(), numItem);
             } else if (event.getColumn().getColumnKey().contains("precio")) {
                 agregarPrecio();
@@ -779,10 +776,12 @@ public class ProveedorController implements Serializable {
     }
 
     public void updateFilaDetalle() {
-        PrimeFaces.current().ajax().update("tblDetallePrecio:" + rowEdit + ":descripcionItem");
-        PrimeFaces.current().ajax().update("tblDetallePrecio:" + rowEdit + ":nivelEducativo");
-        PrimeFaces.current().ajax().update("tblDetallePrecio:" + rowEdit + ":precio");
-        PrimeFaces.current().ajax().update("tblDetallePrecio:" + rowEdit + ":precio2");
+        if (rowEdit != null) {
+            PrimeFaces.current().ajax().update("tblDetallePrecio:" + rowEdit + ":descripcionItem");
+            PrimeFaces.current().ajax().update("tblDetallePrecio:" + rowEdit + ":nivelEducativo");
+            PrimeFaces.current().ajax().update("tblDetallePrecio:" + rowEdit + ":precio");
+            PrimeFaces.current().ajax().update("tblDetallePrecio:" + rowEdit + ":precio2");
+        }
         if (!msjError.isEmpty()) {
             JsfUtil.mensajeAlerta(msjError);
         }
@@ -796,6 +795,7 @@ public class ProveedorController implements Serializable {
                 switch (detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
                     case 1://UNIFORMES
                     case 4:
+                    case 5:
                         preRef = getPrecioRefUniforme();
                         break;
                     case 2:

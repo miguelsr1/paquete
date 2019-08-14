@@ -15,7 +15,7 @@
                 <f:param name="idParticipante" value="#{participantesController.idParticipante}"/>
             </p:menuitem>
             <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" disabled="true"/>
-            <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
             <f:facet  name="options">  
                 <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
@@ -51,7 +51,7 @@
                         <p:outputLabel value="Proveedor:" />
                         <p:selectOneMenu id="cboProveedor" value="#{participantesController.idParticipante}" disabled="#{participantesController.deshabilitado}" onkeydown="setaFoco(this);" >
                             <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
-                            <f:selectItems value="#{ofertaBienesServiciosController.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idEmpresa.idEmpresa)):par.idEmpresa.razonSocial}" rendered="#{!menuController.isUsuarioDigitador}"/>
+                            <f:selectItems value="#{ofertaBienesServiciosController.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idEmpresa.idEmpresa)):par.idEmpresa.razonSocial}"/>
                             <p:ajax update="menuBar dvDetalle btnAgregar" listener="#{participantesController.buscarItemsProveedor}" />
                         </p:selectOneMenu>
                     </p:panelGrid>

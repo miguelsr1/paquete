@@ -304,7 +304,7 @@ public class EntidadEducativaEJB {
     }
 
     public List<BigDecimal> getLstNivelesConMatriculaReportadaByIdProcesoAdqAndCodigoEntidad(Integer idProcesoAdq, String codigoEntidad) {
-        Query q = em.createQuery("SELECT DISTINCT e.idNivelEducativo.idNivelEducativo FROM EstadisticaCenso e WHERE e.idProcesoAdq.idProcesoAdq=:idProAdq AND e.codigoEntidad=:codEnt AND (e.masculino >0 OR e.femenimo > 0)");
+        Query q = em.createQuery("SELECT DISTINCT e.idNivelEducativo.idNivelEducativo FROM EstadisticaCenso e WHERE e.idProcesoAdq.idProcesoAdq=:idProAdq AND e.codigoEntidad=:codEnt AND (e.masculino >0 OR e.femenimo > 0) order by e.idNivelEducativo.idNivelEducativo");
         q.setParameter("idProAdq", idProcesoAdq);
         q.setParameter("codEnt", codigoEntidad);
         return q.getResultList();
