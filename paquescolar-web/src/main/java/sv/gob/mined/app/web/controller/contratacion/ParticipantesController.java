@@ -704,6 +704,7 @@ public class ParticipantesController implements Serializable {
                 for (BigDecimal idNivel : lstNiveles) {
                     if (nivel.getIdNivelEducativo().compareTo(idNivel) == 0) {
                         isNivel = false;
+                        break;
                     }
                 }
 

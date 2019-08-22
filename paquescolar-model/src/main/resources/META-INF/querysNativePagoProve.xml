@@ -404,4 +404,30 @@
             ]]>
         </query>
     </named-native-query>
+    <named-native-query name="PagoProve.RptPreCargaByIdDetProcesoAdq" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.PreCargaDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                  as idRow,
+                codigo_entidad          as codigoEntidad,
+                nombre                  as nombre,
+                codigo_departamento     as codigoDepartamento,
+                nombre_departamento     as nombreDepartamento,
+                codigo_municipio        as codigoMunicipio,
+                nombre_municipio        as nombreMunicipio,
+                descripcion_rubro       as descripcionRubro,
+                cantidad_total          as cantidadTotal,
+                cantidad_total_libros   as cantidadTotalLibros,
+                monto_total             as montoTotal,
+                numero_nit              as numeroNit,
+                razon_social            as razonSocial
+            from vw_formato_pre_carga 
+            where id_det_proceso_adq = ?1 and 
+                id_contrato not in (select id_contrato 
+                                    from detalle_requerimiento dr inner join requerimiento_fondos req on req.id_requerimiento = dr.id_requerimiento 
+                                    where req.id_det_proceso_adq = ?1 and dr.activo = 0)
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>

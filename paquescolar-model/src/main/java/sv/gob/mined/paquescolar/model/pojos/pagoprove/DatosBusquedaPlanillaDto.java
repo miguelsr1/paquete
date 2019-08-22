@@ -24,7 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @SqlResultSetMapping(name = "defaultDatosBusquedaPlanillaDto",
         entities = @EntityResult(entityClass = DatosBusquedaPlanillaDto.class))
-public class DatosBusquedaPlanillaDto implements Serializable{
+public class DatosBusquedaPlanillaDto implements Serializable {
+
     @Id
     private BigDecimal idRow;
     private String formatoRequerimiento;
@@ -34,14 +35,33 @@ public class DatosBusquedaPlanillaDto implements Serializable{
     private String numeroNit;
     private String razonSocial;
     private String descripcionRubro;
+    private String numCheque;
     private BigDecimal montoActual;
     private BigInteger cantidadActual;
     private String nombreEntFinan;
     private BigDecimal idPlanilla;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date fechaInsercion;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date fechaCheque;
 
     public DatosBusquedaPlanillaDto() {
+    }
+
+    public String getNumCheque() {
+        return numCheque;
+    }
+
+    public void setNumCheque(String numCheque) {
+        this.numCheque = numCheque;
+    }
+
+    public Date getFechaCheque() {
+        return fechaCheque;
+    }
+
+    public void setFechaCheque(Date fechaCheque) {
+        this.fechaCheque = fechaCheque;
     }
 
     public String getDescripcionRubro() {

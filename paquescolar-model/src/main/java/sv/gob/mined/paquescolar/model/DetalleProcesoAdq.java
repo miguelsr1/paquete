@@ -46,6 +46,8 @@ public class DetalleProcesoAdq implements Serializable {
     private List<PreciosRefRubroEmp> preciosRefRubroEmpList;
     @OneToMany(mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
     private List<RequerimientoFondos> requerimientoFondosList;
+    @OneToMany(mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
+    private List<PreCarga> preCargaList;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -194,6 +196,14 @@ public class DetalleProcesoAdq implements Serializable {
 
     public void setRptDocumentosList(List<RptDocumentos> rptDocumentosList) {
         this.rptDocumentosList = rptDocumentosList;
+    }
+
+    public List<PreCarga> getPreCargaList() {
+        return preCargaList;
+    }
+
+    public void setPreCargaList(List<PreCarga> preCargaList) {
+        this.preCargaList = preCargaList;
     }
 
 }

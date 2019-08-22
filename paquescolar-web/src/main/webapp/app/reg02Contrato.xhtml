@@ -132,7 +132,7 @@
                         <p:spacer width="10" height="8"/>
                         <p:outputLabel value="Documentos contractuales" />
                     </f:facet>
-
+                    
                     <p:selectManyCheckbox value="#{contratosOrdenesComprasController.lstSelectDocumentosImp}" layout="responsive" columns="2" >
                         <f:selectItems value="#{contratosOrdenesComprasController.lstDocumentosImp}" />
                     </p:selectManyCheckbox>
@@ -148,6 +148,31 @@
                 </p:panel>
             </div>
         </div>
+        
+
+        <p:dialog id="dlgHistorialCambiosReserva" widgetVar="dlgHistorialCambiosReserva" modal="true" draggable="false" width="900" resizable="false" header="Historial de Cambios a Reserva de Fondos">
+            <p:panel>
+                <p:dataTable id="tblHistorial" value="#{contratosOrdenesComprasController.lstHistorialCambios}" var="his" rowIndexVar="rowId">
+                    <p:column headerText="#" width="15" styleClass="centrado">
+                        <h:outputText value="#{rowId + 1}"/>
+                    </p:column>
+                    <p:column headerText="Cambio" width="180">
+                        <h:outputText value="De: #{catalogosGeneralesController.estadoReserva(his.estadoAnterior)} a #{catalogosGeneralesController.estadoReserva(his.estadoNuevo)}"/>
+                    </p:column>
+                    <p:column headerText="Comentario">
+                        <h:outputText value="#{his.comentarioHistorial}"/>
+                    </p:column>
+                    <p:column headerText="Usuario" width="110">
+                        <h:outputText value="#{his.usuario}"/>
+                    </p:column>
+                    <p:column headerText="Fecha" styleClass="centrado" width="60">
+                        <h:outputText value="#{his.fechaCambioEstado}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+        </p:dialog>
 
         <p:remoteCommand name="findEntidad" update="cboRubro nombreCE cboProveedor" actionListener="#{contratosOrdenesComprasController.buscarEntidadEducativa}" />
     </ui:define>

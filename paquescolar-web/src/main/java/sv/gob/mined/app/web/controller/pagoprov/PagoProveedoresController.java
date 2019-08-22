@@ -2321,7 +2321,7 @@ public class PagoProveedoresController implements Serializable {
         if (idPlanilla != null && idPlanilla.intValue() == 0) {
             idPlanilla = BigDecimal.ZERO;
         }
-        lstBusquedaPlanillas = pagoProveedoresEJB.buscarPlanillas(idPlanilla, montoTotal, numeroNit, nombreEntFinanciera, recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq(), numeroCheque);
+        lstBusquedaPlanillas = pagoProveedoresEJB.buscarPlanillas(idPlanilla, montoTotal, numeroNit, nombreEntFinanciera, recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq(), numeroCheque, fechaCheque);
     }
 
     public void postProcessXLS(Object document) {
@@ -2335,7 +2335,7 @@ public class PagoProveedoresController implements Serializable {
                 HSSFRow row = sheet.getRow(j);
                 if (j != 0) {
                     for (int i = 0; i < row.getPhysicalNumberOfCells(); i++) {
-                        if (i == 7 || i == 8 || i == 10) {
+                        if (i == 7 || i == 8 || i == 11) {
                             String valor = row.getCell(i).getRichStringCellValue().getString();
                             if (!valor.isEmpty()) {
                                 HSSFCell celda = row.createCell(i);

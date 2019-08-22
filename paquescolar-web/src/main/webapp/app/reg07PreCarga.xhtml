@@ -1,0 +1,124 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" action="#{preCargaMB.nuevo()}"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" action="#{preCargaMB.modificar()}" update="pnlFiltro pnlListado pnlEdicion"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="#{menuController.usuarioSoloLectura}" ajax="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+            </f:facet>  
+        </p:menubar>
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <p:outputPanel id="pnlFiltro" style="display:#{(preCargaMB.filtro)?'block':'none'}">
+                    <div class="card">
+                        <h1>
+                            <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                            <p:spacer width="10" height="8"/>
+                            <p:outputLabel value="Filtro de busqueda"/>
+                        </h1>
+                        <p:panelGrid columns="2" columnClasses="col2,col10" 
+                                     style="width: 100%; border:0px none; background-color:transparent;"
+                                     styleClass="form-group ui-panelgrid-blank">
+
+                            <p:outputLabel value="#{bundle['compra.rubroAdq']}" />
+                            <p:selectOneMenu id="cboRubro" value="#{preCargaMB.idRubro}">
+                                <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />
+                                <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                <p:ajax listener="#{preCargaMB.obtenerIdDetalleProcesoAdq()}"/>
+                            </p:selectOneMenu>
+
+                            <p:spacer/>
+                            <p:commandButton value="Filtrar" icon="fa fa-filter" action="#{preCargaMB.buscarPreCargas}" update="tblContratos"/>
+                        </p:panelGrid>
+                    </div>
+                </p:outputPanel>
+
+                <p:outputPanel id="pnlListado" style="display:#{(preCargaMB.filtro)?'block':'none'}">
+                    <div class="card clearfix">
+                        <h1>
+                            <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                            <p:spacer width="10"/>
+                            <h:outputText value="Lista de Contratos"/>
+                        </h1>
+
+                        <p:dataTable id="tblContratos" value="#{preCargaMB.lstPreCarga}" var="pre" rowIndexVar="rowId" rowKey="#{pre.idPrecarga}">
+                            <p:column headerText="#" styleClass="centrado" width="40">
+                                <h:outputText value="#{rowId + 1}"/>
+                            </p:column>
+                            <p:column headerText="Rubro">
+                                <h:outputText value="#{pre.idDetProcesoAdq.idDetProcesoAdq} - #{pre.idDetProcesoAdq.idRubroAdq.descripcionRubro}"/>
+                            </p:column>
+                            <p:column headerText="Fecha creación" styleClass="centrado" width="100">
+                                <h:outputText value="#{pre.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Núm.Contratos" styleClass="centrado" width="100">
+                                <h:outputText value="#{pre.detallePreCargaSize}"/>
+                            </p:column>
+                            <p:column headerText="Usuario creación" styleClass="centrado" width="110">
+                                <h:outputText value="#{pre.usuarioCreacion}"/>
+                            </p:column>
+                            <p:column headerText="Ver detalle" styleClass="centrado" width="40">
+                                <p:commandLink action="#{preCargaMB.editarPreCarga(pre.idPrecarga)}" update="pnlFiltro pnlListado pnlEdicion">
+                                    <i class="fa fa-eye" style="font-size: 17px;"></i>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </p:outputPanel>
+
+                <p:outputPanel id="pnlEdicion" style="display:#{(not preCargaMB.filtro)?'block':'none'}">
+                    <div class="card clearfix">
+                        <h:panelGrid columns="3">
+                            
+                        </h:panelGrid>
+                    </div>
+                    
+                    <div class="card clearfix">
+                        <p:dataTable value="#{preCargaMB.lstDetallePreCarga}" var="det" rowIndexVar="rowId">
+                            <p:column headerText="#" width="40" styleClass="centrado">
+                                <h:outputText value="#{rowId+1}"/>
+                            </p:column>
+                            <p:column headerText="#{bundle['tabla.departamento']}" width="95">
+                                <h:outputText value="#{det.nombreDepartamento}"/>
+                            </p:column>
+                            <p:column headerText="#{bundle['tabla.codEnt']}" styleClass="centrado" width="40">
+                                <h:outputText value="#{det.codigoEntidad}"/>
+                            </p:column>
+                            <p:column headerText="#{bundle['tabla.nomEntCorto']}">
+                                <h:outputText value="#{det.nombre}"/>
+                            </p:column>                            
+                            <p:column headerText="#{bundle['tabla.nit']}" width="110">
+                                <h:outputText value="#{det.numeroNit}"/>
+                            </p:column>
+                            <p:column headerText="#{bundle['tabla.proveedor']}">
+                                <h:outputText value="#{det.razonSocial}"/>
+                            </p:column>
+                            <p:column headerText="#{bundle['tabla.monto']}" styleClass="numero" width="60">
+                                <h:outputText value="#{det.montoTotal}">
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{bundle['tabla.cantidad']}" styleClass="numero" width="50">
+                                <h:outputText value="#{det.cantidadTotal}">
+                                    <f:convertNumber pattern="#,##0"/>
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </p:outputPanel>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

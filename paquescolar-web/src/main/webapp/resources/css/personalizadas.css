@@ -114,9 +114,6 @@ a.secciones.active,a.secciones:focus,a.secciones:hover{
     background-image: none !important;
     color: #000000 !important; 
 }
-.celdaNumero{
-    text-align: right;
-}
 
 .celdaNumeroNegativo{
     background: #fc6e2b !important;
@@ -220,6 +217,9 @@ body .ui-growl {
 }
 .numero{
     text-align: right;    
+}
+.centrado{
+    text-align: center;    
 }
 
 .panelStyle,.ui-panel-header{

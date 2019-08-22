@@ -26,6 +26,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
 import net.sf.jasperreports.engine.JasperPrint;
+import org.primefaces.PrimeFaces;
 import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.util.Bean2Excel;
 import sv.gob.mined.app.web.util.JsfUtil;
@@ -43,6 +44,7 @@ import sv.gob.mined.paquescolar.ejb.UtilEJB;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.DetalleOfertas;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
+import sv.gob.mined.paquescolar.model.HistorialCamEstResAdj;
 import sv.gob.mined.paquescolar.model.OfertaBienesServicios;
 import sv.gob.mined.paquescolar.model.OrganizacionEducativa;
 import sv.gob.mined.paquescolar.model.Participantes;
@@ -90,8 +92,9 @@ public class ContratosOrdenesComprasController implements Serializable {
     private ContratosOrdenesCompras current = new ContratosOrdenesCompras();
     private ResolucionesAdjudicativas resolucionAdj = new ResolucionesAdjudicativas();
     private VwCatalogoEntidadEducativa entidadEducativa = new VwCatalogoEntidadEducativa();
-    private List<String> lstSelectDocumentosImp = new ArrayList<>();
-    private List<SelectItem> lstDocumentosImp = new ArrayList<>();
+    private List<String> lstSelectDocumentosImp = new ArrayList();
+    private List<SelectItem> lstDocumentosImp = new ArrayList();
+    private List<HistorialCamEstResAdj> lstHistorialCambios = new ArrayList();
     @EJB
     private OfertaBienesServiciosEJB ofertaBienesServiciosEJB;
     @EJB
@@ -140,6 +143,14 @@ public class ContratosOrdenesComprasController implements Serializable {
         } else {
             VarSession.setVariableSessionED("0");
         }
+    }
+
+    public List<HistorialCamEstResAdj> getLstHistorialCambios() {
+        return lstHistorialCambios;
+    }
+
+    public void setLstHistorialCambios(List<HistorialCamEstResAdj> lstHistorialCambios) {
+        this.lstHistorialCambios = lstHistorialCambios;
     }
 
     public RecuperarProceso getRecuperarProceso() {
@@ -575,7 +586,8 @@ public class ContratosOrdenesComprasController implements Serializable {
                                     }
                                 } else {
                                     limpiarCampos();
-                                    JsfUtil.mensajeAlerta("Esta reserva de fondo se encuentra en estado de " + resolucionAdj.getIdEstadoReserva().getDescripcionReserva());
+                                    JsfUtil.mensajeAlerta("Esta reserva de fondo se encuentra en estado de " + resolucionAdj.getIdEstadoReserva().getDescripcionReserva()
+                                            + ".<br/>Ver historico de cambios. <a onclick=\"PF('dlgHistorialCambiosReserva').show();\">Ver</a>");
                                     resolucionAdj = null;
                                 }
                             } else {
@@ -595,7 +607,10 @@ public class ContratosOrdenesComprasController implements Serializable {
                                         setPlazoPrevistoEntrega();
                                     }
                                 } else {
-                                    JsfUtil.mensajeAlerta("Esta reserva de fondo se encuentra en estado de " + resolucionAdj.getIdEstadoReserva().getDescripcionReserva());
+                                    buscarHistorialCambios();
+                                    PrimeFaces.current().ajax().update("dlgHistorialCambiosReserva");
+                                    JsfUtil.mensajeAlerta("Esta reserva de fondo se encuentra en estado de " + resolucionAdj.getIdEstadoReserva().getDescripcionReserva()
+                                            + ".<br/>Ver historico de cambios. <a onclick=\"PF('dlgHistorialCambiosReserva').show();\">Ver</a>");
                                     current = contratoOrd;
                                     continuar = true;
                                     deshabilitado = true;
@@ -930,5 +945,9 @@ public class ContratosOrdenesComprasController implements Serializable {
 
     public void setLstSelectDocumentosImp(List<String> lstSelectDocumentosImp) {
         this.lstSelectDocumentosImp = lstSelectDocumentosImp;
+    }
+
+    public void buscarHistorialCambios() {
+        lstHistorialCambios = resolucionAdjudicativaEJB.findHistorialByIdResolucionAdj(resolucionAdj.getIdResolucionAdj());
     }
 }

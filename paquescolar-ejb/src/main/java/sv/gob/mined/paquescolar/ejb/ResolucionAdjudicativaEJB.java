@@ -753,4 +753,10 @@ public class ResolucionAdjudicativaEJB {
         q.setParameter("P_CANTIDAD", contrato.getIdResolucionAdj().getIdParticipante().getCantidad());
         q.getResultList();
     }
+
+    public List<HistorialCamEstResAdj> findHistorialByIdResolucionAdj(BigDecimal idResolucionAdj) {
+        Query q = em.createQuery("SELECT h FROM HistorialCamEstResAdj h WHERE h.idResolucionAdj.idResolucionAdj=:idResolucionAdj ORDER BY h.idHistorialCam", HistorialCamEstResAdj.class);
+        q.setParameter("idResolucionAdj", idResolucionAdj);
+        return q.getResultList();
+    }
 }

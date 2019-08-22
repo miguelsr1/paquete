@@ -51,7 +51,7 @@ public class EMailEJB {
         try {
             String listaDeCorreosBcc = utilEJB.getValorDeParametro("PAGO_CORREO_NOTIFICACION_COPIA");
             MimeMessage m = new MimeMessage(mailSession);
-            Address from = new InternetAddress("cesar.nieves@mined.gob.sv");
+            Address from = new InternetAddress(utilEJB.getValorDeParametro("PAGO_CORREO_NOTIFICACION"));
 
             m.setFrom(from);
             m.setRecipients(Message.RecipientType.TO, remitente);

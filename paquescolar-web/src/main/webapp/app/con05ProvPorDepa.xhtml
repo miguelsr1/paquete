@@ -57,7 +57,9 @@
                                 <i class="fa fa-download"></i>
                                 <p:spacer width="10" height="8"/>
                                 <h:outputText value="Exportar"/>
-                                <p:dataExporter  type="xls" encoding="ISO-8859-1" target="lstProveedorConCredito" fileName="proveedoresConCredito" postProcessor="#{creditoBancarioController.postProcessXLS}"/>  
+                                <p:dataExporter  type="xls" encoding="ISO-8859-1" target="lstProveedorConCredito" 
+                                                 fileName="proveedoresConCredito_#{catalogosGeneralesController.formatoFechaReporte}" 
+                                                 postProcessor="#{creditoBancarioController.postProcessXLS}"/>  
                             </h:commandLink>
                         </f:facet>
 

@@ -20,14 +20,17 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import sv.gob.mined.paquescolar.model.DetalleDocPago;
 import sv.gob.mined.paquescolar.model.DetallePlanilla;
+import sv.gob.mined.paquescolar.model.DetallePreCarga;
 import sv.gob.mined.paquescolar.model.DetalleRequerimiento;
 import sv.gob.mined.paquescolar.model.PlanillaPago;
 import sv.gob.mined.paquescolar.model.PlanillaPagoCheque;
+import sv.gob.mined.paquescolar.model.PreCarga;
 import sv.gob.mined.paquescolar.model.ReintegroRequerimiento;
 import sv.gob.mined.paquescolar.model.ResolucionesModificativas;
 import sv.gob.mined.paquescolar.model.TipoDocPago;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosBusquedaPlanillaDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
+import sv.gob.mined.paquescolar.model.pojos.pagoprove.PreCargaDto;
 import sv.gob.mined.paquescolar.util.Constantes;
 
 /**
@@ -54,7 +57,7 @@ public class PagoProveedoresEJB {
         } catch (NumberFormatException e) {
             eMailEJB.enviarMailDeError("Paquete Escolar - Error - Modulo de pago",
                     "Error en generacion de constancia de renta.\n"
-                            + "Anho " + anhoPago + "; NIT " + numeroNit + "; codigoDepartamento " + codigoDepartamento+ "; usuario " + usuario,
+                    + "Anho " + anhoPago + "; NIT " + numeroNit + "; codigoDepartamento " + codigoDepartamento + "; usuario " + usuario,
                     e);
             Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, "Error en generacion de constancia de renta.");
             Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, "Anho {0} NIT {1} codigoDepartamento {2}", new Object[]{anhoPago, numeroNit, codigoDepartamento});
@@ -517,13 +520,15 @@ public class PagoProveedoresEJB {
         q.executeUpdate();
     }
 
-    public List<DatosBusquedaPlanillaDto> buscarPlanillas(BigDecimal idPlanilla, BigDecimal monto, String numeroNit, String nombreEntFinan, Integer idProcesoAdq, String numeroCheque) {
-        String strWhere = Constantes.addCampoToWhere("", "pp.ID_PLANILLA", idPlanilla);
-        strWhere = Constantes.addCampoToWhere(strWhere, "dp.MONTO_ACTUAL", monto);
-        strWhere = Constantes.addCampoToWhere(strWhere, "dr.NUMERO_NIT", numeroNit);
-        strWhere = Constantes.addCampoToWhere(strWhere, "upper(dr.NOMBRE_ENT_FINAN)", nombreEntFinan);
-        strWhere = Constantes.addCampoToWhere(strWhere, "pa.id_proceso_adq", idProcesoAdq);
-        Query q = em.createNativeQuery(Constantes.QUERY_PAGOS_BUSQUEDA_PLANILLA + strWhere + " ORDER BY pp.ID_PLANILLA", DatosBusquedaPlanillaDto.class);
+    public List<DatosBusquedaPlanillaDto> buscarPlanillas(BigDecimal idPlanilla, BigDecimal monto, String numeroNit, String nombreEntFinan, Integer idProcesoAdq, String numeroCheque, Date fechaCheque) {
+        String strWhere = Constantes.addCampoToWhere("", "ID_PLANILLA", idPlanilla);
+        strWhere = Constantes.addCampoToWhere(strWhere, "MONTO_ACTUAL", monto);
+        strWhere = Constantes.addCampoToWhere(strWhere, "NUMERO_NIT", numeroNit);
+        strWhere = Constantes.addCampoToWhere(strWhere, "upper(NOMBRE_ENT_FINAN)", nombreEntFinan);
+        strWhere = Constantes.addCampoToWhere(strWhere, "id_proceso_adq", idProcesoAdq);
+        strWhere = Constantes.addCampoToWhere(strWhere, "numero_cheque", numeroCheque);
+        strWhere = Constantes.addCampoToWhere(strWhere, "fecha_cheque", fechaCheque);
+        Query q = em.createNativeQuery(Constantes.QUERY_PAGOS_BUSQUEDA_PLANILLA + strWhere + " ORDER BY ID_PLANILLA", DatosBusquedaPlanillaDto.class);
         return q.getResultList();
     }
 
@@ -548,4 +553,31 @@ public class PagoProveedoresEJB {
         q.setParameter(1, codDepa);
         return (String) q.getSingleResult();
     }
+
+    public List<PreCargaDto> getLstPreCargaByIdDetProcesoAdq(Integer idDetProcesoAdq) {
+        Query q = em.createNamedQuery("PagoProve.RptPreCargaByIdDetProcesoAdq");
+        q.setParameter(1, idDetProcesoAdq);
+        return q.getResultList();
+    }
+
+    public List<PreCarga> findPreCargaByIdDetProcesoAdq(Integer idDetProcesoAdq) {
+        Query q = em.createQuery("SELECT p FROM PreCarga p WHERE p.idDetProcesoAdq.idDetProcesoAdq = :idDetProcesoAdq ORDER BY p.idPrecarga, p.idDetProcesoAdq", PreCarga.class);
+        q.setParameter("idDetProcesoAdq", idDetProcesoAdq);
+        return q.getResultList();
+    }
+
+    public void guardarPreCarga(PreCarga preCarga) {
+        if (preCarga.getIdPrecarga() == null) {
+            em.persist(preCarga);
+        } else {
+            em.merge(preCarga);
+        }
+    }
+    
+    public List<DetallePreCarga> getLstDetallePreCargaByIdPreCarga(BigDecimal idPrecarga){
+        Query q = em.createQuery("SELECT d FROM DetallePreCarga d WHERE d.idPrecarga.idPrecarga=:idPrecarga ORDER BY d.codigoDepartamento, d.codigoMunicipio", DetallePreCarga.class);
+        q.setParameter("idPrecarga", idPrecarga);
+        return q.getResultList();
+    }
+    
 }

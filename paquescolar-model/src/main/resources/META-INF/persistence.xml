@@ -103,6 +103,9 @@
     <class>sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto</class>
     <class>sv.gob.mined.paquescolar.model.pojos.credito.CreditoProveedorDto</class>
     <class>sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosResumenPagosPorReqYProveedorDto</class>
+    <class>sv.gob.mined.paquescolar.model.pojos.pagoprove.PreCargaDto</class>
+    <class>sv.gob.mined.paquescolar.model.PreCarga</class>
+    <class>sv.gob.mined.paquescolar.model.DetallePreCarga</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>

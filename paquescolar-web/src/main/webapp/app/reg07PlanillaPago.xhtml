@@ -8,22 +8,22 @@
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
 
     <ui:define name="content">
+        <p:menubar id="mbMenu"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" action="#{pagoProveedoresController.nuevoPlanilla}" update="pnlFiltro pnlDatos pnlRequerimiento tbDetallePlanilla"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" action="#{pagoProveedoresController.editarPlanilla}" update="pnlFiltro pnlDatos pnlRequerimiento tbDetallePlanilla "/>
+            <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" action="#{pagoProveedoresController.guardarPlanilla}" disabled="#{menuController.usuarioSoloLectura}" update="tbDetallePlanilla"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" onclick="PF('dlgImprimir').show();"/>
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options" class="centradoVertical">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+            </f:facet>  
+        </p:menubar>
+        <p:blockUI block="mbMenu" trigger="mGuardar" />
+        
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar id="mbMenu"> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" action="#{pagoProveedoresController.nuevoPlanilla}" update="pnlFiltro pnlDatos pnlRequerimiento tbDetallePlanilla"/>
-                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" action="#{pagoProveedoresController.editarPlanilla}" update="pnlFiltro pnlDatos pnlRequerimiento tbDetallePlanilla "/>
-                        <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" action="#{pagoProveedoresController.guardarPlanilla}" disabled="#{menuController.usuarioSoloLectura}" update="tbDetallePlanilla"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" onclick="PF('dlgImprimir').show();"/>
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
-
-                        <f:facet  name="options" class="centradoVertical">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-                    <p:blockUI block="mbMenu" trigger="mGuardar" />
-
                     <h:panelGroup id="pnlFiltro" style="display:#{(pagoProveedoresController.filtro)?'block':'none'}">
                         <h3>
                             <i class="fa fa-filter blue" style="font-size: 16px;"></i>
@@ -108,7 +108,7 @@
                                     <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputText>
                             </p:column>
-
+                            
                             <p:column headerText="Seleccionar" width="70" style="text-align: center;">
                                 <p:commandLink action="#{pagoProveedoresController.selectRequerimiento}" update="dlgEntidadesFinancieras dlgTipoPlanilla">
                                     <f:setPropertyActionListener value="#{req.idRequerimiento}" target="#{pagoProveedoresController.idReq}"/> 

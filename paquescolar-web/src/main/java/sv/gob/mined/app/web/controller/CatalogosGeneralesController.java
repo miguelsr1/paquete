@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -104,8 +105,29 @@ public class CatalogosGeneralesController implements Serializable {
     public List<TipoDocPago> getLstTipoDocPago() {
         return pagoProveedoresEJB.findTipoDocPagoEntities();
     }
-    
+
     public String getFormatoFechaReporte() {
         return UtilFile.getFechaGeneracionReporte();
+    }
+
+    public String estadoReserva(BigInteger valor) {
+        if (valor == null) {
+            return "";
+        } else {
+            switch (valor.intValue()) {
+                case 1:
+                    return "DIGITADA";
+                case 2:
+                    return "APLICADA";
+                case 3:
+                    return "REVERTIDA";
+                case 4:
+                    return "ANULADA";
+                case 5:
+                    return "MODIFICADA";
+                default:
+                    return "";
+            }
+        }
     }
 }
