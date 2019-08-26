@@ -97,6 +97,14 @@ function queryEntidad(value) {
     }
 }
 
+function queryEmpresa(value) {
+    if (value.length == 5) {
+        findEmpresa();
+    }else if(value.length == 0){
+        findEmpresaReiniciar();
+    }
+}
+
 function calcular(fem, mas, lbl) {
     var fem = $("#" + fem).val();
     var mas = $("#" + mas).val();

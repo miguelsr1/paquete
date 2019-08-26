@@ -80,11 +80,11 @@ public class EMailEJB {
         try {
             sb = new StringBuilder();
             if (e != null) {
-                sb.append(message).append("<br/>").append(ExceptionUtils.getStackTrace(e));
+                sb.append(message).append("<br/><br/>").append(ExceptionUtils.getStackTrace(e));
             }
 
             MimeMessage m = new MimeMessage(mailSession);
-            Address from = new InternetAddress("cesar.nieves@mined.edu.sv");
+            Address from = new InternetAddress(utilEJB.getValorDeParametro("PAGO_CORREO_NOTIFICACION"));
 
             m.setFrom(from);
             m.setRecipients(Message.RecipientType.TO, "miguel.sanchez@mined.gob.sv");

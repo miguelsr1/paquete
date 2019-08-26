@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
@@ -25,7 +27,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.event.ToggleEvent;
 import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.util.Bean2Excel;
 import sv.gob.mined.app.web.util.JsfUtil;
@@ -63,6 +64,7 @@ public class OfertaBienesServiciosController implements Serializable {
     private String codigoEntidad;
     private String valorDeBusqueda;
     private String tipoDocumentoImp = "";
+    private String nombreEmp = "";
     private Boolean showProductos = false;
     private Boolean deshabilitar = true;
     private Boolean modifDesac = false;
@@ -80,6 +82,8 @@ public class OfertaBienesServiciosController implements Serializable {
     private List<String> images = new ArrayList();
     private List<CapaInstPorRubro> lstCapaEmpresas = new ArrayList();
     private List<CapaInstPorRubro> lstCapaEmpresasOtros = new ArrayList();
+    private List<CapaInstPorRubro> lstEmpresas = new ArrayList();
+    private List<CapaInstPorRubro> lstEmpresasOtros = new ArrayList();
     private List<PreciosRefRubroEmp> lstPreciosReferencia = new ArrayList();
 
     @EJB
@@ -118,6 +122,14 @@ public class OfertaBienesServiciosController implements Serializable {
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public String getNombreEmp() {
+        return nombreEmp;
+    }
+
+    public void setNombreEmp(String nombreEmp) {
+        this.nombreEmp = nombreEmp;
+    }
+
     public RecuperarProceso getRecuperarProceso() {
         return recuperarProceso;
     }
@@ -622,9 +634,15 @@ public class OfertaBienesServiciosController implements Serializable {
 
     public void consultarEmpresa() {
         municipioCe = datosGeograficosEJB.findNombreMunicipioCe(current.getCodigoEntidad().getCodigoEntidad());
-        lstCapaEmpresas = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), current.getCodigoEntidad().getCodigoEntidad(), true);
-        lstCapaEmpresasOtros = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), current.getCodigoEntidad().getCodigoEntidad(), false);
-        if (lstCapaEmpresas.isEmpty()) {
+        lstEmpresas = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), current.getCodigoEntidad().getCodigoEntidad(), true);
+        lstEmpresasOtros = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), current.getCodigoEntidad().getCodigoEntidad(), false);
+
+        lstCapaEmpresas.clear();
+        lstCapaEmpresas.addAll(lstEmpresas);
+        lstCapaEmpresasOtros.clear();
+        lstCapaEmpresasOtros.addAll(lstEmpresasOtros);
+
+        if (lstEmpresas.isEmpty()) {
             JsfUtil.mensajeInformacion("No se encontró ninguna coincidencia con el valor: <strong>" + valorDeBusqueda + "</strong>");
         }
     }
@@ -828,5 +846,24 @@ public class OfertaBienesServiciosController implements Serializable {
                 i++;
             }
         }
+    }
+
+    public void filterProveedores() {
+        lstCapaEmpresas = lstEmpresas
+                .stream()
+                .filter(d -> d.getIdMuestraInteres().getIdEmpresa().getRazonSocial().contains(nombreEmp))
+                .collect(Collectors.toList());
+    }
+
+    public void filterProveedoresOtros() {
+        lstCapaEmpresas = lstEmpresas
+                .stream()
+                .filter(d -> d.getIdMuestraInteres().getIdEmpresa().getRazonSocial().contains(nombreEmp))
+                .collect(Collectors.toList());
+    }
+
+    public void filterReiniciarProveedores() {
+        lstCapaEmpresas.clear();
+        lstCapaEmpresas.addAll(lstEmpresas);
     }
 }

@@ -72,15 +72,15 @@
                         <p:column headerText="Código" width="80" style="text-align: center;">
                             <p:outputLabel value="PROVE-#{participante.idEmpresa.idEmpresa}" />
                         </p:column>
-                        
+
                         <p:column headerText="NIT" width="110" rendered="#{!menuController.isUsuarioDigitador}">
                             <p:outputLabel value="#{participante.idEmpresa.numeroNit}" />
                         </p:column>
-                        
+
                         <p:column headerText="Proveedor" rendered="#{!menuController.isUsuarioDigitador}">
                             <p:outputLabel value="#{participante.idEmpresa.razonSocial}" />
                         </p:column>
-                       
+
                         <p:column headerText="Eliminar" width="40" style="text-align: center;">
                             <p:commandLink oncomplete="PF('confirmDialog').show();" process="@this" disabled="#{ofertaBienesServiciosController.deshabilitar}">
                                 <p:outputLabel rendered="#{!participante.eliminar}"> <i class="fa fa-trash"></i></p:outputLabel>
@@ -130,14 +130,18 @@
         <p:dialog id="dlgProveedor" widgetVar="dlgProveedor" header="Seleccione un proveedor" closable="true" style="font-size: 11px;" modal="true" showEffect="fade" hideEffect="fade" minWidth="1000" width="1000">
             <p:tabView id="tbEmpresas">
                 <p:tab title="Municipio: #{ofertaBienesServiciosController.municipioCe}">
-
+                    <h:panelGrid columns="2" style="width: 100%;">
+                        <h:outputText value="Nombre:"/>
+                        <p:inputText style="width: 100%;" value="#{ofertaBienesServiciosController.nombreEmp}" onkeyup="queryEmpresa(this.value);" />
+                    </h:panelGrid>
+                    <br/>
                     <p:dataView id="tblEmpresas" var="capaEmpresa" value="#{ofertaBienesServiciosController.lstCapaEmpresas}" rows="3" paginator="true"
                                 paginatorPosition="top"
                                 gridIcon="fa fa-th-large" listIcon="fa fa-bars">
                         <ui:include src="/app/comunes/fragmentos/contrataciones/ofertaListadoProveedores.xhtml"/>
                     </p:dataView>
                 </p:tab>
-                
+
                 <p:tab title="Otros Municipios">
                     <p:dataView id="tblEmpresasOtras" var="capaEmpresa" value="#{ofertaBienesServiciosController.lstCapaEmpresasOtros}" rows="3" paginator="true"
                                 paginatorPosition="top"
@@ -211,6 +215,8 @@
         </p:confirmDialog> 
 
         <p:remoteCommand name="findEntidad" update="menuBar tblParticipantes nombreCE cldFechaApertura btoAgregarProveedor" actionListener="#{ofertaBienesServiciosController.buscarEntidadEducativa}" />
+        <p:remoteCommand name="findEmpresa" update="tbEmpresas:tblEmpresas" actionListener="#{ofertaBienesServiciosController.filterProveedores()}" />
+        <p:remoteCommand name="findEmpresaReiniciar" update="tbEmpresas:tblEmpresas" actionListener="#{ofertaBienesServiciosController.filterReiniciarProveedores()}" />
 
     </ui:define>
 </ui:composition>

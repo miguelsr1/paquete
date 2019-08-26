@@ -820,6 +820,10 @@
 html {
     height: 100%; }
 
+html, body {
+    height: 100%; 
+    margin: 0;}
+
 body {
     font-family: "Roboto", "Helvetica Neue", sans-serif;
     font-size: 12px;
@@ -827,7 +831,7 @@ body {
     -webkit-font-smoothing: antialiased;
     padding: 0;
     margin: 0;
-    /*height: 100%;*/
+    height: 100%;
     background-color: #111c40; }
 
 .layout-wrapper .topbar {

@@ -58,10 +58,12 @@ public class ConamypeEJB {
     private ProveedorEJB proveedorEJB;
     @EJB
     private UtilEJB utilEJB;
+    @EJB
+    private EMailEJB eMailEJB;
 
     @WebMethod
     public void setDatosProveedor(String jsonString, String clave) {
-        if (clave.equals("CONAMYPE_MINED2017")) {
+        if (clave.equals("CONAMYPE_MINED2019")) {
             if (isActivoWsConamype()) {
                 //if (true) {
                 try {
@@ -94,7 +96,7 @@ public class ConamypeEJB {
                                     persona.setUrlImagen("sin_foto.png");
 
                                     empresa.setIdPersona(persona);
-                                    persona.setEmpresaList(new ArrayList<Empresa>());
+                                    persona.setEmpresaList(new ArrayList());
                                     persona.getEmpresaList().add(empresa);
                                 } else {
                                     //actualizar proveedor
@@ -203,7 +205,7 @@ public class ConamypeEJB {
                                     capaInstalada.setIdMuestraInteres(detRubro);
                                     detRubro.getCapaInstPorRubroList().add(capaInstalada);
 
-                                    detRubro.setDetCapaSegunRubroList(new ArrayList<DetCapaSegunRubro>());
+                                    detRubro.setDetCapaSegunRubroList(new ArrayList());
                                     for (DetCapaSegunRubro item : detRubro.getDetCapaSegunRubroList()) {
                                         item.setEstadoEliminacion(BigInteger.ONE);
                                     }
@@ -347,6 +349,8 @@ public class ConamypeEJB {
 
                 } catch (NumberFormatException | ParseException ex) {
                     Logger.getLogger(ConamypeEJB.class.getName()).log(Level.SEVERE, null, "Error en el json\n: json: " + jsonString);
+                    
+                    eMailEJB.enviarMailDeError("Error - WS CONAMYPE - MINED", "Ah ocurrido el sigueinte error en el proceso de exportación de proveedores.", ex);
                 }
             } else {
                 Logger.getLogger(ConamypeEJB.class.getName()).log(Level.INFO, null, "WS NO ACTIVO");

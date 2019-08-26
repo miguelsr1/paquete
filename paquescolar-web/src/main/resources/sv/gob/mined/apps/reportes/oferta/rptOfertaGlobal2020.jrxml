@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="0bd311a0-41c1-46a5-aa9a-a7ec3ef35721">
-	<property name="ireport.zoom" value="1.4641000000000017"/>
+	<property name="ireport.zoom" value="1.9487171000000028"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="196"/>
+	<property name="ireport.y" value="47"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -139,76 +139,7 @@
 	<group name="detalle">
 		<groupExpression><![CDATA[$F{departamento}]]></groupExpression>
 		<groupHeader>
-			<band height="53">
-				<componentElement>
-					<reportElement uuid="2e043f5e-df76-474b-956f-fda6a0692d47" key="table" style="table" x="40" y="0" width="496" height="50"/>
-					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-						<datasetRun subDataset="dsPrecios" uuid="17adf11c-89cb-4186-b1e6-3d20b108ce0c">
-							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetItemOfertaGlobal})]]></dataSourceExpression>
-						</datasetRun>
-						<jr:column width="285" uuid="0396c88a-a072-46c8-9884-6838a5014a02">
-							<jr:columnHeader style="table_TD" height="22" rowSpan="1">
-								<staticText>
-									<reportElement uuid="97e0c53e-d118-408b-b2a3-1f79d19ccf2d" x="0" y="0" width="285" height="22"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8"/>
-									</textElement>
-									<text><![CDATA[Descripción]]></text>
-								</staticText>
-							</jr:columnHeader>
-							<jr:detailCell style="table_TD" height="14" rowSpan="1">
-								<textField isStretchWithOverflow="true">
-									<reportElement uuid="777ca4c3-d7d2-46ea-9099-7f56ad535a60" x="3" y="0" width="279" height="14" isPrintWhenDetailOverflows="true"/>
-									<textElement verticalAlignment="Middle">
-										<font fontName="Arial" size="8"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$F{descripcionItem}]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="76" uuid="84dc2fd2-5413-4184-a957-2bad60f3dcbb">
-							<jr:columnHeader style="table_TD" height="22" rowSpan="1">
-								<staticText>
-									<reportElement uuid="b59c2d47-dda2-44cc-b9dc-3f8f83f99ce2" x="0" y="0" width="75" height="22"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8"/>
-									</textElement>
-									<text><![CDATA[Precio Máximo de Referencia]]></text>
-								</staticText>
-							</jr:columnHeader>
-							<jr:detailCell style="table_TD" height="14" rowSpan="1">
-								<textField pattern="###0.00;-###0.00">
-									<reportElement uuid="1d8bf5d0-899a-4f62-985a-992d5b87cbd5" x="0" y="0" width="72" height="14"/>
-									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="8"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$F{precioMaxReferencia}]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="78" uuid="8b9830c0-7808-44fd-ab78-aeec43a676e6">
-							<jr:columnHeader style="table_TD" height="22" rowSpan="1">
-								<staticText>
-									<reportElement uuid="609fbeab-2755-4965-9c0c-4930354e978f" x="0" y="0" width="78" height="22"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8"/>
-									</textElement>
-									<text><![CDATA[Precio Unitario (INCLUYE IVA)]]></text>
-								</staticText>
-							</jr:columnHeader>
-							<jr:detailCell style="table_TD" height="14" rowSpan="1">
-								<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
-									<reportElement uuid="95291b06-5729-49f3-8363-e5ea2016d910" x="0" y="0" width="75" height="14"/>
-									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="8"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$F{precioUnitario}==null?java.math.BigDecimal.ZERO:$F{precioUnitario}]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-					</jr:table>
-				</componentElement>
-			</band>
+			<band height="5"/>
 		</groupHeader>
 		<groupFooter>
 			<band height="61">
@@ -330,24 +261,23 @@
 		</band>
 	</title>
 	<pageHeader>
-		<band height="8" splitType="Stretch"/>
+		<band height="4" splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
 		<band height="6" splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="36" splitType="Stretch">
-			<printWhenExpression><![CDATA[($P{pIdRubro} == 1)]]></printWhenExpression>
+		<band height="61" splitType="Stretch">
 			<componentElement>
-				<reportElement uuid="a70aad69-c81e-4b31-9a76-a8672c6d98d1" key="table" style="table" x="40" y="18" width="496" height="14"/>
+				<reportElement uuid="2e043f5e-df76-474b-956f-fda6a0692d47" key="table" style="table" x="40" y="0" width="496" height="50"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="dsPrecios" uuid="03e22fa7-4aa9-4494-b590-b5f50ce86e00">
-						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetItemOfertaGlobalLibros})]]></dataSourceExpression>
+					<datasetRun subDataset="dsPrecios" uuid="17adf11c-89cb-4186-b1e6-3d20b108ce0c">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetItemOfertaGlobal})]]></dataSourceExpression>
 					</datasetRun>
-					<jr:column width="285" uuid="89612f59-1a0b-40e3-9215-be7bd20a58be">
+					<jr:column width="285" uuid="0396c88a-a072-46c8-9884-6838a5014a02">
 						<jr:columnHeader style="table_TD" height="22" rowSpan="1">
 							<staticText>
-								<reportElement uuid="d556fcf8-4100-47ec-b6a0-6c45ea0638ca" x="0" y="0" width="285" height="22"/>
+								<reportElement uuid="97e0c53e-d118-408b-b2a3-1f79d19ccf2d" x="0" y="0" width="285" height="22"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="8"/>
 								</textElement>
@@ -356,7 +286,7 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="14" rowSpan="1">
 							<textField isStretchWithOverflow="true">
-								<reportElement uuid="e4fdf9d7-50b9-4af1-822f-c495582cef7c" x="3" y="0" width="279" height="14"/>
+								<reportElement uuid="777ca4c3-d7d2-46ea-9099-7f56ad535a60" x="3" y="0" width="279" height="14" isPrintWhenDetailOverflows="true"/>
 								<textElement verticalAlignment="Middle">
 									<font fontName="Arial" size="8"/>
 								</textElement>
@@ -364,10 +294,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="76" uuid="2f2e42fe-9ae2-4e29-8e5e-995489b93ddc">
+					<jr:column width="76" uuid="84dc2fd2-5413-4184-a957-2bad60f3dcbb">
 						<jr:columnHeader style="table_TD" height="22" rowSpan="1">
 							<staticText>
-								<reportElement uuid="0e920607-5ebe-4400-a536-e34817cb0458" x="0" y="0" width="75" height="22"/>
+								<reportElement uuid="b59c2d47-dda2-44cc-b9dc-3f8f83f99ce2" x="0" y="0" width="75" height="22"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="8"/>
 								</textElement>
@@ -376,7 +306,7 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="14" rowSpan="1">
 							<textField pattern="###0.00;-###0.00">
-								<reportElement uuid="e8c53ad4-3d61-4ee2-8ab7-21c0da7eb86d" x="0" y="0" width="72" height="14"/>
+								<reportElement uuid="1d8bf5d0-899a-4f62-985a-992d5b87cbd5" x="0" y="0" width="72" height="14"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="Arial" size="8"/>
 								</textElement>
@@ -384,10 +314,10 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="78" uuid="ebaab934-9a62-4179-b3a8-31e51d7e9668">
+					<jr:column width="78" uuid="8b9830c0-7808-44fd-ab78-aeec43a676e6">
 						<jr:columnHeader style="table_TD" height="22" rowSpan="1">
 							<staticText>
-								<reportElement uuid="fd0a1cbe-d8b5-4af8-88a3-9989ab8860f6" x="0" y="0" width="78" height="22"/>
+								<reportElement uuid="609fbeab-2755-4965-9c0c-4930354e978f" x="0" y="0" width="78" height="22"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="8"/>
 								</textElement>
@@ -396,7 +326,7 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="14" rowSpan="1">
 							<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
-								<reportElement uuid="6f5f986e-1e8b-4a4b-8a23-853d182b7cf1" x="0" y="0" width="75" height="14"/>
+								<reportElement uuid="95291b06-5729-49f3-8363-e5ea2016d910" x="0" y="0" width="75" height="14"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="Arial" size="8"/>
 								</textElement>
@@ -406,13 +336,6 @@
 					</jr:column>
 				</jr:table>
 			</componentElement>
-			<textField>
-				<reportElement uuid="ac18d743-7cdc-4ecc-ad23-7b135774b1d4" x="6" y="0" width="317" height="18"/>
-				<textElement>
-					<font fontName="Arial"/>
-				</textElement>
-				<textFieldExpression><![CDATA["B – Libros de Texto"]]></textFieldExpression>
-			</textField>
 		</band>
 	</detail>
 	<columnFooter>

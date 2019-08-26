@@ -263,18 +263,21 @@ public class ParticipantesController implements Serializable {
 
     public String update() {
         String urlRed = "reg02ReservaFondos.mined?includeViewParams=true&codigoEntidad=" + codigoEntidad + "&idParticipante=" + idParticipante;
-        Boolean isError, isUtiles;
+        Boolean isError = false;
+        Boolean isUtiles;
         try {
             isUtiles = (detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 2);
             if (isUtiles) {
-                isError = lstDetalleOferta.isEmpty() && lstDetalleOfertaLibros.isEmpty();
+                if (mostraTblLibros) {
+                    isError = lstDetalleOferta.isEmpty() && lstDetalleOfertaLibros.isEmpty();
+                }
             } else {
                 isError = (lstDetalleOferta == null || lstDetalleOfertaLibros == null);
             }
 
             if (isError) {
                 JsfUtil.mensajeAlerta("Debe de agregar al menos un detalle a la oferta."
-                        + (isUtiles ? "\nDebe de agregar al menos un detalle a la oferta de libros" : ""));
+                        + ((isUtiles && mostraTblLibros) ? "\nDebe de agregar al menos un detalle a la oferta de libros" : ""));
                 return "";
             }
 
@@ -294,19 +297,21 @@ public class ParticipantesController implements Serializable {
                     }
                 }
             }
-            for (DetalleOfertas det : lstDetalleOfertaLibros) {
-                if (det.getEstadoEliminacion().compareTo(BigInteger.ONE) == 0) {
-                    det.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
-                    det.setFechaEliminacion(new Date());
-                } else {
-                    if (det.getCantidad().compareTo(BigInteger.ZERO) == 0) {
-                        JsfUtil.mensajeAlerta("Al menos un libro de la oferta tiene cantidad de ITEMS con valor de CERO.");
-                        return "";
-                    }
+            if (mostraTblLibros) {
+                for (DetalleOfertas det : lstDetalleOfertaLibros) {
+                    if (det.getEstadoEliminacion().compareTo(BigInteger.ONE) == 0) {
+                        det.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
+                        det.setFechaEliminacion(new Date());
+                    } else {
+                        if (det.getCantidad().compareTo(BigInteger.ZERO) == 0) {
+                            JsfUtil.mensajeAlerta("Al menos un libro de la oferta tiene cantidad de ITEMS con valor de CERO.");
+                            return "";
+                        }
 
-                    if (det.getPrecioUnitario().compareTo(BigDecimal.ZERO) == 0) {
-                        JsfUtil.mensajeAlerta("Al menos un libro de la oferta tiene precio unitario de con valor de CERO.");
-                        return "";
+                        if (det.getPrecioUnitario().compareTo(BigDecimal.ZERO) == 0) {
+                            JsfUtil.mensajeAlerta("Al menos un libro de la oferta tiene precio unitario de con valor de CERO.");
+                            return "";
+                        }
                     }
                 }
             }
@@ -341,7 +346,7 @@ public class ParticipantesController implements Serializable {
 
             if (urlRed != null) {
                 proveedorEJB.guardarDetalleOferta(lstDetalleOferta);
-                if (!lstDetalleOfertaLibros.isEmpty()) {
+                if (mostraTblLibros && !lstDetalleOfertaLibros.isEmpty()) {
                     proveedorEJB.guardarDetalleOferta(lstDetalleOfertaLibros);
                 }
                 return urlRed;
@@ -427,7 +432,8 @@ public class ParticipantesController implements Serializable {
                 lstDetalleOferta = proveedorEJB.findDetalleOfertas(current, false);
 
                 if (detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 2) {
-                    if (detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 5) {
+                    if (detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 5
+                            && detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() < 8) {
                         mostraTblLibros = true;
                         lstDetalleOfertaLibros = proveedorEJB.findDetalleOfertas(current, true);
                     }
@@ -456,30 +462,30 @@ public class ParticipantesController implements Serializable {
                                 if (preRefEmp.getIdProducto().getIdProducto().intValue() != 1) {
                                     for (BigDecimal idNivel : lstNiveles) {
                                         BigDecimal temIdNivel = BigDecimal.ZERO;
-                                        if(detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1){ //rubro uniforme
+                                        if (detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) { //rubro uniforme
                                             switch (idNivel.intValue()) {
-                                            case 1:
-                                            case 6:
-                                            case 16:
-                                            case 18:
-                                                temIdNivel = idNivel;
-                                                break;
-                                            case 3://primer ciclo
-                                            case 4://segundo ciclo
-                                            case 5://tercer ciclo
-                                            case 7://7o grado
-                                            case 8://8o grado
-                                            case 9://9o grado
-                                            case 10://1o grado
-                                            case 11://2o grado
-                                            case 12://3o grado
-                                            case 13://4o grado
-                                            case 14://5o grado
-                                            case 15://6o grado
-                                                temIdNivel = new BigDecimal(2);
-                                                break;
-                                        }
-                                        }else{//rubro de utiles o zapatos
+                                                case 1:
+                                                case 6:
+                                                case 16:
+                                                case 18:
+                                                    temIdNivel = idNivel;
+                                                    break;
+                                                case 3://primer ciclo
+                                                case 4://segundo ciclo
+                                                case 5://tercer ciclo
+                                                case 7://7o grado
+                                                case 8://8o grado
+                                                case 9://9o grado
+                                                case 10://1o grado
+                                                case 11://2o grado
+                                                case 12://3o grado
+                                                case 13://4o grado
+                                                case 14://5o grado
+                                                case 15://6o grado
+                                                    temIdNivel = new BigDecimal(2);
+                                                    break;
+                                            }
+                                        } else {//rubro de utiles o zapatos
                                             temIdNivel = idNivel;
                                         }
 
@@ -504,7 +510,7 @@ public class ParticipantesController implements Serializable {
                                 }
                             }
                         }
-                        if (lstDetalleOfertaLibros.isEmpty()) {
+                        if (mostraTblLibros && lstDetalleOfertaLibros.isEmpty()) {
                             for (PreciosRefRubroEmp preRefEmp : lstPreciosEmp) {
                                 if (preRefEmp.getIdProducto().getIdProducto().intValue() == 1) {
                                     for (BigDecimal idNivel : lstNiveles) {
