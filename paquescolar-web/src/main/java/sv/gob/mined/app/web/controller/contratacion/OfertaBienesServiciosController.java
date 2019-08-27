@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
@@ -54,7 +53,7 @@ import sv.gob.mined.paquescolar.util.Constantes;
  *
  * @author misanchez
  */
-@ManagedBean
+@ManagedBean(name = "ofertaMB")
 @ViewScoped
 public class OfertaBienesServiciosController implements Serializable {
 
@@ -107,9 +106,10 @@ public class OfertaBienesServiciosController implements Serializable {
     }
 
     @PostConstruct
-    public void ini() {
+    public void init() {
         rubro = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getRubro();
+
         detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubro);
 
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
@@ -147,11 +147,6 @@ public class OfertaBienesServiciosController implements Serializable {
     }
 
     public BigDecimal getRubro() {
-        if (rubro == null) {
-            if (VarSession.isCookie("rubro")) {
-                rubro = new BigDecimal((VarSession.getCookieValue("rubro")));
-            }
-        }
         return rubro;
     }
 

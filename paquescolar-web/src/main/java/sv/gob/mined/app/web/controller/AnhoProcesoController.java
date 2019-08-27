@@ -129,6 +129,8 @@ public class AnhoProcesoController implements Serializable {
             if (VarSession.isCookie("rubro")) {
                 rubro = new BigDecimal((VarSession.getCookieValue("rubro")));
             }
+        }else{
+            rubro = BigDecimal.ZERO;
         }
         return rubro;
     }
