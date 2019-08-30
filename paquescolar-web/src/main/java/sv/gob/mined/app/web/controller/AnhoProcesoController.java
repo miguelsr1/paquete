@@ -125,13 +125,10 @@ public class AnhoProcesoController implements Serializable {
     }
 
     public BigDecimal getRubro() {
-        if (rubro == null) {
-            if (VarSession.isCookie("rubro")) {
-                rubro = new BigDecimal((VarSession.getCookieValue("rubro")));
-            }
-        }else{
-            rubro = BigDecimal.ZERO;
+        if (VarSession.isCookie("rubro")) {
+            rubro = new BigDecimal((VarSession.getCookieValue("rubro")));
         }
+
         return rubro;
     }
 
@@ -180,7 +177,7 @@ public class AnhoProcesoController implements Serializable {
 
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
         ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
-        
+
         //recuperarProceso.recuperarProcesoAdq();
     }
 

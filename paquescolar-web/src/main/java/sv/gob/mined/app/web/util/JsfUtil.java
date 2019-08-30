@@ -17,11 +17,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
+import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 
 public class JsfUtil {
 
@@ -259,5 +261,11 @@ public class JsfUtil {
     public static String getParametroUrl(String nombreParamentro) {
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         return params.get(nombreParamentro);
+    }
+    
+    public static List<CapaInstPorRubro> getListFilterByStream(List<CapaInstPorRubro> lst, String cadenaStream){
+        return lst.stream()
+                .filter(d -> d.getIdMuestraInteres().getIdEmpresa().getRazonSocial().contains(cadenaStream.toUpperCase()))
+                .collect(Collectors.toList());
     }
 }

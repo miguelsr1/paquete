@@ -1,5 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package sv.gob.mined.app.web.controller.contratacion;
@@ -16,20 +17,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.faces.bean.ViewScoped;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.util.Bean2Excel;
 import sv.gob.mined.app.web.util.JsfUtil;
-import sv.gob.mined.app.web.util.RecuperarProceso;
+import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
@@ -45,8 +44,8 @@ import sv.gob.mined.paquescolar.model.Participantes;
 import sv.gob.mined.paquescolar.model.PreciosRefRubroEmp;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.pojos.VwRptCertificacionPresupuestaria;
-import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.VwCotizacion;
+import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 import sv.gob.mined.paquescolar.util.Constantes;
 
 /**
@@ -55,7 +54,7 @@ import sv.gob.mined.paquescolar.util.Constantes;
  */
 @ManagedBean(name = "ofertaMB")
 @ViewScoped
-public class OfertaBienesServiciosController implements Serializable {
+public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
 
     private int rowEdit = 0;
     private String estiloSeleccionado = "-";
@@ -64,6 +63,7 @@ public class OfertaBienesServiciosController implements Serializable {
     private String valorDeBusqueda;
     private String tipoDocumentoImp = "";
     private String nombreEmp = "";
+    private String nombreEmpOtros = "";
     private Boolean showProductos = false;
     private Boolean deshabilitar = true;
     private Boolean modifDesac = false;
@@ -96,13 +96,12 @@ public class OfertaBienesServiciosController implements Serializable {
     @EJB
     private AnhoProcesoEJB anhoProcesoEJB;
 
-    @ManagedProperty("#{recuperarProceso}")
-    private RecuperarProceso recuperarProceso;
+    
 
     /**
-     * Creates a new instance of OfertaBienesServiciosController
+     * Creates a new instance of OfertaMB
      */
-    public OfertaBienesServiciosController() {
+    public OfertaMB() {
     }
 
     @PostConstruct
@@ -110,7 +109,7 @@ public class OfertaBienesServiciosController implements Serializable {
         rubro = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getRubro();
 
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubro);
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), rubro);
 
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
 
@@ -122,20 +121,20 @@ public class OfertaBienesServiciosController implements Serializable {
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public String getNombreEmpOtros() {
+        return nombreEmpOtros;
+    }
+
+    public void setNombreEmpOtros(String nombreEmpOtros) {
+        this.nombreEmpOtros = nombreEmpOtros;
+    }
+
     public String getNombreEmp() {
         return nombreEmp;
     }
 
     public void setNombreEmp(String nombreEmp) {
         this.nombreEmp = nombreEmp;
-    }
-
-    public RecuperarProceso getRecuperarProceso() {
-        return recuperarProceso;
-    }
-
-    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
-        this.recuperarProceso = recuperarProceso;
     }
 
     public Boolean getPageResolucion() {
@@ -385,7 +384,7 @@ public class OfertaBienesServiciosController implements Serializable {
         lstCapaEmpresas = new ArrayList();
         lstCapaEmpresasOtros = new ArrayList();
         limpiarCampos();
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubro);
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), rubro);
     }
 
     public void onSelect(CapaInstPorRubro capa) {
@@ -424,10 +423,10 @@ public class OfertaBienesServiciosController implements Serializable {
                 }
             }
         } catch (Exception e) {
-            Logger.getLogger(OfertaBienesServiciosController.class.getName()).log(Level.INFO, null, "Error OfertaBienesServiciosController.onSelect()");
-            Logger.getLogger(OfertaBienesServiciosController.class.getName()).log(Level.INFO, null, "Codigo Entidad " + current.getCodigoEntidad().getCodigoEntidad());
-            Logger.getLogger(OfertaBienesServiciosController.class.getName()).log(Level.INFO, null, "Proveedor " + empresaSeleccionada.getNumeroNit());
-            Logger.getLogger(OfertaBienesServiciosController.class.getName()).log(Level.INFO, null, "Error: " + e.getMessage());
+            Logger.getLogger(OfertaMB.class.getName()).log(Level.INFO, null, "Error OfertaBienesServiciosController.onSelect()");
+            Logger.getLogger(OfertaMB.class.getName()).log(Level.INFO, null, "Codigo Entidad " + current.getCodigoEntidad().getCodigoEntidad());
+            Logger.getLogger(OfertaMB.class.getName()).log(Level.INFO, null, "Proveedor " + empresaSeleccionada.getNumeroNit());
+            Logger.getLogger(OfertaMB.class.getName()).log(Level.INFO, null, "Error: " + e.getMessage());
         }
     }
 
@@ -528,7 +527,7 @@ public class OfertaBienesServiciosController implements Serializable {
         HashMap param = new HashMap();
 
         if (detalleProceso != null) {
-            VwRptCertificacionPresupuestaria vw = entidadEducativaEJB.getCertificacion(codigoEntidad, recuperarProceso.getProcesoAdquisicion(), (recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq() >= 12));
+            VwRptCertificacionPresupuestaria vw = entidadEducativaEJB.getCertificacion(codigoEntidad, getRecuperarProceso().getProcesoAdquisicion(), (getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq() >= 12));
 
             if (vw != null) {
                 vw.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
@@ -559,10 +558,10 @@ public class OfertaBienesServiciosController implements Serializable {
              * Fecha: 30/08/2018 Comentario: Validación de seleccion del año y
              * proceso de adquisición
              */
-            if (recuperarProceso.getProcesoAdquisicion() == null) {
+            if (getRecuperarProceso().getProcesoAdquisicion() == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
-                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubro);
+                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), rubro);
                 current.setIdDetProcesoAdq(detalleProceso);
                 abrirDialogCe = false;
                 entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
@@ -571,7 +570,7 @@ public class OfertaBienesServiciosController implements Serializable {
                     JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + current.getCodigoEntidad().getCodigoEntidad());
                 } else {
                     if (VarSession.getDepartamentoUsuarioSession() != null) {
-                        String dep = recuperarProceso.getDepartamento();
+                        String dep = getRecuperarProceso().getDepartamento();
                         if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep) || (Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {
                             if (VarSession.getVariableSessionED() == 1) {
                                 if (ofertaBienesServiciosEJB.isOfertaRubro(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq())) {
@@ -665,7 +664,7 @@ public class OfertaBienesServiciosController implements Serializable {
         String nombreRpt = "";
         HashMap param = new HashMap();
         List<VwCotizacion> lst = ofertaBienesServiciosEJB.getLstCotizacion(VarSession.getNombreMunicipioSession(), getSelected().getCodigoEntidad().getCodigoEntidad(), getSelected().getIdDetProcesoAdq(), participanteSeleccionado);
-        Boolean sobredemanda = recuperarProceso.getProcesoAdquisicion().getDescripcionProcesoAdq().contains("SOBREDEMANDA");
+        Boolean sobredemanda = getRecuperarProceso().getProcesoAdquisicion().getDescripcionProcesoAdq().contains("SOBREDEMANDA");
 
         //Para contratos antes de 2016, se tomara los formatos de rpt que no incluyen el año en el nombre del archivo jasper
         if (Integer.parseInt(getSelected().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho()) > 2016) {
@@ -682,7 +681,7 @@ public class OfertaBienesServiciosController implements Serializable {
                 nombreRpt = "rptCotizacionUti" + anho + ".jasper";
                 break;
             case 3:
-                if (recuperarProceso.getProcesoAdquisicion().getDescripcionProcesoAdq().contains("MINI")) {
+                if (getRecuperarProceso().getProcesoAdquisicion().getDescripcionProcesoAdq().contains("MINI")) {
                     nombreRpt = "rptCotizacionZap" + anho + "_mini.jasper";
                 } else {
                     nombreRpt = "rptCotizacionZap" + anho + ".jasper";
@@ -775,10 +774,10 @@ public class OfertaBienesServiciosController implements Serializable {
              * Fecha: 30/08/2018 Comentario: Validación de seleccion del año y
              * proceso de adquisición
              */
-            if (recuperarProceso.getProcesoAdquisicion() == null) {
+            if (getRecuperarProceso().getProcesoAdquisicion() == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
-                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubro);
+                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), rubro);
                 current.setIdDetProcesoAdq(detalleProceso);
                 abrirDialogCe = false;
 
@@ -801,7 +800,7 @@ public class OfertaBienesServiciosController implements Serializable {
     private void cargarOferta() {
         getSelected().setCodigoEntidad(entidadEducativa);
         if (VarSession.getDepartamentoUsuarioSession() != null) {
-            String dep = recuperarProceso.getDepartamento();
+            String dep = getRecuperarProceso().getDepartamento();
             if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep)
                     || (Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {
                 if (VarSession.getVariableSessionED() == 1) {
@@ -844,21 +843,18 @@ public class OfertaBienesServiciosController implements Serializable {
     }
 
     public void filterProveedores() {
-        lstCapaEmpresas = lstEmpresas
-                .stream()
-                .filter(d -> d.getIdMuestraInteres().getIdEmpresa().getRazonSocial().contains(nombreEmp))
-                .collect(Collectors.toList());
+        lstCapaEmpresas = JsfUtil.getListFilterByStream(lstEmpresas, nombreEmp);
     }
 
     public void filterProveedoresOtros() {
-        lstCapaEmpresas = lstEmpresas
-                .stream()
-                .filter(d -> d.getIdMuestraInteres().getIdEmpresa().getRazonSocial().contains(nombreEmp))
-                .collect(Collectors.toList());
+        lstCapaEmpresasOtros = JsfUtil.getListFilterByStream(lstEmpresasOtros, nombreEmpOtros);
     }
 
     public void filterReiniciarProveedores() {
         lstCapaEmpresas.clear();
         lstCapaEmpresas.addAll(lstEmpresas);
+        lstCapaEmpresasOtros.clear();
+        lstCapaEmpresasOtros.addAll(lstEmpresasOtros);
     }
+
 }

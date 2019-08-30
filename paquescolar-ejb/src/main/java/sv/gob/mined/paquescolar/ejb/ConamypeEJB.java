@@ -399,7 +399,7 @@ public class ConamypeEJB {
             }
 
             if (detRubro.getProveedorEmpresaList() == null) {
-                detRubro.setProveedorEmpresaList(new ArrayList<ProveedorEmpresa>());
+                detRubro.setProveedorEmpresaList(new ArrayList());
             }
 
             ProveedorEmpresa proEmp;

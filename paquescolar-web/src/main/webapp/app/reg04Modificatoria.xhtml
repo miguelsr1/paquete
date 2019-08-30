@@ -18,7 +18,7 @@
                                     actionListener="#{modificatoriaController.prepararEdicion}"
                                     update="pnlFiltro"/>
                         <p:menuitem value="Guardar" icon="fa fa-save" action="#{modificatoriaController.guardar}" ajax="true"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{ofertaBienesServiciosController.imprimirAnalisisEconomico}" />
+                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{ofertaMB.imprimirAnalisisEconomico}" />
                         <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
                         <f:facet  name="options" class="centradoVertical">  

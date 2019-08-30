@@ -12,7 +12,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import org.primefaces.model.chart.Axis;
@@ -22,7 +21,7 @@ import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.PieChartModel;
 import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.util.JsfUtil;
-import sv.gob.mined.app.web.util.RecuperarProceso;
+import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
@@ -39,7 +38,7 @@ import sv.gob.mined.paquescolar.model.pojos.contratacion.SaldoProveedorDto;
  */
 @ManagedBean
 @ViewScoped
-public class ConsultasContratacionMB implements Serializable {
+public class ConsultasContratacionMB extends RecuperarProcesoUtil implements Serializable {
 
     @EJB
     public ServiciosJsonEJB serviciosJsonEJB;
@@ -85,9 +84,6 @@ public class ConsultasContratacionMB implements Serializable {
     private BarChartModel barModelUti;
     private BarChartModel barModelZap;
 
-    @ManagedProperty("#{recuperarProceso}")
-    private RecuperarProceso recuperarProceso;
-
     /**
      * Creates a new instance of ConsultasContratacionMB
      */
@@ -98,18 +94,10 @@ public class ConsultasContratacionMB implements Serializable {
     public void ini() {
         idRubro = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getRubro();
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
-    public RecuperarProceso getRecuperarProceso() {
-        return recuperarProceso;
-    }
-
-    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
-        this.recuperarProceso = recuperarProceso;
-    }
-
     public List<SaldoProveedorDto> getLstSaldos() {
         return lstSaldos;
     }
@@ -209,7 +197,7 @@ public class ConsultasContratacionMB implements Serializable {
         this.porcentajeAvance = "";
         if (codigoDepartamento != null) {
             mostrarGrafico = true;
-            for (DetalleProcesoAdq det : recuperarProceso.getProcesoAdquisicion().getDetalleProcesoAdqList()) {
+            for (DetalleProcesoAdq det : getRecuperarProceso().getProcesoAdquisicion().getDetalleProcesoAdqList()) {
                 switch (det.getIdRubroAdq().getIdRubroInteres().intValue()) {
                     case 1:
                     case 4:
@@ -423,7 +411,7 @@ public class ConsultasContratacionMB implements Serializable {
     }
 
     public void consultaSaldo() {
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
         lstSaldos = serviciosJsonEJB.getLstSaldoProveedoresByDepAndCodDepa(detalleProceso, codigoDepartamento);
     }
 

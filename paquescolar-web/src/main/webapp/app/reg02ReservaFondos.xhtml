@@ -36,7 +36,7 @@
                                  style="width: 100%; border:0px none; background-color:transparent;"
                                  styleClass="form-group ui-panelgrid-blank">
                         <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
-                        <p:selectOneMenu id="cboRubro" value="#{ofertaBienesServiciosController.rubro}" disabled="#{resolucionesAdjudicativasController.deshabilitar}">
+                        <p:selectOneMenu id="cboRubro" value="#{ofertaMB.rubro}" disabled="#{resolucionesAdjudicativasController.deshabilitar}">
                             <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
                             <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                             <p:ajax update=":frmPrincipal:pnlFiltro pnlProveedores pnlFondosCE" listener="#{resolucionesAdjudicativasController.limpiarDatos}"/>
@@ -44,14 +44,14 @@
 
                         <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
                         <h:panelGrid columns="3" id="codigoEntidad" >
-                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaBienesServiciosController.codigoEntidad}" size="6" disabled="#{resolucionesAdjudicativasController.deshabilitar}" autocomplete="off" requiredMessage="Código de infraestructura" onkeyup="queryEntidad(this.value);" />
-                            <p:outputLabel id="nombreCE" value="#{ofertaBienesServiciosController.entidadEducativa.nombre}" style="font-weight: bold"/>
+                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaMB.codigoEntidad}" size="6" disabled="#{resolucionesAdjudicativasController.deshabilitar}" autocomplete="off" requiredMessage="Código de infraestructura" onkeyup="queryEntidad(this.value);" />
+                            <p:outputLabel id="nombreCE" value="#{ofertaMB.entidadEducativa.nombre}" style="font-weight: bold"/>
                         </h:panelGrid>
 
                         <p:outputLabel value="Proveedor:" />
                         <p:selectOneMenu id="cboProveedor" value="#{resolucionesAdjudicativasController.idParticipante}" disabled="#{resolucionesAdjudicativasController.deshabilitar}" >
                             <f:selectItem itemLabel="Seleccione un proveedor" />  
-                            <f:selectItems value="#{ofertaBienesServiciosController.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idEmpresa.idEmpresa)):par.idEmpresa.razonSocial}"/>
+                            <f:selectItems value="#{ofertaMB.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idEmpresa.idEmpresa)):par.idEmpresa.razonSocial}"/>
                             <p:ajax update="cboEstado pnlProveedores pnlSaldos idParticipante" listener="#{resolucionesAdjudicativasController.buscarResolucionAdjudicativa}" />
                         </p:selectOneMenu>
 
@@ -202,6 +202,6 @@
             </f:facet>
         </p:dialog>
 
-        <p:remoteCommand name="findEntidad" update="nombreCE cboProveedor pnlProveedores pnlFondosCE" actionListener="#{ofertaBienesServiciosController.buscarEntidadEducativaRes}" />
+        <p:remoteCommand name="findEntidad" update="nombreCE cboProveedor pnlProveedores pnlFondosCE" actionListener="#{ofertaMB.buscarEntidadEducativaRes}" />
     </ui:define>
 </ui:composition>

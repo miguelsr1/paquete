@@ -198,8 +198,8 @@ public class ResolucionesAdjudicativasController implements Serializable {
         current = null;
         saldoAdjudicacion = BigInteger.ZERO;
         idEstadoReserva = null;
-        OfertaBienesServiciosController controller = (OfertaBienesServiciosController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "ofertaBienesServiciosController");
+        OfertaMB controller = (OfertaMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "ofertaMB");
         controller.limpiarFiltros();
     }
 

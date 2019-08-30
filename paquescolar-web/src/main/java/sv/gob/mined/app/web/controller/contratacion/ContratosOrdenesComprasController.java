@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -30,7 +29,7 @@ import org.primefaces.PrimeFaces;
 import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.util.Bean2Excel;
 import sv.gob.mined.app.web.util.JsfUtil;
-import sv.gob.mined.app.web.util.RecuperarProceso;
+import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.apps.utilitario.Herramientas;
@@ -58,7 +57,7 @@ import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
  */
 @ManagedBean
 @ViewScoped
-public class ContratosOrdenesComprasController implements Serializable {
+public class ContratosOrdenesComprasController extends RecuperarProcesoUtil implements Serializable {
 
     private int estadoEdicion = 0;
     private int tipoRpt = 1;
@@ -112,9 +111,6 @@ public class ContratosOrdenesComprasController implements Serializable {
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("Bundle");
 
-    @ManagedProperty("#{recuperarProceso}")
-    private RecuperarProceso recuperarProceso;
-
     /**
      * Creates a new instance of ContratosOrdenesComprasController
      */
@@ -128,7 +124,7 @@ public class ContratosOrdenesComprasController implements Serializable {
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getRubro();
 
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubro);
+        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), rubro);
 
         if (VarSession.getIdMunicipioSession() != null) {
             idMunicipio = VarSession.getIdMunicipioSession();
@@ -151,14 +147,6 @@ public class ContratosOrdenesComprasController implements Serializable {
 
     public void setLstHistorialCambios(List<HistorialCamEstResAdj> lstHistorialCambios) {
         this.lstHistorialCambios = lstHistorialCambios;
-    }
-
-    public RecuperarProceso getRecuperarProceso() {
-        return recuperarProceso;
-    }
-
-    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
-        this.recuperarProceso = recuperarProceso;
     }
 
     public Boolean getAnalisisTecEco() {
@@ -287,10 +275,10 @@ public class ContratosOrdenesComprasController implements Serializable {
             cargarDocumentoLegal();
         } else {
             JsfUtil.mensajeAlerta("Se ha perdido el valor del codigo del centro escolar. Por favor inicie nuevamente su proceso");
-            Logger.getLogger(OfertaBienesServiciosController.class.getName()).log(Level.INFO, null, "=============================================================");
-            Logger.getLogger(OfertaBienesServiciosController.class.getName()).log(Level.INFO, null, "Error: Se ha perdido el valor de la variable codigoEntidad");
-            Logger.getLogger(OfertaBienesServiciosController.class.getName()).log(Level.INFO, null, "ContratosOrdenesComprasController.cargaInicialDeDatos()");
-            Logger.getLogger(OfertaBienesServiciosController.class.getName()).log(Level.INFO, null, "=============================================================");
+            Logger.getLogger(ContratosOrdenesCompras.class.getName()).log(Level.INFO, null, "=============================================================");
+            Logger.getLogger(ContratosOrdenesCompras.class.getName()).log(Level.INFO, null, "Error: Se ha perdido el valor de la variable codigoEntidad");
+            Logger.getLogger(ContratosOrdenesCompras.class.getName()).log(Level.INFO, null, "ContratosOrdenesComprasController.cargaInicialDeDatos()");
+            Logger.getLogger(ContratosOrdenesCompras.class.getName()).log(Level.INFO, null, "=============================================================");
         }
 
     }
@@ -494,10 +482,10 @@ public class ContratosOrdenesComprasController implements Serializable {
              * Fecha: 30/08/2018 Comentario: Validación de seleccion del año y
              * proceso de adquisición
              */
-            if (recuperarProceso.getProcesoAdquisicion() == null) {
+            if (getRecuperarProceso().getProcesoAdquisicion() == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
-                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubro);
+                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), rubro);
                 entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
 
                 if (entidadEducativa == null) {
@@ -505,7 +493,7 @@ public class ContratosOrdenesComprasController implements Serializable {
                 } else {
 
                     if (VarSession.getDepartamentoUsuarioSession() != null) {
-                        String dep = recuperarProceso.getDepartamento();
+                        String dep = getRecuperarProceso().getDepartamento();
                         if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep) || (int) VarSession.getVariableSession("idTipoUsuario") == 1) {
                             oferta = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(codigoEntidad, detalleProceso);
 

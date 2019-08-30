@@ -5,7 +5,6 @@
  */
 package sv.gob.mined.app.web.controller.segmodif;
 
-import sv.gob.mined.app.web.controller.contratacion.OfertaBienesServiciosController;
 import sv.gob.mined.app.web.controller.contratacion.ContratosOrdenesComprasController;
 import java.io.File;
 import java.io.Serializable;
@@ -34,6 +33,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.app.web.controller.AnhoProcesoController;
+import sv.gob.mined.app.web.controller.contratacion.OfertaMB;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProceso;
 import sv.gob.mined.app.web.util.Reportes;
@@ -411,8 +411,8 @@ public class ModificatoriaController implements Serializable {
     }
 
     public void buscarEntidadEducativa() {
-        OfertaBienesServiciosController controller = (OfertaBienesServiciosController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "ofertaBienesServiciosController");
+        OfertaMB controller = (OfertaMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "ofertaMB");
         controller.setCodigoEntidad(codigoEntidad);
         controller.buscarEntidadEducativa();
         entidadEducativa = controller.getEntidadEducativa();

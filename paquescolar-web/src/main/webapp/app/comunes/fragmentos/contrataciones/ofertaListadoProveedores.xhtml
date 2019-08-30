@@ -19,11 +19,11 @@
             </h:panelGrid>
             <f:facet name="footer">
                 <h:panelGrid columns="2" columnClasses="col6,col6" style="width: 100%; text-align: center !important;">
-                    <p:commandButton oncomplete="PF('dlgProveedor').hide()" action="#{ofertaBienesServiciosController.onSelect(capaEmpresa)}" 
+                    <p:commandButton oncomplete="PF('dlgProveedor').hide()" action="#{ofertaMB.onSelect(capaEmpresa)}" 
                                      update="tblParticipantes tbEmpresas" icon="fa fa-check-circle"/>
 
                     <p:commandButton oncomplete="PF('dlgDetalleProveedor').show()" update="dlgDetalleProveedor" icon="fa fa-eye"
-                                     action="#{ofertaBienesServiciosController.cargarDetalleProveedor(capaEmpresa)}"/>
+                                     action="#{ofertaMB.cargarDetalleProveedor(capaEmpresa)}"/>
                 </h:panelGrid>
             </f:facet>
         </p:panel>
@@ -49,11 +49,11 @@
 
             <p:outputPanel>
                 <h:panelGrid columns="2" style="width: 100%; text-align: center !important;">
-                    <p:commandButton oncomplete="PF('dlgProveedor').hide()" action="#{ofertaBienesServiciosController.onSelect(capaEmpresa)}" 
+                    <p:commandButton oncomplete="PF('dlgProveedor').hide()" action="#{ofertaMB.onSelect(capaEmpresa)}" 
                                      update="tblParticipantes tbEmpresas" icon="fa fa-check-circle"/>
 
                     <p:commandButton oncomplete="PF('dlgDetalleProveedor').show()" update="dlgDetalleProveedor" icon="fa fa-eye" 
-                                     action="#{ofertaBienesServiciosController.cargarDetalleProveedor(capaEmpresa)}"/>
+                                     action="#{ofertaMB.cargarDetalleProveedor(capaEmpresa)}"/>
                 </h:panelGrid>
             </p:outputPanel>
         </h:panelGrid>

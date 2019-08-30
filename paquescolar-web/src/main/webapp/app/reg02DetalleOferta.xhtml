@@ -9,7 +9,7 @@
     <ui:define name="content">
         <p:menubar id="menuBar" styleClass="divSticky"> 
             <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
-            <p:menuitem value="Modificar" icon="fa fa-edit" action="#{participantesController.prepareEdit}" actionListener="#{ofertaBienesServiciosController.limpiarCampos}" update="pnlFiltro dvDetalle"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" action="#{participantesController.prepareEdit}" actionListener="#{ofertaMB.limpiarCampos}" update="pnlFiltro dvDetalle"/>
             <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" action="#{participantesController.update}" includeViewParams="true"
                         disabled="#{menuController.usuarioSoloLectura || participantesController.modifDesac}">
                 <f:param name="idParticipante" value="#{participantesController.idParticipante}"/>
@@ -36,22 +36,22 @@
                                  style="width: 100%; border:0px none; background-color:transparent;"
                                  styleClass="form-group ui-panelgrid-blank">
                         <p:outputLabel value="Rubro de adquisicion:" />
-                        <p:selectOneMenu id="cboRubro" value="#{ofertaBienesServiciosController.rubro}" disabled="#{participantesController.deshabilitado}" onkeydown="setaFoco(this);">
+                        <p:selectOneMenu id="cboRubro" value="#{ofertaMB.rubro}" disabled="#{participantesController.deshabilitado}" onkeydown="setaFoco(this);">
                             <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
                             <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
-                            <p:ajax update="pnlFiltro dvDetalle" listener="#{ofertaBienesServiciosController.limpiarFiltros}"/>
+                            <p:ajax update="pnlFiltro dvDetalle" listener="#{ofertaMB.limpiarFiltros}"/>
                         </p:selectOneMenu>
 
                         <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
                         <h:panelGrid columns="3" id="codigoEntidad" >
-                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaBienesServiciosController.codigoEntidad}" size="6" disabled="#{participantesController.deshabilitado}" autocomplete="off" requiredMessage="Código de infraestructura" onkeyup="queryEntidad(this.value);"/>
-                            <p:outputLabel id="nombreCE" value="#{ofertaBienesServiciosController.entidadEducativa.nombre}" style="font-weight: bold"/>
+                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaMB.codigoEntidad}" size="6" disabled="#{participantesController.deshabilitado}" autocomplete="off" requiredMessage="Código de infraestructura" onkeyup="queryEntidad(this.value);"/>
+                            <p:outputLabel id="nombreCE" value="#{ofertaMB.entidadEducativa.nombre}" style="font-weight: bold"/>
                         </h:panelGrid>
 
                         <p:outputLabel value="Proveedor:" />
                         <p:selectOneMenu id="cboProveedor" value="#{participantesController.idParticipante}" disabled="#{participantesController.deshabilitado}" onkeydown="setaFoco(this);" >
                             <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
-                            <f:selectItems value="#{ofertaBienesServiciosController.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idEmpresa.idEmpresa)):par.idEmpresa.razonSocial}"/>
+                            <f:selectItems value="#{ofertaMB.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idEmpresa.idEmpresa)):par.idEmpresa.razonSocial}"/>
                             <p:ajax update="menuBar dvDetalle btnAgregar" listener="#{participantesController.buscarItemsProveedor}" />
                         </p:selectOneMenu>
                     </p:panelGrid>
@@ -282,6 +282,6 @@
 
         <p:remoteCommand name="updDetalleOferta" action="#{participantesController.updateFilaDetalle('tblDetalleOferta')}"/>
         <p:remoteCommand name="updDetalleOfertaLibros" action="#{participantesController.updateFilaDetalle('tblDetalleOfertaLibros')}"/>
-        <p:remoteCommand name="findEntidad" update="nombreCE cboProveedor tblDetalleOferta" actionListener="#{ofertaBienesServiciosController.buscarEntidadEducativa}"/>
+        <p:remoteCommand name="findEntidad" update="nombreCE cboProveedor tblDetalleOferta" actionListener="#{ofertaMB.buscarEntidadEducativa}"/>
     </ui:define>
 </ui:composition>

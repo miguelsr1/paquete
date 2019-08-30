@@ -15,6 +15,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>paquescolar-ejb</artifactId>
             <version>2.1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
@@ -26,11 +27,13 @@
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
             <version>7.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>paradise-theme</groupId>
             <artifactId>paradise-theme</artifactId>
             <version>2.0.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.spec.javax.faces</groupId>
@@ -54,36 +57,43 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>3.16</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.4</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>utilitario</artifactId>
             <version>1.2.1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
             <version>5.0.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.lowagie</groupId>
             <artifactId>itext</artifactId>
             <version>2.1.7</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.bull.javamelody</groupId>
             <artifactId>javamelody-core</artifactId>
             <version>1.54.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.8.5</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -109,7 +119,11 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <archive>
+                        <manifest>
+                            <addClasspath>false</addClasspath>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>
@@ -125,6 +139,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.3</version>
                 <configuration>
+                    <archiveClasses>true</archiveClasses>
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
@@ -175,6 +190,6 @@
         <version.maven-compiler-plugin>2.3.2</version.maven-compiler-plugin>
         <display_version>${project.version}</display_version>
         <timestamp>${maven.build.timestamp}</timestamp>
-        <maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
+        <maven.build.timestamp.format>yyMMdd:hhmm</maven.build.timestamp.format>
     </properties>
 </project>
