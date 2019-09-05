@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4a3c7c5b-138b-45a1-8d78-6065941b41ce">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="descripcionRubro" class="java.lang.String"/>
+	<parameter name="codigoEntidad" class="java.lang.String">
+		<defaultValueExpression><![CDATA[10001]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pAnho" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select 
+    mun.nombre_municipio,
+    dep.nombre_departamento,
+    sysdate,
+    org.nombre_miembro,
+    org.numero_dui,
+    vw.codigo_entidad,
+    vw.nombre
+from 
+    vw_catalogo_entidad_Educativa vw 
+    inner join municipio mun                on vw.codigo_municipio = mun.codigo_municipio
+    inner join departamento dep             on vw.codigo_departamento = dep.codigo_departamento and mun.codigo_departamento = dep.codigo_departamento
+    inner join organizacion_educativa org   on vw.codigo_entidad = org.codigo_entidad
+where
+    org.firma_contrato = 1 and
+    vw.codigo_entidad = $P{codigoEntidad}]]>
+	</queryString>
+	<field name="NOMBRE_MUNICIPIO" class="java.lang.String"/>
+	<field name="NOMBRE_DEPARTAMENTO" class="java.lang.String"/>
+	<field name="SYSDATE" class="java.sql.Timestamp"/>
+	<field name="NOMBRE_MIEMBRO" class="java.lang.String"/>
+	<field name="NUMERO_DUI" class="java.lang.String"/>
+	<field name="CODIGO_ENTIDAD" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<textField>
+				<reportElement uuid="b4bbf48d-b6e0-4134-9ba7-a0d578607d92" x="36" y="40" width="471" height="39"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DECLARACIÓN JURADA DE LA VERACIDAD DE LA INFORMACIÓN\nPLASMADA COMO MATRÍCULA, PREVIA A LAS CONTRATACIONES DE:\n"+$P{descripcionRubro}+" "+$P{pAnho}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="10" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="13" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="112" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="650e6ab4-0be1-4e7e-b6fb-93e75eb5c521" x="22" y="0" width="508" height="112"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["En el municipio de "+$F{NOMBRE_MUNICIPIO}+" del Departamento de "+$F{NOMBRE_DEPARTAMENTO}+
+" a las "+Herramientas.getFormatoLetrasHoraYFecha($F{SYSDATE})+" de dos mil diecinueve en las instalaciones del lugar destinado para la "+
+"realización de la jornada de validación de matrícula, que se tomará de base para el proceso de contratación de los rubros del programa de Paquetes Escolares, "+
+"por la Dirección Departamental de Educación del Departamento de "+$F{NOMBRE_DEPARTAMENTO}+"; yo "+$F{NOMBRE_MIEMBRO}+" mayor de edad, con número de Documento "+
+"Único de Identidad "+$F{NUMERO_DUI}+", actuando en mi calidad de Director(a) del Centro Educativo "+$F{NOMBRE}+" con código de infraestructura "+
+$F{CODIGO_ENTIDAD}+"; y por dicha calidad, siendo autoridad competente del centro educativo antes descrito, afirmo: que como centro educativo estamos "+
+"conscientes de la importancia de adquirir los bienes y servicios correspondientes al programa de Dotación de Paquetes Escolares para el año "+$P{pAnho}+" en las "+
+"mismas cantidades de la matrícula del centro educativo que represento, especialmente para evitar que posteriormente se contrate más de lo realmente "+
+"necesario a la fecha de suscripción de la presente declaración, para lo que de manera expresa mediante la presente, por las afirmaciones anteriores y seguro"+
+" de la veracidad de la información plasmada como matrícula actual del centro educativo que represento, <style isBold='true' pdfFontName='Helvetica-Bold'>BAJO JURAMENTO DECLARO:</style> Que la información correspondiente"+
+" a la matrícula actual del centro educativo que represento es verás y servirá de base cuantitativa para el proceso de contratación de los diferentes rubros "+
+"del programa Dotación de Paquetes Escolares como lo son los zapatos, paquetes de útiles escolares y servicio de confección de uniformes escolares para cada "+
+"estudiante, así como la información relacionada a los números telefónicos de contacto. Declaro ser responsable de las afirmaciones de la presente declaración,"+
+" doy fe de ser cierta y estoy consciente de las consecuencias que implica la falsedad de información o documentos que regulan los Artículos del 283 al 287 del"+
+" Código Penal en lo aplicable"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="80" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

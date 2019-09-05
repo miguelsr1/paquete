@@ -55,6 +55,10 @@ public class OrganizacionEducativa implements Serializable {
     private String usuarioModificacion;
     @Column(name = "TEL_DIRECTOR")
     private String telDirector;
+    @Column(name = "TEL_DIRECTOR2")
+    private String telDirector2;
+    @Column(name = "NUMERO_DUI")
+    private String numeroDui;
     @Column(name = "FECHA_MODIFICACION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
@@ -173,10 +177,7 @@ public class OrganizacionEducativa implements Serializable {
             return false;
         }
         OrganizacionEducativa other = (OrganizacionEducativa) object;
-        if ((this.idOrganizacionEducativa == null && other.idOrganizacionEducativa != null) || (this.idOrganizacionEducativa != null && !this.idOrganizacionEducativa.equals(other.idOrganizacionEducativa))) {
-            return false;
-        }
-        return true;
+        return !((this.idOrganizacionEducativa == null && other.idOrganizacionEducativa != null) || (this.idOrganizacionEducativa != null && !this.idOrganizacionEducativa.equals(other.idOrganizacionEducativa)));
     }
 
     @Override
@@ -190,5 +191,21 @@ public class OrganizacionEducativa implements Serializable {
 
     public void setTelDirector(String telDirector) {
         this.telDirector = telDirector;
+    }
+
+    public String getTelDirector2() {
+        return telDirector2;
+    }
+
+    public void setTelDirector2(String telDirector2) {
+        this.telDirector2 = telDirector2;
+    }
+
+    public String getNumeroDui() {
+        return numeroDui;
+    }
+
+    public void setNumeroDui(String numeroDui) {
+        this.numeroDui = numeroDui;
     }
 }

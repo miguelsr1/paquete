@@ -480,6 +480,10 @@
                             <p:inputText style="width: 100%;" value="#{estadisticasCensoController.organizacionEducativa.nombreMiembro}" disabled="#{estadisticasCensoController.deshabilitado}"/>
                             <h:outputText value="Teléfono: "/>
                             <p:inputText size="10" maxlength="8" value="#{estadisticasCensoController.organizacionEducativa.telDirector}"/>
+                            <h:outputText value="Teléfono 2: "/>
+                            <p:inputText size="10" maxlength="8" value="#{estadisticasCensoController.organizacionEducativa.telDirector2}"/>
+                            <h:outputText value="Número DUI: "/>
+                            <p:inputMask mask="99999999-9" size="10" maxlength="11" value="#{estadisticasCensoController.organizacionEducativa.numeroDui}"/>
                             <h:outputText value="Modalidad del C.E. : "/>
                             <p:inputText size="5" readonly="true" value="#{estadisticasCensoController.entidadEducativa.inicialesModalidad}"/>
                         </p:panelGrid>

@@ -126,7 +126,7 @@
         <extension>svg#fontawesomeregular</extension>
         <mime-type>image/svg+xml</mime-type>
     </mime-mapping>
-    <filter>
+    <!--filter>
         <filter-name>monitoring</filter-name>
         <filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
     </filter>
@@ -136,5 +136,5 @@
     </filter-mapping>
     <listener>
         <listener-class>net.bull.javamelody.SessionListener</listener-class>
-    </listener>
+    </listener-->
 </web-app>

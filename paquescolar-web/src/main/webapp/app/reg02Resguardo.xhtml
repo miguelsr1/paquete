@@ -1,0 +1,66 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo"
+                        action="#{ofertaMB.prepareCreate}" 
+                        update="pnlFiltro"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar"
+                        action="#{ofertaMB.prepareEdit}" 
+                        update="pnlFiltro"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" action="#{ofertaMB.guardar}" 
+                        disabled="#{menuController.usuarioSoloLectura || ofertaMB.deshabilitar}"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+            </f:facet>  
+        </p:menubar>
+
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <h1>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h1>
+                    <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
+                        <p:selectOneMenu id="cboRubro" value="#{resguardoMB.rubro}">
+                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="null" />
+                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <p:ajax update=":frmPrincipal:pnlFiltro " listener="#{resguardoMB.limpiarFiltros}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
+                        <h:panelGrid columns="3" id="codigoEntidad" >
+                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{resguardoMB.codigoEntidad}" size="6" autocomplete="off" requiredMessage="Código de infraestructura" onkeyup="queryEntidad(this.value);"/>
+                            <p:outputLabel id="nombreCE" value="#{resguardoMB.entidadEducativa.nombre}" style="font-weight: bold"/>
+                        </h:panelGrid>
+                    </p:panelGrid>
+                </div>
+
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Lista de Proveedores"/>
+                        <p:commandButton id="btoAgregarProveedor" value=" Agregar" icon="fa fa-plus-circle" style="float: right; font-size: 12px;"/>
+                    </h1>
+
+                </div>
+            </div>
+        </div>
+
+        <p:remoteCommand name="findEntidad" update="menuBar nombreCE" actionListener="#{resguardoMB.buscarEntidadEducativa}" />
+    </ui:define>
+</ui:composition>

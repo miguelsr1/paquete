@@ -30,6 +30,9 @@ import javax.persistence.Transient;
     @NamedQuery(name = "DetalleProcesoAdq.findAll", query = "SELECT d FROM DetalleProcesoAdq d")})
 public class DetalleProcesoAdq implements Serializable {
 
+    @OneToMany(mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
+    private List<ResguardoBienes> reguardoBienesList;
+
     @OneToMany(mappedBy = "idDetProcesoAdq")
     private List<RptDocumentos> rptDocumentosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
@@ -204,6 +207,14 @@ public class DetalleProcesoAdq implements Serializable {
 
     public void setPreCargaList(List<PreCarga> preCargaList) {
         this.preCargaList = preCargaList;
+    }
+
+    public List<ResguardoBienes> getReguardoBienesList() {
+        return reguardoBienesList;
+    }
+
+    public void setReguardoBienesList(List<ResguardoBienes> reguardoBienesList) {
+        this.reguardoBienesList = reguardoBienesList;
     }
 
 }

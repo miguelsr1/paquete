@@ -83,10 +83,7 @@ public class RubrosAmostrarInteres implements Serializable {
             return false;
         }
         RubrosAmostrarInteres other = (RubrosAmostrarInteres) object;
-        if ((this.idRubroInteres == null && other.idRubroInteres != null) || (this.idRubroInteres != null && !this.idRubroInteres.equals(other.idRubroInteres))) {
-            return false;
-        }
-        return true;
+        return !((this.idRubroInteres == null && other.idRubroInteres != null) || (this.idRubroInteres != null && !this.idRubroInteres.equals(other.idRubroInteres)));
     }
 
     @Override

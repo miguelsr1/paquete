@@ -7,6 +7,7 @@ package sv.gob.mined.paquescolar.ejb;
 
 import java.math.BigDecimal;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -31,6 +32,9 @@ public class ServiciosJsonEJB {
     @PersistenceContext(unitName = "paquescolarUP")
     private EntityManager em;
 
+    @EJB
+    private LoginEJB loginEJB;
+
     public List<DatosResumenPagosDto> getResumenPagoJsonByDepaAndDetProcesoAdq(String codigoDepa, Integer idDetProcesoAdq) {
         Query q = em.createNamedQuery("PagoProve.ResumenPagoByDepaAndDetProcesoAdq", DatosResumenPagosDto.class);
         q.setParameter(1, codigoDepa);
@@ -43,7 +47,7 @@ public class ServiciosJsonEJB {
         q.setParameter(1, idDetProcesoAdq);
         return q.getResultList();
     }
-    
+
     public List<DatosResumenPagosPorReqYProveedorDto> getResumenPagoJsonByDetProcesoAdqAndRequerimiento(Integer idDetProcesoAdq, String formatoRequerimiento) {
         Query q = em.createNamedQuery("PagoProve.ResumenPagoByDetProcesoAdqAndRequerimiento", DatosResumenPagosPorReqYProveedorDto.class);
         q.setParameter(1, idDetProcesoAdq);
@@ -111,5 +115,9 @@ public class ServiciosJsonEJB {
         q.setParameter(3, codigoDepartamentoCe);
 
         return q.getResultList();
+    }
+
+    public Boolean isUsuarioValido(String usuario, String pass) {
+        return loginEJB.isUsuarioValido(usuario, pass) != null;
     }
 }

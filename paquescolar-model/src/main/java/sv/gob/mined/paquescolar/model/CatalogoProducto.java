@@ -30,6 +30,9 @@ import javax.persistence.TemporalType;
 @NamedQueries({
     @NamedQuery(name = "CatalogoProducto.findAll", query = "SELECT c FROM CatalogoProducto c")})
 public class CatalogoProducto implements Serializable {
+
+    @OneToMany(mappedBy = "idProducto", fetch = FetchType.LAZY)
+    private List<ResguardoBienes> reguardoBienesList;
     @OneToMany(mappedBy = "idProducto", fetch = FetchType.LAZY)
     private List<DetalleOfertas> detalleOfertasList;
     @OneToMany(mappedBy = "idProducto", fetch = FetchType.LAZY)
@@ -198,6 +201,14 @@ public class CatalogoProducto implements Serializable {
 
     public void setDetalleOfertasList(List<DetalleOfertas> detalleOfertasList) {
         this.detalleOfertasList = detalleOfertasList;
+    }
+
+    public List<ResguardoBienes> getReguardoBienesList() {
+        return reguardoBienesList;
+    }
+
+    public void setReguardoBienesList(List<ResguardoBienes> reguardoBienesList) {
+        this.reguardoBienesList = reguardoBienesList;
     }
     
 }

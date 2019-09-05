@@ -138,6 +138,24 @@
             <p:growl id="growl" showDetail="true" escape="false" sticky="true" >
                 <p:autoUpdate />
             </p:growl>
+
+            <p:ajaxStatus>
+                <f:facet name="default">
+
+                </f:facet>
+                <f:facet name="start">
+                    <div id="div_modal" class="layout-content ui-widget-overlay ui-dialog-mask" style="z-index: 1000;"></div>
+                    <div id="ajax_gif" class="ui-tooltip-text ui-corner-all ui-shadow">
+                        <i class="fa fa-refresh fa-spin ajax-loader" aria-hidden="true" 
+                           style="color: #349ffb; font-size: 36px; display: block;  position: relative;  top: 18%;  transform: translateY(-18%);"></i>
+                    </div>
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+
             <h:form id="frmTopBar">
                 <ui:include src="./topbar.xhtml" />
 
@@ -151,22 +169,6 @@
                     <h:form id="frmPrincipal" prependId="false" >
                         <ui:insert name="content"/>
                     </h:form>
-
-                    <p:ajaxStatus>
-                        <f:facet name="default">
-                        </f:facet>
-                        <f:facet name="start">
-                            <div id="div_modal" class="layout-content ui-widget-overlay ui-dialog-mask" style="z-index: 900;"></div>
-                            <div id="ajax_gif" class="ui-tooltip-text ui-corner-all ui-shadow">
-                                <i class="fa fa-refresh fa-spin ajax-loader" aria-hidden="true" 
-                                   style="color: #349ffb; font-size: 36px; display: block;  position: relative;  top: 18%;  transform: translateY(-18%);"></i>
-                            </div>
-                        </f:facet>
-
-                        <f:facet name="complete">
-                            <h:outputText value="" />
-                        </f:facet>
-                    </p:ajaxStatus>
                 </div>
             </div>    
         </div>

@@ -28,6 +28,7 @@ import sv.gob.mined.paquescolar.model.DetalleOfertas;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.OfertaBienesServicios;
 import sv.gob.mined.paquescolar.model.Participantes;
+import sv.gob.mined.paquescolar.model.ResguardoBienes;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.pojos.Bean;
 import sv.gob.mined.paquescolar.model.pojos.ReportPOIBean;
@@ -280,5 +281,12 @@ public class OfertaBienesServiciosEJB {
         resolucionesAdjudicativas.setUsuarioModificacion(usuarioModif);
 
         return em.merge(resolucionesAdjudicativas);
+    }
+    
+    public List<ResguardoBienes> getLstResguardoBienesByCodEntAndIdDetPro(String codigoEntidad, Integer idDetProcesoAdq){
+        Query q = em.createQuery("SELECT r FROM ResguardoBienes r WHERE r.codigoEntidad=:codEnt and r.idDetProcesoAdq.idDetProcesoAdq=:idDet and r.estadoEliminacion = 0 ORDER BY r.", ResguardoBienes.class);
+        q.setParameter("codEnt", codigoEntidad);
+        q.setParameter("idDet", idDetProcesoAdq);
+        return q.getResultList();
     }
 }
