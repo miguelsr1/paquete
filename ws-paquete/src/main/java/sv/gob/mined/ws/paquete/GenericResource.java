@@ -69,15 +69,15 @@ public class GenericResource {
     @GET
     @Path("/validarUsuario")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getValidarUsuario(@QueryParam("usuario") String usuario, @QueryParam("pass") String pass) {
+    public Response getValidarUsuario(@QueryParam("user") String user, @QueryParam("pass") String pass) {
         Map<String, Object> map = new HashMap();
-        map.put("validar", serviciosJsonEJB.isUsuarioValido(usuario, pass));
+        map.put("respuesta", serviciosJsonEJB.isUsuarioValido(user, pass));
         if ((Boolean) map.get("validar")) {
-            map.put("keyToken", map);
+            map.put("keyToken", "00");
         } else {
             map.put("msj", "Usuario o Clave de acceso no válidas");
         }
 
-        return Response.ok(map).build();
+        return Response.ok(map).header("Access-Control-Allow-Origin", "*").build();
     }
 }

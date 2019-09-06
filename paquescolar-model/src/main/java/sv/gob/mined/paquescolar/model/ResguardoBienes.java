@@ -23,8 +23,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  *
@@ -39,24 +37,20 @@ public class ResguardoBienes implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "ID_RESGUARDO")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_resguardo")
     @SequenceGenerator(name = "seq_resguardo", sequenceName = "SEQ_RESGUARDO", allocationSize = 1, initialValue = 1)
     private Long idResguardo;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "CODIGO_ENTIDAD")
     private Character codigoEntidad;
     @Column(name = "CANTIDAD")
     private BigInteger cantidad;
-    @Size(max = 25)
     @Column(name = "USUARIO_INSERCION")
     private String usuarioInsercion;
     @Column(name = "FECHA_INSERCION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaInsercion;
-    @Size(max = 25)
     @Column(name = "USUARIO_MODIFICACION")
     private String usuarioModificacion;
     @Column(name = "FECHA_MODIFICACION")
