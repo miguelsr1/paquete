@@ -21,3 +21,12 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+/paquescolar-web/target/
+/paquescolar-ejb/target/
+/paquescolar-model/target/
+/utilitario/target/
+/seguridad-apii/target/
+/seguridad-api/target/
+/seguridad/seguridad-api/target/
+/seguridad/seguridad-model/target/
+/seguridad/seguridad-web/target/
