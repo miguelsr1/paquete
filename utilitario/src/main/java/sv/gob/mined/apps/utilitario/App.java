@@ -1,5 +1,6 @@
 package sv.gob.mined.apps.utilitario;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -16,5 +17,6 @@ public class App
         Date fecha = ts;
         
         System.out.println(Herramientas.getFormatoLetrasHoraYFecha(fecha));
+        
     }
 }

@@ -309,4 +309,12 @@ public class EntidadEducativaEJB {
         q.setParameter("codEnt", codigoEntidad);
         return q.getResultList();
     }
+
+    public BigDecimal getCantidadTotalByCodEntAndIdProcesoAdq(String codigoEntidad, Integer idProcesoAdq) {
+        Query q = em.createNativeQuery("select sum(nvl(masculino,0)+nvl(femenimo,0)) from estadistica_censo \n"
+                + "where codigo_entidad = ?1 and id_proceso_adq = ?2 and estado_eliminacion = 0 and id_nivel_educativo in (1,3,4,5,6)");
+        q.setParameter(1, codigoEntidad);
+        q.setParameter(2, idProcesoAdq);
+        return q.getResultList().isEmpty() ? BigDecimal.ZERO : (BigDecimal) q.getSingleResult();
+    }
 }

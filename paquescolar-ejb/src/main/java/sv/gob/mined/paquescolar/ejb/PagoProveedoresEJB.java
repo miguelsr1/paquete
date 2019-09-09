@@ -524,7 +524,7 @@ public class PagoProveedoresEJB {
         String strWhere = Constantes.addCampoToWhere("", "ID_PLANILLA", idPlanilla);
         strWhere = Constantes.addCampoToWhere(strWhere, "MONTO_ACTUAL", monto);
         strWhere = Constantes.addCampoToWhere(strWhere, "NUMERO_NIT", numeroNit);
-        strWhere = Constantes.addCampoToWhere(strWhere, "upper(NOMBRE_ENT_FINAN)", nombreEntFinan);
+        strWhere = Constantes.addCampoToWhere(strWhere, "upper(NOMBRE_ENT_FINAN)", nombreEntFinan.toUpperCase());
         strWhere = Constantes.addCampoToWhere(strWhere, "id_proceso_adq", idProcesoAdq);
         strWhere = Constantes.addCampoToWhere(strWhere, "numero_cheque", numeroCheque);
         strWhere = Constantes.addCampoToWhere(strWhere, "fecha_cheque", fechaCheque);

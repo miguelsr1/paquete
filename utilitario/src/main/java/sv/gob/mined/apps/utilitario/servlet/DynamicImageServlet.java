@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package sv.gob.mined.app.web.servlet;
+package sv.gob.mined.apps.utilitario.servlet;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -27,7 +27,7 @@ public class DynamicImageServlet extends HttpServlet {
             String file = request.getParameter("file");
             byte[] bytes;
             // Get image contents.
-            try (BufferedInputStream in = new BufferedInputStream(new FileInputStream("/imagenes/PaqueteEscolar/" + file))) {
+            try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
                 // Get image contents.
                 bytes = new byte[in.available()];
                 in.read(bytes);
@@ -36,7 +36,7 @@ public class DynamicImageServlet extends HttpServlet {
             // Write image contents to response.
             response.getOutputStream().write(bytes);
         } catch (IOException e) {
-            Logger.getLogger(DynamicImageServlet.class.getName()).log(Level.INFO, "El proveedor con NIT: {0} no posee fotografia", request.getParameter("file"));
+            Logger.getLogger(DynamicImageServlet.class.getName()).log(Level.WARNING, "No se ha podido cargar la imagen {0}", request.getParameter("file"));
         }
     }
 }
