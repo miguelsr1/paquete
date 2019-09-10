@@ -5,6 +5,8 @@
  */
 package sv.gob.mined.paquescolar.util;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author misanchez
@@ -339,6 +341,10 @@ public class Constantes {
             if (objeto instanceof String) {
                 if (!objeto.toString().isEmpty()) {
                     cadenaWhere = cadenaWhere + (cadenaWhere.contains("WHERE") ? " AND " : " WHERE ") + nombreCampo + " like '%" + ((String) objeto).toUpperCase() + "%'";
+                }
+            } else if (objeto instanceof BigDecimal) {
+                if (((BigDecimal) objeto).intValue() > 0) {
+                    cadenaWhere = cadenaWhere + (cadenaWhere.contains("WHERE") ? " AND " : " WHERE ") + nombreCampo + " = " + objeto + "";
                 }
             } else {
                 cadenaWhere = cadenaWhere + (cadenaWhere.contains("WHERE") ? " AND " : " WHERE ") + nombreCampo + " = " + objeto + "";

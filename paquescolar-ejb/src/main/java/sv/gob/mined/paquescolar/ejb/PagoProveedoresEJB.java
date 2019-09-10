@@ -528,6 +528,7 @@ public class PagoProveedoresEJB {
         strWhere = Constantes.addCampoToWhere(strWhere, "id_proceso_adq", idProcesoAdq);
         strWhere = Constantes.addCampoToWhere(strWhere, "numero_cheque", numeroCheque);
         strWhere = Constantes.addCampoToWhere(strWhere, "fecha_cheque", fechaCheque);
+        //System.out.println("QUERY\n=========================" + Constantes.QUERY_PAGOS_BUSQUEDA_PLANILLA + strWhere + " ORDER BY ID_PLANILLA\n================");
         Query q = em.createNativeQuery(Constantes.QUERY_PAGOS_BUSQUEDA_PLANILLA + strWhere + " ORDER BY ID_PLANILLA", DatosBusquedaPlanillaDto.class);
         return q.getResultList();
     }

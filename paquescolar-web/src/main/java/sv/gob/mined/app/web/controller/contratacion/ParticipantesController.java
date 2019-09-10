@@ -46,6 +46,7 @@ public class ParticipantesController implements Serializable {
 
     private int rowEdit = 0;
     private int estadoEdicion = 0;
+    private int tmpIdNivel = 0;
     private String url;
     private String numItem;
     private String codigoEntidad;
@@ -700,6 +701,7 @@ public class ParticipantesController implements Serializable {
     private void editarNumeroDeItem(DetalleOfertas det, int rowEdit, Boolean libros) {
         Boolean error = true;
         Boolean isNivel = true;
+        tmpIdNivel = 0;
         msjError = "";
 
         for (PreciosRefRubroEmp precio : lstPreciosEmp) {
@@ -708,7 +710,38 @@ public class ParticipantesController implements Serializable {
                 nivel = precio.getIdNivelEducativo();
 
                 for (BigDecimal idNivel : lstNiveles) {
-                    if (nivel.getIdNivelEducativo().compareTo(idNivel) == 0) {
+                    switch (idNivel.intValue()) {
+                        case 1:
+                            tmpIdNivel = 1;
+                            break;
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 7:
+                        case 8:
+                        case 9:
+                        case 10:
+                        case 11:
+                        case 12:
+                        case 13:
+                        case 14:
+                        case 15:
+                            if (detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
+                                tmpIdNivel = 2;
+                            } else {
+                                tmpIdNivel = idNivel.intValue();
+                            }
+                            break;
+                        case 6:
+                        case 16:
+                        case 17:
+                        case 18:
+                            tmpIdNivel = 6;
+                            break;
+                    }
+
+                    if (nivel.getIdNivelEducativo().intValue() == tmpIdNivel) {
                         isNivel = false;
                         break;
                     }
