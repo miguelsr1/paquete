@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
@@ -424,9 +426,16 @@ public class SegFisicoController implements Serializable {
             JsfUtil.mensajeAlerta("El campo Rubro de adquisicion es obligatorio");
         } else {
             buscarProceso();
-            lstSeguimientos = recepcionEJB.getLstBusquedaSeguimientos(detalleProceso.getIdDetProcesoAdq(), codigoEntidad, codigoDepartamento, numeroNit, numeroContrato, razonSocial);
-            if (lstSeguimientos.isEmpty()) {
-                JsfUtil.mensajeInformacion("No se ha creado el seguimiento para el centro escolar " + codigoEntidad);
+            try {
+                lstSeguimientos = recepcionEJB.getLstBusquedaSeguimientos(detalleProceso.getIdDetProcesoAdq(), codigoEntidad, codigoDepartamento, numeroNit, numeroContrato, razonSocial);
+                if (lstSeguimientos.isEmpty()) {
+                    JsfUtil.mensajeInformacion("No se ha creado el seguimiento para el centro escolar " + codigoEntidad);
+                }
+            } catch (Exception e) {
+                Logger.getLogger(SegFisicoController.class.getName()).log(Level.WARNING, "ERROR\n=====================================");
+                Logger.getLogger(SegFisicoController.class.getName()).log(Level.WARNING, "detProcesoAdq {0}", detalleProceso);
+                Logger.getLogger(SegFisicoController.class.getName()).log(Level.WARNING, "codigoEntidad {0} codigoDepartamento {1} numeroNit {2} numeroContrato {3} razonSocial {4}", new Object[]{codigoEntidad, codigoDepartamento, numeroNit, numeroContrato, razonSocial});
+                Logger.getLogger(SegFisicoController.class.getName()).log(Level.WARNING, "USUARIO {0}", VarSession.getUsuarioSession().getIdPersona().getUsuario());
             }
         }
     }

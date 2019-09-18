@@ -16,6 +16,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -36,6 +37,7 @@ public class Anho implements Serializable {
     @Column(name = "ANHO")
     private String anho;
     @OneToMany(mappedBy = "idAnho", fetch = FetchType.LAZY)
+    @XmlTransient
     private List<ProcesoAdquisicion> procesoAdquisicionList;
 
     public Anho() {

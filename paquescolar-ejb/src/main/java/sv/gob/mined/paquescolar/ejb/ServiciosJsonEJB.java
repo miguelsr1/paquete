@@ -120,4 +120,44 @@ public class ServiciosJsonEJB {
     public Boolean isUsuarioValido(String usuario, String pass) {
         return loginEJB.isUsuarioValido(usuario, pass) != null;
     }
+
+    public List getLstProveedoresByCodEntAndIdProAndIdRub(String codigoEntidad, Integer idProcesoAdq, Integer idRubro) {
+        Query q = em.createNativeQuery("select \n"
+                + "    dep.nombre_departamento,\n"
+                + "    ofe.codigo_entidad,\n"
+                + "    vw.nombre,\n"
+                + "    sum(det.cantidad*det.precio_unitario) monto,\n"
+                + "    emp.razon_social,\n"
+                + "    emp.numero_nit\n"
+                + "from \n"
+                + "    contratos_ordenes_compras con\n"
+                + "    inner join resoluciones_adjudicativas res on con.id_resolucion_adj = res.id_resolucion_adj\n"
+                + "    inner join participantes par              on res.id_participante = par.id_participante\n"
+                + "    inner join empresa emp                    on emp.id_empresa = par.id_empresa\n"
+                + "    inner join detalle_ofertas det            on det.id_participante = par.id_participante\n"
+                + "    inner join oferta_bienes_servicios ofe    on ofe.id_oferta = par.id_oferta\n"
+                + "    inner join detalle_proceso_Adq detp       on  ofe.id_det_proceso_adq = detp.id_det_proceso_adq\n"
+                + "    inner join vw_catalogo_entidad_educativa vw on vw.codigo_entidad = ofe.codigo_entidad\n"
+                + "    inner join departamento dep             on dep.codigo_Departamento = vw.codigo_departamento\n"
+                + "where\n"
+                + "    ofe.estado_eliminacion = 0 and\n"
+                + "    det.estado_eliminacion = 0 and\n"
+                + "    par.estado_eliminacion = 0 and\n"
+                + "    res.estado_eliminacion = 0 and\n"
+                + "    res.id_estado_reserva = 2 and\n"
+                + "    con.estado_eliminacion = 0 and\n"
+                + "    ofe.codigo_entidad = ?1 and\n"
+                + "    detp.id_proceso_adq = ?2 and\n"
+                + "    detp.id_rubro_adq = ?3 \n"
+                + "group by \n"
+                + "    dep.nombre_departamento,\n"
+                + "    ofe.codigo_entidad,\n"
+                + "    vw.nombre,\n"
+                + "    emp.razon_social,\n"
+                + "    emp.numero_nit");
+        q.setParameter(1, codigoEntidad);
+        q.setParameter(2, idProcesoAdq);
+        q.setParameter(3, idRubro);
+        return q.getResultList();
+    }
 }

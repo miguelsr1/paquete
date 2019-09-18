@@ -460,4 +460,27 @@
             ]]>
         </query>
     </named-native-query>
+    
+    <named-native-query name="Contratacion.DetalleContratadoPorComponenteDto" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleContratadoPorComponenteDto">
+        <query>
+            <![CDATA[
+            select
+                rownum                  as idRow,
+                vw.codigo_Entidad       as codigoEntidad,
+                vw.id_nivel_educativo   as idNivelEducativo,
+                vw.id_producto          as idProducto,
+                vw.descripcion_nivel    as descripcionNivel,
+                vw.nombre_producto      as nombreProducto,
+                vw.cantidad          
+            from 
+                vw_detalle_contratacion vw
+                left outer join resguardo_bienes res on vw.id_det_proceso_adq = res.id_det_proceso_adq and vw.id_nivel_educativo = res.id_nivel_educativo and vw.id_producto = res.id_producto
+            where 
+                vw.codigo_entidad = ?1 and
+                vw.id_det_proceso_adq = ?2 and
+                (res.id_resguardo is null or res.estado_eliminacion = 1)
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>

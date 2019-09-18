@@ -23,6 +23,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 /**
  *
@@ -43,7 +44,7 @@ public class ResguardoBienes implements Serializable {
     private Long idResguardo;
     @Basic(optional = false)
     @Column(name = "CODIGO_ENTIDAD")
-    private Character codigoEntidad;
+    private String codigoEntidad;
     @Column(name = "CANTIDAD")
     private BigInteger cantidad;
     @Column(name = "USUARIO_INSERCION")
@@ -70,6 +71,8 @@ public class ResguardoBienes implements Serializable {
     @JoinColumn(name = "ID_NIVEL_EDUCATIVO", referencedColumnName = "ID_NIVEL_EDUCATIVO")
     @ManyToOne(fetch = FetchType.EAGER)
     private NivelEducativo idNivelEducativo;
+    @Transient
+    private Boolean eliminar = false;
 
     public ResguardoBienes() {
     }
@@ -78,7 +81,7 @@ public class ResguardoBienes implements Serializable {
         this.idResguardo = idResguardo;
     }
 
-    public ResguardoBienes(Long idResguardo, Character codigoEntidad) {
+    public ResguardoBienes(Long idResguardo, String codigoEntidad) {
         this.idResguardo = idResguardo;
         this.codigoEntidad = codigoEntidad;
     }
@@ -91,11 +94,11 @@ public class ResguardoBienes implements Serializable {
         this.idResguardo = idResguardo;
     }
 
-    public Character getCodigoEntidad() {
+    public String getCodigoEntidad() {
         return codigoEntidad;
     }
 
-    public void setCodigoEntidad(Character codigoEntidad) {
+    public void setCodigoEntidad(String codigoEntidad) {
         this.codigoEntidad = codigoEntidad;
     }
 
@@ -203,5 +206,18 @@ public class ResguardoBienes implements Serializable {
     public String toString() {
         return "sv.gob.mined.paquescolar.model.ReguardoBienes[ idResguardo=" + idResguardo + " ]";
     }
-    
+
+    public void setEliminar(Boolean eliminar) {
+        this.eliminar = eliminar;
+        if (this.eliminar) {
+            estadoEliminacion = (short) 1;
+        } else {
+            estadoEliminacion = (short) 0;
+        }
+    }
+
+    public Boolean getEliminar() {
+        return estadoEliminacion.compareTo((short) 0) == 0;
+    }
+
 }

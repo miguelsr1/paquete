@@ -57,6 +57,12 @@ public class AnhoProcesoEJB {
         q.setParameter("proceso", proceso);
         return q.getResultList();
     }
+    
+    public List<RubrosAmostrarInteres> getLstRubrosResguardo(ProcesoAdquisicion proceso) {
+        Query q = em.createQuery("SELECT d.idRubroAdq FROM DetalleProcesoAdq d WHERE d.idProcesoAdq=:proceso and d.idRubroAdq.idRubroInteres not in (5) ORDER BY d.idRubroAdq.idRubroInteres", RubrosAmostrarInteres.class);
+        q.setParameter("proceso", proceso);
+        return q.getResultList();
+    }
 
     public List<RubrosAmostrarInteres> getLstRubrosByRubro(BigDecimal... params) {
         List lst = new ArrayList();

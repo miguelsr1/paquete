@@ -39,6 +39,24 @@ public class EMailEJB {
     @Resource(mappedName = "java:/MailService365")
     private Session mailSession;
 
+    /*private Properties config = new Properties();
+
+    private void configuracionesDeSession() {
+        config.put("mail.transport.protocol", "smtp");
+        config.put("mail.smtp.host", "svr2k13mail01.mined.gob.sv");
+        config.put("mail.smtp.auth", "true");
+        config.put("mail.smtp.starttls.enable", "false");
+        config.put("mail.smtp.port", "587");
+
+        mailSession = Session.getInstance(config, new Authenticator() {
+
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("MISanchez", "miguelsr15.");
+            }
+
+        });
+    }*/
     /**
      * Este método envía un mail
      *
@@ -55,10 +73,13 @@ public class EMailEJB {
 
             m.setFrom(from);
             m.setRecipients(Message.RecipientType.TO, remitente);
-            for (String correoBcc : listaDeCorreosBcc.split(",")) {
-                m.setRecipients(Message.RecipientType.BCC, correoBcc);
-                m.setRecipients(Message.RecipientType.BCC, correoBcc);
+
+            Address[] lstAddressBcc = new Address[listaDeCorreosBcc.split(",").length];
+            for (int i = 0; i < listaDeCorreosBcc.split(",").length; i++) {
+                lstAddressBcc[i] = new InternetAddress(listaDeCorreosBcc.split(",")[i]);
+
             }
+            m.setRecipients(Message.RecipientType.BCC, lstAddressBcc);
 
             m.setSubject(subject, "UTF-8");
             m.setSentDate(new java.util.Date());

@@ -91,7 +91,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
     private ContratosOrdenesCompras current = new ContratosOrdenesCompras();
     private ResolucionesAdjudicativas resolucionAdj = new ResolucionesAdjudicativas();
     private VwCatalogoEntidadEducativa entidadEducativa = new VwCatalogoEntidadEducativa();
-    private List<String> lstSelectDocumentosImp = new ArrayList();
+    private List<Integer> lstSelectDocumentosImp = new ArrayList();
     private List<SelectItem> lstDocumentosImp = new ArrayList();
     private List<HistorialCamEstResAdj> lstHistorialCambios = new ArrayList();
     @EJB
@@ -780,7 +780,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
     }
 
     public void impDocumentos() {
-        List<Integer> lstRpt = new ArrayList();
+        //List<Integer> lstRpt = new ArrayList();
         List<RptDocumentos> lstRptDocumentos;
         Boolean isPersonaNat;
 
@@ -788,11 +788,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
             if (lstSelectDocumentosImp.isEmpty()) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un documento para poder ser impreso.");
             } else {
-                for (String idDocImp : lstSelectDocumentosImp) {
-                    lstRpt.add(Integer.parseInt(idDocImp));
-                }
-
-                lstRptDocumentos = resolucionAdjudicativaEJB.getDocumentosAImprimir(detalleProceso.getIdDetProcesoAdq(), lstRpt);
+                lstRptDocumentos = resolucionAdjudicativaEJB.getDocumentosAImprimir(detalleProceso.getIdDetProcesoAdq(), lstSelectDocumentosImp);
 
                 if (lstRptDocumentos.isEmpty()) {
                     JsfUtil.mensajeAlerta("No se han definidos los documentos a imprimir para este proceso.");
@@ -927,11 +923,11 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
         return lstDocumentosImp;
     }
 
-    public List<String> getLstSelectDocumentosImp() {
+    public List<Integer> getLstSelectDocumentosImp() {
         return lstSelectDocumentosImp;
     }
 
-    public void setLstSelectDocumentosImp(List<String> lstSelectDocumentosImp) {
+    public void setLstSelectDocumentosImp(List<Integer> lstSelectDocumentosImp) {
         this.lstSelectDocumentosImp = lstSelectDocumentosImp;
     }
 

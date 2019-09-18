@@ -7,14 +7,13 @@
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
         <p:menubar id="menuBar" styleClass="divSticky"> 
-            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo"
-                        action="#{ofertaMB.prepareCreate}" 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" disabled="true"
                         update="pnlFiltro"/>
             <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar"
-                        action="#{ofertaMB.prepareEdit}" 
+                        action="#{resguardoMB.limpiar}" 
                         update="pnlFiltro"/>
-            <p:menuitem value="Guardar" icon="fa fa-save" action="#{ofertaMB.guardar}" 
-                        disabled="#{menuController.usuarioSoloLectura || ofertaMB.deshabilitar}"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" action="#{resguardoMB.guardar}" update="pnlFiltro tblDetalleOferta"
+                        disabled="#{menuController.usuarioSoloLectura}"/>
             <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
             <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
@@ -37,7 +36,7 @@
                         <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
                         <p:selectOneMenu id="cboRubro" value="#{resguardoMB.rubro}">
                             <f:selectItem itemLabel="Seleccione un rubro" itemValue="null" />
-                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <f:selectItems value="#{anhoProcesoController.lstRubrosResguardo}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                             <p:ajax update=":frmPrincipal:pnlFiltro " listener="#{resguardoMB.limpiarFiltros}"/>
                         </p:selectOneMenu>
 
@@ -53,14 +52,63 @@
                     <h1>
                         <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
                         <p:spacer width="10"/>
-                        <h:outputText value="Lista de Proveedores"/>
-                        <p:commandButton id="btoAgregarProveedor" value=" Agregar" icon="fa fa-plus-circle" style="float: right; font-size: 12px;"/>
+                        <h:outputText value="Lista de Items"/>
+                        <p:commandButton id="btoAgregar" value=" Agregar" icon="fa fa-plus-circle" update="tblDetalleItems"
+                                         style="float: right; font-size: 12px;" action="#{resguardoMB.buscarItem}"/>
                     </h1>
 
+                    <p:dataTable id="tblDetalleOferta" value="#{resguardoMB.lstResguardoBienes}" var="resguardo" rowKey="#{resguardo.idResguardo}" rowIndexVar="rowId"
+                                 rowStyleClass="#{resguardo.estadoEliminacion eq 1 ? 'filaEliminada' : null}">
+                        <p:column headerText="#" width="50" styleClass="centrado">
+                            #{rowId +1 }
+                        </p:column>
+                        <p:column headerText="Nivel Educativo">
+                            <p:outputLabel value="#{resguardo.idNivelEducativo.descripcionNivel}"/>
+                        </p:column>
+                        <p:column headerText="Item">
+                            <p:outputLabel value="#{resguardo.idProducto.nombreProducto}"/>
+                        </p:column>
+                        <p:column headerText="Cantidad a resguardar" styleClass="numero" width="60">
+                            <p:inputNumber value="#{resguardo.cantidad}" inputStyleClass="numero" decimalPlaces="0" size="5"/>
+                        </p:column>
+                        <p:column headerText="Borrar" width="35" styleClass="centrado">
+                            <p:commandLink action="#{resguardoMB.eliminarDetalle}" update="tblDetalleOferta">
+                                <p:outputLabel rendered="#{!resguardo.eliminar}"> <i class="fa fa-check-circle"></i></p:outputLabel>
+                                <p:outputLabel rendered="#{resguardo.eliminar}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
+                                <f:setPropertyActionListener value="#{resguardo}" target="#{resguardoMB.resguardoBienes}"/>  
+                                <f:setPropertyActionListener value="#{rowId}" target="#{resguardoMB.rowEdit}"/>  
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
                 </div>
             </div>
         </div>
 
-        <p:remoteCommand name="findEntidad" update="menuBar nombreCE" actionListener="#{resguardoMB.buscarEntidadEducativa}" />
+        <p:dialog id="dlgDetalle" widgetVar="dlgDetalle" closable="false" draggable="false" minimizable="false" modal="true" width="700" header="Detalle de Items Contratados">
+            <p:panel>
+                <p:dataTable id="tblDetalleItems" value="#{resguardoMB.lstDetalle}" var="det" rowIndexVar="rowId" rowKey="#{det.idRow}"
+                             selectionMode="multiple" selection="#{resguardoMB.lstDetalleSelect}">
+                    <p:column headerText="#" width="40" styleClass="centrado">
+                        #{rowId +1 }
+                    </p:column>
+                    <p:column headerText="Nivel educativo">
+                        <p:outputLabel value="#{det.descripcionNivel}"/>
+                    </p:column>
+                    <p:column headerText="Item">
+                        <p:outputLabel value="#{det.nombreProducto}"/>
+                    </p:column>
+                    <p:column headerText="Cantidad" width="60" styleClass="numero">
+                        <p:outputLabel value="#{det.cantidad}"/>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+
+            <f:facet name="footer">
+                <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{resguardoMB.agregarDetalle}" onclick="PF('dlgDetalle').hide();" update="tblDetalleOferta"/>
+                <p:commandButton value="Cancelar" icon="fa fa-times-circle" onclick="PF('dlgDetalle').hide();"/>
+            </f:facet>
+        </p:dialog>
+
+        <p:remoteCommand name="findEntidad" update="menuBar nombreCE tblDetalleOferta" actionListener="#{resguardoMB.buscarEntidadEducativa}" />
     </ui:define>
 </ui:composition>

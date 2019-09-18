@@ -100,6 +100,14 @@ public class AnhoProcesoController implements Serializable {
         }
     }
 
+    public List<RubrosAmostrarInteres> getLstRubrosResguardo() {
+        if (proceso == null || proceso.getIdProcesoAdq() == null) {
+            return anhoProcesoEJB.getLstRubros();
+        } else {
+            return anhoProcesoEJB.getLstRubrosResguardo(proceso);
+        }
+    }
+
     public Anho getAnho() {
         return anho;
     }
@@ -154,6 +162,7 @@ public class AnhoProcesoController implements Serializable {
 
     public void findDetalleProcesoAdq() {
         detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(proceso, rubro);
+
     }
 
     public String limpiarVariables() {

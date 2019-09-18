@@ -50,6 +50,7 @@ public class EstadisticasCensoController implements Serializable {
     private Boolean uniformes = true;
     private Boolean utiles = true;
     private Boolean zapatos = true;
+    private Boolean declaracion = true;
     private BigInteger totalAlumnosMas = BigInteger.ZERO;
     private BigInteger totalAlumnosFem = BigInteger.ZERO;
     private BigInteger totalMatricula = BigInteger.ZERO;
@@ -148,6 +149,14 @@ public class EstadisticasCensoController implements Serializable {
     public void init() {
         VarSession.setVariableSessionED("0");
         prepareEdit();
+    }
+
+    public Boolean getDeclaracion() {
+        return declaracion;
+    }
+
+    public void setDeclaracion(Boolean declaracion) {
+        this.declaracion = declaracion;
     }
 
     public Boolean getUniformes() {
@@ -965,15 +974,21 @@ public class EstadisticasCensoController implements Serializable {
                 if (zapatos) {
                     reportes += (reportes.isEmpty() ? "" : ",") + "rptCertZap.jasper";
                 }
+                if (declaracion && procesoAdquisicion.getIdAnho().getIdAnho().intValue() >= 7) {
+                    param.put("descripcionProcesoAdq", detProAdqUni.getIdProcesoAdq().getDescripcionProcesoAdq());
+                    param.put("pAnho", detProAdqUni.getIdProcesoAdq().getIdAnho().getAnho());
+                    param.put("codigoEntidad", entidadEducativa.getCodigoEntidad());
+                    reportes += (reportes.isEmpty() ? "" : ",") + "rptDeclaracionJuradaMatricula" + procesoAdquisicion.getIdAnho().getAnho() + ".jasper";
+                }
                 Reportes.generarRptsContractuales(lst, param, codigoEntidad, procesoAdquisicion.getDescripcionProcesoAdq().contains("SOBREDEMANDA"), reportesEJB, procesoAdquisicion.getIdAnho().getAnho(), reportes.split(","));
             }
         } catch (Exception e) {
-            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, null, "=============================================================");
-            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, null, "Error en la impresion de reporte de la certificación presupuestaria");
-            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, null, "Código Entidad: " + codigoEntidad);
-            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, null, "Rubros uniformes: " + uniformes + " - útiles: " + utiles + " - zapatos: " + zapatos);
-            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, null, "Error: " + e.getMessage());
-            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, null, "=====================================================");
+            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.WARNING, "=============================================================");
+            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.WARNING, "Error en la impresion de reporte de la certificación presupuestaria");
+            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.WARNING, "C\u00f3digo Entidad: {0}", codigoEntidad);
+            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.WARNING, "Rubros uniformes: {0} - \u00fatiles: {1} - zapatos: {2}", new Object[]{uniformes, utiles, zapatos});
+            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.WARNING, "Error: {0}", e.getMessage());
+            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.WARNING, "=====================================================");
         }
     }
 

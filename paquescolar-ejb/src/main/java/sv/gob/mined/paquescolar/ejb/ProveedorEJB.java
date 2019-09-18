@@ -625,10 +625,18 @@ public class ProveedorEJB {
         q = em.createNativeQuery(findLstIdEmpresa(codMunicipio, codDepartamento, idRubro, idAnho, 
                 municipioIgual, byCapacidad, cantidad.intValue()), CapaInstPorRubro.class);
         q.setParameter(1, codigoEntidad);
-        q.setParameter(2, detProcesoAdq.getIdProcesoAdq().getIdProcesoAdq());
-        q.setParameter(3, detProcesoAdq.getIdDetProcesoAdq());
+        q.setParameter(2, getProcesoAdqPadre(detProcesoAdq.getIdProcesoAdq()));
+        q.setParameter(3, getProcesoAdqPadre(detProcesoAdq.getIdProcesoAdq()));
         lstCapa.addAll(q.getResultList());
         return lstCapa;
+    }
+    
+    private Integer getProcesoAdqPadre(ProcesoAdquisicion proAdq){
+        if(proAdq.getPadreIdProcesoAdq() != null){
+            return getProcesoAdqPadre(proAdq.getPadreIdProcesoAdq());
+        }else{
+            return proAdq.getIdProcesoAdq();
+        }
     }
 
     private String findLstIdEmpresa(String codMun, String codDep, BigDecimal idRubro, BigDecimal idAnho, 
@@ -667,7 +675,7 @@ public class ProveedorEJB {
                 + "     det.estado_eliminacion = 0 and\n"
                 + "     mun_e.codigo_municipio " + (municipioIgual ? "=" : "<>") + "'" + codMun + "' and\n"
                 + "     pre.id_nivel_educativo in (select id_nivel from vw_sub_niveles_by_cod_pro where codigo_entidad = ?1 and id_proceso_adq = ?2) and \n"
-                + "     pre.id_det_proceso_adq = ?3\n"
+                + "     pre.id_det_proceso_adq in (select id_det_proceso_adq from detalle_proceso_Adq where id_proceso_adq = ?3) \n"
                 + "     " + (byCapacidad ? " and (cip.CAPACIDAD_ACREDITADA - cip.CAPACIDAD_ADJUDICADA) >= "+ cantidad: "")
                 + " order by vw.pu_avg asc";
         //+ "    mun_e.codigo_municipio " + (municipioIgual ? "=" : "<>") + "'" + codMun + "'";

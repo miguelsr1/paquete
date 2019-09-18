@@ -24,6 +24,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
+import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 
 public class JsfUtil {
 
@@ -267,5 +268,13 @@ public class JsfUtil {
         return lst.stream()
                 .filter(d -> d.getIdMuestraInteres().getIdEmpresa().getRazonSocial().contains(cadenaStream.toUpperCase()))
                 .collect(Collectors.toList());
+    }
+    
+    public static Integer getProcesoAdqPadre(ProcesoAdquisicion proAdq){
+        if(proAdq.getPadreIdProcesoAdq() != null){
+            return getProcesoAdqPadre(proAdq.getPadreIdProcesoAdq());
+        }else{
+            return proAdq.getIdProcesoAdq();
+        }
     }
 }

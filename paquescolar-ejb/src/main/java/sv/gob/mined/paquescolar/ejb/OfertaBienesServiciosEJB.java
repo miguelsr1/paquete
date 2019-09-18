@@ -32,6 +32,7 @@ import sv.gob.mined.paquescolar.model.ResguardoBienes;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.pojos.Bean;
 import sv.gob.mined.paquescolar.model.pojos.ReportPOIBean;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleContratadoPorComponenteDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.VwCotizacion;
 import sv.gob.mined.paquescolar.util.Constantes;
 
@@ -104,13 +105,13 @@ public class OfertaBienesServiciosEJB {
                 }
             }
 
-            for (Participantes par : oferta.getParticipantesList()) {
+            oferta.getParticipantesList().forEach((par) -> {
                 for (int i = par.getDetalleOfertasList().size() - 1; i >= 0; i--) {
                     if (par.getDetalleOfertasList().get(i).getEstadoEliminacion().compareTo(BigInteger.ONE) == 0) {
                         par.getDetalleOfertasList().remove(par.getDetalleOfertasList().get(i));
                     }
                 }
-            }
+            });
             return oferta;
         } else {
             return null;
@@ -125,6 +126,27 @@ public class OfertaBienesServiciosEJB {
         return !query.getResultList().isEmpty();
     }
 
+    private String getIdDetalleProcesoPadre(DetalleProcesoAdq idDetProceso) {
+        String ids = "";
+        Query q = em.createNativeQuery("select det.id_det_proceso_adq \n"
+                + "from detalle_proceso_Adq det\n"
+                + "    inner join proceso_adquisicion pro on pro.id_proceso_adq = det.id_proceso_adq\n"
+                + "    inner join anho     on pro.id_anho = anho.id_anho\n"
+                + "where anho.anho = ?1 and det.id_rubro_adq = ?2");
+        q.setParameter(1, idDetProceso.getIdProcesoAdq().getIdAnho().getAnho());
+        q.setParameter(2, idDetProceso.getIdRubroAdq().getIdRubroInteres());
+        List<BigDecimal> lst = q.getResultList();
+        for (BigDecimal id : lst) {
+            if (ids.isEmpty()) {
+                ids = id.toString();
+            } else {
+                ids = ids + "," + id.toString();
+            }
+        }
+
+        return ids;
+    }
+
     public List<Object> getDatosRptAnalisisEconomico(String codigoEntidad, DetalleProcesoAdq idDetProceso) {
         String query = "";
         ReportPOIBean reportPOIBean = null;
@@ -136,18 +158,9 @@ public class OfertaBienesServiciosEJB {
                 case 1:
                 case 4:
                 case 5:
-                    String idProcesos = "";
-                    for (DetalleProcesoAdq detalleProcesoAdq : idDetProceso.getIdProcesoAdq().getDetalleProcesoAdqList()) {
-                        if (detalleProcesoAdq.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
-                            if (idProcesos.isEmpty()) {
-                                idProcesos = detalleProcesoAdq.getIdDetProcesoAdq() + "";
-                            } else {
-                                idProcesos += "," + detalleProcesoAdq.getIdDetProcesoAdq();
-                            }
-                        }
-                    }
+                    String idDetProcesos = getIdDetalleProcesoPadre(idDetProceso);
 
-                    query = String.format(Constantes.QUERY_CONTRATACION_ANALISIS_ECONOMICO_UNIFORME, idProcesos, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
+                    query = String.format(Constantes.QUERY_CONTRATACION_ANALISIS_ECONOMICO_UNIFORME, idDetProcesos, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
                     break;
                 case 2:
                     query = String.format(Constantes.QUERY_CONTRATACION_ANALISIS_ECONOMICO_UTILES, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
@@ -214,9 +227,9 @@ public class OfertaBienesServiciosEJB {
 
         List<VwCotizacion> lstCotizacion = q.getResultList();
         VwCotizacion v = lstCotizacion.get(0);
-        
-        v.setLstDetalleOferta(new ArrayList<DetalleOfertas>());
-        v.setLstDetalleOfertaLibros(new ArrayList<DetalleOfertas>());
+
+        v.setLstDetalleOferta(new ArrayList());
+        v.setLstDetalleOfertaLibros(new ArrayList());
         v.setLugarFecha(municipio.concat(",").concat(v.getFechaApertura()));
 
         String nombreVista = "";
@@ -243,7 +256,7 @@ public class OfertaBienesServiciosEJB {
         q.setParameter(5, idProceso.getIdProcesoAdq().getPadreIdProcesoAdq() == null ? null : idProceso.getIdProcesoAdq().getPadreIdProcesoAdq().getIdProcesoAdq());
 
         List lst2 = q.getResultList();
-        
+
         for (Object object1 : lst2) {
             Object[] datos1 = (Object[]) object1;
             DetalleOfertas det = new DetalleOfertas();
@@ -258,8 +271,6 @@ public class OfertaBienesServiciosEJB {
                 v.getLstDetalleOferta().add(det);
             }
         }
-
-        //lstCotizacion.add(v);
 
         return lstCotizacion;
     }
@@ -282,11 +293,30 @@ public class OfertaBienesServiciosEJB {
 
         return em.merge(resolucionesAdjudicativas);
     }
-    
-    public List<ResguardoBienes> getLstResguardoBienesByCodEntAndIdDetPro(String codigoEntidad, Integer idDetProcesoAdq){
-        Query q = em.createQuery("SELECT r FROM ResguardoBienes r WHERE r.codigoEntidad=:codEnt and r.idDetProcesoAdq.idDetProcesoAdq=:idDet and r.estadoEliminacion = 0 ORDER BY r.", ResguardoBienes.class);
+
+    public List<ResguardoBienes> getLstResguardoBienesByCodEntAndIdDetPro(String codigoEntidad, Integer idDetProcesoAdq) {
+        Query q = em.createQuery("SELECT r FROM ResguardoBienes r WHERE r.codigoEntidad=:codEnt and r.idDetProcesoAdq.idDetProcesoAdq=:idDet and r.estadoEliminacion = 0 ORDER BY r.idNivelEducativo.idNivelEducativo, r.idProducto.idProducto", ResguardoBienes.class);
         q.setParameter("codEnt", codigoEntidad);
         q.setParameter("idDet", idDetProcesoAdq);
         return q.getResultList();
+    }
+    
+    public List<DetalleContratadoPorComponenteDto> getLstDetalleContratado(String codigoEntidad, Integer idDetProcesoAdq){
+        Query q = em.createNamedQuery("Contratacion.DetalleContratadoPorComponenteDto", DetalleContratadoPorComponenteDto.class);
+        q.setParameter(1, codigoEntidad);
+        q.setParameter(2, idDetProcesoAdq);
+        return q.getResultList();
+    }
+    
+    public void guardarResguardo(ResguardoBienes resguardoBienes, String usuario){
+        if(resguardoBienes.getIdResguardo() == null){
+            resguardoBienes.setFechaInsercion(new Date());
+            resguardoBienes.setUsuarioInsercion(usuario);
+            em.persist(resguardoBienes);
+        }else{
+            resguardoBienes.setFechaModificacion(new Date());
+            resguardoBienes.setUsuarioModificacion(usuario);
+            em.merge(resguardoBienes);
+        }        
     }
 }

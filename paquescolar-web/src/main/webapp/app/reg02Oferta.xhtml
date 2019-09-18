@@ -65,11 +65,11 @@
                                  emptyMessage="No se han agregado proveedores" rowIndexVar="rowId"  
                                  rowKey="#{participante.idParticipante}" rowStyleClass="#{participante.estadoEliminacion eq 1 ? 'filaEliminada' : null}">
 
-                        <p:column headerText="Id" width="40" style="text-align: center;">
+                        <p:column headerText="Id" width="40" styleClass="centrado">
                             <p:outputLabel value="#{participante.idParticipante}" />
                         </p:column>
 
-                        <p:column headerText="Código" width="80" style="text-align: center;">
+                        <p:column headerText="Código" width="80" styleClass="centrado">
                             <p:outputLabel value="PROVE-#{participante.idEmpresa.idEmpresa}" />
                         </p:column>
 
@@ -81,7 +81,7 @@
                             <p:outputLabel value="#{participante.idEmpresa.razonSocial}" />
                         </p:column>
 
-                        <p:column headerText="Eliminar" width="40" style="text-align: center;">
+                        <p:column headerText="Eliminar" width="40" styleClass="centrado">
                             <p:commandLink oncomplete="PF('confirmDialog').show();" process="@this" disabled="#{ofertaMB.deshabilitar}">
                                 <p:outputLabel rendered="#{!participante.eliminar}"> <i class="fa fa-trash"></i></p:outputLabel>
                                 <p:outputLabel rendered="#{participante.eliminar}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
@@ -92,13 +92,13 @@
                             </p:commandLink>
                         </p:column>
 
-                        <p:column headerText="Cotización" width="50" style="text-align: center;">
+                        <p:column headerText="Cotización" width="50" styleClass="centrado">
                             <p:commandButton action="#{ofertaMB.rptCotizacion}" ajax="false" disabled="#{ofertaMB.selected.idOferta eq null}" icon="fa fa-print">
                                 <f:setPropertyActionListener value="#{participante}" target="#{ofertaMB.participanteSeleccionado}" />  
                             </p:commandButton>
                         </p:column>
 
-                        <p:column headerText="Ver Oferta" width="40" style="text-align: center;">
+                        <p:column headerText="Ver Oferta" width="40" styleClass="centrado">
                             <p:commandLink action="#{ofertaMB.editarOfertaParticipante}" disabled="#{ofertaMB.selected.idOferta eq null}">
                                 <f:param name="idParticipante" value="#{participante.idParticipante}"/>
                                 <f:param name="txtCodigoEntidad" value="#{participante.idOferta.codigoEntidad.codigoEntidad}"/>
@@ -188,7 +188,7 @@
                         <p:dataTable id="tblDetallePrecio" widgetVar="tblDetallePrecio" value="#{ofertaMB.lstPreciosReferencia}" var="precio" 
                                      emptyMessage="No se han registrado precios a este proveedor">
 
-                            <p:column headerText="Item" width="15" id="item" style="text-align: center;">
+                            <p:column headerText="Item" width="15" id="item" styleClass="centrado">
                                 <p:outputLabel value="#{precio.noItem}" />
                             </p:column>
 
@@ -218,7 +218,7 @@
                              update="tblParticipantes" oncomplete="PF('confirmDialog').hide();"/>  
             <p:commandButton id="decline" value="No" onclick="PF('confirmDialog').hide();" type="button" icon="fa fa-times-circle"/>
 
-        </p:confirmDialog> 
+        </p:confirmDialog>
 
         <p:remoteCommand name="findEntidad" update="menuBar tblParticipantes nombreCE cldFechaApertura btoAgregarProveedor" actionListener="#{ofertaMB.buscarEntidadEducativa}" />
         <p:remoteCommand name="findEmpresa" update="tbEmpresas:tblEmpresas" actionListener="#{ofertaMB.filterProveedores()}" />
