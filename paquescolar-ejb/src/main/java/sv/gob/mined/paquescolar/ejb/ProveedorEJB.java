@@ -638,7 +638,7 @@ public class ProveedorEJB {
             return proAdq.getIdProcesoAdq();
         }
     }
-
+    
     private String findLstIdEmpresa(String codMun, String codDep, BigDecimal idRubro, BigDecimal idAnho, 
             Boolean municipioIgual, Boolean byCapacidad, Integer cantidad) {
         String sql = "select distinct \n"
@@ -678,7 +678,50 @@ public class ProveedorEJB {
                 + "     pre.id_det_proceso_adq in (select id_det_proceso_adq from detalle_proceso_Adq where id_proceso_adq = ?3) \n"
                 + "     " + (byCapacidad ? " and (cip.CAPACIDAD_ACREDITADA - cip.CAPACIDAD_ADJUDICADA) >= "+ cantidad: "")
                 + " order by vw.pu_avg asc";
-        //+ "    mun_e.codigo_municipio " + (municipioIgual ? "=" : "<>") + "'" + codMun + "'";
+
+        return sql;
+    }
+
+    private String findLstIdEmpresaCumpleNiveles(String codMun, String codDep, BigDecimal idRubro, BigDecimal idAnho, 
+            Boolean municipioIgual, Boolean byCapacidad, Integer cantidad) {
+        String sql = "select distinct \n"
+                + "     cip.ID_CAP_INST_RUBRO,\n"
+                + "     cip.ID_MUESTRA_INTERES,\n"
+                + "     cip.CAPACIDAD_ACREDITADA,\n"
+                + "     cip.CAPACIDAD_ADJUDICADA,\n"
+                + "     cip.USUARIO_INSERCION,\n"
+                + "     cip.FECHA_INSERCION,\n"
+                + "     cip.USUARIO_MODIFICACION,\n"
+                + "     cip.FECHA_MODIFICACION,\n"
+                + "     cip.FECHA_ELIMINACION,\n"
+                + "     cip.ESTADO_ELIMINACION,\n"
+                + "     vw.pu_avg\n"
+                + " from \n"
+                + "     det_rubro_muestra_interes det\n"
+                + "     inner join empresa emp                  on emp.id_empresa = det.id_empresa\n"
+                + "     inner join municipio mun_e              on mun_e.id_municipio = emp.id_municipio\n"
+                + "     inner join detalle_proceso_adq dpa      on dpa.id_det_proceso_adq = det.id_det_proceso_adq\n"
+                + "     inner join proceso_adquisicion pa       on pa.id_proceso_adq = dpa.id_proceso_adq\n"
+                + "     inner join capa_distribucion_acre cap   on det.id_muestra_interes = cap.id_muestra_interes\n"
+                + "     inner join dis_municipio_interes dis    on dis.id_capa_distribucion = cap.id_capa_distribucion\n"
+                + "     inner join municipio mun                on mun.id_municipio = dis.id_municipio\n"
+                + "     inner join departamento dep             on mun.codigo_departamento = dep.codigo_departamento\n"
+                + "     inner join capa_inst_por_rubro  cip     on cip.id_muestra_interes = cap.id_muestra_interes\n"
+                + "     inner join precios_ref_rubro_emp pre    on emp.id_empresa = pre.id_empresa\n"
+                + "     inner join vw_sub_empresa_avg_pu vw     on vw.id_empresa = emp.id_empresa and vw.id_det_proceso_adq = dpa.id_det_proceso_adq and pre.id_empresa = vw.id_empresa\n"
+                + "     inner join vw_sub_niveles_by_cod_pro vws on vws.id_proceso_adq = dpa.id_proceso_adq and vws.id_nivel = pre.id_nivel_educativo\n"
+                + " where \n"
+                + "     mun.codigo_municipio = '" + codMun + "' and\n"
+                + "     dep.codigo_departamento = '" + codDep + "' and\n"
+                + "     dis.estado_eliminacion = 0 and\n"
+                + "     dpa.id_rubro_adq = " + idRubro + " and\n"
+                + "     pa.id_anho = " + idAnho + " and\n"
+                + "     det.estado_eliminacion = 0 and\n"
+                + "     mun_e.codigo_municipio " + (municipioIgual ? "=" : "<>") + "'" + codMun + "' and\n"
+                + "     vws.codigo_entidad = ?1 and vws.id_proceso_adq = ?2 and \n"
+                + "     pre.id_det_proceso_adq in (select id_det_proceso_adq from detalle_proceso_Adq where id_proceso_adq = ?3) \n"
+                + "     " + (byCapacidad ? " and (cip.CAPACIDAD_ACREDITADA - cip.CAPACIDAD_ADJUDICADA) >= "+ cantidad: "")
+                + " order by vw.pu_avg asc";
 
         return sql;
     }

@@ -71,6 +71,13 @@ public class EntidadEducativaEJB {
         return lstEntidadEducativa;
     }
 
+    public List<EstadisticaCenso> getLstEstadisticaByCodEntAndProceso(String codigoEntidad, Integer idProcesoAdq) {
+        Query q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codEnt and e.idProcesoAdq.idProcesoAdq=:idPro", EstadisticaCenso.class);
+        q.setParameter("codEnt", codigoEntidad);
+        q.setParameter("idPro", idProcesoAdq);
+        return q.getResultList();
+    }
+
     public EstadisticaCenso getEstadisticaByCodEntAndNivelAndProceso(String codEntidad, BigDecimal nivel, ProcesoAdquisicion procesoAdq) {
         Query q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codEnt and e.idNivelEducativo.idNivelEducativo=:nivel and e.idProcesoAdq=:procesoAdq", EstadisticaCenso.class);
         q.setParameter("codEnt", codEntidad);
@@ -136,6 +143,12 @@ public class EntidadEducativaEJB {
         } finally {
             return error;
         }
+    }
+
+    public List<TechoRubroEntEdu> getLstTechosByProceso(Integer idProcesoAdq) {
+        Query q = em.createQuery("SELECT t FROM TechoRubroEntEdu t WHERE t.idDetProcesoAdq.idProcesoAdq.idProcesoAdq=:idPro and t.estadoEliminacion = 0", TechoRubroEntEdu.class);
+        q.setParameter("idPro", idProcesoAdq);
+        return q.getResultList();
     }
 
     public TechoRubroEntEdu findTechoByProceso(DetalleProcesoAdq detProAdq, String codigoEntidad, String usuario) {

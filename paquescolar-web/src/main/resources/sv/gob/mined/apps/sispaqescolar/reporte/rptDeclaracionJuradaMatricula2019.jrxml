@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4a3c7c5b-138b-45a1-8d78-6065941b41ce">
 	<property name="ireport.zoom" value="2.357947691000002"/>
-	<property name="ireport.x" value="432"/>
-	<property name="ireport.y" value="82"/>
+	<property name="ireport.x" value="150"/>
+	<property name="ireport.y" value="226"/>
 	<parameter name="descripcionProcesoAdq" class="java.lang.String"/>
 	<parameter name="codigoEntidad" class="java.lang.String">
 		<defaultValueExpression><![CDATA[10001]]></defaultValueExpression>
@@ -75,7 +75,7 @@ where
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
 				<textFieldExpression><![CDATA["En el municipio de "+$F{NOMBRE_MUNICIPIO}+" del Departamento de "+$F{NOMBRE_DEPARTAMENTO}+
-" a las "+Herramientas.getFormatoLetrasHoraYFecha($F{SYSDATE})+" de dos mil diecinueve en las instalaciones del lugar destinado para la "+
+" a las "+Herramientas.getFormatoLetrasHoraYFecha($F{SYSDATE})+" en las instalaciones del lugar destinado para la "+
 "realización de la jornada de validación de matrícula, que se tomará de base para el proceso de contratación de los rubros del programa de Paquetes Escolares, "+
 "por la Dirección Departamental de Educación del Departamento de "+$F{NOMBRE_DEPARTAMENTO}+"; yo "+$F{NOMBRE_MIEMBRO}+" mayor de edad, con número de Documento "+
 "Único de Identidad "+$F{NUMERO_DUI}+", actuando en mi calidad de Director(a) del Centro Educativo "+$F{NOMBRE}+" con código de infraestructura "+

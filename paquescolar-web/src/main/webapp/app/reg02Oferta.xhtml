@@ -164,7 +164,7 @@
 
 
         <p:dialog id="dlgDetalleProveedor" header="#{menuController.isUsuarioDigitador?('PROVE-'.concat(ofertaMB.capaInstSeleccionada.idMuestraInteres.idEmpresa.idEmpresa)):ofertaMB.capaInstSeleccionada.idMuestraInteres.idEmpresa.razonSocial}"
-                  showEffect="fade" hideEffect="fade"  widgetVar="dlgDetalleProveedor" width="670" height="550" modal="true" >
+                  showEffect="fade" hideEffect="fade"  widgetVar="dlgDetalleProveedor" width="670" height="550"  >
             <h:panelGrid columns="1" >
                 <p:tabView>
                     <p:tab title="Fotos productos"  rendered="#{ofertaMB.rubro eq 3}">

@@ -5,6 +5,7 @@
 package sv.gob.mined.paquescolar.ejb;
 
 import java.math.BigDecimal;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
 import javax.persistence.EntityManager;
@@ -47,5 +48,13 @@ public class PreciosReferenciaEJB {
         } else {
             return (PreciosRefRubro) q.getSingleResult();
         }
+    }
+    
+    public List<PreciosRefRubro> getLstPreciosRefRubroByRubro(DetalleProcesoAdq rubro) {
+        Query q = em.createQuery("SELECT p FROM PreciosRefRubro p WHERE p.idDetProcesoAdq.idProcesoAdq.idAnho.anho=:anho and p.idDetProcesoAdq.idRubroAdq.idRubroInteres=:idRubro", PreciosRefRubro.class);
+        q.setParameter("anho", rubro.getIdProcesoAdq().getIdAnho().getAnho());
+        q.setParameter("idRubro", rubro.getIdRubroAdq().getIdRubroInteres());
+
+        return q.getResultList();
     }
 }

@@ -96,8 +96,6 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     @EJB
     private AnhoProcesoEJB anhoProcesoEJB;
 
-    
-
     /**
      * Creates a new instance of OfertaMB
      */
@@ -629,6 +627,9 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     public void consultarEmpresa() {
         municipioCe = datosGeograficosEJB.findNombreMunicipioCe(current.getCodigoEntidad().getCodigoEntidad());
         BigDecimal cantidad = entidadEducativaEJB.getCantidadTotalByCodEntAndIdProcesoAdq(codigoEntidad, current.getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq());
+        /*if (detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
+            cantidad = cantidad.multiply(new BigDecimal(4));
+        }*/
         lstEmpresas = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), current.getCodigoEntidad().getCodigoEntidad(), true, true, cantidad.toBigInteger());
         lstEmpresasOtros = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), current.getCodigoEntidad().getCodigoEntidad(), false, false, BigInteger.ZERO);
 

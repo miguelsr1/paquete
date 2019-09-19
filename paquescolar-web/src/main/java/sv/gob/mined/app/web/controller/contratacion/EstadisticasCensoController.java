@@ -29,6 +29,7 @@ import sv.gob.mined.paquescolar.ejb.PreciosReferenciaEJB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.EstadisticaCenso;
+import sv.gob.mined.paquescolar.model.NivelEducativo;
 import sv.gob.mined.paquescolar.model.OrganizacionEducativa;
 import sv.gob.mined.paquescolar.model.PreciosRefRubro;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
@@ -473,70 +474,18 @@ public class EstadisticasCensoController implements Serializable {
                 entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
 
                 if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() < 6) {//menor a 2018
-                    detProAdqUni = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, BigDecimal.ONE);
+                    detProAdqUni = getDetProceso(1);
                 } else {
-                    detProAdqUni = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(4));
-                    detProAdqUni2 = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(5));
+                    detProAdqUni = getDetProceso(4);
+                    detProAdqUni2 = getDetProceso(5);
                 }
 
-                detProAdqUti = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(2));
-                detProAdqZap = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(3));
+                detProAdqUti = getDetProceso(2);
+                detProAdqZap = getDetProceso(3);
 
-                setEstaditicaPar(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, BigDecimal.ONE, procesoAdquisicion));
-                setEstaditicaCiclo1(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("3"), procesoAdquisicion));
-                setEstaditicaCiclo2(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("4"), procesoAdquisicion));
-                setEstaditicaCiclo3(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("5"), procesoAdquisicion));
-                setEstaditicaBac(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("6"), procesoAdquisicion));
-                setEst7grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("7"), procesoAdquisicion));
-                setEst8grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("8"), procesoAdquisicion));
-                setEst9grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("9"), procesoAdquisicion));
-
-                preParUni = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaPar.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUni);
-                preCicloIUni = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo1.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUni);
-                preCicloIIUni = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo2.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUni);
-                preCicloIIIUni = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo3.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUni);
-                preBacUni = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaBac.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUni);
-
-                preParUti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaPar.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preCicloIUti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo1.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preCicloIIUti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo2.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preCicloIIIUti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo3.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preBacUti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaBac.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-
-                setEst1grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("10"), procesoAdquisicion));
-                setEst2grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("11"), procesoAdquisicion));
-                setEst3grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("12"), procesoAdquisicion));
-                setEst4grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("13"), procesoAdquisicion));
-                setEst5grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("14"), procesoAdquisicion));
-                setEst6grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("15"), procesoAdquisicion));
-                setEst1media(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("16"), procesoAdquisicion));
-                setEst2media(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("17"), procesoAdquisicion));
-                setEst3media(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("18"), procesoAdquisicion));
-                preGrado1Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est1grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preGrado2Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est2grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preGrado3Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est3grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preGrado4Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est4grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preGrado5Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est5grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preGrado6Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est6grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preBachi1Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est1media.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preBachi2Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est2media.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-
-                preGrado7Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est7grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preGrado8Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est8grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preGrado9Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est9grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-
-                preParZap = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaPar.getIdNivelEducativo().getIdNivelEducativo(), detProAdqZap);
-                preCicloIZap = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo1.getIdNivelEducativo().getIdNivelEducativo(), detProAdqZap);
-                preCicloIIZap = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo2.getIdNivelEducativo().getIdNivelEducativo(), detProAdqZap);
-                preCicloIIIZap = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo3.getIdNivelEducativo().getIdNivelEducativo(), detProAdqZap);
-                preBacZap = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaBac.getIdNivelEducativo().getIdNivelEducativo(), detProAdqZap);
-
-                techoUni = entidadEducativaEJB.findTechoByProceso(detProAdqUni, codigoEntidad, VarSession.getVariableSessionUsuario());
-                if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 5) {
-                    techoUni2 = entidadEducativaEJB.findTechoByProceso(detProAdqUni2, codigoEntidad, VarSession.getVariableSessionUsuario());
-                }
-                techoUti = entidadEducativaEJB.findTechoByProceso(detProAdqUti, codigoEntidad, VarSession.getVariableSessionUsuario());
-                techoZap = entidadEducativaEJB.findTechoByProceso(detProAdqZap, codigoEntidad, VarSession.getVariableSessionUsuario());
+                recuperarEstadisticas();
+                recuperarPreciosMaxRef();
+                recuperarTechos();
             } else {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de adquisición.");
             }
@@ -545,6 +494,160 @@ public class EstadisticasCensoController implements Serializable {
         } else {
             isProcesoAdq = true;
         }
+    }
+
+    private void recuperarTechos() {
+        List<TechoRubroEntEdu> lstTechos = entidadEducativaEJB.getLstTechosByProceso(procesoAdquisicion.getIdProcesoAdq());
+        
+        techoUni = getTecho(lstTechos, detProAdqUni);
+        if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 5) {
+            techoUni2 = getTecho(lstTechos, detProAdqUni2);
+        }
+        techoUti = getTecho(lstTechos, detProAdqUti);
+        techoZap = getTecho(lstTechos, detProAdqZap);
+    }
+
+    private void recuperarEstadisticas() {
+        List<EstadisticaCenso> lstEstadistica = entidadEducativaEJB.getLstEstadisticaByCodEntAndProceso(codigoEntidad, procesoAdquisicion.getIdProcesoAdq());
+
+        if (lstEstadistica.isEmpty()) {
+            estaditicaPar = crearEstadistica(BigDecimal.ONE);
+            estaditicaCiclo1 = crearEstadistica(new BigDecimal(3));
+            estaditicaCiclo2 = crearEstadistica(new BigDecimal(4));
+            estaditicaCiclo3 = crearEstadistica(new BigDecimal(5));
+            estaditicaBac = crearEstadistica(new BigDecimal(6));
+            est7grado = crearEstadistica(new BigDecimal(7));
+            est8grado = crearEstadistica(new BigDecimal(8));
+            est9grado = crearEstadistica(new BigDecimal(9));
+            est1grado = crearEstadistica(new BigDecimal(10));
+            est2grado = crearEstadistica(new BigDecimal(11));
+            est3grado = crearEstadistica(new BigDecimal(12));
+            est4grado = crearEstadistica(new BigDecimal(13));
+            est5grado = crearEstadistica(new BigDecimal(14));
+            est6grado = crearEstadistica(new BigDecimal(15));
+            est1media = crearEstadistica(new BigDecimal(16));
+            est2media = crearEstadistica(new BigDecimal(17));
+            est3media = crearEstadistica(new BigDecimal(18));
+        } else {
+            estaditicaPar = getEstadisticaCenso(lstEstadistica, 1);
+            estaditicaCiclo1 = getEstadisticaCenso(lstEstadistica, 3);
+            estaditicaCiclo2 = getEstadisticaCenso(lstEstadistica, 4);
+            estaditicaCiclo3 = getEstadisticaCenso(lstEstadistica, 5);
+            estaditicaBac = getEstadisticaCenso(lstEstadistica, 6);
+            est7grado = getEstadisticaCenso(lstEstadistica, 7);
+            est8grado = getEstadisticaCenso(lstEstadistica, 8);
+            est9grado = getEstadisticaCenso(lstEstadistica, 9);
+            est1grado = getEstadisticaCenso(lstEstadistica, 10);
+            est2grado = getEstadisticaCenso(lstEstadistica, 11);
+            est3grado = getEstadisticaCenso(lstEstadistica, 12);
+            est4grado = getEstadisticaCenso(lstEstadistica, 13);
+            est5grado = getEstadisticaCenso(lstEstadistica, 14);
+            est6grado = getEstadisticaCenso(lstEstadistica, 15);
+            est1media = getEstadisticaCenso(lstEstadistica, 16);
+            est2media = getEstadisticaCenso(lstEstadistica, 17);
+            est3media = getEstadisticaCenso(lstEstadistica, 18);
+        }
+    }
+
+    private void recuperarPreciosMaxRef() {
+        List<PreciosRefRubro> lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqUni);
+
+        if (lstPrecios.isEmpty()) {
+            JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
+        } else {
+            preParUni = getPrecioMax(lstPrecios, 1);
+            preCicloIUni = getPrecioMax(lstPrecios, 3);
+            preCicloIIUni = getPrecioMax(lstPrecios, 4);
+            preCicloIIIUni = getPrecioMax(lstPrecios, 5);
+            preBacUni = getPrecioMax(lstPrecios, 6);
+        }
+
+        lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqUti);
+
+        if (lstPrecios.isEmpty()) {
+            JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
+        } else {
+            preParUti = getPrecioMax(lstPrecios, 1);
+            preCicloIUti = getPrecioMax(lstPrecios, 3);
+            preCicloIIUti = getPrecioMax(lstPrecios, 4);
+            preCicloIIIUti = getPrecioMax(lstPrecios, 5);
+            preBacUti = getPrecioMax(lstPrecios, 6);
+
+            /*preGrado7Uti = getPrecioMax(lstPrecios, 7);
+            preGrado8Uti = getPrecioMax(lstPrecios, 8);
+            preGrado9Uti = getPrecioMax(lstPrecios, 9);
+
+            preGrado1Uti = getPrecioMax(lstPrecios, 10);
+            preGrado2Uti = getPrecioMax(lstPrecios, 11);
+            preGrado3Uti = getPrecioMax(lstPrecios, 12);
+            preGrado4Uti = getPrecioMax(lstPrecios, 13);
+            preGrado5Uti = getPrecioMax(lstPrecios, 14);
+            preGrado6Uti = getPrecioMax(lstPrecios, 15);
+            preBachi1Uti = getPrecioMax(lstPrecios, 16);
+            preBachi2Uti = getPrecioMax(lstPrecios, 17);*/
+        }
+
+        lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqZap);
+
+        if (lstPrecios.isEmpty()) {
+            JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
+        } else {
+            preParZap = getPrecioMax(lstPrecios, 1);
+            preCicloIZap = getPrecioMax(lstPrecios, 3);
+            preCicloIIZap = getPrecioMax(lstPrecios, 4);
+            preCicloIIIZap = getPrecioMax(lstPrecios, 5);
+            preBacZap = getPrecioMax(lstPrecios, 6);
+        }
+    }
+
+    private EstadisticaCenso crearEstadistica(BigDecimal idNivel) {
+        EstadisticaCenso est = new EstadisticaCenso();
+        est.setCodigoEntidad(codigoEntidad);
+        est.setEstadoEliminacion((short) 0);
+        est.setFechaInsercion(new Date());
+        est.setFemenimo(BigInteger.ZERO);
+        est.setIdNivelEducativo(new NivelEducativo(idNivel));
+        est.setIdProcesoAdq(procesoAdquisicion);
+        est.setMasculino(BigInteger.ZERO);
+        est.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+        return est;
+    }
+
+    private EstadisticaCenso getEstadisticaCenso(List<EstadisticaCenso> lstEstadistica, int idNivel) {
+        EstadisticaCenso estC = lstEstadistica.stream()
+                .filter(est -> est.getIdNivelEducativo().getIdNivelEducativo().intValue() == idNivel).findAny().get();
+        if (estC == null) {
+            estC = crearEstadistica(new BigDecimal(idNivel));
+        }
+        return estC;
+    }
+
+    private TechoRubroEntEdu getTecho(List<TechoRubroEntEdu> lstTechos, DetalleProcesoAdq detProcesoAdq) {
+        TechoRubroEntEdu techo = lstTechos.stream()
+                .filter(te -> te.getIdDetProcesoAdq().getIdDetProcesoAdq().compareTo(detProcesoAdq.getIdDetProcesoAdq()) == 0).findAny().get();
+        if (techo == null) {
+            techo = new TechoRubroEntEdu();
+
+            techo.setCodigoEntidad(codigoEntidad);
+            techo.setEstadoEliminacion(BigInteger.ZERO);
+            techo.setFechaInsercion(new Date());
+            techo.setIdDetProcesoAdq(detProcesoAdq);
+            techo.setMontoAdjudicado(BigDecimal.ZERO);
+            techo.setMontoDisponible(BigDecimal.ZERO);
+            techo.setMontoPresupuestado(BigDecimal.ZERO);
+            techo.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+        }
+        return techo;
+    }
+
+    private DetalleProcesoAdq getDetProceso(int idDet) {
+        return procesoAdquisicion.getDetalleProcesoAdqList().stream()
+                .filter(d -> d.getIdRubroAdq().getIdRubroInteres().intValue() == idDet).findAny().get();
+    }
+
+    private PreciosRefRubro getPrecioMax(List<PreciosRefRubro> lstPrecios, int idDet) {
+        return lstPrecios.stream()
+                .filter(p -> p.getIdNivelEducativo().getIdNivelEducativo().intValue() == idDet).findAny().get();
     }
 
     public PreciosRefRubro getPreParUni() {
