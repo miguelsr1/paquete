@@ -145,9 +145,10 @@ public class EntidadEducativaEJB {
         }
     }
 
-    public List<TechoRubroEntEdu> getLstTechosByProceso(Integer idProcesoAdq) {
-        Query q = em.createQuery("SELECT t FROM TechoRubroEntEdu t WHERE t.idDetProcesoAdq.idProcesoAdq.idProcesoAdq=:idPro and t.estadoEliminacion = 0", TechoRubroEntEdu.class);
+    public List<TechoRubroEntEdu> getLstTechosByProceso(Integer idProcesoAdq, String codigoEntidad) {
+        Query q = em.createQuery("SELECT t FROM TechoRubroEntEdu t WHERE t.idDetProcesoAdq.idProcesoAdq.idProcesoAdq=:idPro and t.codigoEntidad=:codEnt and t.estadoEliminacion = 0", TechoRubroEntEdu.class);
         q.setParameter("idPro", idProcesoAdq);
+        q.setParameter("codEnt", codigoEntidad);
         return q.getResultList();
     }
 

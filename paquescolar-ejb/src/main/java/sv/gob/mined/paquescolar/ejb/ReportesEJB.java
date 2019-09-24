@@ -102,12 +102,12 @@ public class ReportesEJB {
 
         lstRpt.get(0).setAnho(em.find(DetalleProcesoAdq.class, idDetProcesoAdq).getIdProcesoAdq().getIdAnho().getAnho());
 
-        q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion=0 and p.idEmpresa.numeroNit=:nit and p.idDetProcesoAdq.idDetProcesoAdq=:idDetProcesoAdq AND p.idProducto.codigoProducto not in (1) ORDER BY  FUNC('TO_NUMBER', p.noItem)", PreciosRefRubroEmp.class);
+        q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion=0 and p.idEmpresa.numeroNit=:nit and p.idDetProcesoAdq.idDetProcesoAdq=:idDetProcesoAdq AND p.idProducto.idProducto not in (1) ORDER BY  FUNC('TO_NUMBER', p.noItem)", PreciosRefRubroEmp.class);
         q.setParameter("nit", nit);
         q.setParameter("idDetProcesoAdq", idDetProcesoAdq);
         List<PreciosRefRubroEmp> lstPrecios = q.getResultList();
 
-        q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion=0 and p.idEmpresa.numeroNit=:nit and p.idDetProcesoAdq.idDetProcesoAdq=:idDetProcesoAdq AND p.idProducto.codigoProducto in (1) ORDER BY p.noItem", PreciosRefRubroEmp.class);
+        q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion=0 and p.idEmpresa.numeroNit=:nit and p.idDetProcesoAdq.idDetProcesoAdq=:idDetProcesoAdq AND p.idProducto.idProducto in (1) ORDER BY p.noItem", PreciosRefRubroEmp.class);
         q.setParameter("nit", nit);
         q.setParameter("idDetProcesoAdq", idDetProcesoAdq);
         List<PreciosRefRubroEmp> lstPreciosLibros = q.getResultList();

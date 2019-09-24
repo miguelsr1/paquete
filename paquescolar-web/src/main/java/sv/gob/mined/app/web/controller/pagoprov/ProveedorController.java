@@ -1204,7 +1204,7 @@ public class ProveedorController implements Serializable {
                 }
 
                 if (item == null && nivel == null) {
-                } else if (isProductoIsValid(item.getCodigoProducto())) {
+                } else if (isProductoIsValid(item.getIdProducto())) {
                     precioRef.setIdProducto(item);
                     precioRef.setIdNivelEducativo(nivel);
                     if (precioLibro.intValue() > 0) {
@@ -1219,9 +1219,9 @@ public class ProveedorController implements Serializable {
         }
     }
 
-    private boolean isProductoIsValid(String codProducto) {
+    private boolean isProductoIsValid(BigDecimal idProducto) {
         for (CatalogoProducto producto : lstItem) {
-            if (producto.getCodigoProducto().equals(codProducto)) {
+            if (producto.getIdProducto().intValue() == idProducto.intValue()) {
                 return true;
             }
         }

@@ -462,7 +462,7 @@ public class ModificatoriaController implements Serializable {
             item = (CatalogoProducto) param.get("item");
             nivel = (NivelEducativo) param.get("nivel");
 
-            if (item != null && nivel != null && !validarItemDuplicado(det, rowEdit) && isProductoIsValid(item.getCodigoProducto())) {
+            if (item != null && nivel != null && !validarItemDuplicado(det, rowEdit) && isProductoIsValid(item.getIdProducto())) {
                 det.setConsolidadoEspTec(item.toString() + ", " + nivel.toString());
                 det.setIdProducto(item.getIdProducto());
                 det.setIdNivelEducativo(nivel.getIdNivelEducativo());
@@ -497,9 +497,9 @@ public class ModificatoriaController implements Serializable {
         return false;
     }
 
-    private boolean isProductoIsValid(String codProducto) {
+    private boolean isProductoIsValid(BigDecimal idProducto) {
         for (CatalogoProducto producto : lstItem) {
-            if (producto.getCodigoProducto().equals(codProducto)) {
+            if (producto.getIdProducto().intValue() == idProducto.intValue()) {
                 return true;
             }
         }

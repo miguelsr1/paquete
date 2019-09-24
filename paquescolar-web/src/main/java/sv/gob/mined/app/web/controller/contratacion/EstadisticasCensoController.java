@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -497,8 +498,8 @@ public class EstadisticasCensoController implements Serializable {
     }
 
     private void recuperarTechos() {
-        List<TechoRubroEntEdu> lstTechos = entidadEducativaEJB.getLstTechosByProceso(procesoAdquisicion.getIdProcesoAdq());
-        
+        List<TechoRubroEntEdu> lstTechos = entidadEducativaEJB.getLstTechosByProceso(procesoAdquisicion.getIdProcesoAdq(), codigoEntidad);
+
         techoUni = getTecho(lstTechos, detProAdqUni);
         if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 5) {
             techoUni2 = getTecho(lstTechos, detProAdqUni2);
@@ -614,8 +615,13 @@ public class EstadisticasCensoController implements Serializable {
     }
 
     private EstadisticaCenso getEstadisticaCenso(List<EstadisticaCenso> lstEstadistica, int idNivel) {
-        EstadisticaCenso estC = lstEstadistica.stream()
-                .filter(est -> est.getIdNivelEducativo().getIdNivelEducativo().intValue() == idNivel).findAny().get();
+        EstadisticaCenso estC;
+        try {
+            estC = lstEstadistica.stream()
+                    .filter(est -> est.getIdNivelEducativo().getIdNivelEducativo().intValue() == idNivel).findAny().get();
+        } catch (NoSuchElementException e) {
+            estC = null;
+        }
         if (estC == null) {
             estC = crearEstadistica(new BigDecimal(idNivel));
         }
@@ -623,8 +629,13 @@ public class EstadisticasCensoController implements Serializable {
     }
 
     private TechoRubroEntEdu getTecho(List<TechoRubroEntEdu> lstTechos, DetalleProcesoAdq detProcesoAdq) {
-        TechoRubroEntEdu techo = lstTechos.stream()
-                .filter(te -> te.getIdDetProcesoAdq().getIdDetProcesoAdq().compareTo(detProcesoAdq.getIdDetProcesoAdq()) == 0).findAny().get();
+        TechoRubroEntEdu techo;
+        try {
+            techo = lstTechos.stream()
+                    .filter(te -> te.getIdDetProcesoAdq().getIdDetProcesoAdq().compareTo(detProcesoAdq.getIdDetProcesoAdq()) == 0).findAny().get();
+        } catch (NoSuchElementException e) {
+            techo = null;
+        }
         if (techo == null) {
             techo = new TechoRubroEntEdu();
 

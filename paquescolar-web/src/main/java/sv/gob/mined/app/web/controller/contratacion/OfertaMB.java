@@ -36,6 +36,7 @@ import sv.gob.mined.paquescolar.ejb.DatosGeograficosEJB;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.OfertaBienesServiciosEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
+import sv.gob.mined.paquescolar.ejb.ReportesEJB;
 import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.Empresa;
@@ -95,6 +96,8 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     private DatosGeograficosEJB datosGeograficosEJB;
     @EJB
     private AnhoProcesoEJB anhoProcesoEJB;
+    @EJB
+    private ReportesEJB reportesEJB;
 
     /**
      * Creates a new instance of OfertaMB
@@ -859,4 +862,13 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         lstCapaEmpresasOtros.addAll(lstEmpresasOtros);
     }
 
+    public void imprimirDetalleAContratar(){
+        HashMap param = new HashMap();
+        param.put("pRubro", detalleProceso.getIdRubroAdq().getDescripcionRubro());
+        param.put("pAnho", detalleProceso.getIdProcesoAdq().getIdAnho().getAnho());
+        param.put("pCodigoEntidad", codigoEntidad);
+        param.put("pHoraYFecha", entidadEducativa.getCodigoDepartamento().getNombreDepartamento() + ", " +JsfUtil.getFechaString(new Date()));
+        
+        Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/contratos/", "rptDetalleDeBienesUniforme", "rptDetalleDeBienesUniforme_");
+    }
 }
