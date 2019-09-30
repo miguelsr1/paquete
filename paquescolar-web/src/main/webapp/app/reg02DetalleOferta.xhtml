@@ -43,10 +43,14 @@
                         </p:selectOneMenu>
 
                         <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
-                        <h:panelGrid columns="3" id="codigoEntidad" >
-                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaMB.codigoEntidad}" size="6" disabled="#{participantesController.deshabilitado}" autocomplete="off" requiredMessage="Código de infraestructura" onkeyup="queryEntidad(this.value);"/>
+                        <p:outputPanel id="codigoEntidad" >
+                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaMB.codigoEntidad}" size="6" disabled="#{participantesController.deshabilitado}" autocomplete="off" 
+                                         requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5">
+                                <p:ajax event="keyup" update="nombreCE cboProveedor tblDetalleOferta" listener="#{ofertaMB.buscarEntidadEducativa}"/>
+                            </p:inputText>
+                            <p:spacer width="10"/>
                             <p:outputLabel id="nombreCE" value="#{ofertaMB.entidadEducativa.nombre}" style="font-weight: bold"/>
-                        </h:panelGrid>
+                        </p:outputPanel>
 
                         <p:outputLabel value="Proveedor:" />
                         <p:selectOneMenu id="cboProveedor" value="#{participantesController.idParticipante}" disabled="#{participantesController.deshabilitado}" onkeydown="setaFoco(this);" >

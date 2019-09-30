@@ -97,22 +97,8 @@ public class OfertaBienesServiciosEJB {
         Query q = em.createQuery("SELECT o FROM OfertaBienesServicios o WHERE o.codigoEntidad.codigoEntidad=:codigoEntidad and o.idDetProcesoAdq=:proceso and o.estadoEliminacion = 0", OfertaBienesServicios.class);
         q.setParameter("codigoEntidad", codigoEntidad);
         q.setParameter("proceso", proceso);
-        if (q.getResultList() != null && !q.getResultList().isEmpty()) {
-            OfertaBienesServicios oferta = (OfertaBienesServicios) q.getSingleResult();
-            for (int i = oferta.getParticipantesList().size() - 1; i >= 0; i--) {
-                if (oferta.getParticipantesList().get(i).getEstadoEliminacion().compareTo(BigInteger.ONE) == 0) {
-                    oferta.getParticipantesList().remove(oferta.getParticipantesList().get(i));
-                }
-            }
-
-            oferta.getParticipantesList().forEach((par) -> {
-                for (int i = par.getDetalleOfertasList().size() - 1; i >= 0; i--) {
-                    if (par.getDetalleOfertasList().get(i).getEstadoEliminacion().compareTo(BigInteger.ONE) == 0) {
-                        par.getDetalleOfertasList().remove(par.getDetalleOfertasList().get(i));
-                    }
-                }
-            });
-            return oferta;
+        if (!q.getResultList().isEmpty()) {
+            return (OfertaBienesServicios) q.getSingleResult();
         } else {
             return null;
         }

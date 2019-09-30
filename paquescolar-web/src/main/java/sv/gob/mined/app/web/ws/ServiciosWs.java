@@ -21,7 +21,7 @@ import sv.gob.mined.paquescolar.ws.RestPaquete;
  *
  * @author misanchez
  */
-@Path("servicios")
+//@Path("servicios")
 public class ServiciosWs {
     @EJB
     private RestPaquete restPaquete;

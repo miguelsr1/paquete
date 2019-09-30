@@ -1454,4 +1454,8 @@ public class ProveedorController implements Serializable {
             return "";
         }
     }
+
+    public void calcularNoItems() {
+        proveedorEJB.calcularNoItems();
+    }
 }

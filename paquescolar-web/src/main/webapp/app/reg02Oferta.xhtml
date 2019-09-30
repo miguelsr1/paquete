@@ -43,10 +43,14 @@
                         </p:selectOneMenu>
 
                         <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
-                        <h:panelGrid columns="3" id="codigoEntidad" >
-                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaMB.codigoEntidad}" size="6" disabled="#{ofertaMB.deshabilitar}" autocomplete="off" requiredMessage="Código de infraestructura" onkeyup="queryEntidad(this.value);"/>
+                        <p:outputPanel id="codigoEntidad" >
+                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaMB.codigoEntidad}" size="6" disabled="#{ofertaMB.deshabilitar}" autocomplete="off" 
+                                         requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5">
+                                <p:ajax event="keyup" update="menuBar tblParticipantes nombreCE cldFechaApertura btoAgregarProveedor" listener="#{ofertaMB.buscarEntidadEducativa}"/>
+                            </p:inputText>
+                            <p:spacer width="10"/>
                             <p:outputLabel id="nombreCE" value="#{ofertaMB.entidadEducativa.nombre}" style="font-weight: bold"/>
-                        </h:panelGrid>
+                        </p:outputPanel>
 
                         <p:outputLabel value="Fecha de registro:" for="cldFechaApertura" />
                         <p:calendar id="cldFechaApertura" value="#{ofertaMB.selected.fechaApertura}"  pattern="dd/MM/yyyy" size="11" disabled="#{ofertaMB.deshabilitar}" onkeypress="return disableEnter();" requiredMessage="Fecha de apertura de la oferta" />
@@ -128,16 +132,15 @@
 
 
 
-        <p:dialog id="dlgProveedor" widgetVar="dlgProveedor" header="Seleccione un proveedor" closable="true" style="font-size: 11px;" modal="true" showEffect="fade" hideEffect="fade" minWidth="1000" width="1000">
-            <p:tabView id="tbEmpresas">
+        <p:dialog id="dlgProveedor" widgetVar="dlgProveedor" header="Seleccione un proveedor" closable="true" style="font-size: 11px;" modal="true" showEffect="fade" hideEffect="fade" minWidth="1000" width="1000" height="500">
+            <p:tabView id="tbEmpresas" scrollable="true">
                 <p:tab title="Municipio: #{ofertaMB.municipioCe}">
                     <h:panelGrid columns="2" style="width: 100%;" rendered="#{!menuController.isUsuarioDigitador}">
                         <h:outputText value="Nombre:"/>
                         <p:inputText style="width: 100%;" value="#{ofertaMB.nombreEmp}" onkeyup="queryEmpresa(this.value);" />
                     </h:panelGrid>
                     <br/>
-                    <p:dataView id="tblEmpresas" var="capaEmpresa" value="#{ofertaMB.lstCapaEmpresas}" rows="3" paginator="true"
-                                paginatorPosition="top"
+                    <p:dataView id="tblEmpresas" var="capaEmpresa" value="#{ofertaMB.lstCapaEmpresas}" 
                                 gridIcon="fa fa-th-large" listIcon="fa fa-bars">
                         <ui:include src="/app/comunes/fragmentos/contrataciones/ofertaListadoProveedores.xhtml"/>
                     </p:dataView>
@@ -149,8 +152,7 @@
                         <p:inputText style="width: 100%;" value="#{ofertaMB.nombreEmpOtros}" onkeyup="queryEmpresaOtros(this.value);" />
                     </h:panelGrid>
                     <br/>
-                    <p:dataView id="tblEmpresasOtras" var="capaEmpresa" value="#{ofertaMB.lstCapaEmpresasOtros}" rows="3" paginator="true"
-                                paginatorPosition="top"
+                    <p:dataView id="tblEmpresasOtras" var="capaEmpresa" value="#{ofertaMB.lstCapaEmpresasOtros}"
                                 gridIcon="fa fa-th-large" listIcon="fa fa-bars">
                         <ui:include src="/app/comunes/fragmentos/contrataciones/ofertaListadoProveedores.xhtml"/>
                     </p:dataView>

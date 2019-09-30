@@ -63,6 +63,7 @@ public class ConamypeEJB {
 
     @WebMethod
     public void setDatosProveedor(String jsonString, String clave) {
+        Logger.getLogger(ConamypeEJB.class.getName()).log(Level.INFO, "Entro");
         if (clave.equals("CONAMYPE_MINED2019")) {
             if (isActivoWsConamype()) {
                 //if (true) {
@@ -349,7 +350,7 @@ public class ConamypeEJB {
 
                 } catch (NumberFormatException | ParseException ex) {
                     Logger.getLogger(ConamypeEJB.class.getName()).log(Level.SEVERE, null, "Error en el json\n: json: " + jsonString);
-                    
+
                     eMailEJB.enviarMailDeError("Error - WS CONAMYPE - MINED", "Ah ocurrido el sigueinte error en el proceso de exportación de proveedores.", ex);
                 }
             } else {
@@ -437,6 +438,7 @@ public class ConamypeEJB {
 
     /**
      * Web service operation
+     *
      * @param numeroNit
      * @param idDet
      * @param capacidad

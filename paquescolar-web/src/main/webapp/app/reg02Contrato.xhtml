@@ -42,10 +42,14 @@
                                 <p:ajax update="pnlFiltro " listener="#{ofertaMB.limpiarFiltros}"/>
                             </p:selectOneMenu>
                             <p:outputLabel value="#{bundle['ce.codEnt']}:" />
-                            <h:panelGrid columns="3" id="codigoEntidad" >
-                                <p:inputText maxlength="5" value="#{contratosOrdenesComprasController.codigoEntidad}" size="6" autocomplete="off" disabled="#{contratosOrdenesComprasController.deshabilitado}" onkeyup="queryEntidad(this.value);"/>
+                            <p:outputPanel id="codigoEntidad" >
+                                <p:inputText maxlength="5" value="#{contratosOrdenesComprasController.codigoEntidad}" size="6" autocomplete="off" 
+                                             disabled="#{contratosOrdenesComprasController.deshabilitado}" onkeyup="return this.value.length >= 5">
+                                    <p:ajax event="keyup" update="cboRubro nombreCE cboProveedor" listener="#{contratosOrdenesComprasController.buscarEntidadEducativa}" />
+                                </p:inputText>
+                                <p:spacer width="10"/>
                                 <p:outputLabel id="nombreCE" value="#{contratosOrdenesComprasController.entidadEducativa.nombre}" style="font-weight: bold"/>
-                            </h:panelGrid>
+                            </p:outputPanel>
 
                             <p:outputLabel value="Proveedor:" />
                             <p:selectOneMenu id="cboProveedor" value="#{contratosOrdenesComprasController.idParticipante}" 
@@ -132,7 +136,7 @@
                         <p:spacer width="10" height="8"/>
                         <p:outputLabel value="Documentos contractuales" />
                     </f:facet>
-                    
+
                     <p:selectManyCheckbox value="#{contratosOrdenesComprasController.lstSelectDocumentosImp}" layout="responsive" columns="2" >
                         <f:selectItems value="#{contratosOrdenesComprasController.lstDocumentosImp}" />
                     </p:selectManyCheckbox>
@@ -148,7 +152,7 @@
                 </p:panel>
             </div>
         </div>
-        
+
 
         <p:dialog id="dlgHistorialCambiosReserva" widgetVar="dlgHistorialCambiosReserva" modal="true" draggable="false" width="900" resizable="false" header="Historial de Cambios a Reserva de Fondos">
             <p:panel>

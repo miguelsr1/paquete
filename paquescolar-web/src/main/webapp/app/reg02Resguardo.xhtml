@@ -41,10 +41,14 @@
                         </p:selectOneMenu>
 
                         <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
-                        <h:panelGrid columns="3" id="codigoEntidad" >
-                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{resguardoMB.codigoEntidad}" size="6" autocomplete="off" requiredMessage="Código de infraestructura" onkeyup="queryEntidad(this.value);"/>
+                        <p:outputPanel id="codigoEntidad" >
+                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{resguardoMB.codigoEntidad}" size="6" autocomplete="off" 
+                                         requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5">
+                                <p:ajax event="keyup" update="menuBar nombreCE tblDetalleOferta" listener="#{resguardoMB.buscarEntidadEducativa}" />
+                            </p:inputText>
+                            <p:spacer width="10"/>
                             <p:outputLabel id="nombreCE" value="#{resguardoMB.entidadEducativa.nombre}" style="font-weight: bold"/>
-                        </h:panelGrid>
+                        </p:outputPanel>
                     </p:panelGrid>
                 </div>
 

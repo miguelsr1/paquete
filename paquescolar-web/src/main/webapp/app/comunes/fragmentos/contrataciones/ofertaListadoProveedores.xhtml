@@ -30,7 +30,7 @@
     </p:dataViewGridItem>
 
     <p:dataViewListItem>
-        <h:panelGrid columns="2" style="width:100%" columnClasses="col8,col4">
+        <h:panelGrid columns="2" style="width:100%" columnClasses="col10,col2">
             <p:outputPanel>
                 <h:panelGrid columns="2" cellpadding="5">
                     <h:outputText value="Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
@@ -39,11 +39,11 @@
                     <h:outputText value="Tipo Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
                     <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.distribuidor eq 1 ? 'PRODUCTOR' : 'DISTRIBUIDOR'}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
 
-                    <h:outputText value="Código proveedor" style="#{menuController.isUsuarioDigitador?'font-size: 14px;':'font-size: 12px;'}"/>
-                    <h:outputText value="PROVE-#{capaEmpresa.idMuestraInteres.idEmpresa.idEmpresa}" style="#{menuController.isUsuarioDigitador?'font-weight: bold;font-size: 14px;':'font-weight: bold;font-size: 12px;'}"/>
+                    <h:outputText value="Código proveedor" style="#{menuController.isUsuarioDigitador?'font-size: 12px;':'font-size: 11px;'}"/>
+                    <h:outputText value="PROVE-#{capaEmpresa.idMuestraInteres.idEmpresa.idEmpresa}" style="#{menuController.isUsuarioDigitador?'font-weight: bold;font-size: 12px;':'font-weight: bold;font-size: 11px;'}"/>
                     
-                    <h:outputText value="Capacidad disponible" style="#{menuController.isUsuarioDigitador?'font-size: 14px;':'font-size: 12px;'}"/>
-                    <h:outputText value="#{capaEmpresa.capacidadAcreditada - capaEmpresa.capacidadAdjudicada}" style="#{menuController.isUsuarioDigitador?'font-weight: bold;font-size: 14px;':'font-weight: bold;font-size: 12px;'}"/>
+                    <h:outputText value="Capacidad disponible" style="#{menuController.isUsuarioDigitador?'font-size: 12px;':'font-size: 11px;'}"/>
+                    <h:outputText value="#{capaEmpresa.capacidadAcreditada - capaEmpresa.capacidadAdjudicada}" style="#{menuController.isUsuarioDigitador?'font-weight: bold;font-size: 12px;':'font-weight: bold;font-size: 11px;'}"/>
 
                     <h:outputText value="Municipio y Departamento:" rendered="#{!menuController.isUsuarioDigitador}"/>
                     <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.nombreMunicipio}, #{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.codigoDepartamento.nombreDepartamento}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>

@@ -486,14 +486,23 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
                 detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), rubro);
-                entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
+                //entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
 
-                if (entidadEducativa == null) {
-                    JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + codigoEntidad);
+                oferta = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(codigoEntidad, detalleProceso);
+
+                if (oferta == null) {
+                    entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
+
+                    if (entidadEducativa == null) {
+                        JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + codigoEntidad);
+                    } else {
+                        JsfUtil.mensajeError("No existe un proceso de contratación para este centro escolar.");
+                    }
                 } else {
-
                     if (VarSession.getDepartamentoUsuarioSession() != null) {
                         String dep = getRecuperarProceso().getDepartamento();
+                        entidadEducativa = oferta.getCodigoEntidad();
+
                         if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep) || (int) VarSession.getVariableSession("idTipoUsuario") == 1) {
                             oferta = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(codigoEntidad, detalleProceso);
 

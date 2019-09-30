@@ -141,10 +141,14 @@
 
                     <h:panelGrid id="pnlFiltro" columns="4" >
                         <p:outputLabel value="#{bundle['ce.codEnt']}:" />
-                        <h:panelGrid columns="3" id="codigoEntidad" >
-                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{estadisticasCensoController.codigoEntidad}" size="5" autocomplete="false" disabled="#{estadisticasCensoController.deshabilitado}" onkeyup="queryEntidad(this.value);"/>
+                        <p:outputPanel id="codigoEntidad" >
+                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{estadisticasCensoController.codigoEntidad}" size="5" 
+                                         autocomplete="false" disabled="#{estadisticasCensoController.deshabilitado}" onkeyup="return this.value.length >= 5">
+                                <p:ajax event="keyup" listener="#{estadisticasCensoController.buscarEntidadEducativa}" update="nombreCE pnlPresupuesto pnlRepresentanteCe"/>
+                            </p:inputText>
+                            <p:spacer width="10"/>
                             <p:outputLabel id="nombreCE" value="#{estadisticasCensoController.entidadEducativa.nombre}" style="font-weight: bold"/>
-                        </h:panelGrid>
+                        </p:outputPanel>
                     </h:panelGrid>
                 </div>
 

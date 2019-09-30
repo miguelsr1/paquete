@@ -147,10 +147,6 @@ public class ResguardoMB extends RecuperarProcesoUtil implements Serializable {
     
     public void buscarEntidadEducativa() {
         if (codigoEntidad.length() == 5) {
-            /**
-             * Fecha: 30/08/2018 Comentario: Validación de seleccion del año y
-             * proceso de adquisición
-             */
             if (getRecuperarProceso().getProcesoAdquisicion() == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
@@ -164,9 +160,8 @@ public class ResguardoMB extends RecuperarProcesoUtil implements Serializable {
                     if (VarSession.getDepartamentoUsuarioSession() != null) {
                         String dep = getRecuperarProceso().getDepartamento();
                         if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep) || (Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {
-                            if (ofertaBienesServiciosEJB.isOfertaRubro(codigoEntidad, detalleProceso)) {
-                                current = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(codigoEntidad, detalleProceso);
-                                
+                            current = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(codigoEntidad, detalleProceso);
+                            if (current != null) {
                                 lstResguardoBienes = ofertaBienesServiciosEJB.getLstResguardoBienesByCodEntAndIdDetPro(codigoEntidad, detalleProceso.getIdDetProcesoAdq());
                             } else {
                                 JsfUtil.mensajeError("No existe un proceso de contratación para este centro escolar.");

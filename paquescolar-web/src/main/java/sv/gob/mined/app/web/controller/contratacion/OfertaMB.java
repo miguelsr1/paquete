@@ -65,6 +65,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     private String tipoDocumentoImp = "";
     private String nombreEmp = "";
     private String nombreEmpOtros = "";
+    private String idNiveles = "";
     private Boolean showProductos = false;
     private Boolean deshabilitar = true;
     private Boolean modifDesac = false;
@@ -628,11 +629,29 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     }
 
     public void consultarEmpresa() {
+        String noItems = "";
         municipioCe = datosGeograficosEJB.findNombreMunicipioCe(current.getCodigoEntidad().getCodigoEntidad());
         BigDecimal cantidad = entidadEducativaEJB.getCantidadTotalByCodEntAndIdProcesoAdq(codigoEntidad, current.getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq());
+        //idNiveles = entidadEducativaEJB.getNivelesDeEntidadEducativa(codigoEntidad, JsfUtil.getProcesoAdqPadre(detalleProceso.getIdProcesoAdq()));
         /*if (detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
             cantidad = cantidad.multiply(new BigDecimal(4));
         }*/
+
+        switch (idNiveles) {
+            case "1":
+                noItems = "1,2,3,4,5";
+                break;
+            case "2":
+                noItems = "1,2,3,4,5";
+                break;
+            case "6":
+                break;
+            case "1,2":
+                break;
+            case "2,6":
+                break;
+        }
+
         lstEmpresas = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), current.getCodigoEntidad().getCodigoEntidad(), true, true, cantidad.toBigInteger());
         lstEmpresasOtros = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), current.getCodigoEntidad().getCodigoEntidad(), false, false, BigInteger.ZERO);
 
@@ -786,10 +805,17 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                 current.setIdDetProcesoAdq(detalleProceso);
                 abrirDialogCe = false;
 
-                entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
-                if (entidadEducativa == null) {
-                    JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + current.getCodigoEntidad());
+                current = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(codigoEntidad, detalleProceso);
+
+                if (current == null) {
+                    entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
+                    if (entidadEducativa == null) {
+                        JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + current.getCodigoEntidad());
+                    } else {
+                        JsfUtil.mensajeError("No existe un proceso de contratación para este centro escolar.");
+                    }
                 } else {
+                    entidadEducativa = current.getCodigoEntidad();
                     ejecutarCalculo(codigoEntidad);
                     cargarOferta();
                 }
@@ -803,17 +829,17 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     }
 
     private void cargarOferta() {
-        getSelected().setCodigoEntidad(entidadEducativa);
+        //getSelected().setCodigoEntidad(entidadEducativa);
         if (VarSession.getDepartamentoUsuarioSession() != null) {
             String dep = getRecuperarProceso().getDepartamento();
             if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep)
                     || (Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {
                 if (VarSession.getVariableSessionED() == 1) {
-                    if (ofertaBienesServiciosEJB.isOfertaRubro(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq())) {
+                    if (current != null) {
                         JsfUtil.mensajeError("Ya existe un proceso de contratación para este centro escolar.");
                     }
                 } else if (VarSession.getVariableSessionED() == 2) {
-                    current = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq());
+                    //current = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq());
 
                     if (current == null) {
                         JsfUtil.mensajeError("No existe un proceso de contratación para este centro escolar.");
@@ -862,13 +888,13 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         lstCapaEmpresasOtros.addAll(lstEmpresasOtros);
     }
 
-    public void imprimirDetalleAContratar(){
+    public void imprimirDetalleAContratar() {
         HashMap param = new HashMap();
         param.put("pRubro", detalleProceso.getIdRubroAdq().getDescripcionRubro());
         param.put("pAnho", detalleProceso.getIdProcesoAdq().getIdAnho().getAnho());
         param.put("pCodigoEntidad", codigoEntidad);
-        param.put("pHoraYFecha", entidadEducativa.getCodigoDepartamento().getNombreDepartamento() + ", " +JsfUtil.getFechaString(new Date()));
-        
+        param.put("pHoraYFecha", entidadEducativa.getCodigoDepartamento().getNombreDepartamento() + ", " + JsfUtil.getFechaString(new Date()));
+
         Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/contratos/", "rptDetalleDeBienesUniforme", "rptDetalleDeBienesUniforme_");
     }
 }

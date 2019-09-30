@@ -36,6 +36,7 @@ import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.DetalleRequerimiento;
 import sv.gob.mined.paquescolar.model.DisMunicipioInteres;
 import sv.gob.mined.paquescolar.model.Empresa;
+import sv.gob.mined.paquescolar.model.EmpresaNoItem;
 import sv.gob.mined.paquescolar.model.EntidadFinanciera;
 import sv.gob.mined.paquescolar.model.NivelEducativo;
 import sv.gob.mined.paquescolar.model.Participantes;
@@ -591,7 +592,7 @@ public class ProveedorEJB {
         return q.getResultList();
     }
 
-    public List<CapaInstPorRubro> getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(DetalleProcesoAdq detProcesoAdq, String codigoEntidad, 
+    public List<CapaInstPorRubro> getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(DetalleProcesoAdq detProcesoAdq, String codigoEntidad,
             Boolean municipioIgual, Boolean byCapacidad, BigInteger cantidad) {
         String codMunicipio;
         String codDepartamento;
@@ -622,7 +623,7 @@ public class ProveedorEJB {
         idAnho = detTemp.getIdProcesoAdq().getIdAnho().getIdAnho();
 
         //dbms_random.value
-        q = em.createNativeQuery(findLstIdEmpresa(codMunicipio, codDepartamento, idRubro, idAnho, 
+        q = em.createNativeQuery(findLstIdEmpresa(codMunicipio, codDepartamento, idRubro, idAnho,
                 municipioIgual, byCapacidad, cantidad.intValue()), CapaInstPorRubro.class);
         q.setParameter(1, codigoEntidad);
         q.setParameter(2, getProcesoAdqPadre(detProcesoAdq.getIdProcesoAdq()));
@@ -630,16 +631,16 @@ public class ProveedorEJB {
         lstCapa.addAll(q.getResultList());
         return lstCapa;
     }
-    
-    private Integer getProcesoAdqPadre(ProcesoAdquisicion proAdq){
-        if(proAdq.getPadreIdProcesoAdq() != null){
+
+    private Integer getProcesoAdqPadre(ProcesoAdquisicion proAdq) {
+        if (proAdq.getPadreIdProcesoAdq() != null) {
             return getProcesoAdqPadre(proAdq.getPadreIdProcesoAdq());
-        }else{
+        } else {
             return proAdq.getIdProcesoAdq();
         }
     }
-    
-    private String findLstIdEmpresa(String codMun, String codDep, BigDecimal idRubro, BigDecimal idAnho, 
+
+    private String findLstIdEmpresa(String codMun, String codDep, BigDecimal idRubro, BigDecimal idAnho,
             Boolean municipioIgual, Boolean byCapacidad, Integer cantidad) {
         String sql = "select distinct \n"
                 + "     cip.ID_CAP_INST_RUBRO,\n"
@@ -676,13 +677,13 @@ public class ProveedorEJB {
                 + "     mun_e.codigo_municipio " + (municipioIgual ? "=" : "<>") + "'" + codMun + "' and\n"
                 + "     pre.id_nivel_educativo in (select id_nivel from vw_sub_niveles_by_cod_pro where codigo_entidad = ?1 and id_proceso_adq = ?2) and \n"
                 + "     pre.id_det_proceso_adq in (select id_det_proceso_adq from detalle_proceso_Adq where id_proceso_adq = ?3) \n"
-                + "     " + (byCapacidad ? " and (cip.CAPACIDAD_ACREDITADA - cip.CAPACIDAD_ADJUDICADA) >= "+ cantidad: "")
+                + "     " + (byCapacidad ? " and (cip.CAPACIDAD_ACREDITADA - cip.CAPACIDAD_ADJUDICADA) >= " + cantidad : "")
                 + " order by vw.pu_avg asc";
 
         return sql;
     }
 
-    private String findLstIdEmpresaCumpleNiveles(String codMun, String codDep, BigDecimal idRubro, BigDecimal idAnho, 
+    private String findLstIdEmpresaCumpleNiveles(String codMun, String codDep, BigDecimal idRubro, BigDecimal idAnho,
             Boolean municipioIgual, Boolean byCapacidad, Integer cantidad) {
         String sql = "select distinct \n"
                 + "     cip.ID_CAP_INST_RUBRO,\n"
@@ -720,7 +721,7 @@ public class ProveedorEJB {
                 + "     mun_e.codigo_municipio " + (municipioIgual ? "=" : "<>") + "'" + codMun + "' and\n"
                 + "     vws.codigo_entidad = ?1 and vws.id_proceso_adq = ?2 and \n"
                 + "     pre.id_det_proceso_adq in (select id_det_proceso_adq from detalle_proceso_Adq where id_proceso_adq = ?3) \n"
-                + "     " + (byCapacidad ? " and (cip.CAPACIDAD_ACREDITADA - cip.CAPACIDAD_ADJUDICADA) >= "+ cantidad: "")
+                + "     " + (byCapacidad ? " and (cip.CAPACIDAD_ACREDITADA - cip.CAPACIDAD_ADJUDICADA) >= " + cantidad : "")
                 + " order by vw.pu_avg asc";
 
         return sql;
@@ -1278,5 +1279,76 @@ public class ProveedorEJB {
         Query q = em.createNamedQuery("Contratacion.DetalleContratacionPorItemDto", DetalleContratacionPorItemDto.class);
         q.setParameter(1, idDetalleProcesoAdq);
         return q.getResultList();
+    }
+
+    public void calcularNoItems() {
+        Integer idDet = 51;
+        Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion = 0 and p.idDetProcesoAdq.idDetProcesoAdq=:idDet ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
+        q.setParameter("idDet", idDet);
+
+        List<PreciosRefRubroEmp> lstPre = q.getResultList();
+        BigDecimal idEmpTemp = BigDecimal.ZERO;
+        EmpresaNoItem emp = null;
+
+        for (PreciosRefRubroEmp precios : lstPre) {
+
+            if (idEmpTemp.intValue() == 0) {
+                idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
+                emp = new EmpresaNoItem();
+                emp.setIdEmpresa(idEmpTemp);
+                emp.setIdDetProceoAdq(idDet);
+            } else if (idEmpTemp.intValue() == precios.getIdEmpresa().getIdEmpresa().intValue()) {
+
+            } else {
+                em.persist(emp);
+
+                idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
+                emp = new EmpresaNoItem();
+                emp.setIdEmpresa(idEmpTemp);
+                emp.setIdDetProceoAdq(idDet);
+            }
+
+            switch (precios.getNoItem()) {
+                case "1":
+                    emp.setItem1("1");
+                    break;
+                case "2":
+                    emp.setItem2("2");
+                    break;
+                case "3":
+                    emp.setItem3("3");
+                    break;
+                case "4":
+                    emp.setItem4("4");
+                    break;
+                case "5":
+                    emp.setItem5("5");
+                    break;
+                case "6":
+                    emp.setItem6("6");
+                    break;
+                case "7":
+                    emp.setItem7("7");
+                    break;
+                case "8":
+                    emp.setItem8("8");
+                    break;
+                case "9":
+                    emp.setItem9("9");
+                    break;
+                case "10":
+                    emp.setItem10("10");
+                    break;
+                case "11":
+                    emp.setItem11("11");
+                    break;
+                case "12":
+                    emp.setItem12("12");
+                    break;
+                case "13":
+                    emp.setItem13("13");
+                    break;
+            }
+        }
     }
 }

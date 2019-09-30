@@ -475,14 +475,14 @@ public class EstadisticasCensoController implements Serializable {
                 entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
 
                 if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() < 6) {//menor a 2018
-                    detProAdqUni = getDetProceso(1);
+                    detProAdqUni = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, BigDecimal.ONE);//getDetProceso(1);
                 } else {
-                    detProAdqUni = getDetProceso(4);
-                    detProAdqUni2 = getDetProceso(5);
+                    detProAdqUni = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(4));
+                    detProAdqUni2 = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(5));
                 }
 
-                detProAdqUti = getDetProceso(2);
-                detProAdqZap = getDetProceso(3);
+                detProAdqUti = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(2));
+                detProAdqZap = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(3));
 
                 recuperarEstadisticas();
                 recuperarPreciosMaxRef();
@@ -498,14 +498,18 @@ public class EstadisticasCensoController implements Serializable {
     }
 
     private void recuperarTechos() {
-        List<TechoRubroEntEdu> lstTechos = entidadEducativaEJB.getLstTechosByProceso(procesoAdquisicion.getIdProcesoAdq(), codigoEntidad);
+        if (detProAdqUni == null) {
+            JsfUtil.mensajeError("Error en el proceso de adquisicion.");
+        } else {
+            List<TechoRubroEntEdu> lstTechos = entidadEducativaEJB.getLstTechosByProceso(procesoAdquisicion.getIdProcesoAdq(), codigoEntidad);
 
-        techoUni = getTecho(lstTechos, detProAdqUni);
-        if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 5) {
-            techoUni2 = getTecho(lstTechos, detProAdqUni2);
+            techoUni = getTecho(lstTechos, detProAdqUni);
+            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 5) {
+                techoUni2 = getTecho(lstTechos, detProAdqUni2);
+            }
+            techoUti = getTecho(lstTechos, detProAdqUti);
+            techoZap = getTecho(lstTechos, detProAdqZap);
         }
-        techoUti = getTecho(lstTechos, detProAdqUti);
-        techoZap = getTecho(lstTechos, detProAdqZap);
     }
 
     private void recuperarEstadisticas() {
@@ -551,30 +555,33 @@ public class EstadisticasCensoController implements Serializable {
     }
 
     private void recuperarPreciosMaxRef() {
-        List<PreciosRefRubro> lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqUni);
-
-        if (lstPrecios.isEmpty()) {
-            JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
+        if (detProAdqUni == null) {
+            JsfUtil.mensajeError("Error en el proceso de adquisicion.");
         } else {
-            preParUni = getPrecioMax(lstPrecios, 1);
-            preCicloIUni = getPrecioMax(lstPrecios, 3);
-            preCicloIIUni = getPrecioMax(lstPrecios, 4);
-            preCicloIIIUni = getPrecioMax(lstPrecios, 5);
-            preBacUni = getPrecioMax(lstPrecios, 6);
-        }
+            List<PreciosRefRubro> lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqUni);
 
-        lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqUti);
+            if (lstPrecios.isEmpty()) {
+                JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
+            } else {
+                preParUni = getPrecioMax(lstPrecios, 1);
+                preCicloIUni = getPrecioMax(lstPrecios, 3);
+                preCicloIIUni = getPrecioMax(lstPrecios, 4);
+                preCicloIIIUni = getPrecioMax(lstPrecios, 5);
+                preBacUni = getPrecioMax(lstPrecios, 6);
+            }
 
-        if (lstPrecios.isEmpty()) {
-            JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
-        } else {
-            preParUti = getPrecioMax(lstPrecios, 1);
-            preCicloIUti = getPrecioMax(lstPrecios, 3);
-            preCicloIIUti = getPrecioMax(lstPrecios, 4);
-            preCicloIIIUti = getPrecioMax(lstPrecios, 5);
-            preBacUti = getPrecioMax(lstPrecios, 6);
+            lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqUti);
 
-            /*preGrado7Uti = getPrecioMax(lstPrecios, 7);
+            if (lstPrecios.isEmpty()) {
+                JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
+            } else {
+                preParUti = getPrecioMax(lstPrecios, 1);
+                preCicloIUti = getPrecioMax(lstPrecios, 3);
+                preCicloIIUti = getPrecioMax(lstPrecios, 4);
+                preCicloIIIUti = getPrecioMax(lstPrecios, 5);
+                preBacUti = getPrecioMax(lstPrecios, 6);
+
+                /*preGrado7Uti = getPrecioMax(lstPrecios, 7);
             preGrado8Uti = getPrecioMax(lstPrecios, 8);
             preGrado9Uti = getPrecioMax(lstPrecios, 9);
 
@@ -586,18 +593,19 @@ public class EstadisticasCensoController implements Serializable {
             preGrado6Uti = getPrecioMax(lstPrecios, 15);
             preBachi1Uti = getPrecioMax(lstPrecios, 16);
             preBachi2Uti = getPrecioMax(lstPrecios, 17);*/
-        }
+            }
 
-        lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqZap);
+            lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqZap);
 
-        if (lstPrecios.isEmpty()) {
-            JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
-        } else {
-            preParZap = getPrecioMax(lstPrecios, 1);
-            preCicloIZap = getPrecioMax(lstPrecios, 3);
-            preCicloIIZap = getPrecioMax(lstPrecios, 4);
-            preCicloIIIZap = getPrecioMax(lstPrecios, 5);
-            preBacZap = getPrecioMax(lstPrecios, 6);
+            if (lstPrecios.isEmpty()) {
+                JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
+            } else {
+                preParZap = getPrecioMax(lstPrecios, 1);
+                preCicloIZap = getPrecioMax(lstPrecios, 3);
+                preCicloIIZap = getPrecioMax(lstPrecios, 4);
+                preCicloIIIZap = getPrecioMax(lstPrecios, 5);
+                preBacZap = getPrecioMax(lstPrecios, 6);
+            }
         }
     }
 
@@ -652,13 +660,21 @@ public class EstadisticasCensoController implements Serializable {
     }
 
     private DetalleProcesoAdq getDetProceso(int idDet) {
-        return procesoAdquisicion.getDetalleProcesoAdqList().stream()
-                .filter(d -> d.getIdRubroAdq().getIdRubroInteres().intValue() == idDet).findAny().get();
+        try {
+            return procesoAdquisicion.getDetalleProcesoAdqList().stream()
+                    .filter(d -> d.getIdRubroAdq().getIdRubroInteres().intValue() == idDet).findAny().get();
+        } catch (NoSuchElementException e) {
+            return null;
+        }
     }
 
     private PreciosRefRubro getPrecioMax(List<PreciosRefRubro> lstPrecios, int idDet) {
-        return lstPrecios.stream()
-                .filter(p -> p.getIdNivelEducativo().getIdNivelEducativo().intValue() == idDet).findAny().get();
+        try {
+            return lstPrecios.stream()
+                    .filter(p -> p.getIdNivelEducativo().getIdNivelEducativo().intValue() == idDet).findAny().get();
+        } catch (NoSuchElementException e) {
+            return null;
+        }
     }
 
     public PreciosRefRubro getPreParUni() {

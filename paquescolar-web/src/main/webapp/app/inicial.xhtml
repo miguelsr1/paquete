@@ -13,6 +13,7 @@
                         <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
                         <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
                         <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                        <p:menuitem value="NoItems" icon="fa fa-print" disabled="false" action="#{proveedorController.calcularNoItems()}" />
                         <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
                         <f:facet  name="options" >
