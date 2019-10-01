@@ -63,7 +63,7 @@
                         <p:spacer width="10"/>
                         <h:outputText value="Lista de Proveedores"/>
                         <p:commandButton id="btoAgregarProveedor" value=" Agregar" icon="fa fa-plus-circle" disabled="#{!ofertaMB.abrirDialogCe}" style="float: right; font-size: 12px;"
-                                         action="#{ofertaMB.abrirDialogProveedor}" update="tbEmpresas"/>
+                                         action="#{ofertaMB.abrirDialogProveedor}" update="tbEmpresas pnoCantidad"/>
                     </h1>
                     <p:dataTable id="tblParticipantes" value="#{ofertaMB.selected.participantesList}" var="participante" 
                                  emptyMessage="No se han agregado proveedores" rowIndexVar="rowId"  
@@ -133,6 +133,16 @@
 
 
         <p:dialog id="dlgProveedor" widgetVar="dlgProveedor" header="Seleccione un proveedor" closable="true" style="font-size: 11px;" modal="true" showEffect="fade" hideEffect="fade" minWidth="1000" width="1000" height="500">
+            <p:outputPanel id="pnoCantidad">
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="Número de alumnos: "/>
+                    <p:outputLabel value="#{ofertaMB.cantidadAlumnos}" style="font-weight: bold;"/>
+                    <p:outputLabel value="Número de piezas a contratar: "/>
+                    <p:outputLabel value="#{ofertaMB.cantidadAlumnos*2}" style="font-weight: bold;" rendered="#{ofertaMB.rubro eq 4 || ofertaMB.rubro eq 5}"/>
+                    <p:outputLabel value="#{ofertaMB.cantidadAlumnos}" style="font-weight: bold;" rendered="#{ofertaMB.rubro eq 2 || ofertaMB.rubro eq 3}"/>
+                </h:panelGrid>
+            </p:outputPanel>
+            <p:spacer width="10"/>
             <p:tabView id="tbEmpresas" scrollable="true">
                 <p:tab title="Municipio: #{ofertaMB.municipioCe}">
                     <h:panelGrid columns="2" style="width: 100%;" rendered="#{!menuController.isUsuarioDigitador}">
@@ -187,22 +197,27 @@
                     </p:tab>
 
                     <p:tab title="Precios de Referencia">
-                        <p:dataTable id="tblDetallePrecio" widgetVar="tblDetallePrecio" value="#{ofertaMB.lstPreciosReferencia}" var="precio" 
+                        <p:dataTable id="tblDetallePrecio" widgetVar="tblDetallePrecio" value="#{ofertaMB.lstPrecios}" var="precio" 
                                      emptyMessage="No se han registrado precios a este proveedor">
-
                             <p:column headerText="Item" width="15" id="item" styleClass="centrado">
                                 <p:outputLabel value="#{precio.noItem}" />
                             </p:column>
-
                             <p:column headerText="Descripción Item" width="100">
-                                <p:outputLabel value="#{precio.idProducto.nombreProducto}" id="descripcionItem" />
+                                <p:outputLabel value="#{precio.nombreProducto}" id="descripcionItem" />
                             </p:column>
-
                             <p:column headerText="Nivel Educativo" width="80">
-                                <p:outputLabel value="#{precio.idNivelEducativo.descripcionNivel}" id="nivelEducativo"/>
+                                <p:outputLabel value="#{precio.descripcionNivel}" id="nivelEducativo"/>
                             </p:column>
-
+                            <p:column headerText="Precio Máximo" width="50" styleClass="numero" id="precioMax">
+                                <h:outputText value="#{precio.precioMaximo}">
+                                    <f:convertNumber pattern="###0.00"/>
+                                </h:outputText>
+                            </p:column>
                             <p:column headerText="Precio U." width="50" styleClass="numero" id="precio">
+                                <p:outputLabel rendered="#{precio.precioReferencia lt precio.precioMaximo}">
+                                    <i class="fa fa-arrow-down" aria-hidden="true" style="color: #007ad9"></i>
+                                </p:outputLabel>
+                                <p:spacer width="10"/>
                                 <h:outputText value="#{precio.precioReferencia}">
                                     <f:convertNumber pattern="###0.00"/>
                                 </h:outputText>

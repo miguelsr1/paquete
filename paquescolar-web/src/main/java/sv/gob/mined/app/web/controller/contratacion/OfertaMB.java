@@ -42,9 +42,9 @@ import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.Empresa;
 import sv.gob.mined.paquescolar.model.OfertaBienesServicios;
 import sv.gob.mined.paquescolar.model.Participantes;
-import sv.gob.mined.paquescolar.model.PreciosRefRubroEmp;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.pojos.VwRptCertificacionPresupuestaria;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.PrecioReferenciaEmpresaDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.VwCotizacion;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 import sv.gob.mined.paquescolar.util.Constantes;
@@ -65,19 +65,20 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     private String tipoDocumentoImp = "";
     private String nombreEmp = "";
     private String nombreEmpOtros = "";
-    private String idNiveles = "";
     private Boolean showProductos = false;
     private Boolean deshabilitar = true;
     private Boolean modifDesac = false;
     private Boolean abrirDialogCe = false;
     private Boolean pageResolucion = false;
+    private BigDecimal rubro = BigDecimal.ZERO;
+    private BigDecimal cantidadAlumnos = BigDecimal.ZERO;
+
     private Empresa empresaSeleccionada;
     private Empresa tempEmpresaSeleccionada;
     private Participantes participanteSeleccionado;
     private DetalleProcesoAdq detalleProceso = new DetalleProcesoAdq();
     private CapaInstPorRubro capaInstSeleccionada;
     private OfertaBienesServicios current = new OfertaBienesServicios();
-    private BigDecimal rubro = BigDecimal.ZERO;
     private VwCatalogoEntidadEducativa entidadEducativa = new VwCatalogoEntidadEducativa();
     private SelectItem[] lstEstilos = new SelectItem[0];
     private List<String> images = new ArrayList();
@@ -85,7 +86,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     private List<CapaInstPorRubro> lstCapaEmpresasOtros = new ArrayList();
     private List<CapaInstPorRubro> lstEmpresas = new ArrayList();
     private List<CapaInstPorRubro> lstEmpresasOtros = new ArrayList();
-    private List<PreciosRefRubroEmp> lstPreciosReferencia = new ArrayList();
+    private List<PrecioReferenciaEmpresaDto> lstPrecios = new ArrayList();
 
     @EJB
     private ProveedorEJB proveedorEJB;
@@ -123,6 +124,10 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public BigDecimal getCantidadAlumnos() {
+        return cantidadAlumnos;
+    }
+
     public String getNombreEmpOtros() {
         return nombreEmpOtros;
     }
@@ -274,14 +279,21 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         this.lstCapaEmpresasOtros = lstCapaEmpresasOtros;
     }
 
-    public List<PreciosRefRubroEmp> getLstPreciosReferencia() {
+    public List<PrecioReferenciaEmpresaDto> getLstPrecios() {
+        return lstPrecios;
+    }
+
+    public void setLstPrecios(List<PrecioReferenciaEmpresaDto> lstPrecios) {
+        this.lstPrecios = lstPrecios;
+    }
+
+    /*public List<PreciosRefRubroEmp> getLstPreciosReferencia() {
         return lstPreciosReferencia;
     }
 
     public void setLstPreciosReferencia(List<PreciosRefRubroEmp> lstPreciosReferencia) {
         this.lstPreciosReferencia = lstPreciosReferencia;
-    }
-
+    }*/
     public SelectItem[] getLstEstilos() {
         return lstEstilos;
     }
@@ -396,8 +408,8 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un proveedor");
             } else {
                 empresaSeleccionada = capaInstSeleccionada.getIdMuestraInteres().getIdEmpresa();
-                lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(empresaSeleccionada, detalleProceso);
-                if (lstPreciosReferencia.isEmpty()) {
+                lstPrecios = proveedorEJB.getLstPreciosByIdEmpresaAndIdProcesoAdq(empresaSeleccionada.getIdEmpresa(), detalleProceso.getIdProcesoAdq().getIdProcesoAdq());
+                if (lstPrecios.isEmpty()) {
                     JsfUtil.mensajeAlerta("Este proveedor no posee precios de referencia. No se puede ingresar a la oferta.");
                 } else {
                     if (VarSession.getDepartamentoUsuarioSession() != null) {
@@ -629,30 +641,17 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     }
 
     public void consultarEmpresa() {
-        String noItems = "";
+        BigInteger cantidad;
         municipioCe = datosGeograficosEJB.findNombreMunicipioCe(current.getCodigoEntidad().getCodigoEntidad());
-        BigDecimal cantidad = entidadEducativaEJB.getCantidadTotalByCodEntAndIdProcesoAdq(codigoEntidad, current.getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq());
-        //idNiveles = entidadEducativaEJB.getNivelesDeEntidadEducativa(codigoEntidad, JsfUtil.getProcesoAdqPadre(detalleProceso.getIdProcesoAdq()));
-        /*if (detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
-            cantidad = cantidad.multiply(new BigDecimal(4));
-        }*/
+        cantidadAlumnos = entidadEducativaEJB.getCantidadTotalByCodEntAndIdProcesoAdq(codigoEntidad, current.getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq());
 
-        switch (idNiveles) {
-            case "1":
-                noItems = "1,2,3,4,5";
-                break;
-            case "2":
-                noItems = "1,2,3,4,5";
-                break;
-            case "6":
-                break;
-            case "1,2":
-                break;
-            case "2,6":
-                break;
+        if (detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
+            cantidad = cantidadAlumnos.multiply(new BigDecimal(2)).toBigInteger();
+        } else {
+            cantidad = cantidadAlumnos.toBigInteger();
         }
 
-        lstEmpresas = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), current.getCodigoEntidad().getCodigoEntidad(), true, true, cantidad.toBigInteger());
+        lstEmpresas = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), current.getCodigoEntidad().getCodigoEntidad(), true, true, cantidad);
         lstEmpresasOtros = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), current.getCodigoEntidad().getCodigoEntidad(), false, false, BigInteger.ZERO);
 
         lstCapaEmpresas.clear();
@@ -859,7 +858,8 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         capaInstSeleccionada = capa;
         tempEmpresaSeleccionada = capaInstSeleccionada.getIdMuestraInteres().getIdEmpresa();
         File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + tempEmpresaSeleccionada.getNumeroNit() + "/");
-        lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(capaInstSeleccionada.getIdMuestraInteres().getIdEmpresa(), detalleProceso);
+        //lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(capaInstSeleccionada.getIdMuestraInteres().getIdEmpresa(), detalleProceso);
+        lstPrecios = proveedorEJB.getLstPreciosByIdEmpresaAndIdProcesoAdq(capaInstSeleccionada.getIdMuestraInteres().getIdEmpresa().getIdEmpresa(), detalleProceso.getIdProcesoAdq().getIdProcesoAdq());
 
         if (carpetaNfs.list() != null) {
             lstEstilos = new SelectItem[carpetaNfs.list().length + 1];

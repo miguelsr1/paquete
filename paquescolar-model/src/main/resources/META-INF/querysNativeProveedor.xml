@@ -52,4 +52,29 @@
             ]]>
         </query>
     </named-native-query>
+    
+    <named-native-query name="Proveedor.PreciosReferenciaByIdEmpresaAndIdProceso" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.PrecioReferenciaEmpresaDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                  idRow,
+                pemp.no_item            noItem,
+                cat.nombre_producto     nombreProducto,
+                niv.descripcion_nivel   descripcionNivel,
+                pmax.precio_maximo      precioMaximo,
+                pemp.precio_referencia  precioReferencia
+            from precio_maximo_referencia pmax
+                inner join precios_ref_rubro_emp pemp on pmax.id_producto = pemp.id_producto and pmax.id_proceso_adq = pemp.id_proceso_adq and pmax.no_item = pemp.no_item
+                inner join catalogo_producto cat      on pemp.id_producto = cat.id_producto
+                inner join nivel_educativo niv        on pemp.id_nivel_educativo = niv.id_nivel_educativo
+            where 
+                pemp.id_empresa = ?1 and 
+                pemp.id_proceso_adq = ?2 and
+                pemp.estado_eliminacion = 0 and
+                pemp.id_nivel_educativo in ?
+            order by to_number(pemp.no_item)
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>

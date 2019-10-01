@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -51,6 +52,7 @@ import sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.DetalleAdjudicacionEmpDto;
 import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleContratacionPorItemDto;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.PrecioReferenciaEmpresaDto;
 import sv.gob.mined.paquescolar.model.view.DatosPreliminarRequerimiento;
 import sv.gob.mined.paquescolar.util.Constantes;
 
@@ -614,16 +616,11 @@ public class ProveedorEJB {
             detTemp = detProcesoAdq;
         }
 
-//        BigDecimal idRubro, idAnho;
-//        if (detTemp.getIdRubroAdq().getDescripcionRubro().contains("2do")) {
-//            idRubro = new BigDecimal(4);
-//        } else {
-//            idRubro = detTemp.getIdRubroAdq().getIdRubroInteres();
-//        }
-//        idAnho = detTemp.getIdProcesoAdq().getIdAnho().getIdAnho();
-        //dbms_random.value
+        HashMap<String, String> mapItems = getNoItemsByCodigoEntidadAndIdProcesoAdq(codigoEntidad, detProcesoAdq,
+                detProcesoAdq.getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
+
         q = em.createNativeQuery(findLstIdEmpresa(codMunicipio, codDepartamento, detTemp.getIdDetProcesoAdq(),
-                municipioIgual, byCapacidad, cantidad.intValue(), "", ""), CapaInstPorRubro.class);
+                municipioIgual, byCapacidad, cantidad.intValue(), mapItems.get("noItemSeparados"), mapItems.get("noItems")), CapaInstPorRubro.class);
         q.setParameter(1, codigoEntidad);
         q.setParameter(2, getProcesoAdqPadre(detProcesoAdq.getIdProcesoAdq()));
         q.setParameter(3, getProcesoAdqPadre(detProcesoAdq.getIdProcesoAdq()));
@@ -641,8 +638,18 @@ public class ProveedorEJB {
 
     private String findLstIdEmpresa(String codMun, String codDep, Integer idDetProcesoAdq,
             Boolean municipioIgual, Boolean byCapacidad, Integer cantidad, String noItemSeparados, String noItems) {
-        String sql = "select cip.*,\n"
-                + "	tbl.avg\n"
+        String sql = "select "
+                + "     cip.ID_CAP_INST_RUBRO,\n"
+                + "     cip.ID_MUESTRA_INTERES,\n"
+                + "     cip.CAPACIDAD_ACREDITADA,\n"
+                + "     cip.CAPACIDAD_ADJUDICADA,\n"
+                + "     cip.USUARIO_INSERCION,\n"
+                + "     cip.FECHA_INSERCION,\n"
+                + "     cip.USUARIO_MODIFICACION,\n"
+                + "     cip.FECHA_MODIFICACION,\n"
+                + "     cip.FECHA_ELIMINACION,\n"
+                + "     cip.ESTADO_ELIMINACION,\n"
+                + "	tbl.avg pu_avg\n"
                 + "from det_rubro_muestra_interes det\n"
                 + "     inner join empresa emp                  on emp.id_empresa = det.id_empresa\n"
                 + "     inner join municipio mun_e              on mun_e.id_municipio = emp.id_municipio\n"
@@ -662,15 +669,16 @@ public class ProveedorEJB {
                 + "     mun.codigo_municipio = '" + codMun + "' and\n"
                 + "     dep.codigo_departamento = '" + codDep + "' and\n"
                 + "     det.estado_eliminacion = 0 and\n"
-                + "     mun_e.codigo_municipio " + (municipioIgual ? "=" : "<>") + "'" + codMun + "' and\n"
-                + "     " + (byCapacidad ? " and (cip.CAPACIDAD_ACREDITADA - cip.CAPACIDAD_ADJUDICADA) >= " + cantidad : "")
+                + "     mun_e.codigo_municipio " + (municipioIgual ? "=" : "<>") + "'" + codMun + "'\n"
+                + "     " + (byCapacidad ? " and (cip.CAPACIDAD_ACREDITADA - cip.CAPACIDAD_ADJUDICADA) >= " + cantidad + "\n" : "\n")
                 + "order by\n"
-                + "    tbl.avg asc";
+                + "    tbl.avg asc,"
+                + "    (cip.CAPACIDAD_ACREDITADA - cip.CAPACIDAD_ADJUDICADA) asc";
 
         return sql;
     }
 
-    private String findLstIdEmpresaCumpleNiveles(String codMun, String codDep, BigDecimal idRubro, BigDecimal idAnho,
+    /*private String findLstIdEmpresaCumpleNiveles(String codMun, String codDep, BigDecimal idRubro, BigDecimal idAnho,
             Boolean municipioIgual, Boolean byCapacidad, Integer cantidad) {
         String sql = "select distinct \n"
                 + "     cip.ID_CAP_INST_RUBRO,\n"
@@ -712,8 +720,7 @@ public class ProveedorEJB {
                 + " order by vw.pu_avg asc";
 
         return sql;
-    }
-
+    }*/
     /**
      * Verifica la existencia de los precios de referencia para un proveedor y
      * año en particular
@@ -1337,5 +1344,196 @@ public class ProveedorEJB {
                     break;
             }
         }
+    }
+
+    private HashMap<String, String> getNoItemsByCodigoEntidadAndIdProcesoAdq(String codigoEntidad, DetalleProcesoAdq detProcesoAdq, boolean isUniforme) {
+        String noItemSeparados = "";
+        String noItems = "";
+        String sql;
+        HashMap<String, String> mapItems = new HashMap();
+        List lst;
+        BigDecimal mas;
+        BigDecimal fem;
+
+        if (isUniforme) {
+            sql = "select id_nivel, sum(masculino) mas, sum(femenimo) fem\n"
+                    + "from (select case when id_nivel_educativo = 1 then 1 when id_nivel_educativo in (3,4,5) then 2 when id_nivel_educativo = 6 then 6 end id_nivel,\n"
+                    + "        masculino, femenimo\n"
+                    + "    from estadistica_censo \n"
+                    + "    where id_proceso_adq = ?1 and id_nivel_educativo in (1,3,4,5,6) and codigo_entidad = ?2 and (masculino <> 0 or femenimo <> 0))\n"
+                    + "group by id_nivel";
+        } else {
+            sql = "select id_nivel_educativo, masculino, femenimo from estadistica_censo \n"
+                    + "where id_proceso_adq = ?1 and \n"
+                    + "    id_nivel_educativo in (1,3,4,5,6) and \n"
+                    + "    codigo_entidad = ?2 and \n"
+                    + "    (masculino <> 0 or femenimo <> 0)";
+        }
+
+        Query q = em.createNativeQuery(sql);
+        q.setParameter(1, detProcesoAdq.getIdProcesoAdq().getIdProcesoAdq());
+        q.setParameter(2, codigoEntidad);
+
+        lst = q.getResultList();
+
+        //item_8 = '8' and item_9 = '9'
+        //'8','9'
+        for (Object object : lst) {
+            Object datos[] = (Object[]) object;
+
+            mas = (BigDecimal) datos[1];
+            fem = (BigDecimal) datos[2];
+
+            switch (((BigDecimal) datos[0]).intValue()) {
+                case 1: //PARVULARIA
+                    switch (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
+                        case 1:
+                        case 4:
+                        case 5://uniformes
+                            if (fem.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_1 = '1' and item_2 = '2'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'1','2'";
+                            }
+                            if (mas.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_3 = '3' and item_4 = '4' and item_5 = '5'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'3','4','5'";
+                            }
+                            break;
+                        case 2://utiles
+                            if (fem.intValue() > 0 || mas.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_1 = '1'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'1'";
+                            }
+                            break;
+                        case 3://zapatos
+                            if (fem.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_1 = '1'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'1'";
+                            }
+                            if (mas.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_2 = '2'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'2'";
+                            }
+                            break;
+                    }
+
+                    break;
+                case 2: //BASICA - UNICAMENTE APLICA PARA UNIFORME
+
+                    if (fem.intValue() > 0) {
+                        noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_6 = '6' and item_7 = '7'";
+                        noItems += (noItems.isEmpty() ? "" : " , ") + "'6','7'";
+                    }
+                    if (mas.intValue() > 0) {
+                        noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_8 = '8' and item_9 = '9'";
+                        noItems += (noItems.isEmpty() ? "" : " , ") + "'8','9'";
+                    }
+                    break;
+                case 3: //PRIMER CICLO
+                    switch (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
+                        case 2://utiles
+                            if (fem.intValue() > 0 || mas.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_2 = '2'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'2'";
+                            }
+                            break;
+                        case 3://zapatos
+                            if (fem.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_3 = '3'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'3'";
+                            }
+                            if (mas.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_4 = '4'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'4'";
+                            }
+                            break;
+                    }
+                    break;
+                case 4: //SEGUNDO CICLO
+                    switch (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
+                        case 2://utiles
+                            if (fem.intValue() > 0 || mas.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_3 = '3'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'3'";
+                            }
+                            break;
+                        case 3://zapatos
+                            if (fem.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_5 = '5'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'5'";
+                            }
+                            if (mas.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_6 = '6'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'6'";
+                            }
+                            break;
+                    }
+                    break;
+                case 5: //TERCER CICLO
+                    switch (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
+                        case 2://utiles
+                            if (fem.intValue() > 0 || mas.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_4 = '4'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'4'";
+                            }
+                            break;
+                        case 3://zapatos
+                            if (fem.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_7 = '7'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'7'";
+                            }
+                            if (mas.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_8 = '8'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'8'";
+                            }
+                            break;
+                    }
+                    break;
+                case 6: //MEDIA
+                    switch (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
+                        case 1:
+                        case 4:
+                        case 5://uniformes
+                            if (fem.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_10 = '10' and item_11 = '11'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'10','11'";
+                            }
+                            if (mas.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_12 = '12' and item_13 = '13'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'13','13'";
+                            }
+                            break;
+                        case 2://utiles
+                            if (fem.intValue() > 0 || mas.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_5 = '5'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'5'";
+                            }
+                            break;
+                        case 3://zapatos
+                            if (fem.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_9 = '9'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'9'";
+                            }
+                            if (mas.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_10 = '10'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'10'";
+                            }
+                            break;
+                    }
+                    break;
+            }
+        }
+
+        mapItems.put("noItemSeparados", noItemSeparados);
+        mapItems.put("noItems", noItems);
+
+        return mapItems;
+    }
+
+    public List<PrecioReferenciaEmpresaDto> getLstPreciosByIdEmpresaAndIdProcesoAdq(BigDecimal idEmpresa, Integer idProcesoAdq) {
+        Query q = em.createNamedQuery("Proveedor.PreciosReferenciaByIdEmpresaAndIdProceso", PrecioReferenciaEmpresaDto.class);
+        q.setParameter(1, idEmpresa);
+        q.setParameter(2, idProcesoAdq);
+        return q.getResultList();
     }
 }
