@@ -18,7 +18,6 @@ import org.primefaces.PrimeFaces;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.VarSession;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.OfertaBienesServiciosEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
@@ -52,8 +51,6 @@ public class ResguardoMB extends RecuperarProcesoUtil implements Serializable {
     private List<DetalleContratadoPorComponenteDto> lstDetalle = new ArrayList();
     private List<DetalleContratadoPorComponenteDto> lstDetalleSelect = new ArrayList();
     
-    @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
     @EJB
     private EntidadEducativaEJB entidadEducativaEJB;
     @EJB
@@ -150,7 +147,7 @@ public class ResguardoMB extends RecuperarProcesoUtil implements Serializable {
             if (getRecuperarProceso().getProcesoAdquisicion() == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
-                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), rubro);
+                detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
                 
                 entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
                 

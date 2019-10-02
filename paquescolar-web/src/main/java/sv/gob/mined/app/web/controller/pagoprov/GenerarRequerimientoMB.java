@@ -14,15 +14,12 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.util.JsfUtil;
-import sv.gob.mined.app.web.util.RecuperarProceso;
+import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.VarSession;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
-import sv.gob.mined.paquescolar.ejb.PagoProveedoresEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.model.Bancos;
 import sv.gob.mined.paquescolar.model.CuentaBancaria;
@@ -35,7 +32,7 @@ import sv.gob.mined.paquescolar.model.view.DatosPreliminarRequerimiento;
  */
 @ManagedBean
 @ViewScoped
-public class GenerarRequerimientoMB implements Serializable {
+public class GenerarRequerimientoMB extends RecuperarProcesoUtil implements Serializable {
 
     private int credito = 0;
     private int idNivelEducativo;
@@ -53,14 +50,8 @@ public class GenerarRequerimientoMB implements Serializable {
     private List<CuentaBancaria> lstCuentaBancaria = new ArrayList();
 
     @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
-    @EJB
-    private PagoProveedoresEJB pagoProveedoresEJB;
-    @EJB
     private ProveedorEJB proveedorEJB;
     
-    @ManagedProperty("#{recuperarProceso}")
-    private RecuperarProceso recuperarProceso;
 
     @PostConstruct
     public void ini() {
@@ -72,15 +63,7 @@ public class GenerarRequerimientoMB implements Serializable {
             Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, "ERROR CONTROLADO: No se ha asignado el año de contratación");
         }
         concepto = "DOTACION DE UNIFORMES, ZAPATOS Y PAQUETES DE UTILES ESCOLARES " + controller.getAnho();
-        codigoDepartamento = recuperarProceso.getDepartamento();
-    }
-    
-    public RecuperarProceso getRecuperarProceso() {
-        return recuperarProceso;
-    }
-
-    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
-        this.recuperarProceso = recuperarProceso;
+        codigoDepartamento = getRecuperarProceso().getDepartamento();
     }
 
     public String getCuentaBancaria() {
@@ -189,7 +172,7 @@ public class GenerarRequerimientoMB implements Serializable {
     }
 
     public void obtenerDetalleProceso() {
-        detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
+        detalleProcesoAdq = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
     }
 
     public void generarDatosPreliminares() {

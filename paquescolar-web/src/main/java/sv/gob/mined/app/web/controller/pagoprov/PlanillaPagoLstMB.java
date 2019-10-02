@@ -12,13 +12,11 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import org.primefaces.PrimeFaces;
 import sv.gob.mined.app.web.util.JsfUtil;
-import sv.gob.mined.app.web.util.RecuperarProceso;
+import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.VarSession;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.CreditosEJB;
 import sv.gob.mined.paquescolar.ejb.PagoProveedoresEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
@@ -36,10 +34,8 @@ import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
  */
 @ManagedBean
 @ViewScoped
-public class PlanillaPagoLstMB implements Serializable {
+public class PlanillaPagoLstMB extends RecuperarProcesoUtil implements Serializable {
 
-    @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
     @EJB
     private PagoProveedoresEJB pagoProveedoresEJB;
     @EJB
@@ -75,9 +71,6 @@ public class PlanillaPagoLstMB implements Serializable {
     private List<DetallePlanilla> lstDetallePlanilla = new ArrayList();
     private List<DatosProveDto> lstProveedores = new ArrayList();
 
-    @ManagedProperty("#{recuperarProceso}")
-    private RecuperarProceso recuperarProceso;
-
     /**
      * Creates a new instance of PlanillaPagoMB
      */
@@ -86,7 +79,7 @@ public class PlanillaPagoLstMB implements Serializable {
 
     @PostConstruct
     public void ini() {
-        codigoDepartamento = recuperarProceso.getDepartamento();
+        codigoDepartamento = getRecuperarProceso().getDepartamento();
         if (JsfUtil.isExisteParametroUrl("javax.faces.source")) {
             switch (JsfUtil.getParametroUrl("javax.faces.source")) {
                 case "mtmNuevo":
@@ -101,14 +94,6 @@ public class PlanillaPagoLstMB implements Serializable {
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
-    public RecuperarProceso getRecuperarProceso() {
-        return recuperarProceso;
-    }
-
-    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
-        this.recuperarProceso = recuperarProceso;
-    }
-
     public Boolean getSeleccionPlanilla() {
         return seleccionPlanilla;
     }
@@ -276,7 +261,7 @@ public class PlanillaPagoLstMB implements Serializable {
     }
 
     public void recuperarRequerimientos() {
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        idDetProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
         lstRequerimientoFondos = proveedorEJB.getLstRequerimientos(codigoDepartamento, idDetProceso);
     }
 
@@ -306,7 +291,7 @@ public class PlanillaPagoLstMB implements Serializable {
     }
 
     private void buscarReuerimientoqOrPlanilla() {
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        idDetProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
     }
 
     public void selectRequerimiento() {

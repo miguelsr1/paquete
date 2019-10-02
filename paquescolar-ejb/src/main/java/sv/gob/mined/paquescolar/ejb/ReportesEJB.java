@@ -90,15 +90,11 @@ public class ReportesEJB {
     public List<OfertaGlobal> getLstOfertaGlobal(String nit, Integer idDetProcesoAdq, int idRubro) {
         PreciosRefRubroEmp preTem;
         List<OfertaGlobal> lstRpt;
-        //Query q = em.createNativeQuery("SELECT * FROM VW_RPT_CABECERA_OFERTA_GLOBAL WHERE nit_empresa=?1 and id_det_proceso_adq=?2");
         Query q = em.createNamedQuery("DatosProveDto.ofertaGlobal", OfertaGlobal.class);
         q.setParameter(1, nit);
         q.setParameter(2, idDetProcesoAdq);
 
         lstRpt = q.getResultList();
-        //for (Object object : lst) {
-        //Object[] datos = (Object[]) object;
-        //OfertaGlobal oferta = new OfertaGlobal();
 
         lstRpt.get(0).setAnho(em.find(DetalleProcesoAdq.class, idDetProcesoAdq).getIdProcesoAdq().getIdAnho().getAnho());
 
@@ -112,7 +108,6 @@ public class ReportesEJB {
         q.setParameter("idDetProcesoAdq", idDetProcesoAdq);
         List<PreciosRefRubroEmp> lstPreciosLibros = q.getResultList();
 
-        //q = em.createQuery("select p from PreciosRefRubroEmp p where p.idDetProcesoAdq.idDetProcesoAdq = ?1 order by p.idNivelEducativo", PreciosRefRubro.class);
         q = em.createNativeQuery("select prr.* from PRECIOS_REF_RUBRO prr inner join NIVEL_EDUCATIVO niv on niv.ID_NIVEL_EDUCATIVO = prr.ID_NIVEL_EDUCATIVO where ID_DET_PROCESO_ADQ = ?1 order by niv.ORDEN2", PreciosRefRubro.class);
         q.setParameter(1, idDetProcesoAdq);
         List<PreciosRefRubro> lstPrecioMax = q.getResultList();

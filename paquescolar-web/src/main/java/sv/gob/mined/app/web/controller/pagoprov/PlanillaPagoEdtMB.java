@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -31,11 +30,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.app.web.util.JsfUtil;
-import sv.gob.mined.app.web.util.RecuperarProceso;
+import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.UtilFile;
 import sv.gob.mined.app.web.util.VarSession;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.EMailEJB;
 import sv.gob.mined.paquescolar.ejb.PagoProveedoresEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
@@ -61,10 +59,8 @@ import sv.gob.mined.paquescolar.util.Constantes;
  */
 @ManagedBean
 @ViewScoped
-public class PlanillaPagoEdtMB implements Serializable {
+public class PlanillaPagoEdtMB extends RecuperarProcesoUtil implements Serializable {
 
-    @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
     @EJB
     private ProveedorEJB proveedorEJB;
     @EJB
@@ -123,9 +119,6 @@ public class PlanillaPagoEdtMB implements Serializable {
 
     private List<SelectItem> lstTipoDocImp = new ArrayList();
 
-    @ManagedProperty("#{recuperarProceso}")
-    private RecuperarProceso recuperarProceso;
-
     /**
      * Creates a new instance of PlanillaPagoEdtMB
      */
@@ -147,7 +140,7 @@ public class PlanillaPagoEdtMB implements Serializable {
     @PostConstruct
     public void ini() {
         idRubro = new BigDecimal(JsfUtil.getParametroUrl("cboRubro_input"));
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        idDetProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
         isRubroUniforme = idRubro.intValue() == 1 || idRubro.intValue() == 4 || idRubro.intValue() == 5;
 
         if (JsfUtil.isExisteParametroUrl("idPlanilla")) {
@@ -174,19 +167,11 @@ public class PlanillaPagoEdtMB implements Serializable {
                     break;
             }
         }
-        codigoDepartamento = recuperarProceso.getDepartamento();
+        codigoDepartamento = getRecuperarProceso().getDepartamento();
         documentosAImprimir();
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
-    public RecuperarProceso getRecuperarProceso() {
-        return recuperarProceso;
-    }
-
-    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
-        this.recuperarProceso = recuperarProceso;
-    }
-
     public Boolean getCheque() {
         return cheque;
     }
@@ -877,7 +862,7 @@ public class PlanillaPagoEdtMB implements Serializable {
                     JsfUtil.getFormatoNum(getMontoActualTotal(), false)));
         }
         sb.append(RESOURCE_BUNDLE.getString("pagoprov.email.tablaDetalle.fin"));
-        sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.finNotificacion"), JsfUtil.getFechaString(planillaPago.getFechaInsercion()), JsfUtil.getNombreDepartamentoByCodigo(recuperarProceso.getDepartamento())));
+        sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.finNotificacion"), JsfUtil.getFechaString(planillaPago.getFechaInsercion()), JsfUtil.getNombreDepartamentoByCodigo(getRecuperarProceso().getDepartamento())));
 
         return sb.toString();
     }
@@ -968,7 +953,7 @@ public class PlanillaPagoEdtMB implements Serializable {
         param.put("pNombreDepartamento", nombreDepartamento);
         param.put("pAnho", "20" + anho);
         param.put("pUsuario", VarSession.getVariableSessionUsuario());
-        param.put("pPagadorDepartamental", pagoProveedoresEJB.getNombrePagadorByCodDepa(recuperarProceso.getDepartamento()));
+        param.put("pPagadorDepartamental", pagoProveedoresEJB.getNombrePagadorByCodDepa(getRecuperarProceso().getDepartamento()));
         DatosProveDto datos = new DatosProveDto();
         datos.setLstDetalle(lstEmailProveeCredito);
         List<DatosProveDto> lst = new ArrayList();

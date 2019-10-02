@@ -2,18 +2,31 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package sv.gob.mined.paquescolar.model.view;
+package sv.gob.mined.paquescolar.model.pojos.contratacion;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import javax.persistence.Entity;
+import javax.persistence.EntityResult;
+import javax.persistence.Id;
+import javax.persistence.SqlResultSetMapping;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author misanchez
  */
+@Entity
+@XmlRootElement
+@SqlResultSetMapping(name = "defaultVwRptPagare",
+        entities = @EntityResult(entityClass = VwRptPagare.class))
 public class VwRptPagare implements Serializable {
+
     private static final long serialVersionUID = 1L;
+
+    @Id
+    private BigDecimal idRow;
     private String ciudadFirma;
     private String fechaEmision;
     private BigInteger idContrato;
@@ -33,6 +46,14 @@ public class VwRptPagare implements Serializable {
     private String anhoContrato;
 
     public VwRptPagare() {
+    }
+
+    public BigDecimal getIdRow() {
+        return idRow;
+    }
+
+    public void setIdRow(BigDecimal idRow) {
+        this.idRow = idRow;
     }
 
     public String getCiudadFirma() {
@@ -170,5 +191,5 @@ public class VwRptPagare implements Serializable {
     public void setAnhoContrato(String anhoContrato) {
         this.anhoContrato = anhoContrato;
     }
-    
+
 }

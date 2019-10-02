@@ -243,7 +243,7 @@ public class OfertaBienesServiciosEJB {
 
         List lst2 = q.getResultList();
 
-        for (Object object1 : lst2) {
+        lst2.forEach((object1) -> {
             Object[] datos1 = (Object[]) object1;
             DetalleOfertas det = new DetalleOfertas();
             det.setNoItem(datos1[9].toString());
@@ -256,7 +256,7 @@ public class OfertaBienesServiciosEJB {
             } else {
                 v.getLstDetalleOferta().add(det);
             }
-        }
+        });
 
         return lstCotizacion;
     }
@@ -286,23 +286,23 @@ public class OfertaBienesServiciosEJB {
         q.setParameter("idDet", idDetProcesoAdq);
         return q.getResultList();
     }
-    
-    public List<DetalleContratadoPorComponenteDto> getLstDetalleContratado(String codigoEntidad, Integer idDetProcesoAdq){
+
+    public List<DetalleContratadoPorComponenteDto> getLstDetalleContratado(String codigoEntidad, Integer idDetProcesoAdq) {
         Query q = em.createNamedQuery("Contratacion.DetalleContratadoPorComponenteDto", DetalleContratadoPorComponenteDto.class);
         q.setParameter(1, codigoEntidad);
         q.setParameter(2, idDetProcesoAdq);
         return q.getResultList();
     }
-    
-    public void guardarResguardo(ResguardoBienes resguardoBienes, String usuario){
-        if(resguardoBienes.getIdResguardo() == null){
+
+    public void guardarResguardo(ResguardoBienes resguardoBienes, String usuario) {
+        if (resguardoBienes.getIdResguardo() == null) {
             resguardoBienes.setFechaInsercion(new Date());
             resguardoBienes.setUsuarioInsercion(usuario);
             em.persist(resguardoBienes);
-        }else{
+        } else {
             resguardoBienes.setFechaModificacion(new Date());
             resguardoBienes.setUsuarioModificacion(usuario);
             em.merge(resguardoBienes);
-        }        
+        }
     }
 }

@@ -484,4 +484,75 @@
             ]]>
         </query>
     </named-native-query>
+    <named-native-query name="Contratacion.VwRptPagare" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.VwRptPagare">
+        <query>
+            <![CDATA[
+            SELECT 
+                rownum              as idRow,
+                CIUDAD_FIRMA        as ciudadFirma,
+                FECHA_EMISION       as fechaEmision,
+                ID_CONTRATO         as idContrato,
+                INICIALES_MODALIDAD as inicialesModalidad,
+                VALOR               as valor,
+                DESCRIPCION_RUBRO   as descripcionRubro,
+                NUMERO_CONTRATO     as numeroContrato,
+                NOMBRE              as nombre,
+                NOMBRE_REPRESENTANTE    as nombreRepresentante,
+                DOMICILIO_REPRESENTANTE as domicilioRepresentante,
+                NUMERO_TELEFONO         as numeroTelefono,
+                NUMERO_DUI              as numeroDui,
+                NUMERO_NIT              as numeroNit,
+                USUARIO_INSERCION       as usuarioInsercion,
+                ID_RESOLUCION_ADJ       as idResolucionAdj,
+                RAZON_SOCIAL            as razonSocial,
+                ANHO_CONTRATO           as anhoContrato,
+                ID_PERSONERIA
+            FROM 
+                vw_rpt_pagare 
+            WHERE 
+                id_resolucion_adj=?1 and id_contrato=?2
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Contratacion.VwRptContratoJurCabecera" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.VwRptContratoJurCabecera">
+        <query>
+            <![CDATA[
+            SELECT 
+                rownum                  as idRow,
+                VALOR                   as valor,
+                NUMERO_CONTRATO         as numeroContrato,
+                RAZON_SOCIAL            as razonSocial,
+                DESCRIPCION_RUBRO       as descripcionRubro,
+                NOMBRE_MIEMBRO          as nombreMiembro,
+                INICIALES_MODALIDAD     as inicialesModalidad,
+                NOMBRE                  as nombre,
+                PLAZO_PREVISTO_ENTREGA  as plazoPrevistoEntrega,
+                CIUDAD_FIRMA            as ciudadFirma,
+                DIRECCION_CE            as direccionCe,
+                TELEFONO_CE             as telefonoCe,
+                FAX_CE                  as faxCe,
+                DIRECCION_EMP           as direccionEmp,
+                TELEFONO_EMP            as telefonoEmp,
+                CELULAR_EMP             as celularEmp,
+                FAX_EMP                 as faxEmp,
+                NUMERO_NIT              as numeroNit,
+                USUARIO_INSERCION       as usuarioInsercion,
+                ANHO_CONTRATO           as anhoContrato,
+                FECHA_EMISION           as fechaEmision,
+                NOMBRE_PRESENTANTE      as nombreePresentante,
+                CODIGO_ENTIDAD          as codigoEntidad,
+                ID_CONTRATO             as idContrato,
+                DISTRIBUIDOR            as distribuidor,
+                MOSTRAR_LEYENDA         as mostrarLeyenda,
+                NOMBRE_DEPARTAMENTO     as nombreDepartamento,
+                NOMBRE_MUNICIPIO        as nombreMunicipio,
+                NUMERO_DUI              as numeroDui
+            FROM 
+                VW_RPT_CONTRATO_JUR_CABECERA  
+            WHERE ID_CONTRATO=?1
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>

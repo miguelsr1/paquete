@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -24,7 +25,6 @@ import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.VarSession;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.PreciosReferenciaEJB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
@@ -137,8 +137,6 @@ public class EstadisticasCensoController implements Serializable {
     @EJB
     private PreciosReferenciaEJB preciosReferenciaEJB;
     @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
-    @EJB
     private ReportesEJB reportesEJB;
 
     /**
@@ -151,8 +149,14 @@ public class EstadisticasCensoController implements Serializable {
     public void init() {
         VarSession.setVariableSessionED("0");
         prepareEdit();
+        procesoAdquisicion = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getProceso();
+        if (procesoAdquisicion == null || procesoAdquisicion.getIdProcesoAdq() == null) {
+            JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de adquisición.");
+        }
     }
 
+    // <editor-fold defaultstate="collapsed" desc="getter-setter">
     public Boolean getDeclaracion() {
         return declaracion;
     }
@@ -381,32 +385,6 @@ public class EstadisticasCensoController implements Serializable {
         this.organizacionEducativa = organizacionEducativa;
     }
 
-    public boolean getEENuevo() {
-        return VarSession.getVariableSessionED() == 1;
-    }
-
-    public boolean getEEModificar() {
-        return VarSession.getVariableSessionED() == 2;
-    }
-
-    public void prepareCreate() {
-        VarSession.setVariableSessionED("1");
-        deshabilitado = false;
-    }
-
-    public void prepareEdit() {
-        VarSession.setVariableSessionED("0");
-        deshabilitado = false;
-        codigoEntidad = "";
-        entidadEducativa = new VwCatalogoEntidadEducativa();
-        organizacionEducativa = new OrganizacionEducativa();
-        estaditicaPar = new EstadisticaCenso();
-        estaditicaCiclo1 = new EstadisticaCenso();
-        estaditicaCiclo2 = new EstadisticaCenso();
-        estaditicaCiclo3 = new EstadisticaCenso();
-        estaditicaBac = new EstadisticaCenso();
-    }
-
     public EstadisticaCenso getEstaditicaPar() {
         return estaditicaPar;
     }
@@ -445,236 +423,6 @@ public class EstadisticasCensoController implements Serializable {
 
     public void setEstaditicaBac(EstadisticaCenso estaditicaBac) {
         this.estaditicaBac = estaditicaBac;
-    }
-
-    private void recuperarProcesoAdq() {
-        procesoAdquisicion = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getProceso();
-        if (procesoAdquisicion == null || procesoAdquisicion.getIdProcesoAdq() == null) {
-            JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de adquisición.");
-        }
-    }
-
-    public void buscarEntidadEducativa() {
-        if (codigoEntidad != null && codigoEntidad.length() == 5) {
-            recuperarProcesoAdq();
-
-            if (procesoAdquisicion != null) {
-                organizacionEducativa = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
-
-                if (organizacionEducativa.getIdOrganizacionEducativa() == null) {
-                    organizacionEducativa.setCargo("Presidente Propietario, Director");
-                    organizacionEducativa.setCodigoEntidad(codigoEntidad);
-                    organizacionEducativa.setEstadoEliminacion(BigInteger.ZERO);
-                    organizacionEducativa.setFechaInsercion(new Date());
-                    organizacionEducativa.setFirmaContrato(BigInteger.ONE);
-                    organizacionEducativa.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-                }
-
-                isProcesoAdq = false;
-                entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
-
-                if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() < 6) {//menor a 2018
-                    detProAdqUni = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, BigDecimal.ONE);//getDetProceso(1);
-                } else {
-                    detProAdqUni = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(4));
-                    detProAdqUni2 = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(5));
-                }
-
-                detProAdqUti = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(2));
-                detProAdqZap = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(3));
-
-                recuperarEstadisticas();
-                recuperarPreciosMaxRef();
-                recuperarTechos();
-            } else {
-                JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de adquisición.");
-            }
-
-            PrimeFaces.current().executeScript("actualizarDatos();");
-        } else {
-            isProcesoAdq = true;
-        }
-    }
-
-    private void recuperarTechos() {
-        if (detProAdqUni == null) {
-            JsfUtil.mensajeError("Error en el proceso de adquisicion.");
-        } else {
-            List<TechoRubroEntEdu> lstTechos = entidadEducativaEJB.getLstTechosByProceso(procesoAdquisicion.getIdProcesoAdq(), codigoEntidad);
-
-            techoUni = getTecho(lstTechos, detProAdqUni);
-            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 5) {
-                techoUni2 = getTecho(lstTechos, detProAdqUni2);
-            }
-            techoUti = getTecho(lstTechos, detProAdqUti);
-            techoZap = getTecho(lstTechos, detProAdqZap);
-        }
-    }
-
-    private void recuperarEstadisticas() {
-        List<EstadisticaCenso> lstEstadistica = entidadEducativaEJB.getLstEstadisticaByCodEntAndProceso(codigoEntidad, procesoAdquisicion.getIdProcesoAdq());
-
-        if (lstEstadistica.isEmpty()) {
-            estaditicaPar = crearEstadistica(BigDecimal.ONE);
-            estaditicaCiclo1 = crearEstadistica(new BigDecimal(3));
-            estaditicaCiclo2 = crearEstadistica(new BigDecimal(4));
-            estaditicaCiclo3 = crearEstadistica(new BigDecimal(5));
-            estaditicaBac = crearEstadistica(new BigDecimal(6));
-            est7grado = crearEstadistica(new BigDecimal(7));
-            est8grado = crearEstadistica(new BigDecimal(8));
-            est9grado = crearEstadistica(new BigDecimal(9));
-            est1grado = crearEstadistica(new BigDecimal(10));
-            est2grado = crearEstadistica(new BigDecimal(11));
-            est3grado = crearEstadistica(new BigDecimal(12));
-            est4grado = crearEstadistica(new BigDecimal(13));
-            est5grado = crearEstadistica(new BigDecimal(14));
-            est6grado = crearEstadistica(new BigDecimal(15));
-            est1media = crearEstadistica(new BigDecimal(16));
-            est2media = crearEstadistica(new BigDecimal(17));
-            est3media = crearEstadistica(new BigDecimal(18));
-        } else {
-            estaditicaPar = getEstadisticaCenso(lstEstadistica, 1);
-            estaditicaCiclo1 = getEstadisticaCenso(lstEstadistica, 3);
-            estaditicaCiclo2 = getEstadisticaCenso(lstEstadistica, 4);
-            estaditicaCiclo3 = getEstadisticaCenso(lstEstadistica, 5);
-            estaditicaBac = getEstadisticaCenso(lstEstadistica, 6);
-            est7grado = getEstadisticaCenso(lstEstadistica, 7);
-            est8grado = getEstadisticaCenso(lstEstadistica, 8);
-            est9grado = getEstadisticaCenso(lstEstadistica, 9);
-            est1grado = getEstadisticaCenso(lstEstadistica, 10);
-            est2grado = getEstadisticaCenso(lstEstadistica, 11);
-            est3grado = getEstadisticaCenso(lstEstadistica, 12);
-            est4grado = getEstadisticaCenso(lstEstadistica, 13);
-            est5grado = getEstadisticaCenso(lstEstadistica, 14);
-            est6grado = getEstadisticaCenso(lstEstadistica, 15);
-            est1media = getEstadisticaCenso(lstEstadistica, 16);
-            est2media = getEstadisticaCenso(lstEstadistica, 17);
-            est3media = getEstadisticaCenso(lstEstadistica, 18);
-        }
-    }
-
-    private void recuperarPreciosMaxRef() {
-        if (detProAdqUni == null) {
-            JsfUtil.mensajeError("Error en el proceso de adquisicion.");
-        } else {
-            List<PreciosRefRubro> lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqUni);
-
-            if (lstPrecios.isEmpty()) {
-                JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
-            } else {
-                preParUni = getPrecioMax(lstPrecios, 1);
-                preCicloIUni = getPrecioMax(lstPrecios, 3);
-                preCicloIIUni = getPrecioMax(lstPrecios, 4);
-                preCicloIIIUni = getPrecioMax(lstPrecios, 5);
-                preBacUni = getPrecioMax(lstPrecios, 6);
-            }
-
-            lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqUti);
-
-            if (lstPrecios.isEmpty()) {
-                JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
-            } else {
-                preParUti = getPrecioMax(lstPrecios, 1);
-                preCicloIUti = getPrecioMax(lstPrecios, 3);
-                preCicloIIUti = getPrecioMax(lstPrecios, 4);
-                preCicloIIIUti = getPrecioMax(lstPrecios, 5);
-                preBacUti = getPrecioMax(lstPrecios, 6);
-
-                /*preGrado7Uti = getPrecioMax(lstPrecios, 7);
-            preGrado8Uti = getPrecioMax(lstPrecios, 8);
-            preGrado9Uti = getPrecioMax(lstPrecios, 9);
-
-            preGrado1Uti = getPrecioMax(lstPrecios, 10);
-            preGrado2Uti = getPrecioMax(lstPrecios, 11);
-            preGrado3Uti = getPrecioMax(lstPrecios, 12);
-            preGrado4Uti = getPrecioMax(lstPrecios, 13);
-            preGrado5Uti = getPrecioMax(lstPrecios, 14);
-            preGrado6Uti = getPrecioMax(lstPrecios, 15);
-            preBachi1Uti = getPrecioMax(lstPrecios, 16);
-            preBachi2Uti = getPrecioMax(lstPrecios, 17);*/
-            }
-
-            lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqZap);
-
-            if (lstPrecios.isEmpty()) {
-                JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
-            } else {
-                preParZap = getPrecioMax(lstPrecios, 1);
-                preCicloIZap = getPrecioMax(lstPrecios, 3);
-                preCicloIIZap = getPrecioMax(lstPrecios, 4);
-                preCicloIIIZap = getPrecioMax(lstPrecios, 5);
-                preBacZap = getPrecioMax(lstPrecios, 6);
-            }
-        }
-    }
-
-    private EstadisticaCenso crearEstadistica(BigDecimal idNivel) {
-        EstadisticaCenso est = new EstadisticaCenso();
-        est.setCodigoEntidad(codigoEntidad);
-        est.setEstadoEliminacion((short) 0);
-        est.setFechaInsercion(new Date());
-        est.setFemenimo(BigInteger.ZERO);
-        est.setIdNivelEducativo(new NivelEducativo(idNivel));
-        est.setIdProcesoAdq(procesoAdquisicion);
-        est.setMasculino(BigInteger.ZERO);
-        est.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-        return est;
-    }
-
-    private EstadisticaCenso getEstadisticaCenso(List<EstadisticaCenso> lstEstadistica, int idNivel) {
-        EstadisticaCenso estC;
-        try {
-            estC = lstEstadistica.stream()
-                    .filter(est -> est.getIdNivelEducativo().getIdNivelEducativo().intValue() == idNivel).findAny().get();
-        } catch (NoSuchElementException e) {
-            estC = null;
-        }
-        if (estC == null) {
-            estC = crearEstadistica(new BigDecimal(idNivel));
-        }
-        return estC;
-    }
-
-    private TechoRubroEntEdu getTecho(List<TechoRubroEntEdu> lstTechos, DetalleProcesoAdq detProcesoAdq) {
-        TechoRubroEntEdu techo;
-        try {
-            techo = lstTechos.stream()
-                    .filter(te -> te.getIdDetProcesoAdq().getIdDetProcesoAdq().compareTo(detProcesoAdq.getIdDetProcesoAdq()) == 0).findAny().get();
-        } catch (NoSuchElementException e) {
-            techo = null;
-        }
-        if (techo == null) {
-            techo = new TechoRubroEntEdu();
-
-            techo.setCodigoEntidad(codigoEntidad);
-            techo.setEstadoEliminacion(BigInteger.ZERO);
-            techo.setFechaInsercion(new Date());
-            techo.setIdDetProcesoAdq(detProcesoAdq);
-            techo.setMontoAdjudicado(BigDecimal.ZERO);
-            techo.setMontoDisponible(BigDecimal.ZERO);
-            techo.setMontoPresupuestado(BigDecimal.ZERO);
-            techo.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-        }
-        return techo;
-    }
-
-    private DetalleProcesoAdq getDetProceso(int idDet) {
-        try {
-            return procesoAdquisicion.getDetalleProcesoAdqList().stream()
-                    .filter(d -> d.getIdRubroAdq().getIdRubroInteres().intValue() == idDet).findAny().get();
-        } catch (NoSuchElementException e) {
-            return null;
-        }
-    }
-
-    private PreciosRefRubro getPrecioMax(List<PreciosRefRubro> lstPrecios, int idDet) {
-        try {
-            return lstPrecios.stream()
-                    .filter(p -> p.getIdNivelEducativo().getIdNivelEducativo().intValue() == idDet).findAny().get();
-        } catch (NoSuchElementException e) {
-            return null;
-        }
     }
 
     public PreciosRefRubro getPreParUni() {
@@ -795,6 +543,374 @@ public class EstadisticasCensoController implements Serializable {
 
     public void setPreBacZap(PreciosRefRubro preBacZap) {
         this.preBacZap = preBacZap;
+    }
+
+    public EstadisticaCenso getEst7grado() {
+        return est7grado;
+    }
+
+    public void setEst7grado(EstadisticaCenso est7grado) {
+        this.est7grado = est7grado;
+    }
+
+    public EstadisticaCenso getEst8grado() {
+        return est8grado;
+    }
+
+    public void setEst8grado(EstadisticaCenso est8grado) {
+        this.est8grado = est8grado;
+    }
+
+    public EstadisticaCenso getEst9grado() {
+        return est9grado;
+    }
+
+    public void setEst9grado(EstadisticaCenso est9grado) {
+        this.est9grado = est9grado;
+    }
+
+    public EstadisticaCenso getEst1grado() {
+        return est1grado;
+    }
+
+    public void setEst1grado(EstadisticaCenso est1grado) {
+        this.est1grado = est1grado;
+    }
+
+    public EstadisticaCenso getEst2grado() {
+        return est2grado;
+    }
+
+    public void setEst2grado(EstadisticaCenso est2grado) {
+        this.est2grado = est2grado;
+    }
+
+    public EstadisticaCenso getEst3grado() {
+        return est3grado;
+    }
+
+    public void setEst3grado(EstadisticaCenso est3grado) {
+        this.est3grado = est3grado;
+    }
+
+    public EstadisticaCenso getEst4grado() {
+        return est4grado;
+    }
+
+    public void setEst4grado(EstadisticaCenso est4grado) {
+        this.est4grado = est4grado;
+    }
+
+    public EstadisticaCenso getEst5grado() {
+        return est5grado;
+    }
+
+    public void setEst5grado(EstadisticaCenso est5grado) {
+        this.est5grado = est5grado;
+    }
+
+    public EstadisticaCenso getEst6grado() {
+        return est6grado;
+    }
+
+    public void setEst6grado(EstadisticaCenso est6grado) {
+        this.est6grado = est6grado;
+    }
+
+    public EstadisticaCenso getEst1media() {
+        return est1media;
+    }
+
+    public void setEst1media(EstadisticaCenso est1media) {
+        this.est1media = est1media;
+    }
+
+    public EstadisticaCenso getEst2media() {
+        return est2media;
+    }
+
+    public void setEst2media(EstadisticaCenso est2media) {
+        this.est2media = est2media;
+    }
+
+    public EstadisticaCenso getEst3media() {
+        return est3media;
+    }
+
+    public void setEst3media(EstadisticaCenso est3media) {
+        this.est3media = est3media;
+    }
+
+    public PreciosRefRubro getPreGrado1Uti() {
+        return preGrado1Uti;
+    }
+
+    public PreciosRefRubro getPreGrado2Uti() {
+        return preGrado2Uti;
+    }
+
+    public PreciosRefRubro getPreGrado3Uti() {
+        return preGrado3Uti;
+    }
+
+    public PreciosRefRubro getPreGrado4Uti() {
+        return preGrado4Uti;
+    }
+
+    public PreciosRefRubro getPreGrado5Uti() {
+        return preGrado5Uti;
+    }
+
+    public PreciosRefRubro getPreGrado6Uti() {
+        return preGrado6Uti;
+    }
+
+    public PreciosRefRubro getPreGrado7Uti() {
+        return preGrado7Uti;
+    }
+
+    public PreciosRefRubro getPreGrado8Uti() {
+        return preGrado8Uti;
+    }
+
+    public PreciosRefRubro getPreGrado9Uti() {
+        return preGrado9Uti;
+    }
+
+    public PreciosRefRubro getPreBachi1Uti() {
+        return preBachi1Uti;
+    }
+
+    public PreciosRefRubro getPreBachi2Uti() {
+        return preBachi2Uti;
+    }
+
+    // </editor-fold>
+    public boolean getEENuevo() {
+        return VarSession.getVariableSessionED() == 1;
+    }
+
+    public boolean getEEModificar() {
+        return VarSession.getVariableSessionED() == 2;
+    }
+
+    public void prepareCreate() {
+        VarSession.setVariableSessionED("1");
+        deshabilitado = false;
+    }
+
+    public void prepareEdit() {
+        VarSession.setVariableSessionED("0");
+        deshabilitado = false;
+        codigoEntidad = "";
+        entidadEducativa = new VwCatalogoEntidadEducativa();
+        organizacionEducativa = new OrganizacionEducativa();
+        estaditicaPar = new EstadisticaCenso();
+        estaditicaCiclo1 = new EstadisticaCenso();
+        estaditicaCiclo2 = new EstadisticaCenso();
+        estaditicaCiclo3 = new EstadisticaCenso();
+        estaditicaBac = new EstadisticaCenso();
+    }
+
+    public void buscarEntidadEducativa() {
+        if (codigoEntidad != null && codigoEntidad.length() == 5) {
+
+            if (procesoAdquisicion != null) {
+                organizacionEducativa = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
+
+                if (organizacionEducativa.getIdOrganizacionEducativa() == null) {
+                    organizacionEducativa.setCargo("Presidente Propietario, Director");
+                    organizacionEducativa.setCodigoEntidad(codigoEntidad);
+                    organizacionEducativa.setEstadoEliminacion(BigInteger.ZERO);
+                    organizacionEducativa.setFechaInsercion(new Date());
+                    organizacionEducativa.setFirmaContrato(BigInteger.ONE);
+                    organizacionEducativa.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+                }
+
+                isProcesoAdq = false;
+                entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
+
+                if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() < 6) {//menor a 2018
+                    detProAdqUni = JsfUtil.findDetalle(procesoAdquisicion, BigDecimal.ONE);
+                } else {
+                    detProAdqUni = JsfUtil.findDetalle(procesoAdquisicion, new BigDecimal(4));
+                    detProAdqUni2 = JsfUtil.findDetalle(procesoAdquisicion, new BigDecimal(5));
+                }
+
+                detProAdqUti = JsfUtil.findDetalle(procesoAdquisicion, new BigDecimal(2));
+                detProAdqZap = JsfUtil.findDetalle(procesoAdquisicion, new BigDecimal(3));
+
+                recuperarEstadisticas();
+                recuperarPreciosMaxRef();
+                recuperarTechos();
+            } else {
+                JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de adquisición.");
+            }
+
+            PrimeFaces.current().executeScript("actualizarDatos();");
+        } else {
+            isProcesoAdq = true;
+        }
+    }
+
+    private void recuperarTechos() {
+        if (detProAdqUni == null) {
+            JsfUtil.mensajeError("Error en el proceso de adquisicion.");
+        } else {
+            List<TechoRubroEntEdu> lstTechos = entidadEducativaEJB.getLstTechosByProceso(procesoAdquisicion.getIdProcesoAdq(), codigoEntidad);
+
+            techoUni = getTecho(lstTechos, detProAdqUni);
+            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 5) {
+                techoUni2 = getTecho(lstTechos, detProAdqUni2);
+            }
+            techoUti = getTecho(lstTechos, detProAdqUti);
+            techoZap = getTecho(lstTechos, detProAdqZap);
+        }
+    }
+
+    private void recuperarEstadisticas() {
+        List<EstadisticaCenso> lstEstadistica = entidadEducativaEJB.getLstEstadisticaByCodEntAndProceso(codigoEntidad, procesoAdquisicion.getIdProcesoAdq());
+
+        if (lstEstadistica.isEmpty()) {
+            estaditicaPar = crearEstadistica(BigDecimal.ONE);
+            estaditicaCiclo1 = crearEstadistica(new BigDecimal(3));
+            estaditicaCiclo2 = crearEstadistica(new BigDecimal(4));
+            estaditicaCiclo3 = crearEstadistica(new BigDecimal(5));
+            estaditicaBac = crearEstadistica(new BigDecimal(6));
+            est7grado = crearEstadistica(new BigDecimal(7));
+            est8grado = crearEstadistica(new BigDecimal(8));
+            est9grado = crearEstadistica(new BigDecimal(9));
+            est1grado = crearEstadistica(new BigDecimal(10));
+            est2grado = crearEstadistica(new BigDecimal(11));
+            est3grado = crearEstadistica(new BigDecimal(12));
+            est4grado = crearEstadistica(new BigDecimal(13));
+            est5grado = crearEstadistica(new BigDecimal(14));
+            est6grado = crearEstadistica(new BigDecimal(15));
+            est1media = crearEstadistica(new BigDecimal(16));
+            est2media = crearEstadistica(new BigDecimal(17));
+            est3media = crearEstadistica(new BigDecimal(18));
+        } else {
+            estaditicaPar = getEstadisticaCenso(lstEstadistica, 1);
+            estaditicaCiclo1 = getEstadisticaCenso(lstEstadistica, 3);
+            estaditicaCiclo2 = getEstadisticaCenso(lstEstadistica, 4);
+            estaditicaCiclo3 = getEstadisticaCenso(lstEstadistica, 5);
+            estaditicaBac = getEstadisticaCenso(lstEstadistica, 6);
+            est7grado = getEstadisticaCenso(lstEstadistica, 7);
+            est8grado = getEstadisticaCenso(lstEstadistica, 8);
+            est9grado = getEstadisticaCenso(lstEstadistica, 9);
+            est1grado = getEstadisticaCenso(lstEstadistica, 10);
+            est2grado = getEstadisticaCenso(lstEstadistica, 11);
+            est3grado = getEstadisticaCenso(lstEstadistica, 12);
+            est4grado = getEstadisticaCenso(lstEstadistica, 13);
+            est5grado = getEstadisticaCenso(lstEstadistica, 14);
+            est6grado = getEstadisticaCenso(lstEstadistica, 15);
+            est1media = getEstadisticaCenso(lstEstadistica, 16);
+            est2media = getEstadisticaCenso(lstEstadistica, 17);
+            est3media = getEstadisticaCenso(lstEstadistica, 18);
+        }
+    }
+
+    private void recuperarPreciosMaxRef() {
+        if (detProAdqUni == null) {
+            JsfUtil.mensajeError("Error en el proceso de adquisicion.");
+        } else {
+            List<PreciosRefRubro> lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqUni);
+
+            if (lstPrecios.isEmpty()) {
+                JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
+            } else {
+                preParUni = getPrecioMax(lstPrecios, 1);
+                preCicloIUni = getPrecioMax(lstPrecios, 3);
+                preCicloIIUni = getPrecioMax(lstPrecios, 4);
+                preCicloIIIUni = getPrecioMax(lstPrecios, 5);
+                preBacUni = getPrecioMax(lstPrecios, 6);
+            }
+
+            lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqUti);
+
+            if (lstPrecios.isEmpty()) {
+                JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
+            } else {
+                preParUti = getPrecioMax(lstPrecios, 1);
+                preCicloIUti = getPrecioMax(lstPrecios, 3);
+                preCicloIIUti = getPrecioMax(lstPrecios, 4);
+                preCicloIIIUti = getPrecioMax(lstPrecios, 5);
+                preBacUti = getPrecioMax(lstPrecios, 6);
+            }
+
+            lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqZap);
+
+            if (lstPrecios.isEmpty()) {
+                JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
+            } else {
+                preParZap = getPrecioMax(lstPrecios, 1);
+                preCicloIZap = getPrecioMax(lstPrecios, 3);
+                preCicloIIZap = getPrecioMax(lstPrecios, 4);
+                preCicloIIIZap = getPrecioMax(lstPrecios, 5);
+                preBacZap = getPrecioMax(lstPrecios, 6);
+            }
+        }
+    }
+
+    private EstadisticaCenso crearEstadistica(BigDecimal idNivel) {
+        EstadisticaCenso est = new EstadisticaCenso();
+        est.setCodigoEntidad(codigoEntidad);
+        est.setEstadoEliminacion((short) 0);
+        est.setFechaInsercion(new Date());
+        est.setFemenimo(BigInteger.ZERO);
+        est.setIdNivelEducativo(new NivelEducativo(idNivel));
+        est.setIdProcesoAdq(procesoAdquisicion);
+        est.setMasculino(BigInteger.ZERO);
+        est.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+        return est;
+    }
+
+    private EstadisticaCenso getEstadisticaCenso(List<EstadisticaCenso> lstEstadistica, int idNivel) {
+        EstadisticaCenso estC;
+        try {
+            estC = lstEstadistica.stream()
+                    .filter(est -> est.getIdNivelEducativo().getIdNivelEducativo().intValue() == idNivel).findAny().get();
+        } catch (NoSuchElementException e) {
+            estC = null;
+        }
+        if (estC == null) {
+            estC = crearEstadistica(new BigDecimal(idNivel));
+        }
+        return estC;
+    }
+
+    private TechoRubroEntEdu getTecho(List<TechoRubroEntEdu> lstTechos, DetalleProcesoAdq detProcesoAdq) {
+        TechoRubroEntEdu techo = null;
+
+        Optional<TechoRubroEntEdu> techoOptional = lstTechos.stream()
+                .filter(te -> te.getIdDetProcesoAdq().getIdDetProcesoAdq().compareTo(detProcesoAdq.getIdDetProcesoAdq()) == 0).findAny();
+        if (techoOptional.isPresent()) {
+            techo = techoOptional.get();
+        }
+
+        if (techo == null) {
+            techo = new TechoRubroEntEdu();
+
+            techo.setCodigoEntidad(codigoEntidad);
+            techo.setEstadoEliminacion(BigInteger.ZERO);
+            techo.setFechaInsercion(new Date());
+            techo.setIdDetProcesoAdq(detProcesoAdq);
+            techo.setMontoAdjudicado(BigDecimal.ZERO);
+            techo.setMontoDisponible(BigDecimal.ZERO);
+            techo.setMontoPresupuestado(BigDecimal.ZERO);
+            techo.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+        }
+        return techo;
+    }
+
+    private PreciosRefRubro getPrecioMax(List<PreciosRefRubro> lstPrecios, int idDet) {
+        Optional<PreciosRefRubro> precioOptional = lstPrecios.stream()
+                .filter(p -> p.getIdNivelEducativo().getIdNivelEducativo().intValue() == idDet).findAny();
+        if (precioOptional.isPresent()) {
+            return precioOptional.get();
+        } else {
+            return null;
+        }
     }
 
     public void updateFilaTotal() {
@@ -1120,146 +1236,6 @@ public class EstadisticasCensoController implements Serializable {
             Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.WARNING, "Error: {0}", e.getMessage());
             Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.WARNING, "=====================================================");
         }
-    }
-
-    public EstadisticaCenso getEst7grado() {
-        return est7grado;
-    }
-
-    public void setEst7grado(EstadisticaCenso est7grado) {
-        this.est7grado = est7grado;
-    }
-
-    public EstadisticaCenso getEst8grado() {
-        return est8grado;
-    }
-
-    public void setEst8grado(EstadisticaCenso est8grado) {
-        this.est8grado = est8grado;
-    }
-
-    public EstadisticaCenso getEst9grado() {
-        return est9grado;
-    }
-
-    public void setEst9grado(EstadisticaCenso est9grado) {
-        this.est9grado = est9grado;
-    }
-
-    public EstadisticaCenso getEst1grado() {
-        return est1grado;
-    }
-
-    public void setEst1grado(EstadisticaCenso est1grado) {
-        this.est1grado = est1grado;
-    }
-
-    public EstadisticaCenso getEst2grado() {
-        return est2grado;
-    }
-
-    public void setEst2grado(EstadisticaCenso est2grado) {
-        this.est2grado = est2grado;
-    }
-
-    public EstadisticaCenso getEst3grado() {
-        return est3grado;
-    }
-
-    public void setEst3grado(EstadisticaCenso est3grado) {
-        this.est3grado = est3grado;
-    }
-
-    public EstadisticaCenso getEst4grado() {
-        return est4grado;
-    }
-
-    public void setEst4grado(EstadisticaCenso est4grado) {
-        this.est4grado = est4grado;
-    }
-
-    public EstadisticaCenso getEst5grado() {
-        return est5grado;
-    }
-
-    public void setEst5grado(EstadisticaCenso est5grado) {
-        this.est5grado = est5grado;
-    }
-
-    public EstadisticaCenso getEst6grado() {
-        return est6grado;
-    }
-
-    public void setEst6grado(EstadisticaCenso est6grado) {
-        this.est6grado = est6grado;
-    }
-
-    public EstadisticaCenso getEst1media() {
-        return est1media;
-    }
-
-    public void setEst1media(EstadisticaCenso est1media) {
-        this.est1media = est1media;
-    }
-
-    public EstadisticaCenso getEst2media() {
-        return est2media;
-    }
-
-    public void setEst2media(EstadisticaCenso est2media) {
-        this.est2media = est2media;
-    }
-
-    public EstadisticaCenso getEst3media() {
-        return est3media;
-    }
-
-    public void setEst3media(EstadisticaCenso est3media) {
-        this.est3media = est3media;
-    }
-
-    public PreciosRefRubro getPreGrado1Uti() {
-        return preGrado1Uti;
-    }
-
-    public PreciosRefRubro getPreGrado2Uti() {
-        return preGrado2Uti;
-    }
-
-    public PreciosRefRubro getPreGrado3Uti() {
-        return preGrado3Uti;
-    }
-
-    public PreciosRefRubro getPreGrado4Uti() {
-        return preGrado4Uti;
-    }
-
-    public PreciosRefRubro getPreGrado5Uti() {
-        return preGrado5Uti;
-    }
-
-    public PreciosRefRubro getPreGrado6Uti() {
-        return preGrado6Uti;
-    }
-
-    public PreciosRefRubro getPreGrado7Uti() {
-        return preGrado7Uti;
-    }
-
-    public PreciosRefRubro getPreGrado8Uti() {
-        return preGrado8Uti;
-    }
-
-    public PreciosRefRubro getPreGrado9Uti() {
-        return preGrado9Uti;
-    }
-
-    public PreciosRefRubro getPreBachi1Uti() {
-        return preBachi1Uti;
-    }
-
-    public PreciosRefRubro getPreBachi2Uti() {
-        return preBachi2Uti;
     }
 
     public void updateCantidadesCiclo3() {

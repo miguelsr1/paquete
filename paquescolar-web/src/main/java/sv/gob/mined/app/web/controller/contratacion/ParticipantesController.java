@@ -512,9 +512,9 @@ public class ParticipantesController implements Serializable {
                             }
                         }
                         if (mostraTblLibros && lstDetalleOfertaLibros.isEmpty()) {
-                            for (PreciosRefRubroEmp preRefEmp : lstPreciosEmp) {
+                            lstPreciosEmp.forEach((preRefEmp) -> {
                                 if (preRefEmp.getIdProducto().getIdProducto().intValue() == 1) {
-                                    for (BigDecimal idNivel : lstNiveles) {
+                                    lstNiveles.forEach((idNivel) -> {
                                         if (preRefEmp.getIdNivelEducativo().getIdNivelEducativo().compareTo(idNivel) == 0) {
                                             DetalleOfertas det = new DetalleOfertas();
                                             det.setNoItem(preRefEmp.getNoItem());
@@ -531,9 +531,9 @@ public class ParticipantesController implements Serializable {
 
                                             lstDetalleOfertaLibros.add(det);
                                         }
-                                    }
+                                    });
                                 }
-                            }
+                            });
                         }
 
                         modifDesac = false;

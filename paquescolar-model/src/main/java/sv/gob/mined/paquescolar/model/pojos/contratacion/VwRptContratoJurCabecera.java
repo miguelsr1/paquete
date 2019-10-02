@@ -9,14 +9,25 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.EntityResult;
+import javax.persistence.Id;
+import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author misanchez
  */
+@Entity
+@XmlRootElement
+@SqlResultSetMapping(name = "defaultVwRptContratoJurCabecera",
+        entities = @EntityResult(entityClass = VwRptContratoJurCabecera.class))
 public class VwRptContratoJurCabecera implements Serializable {
 
+    @Id
+    private BigDecimal idRow;
     private BigDecimal valor;
     private BigDecimal total;
     private BigInteger cantidad;
@@ -59,6 +70,14 @@ public class VwRptContratoJurCabecera implements Serializable {
     private List<DetalleItemDto> lstDetalleItemsBac;
 
     public VwRptContratoJurCabecera() {
+    }
+
+    public BigDecimal getIdRow() {
+        return idRow;
+    }
+
+    public void setIdRow(BigDecimal idRow) {
+        this.idRow = idRow;
     }
 
     public BigDecimal getValor() {

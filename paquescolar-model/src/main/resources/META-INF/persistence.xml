@@ -110,6 +110,8 @@
     <class>sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleContratadoPorComponenteDto</class>
     <class>sv.gob.mined.paquescolar.model.EmpresaNoItem</class>
     <class>sv.gob.mined.paquescolar.model.pojos.contratacion.PrecioReferenciaEmpresaDto</class>
+    <class>sv.gob.mined.paquescolar.model.pojos.contratacion.VwRptPagare</class>
+    <class>sv.gob.mined.paquescolar.model.pojos.contratacion.VwRptContratoJurCabecera</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>

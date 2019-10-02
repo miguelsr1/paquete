@@ -47,8 +47,6 @@ public class ConsultasContratacionMB extends RecuperarProcesoUtil implements Ser
     @EJB
     public EntidadEducativaEJB entidadEducativaEJB;
     @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
-    @EJB
     private UtilEJB utilEJB;
 
     private String codigoDepartamento;
@@ -94,7 +92,7 @@ public class ConsultasContratacionMB extends RecuperarProcesoUtil implements Ser
     public void ini() {
         idRubro = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getRubro();
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
+        detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);//anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
@@ -411,7 +409,7 @@ public class ConsultasContratacionMB extends RecuperarProcesoUtil implements Ser
     }
 
     public void consultaSaldo() {
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
+        detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);//anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
         lstSaldos = serviciosJsonEJB.getLstSaldoProveedoresByDepAndCodDepa(detalleProceso, codigoDepartamento);
     }
 

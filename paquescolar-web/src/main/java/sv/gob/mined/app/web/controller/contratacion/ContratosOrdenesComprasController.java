@@ -33,7 +33,6 @@ import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.apps.utilitario.Herramientas;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.OfertaBienesServiciosEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
@@ -103,8 +102,6 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
     @EJB
     private ResolucionAdjudicativaEJB resolucionAdjudicativaEJB;
     @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
-    @EJB
     private ReportesEJB reportesEJB;
     @EJB
     private UtilEJB utilEJB;
@@ -124,7 +121,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getRubro();
 
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), rubro);
+        detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);//anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), rubro);
 
         if (VarSession.getIdMunicipioSession() != null) {
             idMunicipio = VarSession.getIdMunicipioSession();
@@ -141,6 +138,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
         }
     }
 
+    // <editor-fold defaultstate="collapsed" desc="getter-setter">
     public List<HistorialCamEstResAdj> getLstHistorialCambios() {
         return lstHistorialCambios;
     }
@@ -261,6 +259,132 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
         this.entidadEducativa = entidadEducativa;
     }
 
+    public Boolean getDeshabilitado() {
+        return deshabilitado;
+    }
+
+    public void setDeshabilitado(Boolean deshabilitado) {
+        this.deshabilitado = deshabilitado;
+    }
+
+    public Boolean getContinuar() {
+        return continuar;
+    }
+
+    public void setContinuar(Boolean continuar) {
+        this.continuar = continuar;
+    }
+
+    public Boolean getFiltroCE() {
+        return filtroCE;
+    }
+
+    public void setFiltroCE(Boolean filtroCE) {
+        this.filtroCE = filtroCE;
+    }
+
+    public Boolean getCambiarCiudadFirma() {
+        return cambiarCiudadFirma;
+    }
+
+    public void setCambiarCiudadFirma(Boolean cambiarCiudadFirma) {
+        this.cambiarCiudadFirma = cambiarCiudadFirma;
+    }
+
+    public Boolean getCambiarRepreCe() {
+        return cambiarRepreCe;
+    }
+
+    public void setCambiarRepreCe(Boolean cambiarRepreCe) {
+        this.cambiarRepreCe = cambiarRepreCe;
+    }
+
+    public Boolean getActaAdj() {
+        return actaAdj;
+    }
+
+    public void setActaAdj(Boolean actaAdj) {
+        this.actaAdj = actaAdj;
+    }
+
+    public Boolean getNotaAdj() {
+        return notaAdj;
+    }
+
+    public void setNotaAdj(Boolean notaAdj) {
+        this.notaAdj = notaAdj;
+    }
+
+    public Boolean getContrato() {
+        return contrato;
+    }
+
+    public void setContrato(Boolean contrato) {
+        this.contrato = contrato;
+    }
+
+    public Boolean getGarantiaContrato() {
+        return garantiaContrato;
+    }
+
+    public void setGarantiaContrato(Boolean garantiaContrato) {
+        this.garantiaContrato = garantiaContrato;
+    }
+
+    public Boolean getGarantiaAnticipo() {
+        return garantiaAnticipo;
+    }
+
+    public void setGarantiaAnticipo(Boolean garantiaAnticipo) {
+        this.garantiaAnticipo = garantiaAnticipo;
+    }
+
+    public Boolean getGarantiaUsoTela() {
+        return garantiaUsoTela;
+    }
+
+    public void setGarantiaUsoTela(Boolean garantiaUsoTela) {
+        this.garantiaUsoTela = garantiaUsoTela;
+    }
+
+    public DetalleProcesoAdq getDetalleProceso() {
+        return detalleProceso;
+    }
+
+    public void setDetalleProceso(DetalleProcesoAdq detalleProceso) {
+        this.detalleProceso = detalleProceso;
+    }
+
+    public int getTipoRpt() {
+        return tipoRpt;
+    }
+
+    public void setTipoRpt(int tipoRpt) {
+        this.tipoRpt = tipoRpt;
+        VarSession.setVariableSession("tipoRpt", tipoRpt);
+    }
+
+    public Boolean getShowGarantiaUsoTela() {
+        return showGarantiaUsoTela;
+    }
+
+    public void setShowGarantiaUsoTela(Boolean showGarantiaUsoTela) {
+        this.showGarantiaUsoTela = showGarantiaUsoTela;
+    }
+
+    public List<SelectItem> getLstDocumentosImp() {
+        return lstDocumentosImp;
+    }
+
+    public List<Integer> getLstSelectDocumentosImp() {
+        return lstSelectDocumentosImp;
+    }
+
+    public void setLstSelectDocumentosImp(List<Integer> lstSelectDocumentosImp) {
+        this.lstSelectDocumentosImp = lstSelectDocumentosImp;
+    }
+    // </editor-fold>
+
     private void cargaInicialDeDatos(Map<String, String> params) {
         if (params.containsKey("txtCodigoEntidad")) {
             codigoEntidad = params.get("txtCodigoEntidad");
@@ -361,22 +485,6 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
         idParticipante = BigDecimal.ZERO;
         soloLectura = false;
         lstSelectDocumentosImp.clear();
-    }
-
-    public Boolean getDeshabilitado() {
-        return deshabilitado;
-    }
-
-    public void setDeshabilitado(Boolean deshabilitado) {
-        this.deshabilitado = deshabilitado;
-    }
-
-    public Boolean getContinuar() {
-        return continuar;
-    }
-
-    public void setContinuar(Boolean continuar) {
-        this.continuar = continuar;
     }
 
     public void guardar() {
@@ -485,8 +593,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
             if (getRecuperarProceso().getProcesoAdquisicion() == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
-                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), rubro);
-                //entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
+                detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
 
                 oferta = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(codigoEntidad, detalleProceso);
 
@@ -716,7 +823,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                             }
 
                             nombreRpt = rptDoc.getNombreRpt().concat(perNatural ? "Nat" : "Jur");
-                            rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(nombreRpt + ".jasper"), resolucionAdjudicativaEJB.generarContrato(current.getIdContrato(), current.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
+                            rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(nombreRpt + ".jasper"), resolucionAdjudicativaEJB.generarContrato(current, current.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
                             lstRptAImprimir.add(rptTemp);
                             lstRptAImprimir.add(rptTemp);
                             break;
@@ -829,115 +936,6 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
         } else {
             JsfUtil.mensajeAlerta("Primero debe de guardar la oferta!!!");
         }
-    }
-
-    public Boolean getFiltroCE() {
-        return filtroCE;
-    }
-
-    public void setFiltroCE(Boolean filtroCE) {
-        this.filtroCE = filtroCE;
-    }
-
-    public Boolean getCambiarCiudadFirma() {
-        return cambiarCiudadFirma;
-    }
-
-    public void setCambiarCiudadFirma(Boolean cambiarCiudadFirma) {
-        this.cambiarCiudadFirma = cambiarCiudadFirma;
-    }
-
-    public Boolean getCambiarRepreCe() {
-        return cambiarRepreCe;
-    }
-
-    public void setCambiarRepreCe(Boolean cambiarRepreCe) {
-        this.cambiarRepreCe = cambiarRepreCe;
-    }
-
-    public Boolean getActaAdj() {
-        return actaAdj;
-    }
-
-    public void setActaAdj(Boolean actaAdj) {
-        this.actaAdj = actaAdj;
-    }
-
-    public Boolean getNotaAdj() {
-        return notaAdj;
-    }
-
-    public void setNotaAdj(Boolean notaAdj) {
-        this.notaAdj = notaAdj;
-    }
-
-    public Boolean getContrato() {
-        return contrato;
-    }
-
-    public void setContrato(Boolean contrato) {
-        this.contrato = contrato;
-    }
-
-    public Boolean getGarantiaContrato() {
-        return garantiaContrato;
-    }
-
-    public void setGarantiaContrato(Boolean garantiaContrato) {
-        this.garantiaContrato = garantiaContrato;
-    }
-
-    public Boolean getGarantiaAnticipo() {
-        return garantiaAnticipo;
-    }
-
-    public void setGarantiaAnticipo(Boolean garantiaAnticipo) {
-        this.garantiaAnticipo = garantiaAnticipo;
-    }
-
-    public Boolean getGarantiaUsoTela() {
-        return garantiaUsoTela;
-    }
-
-    public void setGarantiaUsoTela(Boolean garantiaUsoTela) {
-        this.garantiaUsoTela = garantiaUsoTela;
-    }
-
-    public DetalleProcesoAdq getDetalleProceso() {
-        return detalleProceso;
-    }
-
-    public void setDetalleProceso(DetalleProcesoAdq detalleProceso) {
-        this.detalleProceso = detalleProceso;
-    }
-
-    public int getTipoRpt() {
-        return tipoRpt;
-    }
-
-    public void setTipoRpt(int tipoRpt) {
-        this.tipoRpt = tipoRpt;
-        VarSession.setVariableSession("tipoRpt", tipoRpt);
-    }
-
-    public Boolean getShowGarantiaUsoTela() {
-        return showGarantiaUsoTela;
-    }
-
-    public void setShowGarantiaUsoTela(Boolean showGarantiaUsoTela) {
-        this.showGarantiaUsoTela = showGarantiaUsoTela;
-    }
-
-    public List<SelectItem> getLstDocumentosImp() {
-        return lstDocumentosImp;
-    }
-
-    public List<Integer> getLstSelectDocumentosImp() {
-        return lstSelectDocumentosImp;
-    }
-
-    public void setLstSelectDocumentosImp(List<Integer> lstSelectDocumentosImp) {
-        this.lstSelectDocumentosImp = lstSelectDocumentosImp;
     }
 
     public void buscarHistorialCambios() {

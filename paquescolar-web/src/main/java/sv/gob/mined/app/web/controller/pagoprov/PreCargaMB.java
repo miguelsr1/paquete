@@ -9,13 +9,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
-import sv.gob.mined.app.web.util.RecuperarProceso;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
+import sv.gob.mined.app.web.util.JsfUtil;
+import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.paquescolar.ejb.PagoProveedoresEJB;
 import sv.gob.mined.paquescolar.model.DetallePreCarga;
 import sv.gob.mined.paquescolar.model.PreCarga;
@@ -27,7 +25,7 @@ import sv.gob.mined.paquescolar.model.pojos.pagoprove.PreCargaDto;
  */
 @ManagedBean
 @ViewScoped
-public class PreCargaMB implements Serializable {
+public class PreCargaMB extends RecuperarProcesoUtil implements Serializable {
 
     private Boolean filtro = true;
     private Integer idDetProcesoAdq = 0;
@@ -38,11 +36,6 @@ public class PreCargaMB implements Serializable {
 
     @EJB
     private PagoProveedoresEJB pagoProveedoresEJB;
-    @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
-
-    @ManagedProperty("#{recuperarProceso}")
-    private RecuperarProceso recuperarProceso;
 
     public PreCargaMB() {
     }
@@ -80,14 +73,6 @@ public class PreCargaMB implements Serializable {
         this.lstPreCargaDto = lstPreCargaDto;
     }
 
-    public RecuperarProceso getRecuperarProceso() {
-        return recuperarProceso;
-    }
-
-    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
-        this.recuperarProceso = recuperarProceso;
-    }
-
     public List<DetallePreCarga> getLstDetallePreCarga() {
         return lstDetallePreCarga;
     }
@@ -98,7 +83,7 @@ public class PreCargaMB implements Serializable {
 
     // </editor-fold>
     public void obtenerIdDetalleProcesoAdq() {
-        idDetProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        idDetProcesoAdq = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
     }
 
     public void buscarContratos() {

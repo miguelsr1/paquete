@@ -13,15 +13,13 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.ToggleEvent;
 import sv.gob.mined.app.web.util.JsfUtil;
-import sv.gob.mined.app.web.util.RecuperarProceso;
+import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.VarSession;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.ModificativaEJB;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.pojos.modificativa.VwBusquedaContratos;
@@ -34,7 +32,7 @@ import sv.gob.mined.paquescolar.model.pojos.modificativa.VwContratoModificatoria
  */
 @ManagedBean
 @ViewScoped
-public class FiltroContratoModificativaMB implements Serializable {
+public class FiltroContratoModificativaMB extends RecuperarProcesoUtil implements Serializable {
 
     private int op = 0;
     private Boolean deshabilitar = true;
@@ -53,12 +51,7 @@ public class FiltroContratoModificativaMB implements Serializable {
     private List<VwContratoModificatoria> lstContratoModificatorias = new ArrayList();
 
     @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
-    @EJB
     private ModificativaEJB modificativaEJB;
-
-    @ManagedProperty("#{recuperarProceso}")
-    private RecuperarProceso recuperarProceso;
 
     /**
      * Creates a new instance of FiltroContratoModificativaMB
@@ -74,14 +67,6 @@ public class FiltroContratoModificativaMB implements Serializable {
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
-    public RecuperarProceso getRecuperarProceso() {
-        return recuperarProceso;
-    }
-
-    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
-        this.recuperarProceso = recuperarProceso;
-    }
-
     public List<VwContratoModificatoria> getLstContratoModificatorias() {
         return lstContratoModificatorias;
     }
@@ -188,11 +173,11 @@ public class FiltroContratoModificativaMB implements Serializable {
     // </editor-fold>
 
     public void buscarProceso() {
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
+        detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
     }
 
     public void buscarContratos() {
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
+        detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
         if (idRubro == null) {
             JsfUtil.mensajeAlerta("El campo Rubro de adquisicion es obligatorio");
         } else if (idRubro == null || idRubro.compareTo(BigDecimal.ZERO) == 0) {

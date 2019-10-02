@@ -301,7 +301,7 @@ public class CreditoBancarioController implements Serializable {
     }
 
     public void buscarDetProceso() {
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
+        detalleProceso = JsfUtil.findDetalle(recuperarProceso.getProcesoAdquisicion(), idRubro);
         credito.setIdDetProcesoAdq(detalleProceso);
         credito.setCodEntFinanciera(entidadSeleccionado);
 
@@ -655,7 +655,7 @@ public class CreditoBancarioController implements Serializable {
         if (recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de contratación");
         } else {
-            lstCreditosProveedor = creditosEJB.getCreditosActivosPorProveedor(codigoDepartamento, anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro));
+            lstCreditosProveedor = creditosEJB.getCreditosActivosPorProveedor(codigoDepartamento, JsfUtil.findDetalle(recuperarProceso.getProcesoAdquisicion(), idRubro));
             totalDeCreditos = BigDecimal.ZERO;
             totalDeContratos = BigDecimal.ZERO;
             for (CreditoProveedorDto cre : lstCreditosProveedor) {
@@ -708,7 +708,7 @@ public class CreditoBancarioController implements Serializable {
 
     public void resetNit() {
         numeroNit = "";
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
+        detalleProceso = JsfUtil.findDetalle(recuperarProceso.getProcesoAdquisicion(), idRubro);
         lstEntidades = creditosEJB.findEntidadFinancieraEntities((short) 0);
     }
 

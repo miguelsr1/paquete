@@ -31,7 +31,6 @@ import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.VarSession;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.DatosGeograficosEJB;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.OfertaBienesServiciosEJB;
@@ -97,8 +96,6 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     @EJB
     private DatosGeograficosEJB datosGeograficosEJB;
     @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
-    @EJB
     private ReportesEJB reportesEJB;
 
     /**
@@ -112,7 +109,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         rubro = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getRubro();
 
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), rubro);
+        detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
 
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
 
@@ -287,13 +284,6 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         this.lstPrecios = lstPrecios;
     }
 
-    /*public List<PreciosRefRubroEmp> getLstPreciosReferencia() {
-        return lstPreciosReferencia;
-    }
-
-    public void setLstPreciosReferencia(List<PreciosRefRubroEmp> lstPreciosReferencia) {
-        this.lstPreciosReferencia = lstPreciosReferencia;
-    }*/
     public SelectItem[] getLstEstilos() {
         return lstEstilos;
     }
@@ -398,7 +388,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         lstCapaEmpresas = new ArrayList();
         lstCapaEmpresasOtros = new ArrayList();
         limpiarCampos();
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), rubro);
+        detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
     }
 
     public void onSelect(CapaInstPorRubro capa) {
@@ -575,7 +565,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
             if (getRecuperarProceso().getProcesoAdquisicion() == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
-                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), rubro);
+                detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
                 current.setIdDetProcesoAdq(detalleProceso);
                 abrirDialogCe = false;
                 entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
@@ -800,7 +790,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
             if (getRecuperarProceso().getProcesoAdquisicion() == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
-                detalleProceso = anhoProcesoEJB.getDetProcesoAdq(getRecuperarProceso().getProcesoAdquisicion(), rubro);
+                detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
                 current.setIdDetProcesoAdq(detalleProceso);
                 abrirDialogCe = false;
 
@@ -828,7 +818,6 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     }
 
     private void cargarOferta() {
-        //getSelected().setCodigoEntidad(entidadEducativa);
         if (VarSession.getDepartamentoUsuarioSession() != null) {
             String dep = getRecuperarProceso().getDepartamento();
             if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep)
@@ -838,8 +827,6 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                         JsfUtil.mensajeError("Ya existe un proceso de contratación para este centro escolar.");
                     }
                 } else if (VarSession.getVariableSessionED() == 2) {
-                    //current = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq());
-
                     if (current == null) {
                         JsfUtil.mensajeError("No existe un proceso de contratación para este centro escolar.");
                     }
@@ -858,7 +845,6 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         capaInstSeleccionada = capa;
         tempEmpresaSeleccionada = capaInstSeleccionada.getIdMuestraInteres().getIdEmpresa();
         File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + tempEmpresaSeleccionada.getNumeroNit() + "/");
-        //lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(capaInstSeleccionada.getIdMuestraInteres().getIdEmpresa(), detalleProceso);
         lstPrecios = proveedorEJB.getLstPreciosByIdEmpresaAndIdProcesoAdq(capaInstSeleccionada.getIdMuestraInteres().getIdEmpresa().getIdEmpresa(), detalleProceso.getIdProcesoAdq().getIdProcesoAdq());
 
         if (carpetaNfs.list() != null) {

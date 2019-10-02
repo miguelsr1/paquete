@@ -18,16 +18,14 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.util.JsfUtil;
-import sv.gob.mined.app.web.util.RecuperarProceso;
+import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.VarSession;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.RecepcionEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
@@ -48,14 +46,12 @@ import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
  */
 @ManagedBean
 @ViewScoped
-public class SegFisicoController implements Serializable {
+public class SegFisicoController extends RecuperarProcesoUtil implements Serializable {
 
     @EJB
     private RecepcionEJB recepcionEJB;
     @EJB
     private EntidadEducativaEJB entidadEducativaEJB;
-    @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
     @EJB
     private UtilEJB utilEJB;
     private BigDecimal rubro = BigDecimal.ZERO;
@@ -96,9 +92,6 @@ public class SegFisicoController implements Serializable {
     private String numeroItem;
     private String detalleItemEs;
 
-    @ManagedProperty("#{recuperarProceso}")
-    private RecuperarProceso recuperarProceso;
-
     /**
      * Creates a new instance of SegFisicoController
      */
@@ -124,14 +117,6 @@ public class SegFisicoController implements Serializable {
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
-    public RecuperarProceso getRecuperarProceso() {
-        return recuperarProceso;
-    }
-
-    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
-        this.recuperarProceso = recuperarProceso;
-    }
-
     public List<DetalleRecepcion> getLstDetalleRecepcion() {
         return lstDetalleRecepcion;
     }
@@ -166,7 +151,7 @@ public class SegFisicoController implements Serializable {
     }
 
     public void buscarProceso() {
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubro);
+        detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
     }
 
     public String getCodigoEntidad() {
@@ -656,12 +641,12 @@ public class SegFisicoController implements Serializable {
 
     public void findItemBydetalle() {
         contratoOrden = recepcionEJB.getContratoOrdenCompra(contratoSelecionado.getIdContrato());
-        for (DetalleOfertas detalle : contratoOrden.getIdResolucionAdj().getIdParticipante().getDetalleOfertasList()) {
+        contratoOrden.getIdResolucionAdj().getIdParticipante().getDetalleOfertasList().forEach((detalle) -> {
             if ((detalle.getNoItem() + " " + detalle.getConsolidadoEspTec()).equals(detalleItem)) {
                 numeroItem = detalle.getNoItem();
                 detalleItemEs = detalle.getConsolidadoEspTec();
             }
-        }
+        });
     }
 
     public void modificardetalleContratoEdt() {
@@ -829,7 +814,7 @@ public class SegFisicoController implements Serializable {
 
     public void calcularTotalporItemDet() {
         contratoOrden = recepcionEJB.getContratoOrdenCompra(contratoSelecionado.getIdContrato());
-        for (DetalleOfertas detalle : contratoOrden.getIdResolucionAdj().getIdParticipante().getDetalleOfertasList()) {
+        contratoOrden.getIdResolucionAdj().getIdParticipante().getDetalleOfertasList().forEach((detalle) -> {
             if ((detalle.getNoItem() + " " + detalle.getConsolidadoEspTec()).equals(detalleItem)) {
 
                 cantidadTotalDetalle = detalle.getCantidad();
@@ -845,12 +830,12 @@ public class SegFisicoController implements Serializable {
                     }
                 }
             }
-        }
+        });
     }
 
     public void calcularTotalporItem() {
         contratoOrden = recepcionEJB.getContratoOrdenCompra(contratoSelecionado.getIdContrato());
-        for (DetalleOfertas detalle : contratoOrden.getIdResolucionAdj().getIdParticipante().getDetalleOfertasList()) {
+        contratoOrden.getIdResolucionAdj().getIdParticipante().getDetalleOfertasList().forEach((detalle) -> {
             if (detalle.getNoItem().equals(detalleItem)) {
                 cantidadTotalDetalle = detalle.getCantidad();
                 if (VarSession.isVariableSession("rubroConfeccion")) {
@@ -865,12 +850,12 @@ public class SegFisicoController implements Serializable {
                     }
                 }
             }
-        }
+        });
     }
 
     public void calcularTotalEDit() {
         totalEntregado = BigInteger.ZERO;
-        for (DetalleRecepcion detalle : recepcion.getDetalleRecepcionList()) {
+        recepcion.getDetalleRecepcionList().forEach((detalle) -> {
             if (detalleItem != null) {
                 if (detalleItem.equals(detalle.getNoItem())) {
                     BigInteger valor = detalle.getCantidadEntregada();
@@ -883,7 +868,7 @@ public class SegFisicoController implements Serializable {
                     }
                 }
             }
-        }
+        });
     }
 
     public void calcularPendiente() {

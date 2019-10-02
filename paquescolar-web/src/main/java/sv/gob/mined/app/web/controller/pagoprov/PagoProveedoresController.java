@@ -24,7 +24,6 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -40,7 +39,7 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.chart.DonutChartModel;
 import sv.gob.mined.app.web.util.JsfUtil;
-import sv.gob.mined.app.web.util.RecuperarProceso;
+import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.RptExcel;
 import sv.gob.mined.app.web.util.UtilFile;
@@ -79,7 +78,7 @@ import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
  */
 @ManagedBean
 @ViewScoped
-public class PagoProveedoresController implements Serializable {
+public class PagoProveedoresController extends RecuperarProcesoUtil implements Serializable {
 
     @EJB
     private ProveedorEJB proveedorEJB;
@@ -204,24 +203,12 @@ public class PagoProveedoresController implements Serializable {
 
     private StreamedContent file;
 
-    @ManagedProperty("#{recuperarProceso}")
-    private RecuperarProceso recuperarProceso;
-
     public PagoProveedoresController() {
     }
 
     @PostConstruct
     public void ini() {
-        /*AnhoProcesoController controller = (AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController");
-        try {
-            anho = controller.getAnho().getAnho().substring(2);
-        } catch (Exception e) {
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, "ERROR CONTROLADO: No se ha asignado el año de contratación");
-        }
-        concepto = "DOTACION DE UNIFORMES, ZAPATOS Y PAQUETES DE UTILES ESCOLARES " + controller.getAnho();*/
-        codigoDepartamento = recuperarProceso.getDepartamento();
-        //DynamicImageServlet
+        codigoDepartamento = getRecuperarProceso().getDepartamento();
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
@@ -279,14 +266,6 @@ public class PagoProveedoresController implements Serializable {
 
     public void setLstResumenPagoPorProveedor(List<DatosResumenPagosPorReqYProveedorDto> lstResumenPagoPorProveedor) {
         this.lstResumenPagoPorProveedor = lstResumenPagoPorProveedor;
-    }
-
-    public RecuperarProceso getRecuperarProceso() {
-        return recuperarProceso;
-    }
-
-    public void setRecuperarProceso(RecuperarProceso recuperarProceso) {
-        this.recuperarProceso = recuperarProceso;
     }
 
     public StreamedContent getFile() {
@@ -1005,7 +984,9 @@ public class PagoProveedoresController implements Serializable {
         detPla.setMontoOriginal(detalleReq.getMontoTotal());
         detPla.setCantidadActual(BigInteger.ZERO);
         detPla.setMontoActual(BigDecimal.ZERO);
-        detPla.setCodigoEntidad(utilEJB.find(VwCatalogoEntidadEducativa.class, detalleReq.getCodigoEntidad()));
+        detPla
+                .setCodigoEntidad(utilEJB.find(VwCatalogoEntidadEducativa.class,
+                        detalleReq.getCodigoEntidad()));
         detPla.setIdPlanilla(planillaPago);
         detPla.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
         detPla.setFechaInsercion(new Date());
@@ -1069,8 +1050,10 @@ public class PagoProveedoresController implements Serializable {
         planillaPago = pagoProveedoresEJB.guardarPlanillaPago(planillaPago);
         for (DetallePlanilla detPla : lstDetallePlanilla) {
             pagoProveedoresEJB.guardarDetallePlanilla(detPla);
+
         }
-        planillaPago = utilEJB.find(PlanillaPago.class, planillaPago.getIdPlanilla());
+        planillaPago = utilEJB.find(PlanillaPago.class,
+                planillaPago.getIdPlanilla());
         lstDetallePlanilla = planillaPago.getDetallePlanillaList();
 
         if (planillaPago.getIdPlanilla() != null) {
@@ -1087,6 +1070,7 @@ public class PagoProveedoresController implements Serializable {
             PrimeFaces.current().ajax().update("tbDetallePlanilla");
         } else {
             JsfUtil.mensajeError("Ocurrio un error en la operación.");
+
         }
     }
 
@@ -1094,7 +1078,8 @@ public class PagoProveedoresController implements Serializable {
      * Almacenar datos de los cheques necesarios
      */
     private void guardarCheques() {
-        planillaPago = utilEJB.find(PlanillaPago.class, planillaPago.getIdPlanilla());
+        planillaPago = utilEJB.find(PlanillaPago.class,
+                planillaPago.getIdPlanilla());
         BigDecimal mRenta = BigDecimal.ZERO;
         BigDecimal montoTotalActual;
 
@@ -1284,11 +1269,12 @@ public class PagoProveedoresController implements Serializable {
                     dlgEdtDetDocPago = false;
 
                     if (!numeroRequerimiento.trim().isEmpty()) {
-                        requerimientoFondos = utilEJB.find(RequerimientoFondos.class, detalleRequerimiento.getIdRequerimiento().getIdRequerimiento());
+                        requerimientoFondos = utilEJB.find(RequerimientoFondos.class,
+                                detalleRequerimiento.getIdRequerimiento().getIdRequerimiento());
                     } else if (!codigoEntidad.trim().isEmpty()) {
                         lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad,
-                                recuperarProceso.getProcesoAdquisicion(),
-                                VarSession.isVariableSession("departamentoUsuario") ? recuperarProceso.getDepartamento() : null,
+                                getRecuperarProceso().getProcesoAdquisicion(),
+                                VarSession.isVariableSession("departamentoUsuario") ? getRecuperarProceso().getDepartamento() : null,
                                 numeroRequerimiento.isEmpty() ? null : numeroRequerimiento);
                     }
 
@@ -1403,7 +1389,8 @@ public class PagoProveedoresController implements Serializable {
     }
 
     public void selectRequerimiento() {
-        requerimientoFondos = utilEJB.find(RequerimientoFondos.class, idReq); //recuperacion del requerimiento de fondos
+        requerimientoFondos = utilEJB.find(RequerimientoFondos.class,
+                idReq); //recuperacion del requerimiento de fondos
 
         dlgShowTipoPlanilla = false;
         dlgShowEntidadesFinancieras = false;
@@ -1742,7 +1729,7 @@ public class PagoProveedoresController implements Serializable {
     }
 
     public void buscarRequerimientosImp() {
-        detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
+        detalleProcesoAdq = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
         if (idRubro != null) {
             lstRequerimientoFondos = proveedorEJB.getLstRequerimientos(codigoDepartamento, detalleProcesoAdq.getIdDetProcesoAdq());
         } else {
@@ -1751,7 +1738,7 @@ public class PagoProveedoresController implements Serializable {
     }
 
     public void generarRptLiquidacion() {
-        lstEmailProveeCredito = pagoProveedoresEJB.getDatosRptLiquidacion(codigoDepartamento, anho, recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq(), codigoEntidad);
+        lstEmailProveeCredito = pagoProveedoresEJB.getDatosRptLiquidacion(codigoDepartamento, anho, getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq(), codigoEntidad);
     }
 
     public void buscarRequerimientos() {
@@ -1769,8 +1756,10 @@ public class PagoProveedoresController implements Serializable {
                 lstProveedores = pagoProveedoresEJB.getDatosRptReintegroByIdReq(idReq);
                 if (lstProveedores.isEmpty()) {
                     JsfUtil.mensajeInformacion("El requerimiento seleccionado no tienen reintegro de fondos");
+
                 } else {
-                    requerimientoFondos = utilEJB.find(RequerimientoFondos.class, idReq);
+                    requerimientoFondos = utilEJB.find(RequerimientoFondos.class,
+                            idReq);
                     montoReintegro = BigDecimal.ZERO;
                     for (DatosProveDto datosProveDto : lstProveedores) {
                         montoReintegro = montoReintegro.add(datosProveDto.getMontoReintegro());
@@ -1800,7 +1789,7 @@ public class PagoProveedoresController implements Serializable {
     }
 
     public void recuperarRequerimientos() {
-        detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
+        detalleProcesoAdq = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
         isRubroUniforme = idRubro.intValue() == 1 || idRubro.intValue() == 4 || idRubro.intValue() == 5;
         lstRequerimientoFondos = proveedorEJB.getLstRequerimientos(codigoDepartamento, detalleProcesoAdq.getIdDetProcesoAdq());
     }
@@ -1825,23 +1814,23 @@ public class PagoProveedoresController implements Serializable {
     private void buscarReuerimientoqOrPlanilla() {
         reiniciarVisibilidadCheques();
         isRubroUniforme = ((idRubro.intValue() == 1) || (idRubro.intValue() == 4) || (idRubro.intValue() == 5));
-        detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
+        detalleProcesoAdq = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
     }
 
     public void buscarRequerimiento() {
         if (!numeroRequerimiento.trim().isEmpty()) {
-            requerimientoFondos = proveedorEJB.getRequerimientoByNumero(numeroRequerimiento, (VarSession.isVariableSession("departamentoUsuario") ? recuperarProceso.getDepartamento() : null), recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq());
+            requerimientoFondos = proveedorEJB.getRequerimientoByNumero(numeroRequerimiento, (VarSession.isVariableSession("departamentoUsuario") ? getRecuperarProceso().getDepartamento() : null), getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq());
             if (requerimientoFondos == null) {
                 JsfUtil.mensajeInformacion("No se encontro el requerimiento con número: " + numeroRequerimiento);
             } else if (!codigoEntidad.trim().isEmpty()) {
-                lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad, recuperarProceso.getProcesoAdquisicion(),
-                        VarSession.isVariableSession("departamentoUsuario") ? recuperarProceso.getDepartamento() : null,
+                lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad, getRecuperarProceso().getProcesoAdquisicion(),
+                        VarSession.isVariableSession("departamentoUsuario") ? getRecuperarProceso().getDepartamento() : null,
                         numeroRequerimiento);
             } else {
                 lstDetalleRequerimiento = requerimientoFondos.getDetalleRequerimientoList();
             }
         } else if (!codigoEntidad.trim().isEmpty()) {
-            lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad, recuperarProceso.getProcesoAdquisicion(), VarSession.isVariableSession("departamentoUsuario") ? recuperarProceso.getDepartamento() : null, null);
+            lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad, getRecuperarProceso().getProcesoAdquisicion(), VarSession.isVariableSession("departamentoUsuario") ? getRecuperarProceso().getDepartamento() : null, null);
         }
 
         if (lstDetalleRequerimiento.isEmpty()) {
@@ -1861,7 +1850,7 @@ public class PagoProveedoresController implements Serializable {
     public void impRptPagoProve() {
         List<JasperPrint> jasperPrintList = new ArrayList();
 
-        jasperPrintList.add(imprimirRptPagoProve(JsfUtil.getNombreDepartamentoByCodigo(recuperarProceso.getDepartamento())));
+        jasperPrintList.add(imprimirRptPagoProve(JsfUtil.getNombreDepartamentoByCodigo(getRecuperarProceso().getDepartamento())));
 
         Reportes.generarReporte(jasperPrintList, "rptPagoProve_" + codigoDepartamento.replace(" ", ""));
     }
@@ -1872,7 +1861,7 @@ public class PagoProveedoresController implements Serializable {
         } else {
             List<JasperPrint> jasperPrintList = new ArrayList();
 
-            jasperPrintList.add(imprimirRptReintegro(JsfUtil.getNombreDepartamentoByCodigo(recuperarProceso.getDepartamento())));
+            jasperPrintList.add(imprimirRptReintegro(JsfUtil.getNombreDepartamentoByCodigo(getRecuperarProceso().getDepartamento())));
 
             Reportes.generarReporte(jasperPrintList, "rptReintegro_" + codigoDepartamento.replace(" ", ""));
         }
@@ -1885,8 +1874,10 @@ public class PagoProveedoresController implements Serializable {
 
         List<JasperPrint> jasperPrintList = new ArrayList();
         //artificio para impresion de planillas creadas previo a la tipificación de planillas
+
         if (planillaPago == null || planillaPago.getIdEstadoPlanilla() == null) {
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Error en el estado de la planilla {0}", planillaPago);
+            Logger.getLogger(PagoProveedoresController.class
+                    .getName()).log(Level.INFO, "Error en el estado de la planilla {0}", planillaPago);
         } else if (planillaPago.getIdEstadoPlanilla() == 0) {
             tempChequeEntPro = planillaPago.getIdRequerimiento().getCredito() == 1;
             pNombreCheque = nombreEntFinanciera;
@@ -1937,7 +1928,9 @@ public class PagoProveedoresController implements Serializable {
         param.put("pIdPlanilla", planillaPago.getIdPlanilla().intValue());
         param.put("pAFavorDe", (short) (planillaPago.getIdTipoPlanilla() == 1 ? 3 : 0));
         param.put("pNombreCheque", pNombreCheque);
-        jp = reportesEJB.getRpt(param, PagoProveedoresController.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + rpt + ".jasper")));
+        jp
+                = reportesEJB.getRpt(param, PagoProveedoresController.class
+                        .getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + rpt + ".jasper")));
         return jp;
     }
 
@@ -1950,7 +1943,9 @@ public class PagoProveedoresController implements Serializable {
         param.put("pUniforme", detalleProcesoAdq.getIdDetProcesoAdq() == 25 ? 1 : 0);
         param.put("pIdRequerimiento", req.getIdRequerimiento().intValue());
         param.put("pAnho", "20" + anho);
-        jp = reportesEJB.getRpt(param, PagoProveedoresController.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + nombreRpt)));
+        jp
+                = reportesEJB.getRpt(param, PagoProveedoresController.class
+                        .getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + nombreRpt)));
         return jp;
     }
 
@@ -1962,12 +1957,14 @@ public class PagoProveedoresController implements Serializable {
         param.put("pNombreDepartamento", nombreDepartamento);
         param.put("pAnho", "20" + anho);
         param.put("pUsuario", VarSession.getVariableSessionUsuario());
-        param.put("pPagadorDepartamental", pagoProveedoresEJB.getNombrePagadorByCodDepa(recuperarProceso.getDepartamento()));
+        param.put("pPagadorDepartamental", pagoProveedoresEJB.getNombrePagadorByCodDepa(getRecuperarProceso().getDepartamento()));
         DatosProveDto datos = new DatosProveDto();
         datos.setLstDetalle(lstEmailProveeCredito);
         List<DatosProveDto> lst = new ArrayList();
         lst.add(datos);
-        jp = reportesEJB.getRpt(param, PagoProveedoresController.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoProvee.jasper")), lst);
+        jp
+                = reportesEJB.getRpt(param, PagoProveedoresController.class
+                        .getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoProvee.jasper")), lst);
         return jp;
     }
 
@@ -1979,7 +1976,7 @@ public class PagoProveedoresController implements Serializable {
         param.put("pNombreDepartamento", nombreDepartamento);
         param.put("pAnho", "20" + anho);
         param.put("pUsuario", VarSession.getVariableSessionUsuario());
-        param.put("pPagadorDepartamental", pagoProveedoresEJB.getNombrePagadorByCodDepa(recuperarProceso.getDepartamento()));
+        param.put("pPagadorDepartamental", pagoProveedoresEJB.getNombrePagadorByCodDepa(getRecuperarProceso().getDepartamento()));
 
         param.put("pConcepto", requerimientoFondos.getConcepto());
         param.put("pFuenteFinanciamiento", requerimientoFondos.getFuenteFinanciamiento());
@@ -1992,7 +1989,9 @@ public class PagoProveedoresController implements Serializable {
         datos.setLstDetalle(lstProveedores);
         List<DatosProveDto> lst = new ArrayList();
         lst.add(datos);
-        jp = reportesEJB.getRpt(param, PagoProveedoresController.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoReintegro.jasper")), lst);
+        jp
+                = reportesEJB.getRpt(param, PagoProveedoresController.class
+                        .getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoReintegro.jasper")), lst);
         return jp;
     }
 
@@ -2010,11 +2009,11 @@ public class PagoProveedoresController implements Serializable {
             if (entidadEducativa == null) {
                 JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + codigoEntidad);
             } else {
-                if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(recuperarProceso.getDepartamento())) {
+                if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(getRecuperarProceso().getDepartamento())) {
 
                 } else {
-                    if (recuperarProceso.getDepartamento() != null) {
-                        JsfUtil.mensajeAlerta("El codigo del centro escolar no pertenece al departamento " + JsfUtil.getNombreDepartamentoByCodigo(recuperarProceso.getDepartamento()) + "<br/>"
+                    if (getRecuperarProceso().getDepartamento() != null) {
+                        JsfUtil.mensajeAlerta("El codigo del centro escolar no pertenece al departamento " + JsfUtil.getNombreDepartamentoByCodigo(getRecuperarProceso().getDepartamento()) + "<br/>"
                                 + "Departamento del CE: " + entidadEducativa.getCodigoEntidad() + " es " + entidadEducativa.getCodigoDepartamento().getNombreDepartamento());
                     }
                 }
@@ -2029,13 +2028,19 @@ public class PagoProveedoresController implements Serializable {
             emailUnico = pagoProveedoresEJB.getEMailEntidadFinancieraById(lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getCodEntFinanciera());
             lstEmailProveeCredito = pagoProveedoresEJB.getLstNitProveeByIdPlanilla(planillaPago.getIdPlanilla());
 
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
+            Logger
+                    .getLogger(PagoProveedoresController.class
+                            .getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
+
             for (DatosProveDto datosProveDto : lstEmailProveeCredito) {
-                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Email {0} Proveedor {1} {2}", new String[]{datosProveDto.getCorreoElectronico(), datosProveDto.getRazonSocial(), datosProveDto.getNumeroNit()});
+                Logger.getLogger(PagoProveedoresController.class
+                        .getName()).log(Level.INFO, "Email {0} Proveedor {1} {2}", new String[]{datosProveDto.getCorreoElectronico(), datosProveDto.getRazonSocial(), datosProveDto.getNumeroNit()});
             }
         } else if (planillaPago.getIdTipoPlanilla() == 1) {
             emailUnico = pagoProveedoresEJB.getEMailProveedorByNit(lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit());
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
+            Logger
+                    .getLogger(PagoProveedoresController.class
+                            .getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
         }
 
         if (emailUnico == null || emailUnico.isEmpty()) {
@@ -2115,13 +2120,13 @@ public class PagoProveedoresController implements Serializable {
                     JsfUtil.getFormatoNum(getMontoActualTotal(), false)));
         }
         sb.append(RESOURCE_BUNDLE.getString("pagoprov.email.tablaDetalle.fin"));
-        sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.finNotificacion"), JsfUtil.getFechaString(planillaPago.getFechaInsercion()), JsfUtil.getNombreDepartamentoByCodigo(recuperarProceso.getDepartamento())));
+        sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.finNotificacion"), JsfUtil.getFechaString(planillaPago.getFechaInsercion()), JsfUtil.getNombreDepartamentoByCodigo(getRecuperarProceso().getDepartamento())));
 
         return sb.toString();
     }
 
     public void createDonutModel() {
-        detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro);
+        detalleProcesoAdq = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
         renderGrafico = true;
 
         generarResumenPagos();
@@ -2214,9 +2219,13 @@ public class PagoProveedoresController implements Serializable {
                     }
                     notificacion();
                     UtilFile.downloadFileTextoPlano(sb.toString(), "transferencia-" + planillaPago.getIdPlanilla(), UtilFile.EXTENSION_CSV);
-                    Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Archivo: Genera: {0}\n======================================\n{1}", new Object[]{VarSession.getVariableSessionUsuario(), sb.toString()});
+                    Logger
+                            .getLogger(PagoProveedoresController.class
+                                    .getName()).log(Level.INFO, "Archivo: Genera: {0}\n======================================\n{1}", new Object[]{VarSession.getVariableSessionUsuario(), sb.toString()});
+
                 } catch (IOException ex) {
-                    Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(PagoProveedoresController.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -2270,9 +2279,13 @@ public class PagoProveedoresController implements Serializable {
         lstProveedores = pagoProveedoresEJB.getDatosF910(codigoDepartamento, Integer.parseInt(anho));
         if (lstProveedores.isEmpty()) {
             JsfUtil.mensajeInformacion("No se existen datos para el año seleccionado");
+
         } else {
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Generacion de archivo F910 ver. WEB");
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Departamento: {0}", codigoDepartamento);
+            Logger.getLogger(PagoProveedoresController.class
+                    .getName()).log(Level.INFO, "Generacion de archivo F910 ver. WEB");
+            Logger
+                    .getLogger(PagoProveedoresController.class
+                            .getName()).log(Level.INFO, "Departamento: {0}", codigoDepartamento);
 
             RptExcel.generarRptRentaAnual(lstProveedores, anho);
 //            file = new DefaultStreamedContent(RptExcel.generarRptRentaAnual(lstProveedores, anho),
@@ -2302,7 +2315,8 @@ public class PagoProveedoresController implements Serializable {
     }
 
     public void verPlanillaPago() {
-        planillaPago = utilEJB.find(PlanillaPago.class, idPlanilla);
+        planillaPago = utilEJB.find(PlanillaPago.class,
+                idPlanilla);
         idRubro = planillaPago.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres();
 
         reiniciarVisibilidadCheques();
@@ -2321,7 +2335,7 @@ public class PagoProveedoresController implements Serializable {
         if (idPlanilla != null && idPlanilla.intValue() == 0) {
             idPlanilla = BigDecimal.ZERO;
         }
-        lstBusquedaPlanillas = pagoProveedoresEJB.buscarPlanillas(idPlanilla, montoTotal, numeroNit, nombreEntFinanciera, recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq(), numeroCheque, fechaCheque);
+        lstBusquedaPlanillas = pagoProveedoresEJB.buscarPlanillas(idPlanilla, montoTotal, numeroNit, nombreEntFinanciera, getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq(), numeroCheque, fechaCheque);
     }
 
     public void postProcessXLS(Object document) {

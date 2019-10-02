@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
@@ -31,7 +32,7 @@ import sv.gob.mined.paquescolar.model.pojos.contratacion.ContratoDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ParticipanteDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.VwRptContratoJurCabecera;
-import sv.gob.mined.paquescolar.model.view.VwRptPagare;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.VwRptPagare;
 
 /**
  *
@@ -74,7 +75,7 @@ public class ResolucionAdjudicativaEJB {
 
     public void create(ResolucionesAdjudicativas resolucionesAdjudicativas) {
         if (resolucionesAdjudicativas.getContratosOrdenesComprasList() == null) {
-            resolucionesAdjudicativas.setContratosOrdenesComprasList(new ArrayList<ContratosOrdenesCompras>());
+            resolucionesAdjudicativas.setContratosOrdenesComprasList(new ArrayList());
         }
         try {
             resolucionesAdjudicativas.setEstadoEliminacion(BigInteger.ZERO);
@@ -420,266 +421,51 @@ public class ResolucionAdjudicativaEJB {
     }
 
     public List<VwRptPagare> generarRptGarantia(BigDecimal idResolucion, BigDecimal idContrato) {
-        List<VwRptPagare> lstPagare = new ArrayList();
         try {
-            Query query = em.createNativeQuery("SELECT * FROM vw_rpt_pagare WHERE id_resolucion_adj=?1 and id_contrato=?2");
+            Query query = em.createNamedQuery("Contratacion.VwRptPagare", VwRptPagare.class);
             query.setParameter(1, idResolucion);
             query.setParameter(2, idContrato);
 
-            List lst = query.getResultList();
-
-            for (Object object : lst) {
-                Object[] datos = (Object[]) object;
-                VwRptPagare v = new VwRptPagare();
-                v.setCiudadFirma(datos[0] != null ? datos[0].toString() : null);
-                v.setFechaEmision(datos[1] != null ? datos[1].toString() : null);
-                v.setIdContrato(datos[2] != null ? new BigInteger(datos[2].toString()) : null);
-                v.setInicialesModalidad(datos[3] != null ? datos[3].toString() : null);
-                v.setValor(datos[4] != null ? new BigDecimal(datos[4].toString()) : null);
-                v.setDescripcionRubro(datos[5] != null ? datos[5].toString() : null);
-                v.setNumeroContrato(datos[6] != null ? datos[6].toString() : null);
-                v.setNombre(datos[7] != null ? datos[7].toString() : null);
-                v.setNombreRepresentante(datos[8] != null ? datos[8].toString() : null);
-                v.setDomicilioRepresentante(datos[9] != null ? datos[9].toString() : null);
-                v.setNumeroTelefono(datos[10] != null ? datos[10].toString() : null);
-                v.setNumeroDui(datos[11] != null ? datos[11].toString() : null);
-                v.setNumeroNit(datos[12] != null ? datos[12].toString() : null);
-                v.setUsuarioInsercion(datos[13] != null ? datos[13].toString() : null);
-                v.setIdResolucionAdj(datos[14] != null ? new BigInteger(datos[14].toString()) : null);
-                v.setRazonSocial(datos[15] != null ? datos[15].toString() : null);
-                v.setAnhoContrato(datos[16] != null ? datos[16].toString() : null);
-
-                lstPagare.add(v);
-            }
-
-            return lstPagare;
+            return query.getResultList();
         } finally {
         }
     }
 
-    public List<VwRptPagare> generarRptGarantiaByIdContrato(BigDecimal idContrato) {
-        List<VwRptPagare> lstPagare = new ArrayList();
+    public List<VwRptContratoJurCabecera> generarContrato(ContratosOrdenesCompras idContrato, BigDecimal idRubro) {
+        List<VwRptContratoJurCabecera> lstContrato;
+        List<DetalleItemDto> lst;
         try {
-            Query query = em.createNativeQuery("SELECT * FROM vw_rpt_pagare WHERE id_contrato=?1");
-            query.setParameter(1, idContrato);
+            Query query = em.createNamedQuery("Contratacion.VwRptContratoJurCabecera", VwRptContratoJurCabecera.class);
+            query.setParameter(1, idContrato.getIdContrato());
 
-            List lst = query.getResultList();
-
-            for (Object object : lst) {
-                Object[] datos = (Object[]) object;
-                VwRptPagare v = new VwRptPagare();
-                v.setCiudadFirma(datos[0] != null ? datos[0].toString() : null);
-                v.setFechaEmision(datos[1] != null ? datos[1].toString() : null);
-                v.setIdContrato(datos[2] != null ? new BigInteger(datos[2].toString()) : null);
-                v.setInicialesModalidad(datos[3] != null ? datos[3].toString() : null);
-                v.setValor(datos[4] != null ? new BigDecimal(datos[4].toString()) : null);
-                v.setDescripcionRubro(datos[5] != null ? datos[5].toString() : null);
-                v.setNumeroContrato(datos[6] != null ? datos[6].toString() : null);
-                v.setNombre(datos[7] != null ? datos[7].toString() : null);
-                v.setNombreRepresentante(datos[8] != null ? datos[8].toString() : null);
-                v.setDomicilioRepresentante(datos[9] != null ? datos[9].toString() : null);
-                v.setNumeroTelefono(datos[10] != null ? datos[10].toString() : null);
-                v.setNumeroDui(datos[11] != null ? datos[11].toString() : null);
-                v.setNumeroNit(datos[12] != null ? datos[12].toString() : null);
-                v.setUsuarioInsercion(datos[13] != null ? datos[13].toString() : null);
-                v.setIdResolucionAdj(datos[14] != null ? new BigInteger(datos[14].toString()) : null);
-                v.setRazonSocial(datos[15] != null ? datos[15].toString() : null);
-                v.setAnhoContrato(datos[16] != null ? datos[16].toString() : null);
-
-                lstPagare.add(v);
-            }
-
-            return lstPagare;
-        } finally {
-        }
-    }
-
-    public List<VwRptContratoJurCabecera> generarContrato(BigDecimal idContrato, BigDecimal idRubro) {
-        List<VwRptContratoJurCabecera> lstContrato = new ArrayList();
-        try {
-            ContratosOrdenesCompras contratoEntity = em.find(ContratosOrdenesCompras.class, idContrato);
-
-            Query query = em.createNativeQuery("SELECT * FROM VW_RPT_CONTRATO_JUR_CABECERA  WHERE ID_CONTRATO=?1");
-            query.setParameter(1, idContrato);
-
-            List lst = query.getResultList();
-            VwRptContratoJurCabecera cabeceraContrato = new VwRptContratoJurCabecera();
-
-            for (Object object : lst) {
-                Object[] datos = (Object[]) object;
-
-                cabeceraContrato.setValor(new BigDecimal(datos[0] != null ? datos[0].toString() : null));
-                cabeceraContrato.setNumeroContrato(datos[1] != null ? datos[1].toString() : null);
-                cabeceraContrato.setRazonSocial(datos[2] != null ? datos[2].toString() : null);
-                cabeceraContrato.setDescripcionRubro(datos[3] != null ? datos[3].toString() : null);
-                cabeceraContrato.setNombreMiembro(datos[4] != null ? datos[4].toString() : null);
-                cabeceraContrato.setInicialesModalidad(datos[5] != null ? datos[5].toString() : null);
-                cabeceraContrato.setNombre(datos[6] != null ? datos[6].toString() : null);
-                cabeceraContrato.setPlazoPrevistoEntrega(new BigInteger(datos[7] != null ? datos[7].toString() : null));
-                cabeceraContrato.setCiudadFirma(datos[8] != null ? datos[8].toString() : null);
-                cabeceraContrato.setDireccionCe(datos[9] != null ? datos[9].toString() : null);
-                cabeceraContrato.setTelefonoCe(datos[10] != null ? datos[10].toString() : null);
-                cabeceraContrato.setFaxCe(datos[11] != null ? datos[11].toString() : null);
-                cabeceraContrato.setDireccionEmp(datos[12] != null ? datos[12].toString() : null);
-                cabeceraContrato.setTelefonoEmp(datos[13] != null ? datos[13].toString() : null);
-                cabeceraContrato.setCelularEmp(datos[14] != null ? datos[14].toString() : null);
-                cabeceraContrato.setFaxEmp(datos[15] != null ? datos[15].toString() : null);
-                cabeceraContrato.setNumeroNit(datos[16] != null ? datos[16].toString() : null);
-                cabeceraContrato.setUsuarioInsercion(datos[17] != null ? datos[17].toString() : null);
-                cabeceraContrato.setAnhoContrato(datos[18] != null ? datos[18].toString() : null);
-                cabeceraContrato.setFechaEmision(datos[19] != null ? datos[19].toString() : null);
-                cabeceraContrato.setNombrePresentante(datos[20] != null ? datos[20].toString() : null);
-                cabeceraContrato.setCodigoEntidad(datos[21] != null ? datos[21].toString() : null);
-                cabeceraContrato.setIdContrato(new BigInteger(datos[22] != null ? datos[22].toString() : null));
-                cabeceraContrato.setDistribuidor(new BigInteger(datos[24] != null ? datos[24].toString() : null));
-                cabeceraContrato.setMostrarLeyenda(new BigInteger(datos[25] != null ? datos[25].toString() : null));
-                cabeceraContrato.setNombreDepartamento(datos[26] != null ? datos[26].toString() : null);
-                cabeceraContrato.setNombreMunicipio(datos[27] != null ? datos[27].toString() : null);
-                cabeceraContrato.setNumeroDui(datos[28] != null ? datos[28].toString() : null);
-                cabeceraContrato.setNitRepresentante(datos[29] != null ? datos[29].toString() : null);
-
-                lstContrato.add(cabeceraContrato);
-            }
+            lstContrato = query.getResultList();
 
             if (!lstContrato.isEmpty()) {
                 query = em.createQuery("SELECT DISTINCT c.idResolucionAdj.idParticipante.idEmpresa.idPersoneria.idPersoneria, c.idResolucionAdj.idParticipante.idEmpresa.distribuidor FROM ContratosOrdenesCompras c WHERE c.idResolucionAdj=:idResolucion and c.estadoEliminacion=0");
-                query.setParameter("idResolucion", contratoEntity.getIdResolucionAdj());
+                query.setParameter("idResolucion", idContrato.getIdResolucionAdj());
 
                 Object idPersoneria = query.getSingleResult();
                 Object[] datos = (Object[]) idPersoneria;
 
                 if (datos[1].toString().equals("1")) {
                     //DISTRIBUIDOR
-                    query = em.createNativeQuery("SELECT * FROM VW_RPT_DET_ITEMS_DIST WHERE ID_RESOLUCION_ADJ=?1 ORDER BY TO_NUMBER(NO_ITEM)");
+                    query = em.createNamedQuery("Contratacion.RptNotaAdjudicacionBeanDetalleItemDist", DetalleItemDto.class);
                 } else {
                     //FABRICANTE
-                    query = em.createNativeQuery("SELECT * FROM VW_RPT_DET_ITEMS_FAB WHERE ID_RESOLUCION_ADJ=?1 ORDER BY TO_NUMBER(NO_ITEM)");
+                    query = em.createNamedQuery("Contratacion.RptNotaAdjudicacionBeanDetalleItemFab", DetalleItemDto.class);
                 }
 
-                query.setParameter(1, contratoEntity.getIdResolucionAdj().getIdResolucionAdj());
+                query.setParameter(1, idContrato.getIdResolucionAdj().getIdResolucionAdj());
                 lst = query.getResultList();
 
                 List<DetalleItemDto> lstDetalle = new ArrayList();
                 List<DetalleItemDto> lstDetalleBac = new ArrayList();
 
-                for (Object object : lst) {
-                    datos = (Object[]) object;
-                    DetalleItemDto detalleContrato = new DetalleItemDto();
-                    detalleContrato.setNoItem(datos[0] != null ? datos[0].toString() : null);
-                    detalleContrato.setConsolidadoEspTec(datos[1] != null ? datos[1].toString() : null);
-                    detalleContrato.setNombreProveedor(datos[2] != null ? datos[2].toString() : null);
-                    detalleContrato.setCantidad(new BigInteger(datos[3] != null ? datos[3].toString() : "0"));
-                    detalleContrato.setPrecioUnitario(new BigDecimal(datos[4] != null ? datos[4].toString() : "0"));
-                    detalleContrato.setSubTotal(new BigDecimal(datos[5] != null ? datos[5].toString() : "0"));
-                    detalleContrato.setIdContrato(new BigInteger(datos[6] != null ? datos[6].toString() : "0"));
-                    detalleContrato.setIdResolucionAdj(new BigInteger(datos[7] != null ? datos[7].toString() : "0"));
+                lstDetalleBac.addAll(lst.stream().filter(d -> idRubro.compareTo(BigDecimal.ONE) == 0 && d.getConsolidadoEspTec().contains("BACHILLERATO")).collect(Collectors.toList()));
+                lstDetalle.addAll(lst.stream().filter(d -> idRubro.compareTo(BigDecimal.ONE) != 0 || !d.getConsolidadoEspTec().contains("BACHILLERATO")).collect(Collectors.toList()));
 
-                    if (idRubro.compareTo(BigDecimal.ONE) == 0 && detalleContrato.getConsolidadoEspTec().contains("BACHILLERATO")) {
-                        lstDetalleBac.add(detalleContrato);
-                    } else {
-                        lstDetalle.add(detalleContrato);
-                    }
-                }
-
-                cabeceraContrato.setLstDetalleItems(lstDetalle);
-                cabeceraContrato.setLstDetalleItemsBac(lstDetalleBac);
-            }
-
-            return lstContrato;
-        } finally {
-        }
-    }
-
-    public List<VwRptContratoJurCabecera> generarContrato(BigDecimal idContrato, BigDecimal idRubro, Boolean primero) {
-        List<VwRptContratoJurCabecera> lstContrato = new ArrayList();
-        try {
-            ContratosOrdenesCompras contratoEntity = em.find(ContratosOrdenesCompras.class, idContrato);
-
-            Query query = em.createNativeQuery("SELECT * FROM VW_RPT_CONTRATO_JUR_CABECERA  WHERE ID_CONTRATO=?1 and primero=?2");
-            query.setParameter(1, idContrato);
-            query.setParameter(2, primero ? (short) 1 : (short) 2);
-
-            List lst = query.getResultList();
-            VwRptContratoJurCabecera cabeceraContrato = new VwRptContratoJurCabecera();
-
-            for (Object object : lst) {
-                Object[] datos = (Object[]) object;
-
-                cabeceraContrato.setValor(new BigDecimal(datos[0] != null ? datos[0].toString() : null));
-                cabeceraContrato.setNumeroContrato(datos[1] != null ? datos[1].toString() : null);
-                cabeceraContrato.setRazonSocial(datos[2] != null ? datos[2].toString() : null);
-                cabeceraContrato.setDescripcionRubro(datos[3] != null ? datos[3].toString() : null);
-                cabeceraContrato.setNombreMiembro(datos[4] != null ? datos[4].toString() : null);
-                cabeceraContrato.setInicialesModalidad(datos[5] != null ? datos[5].toString() : null);
-                cabeceraContrato.setNombre(datos[6] != null ? datos[6].toString() : null);
-                cabeceraContrato.setPlazoPrevistoEntrega(new BigInteger(datos[7] != null ? datos[7].toString() : null));
-                cabeceraContrato.setCiudadFirma(datos[8] != null ? datos[8].toString() : null);
-                cabeceraContrato.setDireccionCe(datos[9] != null ? datos[9].toString() : null);
-                cabeceraContrato.setTelefonoCe(datos[10] != null ? datos[10].toString() : null);
-                cabeceraContrato.setFaxCe(datos[11] != null ? datos[11].toString() : null);
-                cabeceraContrato.setDireccionEmp(datos[12] != null ? datos[12].toString() : null);
-                cabeceraContrato.setTelefonoEmp(datos[13] != null ? datos[13].toString() : null);
-                cabeceraContrato.setCelularEmp(datos[14] != null ? datos[14].toString() : null);
-                cabeceraContrato.setFaxEmp(datos[15] != null ? datos[15].toString() : null);
-                cabeceraContrato.setNumeroNit(datos[16] != null ? datos[16].toString() : null);
-                cabeceraContrato.setUsuarioInsercion(datos[17] != null ? datos[17].toString() : null);
-                cabeceraContrato.setAnhoContrato(datos[18] != null ? datos[18].toString() : null);
-                cabeceraContrato.setFechaEmision(datos[19] != null ? datos[19].toString() : null);
-                cabeceraContrato.setNombrePresentante(datos[20] != null ? datos[20].toString() : null);
-                cabeceraContrato.setCodigoEntidad(datos[21] != null ? datos[21].toString() : null);
-                cabeceraContrato.setIdContrato(new BigInteger(datos[22] != null ? datos[22].toString() : null));
-                cabeceraContrato.setDistribuidor(new BigInteger(datos[24] != null ? datos[24].toString() : null));
-                cabeceraContrato.setMostrarLeyenda(new BigInteger(datos[25] != null ? datos[25].toString() : null));
-                cabeceraContrato.setNombreDepartamento(datos[26] != null ? datos[26].toString() : null);
-                cabeceraContrato.setNombreMunicipio(datos[27] != null ? datos[27].toString() : null);
-                cabeceraContrato.setNumeroDui(datos[28] != null ? datos[28].toString() : null);
-                cabeceraContrato.setNitRepresentante(datos[29] != null ? datos[29].toString() : null);
-
-                lstContrato.add(cabeceraContrato);
-            }
-
-            if (!lstContrato.isEmpty()) {
-                query = em.createQuery("SELECT DISTINCT c.idResolucionAdj.idParticipante.idEmpresa.idPersoneria.idPersoneria, c.idResolucionAdj.idParticipante.idEmpresa.distribuidor FROM ContratosOrdenesCompras c WHERE c.idResolucionAdj=:idResolucion and c.estadoEliminacion=0");
-                query.setParameter("idResolucion", contratoEntity.getIdResolucionAdj());
-
-                Object idPersoneria = query.getSingleResult();
-                Object[] datos = (Object[]) idPersoneria;
-
-                if (datos[1].toString().equals("1")) {
-                    //DISTRIBUIDOR
-                    query = em.createNativeQuery("SELECT * FROM VW_RPT_DET_ITEMS_DIST WHERE ID_RESOLUCION_ADJ=?1 ORDER BY TO_NUMBER(NO_ITEM)");
-                } else {
-                    //FABRICANTE
-                    query = em.createNativeQuery("SELECT * FROM VW_RPT_DET_ITEMS_FAB WHERE ID_RESOLUCION_ADJ=?1 ORDER BY TO_NUMBER(NO_ITEM)");
-                }
-
-                query.setParameter(1, contratoEntity.getIdResolucionAdj().getIdResolucionAdj());
-                lst = query.getResultList();
-
-                List<DetalleItemDto> lstDetalle = new ArrayList();
-                List<DetalleItemDto> lstDetalleBac = new ArrayList();
-
-                for (Object object : lst) {
-                    datos = (Object[]) object;
-                    DetalleItemDto detalleContrato = new DetalleItemDto();
-                    detalleContrato.setNoItem(datos[0] != null ? datos[0].toString() : null);
-                    detalleContrato.setConsolidadoEspTec(datos[1] != null ? datos[1].toString() : null);
-                    detalleContrato.setNombreProveedor(datos[2] != null ? datos[2].toString() : null);
-                    detalleContrato.setCantidad(new BigInteger(datos[3] != null ? datos[3].toString() : "0"));
-                    detalleContrato.setPrecioUnitario(new BigDecimal(datos[4] != null ? datos[4].toString() : "0"));
-                    detalleContrato.setSubTotal(new BigDecimal(datos[5] != null ? datos[5].toString() : "0"));
-                    detalleContrato.setIdContrato(new BigInteger(datos[6] != null ? datos[6].toString() : "0"));
-                    detalleContrato.setIdResolucionAdj(new BigInteger(datos[7] != null ? datos[7].toString() : "0"));
-
-                    if (idRubro.compareTo(BigDecimal.ONE) == 0 && detalleContrato.getConsolidadoEspTec().contains("BACHILLERATO")) {
-                        lstDetalleBac.add(detalleContrato);
-                    } else {
-                        lstDetalle.add(detalleContrato);
-                    }
-                }
-
-                cabeceraContrato.setLstDetalleItems(lstDetalle);
-                cabeceraContrato.setLstDetalleItemsBac(lstDetalleBac);
+                lstContrato.get(0).setLstDetalleItems(lstDetalle);
+                lstContrato.get(0).setLstDetalleItemsBac(lstDetalleBac);
             }
 
             return lstContrato;
@@ -698,7 +484,6 @@ public class ResolucionAdjudicativaEJB {
     }
 
     public void updateResolucionPorModificativa(BigDecimal idResolucionAdj) {
-        //Query q = em.createQuery("SELECT e FROM EstadoReserva e WHERE e.idEstadoReserva=5", EstadoReserva.class);
         Query q = em.createQuery("UPDATE ResolucionesAdjudicativas r SET r.idEstadoReserva=:idEstado WHERE r.idResolucionAdj = :idRes");
         q.setParameter("idEstado", em.find(EstadoReserva.class, new BigDecimal(5)));
         q.setParameter("idRes", idResolucionAdj);

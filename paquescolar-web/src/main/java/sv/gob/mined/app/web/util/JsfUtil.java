@@ -15,6 +15,7 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -24,6 +25,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
+import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 
 public class JsfUtil {
@@ -263,19 +265,28 @@ public class JsfUtil {
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         return params.get(nombreParamentro);
     }
-    
-    public static List<CapaInstPorRubro> getListFilterByStream(List<CapaInstPorRubro> lst, String cadenaStream){
+
+    public static List<CapaInstPorRubro> getListFilterByStream(List<CapaInstPorRubro> lst, String cadenaStream) {
         return lst.stream()
                 .filter(d -> d.getIdMuestraInteres().getIdEmpresa().getRazonSocial().contains(cadenaStream.toUpperCase()))
                 .collect(Collectors.toList());
     }
-    
-    public static Integer getProcesoAdqPadre(ProcesoAdquisicion proAdq){
-        if(proAdq.getPadreIdProcesoAdq() != null){
+
+    public static Integer getProcesoAdqPadre(ProcesoAdquisicion proAdq) {
+        if (proAdq.getPadreIdProcesoAdq() != null) {
             return getProcesoAdqPadre(proAdq.getPadreIdProcesoAdq());
-        }else{
+        } else {
             return proAdq.getIdProcesoAdq();
         }
     }
 
+    public static DetalleProcesoAdq findDetalle(ProcesoAdquisicion procesoAdquisicion, BigDecimal idRubro) {
+        Optional<DetalleProcesoAdq> detalle = procesoAdquisicion.getDetalleProcesoAdqList().stream().parallel().
+                filter(det -> det.getIdRubroAdq().getIdRubroInteres().compareTo(idRubro) == 0).findAny();
+        if (detalle.isPresent()) {
+            return detalle.get();
+        } else {
+            return null;
+        }
+    }
 }
