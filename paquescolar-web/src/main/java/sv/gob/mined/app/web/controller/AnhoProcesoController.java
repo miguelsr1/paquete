@@ -161,8 +161,8 @@ public class AnhoProcesoController implements Serializable {
     }
 
     public void findDetalleProcesoAdq() {
-        detalleProcesoAdq = JsfUtil.findDetalle(proceso, rubro);
-//anhoProcesoEJB.getDetProcesoAdq(proceso, rubro);
+        //detalleProcesoAdq = JsfUtil.findDetalle(proceso, rubro);
+        anhoProcesoEJB.getDetProcesoAdq(proceso, rubro);
     }
 
     public String limpiarVariables() {

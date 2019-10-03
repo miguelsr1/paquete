@@ -632,8 +632,8 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
 
     public void consultarEmpresa() {
         BigInteger cantidad;
-        municipioCe = datosGeograficosEJB.findNombreMunicipioCe(current.getCodigoEntidad().getCodigoEntidad());
-        cantidadAlumnos = entidadEducativaEJB.getCantidadTotalByCodEntAndIdProcesoAdq(codigoEntidad, current.getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq());
+        municipioCe = datosGeograficosEJB.findNombreMunicipioCe(codigoEntidad);
+        cantidadAlumnos = entidadEducativaEJB.getCantidadTotalByCodEntAndIdProcesoAdq(codigoEntidad, getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq());
 
         if (detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
             cantidad = cantidadAlumnos.multiply(new BigDecimal(2)).toBigInteger();
