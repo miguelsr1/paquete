@@ -4,26 +4,28 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://java.sun.com/jsf/core">
     <p:dataViewGridItem>
-        <p:panel header="PROVE-#{capaEmpresa.idMuestraInteres.idEmpresa.idEmpresa}" styleClass="panelStyle">
+        <p:panel styleClass="panelStyle">
             <h:panelGrid columns="1" style="width: 100%; text-align: left !important;">
                 <h:panelGrid columns="1">
                     <h:outputText value="Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
-                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.razonSocial}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
+                    <h:outputText value="#{capaEmpresa.razonSocial}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
 
                     <h:outputText value="Tipo Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
-                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.distribuidor eq 1 ? 'PRODUCTOR' : 'DISTRIBUIDOR'}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
+                    <h:outputText value="#{capaEmpresa.distribuidor eq 1 ? 'PRODUCTOR' : 'DISTRIBUIDOR'}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
 
                     <h:outputText value="Capacidad disponible" />
-                    <h:outputText value="#{capaEmpresa.capacidadAcreditada - capaEmpresa.capacidadAdjudicada}" style="font-weight: bold"/>
+                    <h:outputText value="#{capaEmpresa.capacidadAcreditada - capaEmpresa.capacidadAdjudicada}" style="font-weight: bold">
+                        <f:convertNumber pattern="#,###"/>
+                    </h:outputText>
                 </h:panelGrid>
             </h:panelGrid>
             <f:facet name="footer">
                 <h:panelGrid columns="2" columnClasses="col6,col6" style="width: 100%; text-align: center !important;">
-                    <p:commandButton oncomplete="PF('dlgProveedor').hide()" action="#{ofertaMB.onSelect(capaEmpresa)}" 
+                    <p:commandButton oncomplete="PF('dlgProveedor').hide()" action="#{ofertaMB.onSelect(capaEmpresa.idEmpresa)}" 
                                      update="tblParticipantes tbEmpresas" icon="fa fa-check-circle"/>
 
                     <p:commandButton oncomplete="PF('dlgDetalleProveedor').show()" update="dlgDetalleProveedor" icon="fa fa-eye"
-                                     action="#{ofertaMB.cargarDetalleProveedor(capaEmpresa)}"/>
+                                     action="#{ofertaMB.cargarDetalleProveedor(capaEmpresa.idEmpresa)}"/>
                 </h:panelGrid>
             </f:facet>
         </p:panel>
@@ -34,29 +36,31 @@
             <p:outputPanel>
                 <h:panelGrid columns="2" cellpadding="5">
                     <h:outputText value="Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
-                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.razonSocial}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
+                    <h:outputText value="#{capaEmpresa.razonSocial}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
 
                     <h:outputText value="Tipo Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
-                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.distribuidor eq 1 ? 'PRODUCTOR' : 'DISTRIBUIDOR'}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
-
-                    <h:outputText value="Código proveedor" style="#{menuController.isUsuarioDigitador?'font-size: 12px;':'font-size: 11px;'}"/>
-                    <h:outputText value="PROVE-#{capaEmpresa.idMuestraInteres.idEmpresa.idEmpresa}" style="#{menuController.isUsuarioDigitador?'font-weight: bold;font-size: 12px;':'font-weight: bold;font-size: 11px;'}"/>
+                    <h:outputText value="#{capaEmpresa.distribuidor eq 1 ? 'PRODUCTOR' : 'DISTRIBUIDOR'}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
                     
                     <h:outputText value="Capacidad disponible" style="#{menuController.isUsuarioDigitador?'font-size: 12px;':'font-size: 11px;'}"/>
-                    <h:outputText value="#{capaEmpresa.capacidadAcreditada - capaEmpresa.capacidadAdjudicada}" style="#{menuController.isUsuarioDigitador?'font-weight: bold;font-size: 12px;':'font-weight: bold;font-size: 11px;'}"/>
+                    <h:outputText value="#{capaEmpresa.capacidadAcreditada - capaEmpresa.capacidadAdjudicada}" style="#{menuController.isUsuarioDigitador?'font-weight: bold;font-size: 12px;':'font-weight: bold;font-size: 11px;'}">
+                        <f:convertNumber pattern="#,###"/>
+                    </h:outputText>
 
                     <h:outputText value="Municipio y Departamento:" rendered="#{!menuController.isUsuarioDigitador}"/>
-                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.nombreMunicipio}, #{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.codigoDepartamento.nombreDepartamento}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
+                    <h:outputText value="#{capaEmpresa.nombreMunicipio}, #{capaEmpresa.nombreDepartamento}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
+                    
+                    <h:outputText value="Porcetaje de cumpliento por Precio:"/>
+                    <h:outputText value="#{capaEmpresa.porcentajePrecio}"/>
                 </h:panelGrid>
             </p:outputPanel>
 
             <p:outputPanel>
                 <h:panelGrid columns="2" style="width: 100%; text-align: center !important;">
-                    <p:commandButton oncomplete="PF('dlgProveedor').hide()" action="#{ofertaMB.onSelect(capaEmpresa)}" 
+                    <p:commandButton oncomplete="PF('dlgProveedor').hide()" action="#{ofertaMB.onSelect(capaEmpresa.idEmpresa)}" 
                                      update="tblParticipantes tbEmpresas" icon="fa fa-check-circle"/>
 
                     <p:commandButton oncomplete="PF('dlgDetalleProveedor').show()" update="dlgDetalleProveedor" icon="fa fa-eye" 
-                                     action="#{ofertaMB.cargarDetalleProveedor(capaEmpresa)}"/>
+                                     action="#{ofertaMB.cargarDetalleProveedor(capaEmpresa.idEmpresa)}"/>
                 </h:panelGrid>
             </p:outputPanel>
         </h:panelGrid>

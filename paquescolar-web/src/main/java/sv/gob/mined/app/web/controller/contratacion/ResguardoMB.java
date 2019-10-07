@@ -36,121 +36,121 @@ import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 @ManagedBean(name = "resguardoMB")
 @ViewScoped
 public class ResguardoMB extends RecuperarProcesoUtil implements Serializable {
-    
+
     private int rowEdit = 0;
     private String codigoEntidad;
     private BigDecimal rubro = BigDecimal.ZERO;
     private BigDecimal idParticipante = BigDecimal.ZERO;
-    
+
     private ResguardoBienes resguardoBienes = new ResguardoBienes();
     private DetalleProcesoAdq detalleProceso = new DetalleProcesoAdq();
     private OfertaBienesServicios current = new OfertaBienesServicios();
     private VwCatalogoEntidadEducativa entidadEducativa = new VwCatalogoEntidadEducativa();
-    
+
     private List<ResguardoBienes> lstResguardoBienes = new ArrayList();
     private List<DetalleContratadoPorComponenteDto> lstDetalle = new ArrayList();
     private List<DetalleContratadoPorComponenteDto> lstDetalleSelect = new ArrayList();
-    
+
     @EJB
     private EntidadEducativaEJB entidadEducativaEJB;
     @EJB
     private OfertaBienesServiciosEJB ofertaBienesServiciosEJB;
     @EJB
     private UtilEJB utilEJB;
-    
+
     public List<DetalleContratadoPorComponenteDto> getLstDetalleSelect() {
         return lstDetalleSelect;
     }
-    
+
     public void setLstDetalleSelect(List<DetalleContratadoPorComponenteDto> lstDetalleSelect) {
         this.lstDetalleSelect = lstDetalleSelect;
     }
-    
+
     public List<DetalleContratadoPorComponenteDto> getLstDetalle() {
         return lstDetalle;
     }
-    
+
     public void setLstDetalle(List<DetalleContratadoPorComponenteDto> lstDetalle) {
         this.lstDetalle = lstDetalle;
     }
-    
+
     public int getRowEdit() {
         return rowEdit;
     }
-    
+
     public void setRowEdit(int rowEdit) {
         this.rowEdit = rowEdit;
     }
-    
+
     public BigDecimal getIdParticipante() {
         return idParticipante;
     }
-    
+
     public void setIdParticipante(BigDecimal idParticipante) {
         this.idParticipante = idParticipante;
     }
-    
+
     public BigDecimal getRubro() {
         return rubro;
     }
-    
+
     public void setRubro(BigDecimal rubro) {
         this.rubro = rubro;
     }
-    
+
     public String getCodigoEntidad() {
         return codigoEntidad;
     }
-    
+
     public void setCodigoEntidad(String codigoEntidad) {
         this.codigoEntidad = codigoEntidad;
     }
-    
+
     public VwCatalogoEntidadEducativa getEntidadEducativa() {
         return entidadEducativa;
     }
-    
+
     public void setEntidadEducativa(VwCatalogoEntidadEducativa entidadEducativa) {
         this.entidadEducativa = entidadEducativa;
     }
-    
+
     public List<ResguardoBienes> getLstResguardoBienes() {
         return lstResguardoBienes;
     }
-    
+
     public void setLstResguardoBienes(List<ResguardoBienes> lstResguardoBienes) {
         this.lstResguardoBienes = lstResguardoBienes;
     }
-    
+
     public OfertaBienesServicios getCurrent() {
         return current;
     }
-    
+
     public void setCurrent(OfertaBienesServicios current) {
         this.current = current;
     }
-    
+
     public ResguardoBienes getResguardoBienes() {
         return resguardoBienes;
     }
-    
+
     public void setResguardoBienes(ResguardoBienes resguardoBienes) {
         this.resguardoBienes = resguardoBienes;
     }
-    
+
     public void limpiarFiltros() {
-        
+        codigoEntidad = "";
     }
-    
+
     public void buscarEntidadEducativa() {
         if (codigoEntidad.length() == 5) {
             if (getRecuperarProceso().getProcesoAdquisicion() == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
                 detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
-                
+
                 entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
-                
+
                 if (entidadEducativa == null) {
                     JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + codigoEntidad);
                 } else {
@@ -179,22 +179,22 @@ public class ResguardoMB extends RecuperarProcesoUtil implements Serializable {
             entidadEducativa = null;
         }
     }
-    
+
     public void limpiar() {
         current = new OfertaBienesServicios();
         codigoEntidad = "";
     }
-    
+
     public void guardar() {
         for (ResguardoBienes resguardo : lstResguardoBienes) {
             ofertaBienesServiciosEJB.guardarResguardo(resguardo, VarSession.getVariableSessionUsuario());
         }
-        
+
         lstResguardoBienes = ofertaBienesServiciosEJB.getLstResguardoBienesByCodEntAndIdDetPro(codigoEntidad, detalleProceso.getIdDetProcesoAdq());
-                
+
         JsfUtil.mensajeInsert();
     }
-    
+
     public void eliminarDetalle() {
         if (resguardoBienes != null) {
             if (resguardoBienes.getEstadoEliminacion().compareTo((short) 0) == 0) {
@@ -206,18 +206,18 @@ public class ResguardoMB extends RecuperarProcesoUtil implements Serializable {
             } else {
                 resguardoBienes.setEstadoEliminacion((short) 0);
             }
-            
+
             resguardoBienes = null;
         } else {
             JsfUtil.mensajeAlerta("Debe seleccionar un detalle para poder eliminarlo.");
         }
     }
-    
+
     public void buscarItem() {
         lstDetalle = ofertaBienesServiciosEJB.getLstDetalleContratado(codigoEntidad, detalleProceso.getIdDetProcesoAdq());
         PrimeFaces.current().executeScript("PF('dlgDetalle').show();");
     }
-    
+
     public void agregarDetalle() {
         for (DetalleContratadoPorComponenteDto detContratado : lstDetalleSelect) {
             ResguardoBienes res = new ResguardoBienes();
@@ -229,7 +229,7 @@ public class ResguardoMB extends RecuperarProcesoUtil implements Serializable {
             res.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, detContratado.getIdNivelEducativo()));
             res.setIdProducto(utilEJB.find(CatalogoProducto.class, detContratado.getIdProducto()));
             res.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-            
+
             lstResguardoBienes.add(res);
         }
     }

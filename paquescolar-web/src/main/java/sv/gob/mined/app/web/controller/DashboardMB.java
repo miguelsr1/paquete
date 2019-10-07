@@ -20,7 +20,6 @@ import org.primefaces.model.chart.ChartSeries;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.VarSession;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.ServiciosJsonEJB;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.Usuario;

@@ -24,7 +24,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.faces.bean.ViewScoped;
 import org.primefaces.PrimeFaces;
-import org.primefaces.event.SelectEvent;
 import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.util.Bean2Excel;
 import sv.gob.mined.app.web.util.JsfUtil;
@@ -36,7 +35,6 @@ import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.OfertaBienesServiciosEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
-import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.Empresa;
 import sv.gob.mined.paquescolar.model.OfertaBienesServicios;
@@ -44,6 +42,7 @@ import sv.gob.mined.paquescolar.model.Participantes;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.pojos.VwRptCertificacionPresupuestaria;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.PrecioReferenciaEmpresaDto;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.ProveedorDisponibleDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.VwCotizacion;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 import sv.gob.mined.paquescolar.util.Constantes;
@@ -73,18 +72,18 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     private BigDecimal cantidadAlumnos = BigDecimal.ZERO;
 
     private Empresa empresaSeleccionada;
-    private Empresa tempEmpresaSeleccionada;
     private Participantes participanteSeleccionado;
     private DetalleProcesoAdq detalleProceso = new DetalleProcesoAdq();
-    private CapaInstPorRubro capaInstSeleccionada;
     private OfertaBienesServicios current = new OfertaBienesServicios();
     private VwCatalogoEntidadEducativa entidadEducativa = new VwCatalogoEntidadEducativa();
     private SelectItem[] lstEstilos = new SelectItem[0];
+    private HashMap<String, String> mapItems;
+
     private List<String> images = new ArrayList();
-    private List<CapaInstPorRubro> lstCapaEmpresas = new ArrayList();
-    private List<CapaInstPorRubro> lstCapaEmpresasOtros = new ArrayList();
-    private List<CapaInstPorRubro> lstEmpresas = new ArrayList();
-    private List<CapaInstPorRubro> lstEmpresasOtros = new ArrayList();
+    private List<ProveedorDisponibleDto> lstCapaEmpresas = new ArrayList();
+    private List<ProveedorDisponibleDto> lstCapaEmpresasOtros = new ArrayList();
+    private List<ProveedorDisponibleDto> lstEmpresas = new ArrayList();
+    private List<ProveedorDisponibleDto> lstEmpresasOtros = new ArrayList();
     private List<PrecioReferenciaEmpresaDto> lstPrecios = new ArrayList();
 
     @EJB
@@ -250,29 +249,29 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         this.images = images;
     }
 
-    public CapaInstPorRubro getCapaInstSeleccionada() {
-        return capaInstSeleccionada;
-    }
+//    public CapaInstPorRubro getCapaInstSeleccionada() {
+//        return capaInstSeleccionada;
+//    }
+//
+//    public void setCapaInstSeleccionada(CapaInstPorRubro capaInstSeleccionada) {
+//        if (capaInstSeleccionada != null) {
+//            this.capaInstSeleccionada = capaInstSeleccionada;
+//        }
+//    }
 
-    public void setCapaInstSeleccionada(CapaInstPorRubro capaInstSeleccionada) {
-        if (capaInstSeleccionada != null) {
-            this.capaInstSeleccionada = capaInstSeleccionada;
-        }
-    }
-
-    public List<CapaInstPorRubro> getLstCapaEmpresas() {
+    public List<ProveedorDisponibleDto> getLstCapaEmpresas() {
         return lstCapaEmpresas;
     }
 
-    public void setLstCapaEmpresas(List<CapaInstPorRubro> lstCapaEmpresas) {
+    public void setLstCapaEmpresas(List<ProveedorDisponibleDto> lstCapaEmpresas) {
         this.lstCapaEmpresas = lstCapaEmpresas;
     }
 
-    public List<CapaInstPorRubro> getLstCapaEmpresasOtros() {
+    public List<ProveedorDisponibleDto> getLstCapaEmpresasOtros() {
         return lstCapaEmpresasOtros;
     }
 
-    public void setLstCapaEmpresasOtros(List<CapaInstPorRubro> lstCapaEmpresasOtros) {
+    public void setLstCapaEmpresasOtros(List<ProveedorDisponibleDto> lstCapaEmpresasOtros) {
         this.lstCapaEmpresasOtros = lstCapaEmpresasOtros;
     }
 
@@ -353,12 +352,12 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
 
     public void cargarFotosPorEstilo() {
         if (!estiloSeleccionado.equals("-")) {
-            File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + tempEmpresaSeleccionada.getNumeroNit() + "/" + estiloSeleccionado + "/");
+            File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + empresaSeleccionada.getNumeroNit() + "/" + estiloSeleccionado + "/");
             images = new ArrayList();
 
             if (carpetaNfs.list() != null) {
                 for (String string : carpetaNfs.list()) {
-                    images.add("Fotos_Zapatos/" + tempEmpresaSeleccionada.getNumeroNit() + "/" + estiloSeleccionado + "/" + string);
+                    images.add("Fotos_Zapatos/" + empresaSeleccionada.getNumeroNit() + "/" + estiloSeleccionado + "/" + string);
                 }
             }
         }
@@ -391,14 +390,14 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
     }
 
-    public void onSelect(CapaInstPorRubro capa) {
-        capaInstSeleccionada = capa;
+    public void onSelect(BigDecimal idEmpresa) {
+        //capaInstSeleccionada = capa;
         try {
-            if (capaInstSeleccionada == null) {
+            if (idEmpresa == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un proveedor");
             } else {
-                empresaSeleccionada = capaInstSeleccionada.getIdMuestraInteres().getIdEmpresa();
-                lstPrecios = proveedorEJB.getLstPreciosByIdEmpresaAndIdProcesoAdq(empresaSeleccionada.getIdEmpresa(), detalleProceso.getIdProcesoAdq().getIdProcesoAdq());
+                empresaSeleccionada = proveedorEJB.findEmpresaByPk(idEmpresa);
+                lstPrecios = proveedorEJB.getLstPreciosByIdEmpresaAndIdProcesoAdq(empresaSeleccionada.getIdEmpresa(), detalleProceso.getIdProcesoAdq().getIdProcesoAdq(), mapItems.get("idNivelesCe"));
                 if (lstPrecios.isEmpty()) {
                     JsfUtil.mensajeAlerta("Este proveedor no posee precios de referencia. No se puede ingresar a la oferta.");
                 } else {
@@ -416,7 +415,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
 
                                 current.getParticipantesList().add(participante);
 
-                                capaInstSeleccionada = null;
+                                //capaInstSeleccionada = null;
                             }
                         } else {
                             JsfUtil.mensajeAlerta("Este proveedor no esta calificado para este departamento.");
@@ -566,13 +565,14 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
                 detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
-                current.setIdDetProcesoAdq(detalleProceso);
                 abrirDialogCe = false;
                 entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
-                getSelected().setCodigoEntidad(entidadEducativa);
                 if (entidadEducativa == null) {
                     JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + current.getCodigoEntidad().getCodigoEntidad());
                 } else {
+                    getSelected().setIdDetProcesoAdq(detalleProceso);
+                    getSelected().setCodigoEntidad(entidadEducativa);
+                    
                     if (VarSession.getDepartamentoUsuarioSession() != null) {
                         String dep = getRecuperarProceso().getDepartamento();
                         if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep) || (Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {
@@ -581,6 +581,8 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                                     JsfUtil.mensajeError("Ya existe un proceso de contratación para este centro escolar.");
                                 } else {
                                     deshabilitar = false;
+                                    mapItems = entidadEducativaEJB.getNoItemsByCodigoEntidadAndIdProcesoAdq(codigoEntidad, detalleProceso,
+                                            detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
                                 }
                             } else if (VarSession.getVariableSessionED() == 2) {
                                 current = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq());
@@ -589,6 +591,8 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                                     JsfUtil.mensajeError("No existe un proceso de contratación para este centro escolar.");
                                 } else {
                                     deshabilitar = false;
+                                    mapItems = entidadEducativaEJB.getNoItemsByCodigoEntidadAndIdProcesoAdq(codigoEntidad, detalleProceso,
+                                            detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
                                 }
                             }
                         } else {
@@ -641,8 +645,8 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
             cantidad = cantidadAlumnos.toBigInteger();
         }
 
-        lstEmpresas = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), current.getCodigoEntidad().getCodigoEntidad(), true, true, cantidad);
-        lstEmpresasOtros = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), current.getCodigoEntidad().getCodigoEntidad(), false, false, BigInteger.ZERO);
+        lstEmpresas = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), current.getCodigoEntidad().getCodigoEntidad(), true, true, cantidad, mapItems);
+        lstEmpresasOtros = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), current.getCodigoEntidad().getCodigoEntidad(), false, false, BigInteger.ZERO, mapItems);
 
         lstCapaEmpresas.clear();
         lstCapaEmpresas.addAll(lstEmpresas);
@@ -773,9 +777,9 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         }
     }
 
-    public void onRowSelect(SelectEvent event) {
-        capaInstSeleccionada = (CapaInstPorRubro) event.getObject();
-    }
+//    public void onRowSelect(SelectEvent event) {
+//        capaInstSeleccionada = (CapaInstPorRubro) event.getObject();
+//    }
 
     /**
      * Este metodo se ejecuta en el filtro de centros escolares en la pagina
@@ -841,11 +845,11 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         }
     }
 
-    public void cargarDetalleProveedor(CapaInstPorRubro capa) {
-        capaInstSeleccionada = capa;
-        tempEmpresaSeleccionada = capaInstSeleccionada.getIdMuestraInteres().getIdEmpresa();
-        File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + tempEmpresaSeleccionada.getNumeroNit() + "/");
-        lstPrecios = proveedorEJB.getLstPreciosByIdEmpresaAndIdProcesoAdq(capaInstSeleccionada.getIdMuestraInteres().getIdEmpresa().getIdEmpresa(), detalleProceso.getIdProcesoAdq().getIdProcesoAdq());
+    public void cargarDetalleProveedor(BigDecimal idEmpresa) {
+        //capaInstSeleccionada = capa;
+        empresaSeleccionada = proveedorEJB.findEmpresaByPk(idEmpresa);
+        File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + empresaSeleccionada.getNumeroNit() + "/");
+        lstPrecios = proveedorEJB.getLstPreciosByIdEmpresaAndIdProcesoAdq(empresaSeleccionada.getIdEmpresa(), detalleProceso.getIdProcesoAdq().getIdProcesoAdq(), mapItems.get("idNivelesCe"));
 
         if (carpetaNfs.list() != null) {
             lstEstilos = new SelectItem[carpetaNfs.list().length + 1];

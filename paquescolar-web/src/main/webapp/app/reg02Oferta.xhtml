@@ -136,10 +136,17 @@
             <p:outputPanel id="pnoCantidad">
                 <h:panelGrid columns="2">
                     <p:outputLabel value="Número de alumnos: "/>
-                    <p:outputLabel value="#{ofertaMB.cantidadAlumnos}" style="font-weight: bold;"/>
+                    <p:outputLabel value="#{ofertaMB.cantidadAlumnos}" style="font-weight: bold;">
+                        <f:convertNumber pattern="#,###"/>
+                    </p:outputLabel>
                     <p:outputLabel value="Número de piezas a contratar: "/>
-                    <p:outputLabel value="#{ofertaMB.cantidadAlumnos*2}" style="font-weight: bold;" rendered="#{ofertaMB.rubro eq 4 || ofertaMB.rubro eq 5}"/>
-                    <p:outputLabel value="#{ofertaMB.cantidadAlumnos}" style="font-weight: bold;" rendered="#{ofertaMB.rubro eq 2 || ofertaMB.rubro eq 3}"/>
+                    <p:outputLabel value="#{ofertaMB.cantidadAlumnos*2}" style="font-weight: bold;" rendered="#{ofertaMB.rubro eq 4 || ofertaMB.rubro eq 5}">
+                        <f:convertNumber pattern="#,###"/>
+                    </p:outputLabel>
+
+                    <p:outputLabel value="#{ofertaMB.cantidadAlumnos}" style="font-weight: bold;" rendered="#{ofertaMB.rubro eq 2 || ofertaMB.rubro eq 3}">
+                        <f:convertNumber pattern="#,###"/>
+                    </p:outputLabel>
                 </h:panelGrid>
             </p:outputPanel>
             <p:spacer width="10"/>
@@ -175,7 +182,7 @@
         </p:dialog>
 
 
-        <p:dialog id="dlgDetalleProveedor" header="#{menuController.isUsuarioDigitador?('PROVE-'.concat(ofertaMB.capaInstSeleccionada.idMuestraInteres.idEmpresa.idEmpresa)):ofertaMB.capaInstSeleccionada.idMuestraInteres.idEmpresa.razonSocial}"
+        <p:dialog id="dlgDetalleProveedor" header="#{menuController.isUsuarioDigitador?('PROVE-'.concat(ofertaMB.empresaSeleccionada.idEmpresa)):ofertaMB.empresaSeleccionada.razonSocial}"
                   showEffect="fade" hideEffect="fade"  widgetVar="dlgDetalleProveedor" width="670" height="550"  >
             <h:panelGrid columns="1" >
                 <p:tabView>
@@ -237,7 +244,7 @@
 
         </p:confirmDialog>
 
-        <p:remoteCommand name="findEntidad" update="menuBar tblParticipantes nombreCE cldFechaApertura btoAgregarProveedor" actionListener="#{ofertaMB.buscarEntidadEducativa}" />
+        <!--p:remoteCommand name="findEntidad" update="menuBar tblParticipantes nombreCE cldFechaApertura btoAgregarProveedor" actionListener="{ofertaMB.buscarEntidadEducativa}" /-->
         <p:remoteCommand name="findEmpresa" update="tbEmpresas:tblEmpresas" actionListener="#{ofertaMB.filterProveedores()}" />
         <p:remoteCommand name="findEmpresaOtros" update="tbEmpresas:tblEmpresasOtras" actionListener="#{ofertaMB.filterProveedoresOtros()}" />
         <p:remoteCommand name="findEmpresaReiniciar" update="tbEmpresas:tblEmpresas tbEmpresas:tblEmpresasOtras" actionListener="#{ofertaMB.filterReiniciarProveedores()}" />

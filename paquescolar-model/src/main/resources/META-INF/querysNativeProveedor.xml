@@ -63,7 +63,7 @@
                 cat.nombre_producto     nombreProducto,
                 niv.descripcion_nivel   descripcionNivel,
                 pmax.precio_maximo      precioMaximo,
-                pemp.precio_referencia  precioReferencia
+                pemp.precio_referencia  precioReferencia,
             from precio_maximo_referencia pmax
                 inner join precios_ref_rubro_emp pemp on pmax.id_producto = pemp.id_producto and pmax.id_proceso_adq = pemp.id_proceso_adq and pmax.no_item = pemp.no_item
                 inner join catalogo_producto cat      on pemp.id_producto = cat.id_producto
@@ -72,7 +72,7 @@
                 pemp.id_empresa = ?1 and 
                 pemp.id_proceso_adq = ?2 and
                 pemp.estado_eliminacion = 0 and
-                pemp.id_nivel_educativo in ?
+                pemp.id_nivel_educativo in (?3)
             order by to_number(pemp.no_item)
             ]]>
         </query>

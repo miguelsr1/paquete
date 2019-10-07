@@ -7,7 +7,8 @@
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
         <p:menubar id="menuBar" styleClass="divSticky"> 
-            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" disabled="true"
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" 
+                        disabled="true"
                         update="pnlFiltro"/>
             <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar"
                         action="#{resguardoMB.limpiar}" 
@@ -35,9 +36,8 @@
                                  styleClass="form-group ui-panelgrid-blank">
                         <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
                         <p:selectOneMenu id="cboRubro" value="#{resguardoMB.rubro}">
-                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="null" />
+                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="0" />
                             <f:selectItems value="#{anhoProcesoController.lstRubrosResguardo}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
-                            <p:ajax update=":frmPrincipal:pnlFiltro " listener="#{resguardoMB.limpiarFiltros}"/>
                         </p:selectOneMenu>
 
                         <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />

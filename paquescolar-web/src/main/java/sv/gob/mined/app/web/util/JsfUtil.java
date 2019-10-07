@@ -27,6 +27,7 @@ import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.ProveedorDisponibleDto;
 
 public class JsfUtil {
 
@@ -266,9 +267,9 @@ public class JsfUtil {
         return params.get(nombreParamentro);
     }
 
-    public static List<CapaInstPorRubro> getListFilterByStream(List<CapaInstPorRubro> lst, String cadenaStream) {
+    public static List<ProveedorDisponibleDto> getListFilterByStream(List<ProveedorDisponibleDto> lst, String cadenaStream) {
         return lst.stream()
-                .filter(d -> d.getIdMuestraInteres().getIdEmpresa().getRazonSocial().contains(cadenaStream.toUpperCase()))
+                .filter(d -> d.getRazonSocial().contains(cadenaStream.toUpperCase()))
                 .collect(Collectors.toList());
     }
 

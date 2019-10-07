@@ -100,6 +100,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     private String url;
     private String msjError = "";
     private String codigoDepartamento = "";
+    private BigDecimal rubro = BigDecimal.ZERO;
     private BigDecimal idMunicipio = BigDecimal.ZERO;
     private BigDecimal totalItems = BigDecimal.ZERO;
     private BigDecimal totalMonto = BigDecimal.ZERO;
@@ -183,6 +184,14 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public BigDecimal getRubro() {
+        return rubro;
+    }
+
+    public void setRubro(BigDecimal rubro) {
+        this.rubro = rubro;
+    }
+
     public List<DetalleAdjudicacionEmpDto> getLstDetalleAdj() {
         return lstDetalleAdj;
     }
@@ -604,12 +613,17 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
 
     public void empSelecPrecioRef(SelectEvent event) {
         if (event.getObject() != null) {
-            empresa = (Empresa) event.getObject();
-            fileName = "fotoProveedores/" + empresa.getIdPersona().getFoto();
-            VarSession.setVariableSession("idEmpresa", empresa.getIdEmpresa());
-            cargarDetalleCalificacion(false);
-            if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
-                cargarPrecioRef();
+            if (event.getObject() instanceof Empresa) {
+                empresa = (Empresa) event.getObject();
+                fileName = "fotoProveedores/" + empresa.getIdPersona().getFoto();
+                VarSession.setVariableSession("idEmpresa", empresa.getIdEmpresa());
+                cargarDetalleCalificacion(false);
+                if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
+                    cargarPrecioRef();
+                }
+            }else{
+                Logger.getLogger(ProveedorController.class
+                        .getName()).log(Level.WARNING, "No se pudo convertir el objeto a la clase Empresa{0}", event.getObject());
             }
         }
         estiloZapato = "0";
@@ -673,9 +687,9 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     public void guardarMunicipioInteres() {
         List<DisMunicipioInteres> lstMunicipioIntereses = proveedorEJB.findMunicipiosInteres(departamentoCalif);
 
-        for (DisMunicipioInteres disMunicipioInteres : lstMunicipioIntereses) {
+        lstMunicipioIntereses.forEach((disMunicipioInteres) -> {
             disMunicipioInteres.setEstadoEliminacion(BigInteger.ONE);
-        }
+        });
 
         if (!(lstMunicipiosInteres.getSource().isEmpty() && lstMunicipiosInteres.getTarget().isEmpty())) {
             for (MunicipioDto mun : getLstMunicipiosInteres().getTarget()) {
@@ -1441,6 +1455,8 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     }
 
     public void calcularNoItems() {
-        proveedorEJB.calcularNoItems();
+        if (getRecuperarProceso().getProcesoAdquisicion() != null) {
+            proveedorEJB.calcularNoItems(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq());
+        }
     }
 }

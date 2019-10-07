@@ -6,7 +6,6 @@
 package sv.gob.mined.app.web.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
