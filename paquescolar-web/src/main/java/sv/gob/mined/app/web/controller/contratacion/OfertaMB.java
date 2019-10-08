@@ -258,7 +258,6 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
 //            this.capaInstSeleccionada = capaInstSeleccionada;
 //        }
 //    }
-
     public List<ProveedorDisponibleDto> getLstCapaEmpresas() {
         return lstCapaEmpresas;
     }
@@ -570,38 +569,44 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                 if (entidadEducativa == null) {
                     JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + current.getCodigoEntidad().getCodigoEntidad());
                 } else {
-                    getSelected().setIdDetProcesoAdq(detalleProceso);
-                    getSelected().setCodigoEntidad(entidadEducativa);
-                    
-                    if (VarSession.getDepartamentoUsuarioSession() != null) {
-                        String dep = getRecuperarProceso().getDepartamento();
-                        if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep) || (Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {
-                            if (VarSession.getVariableSessionED() == 1) {
-                                if (ofertaBienesServiciosEJB.isOfertaRubro(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq())) {
-                                    JsfUtil.mensajeError("Ya existe un proceso de contratación para este centro escolar.");
-                                } else {
-                                    deshabilitar = false;
-                                    mapItems = entidadEducativaEJB.getNoItemsByCodigoEntidadAndIdProcesoAdq(codigoEntidad, detalleProceso,
-                                            detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
-                                }
-                            } else if (VarSession.getVariableSessionED() == 2) {
-                                current = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq());
+                    cantidadAlumnos = entidadEducativaEJB.getCantidadTotalByCodEntAndIdProcesoAdq(codigoEntidad, getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq());
 
-                                if (current == null) {
-                                    JsfUtil.mensajeError("No existe un proceso de contratación para este centro escolar.");
-                                } else {
-                                    deshabilitar = false;
-                                    mapItems = entidadEducativaEJB.getNoItemsByCodigoEntidadAndIdProcesoAdq(codigoEntidad, detalleProceso,
-                                            detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
-                                }
-                            }
-                        } else {
-                            JsfUtil.mensajeAlerta("El codigo del centro escolar no pertenece al departamento " + JsfUtil.getNombreDepartamentoByCodigo(dep) + "<br/>"
-                                    + "Departamento del CE: " + entidadEducativa.getCodigoEntidad() + " es " + entidadEducativa.getCodigoDepartamento().getNombreDepartamento());
-                        }
-                        abrirDialogCe = true;
+                    if (cantidadAlumnos == null) {
+                        JsfUtil.mensajeAlerta("Es necesario registrar las estadisticas para este centro educativo");
                     } else {
-                        JsfUtil.mensajeAlerta("Debe de seleccionar un departamento y municipio.");
+                        getSelected().setIdDetProcesoAdq(detalleProceso);
+                        getSelected().setCodigoEntidad(entidadEducativa);
+
+                        if (VarSession.getDepartamentoUsuarioSession() != null) {
+                            String dep = getRecuperarProceso().getDepartamento();
+                            if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep) || (Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {
+                                if (VarSession.getVariableSessionED() == 1) {
+                                    if (ofertaBienesServiciosEJB.isOfertaRubro(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq())) {
+                                        JsfUtil.mensajeError("Ya existe un proceso de contratación para este centro escolar.");
+                                    } else {
+                                        deshabilitar = false;
+                                        mapItems = entidadEducativaEJB.getNoItemsByCodigoEntidadAndIdProcesoAdq(codigoEntidad, detalleProceso,
+                                                detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
+                                    }
+                                } else if (VarSession.getVariableSessionED() == 2) {
+                                    current = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq());
+
+                                    if (current == null) {
+                                        JsfUtil.mensajeError("No existe un proceso de contratación para este centro escolar.");
+                                    } else {
+                                        deshabilitar = false;
+                                        mapItems = entidadEducativaEJB.getNoItemsByCodigoEntidadAndIdProcesoAdq(codigoEntidad, detalleProceso,
+                                                detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
+                                    }
+                                }
+                            } else {
+                                JsfUtil.mensajeAlerta("El codigo del centro escolar no pertenece al departamento " + JsfUtil.getNombreDepartamentoByCodigo(dep) + "<br/>"
+                                        + "Departamento del CE: " + entidadEducativa.getCodigoEntidad() + " es " + entidadEducativa.getCodigoDepartamento().getNombreDepartamento());
+                            }
+                            abrirDialogCe = true;
+                        } else {
+                            JsfUtil.mensajeAlerta("Debe de seleccionar un departamento y municipio.");
+                        }
                     }
                 }
             }
@@ -637,7 +642,6 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     public void consultarEmpresa() {
         BigInteger cantidad;
         municipioCe = datosGeograficosEJB.findNombreMunicipioCe(codigoEntidad);
-        cantidadAlumnos = entidadEducativaEJB.getCantidadTotalByCodEntAndIdProcesoAdq(codigoEntidad, getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq());
 
         if (detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
             cantidad = cantidadAlumnos.multiply(new BigDecimal(2)).toBigInteger();
@@ -780,7 +784,6 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
 //    public void onRowSelect(SelectEvent event) {
 //        capaInstSeleccionada = (CapaInstPorRubro) event.getObject();
 //    }
-
     /**
      * Este metodo se ejecuta en el filtro de centros escolares en la pagina
      * regReservaFondos.xhtml

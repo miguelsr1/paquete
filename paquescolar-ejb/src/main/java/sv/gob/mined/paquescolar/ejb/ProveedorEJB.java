@@ -604,14 +604,18 @@ public class ProveedorEJB {
         List<ProveedorDisponibleDto> lstCapa = new ArrayList<>();
         Query q = em.createNativeQuery("select codigo_municipio, codigo_departamento from vw_catalogo_entidad_educativa WHERE codigo_entidad = '" + codigoEntidad + "'");
         List lst = q.getResultList();
-        
+
         codMunicipio = ((Object[]) lst.get(0))[0].toString();
         codDepartamento = ((Object[]) lst.get(0))[1].toString();
 
         if (detProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq() != null) {
             for (DetalleProcesoAdq object : detProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq().getDetalleProcesoAdqList()) {
                 if (object.getIdRubroAdq().getIdRubroInteres().compareTo(detProcesoAdq.getIdRubroAdq().getIdRubroInteres()) == 0) {
-                    detTemp = object;
+                    if (object.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 && object.getIdRubroAdq().getIdRubroInteres().intValue() == 4) {
+                        detTemp = object;
+                    } else {
+                        detTemp = object;
+                    }
                     break;
                 }
             }
