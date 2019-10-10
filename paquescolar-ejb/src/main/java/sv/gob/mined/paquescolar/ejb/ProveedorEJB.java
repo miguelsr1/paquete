@@ -600,7 +600,7 @@ public class ProveedorEJB {
             Boolean municipioIgual, Boolean byCapacidad, BigInteger cantidad, HashMap<String, String> mapItems) {
         String codMunicipio;
         String codDepartamento;
-        DetalleProcesoAdq detTemp = null;
+        Integer idDetTemp = 0;
         List<ProveedorDisponibleDto> lstCapa = new ArrayList<>();
         Query q = em.createNativeQuery("select codigo_municipio, codigo_departamento from vw_catalogo_entidad_educativa WHERE codigo_entidad = '" + codigoEntidad + "'");
         List lst = q.getResultList();
@@ -609,38 +609,32 @@ public class ProveedorEJB {
         codDepartamento = ((Object[]) lst.get(0))[1].toString();
 
         if (detProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq() != null) {
-            for (DetalleProcesoAdq object : detProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq().getDetalleProcesoAdqList()) {
-                if (object.getIdRubroAdq().getIdRubroInteres().compareTo(detProcesoAdq.getIdRubroAdq().getIdRubroInteres()) == 0) {
-                    if (object.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 && object.getIdRubroAdq().getIdRubroInteres().intValue() == 4) {
-                        detTemp = object;
-                    } else {
-                        detTemp = object;
-                    }
-                    break;
-                }
-            }
+            idDetTemp = getIdDetProceso(detProcesoAdq, detProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq());
         } else {
-            detTemp = detProcesoAdq;
+            idDetTemp = getIdDetProceso(detProcesoAdq, detProcesoAdq.getIdProcesoAdq());
         }
 
-        q = em.createNativeQuery(findLstIdEmpresa(codMunicipio, codDepartamento, detTemp.getIdDetProcesoAdq(),
+        q = em.createNativeQuery(findLstIdEmpresa(codMunicipio, codDepartamento, detProcesoAdq.getIdDetProcesoAdq(), idDetTemp,
                 municipioIgual, byCapacidad, cantidad.intValue(), mapItems.get("noItemSeparados"), mapItems.get("noItems")), ProveedorDisponibleDto.class);
-        q.setParameter(1, codigoEntidad);
-        q.setParameter(2, getProcesoAdqPadre(detProcesoAdq.getIdProcesoAdq()));
-        q.setParameter(3, getProcesoAdqPadre(detProcesoAdq.getIdProcesoAdq()));
+
         lstCapa.addAll(q.getResultList());
         return lstCapa;
     }
 
-    private Integer getProcesoAdqPadre(ProcesoAdquisicion proAdq) {
-        if (proAdq.getPadreIdProcesoAdq() != null) {
-            return getProcesoAdqPadre(proAdq.getPadreIdProcesoAdq());
-        } else {
-            return proAdq.getIdProcesoAdq();
+    private Integer getIdDetProceso(DetalleProcesoAdq detProcesoAdq, ProcesoAdquisicion procesoAdquisicion) {
+        for (DetalleProcesoAdq object : procesoAdquisicion.getDetalleProcesoAdqList()) {
+            if (object.getIdRubroAdq().getIdRubroUniforme().intValue() != 1 && object.getIdRubroAdq().getIdRubroInteres().compareTo(detProcesoAdq.getIdRubroAdq().getIdRubroInteres()) == 0) {
+                return object.getIdDetProcesoAdq();
+            } else if (object.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
+                if (object.getIdRubroAdq().getIdRubroInteres().intValue() == 4) {
+                    return object.getIdDetProcesoAdq();
+                }
+            }
         }
+        return null;
     }
 
-    private String findLstIdEmpresa(String codMun, String codDep, Integer idDetProcesoAdq,
+    private String findLstIdEmpresa(String codMun, String codDep, Integer idDetProcesoAdq, Integer idDetProcesoAdqPrecio,
             Boolean municipioIgual, Boolean byCapacidad, Integer cantidad, String noItemSeparados, String noItems) {
         String sql = "select "
                 + "    rownum                       as idRow,\n"
@@ -664,9 +658,9 @@ public class ProveedorEJB {
                 + "     inner join capa_inst_por_rubro  cip 	on cip.id_muestra_interes = cap.id_muestra_interes\n"
                 + "     inner join (select id_empresa, round(avg(precio_referencia),3) avg\n"
                 + "            	from precios_Ref_rubro_emp\n"
-                + "            	where id_empresa in (select id_empresa from empresa_no_item where id_det_proceo_adq = " + idDetProcesoAdq + " and (" + noItemSeparados + ")) and\n"
+                + "            	where id_empresa in (select id_empresa from empresa_no_item where id_det_proceo_adq = " + idDetProcesoAdqPrecio + " and (" + noItemSeparados + ")) and\n"
                 + "                	no_item in (" + noItems + ") and estado_eliminacion = 0 and\n"
-                + "                	id_det_proceso_adq =  " + idDetProcesoAdq + "\n"
+                + "                	id_det_proceso_adq =  " + idDetProcesoAdqPrecio + "\n"
                 + "            	group by id_empresa) tbl on det.id_empresa = tbl.id_empresa\n"
                 + "where\n"
                 + "	det.id_det_proceso_adq = " + idDetProcesoAdq + " and\n"
@@ -682,49 +676,6 @@ public class ProveedorEJB {
         return sql;
     }
 
-    /*private String findLstIdEmpresaCumpleNiveles(String codMun, String codDep, BigDecimal idRubro, BigDecimal idAnho,
-            Boolean municipioIgual, Boolean byCapacidad, Integer cantidad) {
-        String sql = "select distinct \n"
-                + "     cip.ID_CAP_INST_RUBRO,\n"
-                + "     cip.ID_MUESTRA_INTERES,\n"
-                + "     cip.CAPACIDAD_ACREDITADA,\n"
-                + "     cip.CAPACIDAD_ADJUDICADA,\n"
-                + "     cip.USUARIO_INSERCION,\n"
-                + "     cip.FECHA_INSERCION,\n"
-                + "     cip.USUARIO_MODIFICACION,\n"
-                + "     cip.FECHA_MODIFICACION,\n"
-                + "     cip.FECHA_ELIMINACION,\n"
-                + "     cip.ESTADO_ELIMINACION,\n"
-                + "     vw.pu_avg\n"
-                + " from \n"
-                + "     det_rubro_muestra_interes det\n"
-                + "     inner join empresa emp                  on emp.id_empresa = det.id_empresa\n"
-                + "     inner join municipio mun_e              on mun_e.id_municipio = emp.id_municipio\n"
-                + "     inner join detalle_proceso_adq dpa      on dpa.id_det_proceso_adq = det.id_det_proceso_adq\n"
-                + "     inner join proceso_adquisicion pa       on pa.id_proceso_adq = dpa.id_proceso_adq\n"
-                + "     inner join capa_distribucion_acre cap   on det.id_muestra_interes = cap.id_muestra_interes\n"
-                + "     inner join dis_municipio_interes dis    on dis.id_capa_distribucion = cap.id_capa_distribucion\n"
-                + "     inner join municipio mun                on mun.id_municipio = dis.id_municipio\n"
-                + "     inner join departamento dep             on mun.codigo_departamento = dep.codigo_departamento\n"
-                + "     inner join capa_inst_por_rubro  cip     on cip.id_muestra_interes = cap.id_muestra_interes\n"
-                + "     inner join precios_ref_rubro_emp pre    on emp.id_empresa = pre.id_empresa\n"
-                + "     inner join vw_sub_empresa_avg_pu vw     on vw.id_empresa = emp.id_empresa and vw.id_det_proceso_adq = dpa.id_det_proceso_adq and pre.id_empresa = vw.id_empresa\n"
-                + "     inner join vw_sub_niveles_by_cod_pro vws on vws.id_proceso_adq = dpa.id_proceso_adq and vws.id_nivel = pre.id_nivel_educativo\n"
-                + " where \n"
-                + "     mun.codigo_municipio = '" + codMun + "' and\n"
-                + "     dep.codigo_departamento = '" + codDep + "' and\n"
-                + "     dis.estado_eliminacion = 0 and\n"
-                + "     dpa.id_rubro_adq = " + idRubro + " and\n"
-                + "     pa.id_anho = " + idAnho + " and\n"
-                + "     det.estado_eliminacion = 0 and\n"
-                + "     mun_e.codigo_municipio " + (municipioIgual ? "=" : "<>") + "'" + codMun + "' and\n"
-                + "     vws.codigo_entidad = ?1 and vws.id_proceso_adq = ?2 and \n"
-                + "     pre.id_det_proceso_adq in (select id_det_proceso_adq from detalle_proceso_Adq where id_proceso_adq = ?3) \n"
-                + "     " + (byCapacidad ? " and (cip.CAPACIDAD_ACREDITADA - cip.CAPACIDAD_ADJUDICADA) >= " + cantidad : "")
-                + " order by vw.pu_avg asc";
-
-        return sql;
-    }*/
     /**
      * Verifica la existencia de los precios de referencia para un proveedor y
      * año en particular
