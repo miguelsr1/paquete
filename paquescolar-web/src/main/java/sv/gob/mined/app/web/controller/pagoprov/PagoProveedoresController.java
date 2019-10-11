@@ -85,8 +85,6 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
     @EJB
     private ServiciosJsonEJB serviciosEJB;
     @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
-    @EJB
     private UtilEJB utilEJB;
     @EJB
     private CreditosEJB creditosEJB;
@@ -1622,6 +1620,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
         dlgEdtDetPlanilla = false;
     }
 
+    //docPago
     public void showDlgEdtDetDocPago() {
         ajusteRenta = 0;
         contratoModificado = false;

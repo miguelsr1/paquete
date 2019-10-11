@@ -614,7 +614,7 @@ public class ProveedorEJB {
             idDetTemp = getIdDetProceso(detProcesoAdq, detProcesoAdq.getIdProcesoAdq());
         }
 
-        q = em.createNativeQuery(findLstIdEmpresa(codMunicipio, codDepartamento, detProcesoAdq.getIdDetProcesoAdq(), idDetTemp,
+        q = em.createNativeQuery(findLstIdEmpresa(codMunicipio, codDepartamento, getIdDetProcesoPadre(detProcesoAdq), idDetTemp,
                 municipioIgual, byCapacidad, cantidad.intValue(), mapItems.get("noItemSeparados"), mapItems.get("noItems")), ProveedorDisponibleDto.class);
 
         lstCapa.addAll(q.getResultList());
@@ -634,44 +634,66 @@ public class ProveedorEJB {
         return null;
     }
 
+    private Integer getIdDetProcesoPadre(DetalleProcesoAdq detalleProcesoAdq) {
+        if (detalleProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq() != null) {
+            for (DetalleProcesoAdq det : detalleProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq().getDetalleProcesoAdqList()) {
+                if (det.getIdRubroAdq().getIdRubroInteres().intValue() == detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
+                    return det.getIdDetProcesoAdq();
+                }
+            }
+        }
+        return detalleProcesoAdq.getIdDetProcesoAdq();
+    }
+
     private String findLstIdEmpresa(String codMun, String codDep, Integer idDetProcesoAdq, Integer idDetProcesoAdqPrecio,
             Boolean municipioIgual, Boolean byCapacidad, Integer cantidad, String noItemSeparados, String noItems) {
-        String sql = "select "
-                + "    rownum                       as idRow,\n"
-                + "    emp.id_empresa               as idEmpresa,\n"
-                + "    emp.razon_social             as razonSocial,\n"
-                + "    nvl(emp.distribuidor,0)      as distribuidor,\n"
-                + "    cip.CAPACIDAD_ACREDITADA     as capacidadAcreditada,\n"
-                + "    cip.CAPACIDAD_ADJUDICADA     as capacidadAdjudicada,\n"
-                + "    mun_e.nombre_municipio       as nombreMunicipio,\n"
-                + "    dep_e.nombre_departamento    as nombreDepartamento,\n"
-                + "    tbl.avg                      as puAvg,\n"
-                + "    round(((min(tbl.avg) OVER (order by tbl.avg))*100)/tbl.avg,2) as porcentajePrecio\n"
-                + "from det_rubro_muestra_interes det\n"
-                + "     inner join empresa emp                  on emp.id_empresa = det.id_empresa\n"
-                + "     inner join municipio mun_e              on mun_e.id_municipio = emp.id_municipio\n"
-                + "     inner join departamento dep_e           on mun_e.codigo_departamento = dep_e.codigo_departamento\n"
-                + "     inner join capa_distribucion_acre cap   on det.id_muestra_interes = cap.id_muestra_interes\n"
-                + "     inner join dis_municipio_interes dis	on dis.id_capa_distribucion = cap.id_capa_distribucion\n"
-                + "     inner join municipio mun            	on mun.id_municipio = dis.id_municipio\n"
-                + "     inner join departamento dep         	on mun.codigo_departamento = dep.codigo_departamento\n"
-                + "     inner join capa_inst_por_rubro  cip 	on cip.id_muestra_interes = cap.id_muestra_interes\n"
-                + "     inner join (select id_empresa, round(avg(precio_referencia),3) avg\n"
-                + "            	from precios_Ref_rubro_emp\n"
-                + "            	where id_empresa in (select id_empresa from empresa_no_item where id_det_proceo_adq = " + idDetProcesoAdqPrecio + " and (" + noItemSeparados + ")) and\n"
-                + "                	no_item in (" + noItems + ") and estado_eliminacion = 0 and\n"
-                + "                	id_det_proceso_adq =  " + idDetProcesoAdqPrecio + "\n"
-                + "            	group by id_empresa) tbl on det.id_empresa = tbl.id_empresa\n"
-                + "where\n"
-                + "	det.id_det_proceso_adq = " + idDetProcesoAdq + " and\n"
-                + "     mun.codigo_municipio = '" + codMun + "' and\n"
-                + "     dep.codigo_departamento = '" + codDep + "' and\n"
-                + "     det.estado_eliminacion = 0 and\n"
-                + "     mun_e.codigo_municipio " + (municipioIgual ? "=" : "<>") + "'" + codMun + "'\n"
-                + "     " + (byCapacidad ? " and (cip.CAPACIDAD_ACREDITADA - cip.CAPACIDAD_ADJUDICADA) >= " + cantidad + "\n" : "\n")
+        String sql = "select \n"
+                + "    rownum                  as idRow,\n"
+                + "    tb1.id_empresa          as idEmpresa,\n"
+                + "    razon_social            as razonSocial,\n"
+                + "    distribuidor,\n"
+                + "    nombre_municipio        as nombreMunicipio,\n"
+                + "    nombre_departamento     as nombreDepartamento,\n"
+                + "    precio_promedio                     as puAvg,\n"
+                + "    round(((min(precio_promedio) OVER (order by precio_promedio))*100)/precio_promedio,2)       as porcentajePrecio,\n"
+                + "    capacidad_acreditada    as capacidadAcreditada,\n"
+                + "    capacidad_adjudicada    as capacidadAdjudicada\n"
+                + "from (select \n"
+                + "        emp.id_empresa,\n"
+                + "        emp.razon_social,\n"
+                + "        nvl(emp.distribuidor,0)      as distribuidor,\n"
+                + "        mun_e.nombre_municipio,\n"
+                + "        dep_e.nombre_departamento,\n"
+                + "        tbl.precio_promedio,\n"
+                + "        mun_e.id_municipio\n"
+                + "    from det_rubro_muestra_interes det\n"
+                + "        inner join empresa emp                  on emp.id_empresa = det.id_empresa\n"
+                + "        inner join municipio mun_e              on mun_e.id_municipio = emp.id_municipio\n"
+                + "        inner join departamento dep_e           on mun_e.codigo_departamento = dep_e.codigo_departamento\n"
+                + "        inner join capa_distribucion_acre cda   on det.id_muestra_interes = cda.id_muestra_interes and cda.id_capa_distribucion in (select id_capa_distribucion from dis_municipio_interes dis inner join municipio mun on mun.id_municipio = dis.id_municipio where dis.id_capa_distribucion = cda.id_capa_distribucion and mun.codigo_municipio ='" + codMun + "'and mun.codigo_departamento = '" + codDep + "')\n"
+                + "        inner join (select id_empresa, round(avg(precio_referencia),3) precio_promedio\n"
+                + "                    from precios_Ref_rubro_emp\n"
+                + "                    where id_empresa in (select id_empresa from empresa_no_item where id_det_proceo_adq = " + idDetProcesoAdqPrecio + " and (" + noItemSeparados + ")) and\n"
+                + "                        no_item in (" + noItems + ") and estado_eliminacion = 0 and\n"
+                + "                        id_det_proceso_adq =  " + idDetProcesoAdqPrecio + "\n"
+                + "                    group by id_empresa) tbl on det.id_empresa = tbl.id_empresa\n"
+                + "    where det.id_det_proceso_adq in (" + idDetProcesoAdqPrecio + ") and\n"
+                + "        cda.estado_eliminacion = 0 and\n"
+                + "        det.estado_eliminacion = 0) tb1\n"
+                + "    inner join (select \n"
+                + "                    det.id_empresa,\n"
+                + "                    cip.capacidad_acreditada,\n"
+                + "                    cip.capacidad_adjudicada\n"
+                + "                from det_rubro_muestra_interes det\n"
+                + "                    inner join capa_inst_por_rubro cip      on det.id_muestra_interes = cip.id_muestra_interes\n"
+                + "                where det.id_det_proceso_adq in (" + idDetProcesoAdq + ") and\n"
+                + "                    det.estado_eliminacion = 0) tb2 on tb1.id_empresa = tb2.id_empresa\n"
+                + "where \n"
+                + "    id_municipio " + (municipioIgual ? "=" : "<>") + " (select id_municipio from municipio where codigo_municipio = '" + codMun + "' and codigo_departamento = '" + codDep + "') \n"
+                + "     " + (byCapacidad ? " and (CAPACIDAD_ACREDITADA - CAPACIDAD_ADJUDICADA) >= " + cantidad + "\n" : "\n")
                 + "order by\n"
-                + "    tbl.avg asc,"
-                + "    (cip.CAPACIDAD_ACREDITADA - cip.CAPACIDAD_ADJUDICADA) asc";
+                + "    precio_promedio asc,\n"
+                + "    (CAPACIDAD_ACREDITADA - CAPACIDAD_ADJUDICADA) asc";
 
         return sql;
     }

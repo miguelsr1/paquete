@@ -55,6 +55,10 @@ public class VwCatalogoEntidadEducativa implements Serializable {
     @Basic(optional = false)
     @Column(name = "CODIGO_MUNICIPIO")
     private String codigoMunicipio;
+    @Column(name = "CODIGO_CANTON")
+    private String codigoCanton;
+    @Column(name = "nombre_CANTON")
+    private String nombreCanton;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "codigoEntidad", fetch = FetchType.LAZY)
     private List<OfertaBienesServicios> ofertaBienesServiciosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "codigoEntidad", fetch = FetchType.LAZY)
@@ -133,6 +137,22 @@ public class VwCatalogoEntidadEducativa implements Serializable {
 
     public void setCodigoMunicipio(String codigoMunicipio) {
         this.codigoMunicipio = codigoMunicipio;
+    }
+
+    public String getCodigoCanton() {
+        return codigoCanton;
+    }
+
+    public void setCodigoCanton(String codigoCanton) {
+        this.codigoCanton = codigoCanton;
+    }
+
+    public String getNombreCanton() {
+        return nombreCanton;
+    }
+
+    public void setNombreCanton(String nombreCanton) {
+        this.nombreCanton = nombreCanton;
     }
 
     public List<OfertaBienesServicios> getOfertaBienesServiciosList() {

@@ -396,7 +396,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un proveedor");
             } else {
                 empresaSeleccionada = proveedorEJB.findEmpresaByPk(idEmpresa);
-                lstPrecios = proveedorEJB.getLstPreciosByIdEmpresaAndIdProcesoAdq(empresaSeleccionada.getIdEmpresa(), detalleProceso.getIdProcesoAdq().getIdProcesoAdq(), mapItems.get("idNivelesCe"));
+                lstPrecios = proveedorEJB.getLstPreciosByIdEmpresaAndIdProcesoAdq(empresaSeleccionada.getIdEmpresa(), JsfUtil.getProcesoAdqPadre(detalleProceso.getIdProcesoAdq()), mapItems.get("idNivelesCe"));
                 if (lstPrecios.isEmpty()) {
                     JsfUtil.mensajeAlerta("Este proveedor no posee precios de referencia. No se puede ingresar a la oferta.");
                 } else {
@@ -798,7 +798,6 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
                 detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
-                current.setIdDetProcesoAdq(detalleProceso);
                 abrirDialogCe = false;
 
                 current = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(codigoEntidad, detalleProceso);
@@ -806,7 +805,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                 if (current == null) {
                     entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
                     if (entidadEducativa == null) {
-                        JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + current.getCodigoEntidad());
+                        JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + codigoEntidad);
                     } else {
                         JsfUtil.mensajeError("No existe un proceso de contratación para este centro escolar.");
                     }

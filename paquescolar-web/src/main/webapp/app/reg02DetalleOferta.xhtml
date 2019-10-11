@@ -110,8 +110,8 @@
                                         </h:outputText>
                                     </f:facet>
                                     <f:facet name="input">
-                                        <p:inputText value="#{detalle.cantidad}" disabled="#{detalle.estadoEliminacion eq 1}" size="8"
-                                                     style="text-align: right" readonly="#{participantesController.modifDesac}" />
+                                        <p:inputNumber value="#{detalle.cantidad}" disabled="#{detalle.estadoEliminacion eq 1}" size="8" 
+                                                       inputStyle="text-align: right" readonly="#{participantesController.modifDesac}" decimalPlaces="0"/>
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>

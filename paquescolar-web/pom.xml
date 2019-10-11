@@ -5,7 +5,7 @@
     <groupId>sv.gob.mined</groupId>
     <artifactId>paquescolar-web</artifactId>
     <packaging>war</packaging>
-    <version>3.2</version>
+    <version>3.3</version>
 
     <name>paquescolar-web</name>
     <url>http://maven.apache.org</url>

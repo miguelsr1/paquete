@@ -36,8 +36,9 @@
                                  styleClass="form-group ui-panelgrid-blank">
                         <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
                         <p:selectOneMenu id="cboRubro" value="#{resguardoMB.rubro}">
-                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="0" />
+                            <f:selectItem itemLabel="Seleccione un rubro" />
                             <f:selectItems value="#{anhoProcesoController.lstRubrosResguardo}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                             <p:ajax update=":frmPrincipal:pnlFiltro"/>
                         </p:selectOneMenu>
 
                         <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />

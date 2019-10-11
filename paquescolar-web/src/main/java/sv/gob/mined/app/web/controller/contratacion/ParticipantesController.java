@@ -47,7 +47,6 @@ public class ParticipantesController implements Serializable {
     private int rowEdit = 0;
     private int estadoEdicion = 0;
     private int tmpIdNivel = 0;
-    private String url;
     private String numItem;
     private String codigoEntidad;
     private String msjError = "";
@@ -60,7 +59,7 @@ public class ParticipantesController implements Serializable {
     private CatalogoProducto item;
     private DetalleProcesoAdq detalleProceso = new DetalleProcesoAdq();
     private NivelEducativo nivel;
-    private Participantes current = new Participantes();
+    private Participantes participante = new Participantes();
     private DetalleOfertas detalleSeleccionado;
     private SelectItem[] lstEstilos = new SelectItem[0];
     private List<DetalleOfertas> lstDetalleOferta = new ArrayList();
@@ -84,18 +83,16 @@ public class ParticipantesController implements Serializable {
 
     @PostConstruct
     public void init() {
-        url = "";
-
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         if (params.containsKey("txtCodigoEntidad")) {
             if (params.containsKey("idParticipante")) {
                 VarSession.setVariableSessionED("2");
                 deshabilitado = false;
-                if (current.getIdParticipante() == null) {
-                    current = utilEJB.find(Participantes.class, new BigDecimal(params.get("idParticipante")));
+                if (participante.getIdParticipante() == null) {
+                    participante = utilEJB.find(Participantes.class, new BigDecimal(params.get("idParticipante")));
                 }
-                idParticipante = current.getIdParticipante();
-                codigoEntidad = current.getIdOferta().getCodigoEntidad().getCodigoEntidad();
+                idParticipante = participante.getIdParticipante();
+                codigoEntidad = params.get("txtCodigoEntidad");//participante.getIdOferta().getCodigoEntidad().getCodigoEntidad();
                 buscarItemsProveedor();
             }
         } else {
@@ -134,14 +131,6 @@ public class ParticipantesController implements Serializable {
 
     public void setEstadoEdicion(int estadoEdicion) {
         this.estadoEdicion = estadoEdicion;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public String getNumItem() {
@@ -189,19 +178,19 @@ public class ParticipantesController implements Serializable {
     }
 
     public void setSelected(Participantes participante) {
-        if (participante != null && current != null) {
-            if (current.equals(participante)) {
+        if (participante != null && participante != null) {
+            if (participante.equals(participante)) {
             } else {
-                current = participante;
+                participante = participante;
             }
         }
     }
 
     public Participantes getSelected() {
-        if (current == null) {
-            current = new Participantes();
+        if (participante == null) {
+            participante = new Participantes();
         }
-        return current;
+        return participante;
     }
 
     public DetalleOfertas getDetalleSeleccionado() {
@@ -253,7 +242,7 @@ public class ParticipantesController implements Serializable {
         setDeshabilitado(false);
         VarSession.removeVariableSession("codigoEntidad");
         VarSession.setVariableSessionED("2");
-        current = new Participantes();
+        participante = new Participantes();
         estadoEdicion = 2;
         mostrarMsj = false;
         mostraTblLibros = false;
@@ -321,7 +310,7 @@ public class ParticipantesController implements Serializable {
             if (res == null) {
                 res = new ResolucionesAdjudicativas();
                 res.setIdEstadoReserva(utilEJB.find(EstadoReserva.class, BigDecimal.ONE));
-                res.setIdParticipante(current);
+                res.setIdParticipante(participante);
                 res.setValor(getMontoAdjudicado(false).add(getMontoAdjudicado(true)));
                 res.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
 
@@ -407,14 +396,14 @@ public class ParticipantesController implements Serializable {
         lstEstilos = new SelectItem[0];
         lstDetalleOferta.clear();
         if (idParticipante != null && idParticipante.compareTo(BigDecimal.ZERO) != 0) {
-            current = utilEJB.find(Participantes.class, idParticipante);
-            detalleProceso = current.getIdOferta().getIdDetProcesoAdq();
+            //participante = utilEJB.find(Participantes.class, idParticipante);
+            detalleProceso = participante.getIdOferta().getIdDetProcesoAdq();
 
             //verificar si el proveedor seleccionado posee precios de referencia
-            if (proveedorEJB.isPrecioRef(current.getIdEmpresa(), current.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho())) {
+            if (proveedorEJB.isPrecioRef(participante.getIdEmpresa(), participante.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho())) {
                 //cargar estilos, unicamente si el rubro es zapatos
                 if (detalleProceso.getIdRubroAdq().getIdRubroInteres().compareTo(new BigDecimal(3)) == 0) {
-                    File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + current.getIdEmpresa().getNumeroNit() + "/");
+                    File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + participante.getIdEmpresa().getNumeroNit() + "/");
 
                     if (carpetaNfs.list() != null) {
                         showEstilo = true;
@@ -430,13 +419,13 @@ public class ParticipantesController implements Serializable {
                 }
 
                 //cargar detalle de contratación
-                lstDetalleOferta = proveedorEJB.findDetalleOfertas(current, false);
+                lstDetalleOferta = proveedorEJB.findDetalleOfertas(participante, false);
 
                 if (detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 2) {
                     if (detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 5
                             && detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() < 8) {
                         mostraTblLibros = true;
-                        lstDetalleOfertaLibros = proveedorEJB.findDetalleOfertas(current, true);
+                        lstDetalleOfertaLibros = proveedorEJB.findDetalleOfertas(participante, true);
                     }
                 }
 
@@ -453,8 +442,8 @@ public class ParticipantesController implements Serializable {
                 switch (idResolucion) {
                     case 1://digitacion
                     case 3://revertida
-                        lstPreciosEmp = proveedorEJB.findPreciosRefRubroEmpRubro(current.getIdEmpresa(), detalleProceso);
-                        lstNiveles = entidadEducativaEJB.getLstNivelesConMatriculaReportadaByIdProcesoAdqAndCodigoEntidad(detalleProceso.getIdProcesoAdq().getIdProcesoAdq(), current.getIdOferta().getCodigoEntidad().getCodigoEntidad());
+                        lstPreciosEmp = proveedorEJB.findPreciosRefRubroEmpRubro(participante.getIdEmpresa(), detalleProceso);
+                        lstNiveles = entidadEducativaEJB.getLstNivelesConMatriculaReportadaByIdProcesoAdqAndCodigoEntidad(detalleProceso.getIdProcesoAdq().getIdProcesoAdq(), participante.getIdOferta().getCodigoEntidad().getCodigoEntidad());
 
                         //en el momento de creación del detalle de oferta, se agregaran todos los items calificados del proveedor
                         //seleccionado con el objetivo de facilitar el ingreso de esta información
@@ -502,7 +491,7 @@ public class ParticipantesController implements Serializable {
                                             det.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
                                             det.setFechaInsercion(new Date());
                                             det.setModificativa(BigInteger.ZERO);
-                                            det.setIdParticipante(current);
+                                            det.setIdParticipante(participante);
 
                                             lstDetalleOferta.add(det);
                                             break;
@@ -527,7 +516,7 @@ public class ParticipantesController implements Serializable {
                                             det.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
                                             det.setFechaInsercion(new Date());
                                             det.setModificativa(BigInteger.ZERO);
-                                            det.setIdParticipante(current);
+                                            det.setIdParticipante(participante);
 
                                             lstDetalleOfertaLibros.add(det);
                                         }
@@ -540,13 +529,11 @@ public class ParticipantesController implements Serializable {
                         break;
                     case 2:
                         JsfUtil.mensajeInformacion("Reserva de fondos APLICADA. Primero debe REVERTIR la reserva para realizar cambios.");
-                        url = null;
                         modifDesac = true;
                         break;
                     case 4:
                     case 5:
                         JsfUtil.mensajeInformacion("La reserva de fondos se encuentra ANULADA/MODIFICADA, No se pueden realizar cambios.");
-                        url = null;
                         modifDesac = true;
                         break;
                 }
@@ -560,7 +547,7 @@ public class ParticipantesController implements Serializable {
     }
 
     public void prepareNewDetalle() {
-        if (current != null) {
+        if (participante != null) {
             DetalleOfertas det = new DetalleOfertas();
             det.setConsolidadoEspTec("");
             det.setCantidad(BigInteger.ZERO);
@@ -568,7 +555,7 @@ public class ParticipantesController implements Serializable {
             det.setEstadoEliminacion(BigInteger.ZERO);
             det.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
             det.setFechaInsercion(new Date());
-            det.setIdParticipante(current);
+            det.setIdParticipante(participante);
             det.setModificativa(BigInteger.ZERO);
 
             lstDetalleOferta.add(det);
@@ -578,7 +565,7 @@ public class ParticipantesController implements Serializable {
     }
 
     public void prepareNewDetalleLibro() {
-        if (current != null) {
+        if (participante != null) {
             DetalleOfertas det = new DetalleOfertas();
             det.setConsolidadoEspTec("");
             det.setCantidad(BigInteger.ZERO);
@@ -586,7 +573,7 @@ public class ParticipantesController implements Serializable {
             det.setEstadoEliminacion(BigInteger.ZERO);
             det.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
             det.setFechaInsercion(new Date());
-            det.setIdParticipante(current);
+            det.setIdParticipante(participante);
             det.setModificativa(BigInteger.ZERO);
 
             lstDetalleOfertaLibros.add(det);
@@ -641,9 +628,10 @@ public class ParticipantesController implements Serializable {
                 if (det.getEstadoEliminacion().compareTo(BigInteger.ONE) == 0) {
                     JsfUtil.mensajeError("El detalle seleccionado no se puede modificar.");
                 } else {
+                    rowEdit = event.getRowIndex();
+                    
                     if (event.getColumn().getColumnKey().contains("item")) {
                         numItem = event.getNewValue().toString();
-                        rowEdit = event.getRowIndex();
                         editarNumeroDeItem(det, event.getRowIndex(), libros);
                         det.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
                         det.setFechaModificacion(new Date());
@@ -763,7 +751,7 @@ public class ParticipantesController implements Serializable {
                 det.setConsolidadoEspTec(item.toString() + ", " + nivel.toString());
                 det.setIdProducto(item);
                 det.setIdNivelEducativo(nivel);
-                PreciosRefRubroEmp precio = proveedorEJB.getPrecioRef(current.getIdEmpresa(), nivel.getIdNivelEducativo(), item.getIdProducto(), current.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho());
+                PreciosRefRubroEmp precio = proveedorEJB.getPrecioRef(participante.getIdEmpresa(), nivel.getIdNivelEducativo(), item.getIdProducto(), participante.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho());
                 if (precio != null) {
                     det.setPrecioUnitario(precio.getPrecioReferencia());
                 } else {

@@ -409,8 +409,8 @@ public class EntidadEducativaEJB {
                                 noItems += (noItems.isEmpty() ? "" : " , ") + "'1','2'";
                             }
                             if (mas.intValue() > 0) {
-                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_3 = '3' and item_4 = '4' and item_5 = '5'";
-                                noItems += (noItems.isEmpty() ? "" : " , ") + "'3','4','5'";
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_3 = '3' and item_4 = '4'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'3','4'";
                             }
                             break;
                         case 2://utiles
