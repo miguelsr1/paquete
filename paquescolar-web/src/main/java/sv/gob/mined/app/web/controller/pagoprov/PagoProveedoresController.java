@@ -44,7 +44,6 @@ import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.RptExcel;
 import sv.gob.mined.app.web.util.UtilFile;
 import sv.gob.mined.app.web.util.VarSession;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.CreditosEJB;
 import sv.gob.mined.paquescolar.ejb.EMailEJB;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;

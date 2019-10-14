@@ -14,8 +14,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Stateless;
-import javax.ejb.LocalBean;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -39,7 +42,7 @@ import sv.gob.mined.paquescolar.model.pojos.contratacion.VwRptPagare;
  * @author misanchez
  */
 @Stateless
-@LocalBean
+@TransactionManagement(TransactionManagementType.CONTAINER)
 public class ResolucionAdjudicativaEJB {
 
     @PersistenceContext(unitName = "paquescolarUP")
@@ -111,7 +114,8 @@ public class ResolucionAdjudicativaEJB {
         return resultado;
     }
 
-    public synchronized HashMap<String, Object> aplicarReservaDeFondos(ResolucionesAdjudicativas resAdj,
+    @Lock(LockType.WRITE)
+    public HashMap<String, Object> aplicarReservaDeFondos(ResolucionesAdjudicativas resAdj,
             BigDecimal estadoReserva, String codigoEntidad, BigInteger cantidad, String comentarioReversion, String usuario) {
         HashMap<String, Object> param = new HashMap();
         //TODO falta derechos de usuarios y manejo de errores

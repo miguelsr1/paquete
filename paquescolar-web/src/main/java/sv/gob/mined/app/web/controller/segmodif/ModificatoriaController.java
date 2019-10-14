@@ -429,7 +429,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
             rowEdit = event.getRowIndex();
 
             if (event.getColumn().getColumnKey().contains("item")) {
-                editarNumeroDeItem(det, event.getRowIndex(), event.getNewValue().toString());
+                editarNumeroDeItem(det, event.getRowIndex(), event.getNewValue().toString().trim());
                 det.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
                 det.setFechaModificacion(new Date());
             }

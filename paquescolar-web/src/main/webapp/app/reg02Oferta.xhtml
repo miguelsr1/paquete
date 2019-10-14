@@ -73,10 +73,6 @@
                             <p:outputLabel value="#{participante.idParticipante}" />
                         </p:column>
 
-                        <p:column headerText="Código" width="80" styleClass="centrado">
-                            <p:outputLabel value="PROVE-#{participante.idEmpresa.idEmpresa}" />
-                        </p:column>
-
                         <p:column headerText="NIT" width="110" rendered="#{!menuController.isUsuarioDigitador}">
                             <p:outputLabel value="#{participante.idEmpresa.numeroNit}" />
                         </p:column>

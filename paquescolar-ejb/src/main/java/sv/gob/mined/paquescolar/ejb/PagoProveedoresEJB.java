@@ -432,6 +432,10 @@ public class PagoProveedoresEJB {
         return q.getResultList().isEmpty() ? new PlanillaPagoCheque() : (PlanillaPagoCheque) q.getSingleResult();
     }
 
+    public PlanillaPago getPlanillaPago(BigDecimal idPlanilla) {
+        return em.find(PlanillaPago.class, idPlanilla);
+    }
+
     public ReintegroRequerimiento getReintegroByIdReq(BigDecimal idReq) {
         Query q = em.createQuery("SELECT r FROM ReintegroRequerimiento r WHERE r.idRequerimiento.idRequerimiento =:idReq", ReintegroRequerimiento.class);
         q.setParameter("idReq", idReq);
@@ -574,11 +578,11 @@ public class PagoProveedoresEJB {
             em.merge(preCarga);
         }
     }
-    
-    public List<DetallePreCarga> getLstDetallePreCargaByIdPreCarga(BigDecimal idPrecarga){
+
+    public List<DetallePreCarga> getLstDetallePreCargaByIdPreCarga(BigDecimal idPrecarga) {
         Query q = em.createQuery("SELECT d FROM DetallePreCarga d WHERE d.idPrecarga.idPrecarga=:idPrecarga ORDER BY d.codigoDepartamento, d.codigoMunicipio", DetallePreCarga.class);
         q.setParameter("idPrecarga", idPrecarga);
         return q.getResultList();
     }
-    
+
 }

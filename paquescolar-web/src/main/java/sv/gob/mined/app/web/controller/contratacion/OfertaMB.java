@@ -168,10 +168,9 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         return abrirDialogCe;
     }
 
-    public void setAbrirDialogCe(Boolean abrirDialogCe) {
+    /*public void setAbrirDialogCe(Boolean abrirDialogCe) {
         this.abrirDialogCe = abrirDialogCe;
-    }
-
+    }*/
     public Participantes getParticipanteSeleccionado() {
         return participanteSeleccionado;
     }
@@ -427,7 +426,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         } catch (Exception e) {
             Logger.getLogger(OfertaMB.class.getName()).log(Level.INFO, null, "Error OfertaBienesServiciosController.onSelect()");
             Logger.getLogger(OfertaMB.class.getName()).log(Level.INFO, null, "Codigo Entidad " + current.getCodigoEntidad().getCodigoEntidad());
-            Logger.getLogger(OfertaMB.class.getName()).log(Level.INFO, null, "Proveedor " + empresaSeleccionada.getNumeroNit());
+            Logger.getLogger(OfertaMB.class.getName()).log(Level.INFO, null, "id Empresa " + idEmpresa);
             Logger.getLogger(OfertaMB.class.getName()).log(Level.INFO, null, "Error: " + e.getMessage());
         }
     }
@@ -567,7 +566,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                 abrirDialogCe = false;
                 entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
                 if (entidadEducativa == null) {
-                    JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + current.getCodigoEntidad().getCodigoEntidad());
+                    JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + codigoEntidad);
                 } else {
                     cantidadAlumnos = entidadEducativaEJB.getCantidadTotalByCodEntAndIdProcesoAdq(codigoEntidad, getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq());
 
@@ -585,6 +584,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                                         JsfUtil.mensajeError("Ya existe un proceso de contratación para este centro escolar.");
                                     } else {
                                         deshabilitar = false;
+                                        abrirDialogCe = true;
                                         mapItems = entidadEducativaEJB.getNoItemsByCodigoEntidadAndIdProcesoAdq(codigoEntidad, detalleProceso,
                                                 detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
                                     }
@@ -595,6 +595,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                                         JsfUtil.mensajeError("No existe un proceso de contratación para este centro escolar.");
                                     } else {
                                         deshabilitar = false;
+                                        abrirDialogCe = true;
                                         mapItems = entidadEducativaEJB.getNoItemsByCodigoEntidadAndIdProcesoAdq(codigoEntidad, detalleProceso,
                                                 detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
                                     }
@@ -603,7 +604,6 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                                 JsfUtil.mensajeAlerta("El codigo del centro escolar no pertenece al departamento " + JsfUtil.getNombreDepartamentoByCodigo(dep) + "<br/>"
                                         + "Departamento del CE: " + entidadEducativa.getCodigoEntidad() + " es " + entidadEducativa.getCodigoDepartamento().getNombreDepartamento());
                             }
-                            abrirDialogCe = true;
                         } else {
                             JsfUtil.mensajeAlerta("Debe de seleccionar un departamento y municipio.");
                         }

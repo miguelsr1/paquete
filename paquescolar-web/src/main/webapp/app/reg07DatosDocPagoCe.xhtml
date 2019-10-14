@@ -31,7 +31,9 @@
                         <p:inputMask value="#{pagoProveedoresController.numeroRequerimiento}" mask="P99-999999-99" rendered="#{pagoProveedoresController.usuarioAdministrador}"/>
                         <h:outputText value="#{bundle['ce.codEnt']}:"/>
                         <p:outputPanel>
-                            <p:inputText value="#{pagoProveedoresController.codigoEntidad}" maxlength="5" size="6" onkeyup="queryEntidad(this.value);" onkeypress="return event.keyCode !== 13;"/>
+                            <p:inputText value="#{pagoProveedoresController.codigoEntidad}" maxlength="5" size="6" onkeypress="return event.keyCode !== 13;" onkeyup="return this.value.length >= 5">
+                                <p:ajax event="keyup" update="nombreCE" listener="#{pagoProveedoresController.buscarEntidadEducativa}"/>
+                            </p:inputText>
                             <p:spacer width="10"/>
                             <p:outputLabel id="nombreCE" value="#{pagoProveedoresController.entidadEducativa.nombre}" style="font-weight: bold"/>
                         </p:outputPanel>
@@ -272,7 +274,6 @@
         <p:dialog id="dlgPlanillaPago" widgetVar="dlgPlanillaPago" header="Planilla de Pago" width="900" height="600" modal="true" resizable="false">
             <ui:include src="/app/comunes/fragmentos/pagoProveedores/planillaPago.xhtml"/>
         </p:dialog>
-        <p:remoteCommand name="findEntidad" update="nombreCE" actionListener="#{pagoProveedoresController.buscarEntidadEducativa}" />
 
         <p:panel id="pnlDatos" visible="false"></p:panel>
 

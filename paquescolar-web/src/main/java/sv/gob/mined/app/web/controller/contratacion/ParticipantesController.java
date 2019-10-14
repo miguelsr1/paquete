@@ -396,7 +396,7 @@ public class ParticipantesController implements Serializable {
         lstEstilos = new SelectItem[0];
         lstDetalleOferta.clear();
         if (idParticipante != null && idParticipante.compareTo(BigDecimal.ZERO) != 0) {
-            //participante = utilEJB.find(Participantes.class, idParticipante);
+            participante = utilEJB.find(Participantes.class, idParticipante);
             detalleProceso = participante.getIdOferta().getIdDetProcesoAdq();
 
             //verificar si el proveedor seleccionado posee precios de referencia
