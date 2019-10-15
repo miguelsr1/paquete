@@ -676,7 +676,9 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
     }
 
     public void setCodigoDepartamento(String codigoDepartamento) {
-        this.codigoDepartamento = codigoDepartamento;
+        if (codigoDepartamento != null) {
+            this.codigoDepartamento = codigoDepartamento;
+        }
     }
 
     public String getNombreRubro() {
@@ -1023,10 +1025,10 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
 
         //guardar datos de fecha y numero de cheque en el detalle de planilla
         if (isRubroUniforme && chequeFinanProve.getFechaCheque() != null && chequeFinanProve.getNumeroCheque() != null) {
-            for (DetallePlanilla detPla : lstDetallePlanilla) {
+            lstDetallePlanilla.forEach((detPla) -> {
                 detPla.setFechaCheque(chequeFinanProve.getFechaCheque());
                 detPla.setNumCheque(chequeFinanProve.getNumeroCheque());
-            }
+            });
         }
 
         if (planillaPago.getIdPlanilla() == null) {
@@ -1045,12 +1047,11 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
         }
 
         planillaPago = pagoProveedoresEJB.guardarPlanillaPago(planillaPago);
-        for (DetallePlanilla detPla : lstDetallePlanilla) {
+        lstDetallePlanilla.forEach((detPla) -> {
             pagoProveedoresEJB.guardarDetallePlanilla(detPla);
+        });
 
-        }
-        planillaPago = utilEJB.find(PlanillaPago.class,
-                planillaPago.getIdPlanilla());
+        planillaPago = utilEJB.find(PlanillaPago.class, planillaPago.getIdPlanilla());
         lstDetallePlanilla = planillaPago.getDetallePlanillaList();
 
         if (planillaPago.getIdPlanilla() != null) {
@@ -1756,12 +1757,11 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
                     JsfUtil.mensajeInformacion("El requerimiento seleccionado no tienen reintegro de fondos");
 
                 } else {
-                    requerimientoFondos = utilEJB.find(RequerimientoFondos.class,
-                            idReq);
+                    requerimientoFondos = utilEJB.find(RequerimientoFondos.class, idReq);
                     montoReintegro = BigDecimal.ZERO;
-                    for (DatosProveDto datosProveDto : lstProveedores) {
+                    lstProveedores.forEach((datosProveDto) -> {
                         montoReintegro = montoReintegro.add(datosProveDto.getMontoReintegro());
-                    }
+                    });
                     reintegroRequerimiento = pagoProveedoresEJB.getReintegroByIdReq(idReq);
                     if (reintegroRequerimiento.getIdReintegro() == null) {
                         reintegroRequerimiento.setEstadoEliminacion((short) 0);
@@ -1866,55 +1866,64 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
     }
 
     public void imprimirDocumentos() {
-        boolean tempChequeEntPro = false;
-        String rpt = "";
-        String pNombreCheque = "";
+        try {
 
-        List<JasperPrint> jasperPrintList = new ArrayList();
-        //artificio para impresion de planillas creadas previo a la tipificación de planillas
+            boolean tempChequeEntPro = false;
+            String rpt = "";
+            String pNombreCheque = "";
 
-        if (planillaPago == null || planillaPago.getIdEstadoPlanilla() == null) {
-            Logger.getLogger(PagoProveedoresController.class
-                    .getName()).log(Level.INFO, "Error en el estado de la planilla {0}", planillaPago);
-        } else if (planillaPago.getIdEstadoPlanilla() == 0) {
-            tempChequeEntPro = planillaPago.getIdRequerimiento().getCredito() == 1;
-            pNombreCheque = nombreEntFinanciera;
-        } else {
-            tempChequeEntPro = showChequeEntProv;
-            switch (planillaPago.getIdTipoPlanilla()) {
-                case 1:
-                    pNombreCheque = lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getRazonSocial();
-                    break;
-                case 3:
-                    pNombreCheque = nombreEntFinanciera;
-                    break;
-                default:
-                    pNombreCheque = "";
-                    break;
+            List<JasperPrint> jasperPrintList = new ArrayList();
+            //artificio para impresion de planillas creadas previo a la tipificación de planillas
+
+            if (planillaPago == null || planillaPago.getIdEstadoPlanilla() == null) {
+                Logger.getLogger(PagoProveedoresController.class
+                        .getName()).log(Level.INFO, "Error en el estado de la planilla {0}", planillaPago);
+            } else if (planillaPago.getIdEstadoPlanilla() == 0) {
+                tempChequeEntPro = planillaPago.getIdRequerimiento().getCredito() == 1;
+                pNombreCheque = nombreEntFinanciera;
+            } else {
+                tempChequeEntPro = showChequeEntProv;
+                switch (planillaPago.getIdTipoPlanilla()) {
+                    case 1:
+                        pNombreCheque = lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getRazonSocial();
+                        break;
+                    case 3:
+                        pNombreCheque = nombreEntFinanciera;
+                        break;
+                    default:
+                        pNombreCheque = "";
+                        break;
+                }
+            }
+
+            for (Integer idRpt : tipoDocumentoImp) {
+                switch (idRpt) {
+                    case 1: //Planilla de Pago
+                        rpt = tempChequeEntPro ? "rptTransferenciaCrediCheque" : "rptTransferenciaCheque";
+                        break;
+                    case 2: //Matriz de Pago
+                        rpt = tempChequeEntPro ? "rptMatrizPagoCredito" : "rptMatrizPago";
+                        break;
+                    case 3: //Formato Entrega de Cheques
+                        rpt = tempChequeEntPro ? "rptFormatoEntregaChequeCredito" : "rptFormatoEntregaCheque";
+                        break;
+                    case 4: //Planilla de Reintegro
+                        rpt = "rptFormatoReintegro";
+                        break;
+                    case 5: //Planilla Renta
+                        rpt = "rptTransferenciaRenta";
+                        break;
+                }
+                jasperPrintList.add(imprimirRptPlanilla(rpt, pNombreCheque));
+            }
+            Reportes.generarReporte(jasperPrintList, "rptsPlanilla-" + planillaPago.getIdPlanilla());
+        } catch (Exception e) {
+            if (planillaPago != null & planillaPago.getIdPlanilla() != null) {
+                JsfUtil.mensajeError("Ah ocurrido un error en la generacion de los documentos contractuales. Id Planilla: " + planillaPago.getIdPlanilla());
+            } else {
+                JsfUtil.mensajeError("Ah ocurrido un error en la generacion de los documentos contractuales.");
             }
         }
-
-        for (Integer idRpt : tipoDocumentoImp) {
-            switch (idRpt) {
-                case 1: //Planilla de Pago
-                    rpt = tempChequeEntPro ? "rptTransferenciaCrediCheque" : "rptTransferenciaCheque";
-                    break;
-                case 2: //Matriz de Pago
-                    rpt = tempChequeEntPro ? "rptMatrizPagoCredito" : "rptMatrizPago";
-                    break;
-                case 3: //Formato Entrega de Cheques
-                    rpt = tempChequeEntPro ? "rptFormatoEntregaChequeCredito" : "rptFormatoEntregaCheque";
-                    break;
-                case 4: //Planilla de Reintegro
-                    rpt = "rptFormatoReintegro";
-                    break;
-                case 5: //Planilla Renta
-                    rpt = "rptTransferenciaRenta";
-                    break;
-            }
-            jasperPrintList.add(imprimirRptPlanilla(rpt, pNombreCheque));
-        }
-        Reportes.generarReporte(jasperPrintList, "rptsPlanilla-" + planillaPago.getIdPlanilla());
     }
 
     public JasperPrint imprimirRptPlanilla(String rpt, String pNombreCheque) {
@@ -2026,19 +2035,14 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
             emailUnico = pagoProveedoresEJB.getEMailEntidadFinancieraById(lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getCodEntFinanciera());
             lstEmailProveeCredito = pagoProveedoresEJB.getLstNitProveeByIdPlanilla(planillaPago.getIdPlanilla());
 
-            Logger
-                    .getLogger(PagoProveedoresController.class
-                            .getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
+            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
 
-            for (DatosProveDto datosProveDto : lstEmailProveeCredito) {
-                Logger.getLogger(PagoProveedoresController.class
-                        .getName()).log(Level.INFO, "Email {0} Proveedor {1} {2}", new String[]{datosProveDto.getCorreoElectronico(), datosProveDto.getRazonSocial(), datosProveDto.getNumeroNit()});
-            }
+            lstEmailProveeCredito.forEach((datosProveDto) -> {
+                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Email {0} Proveedor {1} {2}", new String[]{datosProveDto.getCorreoElectronico(), datosProveDto.getRazonSocial(), datosProveDto.getNumeroNit()});
+            });
         } else if (planillaPago.getIdTipoPlanilla() == 1) {
             emailUnico = pagoProveedoresEJB.getEMailProveedorByNit(lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit());
-            Logger
-                    .getLogger(PagoProveedoresController.class
-                            .getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
+            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
         }
 
         if (emailUnico == null || emailUnico.isEmpty()) {
@@ -2109,9 +2113,9 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
             sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.cabeceraMensaje"), planillaPago.getIdRequerimiento().getFormatoRequerimiento(), JsfUtil.getFormatoNum(planillaPago.getMontoTotal(), false)));
         }
         sb.append(RESOURCE_BUNDLE.getString("pagoprov.email.tablaDetalle.header"));
-        for (DetallePlanilla detalle : lstDetallePlanilla) {
+        lstDetallePlanilla.forEach((detalle) -> {
             sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.tablaDetalle.detalle"), detalle.getCodigoEntidad().getCodigoEntidad(), detalle.getCodigoEntidad().getNombre(), detalle.getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit(), detalle.getIdDetalleDocPago().getIdDetRequerimiento().getRazonSocial(), JsfUtil.getFormatoNum(detalle.getMontoActual(), false)));
-        }
+        });
         //agregando fila de totales (unicamente si la planilla de pago contiene más de 1 contrato)
         if (lstDetallePlanilla.size() > 1) {
             sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.tablaDetalle.footer"),
@@ -2162,7 +2166,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
         }
 
         cantidadCe = cantidadPlanilla = montoTotal = montoPagado = montoPendiente = montoReintegro = montoSaldo = BigDecimal.ZERO;
-        for (DatosResumenPagosDto resumenPagoJson : lstResumenPago) {
+        lstResumenPago.forEach((resumenPagoJson) -> {
             cantidadCe = cantidadCe.add(resumenPagoJson.getCantidadCe());
             cantidadPlanilla = cantidadPlanilla.add(resumenPagoJson.getCantidadPlanilla());
             montoTotal = montoTotal.add(resumenPagoJson.getMontoTotal());
@@ -2170,7 +2174,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
             montoPendiente = montoPendiente.add(resumenPagoJson.getMontoPendiente());
             montoReintegro = montoReintegro.add(resumenPagoJson.getMontoReintegro());
             montoSaldo = montoSaldo.add(resumenPagoJson.getMontoSaldo());
-        }
+        });
     }
 
     public void generarArchivoDePagoFinaciera() {
@@ -2217,13 +2221,10 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
                     }
                     notificacion();
                     UtilFile.downloadFileTextoPlano(sb.toString(), "transferencia-" + planillaPago.getIdPlanilla(), UtilFile.EXTENSION_CSV);
-                    Logger
-                            .getLogger(PagoProveedoresController.class
-                                    .getName()).log(Level.INFO, "Archivo: Genera: {0}\n======================================\n{1}", new Object[]{VarSession.getVariableSessionUsuario(), sb.toString()});
+                    Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Archivo: Genera: {0}\n======================================\n{1}", new Object[]{VarSession.getVariableSessionUsuario(), sb.toString()});
 
                 } catch (IOException ex) {
-                    Logger.getLogger(PagoProveedoresController.class
-                            .getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -2242,11 +2243,11 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
             montoTotal = BigDecimal.ZERO;
             montoSujetoRenta = BigDecimal.ZERO;
             montoRenta = BigDecimal.ZERO;
-            for (DatosProveDto rentaProveDto : lstProveedores) {
+            lstProveedores.forEach((rentaProveDto) -> {
                 montoTotal = montoTotal.add(rentaProveDto.getMontoActual());
                 montoSujetoRenta = montoSujetoRenta.add(rentaProveDto.getMontoRetencion());
                 montoRenta = montoRenta.add(rentaProveDto.getMontoRenta());
-            }
+            });
         }
     }
 
@@ -2379,13 +2380,13 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
         nombreRubro = detalleProcesoAdq.getIdRubroAdq().getDescripcionRubro();
         lstResumenPagoPorProveedor = serviciosEJB.getResumenPagoJsonByDetProcesoAdqAndRequerimiento(detalleProcesoAdq.getIdDetProcesoAdq(), numeroRequerimiento);
 
-        for (DatosResumenPagosPorReqYProveedorDto dato : lstResumenPagoPorProveedor) {
+        lstResumenPagoPorProveedor.forEach((dato) -> {
             ceContratados = ceContratados.add(dato.getCantidadTotalContratos());
             totalContratado = totalContratado.add(dato.getMontoTotalContratado());
             totalPagado = totalPagado.add(dato.getMontoTotalPagado());
             totalPendiente = totalPendiente.add(dato.getMontoTotalPendiente());
             totalReintegro = totalReintegro.add(dato.getMontoTotalReintegrar());
-        }
+        });
         dlgDetPagoProveedor = true;
     }
 

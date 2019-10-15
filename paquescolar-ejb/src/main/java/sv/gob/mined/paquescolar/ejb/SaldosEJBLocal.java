@@ -5,7 +5,11 @@
  */
 package sv.gob.mined.paquescolar.ejb;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.HashMap;
 import javax.ejb.Local;
+import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 
 /**
  *
@@ -13,5 +17,7 @@ import javax.ejb.Local;
  */
 @Local
 public interface SaldosEJBLocal {
-    
+
+    public HashMap<String, Object> aplicarReservaDeFondos(ResolucionesAdjudicativas resAdj,
+            BigDecimal estadoReserva, String codigoEntidad, String comentarioReversion, String usuario);
 }

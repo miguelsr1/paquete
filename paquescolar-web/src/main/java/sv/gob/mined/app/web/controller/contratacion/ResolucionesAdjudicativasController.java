@@ -299,7 +299,7 @@ public class ResolucionesAdjudicativasController implements Serializable {
     }
 
     private boolean aplicarCambiosReserva() {
-        HashMap<String, Object> param = resolucionAdjudicativaEJB.aplicarReservaDeFondos(current, idEstadoReserva, codigoEntidad, saldoPro.getAdjudicadaActual(), comentarioReversion, VarSession.getVariableSessionUsuario());
+        HashMap<String, Object> param = resolucionAdjudicativaEJB.aplicarReservaDeFondos(current, idEstadoReserva, codigoEntidad, comentarioReversion, VarSession.getVariableSessionUsuario());
         Boolean exito = !param.containsKey("error");
         if (VarSession.getVariableSessionUsuario().equals("RMINERO")
                 || VarSession.getVariableSessionUsuario().equals("RAFAARIAS")

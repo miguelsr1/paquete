@@ -115,7 +115,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         if (params.containsKey("txtCodigoEntidad")) {
             current = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(params.get("txtCodigoEntidad"), detalleProceso);
 
-            codigoEntidad = current.getCodigoEntidad().getCodigoEntidad();
+            codigoEntidad = params.get("txtCodigoEntidad");
         }
     }
 
@@ -425,7 +425,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
             }
         } catch (Exception e) {
             Logger.getLogger(OfertaMB.class.getName()).log(Level.INFO, null, "Error OfertaBienesServiciosController.onSelect()");
-            Logger.getLogger(OfertaMB.class.getName()).log(Level.INFO, null, "Codigo Entidad " + current.getCodigoEntidad().getCodigoEntidad());
+            Logger.getLogger(OfertaMB.class.getName()).log(Level.INFO, null, "Codigo Entidad " + codigoEntidad);
             Logger.getLogger(OfertaMB.class.getName()).log(Level.INFO, null, "id Empresa " + idEmpresa);
             Logger.getLogger(OfertaMB.class.getName()).log(Level.INFO, null, "Error: " + e.getMessage());
         }
@@ -580,7 +580,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                             String dep = getRecuperarProceso().getDepartamento();
                             if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep) || (Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {
                                 if (VarSession.getVariableSessionED() == 1) {
-                                    if (ofertaBienesServiciosEJB.isOfertaRubro(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq())) {
+                                    if (ofertaBienesServiciosEJB.isOfertaRubro(codigoEntidad, detalleProceso)) {
                                         JsfUtil.mensajeError("Ya existe un proceso de contratación para este centro escolar.");
                                     } else {
                                         deshabilitar = false;
@@ -589,7 +589,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                                                 detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
                                     }
                                 } else if (VarSession.getVariableSessionED() == 2) {
-                                    current = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq());
+                                    current = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(codigoEntidad, detalleProceso);
 
                                     if (current == null) {
                                         JsfUtil.mensajeError("No existe un proceso de contratación para este centro escolar.");
@@ -649,8 +649,8 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
             cantidad = cantidadAlumnos.toBigInteger();
         }
 
-        lstEmpresas = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), current.getCodigoEntidad().getCodigoEntidad(), true, true, cantidad, mapItems);
-        lstEmpresasOtros = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), current.getCodigoEntidad().getCodigoEntidad(), false, false, BigInteger.ZERO, mapItems);
+        lstEmpresas = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), codigoEntidad, true, true, cantidad, mapItems);
+        lstEmpresasOtros = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), codigoEntidad, false, false, BigInteger.ZERO, mapItems);
 
         lstCapaEmpresas.clear();
         lstCapaEmpresas.addAll(lstEmpresas);

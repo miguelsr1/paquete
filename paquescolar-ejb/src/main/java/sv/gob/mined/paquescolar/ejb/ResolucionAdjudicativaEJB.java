@@ -14,15 +14,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.EstadoReserva;
 import sv.gob.mined.paquescolar.model.HistorialCamEstResAdj;
@@ -51,6 +48,8 @@ public class ResolucionAdjudicativaEJB {
     ProveedorEJB proveedorEJB;
     @EJB
     EMailEJB eMailEJB;
+    @EJB
+    SaldosEJB saldosEJB;
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
@@ -112,223 +111,6 @@ public class ResolucionAdjudicativaEJB {
             resultado = true;
         }
         return resultado;
-    }
-
-    @Lock(LockType.WRITE)
-    public HashMap<String, Object> aplicarReservaDeFondos(ResolucionesAdjudicativas resAdj,
-            BigDecimal estadoReserva, String codigoEntidad, BigInteger cantidad, String comentarioReversion, String usuario) {
-        HashMap<String, Object> param = new HashMap();
-        //TODO falta derechos de usuarios y manejo de errores
-        TechoRubroEntEdu techoCE;
-
-        if (resAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 4) {
-            param.put("error", "Esta reserva se encuentra anulada y no se puede modificar.");
-        } else {
-            //recuperar techo presupuestario del centro escolar
-            techoCE = findTechoRubroEntEdu(codigoEntidad, resAdj.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq());
-
-            //DIGITADA -> APLICADA  y  REVERTIDAD -> APLICADA
-            if (techoCE != null) {
-                if ((resAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 1 && estadoReserva.intValue() == 2)
-                        || (resAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 3 && estadoReserva.intValue() == 2)) {
-                    //verificar disponibilidad presupuestaria del C.E. y capacidad calificada del proveedor
-                    param = existeDiponibilidad(techoCE, resAdj, param);
-                    if (usuario.equals("RMINERO") || usuario.equals("RAFAARIAS") || usuario.equals("CVILLEGAS") || !param.containsKey("error")) {
-                        param = aplicarSaldos(resAdj, techoCE, estadoReserva, cantidad, comentarioReversion, usuario, param);
-
-                        //Si ya existe un contrato para esta reserva de fondos, se actualizan los datos del resumen de contrataciones
-                        if (!resAdj.getContratosOrdenesComprasList().isEmpty() || resAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 3) {
-                            agregarDatosAResumen(resAdj.getContratosOrdenesComprasList().get(0));
-                        }
-                    }
-                } else //DIGITADA -> ANULADA y REVERTIDA -> ANULADA 
-                if ((resAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 1 && estadoReserva.intValue() == 4)
-                        || (resAdj.getIdResolucionAdj().intValue() == 3 && estadoReserva.intValue() == 4)) {
-                    param = aplicarSaldos(resAdj, techoCE, estadoReserva, cantidad, comentarioReversion, usuario, param);
-                } else //APLICADA -> REVERTIDA
-                if (resAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 2 && estadoReserva.intValue() == 3) {
-                    param = aplicarSaldos(resAdj, techoCE, estadoReserva, cantidad, comentarioReversion, usuario, param);
-                    removerDatosResumen(resAdj);
-                }
-            } else {
-                param.put("error", "Se ha generado un error en la aplicación de fondos.");
-            }
-        }
-
-        return param;
-    }
-
-    public HashMap<String, Object> aplicarSaldos(ResolucionesAdjudicativas res,
-            TechoRubroEntEdu techoCE,
-            BigDecimal idEstadoReserva,
-            BigInteger cantidad,
-            String comentarioReversion,
-            String usuario,
-            HashMap<String, Object> param) {
-        try {
-
-            BigDecimal cantidadAdjudicada = new BigDecimal(getCantidadAdjudicadaActual(res.getIdParticipante().getIdParticipante()));
-            BigInteger estadoAnterior = res.getIdEstadoReserva().getIdEstadoReserva().toBigInteger();
-
-            //no devuelve nada cuando no hay registros
-            Query query;
-            if (res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho().equals("2018")) {
-                query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idAnho=:idAnho and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
-                query.setParameter("idEmpresa", res.getIdParticipante().getIdEmpresa());
-                query.setParameter("idAnho", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho());
-            } else {
-                query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idProcesoAdq=:idProcesoAdq and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
-                query.setParameter("idEmpresa", res.getIdParticipante().getIdEmpresa());
-                query.setParameter("idProcesoAdq", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq() == null ? res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq() : res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq().getIdProcesoAdq());
-            }
-            List<CapaInstPorRubro> lst = query.getResultList();
-
-            if (!lst.isEmpty()) {
-                CapaInstPorRubro capaInst = em.find(CapaInstPorRubro.class, lst.get(0).getIdCapInstRubro());
-
-                switch (idEstadoReserva.intValue()) {
-                    case 2: //aplicar
-                        techoCE.setMontoAdjudicado(techoCE.getMontoAdjudicado().add(res.getValor()));
-                        techoCE.setMontoDisponible(techoCE.getMontoDisponible().add(res.getValor().negate()));
-
-                        capaInst.setCapacidadAdjudicada(getAdjParticipante(res.getIdParticipante()).add(cantidadAdjudicada).toBigInteger());
-                        break;
-                    case 3: //revertir modificada
-                    case 5:
-                        techoCE.setMontoAdjudicado(techoCE.getMontoAdjudicado().add(res.getValor().negate()));
-                        techoCE.setMontoDisponible(techoCE.getMontoDisponible().add(res.getValor()));
-
-                        capaInst.setCapacidadAdjudicada(getAdjParticipante(res.getIdParticipante()).add(cantidadAdjudicada.negate()).toBigInteger());
-                        break;
-                    case 4: //anular
-                        res.setIdEstadoReserva(new EstadoReserva(idEstadoReserva));
-                        break;
-                }
-
-                res.setIdEstadoReserva(new EstadoReserva(idEstadoReserva));
-                res.setUsuarioModificacion(usuario);
-                res.setFechaModificacion(new Date());
-
-                em.merge(techoCE);
-                res = em.merge(res);
-
-                em.merge(capaInst);
-
-                historialCambioEstado(res, estadoAnterior, idEstadoReserva.toBigInteger(), comentarioReversion, usuario);
-            }
-            return param;
-        } catch (Exception e) {
-            param.put("error", "Se ha generado un error en la aplicación de fondos.");
-            Logger.getLogger(ResolucionAdjudicativaEJB.class.getName()).log(Level.SEVERE, null, e);
-            return param;
-        }
-    }
-
-    private void historialCambioEstado(ResolucionesAdjudicativas res,
-            BigInteger estadoAnterior,
-            BigInteger estadoNuevo,
-            String comentarioReversion, String usuario) {
-        HistorialCamEstResAdj historial = new HistorialCamEstResAdj();
-        if (estadoAnterior.compareTo(BigInteger.ONE) == 0 && estadoNuevo.compareTo(new BigInteger("2")) == 0) {
-            historial.setComentarioHistorial("Primera aplicación de reserva de fondos");
-        } else if (estadoAnterior.compareTo(new BigInteger("2")) == 0 && estadoNuevo.compareTo(new BigInteger("3")) == 0) {
-            historial.setComentarioHistorial(comentarioReversion);
-        }
-        historial.setEstadoAnterior(estadoAnterior);
-        historial.setEstadoNuevo(estadoNuevo);
-        historial.setFechaCambioEstado(new Date());
-        historial.setIdResolucionAdj(res);
-        historial.setUsuario(usuario);
-
-        em.persist(historial);
-    }
-
-    public BigDecimal getAdjParticipante(Participantes par) {
-        List lst = getAdjudicacionParticipante(par);
-
-        try {
-            return (BigDecimal) lst.get(0);
-        } catch (Exception ex) {
-            return BigDecimal.ZERO;
-        }
-    }
-
-    public List getAdjudicacionParticipante(Participantes par) {
-        String sql = String.format("SELECT NVL(FN_GET_CANT_ADJ_PROVE(%d, %d), 0) FROM DUAL",
-                par.getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq(),
-                par.getIdEmpresa().getIdEmpresa().intValue());
-
-        Query q = em.createNativeQuery(sql);
-        return q.getResultList();
-    }
-
-    private HashMap<String, Object> existeDiponibilidad(TechoRubroEntEdu techoCE, ResolucionesAdjudicativas resAdj, HashMap<String, Object> param) {
-        param = existeDisponibilidadProveedor(resAdj, param);
-        if (param.containsKey("error")) {
-            return param;
-        }
-
-        return existeDisponibilidadesCE(techoCE, resAdj.getValor(), param);
-    }
-
-    private HashMap<String, Object> existeDisponibilidadesCE(TechoRubroEntEdu techoCE, BigDecimal valorReserva, HashMap<String, Object> param) {
-
-        if (techoCE.getMontoDisponible().compareTo(valorReserva) != -1) {
-        } else {
-            param.put("error", "El centro escolar " + techoCE.getCodigoEntidad() + " no posee disponibilidad presupuestaria!"
-                    + "Monto Disponible: " + techoCE.getMontoDisponible() + " Monto Adjudicado: " + valorReserva);
-        }
-        return param;
-    }
-
-    private HashMap<String, Object> existeDisponibilidadProveedor(ResolucionesAdjudicativas resAdj, HashMap<String, Object> param) {
-        List lista;
-        BigInteger cantidadAdjudicada = getCantidadAdjudicadaActual(resAdj.getIdParticipante().getIdParticipante());
-        BigInteger disponibilidadProveedor;
-        lista = getSaldoParticipante(resAdj);
-        if (lista != null && !lista.isEmpty()) {
-            disponibilidadProveedor = ((BigDecimal) lista.get(0)).toBigInteger();
-            if (disponibilidadProveedor.compareTo(cantidadAdjudicada) != -1) {
-            } else {
-                param.put("error", "El proveedor no posee disponibilidad para este rubro! Cantidad disponible:" + disponibilidadProveedor.intValue()
-                        + " Cantidad de Adjudicada: " + cantidadAdjudicada.intValue());
-            }
-        } else {
-            param.put("error", "El proveedor no posee disponibilidad para este rubro!");
-        }
-        return param;
-    }
-
-    public List getSaldoParticipante(ResolucionesAdjudicativas res) {
-        String sql = String.format("SELECT NVL(FN_VERIFICAR_SALDO_PROVEEDOR(%d, %d, %d), 0) FROM DUAL",
-                res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq(),
-                res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq() == null ? res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq() : res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq().getIdProcesoAdq(),
-                res.getIdParticipante().getIdEmpresa().getIdEmpresa().intValue());
-
-        Query q = em.createNativeQuery(sql);
-        return q.getResultList();
-    }
-
-    public BigInteger getCantidadAdjudicadaActual(BigDecimal idParticipante) {
-        BigInteger total;
-
-        Query q = em.createNativeQuery("SELECT nvl(sum(cantidad),0) FROM DETALLE_OFERTAS WHERE id_participante=?1 and estado_eliminacion=0 and id_producto not in (1)");
-        q.setParameter(1, idParticipante);
-        total = ((BigDecimal) q.getSingleResult()).toBigInteger();
-
-        return total;
-    }
-
-    public TechoRubroEntEdu findTechoRubroEntEdu(String codigoEntidad, Integer idDetProcesoAdq) {
-        Query query = em.createQuery("SELECT t FROM TechoRubroEntEdu t WHERE t.codigoEntidad=:codigoEntidad and t.idDetProcesoAdq.idDetProcesoAdq=:idProceso and t.estadoEliminacion=0", TechoRubroEntEdu.class);
-        query.setParameter("codigoEntidad", codigoEntidad);
-        query.setParameter("idProceso", idDetProcesoAdq);
-
-        if (query.getResultList().isEmpty()) {
-            return null;
-        } else {
-            return (TechoRubroEntEdu) query.getSingleResult();
-        }
     }
 
     public List<EstadoReserva> findEstadoReservaEntities() {
@@ -487,6 +269,25 @@ public class ResolucionAdjudicativaEJB {
         return saldo;
     }
 
+    public BigInteger getCantidadAdjudicadaActual(BigDecimal idParticipante) {
+        BigInteger total;
+
+        Query q = em.createNativeQuery("SELECT nvl(sum(cantidad),0) FROM DETALLE_OFERTAS WHERE id_participante=?1 and estado_eliminacion=0 and id_producto not in (1)");
+        q.setParameter(1, idParticipante);
+        total = ((BigDecimal) q.getSingleResult()).toBigInteger();
+
+        return total;
+    }
+
+    public List getAdjudicacionParticipante(Participantes par) {
+        String sql = String.format("SELECT NVL(FN_GET_CANT_ADJ_PROVE(%d, %d), 0) FROM DUAL",
+                par.getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq(),
+                par.getIdEmpresa().getIdEmpresa().intValue());
+
+        Query q = em.createNativeQuery(sql);
+        return q.getResultList();
+    }
+
     public void updateResolucionPorModificativa(BigDecimal idResolucionAdj) {
         Query q = em.createQuery("UPDATE ResolucionesAdjudicativas r SET r.idEstadoReserva=:idEstado WHERE r.idResolucionAdj = :idRes");
         q.setParameter("idEstado", em.find(EstadoReserva.class, new BigDecimal(5)));
@@ -495,6 +296,25 @@ public class ResolucionAdjudicativaEJB {
 
         ResolucionesAdjudicativas res = em.find(ResolucionesAdjudicativas.class, idResolucionAdj);
         historialCambioEstado(res, res.getIdEstadoReserva().getIdEstadoReserva().toBigInteger(), new BigInteger("5"), "Modificatoria Inicial", res.getUsuarioInsercion());
+    }
+
+    private void historialCambioEstado(ResolucionesAdjudicativas res,
+            BigInteger estadoAnterior,
+            BigInteger estadoNuevo,
+            String comentarioReversion, String usuario) {
+        HistorialCamEstResAdj historial = new HistorialCamEstResAdj();
+        if (estadoAnterior.compareTo(BigInteger.ONE) == 0 && estadoNuevo.compareTo(new BigInteger("2")) == 0) {
+            historial.setComentarioHistorial("Primera aplicación de reserva de fondos");
+        } else if (estadoAnterior.compareTo(new BigInteger("2")) == 0 && estadoNuevo.compareTo(new BigInteger("3")) == 0) {
+            historial.setComentarioHistorial(comentarioReversion);
+        }
+        historial.setEstadoAnterior(estadoAnterior);
+        historial.setEstadoNuevo(estadoNuevo);
+        historial.setFechaCambioEstado(new Date());
+        historial.setIdResolucionAdj(res);
+        historial.setUsuario(usuario);
+
+        em.persist(historial);
     }
 
     public List<RptDocumentos> getDocumentosAImprimir(Integer idDetProcesoAdq, List<Integer> lstNumDoc) {
@@ -507,21 +327,6 @@ public class ResolucionAdjudicativaEJB {
 
     public void enviarCorreoDeError(BigDecimal idResolucionAdj) {
         eMailEJB.enviarMailDeError("Contratos Múltiple", "Duplicidad de contratos para idResolucionAdj: " + idResolucionAdj, null);
-    }
-
-    private void removerDatosResumen(ResolucionesAdjudicativas resAdj) {
-        Query q = em.createNativeQuery("delete RESUMEN_ADJ_EMP where id_det_proceso_adq = ?1 and codigo_entidad =?2 and id_empresa = ?3");
-        q.setParameter(1, resAdj.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq());
-        q.setParameter(2, resAdj.getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad());
-        q.setParameter(3, resAdj.getIdParticipante().getIdEmpresa().getIdEmpresa());
-
-        q.executeUpdate();
-
-        q = em.createNativeQuery("delete resumen_ce_procesados where id_det_proceso_adq = ?1 and codigo_entidad = ?2");
-        q.setParameter(1, resAdj.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq());
-        q.setParameter(2, resAdj.getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad());
-
-        q.executeUpdate();
     }
 
     private void agregarDatosAResumen(ContratosOrdenesCompras contrato) {
@@ -547,5 +352,24 @@ public class ResolucionAdjudicativaEJB {
         Query q = em.createQuery("SELECT h FROM HistorialCamEstResAdj h WHERE h.idResolucionAdj.idResolucionAdj=:idResolucionAdj ORDER BY h.idHistorialCam", HistorialCamEstResAdj.class);
         q.setParameter("idResolucionAdj", idResolucionAdj);
         return q.getResultList();
+    }
+
+    public TechoRubroEntEdu findTechoRubroEntEdu(String codigoEntidad, Integer idDetProcesoAdq) {
+        Query query = em.createQuery("SELECT t FROM TechoRubroEntEdu t WHERE t.codigoEntidad=:codigoEntidad and t.idDetProcesoAdq.idDetProcesoAdq=:idProceso and t.estadoEliminacion=0", TechoRubroEntEdu.class);
+        query.setParameter("codigoEntidad", codigoEntidad);
+        query.setParameter("idProceso", idDetProcesoAdq);
+
+        if (query.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (TechoRubroEntEdu) query.getSingleResult();
+        }
+    }
+
+    public HashMap<String, Object> aplicarReservaDeFondos(ResolucionesAdjudicativas resAdj,
+            BigDecimal estadoReserva, String codigoEntidad, BigInteger cantidad, String comentarioReversion, String usuario) {
+        Logger.getLogger(ResolucionAdjudicativaEJB.class.getName()).log(Level.INFO, "Usuario que aplica reserva: {0} del CE: {1}", new Object[]{usuario, codigoEntidad});
+
+        return saldosEJB.aplicarReservaDeFondos(resAdj, estadoReserva, codigoEntidad, cantidad, comentarioReversion, usuario);
     }
 }
