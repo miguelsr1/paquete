@@ -649,8 +649,8 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
             cantidad = cantidadAlumnos.toBigInteger();
         }
 
-        lstEmpresas = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), codigoEntidad, true, true, cantidad, mapItems);
-        lstEmpresasOtros = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), codigoEntidad, false, false, BigInteger.ZERO, mapItems);
+        lstEmpresas = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), codigoEntidad, true, true, cantidad, mapItems, entidadEducativa.getCodigoDepartamento().getCodigoDepartamento(), entidadEducativa.getCodigoMunicipio(), entidadEducativa.getCodigoCanton());
+        lstEmpresasOtros = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), codigoEntidad, false, false, BigInteger.ZERO, mapItems, entidadEducativa.getCodigoDepartamento().getCodigoDepartamento(), entidadEducativa.getCodigoMunicipio(), entidadEducativa.getCodigoCanton());
 
         lstCapaEmpresas.clear();
         lstCapaEmpresas.addAll(lstEmpresas);

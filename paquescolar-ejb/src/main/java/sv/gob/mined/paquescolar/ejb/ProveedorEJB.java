@@ -222,7 +222,7 @@ public class ProveedorEJB {
         q.setParameter(2, codigoDepartamento);
         q.setParameter(3, credito == 1 ? "NO" : "SI");
 
-        for (Object object : q.getResultList()) {
+        q.getResultList().forEach((object) -> {
             DatosPreliminarRequerimiento dato = new DatosPreliminarRequerimiento();
             Object[] datos = (Object[]) object;
 
@@ -258,7 +258,7 @@ public class ProveedorEJB {
             dato.setCantidadTotal(((BigDecimal) datos[29]));
 
             lst.add(dato);
-        }
+        });
         return lst;
     }
 
@@ -463,13 +463,13 @@ public class ProveedorEJB {
 
     public Boolean guardarDetalleOferta(List<DetalleOfertas> lstDetalleOfertas) {
         try {
-            for (DetalleOfertas detalleOfertas : lstDetalleOfertas) {
+            lstDetalleOfertas.forEach((detalleOfertas) -> {
                 if (detalleOfertas.getIdDetalleOfe() == null) {
                     em.persist(detalleOfertas);
                 } else {
                     detalleOfertas = em.merge(detalleOfertas);
                 }
-            }
+            });
             return true;
         } catch (Exception e) {
             Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, null, e);
@@ -595,16 +595,14 @@ public class ProveedorEJB {
     }
 
     public List<ProveedorDisponibleDto> getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(DetalleProcesoAdq detProcesoAdq, String codigoEntidad,
-            Boolean municipioIgual, Boolean byCapacidad, BigInteger cantidad, HashMap<String, String> mapItems) {
-        String codMunicipio;
-        String codDepartamento;
+            Boolean municipioIgual, Boolean byCapacidad, BigInteger cantidad, HashMap<String, String> mapItems, String codDepartamento, String codMunicipio, String codCanton) {
         Integer idDetTemp;
         List<ProveedorDisponibleDto> lstCapa = new ArrayList<>();
-        Query q = em.createNativeQuery("select codigo_municipio, codigo_departamento from vw_catalogo_entidad_educativa WHERE codigo_entidad = '" + codigoEntidad + "'");
-        List lst = q.getResultList();
+        /*Query q = em.createNativeQuery("select codigo_municipio, codigo_departamento from vw_catalogo_entidad_educativa WHERE codigo_entidad = '" + codigoEntidad + "'");
+        /*List lst = q.getResultList();
 
-        codMunicipio = ((Object[]) lst.get(0))[0].toString();
-        codDepartamento = ((Object[]) lst.get(0))[1].toString();
+        /*codMunicipio = ((Object[]) lst.get(0))[0].toString();
+        codDepartamento = ((Object[]) lst.get(0))[1].toString();*/
 
         if (detProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq() != null) {
             idDetTemp = getIdDetProceso(detProcesoAdq, detProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq());
@@ -612,10 +610,12 @@ public class ProveedorEJB {
             idDetTemp = getIdDetProceso(detProcesoAdq, detProcesoAdq.getIdProcesoAdq());
         }
 
-        q = em.createNativeQuery(findLstIdEmpresa(codMunicipio, codDepartamento, getIdDetProcesoPadre(detProcesoAdq), idDetTemp,
+        Query q = em.createNativeQuery(findLstIdEmpresa(codDepartamento, codMunicipio, getIdDetProcesoPadre(detProcesoAdq), idDetTemp,
                 municipioIgual, byCapacidad, cantidad.intValue(), mapItems.get("noItemSeparados"), mapItems.get("noItems")), ProveedorDisponibleDto.class);
 
         lstCapa.addAll(q.getResultList());
+
+
         return lstCapa;
     }
 
@@ -643,7 +643,7 @@ public class ProveedorEJB {
         return detalleProcesoAdq.getIdDetProcesoAdq();
     }
 
-    private String findLstIdEmpresa(String codMun, String codDep, Integer idDetProcesoAdq, Integer idDetProcesoAdqPrecio,
+    private String findLstIdEmpresa(String codDep, String codMun, Integer idDetProcesoAdq, Integer idDetProcesoAdqPrecio,
             Boolean municipioIgual, Boolean byCapacidad, Integer cantidad, String noItemSeparados, String noItems) {
         String sql = "select \n"
                 + "    rownum                  as idRow,\n"
@@ -979,13 +979,13 @@ public class ProveedorEJB {
     }
 
     public void guardarDetallePlanilla(List<DetallePlanilla> detallePlanillaLst) {
-        for (DetallePlanilla detallePlanilla : detallePlanillaLst) {
+        detallePlanillaLst.forEach((detallePlanilla) -> {
             if (detallePlanilla.getIdDetallePlanilla() == null) {
                 em.persist(detallePlanilla);
             } else {
                 em.merge(detallePlanilla);
             }
-        }
+        });
     }
 
     public List<ResumenRequerimientoDto> getLstResumenRequerimiento(String codigoDepartamento, int idDetProcesoAdq) {
@@ -1342,8 +1342,8 @@ public class ProveedorEJB {
     }
 
     public void guardarCantonProveedor(String numeroNit, String codigoCanton) {
-        Query q = em.createNativeQuery("UPDATE Empresa SET codigo_canton='"+codigoCanton+"' WHERE numero_nit='"+numeroNit+"'");
-        
+        Query q = em.createNativeQuery("UPDATE Empresa SET codigo_canton='" + codigoCanton + "' WHERE numero_nit='" + numeroNit + "'");
+
         int i = q.executeUpdate();
 
         if (i == 0) {

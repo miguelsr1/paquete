@@ -69,12 +69,11 @@ public class DatosGeograficosEJB {
     }
 
     public String findNombreMunicipioCe(String codigoEntidad) {
-        Query q = em.createNativeQuery("select nombre_municipio "
-                + "from vw_catalogo_entidad_educativa "
-                + "inner join municipio on vw_catalogo_entidad_educativa.codigo_municipio = municipio.codigo_municipio "
-                + "inner join departamento on municipio.codigo_departamento = departamento.codigo_departamento "
-                + "  and departamento.codigo_departamento = vw_catalogo_entidad_educativa.codigo_departamento "
-                + "WHERE codigo_entidad = '" + codigoEntidad + "'");
+        Query q = em.createNativeQuery("select mun.nombre_municipio || case when vw.nombre_canton is null then null end || case when vw.nombre_canton is not null then ', Cantón: '||vw.nombre_canton end nombre_canton "
+                + "from vw_catalogo_entidad_educativa vw "
+                + "inner join municipio mun on vw.codigo_municipio = mun.codigo_municipio "
+                + "inner join departamento dep on mun.codigo_departamento = dep.codigo_departamento and dep.codigo_departamento = vw.codigo_departamento "
+                + "WHERE vw.codigo_entidad = '" + codigoEntidad + "'");
         List lst = q.getResultList();
         String codMunicipio = lst.get(0).toString();
 

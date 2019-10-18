@@ -20,7 +20,7 @@
             <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
             <f:facet  name="options">  
-                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
             </f:facet>  
         </p:menubar>
 
@@ -147,7 +147,7 @@
             </p:outputPanel>
             <p:spacer width="10"/>
             <p:tabView id="tbEmpresas" scrollable="true">
-                <p:tab title="Municipio: #{ofertaMB.municipioCe}">
+                <p:tab title="Municipio: #{ofertaMB.municipioCe}}">
                     <h:panelGrid columns="2" style="width: 100%;" rendered="#{!menuController.isUsuarioDigitador}">
                         <h:outputText value="Nombre:"/>
                         <p:inputText style="width: 100%;" value="#{ofertaMB.nombreEmp}" onkeyup="queryEmpresa(this.value);" />
