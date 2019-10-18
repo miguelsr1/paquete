@@ -15,9 +15,17 @@
  */
 package org.primefaces.paradise.view;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
+import sv.gob.mined.app.web.controller.PersonaController;
+import sv.gob.mined.app.web.util.VarSession;
 
 @ManagedBean
 @SessionScoped
@@ -76,5 +84,18 @@ public class GuestPreferences implements Serializable {
     
     public void setDarkMenu(boolean value) {
         this.darkMenu = value;
+    }
+    
+    public void logout() {
+        try {
+            VarSession.limpiarVariableSession();
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.getExternalContext().getSessionMap().clear();
+            ExternalContext externalContext = context.getExternalContext();
+            externalContext.redirect(((ServletContext) externalContext.getContext()).getContextPath() + "/index.mined");
+            System.gc();
+        } catch (IOException ex) {
+            Logger.getLogger(PersonaController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

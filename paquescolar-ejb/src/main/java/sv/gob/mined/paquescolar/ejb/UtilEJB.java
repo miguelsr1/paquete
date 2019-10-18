@@ -4,6 +4,7 @@
  */
 package sv.gob.mined.paquescolar.ejb;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.LocalBean;
@@ -12,6 +13,7 @@ import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import sv.gob.mined.paquescolar.model.Canton;
 import sv.gob.mined.paquescolar.model.Municipio;
 
 /**
@@ -40,7 +42,7 @@ public class UtilEJB {
      * @param <T>
      * @param type
      * @param o
-     * @return 
+     * @return
      */
     public <T extends Object> T find(Class<T> type, Object o) {
         if (o == null) {
@@ -53,8 +55,8 @@ public class UtilEJB {
     public void refreshEntity(Object obj) {
         em.refresh(obj);
     }
-    
-    public void updateEntity(Object obj){
+
+    public void updateEntity(Object obj) {
         em.merge(obj);
     }
 
@@ -82,14 +84,35 @@ public class UtilEJB {
 
         return lstDocumentosImp;
     }
-    
-    public String getValorDeParametro(String nombreParametro){
+
+    public String getValorDeParametro(String nombreParametro) {
         Query q = em.createNativeQuery("SELECT valor_parametro FROM parametros WHERE nombre_parametro = ?1");
         q.setParameter(1, nombreParametro);
-        if(q.getResultList().isEmpty()){
+        if (q.getResultList().isEmpty()) {
             return "";
-        }else{
+        } else {
             return q.getResultList().get(0).toString();
+        }
+    }
+
+    public void guardarCanton(String codigoCanton, String nombreCanton, Integer idMunicipio) {
+        Canton canton = new Canton();
+        canton.setCodigoCanton(codigoCanton);
+        canton.setIdMunicipio(new BigInteger(idMunicipio.toString()));
+        canton.setNombreCanton(nombreCanton);
+
+        em.persist(canton);
+    }
+
+    public Integer findMunicipioByCodigo(String codigoDepartamento, String codigoMunicipio) {
+        Query q = em.createQuery("SELECT m FROM Municipio m WHERE m.codigoDepartamento.codigoDepartamento=:codDepa and m.codigoMunicipio=:codMun", Municipio.class);
+        q.setParameter("codDepa", codigoDepartamento);
+        q.setParameter("codMun", codigoMunicipio);
+
+        if (!q.getResultList().isEmpty()) {
+            return ((Municipio) q.getSingleResult()).getIdMunicipio().intValue();
+        } else {
+            return 0;
         }
     }
 }

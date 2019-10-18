@@ -27,7 +27,6 @@ import sv.gob.mined.paquescolar.model.Anho;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.RubrosAmostrarInteres;
-import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 
 /**
  *
@@ -37,12 +36,10 @@ import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 @SessionScoped
 public class AnhoProcesoController implements Serializable {
 
-    private String codigoEntidad = "";
     private Anho anho = new Anho();
     private ProcesoAdquisicion proceso = new ProcesoAdquisicion();
     private BigDecimal rubro = BigDecimal.ZERO;
     private DetalleProcesoAdq detalleProcesoAdq = new DetalleProcesoAdq();
-    private VwCatalogoEntidadEducativa entidadEducativa = new VwCatalogoEntidadEducativa();
     @EJB
     private AnhoProcesoEJB anhoProcesoEJB;
     @EJB
@@ -116,14 +113,6 @@ public class AnhoProcesoController implements Serializable {
         this.anho = anho;
     }
 
-    public String getCodigoEntidad() {
-        return codigoEntidad;
-    }
-
-    public void setCodigoEntidad(String codigoEntidad) {
-        this.codigoEntidad = codigoEntidad;
-    }
-
     public ProcesoAdquisicion getProceso() {
         return proceso;
     }
@@ -152,17 +141,8 @@ public class AnhoProcesoController implements Serializable {
         this.detalleProcesoAdq = detalleProcesoAdq;
     }
 
-    public VwCatalogoEntidadEducativa getEntidadEducativa() {
-        return entidadEducativa;
-    }
-
-    public void setEntidadEducativa(VwCatalogoEntidadEducativa entidadEducativa) {
-        this.entidadEducativa = entidadEducativa;
-    }
-
     public void findDetalleProcesoAdq() {
-        //detalleProcesoAdq = JsfUtil.findDetalle(proceso, rubro);
-        anhoProcesoEJB.getDetProcesoAdq(proceso, rubro);
+        //anhoProcesoEJB.getDetProcesoAdq(proceso.getIdProcesoAdq(), rubro);
     }
 
     public String limpiarVariables() {
@@ -186,8 +166,6 @@ public class AnhoProcesoController implements Serializable {
 
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
         ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
-
-        //recuperarProceso.recuperarProcesoAdq();
     }
 
     private void crearCookies() {
@@ -210,17 +188,5 @@ public class AnhoProcesoController implements Serializable {
             setAnho(anho);
             setProceso(proceso);
         }
-    }
-
-    public void filtroParametros() {
-        Map<String, Object> options = new HashMap();
-        options.put("modal", true);
-        options.put("draggable", false);
-        options.put("resizable", false);
-        options.put("contentHeight", 136);
-        options.put("contentWidth", 510);
-        options.put("closable", false);
-
-        PrimeFaces.current().dialog().openDynamic("/app/comunes/filtroParamAnhoProceso", options, null);
     }
 }

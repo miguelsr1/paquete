@@ -29,11 +29,7 @@ import sv.gob.mined.paquescolar.model.Usuario;
 public class LoginController implements Serializable {
 
     private String usuario;
-    //private String tipoUsuario;
     private String clave;
-    //private Boolean usuarioActivo;
-    //private Boolean usuarioSoloLectura = false;
-    //private Persona persona;
     @EJB
     private LoginEJB loginEJBLocal;
 

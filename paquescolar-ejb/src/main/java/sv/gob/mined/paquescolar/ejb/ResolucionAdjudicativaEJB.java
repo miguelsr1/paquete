@@ -367,9 +367,9 @@ public class ResolucionAdjudicativaEJB {
     }
 
     public HashMap<String, Object> aplicarReservaDeFondos(ResolucionesAdjudicativas resAdj,
-            BigDecimal estadoReserva, String codigoEntidad, BigInteger cantidad, String comentarioReversion, String usuario) {
+            BigDecimal estadoReserva, String codigoEntidad, String comentarioReversion, String usuario) {
         Logger.getLogger(ResolucionAdjudicativaEJB.class.getName()).log(Level.INFO, "Usuario que aplica reserva: {0} del CE: {1}", new Object[]{usuario, codigoEntidad});
 
-        return saldosEJB.aplicarReservaDeFondos(resAdj, estadoReserva, codigoEntidad, cantidad, comentarioReversion, usuario);
+        return saldosEJB.aplicarReservaDeFondos(resAdj, estadoReserva, codigoEntidad, comentarioReversion, usuario);
     }
 }

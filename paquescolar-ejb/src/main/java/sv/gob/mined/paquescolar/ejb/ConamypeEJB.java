@@ -457,4 +457,19 @@ public class ConamypeEJB {
             em.merge(capa);
         }
     }
+
+    @WebMethod
+    public void setCantonProveedor(String numeroNit, String codigoCanton) {
+        proveedorEJB.guardarCantonProveedor(numeroNit, codigoCanton);
+    }
+
+    @WebMethod
+    public Integer getIdMunicipio(String codigoDepartamento, String codigoMunicipio) {
+        return utilEJB.findMunicipioByCodigo(codigoDepartamento, codigoMunicipio);
+    }
+
+    @WebMethod
+    public void guardarCanton(Integer idMunicipio, String nombre, String codigoCanton) {
+        utilEJB.guardarCanton(codigoCanton, nombre, idMunicipio);
+    }
 }

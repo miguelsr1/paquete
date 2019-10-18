@@ -22,9 +22,7 @@ import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.DatosGeograficosEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
-import sv.gob.mined.paquescolar.model.Anho;
 import sv.gob.mined.paquescolar.model.Municipio;
-import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 
 /**
  *
@@ -38,8 +36,6 @@ public class DatosGeograficosController implements Serializable {
     private BigDecimal idMunicipio;
     private Boolean mostrarMsj = false;
     private Boolean usuarioDepartamental = false;
-    private Anho anho = new Anho();
-    private ProcesoAdquisicion proceso = new ProcesoAdquisicion();
     private Municipio municipio = new Municipio();
     @EJB
     private DatosGeograficosEJB datosGeograficosEJB;
@@ -151,19 +147,6 @@ public class DatosGeograficosController implements Serializable {
         } else {
             return datosGeograficosEJB.getLstMunicipiosByDepartamento(codigoDepartamento);
         }
-    }
-
-    public void filtroParametros() {
-        mostrarMsj = false;
-        Map<String, Object> options = new HashMap();
-        options.put("modal", true);
-        options.put("draggable", false);
-        options.put("resizable", false);
-        options.put("contentHeight", 136);
-        options.put("contentWidth", 510);
-        options.put("closable", false);
-
-        PrimeFaces.current().dialog().openDynamic("/app/comunes/filtroParamUbicacion", options, null);
     }
 
     public void cerrarFiltroPro() {

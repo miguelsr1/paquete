@@ -3,7 +3,9 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui"
     xmlns:f="http://java.sun.com/jsf/core"
-    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html">
     <ui:define name="content">
         <p:menubar> 
             <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
@@ -13,7 +15,7 @@
             <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
             <f:facet  name="options" >
-                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
             </f:facet>  
         </p:menubar>
 
@@ -31,7 +33,7 @@
                                      styleClass="form-group ui-panelgrid-blank">
                             <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
                             <p:selectOneMenu id="cboRubro" value="#{proveedorController.rubro}" >
-                                <f:selectItem itemLabel="Seleccione un rubro" itemValue="null" />
+                                <f:selectItem noSelectionOption="true" itemLabel="Seleccione un rubro" />
                                 <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                             </p:selectOneMenu>
 
@@ -43,5 +45,46 @@
                 </div>
             </div>
         </div>
+
+        <p:dialog id="dlgParametrosIniciales" widgetVar="dlgParametrosIniciales" visible="#{parametrosMB.validacionGeneral}" modal="true" closable="false" draggable="false"
+                  header="Antes de comenzar...">
+            <h:outputText value="Por favor, configure las siguientes variables antes de continuar: #{parametrosMB.validacionGeneral}" />
+            <h:panelGrid columns="2">
+                <p:panel>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Departamento:" />
+                        <p:selectOneMenu id="cboDepa" value="#{parametrosMB.codigoDepartamento}" disabled="#{parametrosMB.usuarioDepartamental}">
+                            <f:selectItem noSelectionOption="true" itemLabel="Seleccione un departamento" />
+                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}"/>
+                            <p:ajax update="cboMuni"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Municipio:" />
+                        <p:selectOneMenu id="cboMuni" value="#{parametrosMB.idMunicipio}">
+                            <f:selectItem noSelectionOption="true" itemLabel="Seleccione un municipio" />
+                            <f:selectItems value="#{parametrosMB.lstMunicipios}" var="muni" itemValue="#{muni.idMunicipio}" itemLabel="#{muni.codigoMunicipio} - #{muni.nombreMunicipio}"/>
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                </p:panel>
+                <p:panel>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Año contratación:" />
+                        <p:selectOneMenu id="cAnho" value="#{parametrosMB.idAnho}">
+                            <f:selectItem noSelectionOption="true" itemLabel="Seleccione"/> 
+                            <f:selectItems value="#{catalogosGeneralesController.lstAnho}" var="anho" itemValue="#{anho.idAnho}" itemLabel="#{anho.anho}"/>
+                            <p:ajax update="cComponente"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Proceso:" />
+                        <p:selectOneMenu id="cComponente" value="#{parametrosMB.idProcesoAdq}">
+                            <f:selectItem noSelectionOption="true" itemLabel="Seleccione un proceso" />  
+                            <f:selectItems value="#{anhoProcesoController.lstProcesoAdquisicion}" var="pro" itemValue="#{pro.idProcesoAdq}" itemLabel="#{pro.descripcionProcesoAdq}"/>
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                </p:panel>
+            </h:panelGrid>
+            <f:facet name="footer">
+                <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{parametrosMB.cerrarDlgParametros}" 
+                                 oncomplete="PF('cerrarDlgParametros').hide();"/>
+            </f:facet>
+        </p:dialog>
     </ui:define>
 </ui:composition>

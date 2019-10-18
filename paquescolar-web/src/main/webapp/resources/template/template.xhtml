@@ -116,7 +116,7 @@
 
     <h:body >
         <p:idleMonitor onactive="PF('sessionTimeOutDialog').show();" timeout="600000" >
-            <p:ajax event="active" listener="#{personaController.logout}"/>
+            <p:ajax event="active" listener="#{guestPreferences.logout}"/>
         </p:idleMonitor>
 
         <p:dialog header="Sesión caducada" id="sessionTimeOutDialog" widgetVar="sessionTimeOutDialog" resizable="false" draggable="false"

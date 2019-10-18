@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.LocalBean;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -31,13 +32,13 @@ import sv.gob.mined.paquescolar.model.TechoRubroEntEdu;
  * @author misanchez
  */
 @Singleton
-public class SaldosEJB implements SaldosEJBLocal {
+@LocalBean
+public class SaldosEJB {
 
     @PersistenceContext(unitName = "paquescolarUP")
     private EntityManager em;
 
     @Lock(LockType.WRITE)
-    @Override
     public HashMap<String, Object> aplicarReservaDeFondos(ResolucionesAdjudicativas resAdj,
             BigDecimal estadoReserva, String codigoEntidad, String comentarioReversion, String usuario) {
         HashMap<String, Object> param = new HashMap();

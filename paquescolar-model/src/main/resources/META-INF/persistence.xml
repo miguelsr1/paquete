@@ -113,6 +113,7 @@
     <class>sv.gob.mined.paquescolar.model.pojos.contratacion.VwRptPagare</class>
     <class>sv.gob.mined.paquescolar.model.pojos.contratacion.VwRptContratoJurCabecera</class>
     <class>sv.gob.mined.paquescolar.model.pojos.contratacion.ProveedorDisponibleDto</class>
+    <class>sv.gob.mined.paquescolar.model.Canton</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>

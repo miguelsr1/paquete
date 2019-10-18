@@ -20,7 +20,6 @@ import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.MenuEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
-import sv.gob.mined.paquescolar.model.OpcionMenu;
 import sv.gob.mined.paquescolar.model.Usuario;
 
 /**
@@ -32,11 +31,7 @@ import sv.gob.mined.paquescolar.model.Usuario;
 public class MenuController implements Serializable {
 
     private Boolean usuarioSoloLectura = false;
-    private String app;
-    private String codigoPantalla;
     private String codigoDepartamento;
-    private String query;
-    private String llavePrimaria;
     private String tipoUsuario;
 
     private DefaultMenuModel model;
@@ -101,39 +96,7 @@ public class MenuController implements Serializable {
     public void setModel(DefaultMenuModel model) {
         this.model = model;
     }
-
-    public String getApp() {
-        return app;
-    }
-
-    public void setApp(String app) {
-        this.app = app;
-    }
-
-    public String getCodigoPantalla() {
-        return codigoPantalla;
-    }
-
-    public void setCodigoPantalla(String codigoPantalla) {
-        this.codigoPantalla = codigoPantalla;
-    }
-
-    public String getQuery() {
-        return query;
-    }
-
-    public void setQuery(String query) {
-        this.query = query;
-    }
-
-    public String getLlavePrimaria() {
-        return llavePrimaria;
-    }
-
-    public void setLlavePrimaria(String llavePrimaria) {
-        this.llavePrimaria = llavePrimaria;
-    }
-    // </editor-fold>    
+    // </editor-fold>
 
     public void armarMenu() {
         lstOpciones = menuEJB.getOpciones(usuario.getIdUsuario().intValue(), null, false);
@@ -212,10 +175,6 @@ public class MenuController implements Serializable {
         }
     }
 
-    public void refreshEntidad() {
-        utilEJB.executeSql(query);
-        JsfUtil.mensajeInformacion("Entidad refrescada");
-    }
 
     public String verResumenGeneralContrataciones() {
         if ((Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {

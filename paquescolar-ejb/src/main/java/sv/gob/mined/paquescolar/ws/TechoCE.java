@@ -94,10 +94,10 @@ public class TechoCE {
 
         ProcesoAdquisicion procesoAdquisicion = utilEJB.find(ProcesoAdquisicion.class, idProceso);
 
-        detProAdqUni = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(4));
-        detProAdqUni2 = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(5));
-        detProAdqUti = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(2));
-        detProAdqZap = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(3));
+        detProAdqUni = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion.getIdProcesoAdq(), new BigDecimal(4));
+        detProAdqUni2 = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion.getIdProcesoAdq(), new BigDecimal(5));
+        detProAdqUti = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion.getIdProcesoAdq(), new BigDecimal(2));
+        detProAdqZap = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion.getIdProcesoAdq(), new BigDecimal(3));
 
         estPar = entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, BigDecimal.ONE, procesoAdquisicion);
         estCiclo1 = entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("3"), procesoAdquisicion);

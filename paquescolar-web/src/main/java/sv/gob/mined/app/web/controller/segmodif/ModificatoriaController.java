@@ -54,7 +54,6 @@ import sv.gob.mined.paquescolar.model.RptDocumentos;
 import sv.gob.mined.paquescolar.model.TechoRubroEntEdu;
 import sv.gob.mined.paquescolar.model.TipoModifContrato;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ContratoDto;
-import sv.gob.mined.paquescolar.model.pojos.contratacion.SaldoProveedorDto;
 import sv.gob.mined.paquescolar.model.pojos.VwDepartamentoModificativas;
 import sv.gob.mined.paquescolar.model.pojos.VwDetalleModificativas;
 import sv.gob.mined.paquescolar.model.pojos.modificativa.VwBusquedaContratos;
@@ -245,12 +244,12 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                 deshabilitarAgregar = true;
                 deshabilitarEliminar = true;
                 deshabilitarCantidad = true;
-                for (DetalleModificativa detalle : lstDetalleModificativas) {
+                lstDetalleModificativas.forEach((detalle) -> {
                     detalle.setCantidadNew(detalle.getCantidadOld());
                     if (idTipoModif.intValue() == 4) {
                         detalle.setPrecioUnitarioNew(detalle.getPrecioUnitarioOld());
                     }
-                }
+                });
                 break;
             case 2:
             case 3:
@@ -258,9 +257,9 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
             case 5:
             case 6:
                 if (idTipoModif.intValue() == 6) {
-                    for (DetalleModificativa detalle : lstDetalleModificativas) {
+                    lstDetalleModificativas.forEach((detalle) -> {
                         detalle.setCantidadNew(detalle.getCantidadOld());
-                    }
+                    });
                     msjInformacion = "No se permiten disminuciones <b>MENOR ▼</b> al 20% del monto total del contrato.";
                 } else {
                     msjInformacion = "No se permiten incrementos <b>MAYOR ▲</b> al 20% del monto total del contrato.";
@@ -975,14 +974,11 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
         resolucionesModificativas.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
         resolucionesModificativas.setFechaModificacion(new Date());
         modificativaEJB.guardarExtision(resolucionesModificativas);
-        List<SaldoProveedorDto> saldoProveedor = new ArrayList();
-
-        saldoProveedor.add(resolucionAdjudicativaEJB.getSaldoProveedor(resolucionesModificativas.getIdContrato().getIdResolucionAdj()));
 
         HashMap<String, Object> param = resolucionAdjudicativaEJB.aplicarReservaDeFondos(resolucionesModificativas.getIdContrato().getIdResolucionAdj(),
-                new BigDecimal(3), codigoEntidad, saldoProveedor.get(0).getAdjudicadaActual(), "Reversión por Extinsión de Contrato", VarSession.getVariableSessionUsuario());
+                new BigDecimal(3), codigoEntidad, "Reversión por Extinsión de Contrato", VarSession.getVariableSessionUsuario());
         param = resolucionAdjudicativaEJB.aplicarReservaDeFondos(resolucionesModificativas.getIdContrato().getIdResolucionAdj(),
-                new BigDecimal(4), codigoEntidad, saldoProveedor.get(0).getAdjudicadaActual(), "Anulación por Extinsión de Contrato", VarSession.getVariableSessionUsuario());
+                new BigDecimal(4), codigoEntidad, "Anulación por Extinsión de Contrato", VarSession.getVariableSessionUsuario());
 
         JsfUtil.mensajeUpdate();
     }
@@ -1049,7 +1045,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
     }
 
     private void imprimirContratoFormatoOriginal(Boolean isPersonaNatural) {
-        List<RptDocumentos> lstRptDocumentos = new ArrayList();
+        List<RptDocumentos> lstRptDocumentos;
         List<Integer> lstRpt = new ArrayList();
         lstRpt.add(7);
 

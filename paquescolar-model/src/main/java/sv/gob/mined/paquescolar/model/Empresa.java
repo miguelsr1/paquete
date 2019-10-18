@@ -116,6 +116,8 @@ public class Empresa implements Serializable {
     private EstadoRegistro idEstadoRegistro;
     @Column(name = "NUMERO_CUENTA")
     private String numeroCuenta;
+    @Column(name = "CODIGO_CANTON")
+    private String codigoCanton;
 
     public Empresa() {
     }
@@ -365,10 +367,7 @@ public class Empresa implements Serializable {
             return false;
         }
         Empresa other = (Empresa) object;
-        if ((this.idEmpresa == null && other.idEmpresa != null) || (this.idEmpresa != null && !this.idEmpresa.equals(other.idEmpresa))) {
-            return false;
-        }
-        return true;
+        return !((this.idEmpresa == null && other.idEmpresa != null) || (this.idEmpresa != null && !this.idEmpresa.equals(other.idEmpresa)));
     }
 
     @Override
@@ -398,5 +397,13 @@ public class Empresa implements Serializable {
 
     public void setNumeroCuenta(String numeroCuenta) {
         this.numeroCuenta = numeroCuenta;
+    }
+
+    public String getCodigoCanton() {
+        return codigoCanton;
+    }
+
+    public void setCodigoCanton(String codigoCanton) {
+        this.codigoCanton = codigoCanton;
     }
 }

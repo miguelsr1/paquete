@@ -12,11 +12,9 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -600,7 +598,7 @@ public class ProveedorEJB {
             Boolean municipioIgual, Boolean byCapacidad, BigInteger cantidad, HashMap<String, String> mapItems) {
         String codMunicipio;
         String codDepartamento;
-        Integer idDetTemp = 0;
+        Integer idDetTemp;
         List<ProveedorDisponibleDto> lstCapa = new ArrayList<>();
         Query q = em.createNativeQuery("select codigo_municipio, codigo_departamento from vw_catalogo_entidad_educativa WHERE codigo_entidad = '" + codigoEntidad + "'");
         List lst = q.getResultList();
@@ -819,9 +817,9 @@ public class ProveedorEJB {
         q.setParameter("idEmpresa", idEmpresa);
         q.setParameter("idDetProceso", idDetProceso);
         if (!q.getResultList().isEmpty()) {
-            for (Object par : q.getResultList()) {
+            q.getResultList().forEach((par) -> {
                 lst.addAll(((Participantes) par).getDetalleOfertasList());
-            }
+            });
         }
         return lst;
     }
@@ -1341,5 +1339,15 @@ public class ProveedorEJB {
                 + "                pemp.id_nivel_educativo in (" + idNivelesCe + ")\n"
                 + "            order by to_number(pemp.no_item)", PrecioReferenciaEmpresaDto.class);
         return q.getResultList();
+    }
+
+    public void guardarCantonProveedor(String numeroNit, String codigoCanton) {
+        Query q = em.createNativeQuery("UPDATE Empresa SET codigo_canton='"+codigoCanton+"' WHERE numero_nit='"+numeroNit+"'");
+        
+        int i = q.executeUpdate();
+
+        if (i == 0) {
+            System.out.println("empresa no encontrada: " + numeroNit);
+        }
     }
 }
