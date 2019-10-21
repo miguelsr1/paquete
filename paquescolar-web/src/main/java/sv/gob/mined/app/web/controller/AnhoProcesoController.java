@@ -7,6 +7,7 @@ package sv.gob.mined.app.web.controller;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -85,6 +86,14 @@ public class AnhoProcesoController implements Serializable {
         } else {
             return anhoProcesoEJB.getLstProcesoAdquisicionByAnho(anho.getIdAnho());
         }
+    }
+
+    public List<ProcesoAdquisicion> getLstProcesoAdquisicion(BigDecimal idAnho) {
+        if (idAnho == null) {
+            anho.setIdAnho(idAnho);
+            return anhoProcesoEJB.getLstProcesoAdquisicionByAnho(idAnho);
+        }
+        return new ArrayList();
     }
 
     public List<RubrosAmostrarInteres> getLstRubros() {

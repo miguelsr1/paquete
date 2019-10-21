@@ -76,14 +76,13 @@
                         <p:outputLabel value="Proceso:" />
                         <p:selectOneMenu id="cComponente" value="#{parametrosMB.idProcesoAdq}">
                             <f:selectItem noSelectionOption="true" itemLabel="Seleccione un proceso" />  
-                            <f:selectItems value="#{anhoProcesoController.lstProcesoAdquisicion}" var="pro" itemValue="#{pro.idProcesoAdq}" itemLabel="#{pro.descripcionProcesoAdq}"/>
+                            <f:selectItems value="#{parametrosMB.lstProcesoAdquisicion}" var="pro" itemValue="#{pro.idProcesoAdq}" itemLabel="#{pro.descripcionProcesoAdq}"/>
                         </p:selectOneMenu>
                     </h:panelGrid>
                 </p:panel>
             </h:panelGrid>
             <f:facet name="footer">
-                <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{parametrosMB.cerrarDlgParametros}" 
-                                 oncomplete="PF('cerrarDlgParametros').hide();"/>
+                <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{parametrosMB.cerrarDlgParametros}" />
             </f:facet>
         </p:dialog>
     </ui:define>
