@@ -68,7 +68,7 @@
                         <h:panelGrid style="width: 100%;" columns="2" columnClasses="col10,col2">
                             <p:selectOneMenu id="cboRubro" value="#{dashboardMB.rubro}">
                                 <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
-                                <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.nombreCorto}"/>
+                                <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.nombreCorto}"/>
                                 <p:ajax update="dvMonto dvCantidad dvProveedor pnlRubro dvTipoEmp dvTipoGen" listener="#{dashboardMB.updateDatos}"/>
                             </p:selectOneMenu>
                             <p:commandButton icon="fa fa-home" action="inicial.mined?faces-redirect=true" process="@this"/>

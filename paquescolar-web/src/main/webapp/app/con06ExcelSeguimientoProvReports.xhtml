@@ -34,7 +34,7 @@
                         <p:outputLabel value="Rubro de adquisición:" />  
                         <p:selectOneMenu id="idRubro" value="#{graficoController.rubroSeg}" effect="fade">
                             <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
-                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}"/>
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}"/>
                         </p:selectOneMenu>
                     </p:panelGrid>
                 </div>                

@@ -28,7 +28,7 @@
                     </h3>
                     <h:panelGrid columns="2">
                         <h:outputText value="Departamento"/>
-                        <p:selectOneMenu id="codigoDepartamento" value="#{pagoProveedoresController.codigoDepartamento}"  required="true" disabled="#{datosGeograficosController.usuarioDepartamental}" >
+                        <p:selectOneMenu id="codigoDepartamento" value="#{pagoProveedoresController.codigoDepartamento}"  required="true" disabled="#{parametrosMB.usuarioDepartamental}" >
                             <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
                             <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
                             <p:ajax update="codigoDepartamento"/>

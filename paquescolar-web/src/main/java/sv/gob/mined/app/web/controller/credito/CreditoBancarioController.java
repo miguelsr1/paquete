@@ -23,7 +23,8 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.primefaces.PrimeFaces;
-import sv.gob.mined.app.web.controller.AnhoProcesoController;
+import sv.gob.mined.app.web.controller.ParametrosMB;
+//import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProceso;
 import sv.gob.mined.app.web.util.RptExcel;
@@ -115,8 +116,8 @@ public class CreditoBancarioController implements Serializable {
 
     @PostConstruct
     public void ini() {
-        anho = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getAnho().getIdAnho();
+        anho = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getIdAnho();
 
         lstRubros = anhoProcesoEJB.getLstRubros(recuperarProceso.getProcesoAdquisicion());
 

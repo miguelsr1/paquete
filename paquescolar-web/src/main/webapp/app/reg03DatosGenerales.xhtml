@@ -11,7 +11,7 @@
             <p:menuitem value="Modificar" update="frmPrincipal" icon="fa fa-edit" ajax="true"  onclick="onClick('btnModificar');"/>
             <p:menuitem value="Guardar" icon="fa fa-save" disabled="#{menuController.usuarioSoloLectura || proveedorController.deshabiliar}" action="#{proveedorController.guardarDatosGenerales}"/>
             <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-            <p:menuitem value="Principal" icon="fa fa-home" action="#{anhoProcesoController.limpiarVariables}" url="#{request.contextPath}/app/inicial.mined"/>
+            <p:menuitem value="Principal" icon="fa fa-home" action="#{parametrosMB.limpiarVariables}" url="#{request.contextPath}/app/inicial.mined"/>
 
             <f:facet  name="options">  
                 <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
@@ -43,7 +43,7 @@
                                     <p:outputLabel value="Departamento: "/>
                                     <h:panelGroup>
                                         <h:panelGrid columns="4">
-                                            <p:selectOneMenu id="cboDepaEmp" value="#{proveedorController.empresa.idMunicipio.codigoDepartamento.codigoDepartamento}" disabled="#{datosGeograficosController.usuarioDepartamental}">
+                                            <p:selectOneMenu id="cboDepaEmp" value="#{proveedorController.empresa.idMunicipio.codigoDepartamento.codigoDepartamento}" disabled="#{parametrosMB.usuarioDepartamental}">
                                                 <f:selectItem noSelectionOption="true" itemLabel="Seleccione un departamento" />
                                                 <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
                                                 <p:ajax update="cboMuniEmp"/>

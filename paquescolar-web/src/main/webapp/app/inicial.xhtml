@@ -34,7 +34,7 @@
                             <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
                             <p:selectOneMenu id="cboRubro" value="#{proveedorController.rubro}" >
                                 <f:selectItem noSelectionOption="true" itemLabel="Seleccione un rubro" />
-                                <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                             </p:selectOneMenu>
 
                             <f:facet name="footer">

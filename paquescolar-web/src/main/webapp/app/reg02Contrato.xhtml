@@ -38,7 +38,7 @@
                             <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
                             <p:selectOneMenu id="cboRubro" value="#{contratosOrdenesComprasController.rubro}" onkeydown="setaFoco(this);" disabled="#{contratosOrdenesComprasController.deshabilitado}">
                                 <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
-                                <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                                 <p:ajax update="pnlFiltro " listener="#{ofertaMB.limpiarFiltros}"/>
                             </p:selectOneMenu>
                             <p:outputLabel value="#{bundle['ce.codEnt']}:" />

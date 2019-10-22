@@ -22,7 +22,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
-import sv.gob.mined.app.web.controller.AnhoProcesoController;
+import sv.gob.mined.app.web.controller.ParametrosMB;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.VarSession;
@@ -106,8 +106,8 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             showPnlNewSeguimiento = false;
             inicializarValores(idContrato);
         }
-        rubro = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getRubro();
+        rubro = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getRubro();
         esDosUniformes = (rubro.intValue() == 1);
     }
 
@@ -174,10 +174,10 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
     public void setRubro(BigDecimal rubro) {
         if (rubro != null) {
             VarSession.crearCookie("rubro", rubro.toString());
-            AnhoProcesoController controller = (AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                    getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController");
+            /*ParametrosMB controller = (ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                    getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB");
             controller.setRubro(rubro);
-            controller.findDetalleProcesoAdq();
+            controller.findDetalleProcesoAdq();*/
 
             this.rubro = rubro;
         }
@@ -582,9 +582,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
 
     public void buscarEntidadEducativa() {
         if (codigoEntidad.length() == 5) {
-            AnhoProcesoController controller = (AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                    getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController");
-            detalleProceso = controller.getDetalleProcesoAdq();
+            detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
             entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
             if (entidadEducativa == null) {
                 JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + codigoEntidad);

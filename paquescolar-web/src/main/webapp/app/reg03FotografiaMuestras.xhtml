@@ -12,7 +12,7 @@
             <p:menuitem value="Guardar" icon="fa fa-save"  disabled="#{menuController.usuarioSoloLectura || proveedorController.deshabiliar}" 
                         action="#{proveedorController.guardarPreciosRef}" update=":frmPrincipal:pnlFotografiaZapatos"/>
             <p:menuitem value="Imprimir" ajax="false" icon="fa fa-print" action="#{proveedorController.impOfertaGlobal}" />
-            <p:menuitem value="Principal" icon="fa fa-home" action="#{anhoProcesoController.limpiarVariables}" url="#{request.contextPath}/app/inicial.mined" />
+            <p:menuitem value="Principal" icon="fa fa-home" action="#{parametrosMB.limpiarVariables}" url="#{request.contextPath}/app/inicial.mined" />
 
             <f:facet  name="options">  
                 <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>

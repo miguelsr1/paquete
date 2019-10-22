@@ -57,9 +57,9 @@ public class MenuController implements Serializable {
 
             VarSession.setVariableSession("Usuario", usuario.getIdPersona().getUsuario());
             VarSession.setVariableSession("idTipoUsuario", usuario.getIdTipoUsuario().getIdTipoUsuario().intValue());
-            if (!usuario.getCodigoDepartamento().equals("00")) {
+            //if (!usuario.getCodigoDepartamento().equals("00")) {
                 codigoDepartamento = usuario.getCodigoDepartamento();
-            }
+            //}
             armarMenu();
         }
     }

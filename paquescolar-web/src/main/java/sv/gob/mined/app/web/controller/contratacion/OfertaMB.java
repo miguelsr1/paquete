@@ -24,7 +24,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.faces.bean.ViewScoped;
 import org.primefaces.PrimeFaces;
-import sv.gob.mined.app.web.controller.AnhoProcesoController;
+import sv.gob.mined.app.web.controller.ParametrosMB;
 import sv.gob.mined.app.web.util.Bean2Excel;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
@@ -105,8 +105,8 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
 
     @PostConstruct
     public void init() {
-        rubro = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getRubro();
+        rubro = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getRubro();
 
         detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
 
@@ -155,10 +155,10 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     public void setRubro(BigDecimal rubro) {
         if (rubro != null) {
             VarSession.crearCookie("rubro", rubro.toString());
-            AnhoProcesoController controller = (AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                    getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController");
+            ParametrosMB controller = (ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                    getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB");
             controller.setRubro(rubro);
-            controller.findDetalleProcesoAdq();
+            //controller.findDetalleProcesoAdq();
 
             this.rubro = rubro;
         }
@@ -168,9 +168,6 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         return abrirDialogCe;
     }
 
-    /*public void setAbrirDialogCe(Boolean abrirDialogCe) {
-        this.abrirDialogCe = abrirDialogCe;
-    }*/
     public Participantes getParticipanteSeleccionado() {
         return participanteSeleccionado;
     }

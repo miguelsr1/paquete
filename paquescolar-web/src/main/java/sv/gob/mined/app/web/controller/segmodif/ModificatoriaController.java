@@ -31,7 +31,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.SelectEvent;
-import sv.gob.mined.app.web.controller.AnhoProcesoController;
+import sv.gob.mined.app.web.controller.ParametrosMB;
+//import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.controller.contratacion.OfertaMB;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
@@ -114,8 +115,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
 
     private List<VwDepartamentoModificativas> lstCeDetModificativas = new ArrayList();
     private List<VwDetalleModificativas> lstProDetModificativas = new ArrayList();
-    @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
+    
     @EJB
     private ModificativaEJB modificativaEJB;
     @EJB
@@ -133,8 +133,8 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
 
     @PostConstruct
     public void ini() {
-        idRubro = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getRubro();
+        idRubro = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getRubro();
         detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
         techoCE.setMontoAdjudicado(BigDecimal.ZERO);
         techoCE.setMontoDisponible(BigDecimal.ZERO);

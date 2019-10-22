@@ -42,8 +42,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DualListModel;
-import sv.gob.mined.app.web.controller.AnhoProcesoController;
-import sv.gob.mined.app.web.controller.DatosGeograficosController;
+import sv.gob.mined.app.web.controller.ParametrosMB;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.Reportes;
@@ -514,15 +513,15 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     }
 
     private void cargarDetalleCalificacion(Boolean inicio) {
-        ProcesoAdquisicion proceso = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getProceso();
+        ProcesoAdquisicion proceso = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getProceso();
         if (proceso == null || proceso.getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe seleccionar un proceso de contratación");
-            if (inicio) {
+            /*if (inicio) {
                 DatosGeograficosController d = ((DatosGeograficosController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                         getValue(FacesContext.getCurrentInstance().getELContext(), null, "datosGeograficosController"));
                 d.setMostrarMsj(true);
-            }
+            }*/
         } else {
             if (proceso.getPadreIdProcesoAdq() != null) {
                 proceso = proceso.getPadreIdProcesoAdq();
@@ -1280,11 +1279,10 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
 
     public void impOfertaGlobal() {
         try {
-            String lugar = ((DatosGeograficosController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                    getValue(FacesContext.getCurrentInstance().getELContext(), null, "datosGeograficosController")).getUbicacion();
+            String lugar = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                    getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getUbicacion();
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-            //HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
             ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
             HashMap param = new HashMap();
             param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);

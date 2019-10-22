@@ -36,7 +36,7 @@
                         <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />  
                         <p:selectOneMenu id="idRubro" value="#{creditoBancarioController.rubro}" effect="fade">
                             <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
-                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}"/>
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}"/>
                         </p:selectOneMenu>
 
                         <p:commandButton   value="Buscar" icon="ui-icon-search" action="#{creditoBancarioController.consultaCreditosActivosPorProveedor}" 

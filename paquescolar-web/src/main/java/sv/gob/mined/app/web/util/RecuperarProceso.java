@@ -9,8 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import sv.gob.mined.app.web.controller.AnhoProcesoController;
-import sv.gob.mined.app.web.controller.DatosGeograficosController;
+import sv.gob.mined.app.web.controller.ParametrosMB;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 
 /**
@@ -31,25 +30,25 @@ public class RecuperarProceso implements Serializable {
     }
 
     public void recuperarProcesoAdq() {
-        procesoAdquisicion = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getProceso();
+        procesoAdquisicion = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getProceso();
         if (procesoAdquisicion == null || procesoAdquisicion.getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de adquisición.");
         }
 
-        departamento = ((DatosGeograficosController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "datosGeograficosController")).getCodigoDepartamento();
+        departamento = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getCodigoDepartamento();
     }
 
     public ProcesoAdquisicion getProcesoAdquisicion() {
-        procesoAdquisicion = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getProceso();
+        procesoAdquisicion = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getProceso();
         return procesoAdquisicion;
     }
 
     public String getDepartamento() {
-        departamento = ((DatosGeograficosController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "datosGeograficosController")).getCodigoDepartamento();
+        departamento = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getCodigoDepartamento();
         return departamento;
     }
 }

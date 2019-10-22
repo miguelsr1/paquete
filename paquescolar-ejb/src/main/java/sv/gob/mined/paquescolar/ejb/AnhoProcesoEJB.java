@@ -31,7 +31,7 @@ public class AnhoProcesoEJB {
     // "Insert Code > Add Business Method")
 
     public List<Anho> getLstAnhos() {
-        Query q = em.createQuery("SELECT a FROM Anho a ORDER BY a.idAnho", Anho.class);
+        Query q = em.createQuery("SELECT a FROM Anho a ORDER BY a.idAnho DESC", Anho.class);
         return q.getResultList();
     }
 

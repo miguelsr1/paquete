@@ -40,7 +40,7 @@
                         <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />  
                         <p:selectOneMenu id="idRubro" value="#{segFisicoController.rubro}" effect="fade">
                             <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
-                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}"/>
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}"/>
                         </p:selectOneMenu>
                         <p:outputLabel value="N.I.T.:" />
                         <p:inputMask id="nit" mask="9999-999999-999-9"  value="#{segFisicoController.numeroNit}" 

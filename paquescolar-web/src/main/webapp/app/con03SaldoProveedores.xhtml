@@ -33,7 +33,7 @@
                         <p:outputLabel value="Rubro de adquisición: " />
                         <p:selectOneMenu id="idRubroInteres" value="#{consultasContratacionMB.idRubro}" required="true" requiredMessage="El rubro es requerido">
                             <f:selectItem itemLabel="Seleccione un rubro" itemValue="0" />  
-                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                         </p:selectOneMenu>
 
                         <p:outputLabel value="Departamento: " />

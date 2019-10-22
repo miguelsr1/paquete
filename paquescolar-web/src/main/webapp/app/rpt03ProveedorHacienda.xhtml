@@ -36,7 +36,7 @@
 
                         <p:outputLabel value="#{bundle['compra.rubroAdq']}: " />
                         <p:selectOneMenu id="idRubroInteres" value="#{reportesWebController.idRubro}" >
-                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                         </p:selectOneMenu>
 
                         <p:commandButton action="#{reportesWebController.generarRptProveedoresHacienda}" value="Buscar" id="ingresar" update="pnlDatos"/>

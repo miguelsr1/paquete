@@ -33,7 +33,7 @@
                             <p:outputLabel value="#{bundle['compra.rubroAdq']}" />
                             <p:selectOneMenu id="cboRubro" value="#{preCargaMB.idRubro}">
                                 <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />
-                                <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                                 <p:ajax listener="#{preCargaMB.obtenerIdDetalleProcesoAdq()}"/>
                             </p:selectOneMenu>
 

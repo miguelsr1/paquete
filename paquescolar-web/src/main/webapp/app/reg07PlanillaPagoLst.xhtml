@@ -34,7 +34,7 @@
                         <p:panelGrid columns="2" columnClasses="col3_label,col9" 
                                      styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
                             <h:outputText value="Departamento"/>
-                            <p:selectOneMenu id="codigoDepartamento" value="#{planillaPagoLstMB.codigoDepartamento}" disabled="#{datosGeograficosController.usuarioDepartamental}" >
+                            <p:selectOneMenu id="codigoDepartamento" value="#{planillaPagoLstMB.codigoDepartamento}" disabled="#{parametrosMB.usuarioDepartamental}" >
                                 <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
                                 <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
                                 <p:ajax listener="#{planillaPagoLstMB.clearRubroAndRequerimiento}"  update="codigoDepartamento cboRubro cboRequerimiento"/>
@@ -43,7 +43,7 @@
                             <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
                             <p:selectOneMenu id="cboRubro" value="#{planillaPagoLstMB.idRubro}">
                                 <f:selectItem itemLabel="Seleccione un rubro" itemValue="0" />
-                                <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                                 <p:ajax listener="#{planillaPagoLstMB.recuperarRequerimientos}" update="cboRequerimiento"/>
                             </p:selectOneMenu>
 

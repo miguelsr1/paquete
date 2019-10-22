@@ -27,6 +27,7 @@ import sv.gob.mined.paquescolar.ejb.UtilEJB;
 import sv.gob.mined.paquescolar.model.Anho;
 import sv.gob.mined.paquescolar.model.Municipio;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
+import sv.gob.mined.paquescolar.model.RubrosAmostrarInteres;
 
 /**
  *
@@ -63,33 +64,40 @@ public class ParametrosMB implements Serializable {
         Map<String, Object> requestCookieMap = FacesContext.getCurrentInstance().getExternalContext().getRequestCookieMap();
 
         if (requestCookieMap.containsKey("anho")) {
-            idAnho = new BigDecimal(((Cookie) requestCookieMap.get("anho")).getValue());
             validacionGeneral = false;
+            idAnho = new BigDecimal(((Cookie) requestCookieMap.get("anho")).getValue());
+            anho = utilEJB.find(Anho.class, idAnho);
         } else {
             idAnho = BigDecimal.ONE;
         }
 
         if (requestCookieMap.containsKey("proceso")) {
-            idProcesoAdq = Integer.parseInt(((Cookie) requestCookieMap.get("proceso")).getValue());
             validacionGeneral = false;
+            idProcesoAdq = Integer.parseInt(((Cookie) requestCookieMap.get("proceso")).getValue());
+            proceso = utilEJB.find(ProcesoAdquisicion.class, idProcesoAdq);
+            anhoProceso = anho.getAnho() + " :: " + proceso.getDescripcionProcesoAdq();
         }
 
         if (requestCookieMap.containsKey("rubro")) {
-            idRubro = new BigDecimal(((Cookie) requestCookieMap.get("rubro")).getValue());
             validacionGeneral = false;
+            idRubro = new BigDecimal(((Cookie) requestCookieMap.get("rubro")).getValue());
         }
 
         codigoDepartamento = VarSession.getDepartamentoUsuarioSession();
 
         if (codigoDepartamento != null) {
             if (VarSession.isCookie("municipio")) {
-                idMunicipio = new BigDecimal(VarSession.getCookieValue("municipio"));
                 validacionGeneral = false;
+                idMunicipio = new BigDecimal(VarSession.getCookieValue("municipio"));
+                municipio = utilEJB.find(Municipio.class, idMunicipio);
+                ubicacion = JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento) + ", " + municipio.getNombreMunicipio();
             } else {
-                idMunicipio = utilEJB.getMunicipioPrimerByDepartamento(codigoDepartamento).getIdMunicipio();
                 VarSession.crearCookie("municipio", idMunicipio.toString());
+                idMunicipio = utilEJB.getMunicipioPrimerByDepartamento(codigoDepartamento).getIdMunicipio();
+                ubicacion = JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento) + ", " + municipio.getNombreMunicipio();
             }
-            usuarioDepartamental = true;
+            usuarioDepartamental = !codigoDepartamento.equals("00");
+            
         } else if (VarSession.isCookie("departamento")) {
             codigoDepartamento = VarSession.getCookieValue("departamento");
             validacionGeneral = false;
@@ -97,6 +105,8 @@ public class ParametrosMB implements Serializable {
         if (VarSession.isCookie("municipio") && idMunicipio == null) {
             validacionGeneral = false;
             idMunicipio = new BigDecimal(VarSession.getCookieValue("municipio"));
+            municipio = utilEJB.find(Municipio.class, idMunicipio);
+            ubicacion = JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento) + ", " + municipio.getNombreMunicipio();
         }
 
     }
@@ -110,6 +120,14 @@ public class ParametrosMB implements Serializable {
         if (idAnho != null) {
             this.idAnho = idAnho;
         }
+    }
+
+    public Anho getAnho() {
+        return anho;
+    }
+
+    public ProcesoAdquisicion getProceso() {
+        return proceso;
     }
 
     public String ubicacion() {
@@ -206,6 +224,10 @@ public class ParametrosMB implements Serializable {
     }
     // </editor-fold>
 
+    public String getNombreMunicipio() {
+        return municipio.getNombreMunicipio();
+    }
+
     public String cerrarDlgParametros() throws IOException {
         if (codigoDepartamento != null && idMunicipio != null && idAnho != null && idProcesoAdq != null) {
             validacionGeneral = false;
@@ -221,9 +243,6 @@ public class ParametrosMB implements Serializable {
 
             anhoProceso = anho.getAnho() + " :: " + proceso.getDescripcionProcesoAdq();
             ubicacion = JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento) + ", " + municipio.getNombreMunicipio();
-
-            ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).init();
-            ((DatosGeograficosController) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(FacesContext.getCurrentInstance().getELContext(), null, "datosGeograficosController")).init();
 
             return "/app/inicial?faces-redirect=true";
         } else {
@@ -257,6 +276,8 @@ public class ParametrosMB implements Serializable {
             anho = utilEJB.find(Anho.class, idAnho);
             proceso = utilEJB.find(ProcesoAdquisicion.class, idProcesoAdq);
 
+            anhoProceso = anho.getAnho() + " :: " + proceso.getDescripcionProcesoAdq();
+
             VarSession.crearCookie("anho", anho.getIdAnho().toString());
             VarSession.crearCookie("proceso", proceso.getIdProcesoAdq().toString());
         }
@@ -278,6 +299,8 @@ public class ParametrosMB implements Serializable {
             JsfUtil.mensajeAlerta(msj);
         } else {
             municipio = utilEJB.find(Municipio.class, idMunicipio);
+
+            ubicacion = JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento) + ", " + municipio.getNombreMunicipio();
 
             VarSession.crearCookie("departamento", codigoDepartamento);
             VarSession.crearCookie("municipio", idMunicipio.toString());
@@ -306,4 +329,24 @@ public class ParametrosMB implements Serializable {
         }
     }
 
+    public List<RubrosAmostrarInteres> getLstRubros() {
+        if (proceso == null || proceso.getIdProcesoAdq() == null) {
+            return anhoProcesoEJB.getLstRubros();
+        } else {
+            return anhoProcesoEJB.getLstRubros(proceso);
+        }
+    }
+
+    public List<RubrosAmostrarInteres> getLstRubrosResguardo() {
+        if (proceso == null || proceso.getIdProcesoAdq() == null) {
+            return anhoProcesoEJB.getLstRubros();
+        } else {
+            return anhoProcesoEJB.getLstRubrosResguardo(proceso);
+        }
+    }
+
+    public String limpiarVariables() {
+        VarSession.removeVariableSession("idEmpresa");
+        return "inicial";
+    }
 }

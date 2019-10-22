@@ -46,7 +46,7 @@
                                  style="border:0px none; background-color:transparent;"
                                  styleClass="ui-panelgrid-blank form-group form-elements">
                         <h:outputText value="Departamento"/>
-                        <p:selectOneMenu id="codigoDepartamento" value="#{pagoProveedoresController.codigoDepartamento}" disabled="#{datosGeograficosController.usuarioDepartamental}" >
+                        <p:selectOneMenu id="codigoDepartamento" value="#{pagoProveedoresController.codigoDepartamento}" disabled="#{parametrosMB.usuarioDepartamental}" >
                             <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
                             <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
                             <p:ajax update="codigoDepartamento"/>
@@ -55,7 +55,7 @@
                         <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
                         <p:selectOneMenu id="cboRubro" value="#{pagoProveedoresController.idRubro}" >
                             <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />
-                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                         </p:selectOneMenu>
 
                         <p:commandButton value="Filtrar" action="#{pagoProveedoresController.createDonutModel}" update="pnlDatos"/>

@@ -36,7 +36,7 @@
 
                         <p:outputLabel value="Rubro de adquisición: " />
                         <p:selectOneMenu id="idRubroInteres" value="#{graficoController.rubroSeg}" >
-                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                         </p:selectOneMenu>
 
                         <p:commandButton action="#{graficoController.buscarTotal}" value="Buscar" id="ingresar" update="pnlDatos "/>
