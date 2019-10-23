@@ -623,7 +623,7 @@ public class ProveedorEJB {
         for (DetalleProcesoAdq object : procesoAdquisicion.getDetalleProcesoAdqList()) {
             if (object.getIdRubroAdq().getIdRubroUniforme().intValue() != 1 && object.getIdRubroAdq().getIdRubroInteres().compareTo(detProcesoAdq.getIdRubroAdq().getIdRubroInteres()) == 0) {
                 return object.getIdDetProcesoAdq();
-            } else if (object.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
+            } else if (object.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 && object.getIdRubroAdq().getIdRubroInteres().compareTo(detProcesoAdq.getIdRubroAdq().getIdRubroInteres()) == 0) {
                 if (object.getIdRubroAdq().getIdRubroInteres().intValue() == 4) {
                     return object.getIdDetProcesoAdq();
                 }

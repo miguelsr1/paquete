@@ -46,7 +46,7 @@
             </div>
         </div>
 
-        <p:dialog id="dlgParametrosIniciales" widgetVar="dlgParametrosIniciales" visible="#{parametrosMB.validacionGeneral}" modal="true" closable="false" draggable="false"
+        <p:dialog id="dlgParametrosIniciales" widgetVar="dlgParametrosIniciales" visible="#{!parametrosMB.validacionGeneral}" modal="true" closable="false" draggable="false"
                   header="Antes de comenzar...">
             <h:outputText value="Por favor, configure las siguientes variables antes de continuar: #{parametrosMB.validacionGeneral}" />
             <h:panelGrid columns="2">

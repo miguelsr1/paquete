@@ -64,7 +64,6 @@ public class ParametrosMB implements Serializable {
         Map<String, Object> requestCookieMap = FacesContext.getCurrentInstance().getExternalContext().getRequestCookieMap();
 
         if (requestCookieMap.containsKey("anho")) {
-            validacionGeneral = false;
             idAnho = new BigDecimal(((Cookie) requestCookieMap.get("anho")).getValue());
             anho = utilEJB.find(Anho.class, idAnho);
         } else {
@@ -72,14 +71,12 @@ public class ParametrosMB implements Serializable {
         }
 
         if (requestCookieMap.containsKey("proceso")) {
-            validacionGeneral = false;
             idProcesoAdq = Integer.parseInt(((Cookie) requestCookieMap.get("proceso")).getValue());
             proceso = utilEJB.find(ProcesoAdquisicion.class, idProcesoAdq);
             anhoProceso = anho.getAnho() + " :: " + proceso.getDescripcionProcesoAdq();
         }
 
         if (requestCookieMap.containsKey("rubro")) {
-            validacionGeneral = false;
             idRubro = new BigDecimal(((Cookie) requestCookieMap.get("rubro")).getValue());
         }
 
@@ -87,28 +84,27 @@ public class ParametrosMB implements Serializable {
 
         if (codigoDepartamento != null) {
             if (VarSession.isCookie("municipio")) {
-                validacionGeneral = false;
                 idMunicipio = new BigDecimal(VarSession.getCookieValue("municipio"));
                 municipio = utilEJB.find(Municipio.class, idMunicipio);
                 ubicacion = JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento) + ", " + municipio.getNombreMunicipio();
             } else {
-                VarSession.crearCookie("municipio", idMunicipio.toString());
+                /*codigoDepartamento = "01";
                 idMunicipio = utilEJB.getMunicipioPrimerByDepartamento(codigoDepartamento).getIdMunicipio();
-                ubicacion = JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento) + ", " + municipio.getNombreMunicipio();
+                VarSession.crearCookie("municipio", idMunicipio.toString());
+                ubicacion = JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento) + ", " + municipio.getNombreMunicipio();*/
             }
             usuarioDepartamental = !codigoDepartamento.equals("00");
             
         } else if (VarSession.isCookie("departamento")) {
             codigoDepartamento = VarSession.getCookieValue("departamento");
-            validacionGeneral = false;
         }
         if (VarSession.isCookie("municipio") && idMunicipio == null) {
-            validacionGeneral = false;
             idMunicipio = new BigDecimal(VarSession.getCookieValue("municipio"));
             municipio = utilEJB.find(Municipio.class, idMunicipio);
             ubicacion = JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento) + ", " + municipio.getNombreMunicipio();
         }
 
+        validacionGeneral = (codigoDepartamento != null && idMunicipio != null && idAnho != null && idProcesoAdq != null);
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">    
@@ -229,9 +225,8 @@ public class ParametrosMB implements Serializable {
     }
 
     public String cerrarDlgParametros() throws IOException {
-        if (codigoDepartamento != null && idMunicipio != null && idAnho != null && idProcesoAdq != null) {
-            validacionGeneral = false;
-
+        validacionGeneral = (codigoDepartamento != null && idMunicipio != null && idAnho != null && idProcesoAdq != null);
+        if (validacionGeneral) {
             VarSession.crearCookie("departamento", codigoDepartamento);
             VarSession.crearCookie("municipio", idMunicipio.toString());
             VarSession.crearCookie("anho", idAnho.toString());
