@@ -594,15 +594,11 @@ public class ProveedorEJB {
         return q.getResultList();
     }
 
-    public List<ProveedorDisponibleDto> getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(DetalleProcesoAdq detProcesoAdq, String codigoEntidad,
-            Boolean municipioIgual, Boolean byCapacidad, BigInteger cantidad, HashMap<String, String> mapItems, String codDepartamento, String codMunicipio, String codCanton) {
+    public List<ProveedorDisponibleDto> getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(DetalleProcesoAdq detProcesoAdq,
+            String codigoEntidad, String codDepartamento, String codMunicipio, String codCanton, 
+            Integer idMunicipio, String idMunicipios, Boolean municipioIgual, Boolean byCapacidad, BigInteger cantidad, HashMap<String, String> mapItems) {
         Integer idDetTemp;
         List<ProveedorDisponibleDto> lstCapa = new ArrayList<>();
-        /*Query q = em.createNativeQuery("select codigo_municipio, codigo_departamento from vw_catalogo_entidad_educativa WHERE codigo_entidad = '" + codigoEntidad + "'");
-        /*List lst = q.getResultList();
-
-        /*codMunicipio = ((Object[]) lst.get(0))[0].toString();
-        codDepartamento = ((Object[]) lst.get(0))[1].toString();*/
 
         if (detProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq() != null) {
             idDetTemp = getIdDetProceso(detProcesoAdq, detProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq());
@@ -610,11 +606,10 @@ public class ProveedorEJB {
             idDetTemp = getIdDetProceso(detProcesoAdq, detProcesoAdq.getIdProcesoAdq());
         }
 
-        Query q = em.createNativeQuery(findLstIdEmpresa(codDepartamento, codMunicipio, getIdDetProcesoPadre(detProcesoAdq), idDetTemp,
+        Query q = em.createNativeQuery(findLstIdEmpresa(codDepartamento, codMunicipio, codCanton, idMunicipio, idMunicipios, detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue(), getIdDetProcesoPadre(detProcesoAdq), idDetTemp,
                 municipioIgual, byCapacidad, cantidad.intValue(), mapItems.get("noItemSeparados"), mapItems.get("noItems")), ProveedorDisponibleDto.class);
 
         lstCapa.addAll(q.getResultList());
-
 
         return lstCapa;
     }
@@ -623,7 +618,7 @@ public class ProveedorEJB {
         for (DetalleProcesoAdq object : procesoAdquisicion.getDetalleProcesoAdqList()) {
             if (object.getIdRubroAdq().getIdRubroUniforme().intValue() != 1 && object.getIdRubroAdq().getIdRubroInteres().compareTo(detProcesoAdq.getIdRubroAdq().getIdRubroInteres()) == 0) {
                 return object.getIdDetProcesoAdq();
-            } else if (object.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 && object.getIdRubroAdq().getIdRubroInteres().compareTo(detProcesoAdq.getIdRubroAdq().getIdRubroInteres()) == 0) {
+            } else if (object.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
                 if (object.getIdRubroAdq().getIdRubroInteres().intValue() == 4) {
                     return object.getIdDetProcesoAdq();
                 }
@@ -643,7 +638,7 @@ public class ProveedorEJB {
         return detalleProcesoAdq.getIdDetProcesoAdq();
     }
 
-    private String findLstIdEmpresa(String codDep, String codMun, Integer idDetProcesoAdq, Integer idDetProcesoAdqPrecio,
+    private String findLstIdEmpresa(String codDep, String codMun, String codCanton, Integer idMunicipio, String idMunicipios, Integer idRubro, Integer idDetProcesoAdq, Integer idDetProcesoAdqPrecio,
             Boolean municipioIgual, Boolean byCapacidad, Integer cantidad, String noItemSeparados, String noItems) {
         String sql = "select \n"
                 + "    rownum                  as idRow,\n"
@@ -653,9 +648,11 @@ public class ProveedorEJB {
                 + "    nombre_municipio        as nombreMunicipio,\n"
                 + "    nombre_departamento     as nombreDepartamento,\n"
                 + "    precio_promedio                     as puAvg,\n"
-                + "    round(((min(precio_promedio) OVER (order by precio_promedio))*100)/precio_promedio,2)       as porcentajePrecio,\n"
+                + "    round((((min(precio_promedio) OVER (order by precio_promedio))*100)/precio_promedio)*0.4,2)       as porcentajePrecio,\n"
                 + "    capacidad_acreditada    as capacidadAcreditada,\n"
-                + "    capacidad_adjudicada    as capacidadAdjudicada\n"
+                + "    capacidad_adjudicada    as capacidadAdjudicada,\n"
+                + "    porcentaje_geo          as porcentajeGeo,\n"
+                + "    porcentaje_capacidad    as porcentajeCapacidad\n"
                 + "from (select \n"
                 + "        emp.id_empresa,\n"
                 + "        emp.razon_social,\n"
@@ -663,13 +660,16 @@ public class ProveedorEJB {
                 + "        mun_e.nombre_municipio,\n"
                 + "        dep_e.nombre_departamento,\n"
                 + "        tbl.precio_promedio,\n"
-                + "        mun_e.id_municipio\n"
+                + "        mun_e.id_municipio,\n"
+                + "        emp.codigo_canton,\n"
+                + "        tbl.porcentaje_capacidad,\n"
+                + "        " + getParteSelectUbicacion(idRubro, codCanton, idMunicipio, codDep, idMunicipios) + "\n"
                 + "    from det_rubro_muestra_interes det\n"
                 + "        inner join empresa emp                  on emp.id_empresa = det.id_empresa\n"
                 + "        inner join municipio mun_e              on mun_e.id_municipio = emp.id_municipio\n"
                 + "        inner join departamento dep_e           on mun_e.codigo_departamento = dep_e.codigo_departamento\n"
                 + "        inner join capa_distribucion_acre cda   on det.id_muestra_interes = cda.id_muestra_interes and cda.id_capa_distribucion in (select id_capa_distribucion from dis_municipio_interes dis inner join municipio mun on mun.id_municipio = dis.id_municipio where dis.id_capa_distribucion = cda.id_capa_distribucion and mun.codigo_municipio ='" + codMun + "'and mun.codigo_departamento = '" + codDep + "')\n"
-                + "        inner join (select id_empresa, round(avg(precio_referencia),3) precio_promedio\n"
+                + "        inner join (select id_empresa, round(avg(precio_referencia),3) precio_promedio,(count(id_empresa)*100)/" + noItems.split(",").length + " porcentaje_capacidad\n"
                 + "                    from precios_Ref_rubro_emp\n"
                 + "                    where id_empresa in (select id_empresa from empresa_no_item where id_det_proceo_adq = " + idDetProcesoAdqPrecio + " and (" + noItemSeparados + ")) and\n"
                 + "                        no_item in (" + noItems + ") and estado_eliminacion = 0 and\n"
@@ -694,6 +694,23 @@ public class ProveedorEJB {
                 + "    (CAPACIDAD_ACREDITADA - CAPACIDAD_ADJUDICADA) asc";
 
         return sql;
+    }
+
+    private String getParteSelectUbicacion(int idRubro, String codigoCanton, int idMunicipio, String codigosDepartamento, String idMunicipios) {
+        switch (idRubro) {
+            case 1:
+            case 4:
+            case 5:
+                if (codigoCanton != null && !codigoCanton.isEmpty()) {
+                    return " case when mun_e.id_municipio = " + idMunicipio + " and emp.codigo_canton = '" + codigoCanton + "' then 35.00 when mun_e.id_municipio = " + idMunicipio + " and emp.codigo_canton != '" + codigoCanton + "' then 26.25 when mun_e.id_municipio in (" + idMunicipios + ") then 17.50 else 8.75 end porcentaje_geo ";
+                } else {
+                    return " case when mun_e.id_municipio = " + idMunicipio + " then 35.00 when mun_e.id_municipio in (" + idMunicipios + ") then 23.00 else 12.00 end porcentaje_geo ";
+                }
+            case 2:
+                return " case when mun_e.id_municipio = " + idMunicipio + " then 25.00 when mun_e.id_municipio in (" + idMunicipios + ") then 16.67 else 8.33 end porcentaje_geo";
+            default:
+                return " case when mun_e.codigo_departamento in (" + codigosDepartamento + ") then 25.00 else 12.50 end porcentaje_geo";
+        }
     }
 
     /**
@@ -1251,6 +1268,7 @@ public class ProveedorEJB {
     }
 
     public void calcularNoItems(Integer idDet) {
+        idDet = 52;
         Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion = 0 and p.idDetProcesoAdq.idDetProcesoAdq=:idDet ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
         q.setParameter("idDet", idDet);
 
