@@ -468,6 +468,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         fileName = "fotoProveedores/profile.png";
         showFoto = true;
         deshabiliar = true;
+        images.clear();
         Map<String, Object> options = new HashMap();
         options.put("modal", true);
         options.put("draggable", true);

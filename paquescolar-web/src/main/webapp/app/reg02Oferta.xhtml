@@ -147,7 +147,7 @@
             </p:outputPanel>
             <p:spacer width="10"/>
             <p:tabView id="tbEmpresas" scrollable="true">
-                <p:tab title="Municipio: #{ofertaMB.municipioCe}}">
+                <p:tab title="Municipio: #{ofertaMB.municipioCe}">
                     <h:panelGrid columns="2" style="width: 100%;" rendered="#{!menuController.isUsuarioDigitador}">
                         <h:outputText value="Nombre:"/>
                         <p:inputText style="width: 100%;" value="#{ofertaMB.nombreEmp}" onkeyup="queryEmpresa(this.value);" />

@@ -23,9 +23,9 @@ import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
-import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
+import sv.gob.mined.app.web.controller.CatalogosGeneralesController;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
+import sv.gob.mined.paquescolar.model.MunicipioAledanho;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ProveedorDisponibleDto;
 
@@ -97,7 +97,7 @@ public class JsfUtil {
                     value = (T) t.getClass().getMethod(getter.getName(), sinArgumentos).invoke(t, sinParametros);
                     break;
                 } catch (IntrospectionException | IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException ex) {
-                    Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(JsfUtil.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -122,7 +122,7 @@ public class JsfUtil {
 
                     break;
                 } catch (NumberFormatException ex) {
-                    Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(JsfUtil.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -286,6 +286,17 @@ public class JsfUtil {
                 filter(det -> det.getIdRubroAdq().getIdRubroInteres().compareTo(idRubro) == 0).findAny();
         if (detalle.isPresent()) {
             return detalle.get();
+        } else {
+            return null;
+        }
+    }
+    
+    public static MunicipioAledanho findIdMunicipios(BigDecimal idMunicipio) {        
+        Optional<MunicipioAledanho> municipio = ((CatalogosGeneralesController) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "catalogosGeneralesController")).getLstMunicipiosAledanho().stream().parallel().
+                filter(munA -> munA.getIdMunicipio().compareTo(idMunicipio) == 0).findAny();
+        if (municipio.isPresent()) {
+            return municipio.get();
         } else {
             return null;
         }

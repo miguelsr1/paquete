@@ -638,6 +638,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
 
     public void consultarEmpresa() {
         BigInteger cantidad;
+        String idMunicipios;
         municipioCe = datosGeograficosEJB.findNombreMunicipioCe(codigoEntidad);
 
         if (detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
@@ -646,8 +647,15 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
             cantidad = cantidadAlumnos.toBigInteger();
         }
 
-        lstEmpresas = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), codigoEntidad, true, true, cantidad, mapItems, entidadEducativa.getCodigoDepartamento().getCodigoDepartamento(), entidadEducativa.getCodigoMunicipio(), entidadEducativa.getCodigoCanton());
-        lstEmpresasOtros = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(), codigoEntidad, false, false, BigInteger.ZERO, mapItems, entidadEducativa.getCodigoDepartamento().getCodigoDepartamento(), entidadEducativa.getCodigoMunicipio(), entidadEducativa.getCodigoCanton());
+        idMunicipios = JsfUtil.findIdMunicipios(entidadEducativa.getIdMunicipio()).getIdMunicipios();
+
+        //calcular el menor precio de ambos listados
+        lstEmpresas = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(),
+                codigoEntidad, entidadEducativa.getCodigoDepartamento().getCodigoDepartamento(), entidadEducativa.getCodigoMunicipio(), entidadEducativa.getCodigoCanton(),
+                entidadEducativa.getIdMunicipio().intValue(), idMunicipios, true, true, cantidad, mapItems);
+        lstEmpresasOtros = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(),
+                codigoEntidad, entidadEducativa.getCodigoDepartamento().getCodigoDepartamento(), entidadEducativa.getCodigoMunicipio(), entidadEducativa.getCodigoCanton(),
+                entidadEducativa.getIdMunicipio().intValue(), idMunicipios, false, false, BigInteger.ZERO, mapItems);
 
         lstCapaEmpresas.clear();
         lstCapaEmpresas.addAll(lstEmpresas);

@@ -40,7 +40,7 @@
 
                     <h:outputText value="Tipo Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
                     <h:outputText value="#{capaEmpresa.distribuidor eq 1 ? 'PRODUCTOR' : 'DISTRIBUIDOR'}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
-                    
+
                     <h:outputText value="Capacidad disponible" style="#{menuController.isUsuarioDigitador?'font-size: 12px;':'font-size: 11px;'}"/>
                     <h:outputText value="#{capaEmpresa.capacidadAcreditada - capaEmpresa.capacidadAdjudicada}" style="#{menuController.isUsuarioDigitador?'font-weight: bold;font-size: 12px;':'font-weight: bold;font-size: 11px;'}">
                         <f:convertNumber pattern="#,###"/>
@@ -48,9 +48,15 @@
 
                     <h:outputText value="Municipio y Departamento:" rendered="#{!menuController.isUsuarioDigitador}"/>
                     <h:outputText value="#{capaEmpresa.nombreMunicipio}, #{capaEmpresa.nombreDepartamento}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
-                    
+
                     <h:outputText value="Porcetaje de cumpliento por Precio:"/>
                     <h:outputText value="#{capaEmpresa.porcentajePrecio}"/>
+
+                    <h:outputText value="Porcetaje de cumpliento por Ubicación:"/>
+                    <h:outputText value="#{capaEmpresa.porcentajeGeo}"/>
+                    
+                    <h:outputText value="Porcetaje de cumpliento de capacidad:"/>
+                    <h:outputText value="#{capaEmpresa.porcentajeCapacidad}"/>
                 </h:panelGrid>
             </p:outputPanel>
 

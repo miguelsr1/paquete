@@ -13,6 +13,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import sv.gob.mined.paquescolar.model.Departamento;
 import sv.gob.mined.paquescolar.model.Municipio;
+import sv.gob.mined.paquescolar.model.MunicipioAledanho;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.MunicipioDto;
 import sv.gob.mined.paquescolar.util.Constantes;
 
@@ -78,5 +79,10 @@ public class DatosGeograficosEJB {
         String codMunicipio = lst.get(0).toString();
 
         return codMunicipio;
+    }
+
+    public List<MunicipioAledanho> getLstMunicipiosAledanhos() {
+        Query q = em.createQuery("SELECT m FROM MunicipioAledanho m", MunicipioAledanho.class);
+        return q.getResultList();
     }
 }

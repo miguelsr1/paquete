@@ -5,6 +5,7 @@
 package sv.gob.mined.paquescolar.model.view;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -63,6 +64,8 @@ public class VwCatalogoEntidadEducativa implements Serializable {
     private List<OfertaBienesServicios> ofertaBienesServiciosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "codigoEntidad", fetch = FetchType.LAZY)
     private List<DetallePlanilla> detallePlanillaList;
+    @Column(name = "ID_MUNICIPIO")
+    private BigDecimal idMunicipio;
 
     public VwCatalogoEntidadEducativa() {
     }
@@ -169,5 +172,13 @@ public class VwCatalogoEntidadEducativa implements Serializable {
 
     public void setDetallePlanillaList(List<DetallePlanilla> detallePlanillaList) {
         this.detallePlanillaList = detallePlanillaList;
+    }
+
+    public BigDecimal getIdMunicipio() {
+        return idMunicipio;
+    }
+
+    public void setIdMunicipio(BigDecimal idMunicipio) {
+        this.idMunicipio = idMunicipio;
     }
 }

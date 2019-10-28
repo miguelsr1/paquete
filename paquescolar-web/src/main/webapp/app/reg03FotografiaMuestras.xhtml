@@ -8,9 +8,9 @@
     <ui:define name="content">
         <p:menubar id="menuBar" styleClass="divSticky"> 
             <p:menuitem value="Nuevo" icon="fa fa-file-o" ajax="true" process="@this" disabled="true"/>
-            <p:menuitem value="Modificar" update="frmPrincipal" icon="fa fa-edit" ajax="true"  onclick="onClick('btnModificar');"/>
+            <p:menuitem value="Modificar" update="frmPrincipal" icon="fa fa-edit" onclick="onClick('btnModificar');"/>
             <p:menuitem value="Guardar" icon="fa fa-save"  disabled="#{menuController.usuarioSoloLectura || proveedorController.deshabiliar}" 
-                        action="#{proveedorController.guardarPreciosRef}" update=":frmPrincipal:pnlFotografiaZapatos"/>
+                        action="#{proveedorController.guardarPreciosRef}" update="galZapato"/>
             <p:menuitem value="Imprimir" ajax="false" icon="fa fa-print" action="#{proveedorController.impOfertaGlobal}" />
             <p:menuitem value="Principal" icon="fa fa-home" action="#{parametrosMB.limpiarVariables}" url="#{request.contextPath}/app/inicial.mined" />
 
@@ -42,20 +42,18 @@
                                 <h:outputText value="Seleccione un estilo"/>
                                 <p:selectOneMenu value="#{proveedorController.estiloZapato}">
                                     <f:selectItem itemLabel="----" itemValue="0"/>
-                                    <f:selectItem itemLabel="F-01" itemValue="F-01"/>
-                                    <f:selectItem itemLabel="F-02" itemValue="F-02"/>
-                                    <f:selectItem itemLabel="F-03" itemValue="F-03"/>
-                                    <f:selectItem itemLabel="M-01" itemValue="M-01"/>
-                                    <f:selectItem itemLabel="M-02" itemValue="M-02"/>
-                                    <f:selectItem itemLabel="M-03" itemValue="M-03"/>
-                                    <p:ajax listener="#{proveedorController.cargarFotografias}" update=":frmPrincipal:pnlFotografiaZapatos"/>
+                                    <f:selectItem itemLabel="F-01" itemValue="F1"/>
+                                    <f:selectItem itemLabel="F-02" itemValue="F2"/>
+                                    <f:selectItem itemLabel="M-01" itemValue="M1"/>
+                                    <f:selectItem itemLabel="M-02" itemValue="M2"/>
+                                    <p:ajax listener="#{proveedorController.cargarFotografias}" update="galZapato"/>
                                 </p:selectOneMenu>
                                 <p:spacer width="50" height="8"/>
                                 <p:commandButton value="Tomar fotografia" icon="fa fa-camera" action="#{proveedorController.dlgFotografiaZapato}">
                                     <p:ajax event="dialogReturn" listener="#{proveedorController.updateFrmFotoZapato}" update="pnlFotografiaZapatos"/>
                                 </p:commandButton>
                             </h:panelGrid>
-                            <p:galleria value="#{proveedorController.images}" var="image" panelHeight="500" style="width: auto;" autoPlay="false">
+                            <p:galleria id="galZapato" value="#{proveedorController.images}" var="image" panelHeight="500" style="width: auto;" autoPlay="false">
                                 <p:graphicImage value="/DynamicImageServlet?file=#{bundle['path_images']}#{image}" style="max-height: 500px; width: auto;"/>
                             </p:galleria>
                         </h:panelGrid>

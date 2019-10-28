@@ -595,7 +595,7 @@ public class ProveedorEJB {
     }
 
     public List<ProveedorDisponibleDto> getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(DetalleProcesoAdq detProcesoAdq,
-            String codigoEntidad, String codDepartamento, String codMunicipio, String codCanton, 
+            String codigoEntidad, String codDepartamento, String codMunicipio, String codCanton,
             Integer idMunicipio, String idMunicipios, Boolean municipioIgual, Boolean byCapacidad, BigInteger cantidad, HashMap<String, String> mapItems) {
         Integer idDetTemp;
         List<ProveedorDisponibleDto> lstCapa = new ArrayList<>();
@@ -668,10 +668,10 @@ public class ProveedorEJB {
                 + "        inner join empresa emp                  on emp.id_empresa = det.id_empresa\n"
                 + "        inner join municipio mun_e              on mun_e.id_municipio = emp.id_municipio\n"
                 + "        inner join departamento dep_e           on mun_e.codigo_departamento = dep_e.codigo_departamento\n"
-                + "        inner join capa_distribucion_acre cda   on det.id_muestra_interes = cda.id_muestra_interes and cda.id_capa_distribucion in (select id_capa_distribucion from dis_municipio_interes dis inner join municipio mun on mun.id_municipio = dis.id_municipio where dis.id_capa_distribucion = cda.id_capa_distribucion and mun.codigo_municipio ='" + codMun + "'and mun.codigo_departamento = '" + codDep + "')\n"
+                + "        inner join capa_distribucion_acre cda   on det.id_muestra_interes = cda.id_muestra_interes and cda.id_capa_distribucion in (select id_capa_distribucion from dis_municipio_interes dis inner join municipio mun on mun.id_municipio = dis.id_municipio where dis.id_capa_distribucion = cda.id_capa_distribucion and " + (municipioIgual ? "mun.codigo_municipio ='" + codMun + "'and mun.codigo_departamento = '" + codDep + "'" : "mun.id_municipio in (" + idMunicipios + ")") + ")\n"
                 + "        inner join (select id_empresa, round(avg(precio_referencia),3) precio_promedio,(count(id_empresa)*100)/" + noItems.split(",").length + " porcentaje_capacidad\n"
                 + "                    from precios_Ref_rubro_emp\n"
-                + "                    where id_empresa in (select id_empresa from empresa_no_item where id_det_proceo_adq = " + idDetProcesoAdqPrecio + " and (" + noItemSeparados + ")) and\n"
+                + "                    where id_empresa in (select id_empresa from empresa_no_item where id_det_proceo_adq = " + idDetProcesoAdqPrecio + " " + (municipioIgual ? " and (" + noItemSeparados + ")" : "") + ") and\n"
                 + "                        no_item in (" + noItems + ") and estado_eliminacion = 0 and\n"
                 + "                        id_det_proceso_adq =  " + idDetProcesoAdqPrecio + "\n"
                 + "                    group by id_empresa) tbl on det.id_empresa = tbl.id_empresa\n"

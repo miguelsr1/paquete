@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -29,6 +30,7 @@ import sv.gob.mined.paquescolar.ejb.ResolucionAdjudicativaEJB;
 import sv.gob.mined.paquescolar.model.Anho;
 import sv.gob.mined.paquescolar.model.Departamento;
 import sv.gob.mined.paquescolar.model.EstadoReserva;
+import sv.gob.mined.paquescolar.model.MunicipioAledanho;
 import sv.gob.mined.paquescolar.model.TipoDocPago;
 
 /**
@@ -40,6 +42,8 @@ import sv.gob.mined.paquescolar.model.TipoDocPago;
 public class CatalogosGeneralesController implements Serializable {
 
     private String version;
+    private List<MunicipioAledanho> lstMunicipiosAledanho = new ArrayList();
+
     @EJB
     private AnhoProcesoEJB anhoProcesoEJB;
     @EJB
@@ -56,6 +60,8 @@ public class CatalogosGeneralesController implements Serializable {
     public void init() {
         Manifest manifest;
         try {
+            lstMunicipiosAledanho = datosGeograficosEJB.getLstMunicipiosAledanhos();
+            
             InputStream is = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/META-INF/MANIFEST.MF");
             manifest = new Manifest();
             manifest.read(is);
@@ -64,10 +70,13 @@ public class CatalogosGeneralesController implements Serializable {
 
             version = atts.getValue("Implementation-Build");
             version = version + "." + atts.getValue("build-time");
-
         } catch (IOException ex) {
             Logger.getLogger(CatalogosGeneralesController.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public List<MunicipioAledanho> getLstMunicipiosAledanho() {
+        return lstMunicipiosAledanho;
     }
 
     public String getVersion() {
@@ -131,8 +140,8 @@ public class CatalogosGeneralesController implements Serializable {
             }
         }
     }
-    
-    public Boolean isUsuarioRoot(){
+
+    public Boolean isUsuarioRoot() {
         return VarSession.getVariableSessionUsuario().equals("MSANCHEZ");
     }
 }
