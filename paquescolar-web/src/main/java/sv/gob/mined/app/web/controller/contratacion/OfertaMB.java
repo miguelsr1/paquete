@@ -655,7 +655,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                 entidadEducativa.getIdMunicipio().intValue(), idMunicipios, true, true, cantidad, mapItems);
         lstEmpresasOtros = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(),
                 codigoEntidad, entidadEducativa.getCodigoDepartamento().getCodigoDepartamento(), entidadEducativa.getCodigoMunicipio(), entidadEducativa.getCodigoCanton(),
-                entidadEducativa.getIdMunicipio().intValue(), idMunicipios, false, false, BigInteger.ZERO, mapItems);
+                entidadEducativa.getIdMunicipio().intValue(), idMunicipios, false, false, cantidad, mapItems);
 
         lstCapaEmpresas.clear();
         lstCapaEmpresas.addAll(lstEmpresas);
@@ -893,5 +893,26 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         param.put("pHoraYFecha", entidadEducativa.getCodigoDepartamento().getNombreDepartamento() + ", " + JsfUtil.getFechaString(new Date()));
 
         Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/contratos/", "rptDetalleDeBienesUniforme", "rptDetalleDeBienesUniforme_");
+    }
+
+    public BigDecimal porcentajeCapacidad(BigDecimal capacidadDisponible) {
+        Boolean esUniforme;
+        BigDecimal porcentaje;
+        switch (rubro.toBigInteger().intValue()) {
+            case 4:
+            case 5:
+                esUniforme = true;
+                porcentaje = new BigDecimal(0.125);
+                break;
+            default:
+                esUniforme = false;
+                porcentaje = new BigDecimal(0.175);
+                break;
+        }
+        if (capacidadDisponible.compareTo(cantidadAlumnos.multiply(esUniforme ? new BigDecimal(2) : BigDecimal.ONE)) < 0) {
+            return (capacidadDisponible.multiply(new BigDecimal(100))).divide(cantidadAlumnos.multiply(esUniforme ? new BigDecimal(2) : BigDecimal.ONE), 2).multiply(porcentaje);
+        } else {
+            return new BigDecimal(100);
+        }
     }
 }

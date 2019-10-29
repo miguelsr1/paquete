@@ -49,14 +49,30 @@
                     <h:outputText value="Municipio y Departamento:" rendered="#{!menuController.isUsuarioDigitador}"/>
                     <h:outputText value="#{capaEmpresa.nombreMunicipio}, #{capaEmpresa.nombreDepartamento}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
 
+                    <h:outputText value="Porcetaje de cumpliento:" style="font-weight: bold;"/>
+                    <h:outputText value="#{capaEmpresa.porcentajePrecio + capaEmpresa.porcentajeGeo + capaEmpresa.porcentajeCapacidad + capaEmpresa.porcentajeCapacidadItem}" style="font-weight: bold;">
+                        <f:convertNumber pattern="#,##0.00"/>
+                    </h:outputText>
+                    
                     <h:outputText value="Porcetaje de cumpliento por Precio:"/>
-                    <h:outputText value="#{capaEmpresa.porcentajePrecio}"/>
+                    <h:outputText value="#{capaEmpresa.porcentajePrecio}">
+                        <f:convertNumber pattern="#,##0.000"/>
+                    </h:outputText>
 
                     <h:outputText value="Porcetaje de cumpliento por Ubicación:"/>
-                    <h:outputText value="#{capaEmpresa.porcentajeGeo}"/>
+                    <h:outputText value="#{capaEmpresa.porcentajeGeo}">
+                        <f:convertNumber pattern="#,##0.000"/>
+                    </h:outputText>
+                    
+                    <h:outputText value="Porcetaje de cumpliento de capacidad-items:"/>
+                    <h:outputText value="#{capaEmpresa.porcentajeCapacidadItem}">
+                        <f:convertNumber pattern="#,##0.000"/>
+                    </h:outputText>
                     
                     <h:outputText value="Porcetaje de cumpliento de capacidad:"/>
-                    <h:outputText value="#{capaEmpresa.porcentajeCapacidad}"/>
+                    <h:outputText value="#{capaEmpresa.porcentajeCapacidad}">
+                        <f:convertNumber pattern="#,##0.000"/>
+                    </h:outputText>
                 </h:panelGrid>
             </p:outputPanel>
 

@@ -63,7 +63,7 @@ import sv.gob.mined.paquescolar.util.Constantes;
 @Stateless
 @LocalBean
 public class ProveedorEJB {
-    
+
     @PersistenceContext(unitName = "paquescolarUP")
     private EntityManager em;
     // Add business logic below. (Right-click in editor and choose
@@ -84,12 +84,12 @@ public class ProveedorEJB {
             return participante;
         }
     }
-    
+
     public List<DetalleRequerimiento> getLstDetalleReqByCodEntidadAndProceso(String codigoEntidad,
             ProcesoAdquisicion procesoAdq,
             String codigoDepartamento,
             String formatoRequerimiento) {
-        
+
         String jpql = "SELECT d FROM DetalleRequerimiento d WHERE ";
         if (formatoRequerimiento != null && codigoEntidad != null) {
             jpql += "d.codigoEntidad=:codigoEntidad AND d.idRequerimiento.formatoRequerimiento=:formatoReq ";
@@ -98,15 +98,15 @@ public class ProveedorEJB {
         } else {
             jpql += "d.idRequerimiento.formatoRequerimiento=:formatoReq ";
         }
-        
+
         jpql += "and d.idRequerimiento.idDetProcesoAdq.idProcesoAdq=:idProcesoAdq ";
-        
+
         if (codigoDepartamento != null) {
             jpql += "and d.idRequerimiento.codigoDepartamento=:codDepa ";
         }
-        
+
         Query q = em.createQuery(jpql + (jpql.contains("WHERE") ? " and " : " WHERE ") + " d.idRequerimiento.estadoEliminacion=0 ", DetalleRequerimiento.class);
-        
+
         if (formatoRequerimiento != null && codigoEntidad != null) {
             q.setParameter("formatoReq", formatoRequerimiento);
             q.setParameter("codigoEntidad", codigoEntidad);
@@ -115,16 +115,16 @@ public class ProveedorEJB {
         } else {
             q.setParameter("formatoReq", formatoRequerimiento);
         }
-        
+
         if (codigoDepartamento != null) {
             q.setParameter("codDepa", codigoDepartamento);
         }
-        
+
         q.setParameter("idProcesoAdq", procesoAdq);
-        
+
         return q.getResultList();
     }
-    
+
     public DetalleDocPago getDetalleDocPago(DetalleRequerimiento detalleRequerimiento) {
         Query q = em.createQuery("SELECT d FROM DetalleDocPago d WHERE d.idDetRequerimiento=:idReq ", DetalleDocPago.class);
         q.setParameter("idReq", detalleRequerimiento);
@@ -135,12 +135,12 @@ public class ProveedorEJB {
             return lst.get(0);
         }
     }
-    
+
     public List<DatosPreliminarRequerimiento> getLstPreRequerimiento(Integer idDetProcesoAdq, String codigoDepartamento, int credito, int idNivelEducativo) {
         String sqlString;
         String where = "";
         List<DatosPreliminarRequerimiento> lst = new ArrayList<>();
-        
+
         switch (idNivelEducativo) {
             case 1:
                 where = " AND UPPER(trim(VW_FORMATO_PRE_CARGA.NOMBRE)) LIKE '%PARVULARIA%' ";
@@ -152,7 +152,7 @@ public class ProveedorEJB {
                 where = " AND UPPER(trim(VW_FORMATO_PRE_CARGA.NOMBRE)) LIKE 'INSTITUTO%' ";
                 break;
         }
-        
+
         switch (credito) {
             case 1:
                 where += " AND TIENE_CREDITO = 'NO' ";
@@ -161,7 +161,7 @@ public class ProveedorEJB {
                 where += " AND TIENE_CREDITO = 'SI' ";
                 break;
         }
-        
+
         sqlString = "SELECT \n"
                 + "  VW_FORMATO_PRE_CARGA.CODIGO_DEPARTAMENTO,\n"
                 + "  VW_FORMATO_PRE_CARGA.CODIGO_MUNICIPIO,\n"
@@ -216,16 +216,16 @@ public class ProveedorEJB {
                 + "  VW_FORMATO_PRE_CARGA.ID_DET_PROCESO_ADQ,\n"
                 + "  VW_FORMATO_PRE_CARGA.ID_CONTRATO \n"
                 + "ORDER BY VW_FORMATO_PRE_CARGA.ID_CONTRATO, VW_FORMATO_PRE_CARGA.CODIGO_ENTIDAD ASC";
-        
+
         Query q = em.createNativeQuery(sqlString);
         q.setParameter(1, idDetProcesoAdq);
         q.setParameter(2, codigoDepartamento);
         q.setParameter(3, credito == 1 ? "NO" : "SI");
-        
+
         q.getResultList().forEach((object) -> {
             DatosPreliminarRequerimiento dato = new DatosPreliminarRequerimiento();
             Object[] datos = (Object[]) object;
-            
+
             dato.setCodigoDepartamento(datos[0].toString());
             dato.setCodigoMunicipio(datos[1].toString());
             dato.setNombreDepartamento(datos[2].toString());
@@ -256,16 +256,16 @@ public class ProveedorEJB {
             dato.setTieneCredito(datos[27].toString());
             dato.setIdDetProcesoAdq(((BigDecimal) datos[28]).intValue());
             dato.setCantidadTotal(((BigDecimal) datos[29]));
-            
+
             lst.add(dato);
         });
         return lst;
     }
-    
+
     public Boolean getDatosPreRequerimiento(Integer idDetProcesoAdq, String codigoDepartamento, int credito, int idNivelEducativo) {
         String sqlString;
         String where = "";
-        
+
         switch (idNivelEducativo) {
             case 1:
                 where = " AND UPPER(trim(VW_FORMATO_PRE_CARGA.NOMBRE)) LIKE '%PARVULARIA%' ";
@@ -277,7 +277,7 @@ public class ProveedorEJB {
                 where = " AND UPPER(trim(VW_FORMATO_PRE_CARGA.NOMBRE)) LIKE 'INSTITUTO%' ";
                 break;
         }
-        
+
         switch (credito) {
             case 1:
                 where += " AND TIENE_CREDITO = 'NO' ";
@@ -286,7 +286,7 @@ public class ProveedorEJB {
                 where += " AND TIENE_CREDITO = 'SI' ";
                 break;
         }
-        
+
         sqlString = "SELECT \n"
                 + "  count(*)\n"
                 + "FROM VW_FORMATO_PRE_CARGA \n"
@@ -296,45 +296,45 @@ public class ProveedorEJB {
                 + "  VW_FORMATO_PRE_CARGA.TIENE_CREDITO = ?3 AND "
                 + "  DETALLE_REQUERIMIENTO.ID_DET_REQUERIMIENTO IS NULL " + where + "  \n"
                 + "ORDER BY VW_FORMATO_PRE_CARGA.ID_CONTRATO, VW_FORMATO_PRE_CARGA.CODIGO_ENTIDAD ASC";
-        
+
         Query q = em.createNativeQuery(sqlString);
         q.setParameter(1, idDetProcesoAdq);
         q.setParameter(2, codigoDepartamento);
         q.setParameter(3, credito == 1 ? "NO" : "SI");
-        
+
         BigDecimal cantidad = (BigDecimal) q.getSingleResult();
         return (cantidad.intValue() == 1);
     }
-    
+
     public Empresa findEmpresaByNit(String nit) {
         Query q = em.createQuery("SELECT e FROM Empresa e WHERE e.numeroNit=:nit and e.estadoEliminacion=0", Empresa.class);
         q.setParameter("nit", nit);
-        
+
         if (q.getResultList().isEmpty()) {
             return null;
         } else {
             return (Empresa) q.getSingleResult();
         }
     }
-    
+
     public Empresa findEmpresaByPk(BigDecimal pk) {
         Query q = em.createQuery("SELECT e FROM Empresa e WHERE e.idEmpresa=:idEmpresa", Empresa.class);
         q.setParameter("idEmpresa", pk);
-        
+
         if (q.getResultList().isEmpty()) {
             return null;
         } else {
             return (Empresa) q.getSingleResult();
         }
     }
-    
+
     public List<Empresa> findEmpresaByValorBusqueda(String valor) {
         Query q = em.createQuery("SELECT e FROM Empresa e WHERE e.estadoEliminacion=0 and e.numeroNit like :nit OR FUNC('REGEXP_REPLACE', e.razonSocial,' ','') like :razonSocial", Empresa.class);
         q.setParameter("nit", "%" + valor + "%");
         q.setParameter("razonSocial", "%" + valor.replace(" ", "") + "%");
         return q.getResultList();
     }
-    
+
     public DetRubroMuestraInteres findRubroByProveedor(BigDecimal idEmpresa) {
         Query q = em.createQuery("SELECT d FROM DetRubroMuestraInteres d WHERE d.idEmpresa.idEmpresa=:idEmpresa and d.estadoEliminacion=0", DetRubroMuestraInteres.class);
         q.setParameter("idEmpresa", idEmpresa);
@@ -344,7 +344,7 @@ public class ProveedorEJB {
             return (DetRubroMuestraInteres) q.getSingleResult();
         }
     }
-    
+
     public <T extends Object> T findDetProveedor(ProcesoAdquisicion proceso, Empresa idEmpresa, Class clase) {
         Query q = em.createQuery("SELECT d FROM " + clase.getSimpleName() + " d WHERE d.idMuestraInteres.idDetProcesoAdq.idProcesoAdq=:proceso and d.idMuestraInteres.idEmpresa=:idEmpresa and d.estadoEliminacion=0 and d.idMuestraInteres.estadoEliminacion=0 ORDER BY d.idMuestraInteres.idDetProcesoAdq", clase);
         q.setParameter("proceso", proceso);
@@ -355,7 +355,7 @@ public class ProveedorEJB {
             return (T) q.getResultList().get(0);
         }
     }
-    
+
     public boolean updateCuentaEmpresa(String numeroNit, String numeroCuenta) {
         Query q = em.createQuery("SELECT e FROM Empresa e WHERE e.numeroNit=:numeroNit", Empresa.class);
         q.setParameter("numeroNit", numeroNit);
@@ -369,7 +369,7 @@ public class ProveedorEJB {
             return true;
         }
     }
-    
+
     public Boolean guardar(Object... entidades) {
         try {
             for (Object entidad : entidades) {
@@ -385,30 +385,30 @@ public class ProveedorEJB {
             return false;
         }
     }
-    
+
     public Boolean guardarCapaInst(CapaDistribucionAcre capaDistribucionAcre, CapaInstPorRubro capaInstPorRubro) {
         try {
             Query query = em.createQuery("UPDATE CapaInstPorRubro c SET c.capacidadAcreditada = :capaCalificada WHERE c.idMuestraInteres.idEmpresa.idEmpresa = :idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idAnho.idAnho = :idAnho ");
             query.setParameter("capaCalificada", capaInstPorRubro.getCapacidadAcreditada());
             query.setParameter("idEmpresa", capaInstPorRubro.getIdMuestraInteres().getIdEmpresa().getIdEmpresa());
             query.setParameter("idAnho", capaInstPorRubro.getIdMuestraInteres().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
-            
+
             query.executeUpdate();
-            
+
             query = em.createQuery("UPDATE CapaDistribucionAcre c SET c.codigoDepartamento = :codigoDepartamento WHERE c.idMuestraInteres.idEmpresa.idEmpresa = :idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idAnho.idAnho = :idAnho ");
             query.setParameter("codigoDepartamento", capaDistribucionAcre.getCodigoDepartamento());
             query.setParameter("idEmpresa", capaInstPorRubro.getIdMuestraInteres().getIdEmpresa().getIdEmpresa());
             query.setParameter("idAnho", capaInstPorRubro.getIdMuestraInteres().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
-            
+
             query.executeUpdate();
-            
+
             return true;
         } catch (Exception e) {
             Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, null, e);
             return false;
         }
     }
-    
+
     public PlanillaPagoCheque guardar(PlanillaPagoCheque entidad) {
         try {
             if (isNewRegistro(entidad)) {
@@ -416,14 +416,14 @@ public class ProveedorEJB {
             } else {
                 entidad = em.merge(entidad);
             }
-            
+
             return entidad;
         } catch (Exception e) {
             Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, null, e);
             return null;
         }
     }
-    
+
     public void guardarDetDocPago(DetalleDocPago detalleDocPago, String usuario) {
         if (detalleDocPago.getIdDetalleDocPago() == null) {
             detalleDocPago.setFechaInsercion(new Date());
@@ -436,7 +436,7 @@ public class ProveedorEJB {
             em.merge(detalleDocPago);
         }
     }
-    
+
     public void guardarDetalleRequerimiento(DetalleRequerimiento detalleRequerimiento) {
         em.merge(detalleRequerimiento);
     }
@@ -452,7 +452,7 @@ public class ProveedorEJB {
         q.setParameter("numeroNit", numeroNit);
         return ((TipoPersoneria) q.getSingleResult()).getIdPersoneria().intValue() == 1;
     }
-    
+
     public synchronized void guardarDetDocPago(DetalleDocPago detalleDocPago) {
         if (detalleDocPago.getIdDetalleDocPago() != null) {
             em.merge(detalleDocPago);
@@ -460,7 +460,7 @@ public class ProveedorEJB {
             em.persist(detalleDocPago);
         }
     }
-    
+
     public Boolean guardarDetalleOferta(List<DetalleOfertas> lstDetalleOfertas) {
         try {
             lstDetalleOfertas.forEach((detalleOfertas) -> {
@@ -475,9 +475,9 @@ public class ProveedorEJB {
             Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, null, e);
             return false;
         }
-        
+
     }
-    
+
     private Boolean isNewRegistro(Object t) {
         Boolean valor = false;
         Field[] fields = t.getClass().getDeclaredFields();
@@ -497,21 +497,21 @@ public class ProveedorEJB {
         }
         return valor;
     }
-    
+
     public List<DisMunicipioInteres> findMunicipiosInteres(CapaDistribucionAcre depa) {
         Query query = em.createQuery("SELECT d FROM DisMunicipioInteres d WHERE d.idCapaDistribucion =:capa ORDER BY d.idMunicipio.idMunicipio, d.idMunicipio.codigoDepartamento.codigoDepartamento", DisMunicipioInteres.class);
         query.setParameter("capa", depa);
-        
+
         return query.getResultList();
     }
-    
+
     public List<PreciosRefRubroEmp> findPreciosRefRubroEmpRubro(Empresa idEmpresa, DetalleProcesoAdq idDetProceso) {
         Query q;
         if (idDetProceso.getIdRubroAdq().getDescripcionRubro().contains("2do") || idDetProceso.getIdRubroAdq().getDescripcionRubro().contains("1er")) {
             q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.idEmpresa=:idEmpresa and (p.idDetProcesoAdq.idRubroAdq.idRubroInteres=:idRubro AND p.idDetProcesoAdq.idProcesoAdq =:idProceso) and p.estadoEliminacion=0 ORDER BY FUNC('TO_NUMBER', p.noItem)", PreciosRefRubroEmp.class);
             q.setParameter("idEmpresa", idEmpresa);
             q.setParameter("idRubro", new BigDecimal(4));
-            
+
             if (idDetProceso.getIdProcesoAdq().getPadreIdProcesoAdq() == null) {
                 q.setParameter("idProceso", idDetProceso.getIdProcesoAdq());
             } else {
@@ -525,7 +525,7 @@ public class ProveedorEJB {
         }
         return q.getResultList();
     }
-    
+
     public Boolean isDepaCalificado(Empresa empresa, String codigoDepartamento, DetalleProcesoAdq detalleProceso) {
         Boolean valor = false;
         Query q;
@@ -537,7 +537,7 @@ public class ProveedorEJB {
             q.setParameter("idRubro", detalleProceso.getIdRubroAdq().getIdRubroInteres());
         }
         q.setParameter("idAnho", detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho());
-        
+
         List lst = q.getResultList();
         if (!lst.isEmpty()) {
             Departamento depaCalificado = (Departamento) lst.get(0);
@@ -549,71 +549,71 @@ public class ProveedorEJB {
         }
         return valor;
     }
-    
+
     public CatalogoProducto findProducto(String codigo) {
         Query q = em.createQuery("SELECT c FROM CatalogoProducto c WHERE c.idProducto=:codigo", CatalogoProducto.class);
         q.setParameter("codigo", new BigDecimal(codigo));
-        
+
         try {
             return (CatalogoProducto) q.getSingleResult();
         } catch (Exception e) {
             return null;
         }
     }
-    
+
     public NivelEducativo findNivelEducativo(String idNivel) {
         Query q = em.createQuery("SELECT n FROM NivelEducativo n WHERE n.idNivelEducativo=:idNivel", NivelEducativo.class);
         q.setParameter("idNivel", new BigDecimal(idNivel));
-        
+
         try {
             return (NivelEducativo) q.getSingleResult();
         } catch (Exception e) {
             return null;
         }
     }
-    
+
     public List<NivelEducativo> findNivelEducativoProveedor(Empresa empresa) {
         Query q = em.createQuery("SELECT distinct d.idNivelEducativo FROM DetCapaSegunRubro d WHERE d.idMuestraInteres.idEmpresa=:empresa", NivelEducativo.class);
         q.setParameter("empresa", empresa);
-        
+
         return q.getResultList();
     }
-    
+
     public List<CatalogoProducto> findItemProveedor(Empresa empresa, DetalleProcesoAdq detProcesoAdq) {
         Query q = em.createQuery("SELECT distinct d.idProducto FROM DetCapaSegunRubro d WHERE d.idMuestraInteres.estadoEliminacion=0 and d.idMuestraInteres.idEmpresa=:empresa and d.idMuestraInteres.idDetProcesoAdq=:detProcesoAdq and d.estadoEliminacion=0", CatalogoProducto.class);
         q.setParameter("empresa", empresa);
         q.setParameter("detProcesoAdq", detProcesoAdq);
-        
+
         return q.getResultList();
     }
-    
+
     public List<DetalleOfertas> findDetalleOfertas(Participantes participante, Boolean libros) {
         Query q = em.createQuery("SELECT d FROM DetalleOfertas d WHERE d.estadoEliminacion=0 and d.idParticipante=:participante and d.idProducto.idProducto " + (libros ? "" : "not") + " in (1) ORDER BY FUNC('TO_NUMBER', d.noItem)", CatalogoProducto.class);
         q.setParameter("participante", participante);
-        
+
         return q.getResultList();
     }
-    
+
     public List<ProveedorDisponibleDto> getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(DetalleProcesoAdq detProcesoAdq,
             String codigoEntidad, String codDepartamento, String codMunicipio, String codCanton,
             Integer idMunicipio, String idMunicipios, Boolean municipioIgual, Boolean byCapacidad, BigInteger cantidad, HashMap<String, String> mapItems) {
         Integer idDetTemp;
         List<ProveedorDisponibleDto> lstCapa = new ArrayList<>();
-        
+
         if (detProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq() != null) {
             idDetTemp = getIdDetProceso(detProcesoAdq, detProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq());
         } else {
             idDetTemp = getIdDetProceso(detProcesoAdq, detProcesoAdq.getIdProcesoAdq());
         }
-        
+
         Query q = em.createNativeQuery(findLstIdEmpresa(codDepartamento, codMunicipio, codCanton, idMunicipio, idMunicipios, detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue(), getIdDetProcesoPadre(detProcesoAdq), idDetTemp,
                 municipioIgual, byCapacidad, cantidad.intValue(), mapItems.get("noItemSeparados"), mapItems.get("noItems")), ProveedorDisponibleDto.class);
-        
+
         lstCapa.addAll(q.getResultList());
-        
+
         return lstCapa;
     }
-    
+
     private Integer getIdDetProceso(DetalleProcesoAdq detProcesoAdq, ProcesoAdquisicion procesoAdquisicion) {
         for (DetalleProcesoAdq object : procesoAdquisicion.getDetalleProcesoAdqList()) {
             if (object.getIdRubroAdq().getIdRubroUniforme().intValue() != 1 && object.getIdRubroAdq().getIdRubroInteres().compareTo(detProcesoAdq.getIdRubroAdq().getIdRubroInteres()) == 0) {
@@ -626,7 +626,7 @@ public class ProveedorEJB {
         }
         return null;
     }
-    
+
     private Integer getIdDetProcesoPadre(DetalleProcesoAdq detalleProcesoAdq) {
         if (detalleProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq() != null) {
             for (DetalleProcesoAdq det : detalleProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq().getDetalleProcesoAdqList()) {
@@ -637,7 +637,7 @@ public class ProveedorEJB {
         }
         return detalleProcesoAdq.getIdDetProcesoAdq();
     }
-    
+
     private String findLstIdEmpresa(String codDep, String codMun, String codCanton, Integer idMunicipio, String idMunicipios, Integer idRubro, Integer idDetProcesoAdq, Integer idDetProcesoAdqPrecio,
             Boolean municipioIgual, Boolean byCapacidad, Integer cantidad, String noItemSeparados, String noItems) {
         String sql = "select \n"
@@ -652,7 +652,10 @@ public class ProveedorEJB {
                 + "    capacidad_acreditada    as capacidadAcreditada,\n"
                 + "    capacidad_adjudicada    as capacidadAdjudicada,\n"
                 + "    porcentaje_geo          as porcentajeGeo,\n"
-                + "    porcentaje_capacidad    as porcentajeCapacidad\n"
+                + "    porcentaje_capacidad    as porcentajeCapacidadItem,\n"
+                + "    case when (capacidad_acreditada-capacidad_adjudicada) >= " + cantidad + " then " + (idRubro == 4 ? "12.50" : (idRubro == 5 ? "12.50" : "17.50")) + " \n"
+                + "        else (((capacidad_acreditada-capacidad_adjudicada)*100)/" + cantidad + ") * " + (idRubro == 4 ? "0.1250" : (idRubro == 5 ? "0.1250" : "0.1750")) + " \n"
+                + "    end porcentajeCapacidad\n"
                 + "from (select \n"
                 + "        emp.id_empresa,\n"
                 + "        emp.razon_social,\n"
@@ -692,21 +695,21 @@ public class ProveedorEJB {
                 + "order by\n"
                 + "    precio_promedio asc,\n"
                 + "    (CAPACIDAD_ACREDITADA - CAPACIDAD_ADJUDICADA) asc";
-        
+
         return sql;
     }
-    
+
     private String getPorcentajePorItems(int idRubro) {
         switch (idRubro) {
             case 1:
             case 4:
             case 5:
-                return "12.5 ";
+                return "0.125 ";
             default:
-                return "17.5 ";
+                return "0.175 ";
         }
     }
-    
+
     private String getParteSelectUbicacion(int idRubro, String codigoCanton, int idMunicipio, String codigosDepartamento, String idMunicipios) {
         switch (idRubro) {
             case 1:
@@ -736,19 +739,19 @@ public class ProveedorEJB {
         Query query = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.idEmpresa=:idEmpresa and p.idDetProcesoAdq.idProcesoAdq.idAnho.anho=:anho and p.estadoEliminacion=0", PreciosRefRubroEmp.class);
         query.setParameter("idEmpresa", idEmpresa);
         query.setParameter("anho", anho);
-        
+
         List<PreciosRefRubroEmp> lstPrecios = query.getResultList();
-        
+
         return !lstPrecios.isEmpty();
     }
-    
+
     public PreciosRefRubroEmp getPrecioRef(Empresa idEmpresa, BigDecimal idNivelEdu, BigDecimal idProducto, String anho) {
         Query query = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.idEmpresa=:idEmpresa and p.idNivelEducativo.idNivelEducativo=:idNivelEdu and p.idProducto.idProducto=:idProducto and p.idDetProcesoAdq.idProcesoAdq.idAnho.anho=:anho and p.estadoEliminacion=0", PreciosRefRubroEmp.class);
         query.setParameter("idEmpresa", idEmpresa);
         query.setParameter("idNivelEdu", idNivelEdu);
         query.setParameter("idProducto", idProducto);
         query.setParameter("anho", anho);
-        
+
         List<PreciosRefRubroEmp> lstPrecios = query.getResultList();
         if (lstPrecios.isEmpty()) {
             return null;
@@ -756,28 +759,28 @@ public class ProveedorEJB {
             return lstPrecios.get(0);
         }
     }
-    
+
     public List<CapaInstPorRubro> findCapaInstPorRubro(Participantes participante) {
         Query query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idAnho.idAnho=:idAnho and c.estadoEliminacion=0 and c.idMuestraInteres.estadoEliminacion=0", CapaInstPorRubro.class);
-        
+
         query.setParameter("idEmpresa", participante.getIdEmpresa());
         query.setParameter("idAnho", participante.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
         List<CapaInstPorRubro> lstCapa = query.getResultList();
-        
+
         return lstCapa;
     }
-    
+
     public String getRespresentanteLegalEmp(BigDecimal idPersona) {
         Persona persona = em.find(Persona.class, idPersona);
         String representante;
-        
+
         representante = persona.getPrimerNombre();
-        
+
         if (persona.getSegundoNombre() != null) {
             representante = representante.concat(" ").concat(persona.getSegundoNombre());
         }
         representante = representante.concat(" ").concat(persona.getPrimerApellido());
-        
+
         if (persona.getSegundoApellido() != null) {
             if (persona.getAcasada() != null) {
                 representante = representante.concat(" ").concat(persona.getAcasada());
@@ -787,7 +790,7 @@ public class ProveedorEJB {
         }
         return representante;
     }
-    
+
     public List findAvanceDocumentosProcesados(String codDepartamento, Integer... procesos) {
         try {
             String query = "SELECT VW_CE_ASISTENTES.CODIGO_MUNICIPIO, \n"
@@ -809,7 +812,7 @@ public class ProveedorEJB {
         } finally {
         }
     }
-    
+
     public List findAvanceContratacionByDepartamento(DetalleProcesoAdq proceso, String idDep) {
         Query q;
         if (idDep.equals("00")) {
@@ -824,21 +827,21 @@ public class ProveedorEJB {
         }
         return q.getResultList();
     }
-    
+
     public List<DetalleAdjudicacionEmpDto> resumenAdjProveedor(String nit, Integer idProceso) {
         Query q = em.createNativeQuery(Constantes.QUERY_PROVEEDOR_RESUMEN_ADJ_EMP, DetalleAdjudicacionEmpDto.class);
         q.setParameter(1, nit);
         q.setParameter(2, idProceso);
         return q.getResultList();
     }
-    
+
     public List<DetalleAdjudicacionEmpDto> detalleAdjProveedor(String nit, Integer idProceso) {
         Query q = em.createNativeQuery(Constantes.QUERY_PROVEEDOR_DETALLE_ADJ_EMP, DetalleAdjudicacionEmpDto.class);
         q.setParameter(1, nit);
         q.setParameter(2, idProceso);
         return q.getResultList();
     }
-    
+
     public List<DetalleOfertas> getDetalleAdjProveedor(BigDecimal idEmpresa, Integer idDetProceso) {
         List<DetalleOfertas> lst = new ArrayList<>();
         Query q = em.createQuery("SELECT c.idResolucionAdj.idParticipante FROM ContratosOrdenesCompras c where c.idResolucionAdj.idEstadoReserva.idEstadoReserva=2 and c.idResolucionAdj.idParticipante.idEmpresa.idEmpresa=:idEmpresa and c.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq.idDetProcesoAdq=:idDetProceso order by c.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoDepartamento, c.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoMunicipio, c.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoEntidad", Participantes.class);
@@ -851,15 +854,15 @@ public class ProveedorEJB {
         }
         return lst;
     }
-    
+
     public List<DetRubroMuestraInteres> findDetRubroMuestraInteresEntitiesByRubroAndEmpresa(DetalleProcesoAdq detProceso, Empresa empresa) {
         Query q = em.createQuery("SELECT d FROM DetRubroMuestraInteres d WHERE d.estadoEliminacion = 0 and d.idDetProcesoAdq.idProcesoAdq.idAnho=:detProceso and d.idEmpresa=:empresa", DetRubroMuestraInteres.class);
         q.setParameter("detProceso", detProceso.getIdProcesoAdq().getIdAnho());
         q.setParameter("empresa", empresa);
-        
+
         return q.getResultList();
     }
-    
+
     public List findAvanceSeguimientos(String codDepartamento, DetalleProcesoAdq proceso) {
         if (proceso != null) {
             String query = "SELECT (SELECT COUNT( VW_BUSQUEDA_CONTRATO.ID_CONTRATO) "
@@ -870,14 +873,14 @@ public class ProveedorEJB {
                     + "AND RECEPCION_BIENES_SERVICIOS.ID_ESTADO_SEGUIMIENTO = 1) PROCESO, (SELECT COUNT(VW_BUSQUEDA_CONTRATO.ID_CONTRATO) "
                     + "FROM VW_BUSQUEDA_CONTRATO INNER JOIN RECEPCION_BIENES_SERVICIOS ON VW_BUSQUEDA_CONTRATO.ID_CONTRATO = RECEPCION_BIENES_SERVICIOS.ID_CONTRATO "
                     + "WHERE ID_DET_PROCESO_ADQ =" + proceso.getIdDetProcesoAdq() + "AND ID_ESTADO_RESERVA IN (2, 5) AND RECEPCION_BIENES_SERVICIOS.ID_ESTADO_SEGUIMIENTO = 2) FINALIZADO FROM DUAL";
-            
+
             Query q = em.createNativeQuery(query);
             return q.getResultList();
         } else {
             return new ArrayList();
         }
     }
-    
+
     public List findAvanceSeguimientosPorProveedor(String codDepartamento, DetalleProcesoAdq proceso) {
         try {
             if (proceso != null) {
@@ -898,7 +901,7 @@ public class ProveedorEJB {
         } finally {
         }
     }
-    
+
     public List findAvanceSeguimientosPorCentroEducativo(String codDepartamento, DetalleProcesoAdq proceso) {
         if (proceso != null) {
             String query = "SELECT (SELECT COUNT(distinct VW_BUSQUEDA_CONTRATO.CODIGO_ENTIDAD) "
@@ -914,27 +917,27 @@ public class ProveedorEJB {
                     + "WHERE ID_DET_PROCESO_ADQ = " + proceso.getIdDetProcesoAdq() + " "
                     + "AND ID_ESTADO_RESERVA IN (2, 5) "
                     + "AND RECEPCION_BIENES_SERVICIOS.ID_ESTADO_SEGUIMIENTO = 2) FINALIZADO FROM DUAL";
-            
+
             Query q = em.createNativeQuery(query);
             return q.getResultList();
         } else {
             return new ArrayList();
         }
     }
-    
+
     public List<Bancos> getLstBancos() {
         Query q = em.createQuery("select b from Bancos b where b.idBanco=2 ", Bancos.class);
         return q.getResultList();
     }
-    
+
     public List<CuentaBancaria> getLstCuentaByDepa(String codigoDepartamento) {
         Query q = em.createQuery("select c from CuentaBancaria c WHERE c.codigoDepartamento=:codDepa and c.activo=1", CuentaBancaria.class);
         q.setParameter("codDepa", codigoDepartamento);
         return q.getResultList();
     }
-    
+
     public void generarRequerimiento(String anho, String codDep, Integer idBanco, String numCuenta, String concep, String compon, String line, String usu, String tieneCredito, BigDecimal montoTot, Integer idNivel, Integer idDepPro) {
-        
+
         Query q = em.createNamedQuery("SP_GENERAR_REQ_PRE_CARGA");
         q.setParameter("param1", anho);
         q.setParameter("param2", codDep);
@@ -950,23 +953,23 @@ public class ProveedorEJB {
         q.setParameter("param12", idDepPro);
         q.getResultList();
     }
-    
+
     public List<RequerimientoFondos> getLstRequerimientos(String codigoDepartamento, Integer idDetProcesoAdq) {
         Query q = em.createQuery("SELECT r FROM RequerimientoFondos r WHERE r.idDetProcesoAdq.idDetProcesoAdq =:id and r.codigoDepartamento=:codDep and r.estadoEliminacion=0 ORDER BY r.numeroRequerimiento ASC", RequerimientoFondos.class);
         q.setParameter("id", idDetProcesoAdq);
         q.setParameter("codDep", codigoDepartamento);
         return q.getResultList();
     }
-    
+
     public RequerimientoFondos getRequerimientoByNumero(String numeroRequerimiento, String codigoDepartamento, Integer idProcesoAdq) {
         String sql = "SELECT r FROM RequerimientoFondos r WHERE r.idDetProcesoAdq.idProcesoAdq.idProcesoAdq =:id %s and r.formatoRequerimiento=:numReq and r.estadoEliminacion = 0 ORDER BY r.idRequerimiento ASC";
-        
+
         if (codigoDepartamento == null) {
             sql = String.format(sql, "");
         } else {
             sql = String.format(sql, "and r.codigoDepartamento=:codDep");
         }
-        
+
         Query q = em.createQuery(sql, RequerimientoFondos.class);
         q.setParameter("id", idProcesoAdq);
         if (codigoDepartamento != null) {
@@ -975,18 +978,18 @@ public class ProveedorEJB {
         q.setParameter("numReq", numeroRequerimiento);
         return q.getResultList().isEmpty() ? null : (RequerimientoFondos) q.getSingleResult();
     }
-    
+
     public List<PlanillaPago> getLstPlanillaPagos(BigDecimal idRequerimiento) {
         Query q = em.createQuery("SELECT p FROM PlanillaPago p where p.estadoEliminacion = 0 and p.idRequerimiento.idRequerimiento=:idReq ORDER BY p.fechaInsercion ASC", PlanillaPago.class);
         q.setParameter("idReq", idRequerimiento);
         return q.getResultList();
     }
-    
+
     public List<RequerimientoFondos> getLstRequerimientoFondos() {
         Query q = em.createQuery("SELECT r FROM RequerimientoFondos r", RequerimientoFondos.class);
         return q.getResultList();
     }
-    
+
     public PlanillaPago guardar(String usuario, PlanillaPago planillaPago) {
         try {
             if (planillaPago.getIdPlanilla() == null) {
@@ -1005,7 +1008,7 @@ public class ProveedorEJB {
             return null;
         }
     }
-    
+
     public void guardarDetallePlanilla(List<DetallePlanilla> detallePlanillaLst) {
         detallePlanillaLst.forEach((detallePlanilla) -> {
             if (detallePlanilla.getIdDetallePlanilla() == null) {
@@ -1015,7 +1018,7 @@ public class ProveedorEJB {
             }
         });
     }
-    
+
     public List<ResumenRequerimientoDto> getLstResumenRequerimiento(String codigoDepartamento, int idDetProcesoAdq) {
         List<ResumenRequerimientoDto> lstResumen;
         Query q = em.createNamedQuery("PagoProve.QueryConsultaRequerimiento", ResumenRequerimientoDto.class);
@@ -1037,11 +1040,11 @@ public class ProveedorEJB {
         q.setParameter(1, idRequerimiento);
         return q.getResultList();
     }
-    
+
     public List<VwRptProveedoresContratadosDto> getLstProveedoresHacienda(Integer idDetalleProcesoAdq, String codigoDepartamento) {
         String sql = "select rubro, count(ID_CONTRATO), DEPA_CE, DEPA_EMP, NUMERO_NIT, sum(monto) from VW_RPT_PROVEEDORES_HACIENDA where ID_DET_PROCESO_ADQ = ?1 ";
         List<VwRptProveedoresContratadosDto> lst = new ArrayList<>();
-        
+
         if (!codigoDepartamento.equals("00")) {
             sql += " AND codigo_departamento = ?2";
         }
@@ -1050,7 +1053,7 @@ public class ProveedorEJB {
         if (!codigoDepartamento.equals("00")) {
             q.setParameter(2, codigoDepartamento);
         }
-        
+
         for (Object object : q.getResultList()) {
             Object[] datos = (Object[]) object;
             VwRptProveedoresContratadosDto vw = new VwRptProveedoresContratadosDto();
@@ -1064,7 +1067,7 @@ public class ProveedorEJB {
         }
         return lst;
     }
-    
+
     public List<VwRptProveedoresContratadosDto> getLstResumenContratacionByProcesoAndDepartamento(Integer idDetProceso, String codigoDepartamento) {
         try {
             Query q;
@@ -1073,7 +1076,7 @@ public class ProveedorEJB {
             } else {
                 q = em.createNamedQuery("Ejecucion.ResumenContratacionesByProcesoAndDepa", VwRptProveedoresContratadosDto.class);
             }
-            
+
             q.setParameter(1, idDetProceso);
             q.setParameter(2, codigoDepartamento);
             return q.getResultList();
@@ -1094,7 +1097,7 @@ public class ProveedorEJB {
         String error = "";
         CatalogoProducto item = null;
         NivelEducativo nivel = null;
-        
+
         if (numItem != null && !numItem.isEmpty()) {
             switch (rubro) {
                 case 1: //UNIFORMES
@@ -1184,7 +1187,7 @@ public class ProveedorEJB {
                     break;
                 case 2: //UTILES
                     item = findProducto("54");
-                    
+
                     switch (Integer.parseInt(numItem)) {
                         case 1:
                             nivel = findNivelEducativo("1");
@@ -1255,56 +1258,56 @@ public class ProveedorEJB {
                     break;
             }
         }
-        
+
         if (error.isEmpty()) {
             param.put("item", item);
             param.put("nivel", nivel);
         } else {
             param.put("error", error);
         }
-        
+
         return param;
     }
-    
+
     public EntidadFinanciera getEntidadByNombre(String nombre) {
         Query q = em.createQuery("SELECT e FROM EntidadFinanciera e WHERE e.nombreEntFinan=:nombre", EntidadFinanciera.class);
         q.setParameter("nombre", nombre);
         return (EntidadFinanciera) q.getSingleResult();
     }
-    
+
     public List<DetalleContratacionPorItemDto> getLstDetalleContratacionPorItem(Integer idDetalleProcesoAdq) {
         Query q = em.createNamedQuery("Contratacion.DetalleContratacionPorItemDto", DetalleContratacionPorItemDto.class);
         q.setParameter(1, idDetalleProcesoAdq);
         return q.getResultList();
     }
-    
+
     public void calcularNoItems(Integer idDet) {
         idDet = 52;
         Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion = 0 and p.idDetProcesoAdq.idDetProcesoAdq=:idDet ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
         q.setParameter("idDet", idDet);
-        
+
         List<PreciosRefRubroEmp> lstPre = q.getResultList();
         BigDecimal idEmpTemp = BigDecimal.ZERO;
         EmpresaNoItem emp = null;
-        
+
         for (PreciosRefRubroEmp precios : lstPre) {
-            
+
             if (idEmpTemp.intValue() == 0) {
                 idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
                 emp = new EmpresaNoItem();
                 emp.setIdEmpresa(idEmpTemp);
                 emp.setIdDetProceoAdq(idDet);
             } else if (idEmpTemp.intValue() == precios.getIdEmpresa().getIdEmpresa().intValue()) {
-                
+
             } else {
                 em.persist(emp);
-                
+
                 idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
                 emp = new EmpresaNoItem();
                 emp.setIdEmpresa(idEmpTemp);
                 emp.setIdDetProceoAdq(idDet);
             }
-            
+
             switch (precios.getNoItem()) {
                 case "1":
                     emp.setItem1("1");
@@ -1348,7 +1351,7 @@ public class ProveedorEJB {
             }
         }
     }
-    
+
     public List<PrecioReferenciaEmpresaDto> getLstPreciosByIdEmpresaAndIdProcesoAdq(BigDecimal idEmpresa, Integer idProcesoAdq, String idNivelesCe) {
         Query q = em.createNativeQuery("select \n"
                 + "                rownum                  idRow,\n"
@@ -1369,12 +1372,12 @@ public class ProveedorEJB {
                 + "            order by to_number(pemp.no_item)", PrecioReferenciaEmpresaDto.class);
         return q.getResultList();
     }
-    
+
     public void guardarCantonProveedor(String numeroNit, String codigoCanton) {
         Query q = em.createNativeQuery("UPDATE Empresa SET codigo_canton='" + codigoCanton + "' WHERE numero_nit='" + numeroNit + "'");
-        
+
         int i = q.executeUpdate();
-        
+
         if (i == 0) {
             System.out.println("empresa no encontrada: " + numeroNit);
         }

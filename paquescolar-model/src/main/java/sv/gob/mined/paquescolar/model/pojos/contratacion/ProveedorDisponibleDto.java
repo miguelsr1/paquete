@@ -37,8 +37,17 @@ public class ProveedorDisponibleDto implements Serializable {
     private BigDecimal porcentajePrecio;
     private BigDecimal porcentajeGeo;
     private BigDecimal porcentajeCapacidad;
+    private BigDecimal porcentajeCapacidadItem;
 
     public ProveedorDisponibleDto() {
+    }
+
+    public BigDecimal getPorcentajeCapacidadItem() {
+        return porcentajeCapacidadItem;
+    }
+
+    public void setPorcentajeCapacidadItem(BigDecimal porcentajeCapacidadItem) {
+        this.porcentajeCapacidadItem = porcentajeCapacidadItem;
     }
 
     public BigDecimal getPorcentajeCapacidad() {
