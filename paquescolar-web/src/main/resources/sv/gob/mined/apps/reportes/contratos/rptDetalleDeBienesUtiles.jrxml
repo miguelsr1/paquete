@@ -30,19 +30,11 @@
 		<queryString>
 			<![CDATA[select 
     case 
-        when tb.id_nivel in (1) and tb.id_producto in (30) then 1
-        when tb.id_nivel in (1) and tb.id_producto in (44) then 2
-        when tb.id_nivel in (1) and tb.id_producto in (29) then 3
-        when tb.id_nivel in (1) and tb.id_producto in (31) then 4
-        when tb.id_nivel in (1) and tb.id_producto in (34) then 5
-        when tb.id_nivel in (2) and tb.id_producto in (30) then 6
-        when tb.id_nivel in (2) and tb.id_producto in (44) then 7
-        when tb.id_nivel in (2) and tb.id_producto in (29) then 8
-        when tb.id_nivel in (2) and tb.id_producto in (34) then 9
-        when tb.id_nivel in (6) and tb.id_producto in (30) then 10
-        when tb.id_nivel in (6) and tb.id_producto in (44) then 11
-        when tb.id_nivel in (6) and tb.id_producto in (29) then 12
-        when tb.id_nivel in (6) and tb.id_producto in (34) then 13
+        when tb.id_nivel in (1) and tb.id_producto in (54) then 1
+        when tb.id_nivel in (3) and tb.id_producto in (54) then 3
+        when tb.id_nivel in (4) and tb.id_producto in (54) then 4
+        when tb.id_nivel in (5) and tb.id_producto in (54) then 5
+        when tb.id_nivel in (6) and tb.id_producto in (54) then 6
     end no_item,
     tb.nombre_producto||', '|| niv.descripcion_nivel descripcion,
     tb.can,
@@ -57,10 +49,7 @@ from (select
             tbl.id_nivel+cat.id_producto id_niv_pro
         from (select 
                     est.codigo_entidad, 
-                    case 
-                        when est.id_nivel_educativo in (3,4,5) then 2
-                        else est.id_nivel_educativo
-                    end id_nivel,
+                    est.id_nivel_educativo id_nivel,
                     masculino, 
                     femenimo
                 from estadistica_censo est 
@@ -70,12 +59,12 @@ from (select
                     (masculino is not null and femenimo is not null and masculino <>0 and femenimo <> 0)
                 order by est.id_nivel_educativo) tbl,
                 catalogo_producto cat
-        where cat.id_producto in (30,44,29,31,34)
+        where cat.id_producto in (54)
         group by tbl.codigo_entidad, tbl.id_nivel,cat.nombre_producto, cat.codigo_producto, cat.id_producto) tb
     left outer join resguardo_bienes res on res.id_nivel_educativo = tb.id_nivel and res.codigo_entidad = tb.codigo_entidad and res.id_producto = tb.id_producto
     inner join nivel_educativo niv on tb.id_nivel = niv.id_nivel_educativo
 where (tb.id_niv_pro <>  33 and tb.id_niv_pro <> 37) and
-    (res.id_det_proceso_adq = 40 or res.id_det_proceso_adq is null)
+    (res.id_det_proceso_adq = 42 or res.id_det_proceso_adq is null)
 order by tb.id_nivel, codigo_producto]]>
 		</queryString>
 		<field name="NO_ITEM" class="java.math.BigDecimal"/>

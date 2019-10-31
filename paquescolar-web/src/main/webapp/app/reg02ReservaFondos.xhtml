@@ -55,7 +55,7 @@
                         <p:outputLabel value="Proveedor:" />
                         <p:selectOneMenu id="cboProveedor" value="#{resolucionesAdjudicativasController.idParticipante}" disabled="#{resolucionesAdjudicativasController.deshabilitar}" >
                             <f:selectItem itemLabel="Seleccione un proveedor" />  
-                            <f:selectItems value="#{ofertaMB.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idEmpresa.idEmpresa)):par.idEmpresa.razonSocial}"/>
+                            <f:selectItems value="#{ofertaMB.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idParticipante)):par.idEmpresa.razonSocial}"/>
                             <p:ajax update="cboEstado pnlProveedores pnlSaldos idParticipante" listener="#{resolucionesAdjudicativasController.buscarResolucionAdjudicativa}" />
                         </p:selectOneMenu>
 

@@ -41,16 +41,21 @@
                     <h:outputText value="Tipo Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
                     <h:outputText value="#{capaEmpresa.distribuidor eq 1 ? 'PRODUCTOR' : 'DISTRIBUIDOR'}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
 
-                    <h:outputText value="Capacidad disponible" style="#{menuController.isUsuarioDigitador?'font-size: 12px;':'font-size: 11px;'}"/>
-                    <h:outputText value="#{capaEmpresa.capacidadAcreditada - capaEmpresa.capacidadAdjudicada}" style="#{menuController.isUsuarioDigitador?'font-weight: bold;font-size: 12px;':'font-weight: bold;font-size: 11px;'}">
+                    <h:outputText value="Capacidad disponible"/>
+                    <h:outputText value="#{capaEmpresa.capacidadAcreditada - capaEmpresa.capacidadAdjudicada}">
                         <f:convertNumber pattern="#,###"/>
+                    </h:outputText>
+                    
+                    <h:outputText value="Porcentaje adjudicación " rendered="#{!menuController.isUsuarioDigitador}"/>
+                    <h:outputText value="#{capaEmpresa.porcentajeAdjudicacion}" rendered="#{!menuController.isUsuarioDigitador}">
+                        <f:convertNumber pattern="#,###.00"/>
                     </h:outputText>
 
                     <h:outputText value="Municipio y Departamento:" rendered="#{!menuController.isUsuarioDigitador}"/>
                     <h:outputText value="#{capaEmpresa.nombreMunicipio}, #{capaEmpresa.nombreDepartamento}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
 
                     <h:outputText value="Porcetaje de cumpliento:" style="font-weight: bold;"/>
-                    <h:outputText value="#{capaEmpresa.porcentajePrecio + capaEmpresa.porcentajeGeo + capaEmpresa.porcentajeCapacidad + capaEmpresa.porcentajeCapacidadItem}" style="font-weight: bold;">
+                    <h:outputText value="#{capaEmpresa.porcentajeEvaluacion}" style="font-weight: bold;">
                         <f:convertNumber pattern="#,##0.00"/>
                     </h:outputText>
                     

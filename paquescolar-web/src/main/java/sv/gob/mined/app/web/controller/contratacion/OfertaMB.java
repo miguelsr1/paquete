@@ -886,13 +886,14 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     }
 
     public void imprimirDetalleAContratar() {
+        String nombreRubroTemp = (detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "Uniforme" : (detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 2 ? "Utiles" : "Zapatos"));
         HashMap param = new HashMap();
         param.put("pRubro", detalleProceso.getIdRubroAdq().getDescripcionRubro());
         param.put("pAnho", detalleProceso.getIdProcesoAdq().getIdAnho().getAnho());
         param.put("pCodigoEntidad", codigoEntidad);
         param.put("pHoraYFecha", entidadEducativa.getCodigoDepartamento().getNombreDepartamento() + ", " + JsfUtil.getFechaString(new Date()));
 
-        Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/contratos/", "rptDetalleDeBienesUniforme", "rptDetalleDeBienesUniforme_");
+        Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/contratos/", "rptDetalleDeBienes" + nombreRubroTemp, "rptDetalleDeBienes" + nombreRubroTemp + "_");
     }
 
     public BigDecimal porcentajeCapacidad(BigDecimal capacidadDisponible) {

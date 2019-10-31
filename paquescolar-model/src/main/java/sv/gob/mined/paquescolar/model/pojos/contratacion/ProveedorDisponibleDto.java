@@ -28,41 +28,43 @@ public class ProveedorDisponibleDto implements Serializable {
     private BigDecimal idRow;
     private BigDecimal idEmpresa;
     private String razonSocial;
-    private BigInteger distribuidor;
+    private Integer distribuidor;
     private BigDecimal capacidadAcreditada;
     private BigDecimal capacidadAdjudicada;
     private String nombreMunicipio;
     private String nombreDepartamento;
-    private BigDecimal puAvg;
-    private BigDecimal porcentajePrecio;
-    private BigDecimal porcentajeGeo;
-    private BigDecimal porcentajeCapacidad;
-    private BigDecimal porcentajeCapacidadItem;
+    private Double puAvg;
+    private Double porcentajePrecio;
+    private Double porcentajeGeo;
+    private Double porcentajeCapacidad;
+    private Double porcentajeCapacidadItem;
+    private Double porcentajeEvaluacion;
+    private Double porcentajeAdjudicacion;
 
     public ProveedorDisponibleDto() {
     }
 
-    public BigDecimal getPorcentajeCapacidadItem() {
+    public Double getPorcentajeCapacidadItem() {
         return porcentajeCapacidadItem;
     }
 
-    public void setPorcentajeCapacidadItem(BigDecimal porcentajeCapacidadItem) {
+    public void setPorcentajeCapacidadItem(Double porcentajeCapacidadItem) {
         this.porcentajeCapacidadItem = porcentajeCapacidadItem;
     }
 
-    public BigDecimal getPorcentajeCapacidad() {
+    public Double getPorcentajeCapacidad() {
         return porcentajeCapacidad;
     }
 
-    public void setPorcentajeCapacidad(BigDecimal porcentajeCapacidad) {
+    public void setPorcentajeCapacidad(Double porcentajeCapacidad) {
         this.porcentajeCapacidad = porcentajeCapacidad;
     }
 
-    public BigDecimal getPorcentajeGeo() {
+    public Double getPorcentajeGeo() {
         return porcentajeGeo;
     }
 
-    public void setPorcentajeGeo(BigDecimal porcentajeGeo) {
+    public void setPorcentajeGeo(Double porcentajeGeo) {
         this.porcentajeGeo = porcentajeGeo;
     }
 
@@ -90,11 +92,11 @@ public class ProveedorDisponibleDto implements Serializable {
         this.razonSocial = razonSocial;
     }
 
-    public BigInteger getDistribuidor() {
+    public Integer getDistribuidor() {
         return distribuidor;
     }
 
-    public void setDistribuidor(BigInteger distribuidor) {
+    public void setDistribuidor(Integer distribuidor) {
         this.distribuidor = distribuidor;
     }
 
@@ -130,20 +132,35 @@ public class ProveedorDisponibleDto implements Serializable {
         this.nombreDepartamento = nombreDepartamento;
     }
 
-    public BigDecimal getPuAvg() {
+    public Double getPuAvg() {
         return puAvg;
     }
 
-    public void setPuAvg(BigDecimal puAvg) {
+    public void setPuAvg(Double puAvg) {
         this.puAvg = puAvg;
     }
 
-    public BigDecimal getPorcentajePrecio() {
+    public Double getPorcentajePrecio() {
         return porcentajePrecio;
     }
 
-    public void setPorcentajePrecio(BigDecimal porcentajePrecio) {
+    public void setPorcentajePrecio(Double porcentajePrecio) {
         this.porcentajePrecio = porcentajePrecio;
     }
 
+    public Double getPorcentajeEvaluacion() {
+        return porcentajeEvaluacion;
+    }
+
+    public void setPorcentajeEvaluacion(Double porcentajeEvaluacion) {
+        this.porcentajeEvaluacion = porcentajeEvaluacion;
+    }
+
+    public Double getPorcentajeAdjudicacion() {
+        return porcentajeAdjudicacion;
+    }
+
+    public void setPorcentajeAdjudicacion(Double porcentajeAdjudicacion) {
+        this.porcentajeAdjudicacion = porcentajeAdjudicacion;
+    }
 }

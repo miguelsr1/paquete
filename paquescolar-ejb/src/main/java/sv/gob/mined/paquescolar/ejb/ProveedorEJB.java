@@ -616,9 +616,9 @@ public class ProveedorEJB {
 
     private Integer getIdDetProceso(DetalleProcesoAdq detProcesoAdq, ProcesoAdquisicion procesoAdquisicion) {
         for (DetalleProcesoAdq object : procesoAdquisicion.getDetalleProcesoAdqList()) {
-            if (object.getIdRubroAdq().getIdRubroUniforme().intValue() != 1 && object.getIdRubroAdq().getIdRubroInteres().compareTo(detProcesoAdq.getIdRubroAdq().getIdRubroInteres()) == 0) {
+            if (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().compareTo(object.getIdRubroAdq().getIdRubroInteres()) == 0 && detProcesoAdq.getIdRubroAdq().getIdRubroUniforme().intValue() != 1) {
                 return object.getIdDetProcesoAdq();
-            } else if (object.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
+            } else if (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().compareTo(object.getIdRubroAdq().getIdRubroInteres()) == 0 && detProcesoAdq.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
                 if (object.getIdRubroAdq().getIdRubroInteres().intValue() == 4) {
                     return object.getIdDetProcesoAdq();
                 }
@@ -647,15 +647,15 @@ public class ProveedorEJB {
                 + "    distribuidor,\n"
                 + "    nombre_municipio        as nombreMunicipio,\n"
                 + "    nombre_departamento     as nombreDepartamento,\n"
-                + "    precio_promedio                     as puAvg,\n"
-                + "    round((((min(precio_promedio) OVER (order by precio_promedio))*100)/precio_promedio)*0.4,2)       as porcentajePrecio,\n"
+                + "    precio_promedio         as puAvg,\n"
                 + "    capacidad_acreditada    as capacidadAcreditada,\n"
                 + "    capacidad_adjudicada    as capacidadAdjudicada,\n"
+                + "    porcentaje_precio       as porcentajePrecio,\n"
                 + "    porcentaje_geo          as porcentajeGeo,\n"
-                + "    porcentaje_capacidad    as porcentajeCapacidadItem,\n"
-                + "    case when (capacidad_acreditada-capacidad_adjudicada) >= " + cantidad + " then " + (idRubro == 4 ? "12.50" : (idRubro == 5 ? "12.50" : "17.50")) + " \n"
-                + "        else (((capacidad_acreditada-capacidad_adjudicada)*100)/" + cantidad + ") * " + (idRubro == 4 ? "0.1250" : (idRubro == 5 ? "0.1250" : "0.1750")) + " \n"
-                + "    end porcentajeCapacidad\n"
+                + "    porcentaje_capacidad_i  as porcentajeCapacidadItem,\n"
+                + "    porcentaje_capacidad    as porcentajeCapacidad,\n"
+                + "    porcentaje_precio+porcentaje_geo+porcentaje_capacidad_i+porcentaje_capacidad as porcentajeEvaluacion,\n"
+                + "    ((capacidad_adjudicada*100)/capacidad_acreditada) porcentajeAdjudicacion\n"
                 + "from (select \n"
                 + "        emp.id_empresa,\n"
                 + "        emp.razon_social,\n"
@@ -663,9 +663,10 @@ public class ProveedorEJB {
                 + "        mun_e.nombre_municipio,\n"
                 + "        dep_e.nombre_departamento,\n"
                 + "        tbl.precio_promedio,\n"
+                + "        round((((min(tbl.precio_promedio) OVER (order by tbl.precio_promedio))*100)/tbl.precio_promedio)*0.4,2) as porcentaje_precio,\n"
                 + "        mun_e.id_municipio,\n"
                 + "        emp.codigo_canton,\n"
-                + "        tbl.porcentaje_capacidad,\n"
+                + "        tbl.porcentaje_capacidad as porcentaje_capacidad_i,\n"
                 + "        " + getParteSelectUbicacion(idRubro, codCanton, idMunicipio, codDep, idMunicipios) + "\n"
                 + "    from det_rubro_muestra_interes det\n"
                 + "        inner join empresa emp                  on emp.id_empresa = det.id_empresa\n"
@@ -684,17 +685,19 @@ public class ProveedorEJB {
                 + "    inner join (select \n"
                 + "                    det.id_empresa,\n"
                 + "                    cip.capacidad_acreditada,\n"
-                + "                    cip.capacidad_adjudicada\n"
+                + "                    cip.capacidad_adjudicada,\n"
+                + "                    case when (cip.capacidad_acreditada-cip.capacidad_adjudicada) >= " + cantidad + " then " + (idRubro == 4 ? "12.50" : (idRubro == 5 ? "12.50" : "17.50")) + " \n"
+                + "                    else (((cip.capacidad_acreditada-cip.capacidad_adjudicada)*100)/" + cantidad + ") * " + (idRubro == 4 ? "0.1250" : (idRubro == 5 ? "0.1250" : "0.1750")) + " \n"
+                + "                    end porcentaje_capacidad\n"
                 + "                from det_rubro_muestra_interes det\n"
                 + "                    inner join capa_inst_por_rubro cip      on det.id_muestra_interes = cip.id_muestra_interes\n"
                 + "                where det.id_det_proceso_adq in (" + idDetProcesoAdq + ") and\n"
                 + "                    det.estado_eliminacion = 0) tb2 on tb1.id_empresa = tb2.id_empresa\n"
                 + "where \n"
                 + "    id_municipio " + (municipioIgual ? "=" : "<>") + " (select id_municipio from municipio where codigo_municipio = '" + codMun + "' and codigo_departamento = '" + codDep + "') \n"
-                + "     " + (byCapacidad ? " and (CAPACIDAD_ACREDITADA - CAPACIDAD_ADJUDICADA) >= " + cantidad + "\n" : "\n")
+                //+ "     " + (byCapacidad ? " and (CAPACIDAD_ACREDITADA - CAPACIDAD_ADJUDICADA) >= " + cantidad + "\n" : "\n")
                 + "order by\n"
-                + "    precio_promedio asc,\n"
-                + "    (CAPACIDAD_ACREDITADA - CAPACIDAD_ADJUDICADA) asc";
+                + "    (porcentaje_precio+porcentaje_geo+porcentaje_capacidad_i+porcentaje_capacidad) desc,((capacidad_adjudicada*100)/capacidad_acreditada) asc";
 
         return sql;
     }
