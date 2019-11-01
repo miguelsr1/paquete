@@ -5,6 +5,7 @@
  */
 package sv.gob.mined.boleta.web;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -12,10 +13,28 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.mail.Address;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -37,6 +56,11 @@ public class BoletaMB implements Serializable {
     private PDDocument document;
     private List<PDDocument> lstPages;
     private Iterator<PDDocument> iterator;
+
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("config");
+
+    @Resource(mappedName = "java:/MailService365")
+    private Session mailSession;
 
     public UploadedFile getFile() {
         return file;
@@ -64,66 +88,34 @@ public class BoletaMB implements Serializable {
             //Instantiating Splitter class
             Splitter splitter = new Splitter();
 
-            if (document.getNumberOfPages() > 1000) {
-                splitter.setSplitAtPage(1000); //<----- separar el documento cada 1000 paginas
-            }
-
             //splitting the pages of a PDF document
             lstPages = splitter.split(document);
 
             //Creating an iterator 
             iterator = lstPages.listIterator();
 
-            /*jpb_progreso.setValue(0);
-                    jpb_progreso.setMinimum(1);
-                    jpb_progreso.setStringPainted(true);*/
             final Properties info = chargeEmailsProperties2();
+            int i = 1;
 
-            while (iterator.hasNext()) {
+            while (i < 10 || iterator.hasNext()) {
                 DatosDto rowData = new DatosDto();
 
                 PDDocument pd = iterator.next();
 
-                if (pd.getNumberOfPages() > 1) {
-                    //System.out.println("Entro a sub bloque");
-                    try {
-                        Splitter splitter2 = new Splitter();
-                        Pages2 = splitter2.split(pd);
-                        Iterator<PDDocument> iterator2 = Pages2.listIterator();
-                        while (iterator2.hasNext()) {
-                            PDDocument pd2 = iterator2.next();
-                            String code = getCode2(pd2, "         )", 0, 15).substring(8);
-                            if (info.containsKey(code)) {
-                                String email = info.getProperty(code);
-                                rowData.setCodigo(code);
-                                rowData.setCorreoElectronico(email);
+                String code = getCode2(pd, "         )", 0, 15).substring(8);
+                if (info.containsKey(code)) {
+                    String email = info.getProperty(code);
+                    rowData.setCodigo(code);
+                    rowData.setCorreoElectronico(email);
 
-                                lstDatos.add(rowData);
-                            } else {
-                            }
+                    enviarMail(code, email, pd);
 
-                            pd2.close();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    //Utilizado con las 4763 boletas reales de La Libertad
-                    String code = getCode2(pd, "         )", 0, 15).substring(8);
-
-                    if (info.containsKey(code)) {
-                        String email = info.getProperty(code);
-                        rowData.setCodigo(code);
-                        rowData.setCorreoElectronico(email);
-                        lstDatos.add(rowData);
-
-                        //Para enviar correo
-                        //sendEmail.sendEmailWithAttachment(pd, email, code); //<---- descomentar
-                    } else {
-                        //System.out.println("Codigo obtenido del PDF con error " + code); 
-                    }
+                    lstDatos.add(rowData);
+                    System.out.println("envio " + i);
                 }
                 pd.close();
+
+                i++;
             }
 
             document.close();
@@ -168,5 +160,48 @@ public class BoletaMB implements Serializable {
             ex.printStackTrace();
         }
         return returnString;
+    }
+
+    //@Asynchronous
+    public void enviarMail(String code, String remitente, PDDocument pDDocument) throws IOException {
+        try {
+            MimeMessage m = new MimeMessage(mailSession);
+            Address from = new InternetAddress("cesar.nieves@mined.gob.sv");
+
+            m.setFrom(from);
+            m.setRecipients(Message.RecipientType.TO, remitente);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            pDDocument.save(out);
+            byte[] bytes = out.toByteArray();
+
+            BodyPart messageBodyPart1 = new MimeBodyPart(); 
+            messageBodyPart1.setText(RESOURCE_BUNDLE.getString("mail.message"));
+            
+            MimeBodyPart messageBodyPart2 = new MimeBodyPart(); 
+            DataSource source = new FileDataSource("Boleta.pdf"); 
+            messageBodyPart2.setDataHandler(new DataHandler(source)); 
+            messageBodyPart2.setFileName("Boleta.pdf");
+            
+            ByteArrayDataSource ds = new ByteArrayDataSource(bytes, "application/pdf");
+            messageBodyPart2.setDataHandler(new DataHandler(ds));
+            
+            Multipart multipart = new MimeMultipart();    
+            multipart.addBodyPart(messageBodyPart1);     
+            multipart.addBodyPart(messageBodyPart2);
+            
+            m.setContent(multipart);
+            
+            
+            //m.setDataHandler(new DataHandler(ds));
+            //m.setFileName("Boleta.pdf");*/
+
+            m.setSubject(code + " Boleta", "UTF-8");
+            /*m.setSentDate(new java.util.Date());
+            m.setText(RESOURCE_BUNDLE.getString("mail.message"), "UTF-8", "html");*/
+            Transport.send(m);
+        } catch (MessagingException ex) {
+            Logger.getLogger(EMailMB.class.getName()).log(Level.INFO, "Error en el envio de correo", ex);
+        }
     }
 }
