@@ -702,6 +702,52 @@ public class ProveedorEJB {
         return sql;
     }
 
+    public List<ProveedorDisponibleDto> getLstProveedorPorcentajeEval(Integer idRubro, Integer idMunicipio, Integer cantidad,
+            Integer idDetProcesoAdq, String codDep, String codCanton, String idMunicipios, String idEmpresas) {
+        Query q = em.createQuery("select \n"
+                + "    rownum                  as idRow,\n"
+                + "    razon_social            as razonSocial,\n"
+                + "    porcentaje_precio       as porcentajePrecio,\n"
+                + "    porcentaje_geo          as porcentajeGeo,\n"
+                + "    porcentaje_capacidad_i  as porcentajeCapacidadItem,\n"
+                + "    porcentaje_capacidad    as porcentajeCapacidad,\n"
+                + "    porcentaje_precio+porcentaje_geo+porcentaje_capacidad_i+porcentaje_capacidad as porcentajeEvaluacion\n"
+                + "from (select \n"
+                + "        emp.id_empresa,\n"
+                + "        emp.razon_social,\n"
+                + "        nvl(emp.distribuidor,0)      as distribuidor,\n"
+                + "        tbl.precio_promedio,\n"
+                + "        round((((min(tbl.precio_promedio) OVER (order by tbl.precio_promedio))*100)/tbl.precio_promedio)*0.4,2) as porcentaje_precio,\n"
+                + "        tbl.porcentaje_capacidad as porcentaje_capacidad_i,\n"
+                + "        " + getParteSelectUbicacion(idRubro, codCanton, idMunicipio, codDep, idMunicipios) + "\n"
+                + "    from det_rubro_muestra_interes det\n"
+                + "        inner join empresa emp                  on emp.id_empresa = det.id_empresa\n"
+                + "        inner join municipio mun_e              on mun_e.id_municipio = emp.id_municipio\n"
+                + "        inner join (select id_empresa, round(avg(precio_referencia),3) precio_promedio,((count(id_empresa)*100)/8)*0.175  porcentaje_capacidad\n"
+                + "                    from precios_Ref_rubro_emp\n"
+                + "                    where id_empresa in (" + idEmpresas + ") and \n"
+                + "                        estado_eliminacion = 0 and\n"
+                + "                        id_det_proceso_adq =  " + idDetProcesoAdq + "\n"
+                + "                    group by id_empresa) tbl on det.id_empresa = tbl.id_empresa\n"
+                + "    where det.id_det_proceso_adq in (" + idDetProcesoAdq + ") and\n"
+                + "        det.estado_eliminacion = 0) tb1\n"
+                + "    inner join (select \n"
+                + "                    det.id_empresa,\n"
+                + "                    cip.capacidad_acreditada,\n"
+                + "                    cip.capacidad_adjudicada,\n"
+                + "                    case when (cip.capacidad_acreditada-cip.capacidad_adjudicada) >= " + cantidad + " then " + (idRubro == 4 ? "12.50" : (idRubro == 5 ? "12.50" : "17.50")) + " \n"
+                + "                    else (((cip.capacidad_acreditada-cip.capacidad_adjudicada)*100)/" + cantidad + ") * " + (idRubro == 4 ? "0.1250" : (idRubro == 5 ? "0.1250" : "0.1750")) + " \n"
+                + "                    end porcentaje_capacidad\n"
+                + "                from det_rubro_muestra_interes det\n"
+                + "                    inner join capa_inst_por_rubro cip      on det.id_muestra_interes = cip.id_muestra_interes\n"
+                + "                where det.id_det_proceso_adq in (" + idDetProcesoAdq + ") and\n"
+                + "                    det.id_empresa in (" + idEmpresas + ") and\n"
+                + "                    det.estado_eliminacion = 0) tb2 on tb1.id_empresa = tb2.id_empresa\n"
+                + "order by\n"
+                + "    (porcentaje_precio+porcentaje_geo+porcentaje_capacidad_i+porcentaje_capacidad) desc,((capacidad_adjudicada*100)/capacidad_acreditada) asc", ProveedorDisponibleDto.class);
+        return q.getResultList();
+    }
+
     private String getPorcentajePorItems(int idRubro) {
         switch (idRubro) {
             case 1:
