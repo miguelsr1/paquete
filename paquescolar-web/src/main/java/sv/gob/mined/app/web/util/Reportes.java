@@ -53,6 +53,18 @@ public class Reportes {
         }
     }
 
+    public static JasperPrint generarRptBeanConnection(List lst, HashMap param, String paqueteRpt, String nombreRpt) {
+        try {
+            ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+            param.put("ubicacionImagenes", ctx.getRealPath(PATH_IMAGENES));
+            JasperPrint jasperPrint = JasperFillManager.fillReport(Reportes.class.getClassLoader().getResourceAsStream(paqueteRpt + File.separator + nombreRpt), param, new JRBeanCollectionDataSource(lst));
+            return jasperPrint;
+        } catch (JRException ex) {
+            Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
     /**
      *
      * @param reportesEJB

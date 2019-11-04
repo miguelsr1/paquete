@@ -460,11 +460,10 @@
                             <f:facet name="footer">
                                 <p:row>
                                     <p:column colspan="3" styleClass="numero">Total</p:column>
-                                    <p:column styleClass="numero"><p:outputLabel id="lblTotalMatricula"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
-
-                                    <p:column styleClass="numero"><p:outputLabel id="lblTotalUni"><f:convertNumber pattern="$ #,#00.00"/></p:outputLabel></p:column>
-                                    <p:column styleClass="numero"><p:outputLabel id="lblTotalUti"><f:convertNumber pattern="$ #,#00.00"/></p:outputLabel></p:column>
-                                    <p:column styleClass="numero"><p:outputLabel id="lblTotalZap"><f:convertNumber pattern="$ #,#00.00"/></p:outputLabel></p:column>
+                                    <p:column styleClass="numero"><h:outputText id="lblTotalMatricula"><f:convertNumber pattern="#,#00"/></h:outputText></p:column>
+                                    <p:column styleClass="numero"><h:outputText id="lblTotalUni"><f:convertNumber pattern="#,#00.00"/></h:outputText></p:column>
+                                    <p:column styleClass="numero"><h:outputText id="lblTotalUti"><f:convertNumber pattern="#,#00.00"/></h:outputText></p:column>
+                                    <p:column styleClass="numero"><h:outputText id="lblTotalZap"><f:convertNumber pattern="#,#00.00"/></h:outputText></p:column>
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>

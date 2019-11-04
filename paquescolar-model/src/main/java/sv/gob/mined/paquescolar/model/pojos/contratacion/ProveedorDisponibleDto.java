@@ -7,7 +7,6 @@ package sv.gob.mined.paquescolar.model.pojos.contratacion;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import javax.persistence.Entity;
 import javax.persistence.EntityResult;
 import javax.persistence.Id;

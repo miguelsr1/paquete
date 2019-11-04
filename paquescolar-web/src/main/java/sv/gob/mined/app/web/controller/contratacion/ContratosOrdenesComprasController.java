@@ -49,6 +49,7 @@ import sv.gob.mined.paquescolar.model.OrganizacionEducativa;
 import sv.gob.mined.paquescolar.model.Participantes;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.RptDocumentos;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.VwCotizacion;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 
 /**
@@ -893,11 +894,19 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
             }
         }
 
+        //verificar selección de cotización
+        for (int i = 0; i < lstSelectDocumentosImp.size(); i++) {
+            Object valor = lstSelectDocumentosImp.get(i);
+            if (valor instanceof String && valor.equals("8")) {
+                lstRptAImprimir.add(rptCotizacion());
+                break;
+            }
+        }
+
         return lstRptAImprimir;
     }
 
     public void impDocumentos() {
-        //List<Integer> lstRpt = new ArrayList();
         List<RptDocumentos> lstRptDocumentos;
         Boolean isPersonaNat;
 
@@ -907,7 +916,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
             } else {
                 lstRptDocumentos = resolucionAdjudicativaEJB.getDocumentosAImprimir(detalleProceso.getIdDetProcesoAdq(), lstSelectDocumentosImp);
 
-                if (lstRptDocumentos.isEmpty()) {
+                if (lstRptDocumentos.isEmpty() && lstSelectDocumentosImp.isEmpty()) {
                     JsfUtil.mensajeAlerta("No se han definidos los documentos a imprimir para este proceso.");
                 } else {
                     try {
@@ -941,5 +950,39 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
 
     public void buscarHistorialCambios() {
         lstHistorialCambios = resolucionAdjudicativaEJB.findHistorialByIdResolucionAdj(resolucionAdj.getIdResolucionAdj());
+    }
+
+    public JasperPrint rptCotizacion() {
+        String anho = "";
+        String nombreRpt = "";
+        HashMap param = new HashMap();
+        List<VwCotizacion> lst = ofertaBienesServiciosEJB.getLstCotizacion(VarSession.getNombreMunicipioSession(), codigoEntidad, detalleProceso, current.getIdResolucionAdj().getIdParticipante());
+        Boolean sobredemanda = getRecuperarProceso().getProcesoAdquisicion().getDescripcionProcesoAdq().contains("SOBREDEMANDA");
+
+        //Para contratos antes de 2016, se tomara los formatos de rpt que no incluyen el año en el nombre del archivo jasper
+        if (Integer.parseInt(detalleProceso.getIdProcesoAdq().getIdAnho().getAnho()) > 2016) {
+            anho = detalleProceso.getIdProcesoAdq().getIdAnho().getAnho();
+        }
+
+        switch (detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue()) {
+            case 1:
+            case 4:
+            case 5:
+                nombreRpt = "rptCotizacionUni" + anho + ".jasper";
+                break;
+            case 2:
+                nombreRpt = "rptCotizacionUti" + anho + ".jasper";
+                break;
+            case 3:
+                if (getRecuperarProceso().getProcesoAdquisicion().getDescripcionProcesoAdq().contains("MINI")) {
+                    nombreRpt = "rptCotizacionZap" + anho + "_mini.jasper";
+                } else {
+                    nombreRpt = "rptCotizacionZap" + anho + ".jasper";
+                }
+        }
+        param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda);
+        param.put("ubicacionImagenes", ContratosOrdenesComprasController.class.getClassLoader().getResource(("sv/gob/mined/apps/reportes/cotizacion" + File.separator + nombreRpt)).getPath().replace(nombreRpt, ""));
+
+        return Reportes.generarRptBeanConnection(lst, param, "sv/gob/mined/apps/reportes/cotizacion", nombreRpt);
     }
 }

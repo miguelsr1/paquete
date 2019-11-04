@@ -43,7 +43,6 @@ import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.pojos.VwRptCertificacionPresupuestaria;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.PrecioReferenciaEmpresaDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ProveedorDisponibleDto;
-import sv.gob.mined.paquescolar.model.pojos.contratacion.VwCotizacion;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 import sv.gob.mined.paquescolar.util.Constantes;
 
@@ -685,40 +684,6 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         }
     }
 
-    public void rptCotizacion() {
-        String anho = "";
-        String nombreRpt = "";
-        HashMap param = new HashMap();
-        List<VwCotizacion> lst = ofertaBienesServiciosEJB.getLstCotizacion(VarSession.getNombreMunicipioSession(), getSelected().getCodigoEntidad().getCodigoEntidad(), getSelected().getIdDetProcesoAdq(), participanteSeleccionado);
-        Boolean sobredemanda = getRecuperarProceso().getProcesoAdquisicion().getDescripcionProcesoAdq().contains("SOBREDEMANDA");
-
-        //Para contratos antes de 2016, se tomara los formatos de rpt que no incluyen el año en el nombre del archivo jasper
-        if (Integer.parseInt(getSelected().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho()) > 2016) {
-            anho = getSelected().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho();
-        }
-
-        switch (getSelected().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue()) {
-            case 1:
-            case 4:
-            case 5:
-                nombreRpt = "rptCotizacionUni" + anho + ".jasper";
-                break;
-            case 2:
-                nombreRpt = "rptCotizacionUti" + anho + ".jasper";
-                break;
-            case 3:
-                if (getRecuperarProceso().getProcesoAdquisicion().getDescripcionProcesoAdq().contains("MINI")) {
-                    nombreRpt = "rptCotizacionZap" + anho + "_mini.jasper";
-                } else {
-                    nombreRpt = "rptCotizacionZap" + anho + ".jasper";
-                }
-        }
-        param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda);
-        param.put("ubicacionImagenes", OfertaBienesServicios.class.getClassLoader().getResource(("sv/gob/mined/apps/reportes/cotizacion" + File.separator + nombreRpt)).getPath().replace(nombreRpt, ""));
-
-        Reportes.generarRptBeanConnection(lst, param, "sv/gob/mined/apps/reportes/cotizacion", nombreRpt, "cotización" + codigoEntidad);
-    }
-
     public String editarOfertaParticipante() {
         String r = "";
         boolean modificaciones = false;
@@ -889,6 +854,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         String nombreRubroTemp = (detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "Uniforme" : (detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 2 ? "Utiles" : "Zapatos"));
         HashMap param = new HashMap();
         param.put("pRubro", detalleProceso.getIdRubroAdq().getDescripcionRubro());
+        param.put("pProceso", detalleProceso.getIdProcesoAdq().getIdProcesoAdq());
         param.put("pAnho", detalleProceso.getIdProcesoAdq().getIdAnho().getAnho());
         param.put("pCodigoEntidad", codigoEntidad);
         param.put("pHoraYFecha", entidadEducativa.getCodigoDepartamento().getNombreDepartamento() + ", " + JsfUtil.getFechaString(new Date()));

@@ -14,6 +14,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
@@ -366,6 +368,7 @@ public class ResolucionAdjudicativaEJB {
         }
     }
 
+    @Lock(LockType.WRITE)
     public HashMap<String, Object> aplicarReservaDeFondos(ResolucionesAdjudicativas resAdj,
             BigDecimal estadoReserva, String codigoEntidad, String comentarioReversion, String usuario) {
         Logger.getLogger(ResolucionAdjudicativaEJB.class.getName()).log(Level.INFO, "Usuario que aplica reserva: {0} del CE: {1}", new Object[]{usuario, codigoEntidad});
