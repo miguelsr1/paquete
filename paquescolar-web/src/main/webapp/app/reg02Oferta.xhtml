@@ -73,7 +73,7 @@
                             <p:outputLabel value="#{participante.idParticipante}" />
                         </p:column>
 
-                        <p:column headerText="NIT" width="110" rendered="#{!menuController.isUsuarioDigitador}">
+                        <p:column headerText="NIT" width="120" rendered="#{!menuController.isUsuarioDigitador}">
                             <p:outputLabel value="#{participante.idEmpresa.numeroNit}" />
                         </p:column>
 
@@ -90,12 +90,6 @@
 
                                 <f:viewParam name="idParticipante" value="#{participante.idParticipante}"/>
                             </p:commandLink>
-                        </p:column>
-
-                        <p:column headerText="Cotización" width="50" styleClass="centrado">
-                            <p:commandButton action="#{ofertaMB.rptCotizacion}" ajax="false" disabled="#{ofertaMB.selected.idOferta eq null}" icon="fa fa-print">
-                                <f:setPropertyActionListener value="#{participante}" target="#{ofertaMB.participanteSeleccionado}" />  
-                            </p:commandButton>
                         </p:column>
 
                         <p:column headerText="Ver Oferta" width="40" styleClass="centrado">

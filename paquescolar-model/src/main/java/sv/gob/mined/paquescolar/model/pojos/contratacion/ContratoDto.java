@@ -80,6 +80,8 @@ public class ContratoDto implements Serializable {
     private List<DetalleItemDto> lstDetalleNew = new ArrayList();
     @Transient
     private List<ParticipanteDto> lstParticipantes = new ArrayList();
+    @Transient
+    private List<ProveedorDisponibleDto> lstPorcentajeEval = new ArrayList();
 
     public ContratoDto() {
     }
@@ -398,5 +400,13 @@ public class ContratoDto implements Serializable {
 
     public void setDistribuidor(BigInteger distribuidor) {
         this.distribuidor = distribuidor;
+    }
+
+    public List<ProveedorDisponibleDto> getLstPorcentajeEval() {
+        return lstPorcentajeEval;
+    }
+
+    public void setLstPorcentajeEval(List<ProveedorDisponibleDto> lstPorcentajeEval) {
+        this.lstPorcentajeEval = lstPorcentajeEval;
     }
 }

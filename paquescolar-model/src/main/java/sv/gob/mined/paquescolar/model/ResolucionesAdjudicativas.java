@@ -77,7 +77,7 @@ public class ResolucionesAdjudicativas implements Serializable {
     @JoinColumn(name = "ID_ESTADO_RESERVA", referencedColumnName = "ID_ESTADO_RESERVA")
     @ManyToOne(fetch = FetchType.EAGER)
     private EstadoReserva idEstadoReserva;
-
+    
     public ResolucionesAdjudicativas() {
     }
 

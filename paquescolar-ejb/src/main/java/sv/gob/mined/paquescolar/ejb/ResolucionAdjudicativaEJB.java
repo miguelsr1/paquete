@@ -181,6 +181,26 @@ public class ResolucionAdjudicativaEJB {
         }
         return lst;
     }
+    
+    public List<ContratoDto> generarRptActaRecomendacion(BigDecimal idResolucion) {
+        List<ContratoDto> lst;
+
+        ResolucionesAdjudicativas res = findResolucionesAdjudicativasByPk(idResolucion);
+
+        Query query = em.createNamedQuery("Contratacion.RptActaAdjudicacion", ContratoDto.class);
+        query.setParameter(1, res.getIdParticipante().getIdOferta().getIdOferta());
+        lst = query.getResultList();
+        if (lst.isEmpty()) {
+            return new ArrayList();
+        } else {
+            query = em.createNamedQuery("Contratacion.RptActaAdjudicacionParticipantes", ParticipanteDto.class);
+            query.setParameter(1, res.getIdParticipante().getIdOferta().getIdOferta());
+            lst.get(0).setLstParticipantes(query.getResultList());
+
+            lst.get(0).setLstPorcentajeEval(proveedorEJB.getLstProveedorPorcentajeEval(res.getIdParticipante().getIdOferta().getIdOferta()));
+        }
+        return lst;
+    }
 
     public List<ContratoDto> generarRptNotaAdjudicacion(BigDecimal idResolucion) {
         Query query = em.createNamedQuery("Contratacion.RptNotaAdjudicacionBean", ContratoDto.class);

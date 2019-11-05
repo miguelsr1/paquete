@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptActaAdjudicacion" pageWidth="612" pageHeight="792" columnWidth="528" leftMargin="42" rightMargin="42" topMargin="39" bottomMargin="39" uuid="244b56df-7b1c-4fca-9e9d-dde2f9b172eb">
 	<property name="ireport.zoom" value="1.0245201830476065"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="176"/>
+	<property name="ireport.y" value="0"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -135,6 +135,9 @@
 	<field name="usuarioInsercion" class="java.lang.String">
 		<fieldDescription><![CDATA[usuarioInsercion]]></fieldDescription>
 	</field>
+	<field name="lstPorcentajeEval" class="java.util.List">
+		<fieldDescription><![CDATA[lstPorcentajeEval]]></fieldDescription>
+	</field>
 	<group name="reporte" isStartNewColumn="true" isStartNewPage="true" isResetPageNumber="true" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[]]></groupExpression>
 		<groupHeader>
@@ -168,14 +171,6 @@ concat("económicamente las cotizaciones presentadas para el proceso de compra "
 concat("de Libre Gestión y dar la recomendación de adjudicación respectiva.").
 concat("\n\nETAPAS DEL PROCESO:\n\n").
 concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{fechaApertura}+" a:")]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement uuid="5843cd26-1ae0-4edd-ac6d-bac74c0c756d" key="staticText-5" x="81" y="10" width="298" height="35"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-						<font fontName="Arial" size="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA["ACTA DE ADJUDICACION\n"+
-"\""+$F{descripcionRubro}+"\""]]></textFieldExpression>
 				</textField>
 				<image>
 					<reportElement uuid="d662ed9c-377b-4d74-87d4-2293e65456b4" key="image-1" x="0" y="0" width="60" height="60"/>
@@ -249,7 +244,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 				<reportElement uuid="00146551-f7a9-443a-b751-cf2b76b7a1c9" key="table 2" style="table 2" x="11" y="0" width="507" height="50"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="dsDetalleItem" uuid="0ea60642-20d6-422f-9d7a-25f6b2505146">
-						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstPorcentajeEval})]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="221" uuid="b88a7db0-4cf6-497e-bf7b-6385260837e0">
 						<jr:columnHeader style="table 2_TD" height="24" rowSpan="1">

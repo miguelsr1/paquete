@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="65172929-4721-4af7-be7e-c359fec8ef19">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="343"/>
+	<property name="ireport.y" value="144"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -50,7 +50,7 @@
 from (select 
             tbl.codigo_entidad, 
             tbl.id_nivel, 
-            sum(masculino+femenimo) can,
+            case cat.id_producto when 21 then femenimo else masculino end can,
             cat.nombre_producto,
             cat.codigo_producto,
             cat.id_producto,
@@ -67,8 +67,7 @@ from (select
                     (masculino is not null and femenimo is not null and masculino <>0 and femenimo <> 0)
                 order by est.id_nivel_educativo) tbl,
                 catalogo_producto cat
-        where cat.id_producto in (21,43)
-        group by tbl.codigo_entidad, tbl.id_nivel,cat.nombre_producto, cat.codigo_producto, cat.id_producto) tb
+        where cat.id_producto in (21,43)) tb
     left outer join resguardo_bienes res on res.id_nivel_educativo = tb.id_nivel and res.codigo_entidad = tb.codigo_entidad and res.id_producto = tb.id_producto
     inner join nivel_educativo niv on tb.id_nivel = niv.id_nivel_educativo
 where (tb.id_niv_pro <>  33 and tb.id_niv_pro <> 37) and

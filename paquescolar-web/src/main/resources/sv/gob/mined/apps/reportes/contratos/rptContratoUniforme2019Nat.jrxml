@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptContratoPersonaNaturalZapatos" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="b3d27ee3-cc8d-4284-9900-697f3963c735">
 	<property name="ireport.zoom" value="1.366026910730141"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="96"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -169,7 +169,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 	<group name="cabecera">
 		<groupExpression><![CDATA[$F{CODIGO_ENTIDAD}]]></groupExpression>
 		<groupHeader>
-			<band height="179" splitType="Stretch">
+			<band height="188" splitType="Stretch">
 				<image onErrorType="Blank">
 					<reportElement uuid="844fab98-6db0-4fbc-b7fe-37651b8c294d" key="image-1" x="0" y="0" width="60" height="60"/>
 					<box>
@@ -204,7 +204,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 					<textFieldExpression><![CDATA["CONTRATO No. ME-"+$F{NUMERO_CONTRATO}+"/"+$F{ANHO_CONTRATO}+"/COD:"+$F{CODIGO_ENTIDAD}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement uuid="735d7e0e-c206-43a2-8c36-0ca7a274c416" key="textField-8" x="0" y="93" width="510" height="86"/>
+					<reportElement uuid="735d7e0e-c206-43a2-8c36-0ca7a274c416" key="textField-8" x="0" y="91" width="510" height="97"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

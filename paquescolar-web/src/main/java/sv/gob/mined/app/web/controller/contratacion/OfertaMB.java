@@ -78,6 +78,8 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     private SelectItem[] lstEstilos = new SelectItem[0];
     private HashMap<String, String> mapItems;
 
+    private ProveedorDisponibleDto proveedorSeleccionado = new ProveedorDisponibleDto();
+
     private List<String> images = new ArrayList();
     private List<ProveedorDisponibleDto> lstCapaEmpresas = new ArrayList();
     private List<ProveedorDisponibleDto> lstCapaEmpresasOtros = new ArrayList();
@@ -119,6 +121,14 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public ProveedorDisponibleDto getProveedorSeleccionado() {
+        return proveedorSeleccionado;
+    }
+
+    public void setProveedorSeleccionado(ProveedorDisponibleDto proveedorSeleccionado) {
+        this.proveedorSeleccionado = proveedorSeleccionado;
+    }
+
     public BigDecimal getCantidadAlumnos() {
         return cantidadAlumnos;
     }
@@ -385,7 +395,6 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     }
 
     public void onSelect(BigDecimal idEmpresa) {
-        //capaInstSeleccionada = capa;
         try {
             if (idEmpresa == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un proveedor");
@@ -407,9 +416,11 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                                 participante.setModificativa(BigInteger.ZERO);
                                 participante.setUsuarioInsercion(VarSession.getVariableSession("Usuario").toString());
 
+                                participante.setPorcentajeCapacidad(new BigDecimal(proveedorSeleccionado.getPorcentajeCapacidad()+proveedorSeleccionado.getPorcentajeCapacidadItem()));
+                                participante.setPorcentajeGeo(new BigDecimal(proveedorSeleccionado.getPorcentajeGeo()));
+                                participante.setPorcentajePrecio(new BigDecimal(proveedorSeleccionado.getPorcentajePrecio()));
+                                                                
                                 current.getParticipantesList().add(participante);
-
-                                //capaInstSeleccionada = null;
                             }
                         } else {
                             JsfUtil.mensajeAlerta("Este proveedor no esta calificado para este departamento.");
@@ -651,10 +662,10 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         //calcular el menor precio de ambos listados
         lstEmpresas = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(),
                 codigoEntidad, entidadEducativa.getCodigoDepartamento().getCodigoDepartamento(), entidadEducativa.getCodigoMunicipio(), entidadEducativa.getCodigoCanton(),
-                entidadEducativa.getIdMunicipio().intValue(), idMunicipios, true, true, cantidad, mapItems);
+                entidadEducativa.getIdMunicipio().intValue(), idMunicipios, true, cantidad, mapItems);
         lstEmpresasOtros = proveedorEJB.getLstCapaEmpPorNitOrRazonSocialAndRubroAndMunicipioCe(current.getIdDetProcesoAdq(),
                 codigoEntidad, entidadEducativa.getCodigoDepartamento().getCodigoDepartamento(), entidadEducativa.getCodigoMunicipio(), entidadEducativa.getCodigoCanton(),
-                entidadEducativa.getIdMunicipio().intValue(), idMunicipios, false, false, cantidad, mapItems);
+                entidadEducativa.getIdMunicipio().intValue(), idMunicipios, false, cantidad, mapItems);
 
         lstCapaEmpresas.clear();
         lstCapaEmpresas.addAll(lstEmpresas);

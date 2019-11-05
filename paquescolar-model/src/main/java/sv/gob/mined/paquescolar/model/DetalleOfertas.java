@@ -82,9 +82,14 @@ public class DetalleOfertas implements Serializable {
     private BigInteger modificativa;
     @Column(name = "CANTIDAD_OFERTADA")
     private BigInteger cantidadOfertada;
+    
+    
     @JoinColumn(name = "ID_PARTICIPANTE", referencedColumnName = "ID_PARTICIPANTE")
     @ManyToOne(fetch = FetchType.EAGER)
     private Participantes idParticipante;
+    
+    
+    
     @JoinColumn(name = "ID_NIVEL_EDUCATIVO", referencedColumnName = "ID_NIVEL_EDUCATIVO")
     @ManyToOne(fetch = FetchType.EAGER)
     private NivelEducativo idNivelEducativo;

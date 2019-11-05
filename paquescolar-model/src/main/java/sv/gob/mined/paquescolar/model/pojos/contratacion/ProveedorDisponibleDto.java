@@ -33,10 +33,10 @@ public class ProveedorDisponibleDto implements Serializable {
     private String nombreMunicipio;
     private String nombreDepartamento;
     private Double puAvg;
-    private Double porcentajePrecio;
-    private Double porcentajeGeo;
-    private Double porcentajeCapacidad;
-    private Double porcentajeCapacidadItem;
+    private Double porcentajePrecio = 0d;
+    private Double porcentajeGeo = 0d;
+    private Double porcentajeCapacidad = 0d;
+    private Double porcentajeCapacidadItem = 0d;
     private Double porcentajeEvaluacion;
     private Double porcentajeAdjudicacion;
 

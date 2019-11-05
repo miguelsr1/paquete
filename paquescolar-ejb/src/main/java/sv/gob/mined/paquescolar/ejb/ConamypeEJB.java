@@ -63,10 +63,9 @@ public class ConamypeEJB {
 
     @WebMethod
     public void setDatosProveedor(String jsonString, String clave) {
-        Logger.getLogger(ConamypeEJB.class.getName()).log(Level.INFO, "Entro");
         if (clave.equals("CONAMYPE_MINED2019")) {
-            if (isActivoWsConamype()) {
-                //if (true) {
+            //if (isActivoWsConamype()) {
+            if (true) {
                 try {
                     String usuario;
                     JSONParser jsonParser = new JSONParser();
@@ -310,7 +309,7 @@ public class ConamypeEJB {
                                     for (Object itemTemp : jsItems.toArray()) {
                                         JSONObject jsItem = (JSONObject) itemTemp;
 
-                                        DetCapaSegunRubro detCapaSegunRubro = findDetCapaSegunRubro(new BigDecimal(jsItem.get("id").toString()), new BigDecimal(jsItem.get("nivel").toString()));
+                                        DetCapaSegunRubro detCapaSegunRubro = findDetCapaSegunRubro(new BigDecimal(jsItem.get("id").toString()), new BigDecimal(jsItem.get("nivel").toString()), detRubro.getIdMuestraInteres());
 
                                         if (detCapaSegunRubro == null) {
                                             detCapaSegunRubro = new DetCapaSegunRubro();
@@ -343,18 +342,18 @@ public class ConamypeEJB {
                                     }
                                 }
 
-                                Logger.getLogger(ConamypeEJB.class.getName()).log(Level.INFO, null, "Empresa: " + empresa);
+                                Logger.getLogger(ConamypeEJB.class.getName()).log(Level.INFO, "Empresa: {0}", empresa);
                             }
                         }
                     }
 
                 } catch (NumberFormatException | ParseException ex) {
-                    Logger.getLogger(ConamypeEJB.class.getName()).log(Level.SEVERE, null, "Error en el json\n: json: " + jsonString);
+                    Logger.getLogger(ConamypeEJB.class.getName()).log(Level.SEVERE, "Error en el json\n: json: {0}", jsonString);
 
                     eMailEJB.enviarMailDeError("Error - WS CONAMYPE - MINED", "Ah ocurrido el sigueinte error en el proceso de exportación de proveedores.", ex);
                 }
             } else {
-                Logger.getLogger(ConamypeEJB.class.getName()).log(Level.INFO, null, "WS NO ACTIVO");
+                Logger.getLogger(ConamypeEJB.class.getName()).log(Level.INFO, "WS NO ACTIVO");
             }
         } else {
             Logger.getLogger(ConamypeEJB.class.getName()).log(Level.INFO, null, "Error en la clave de acceso");
@@ -425,10 +424,11 @@ public class ConamypeEJB {
         }
     }
 
-    private DetCapaSegunRubro findDetCapaSegunRubro(BigDecimal idProducto, BigDecimal idNivelEducativo) {
-        Query q = em.createQuery("SELECT d FROM DetCapaSegunRubro d WHERE d.idProducto.idProducto=:idProducto AND d.idNivelEducativo.idNivelEducativo=:idNivelEducativo", DetCapaSegunRubro.class);
+    private DetCapaSegunRubro findDetCapaSegunRubro(BigDecimal idProducto, BigDecimal idNivelEducativo, BigDecimal idDetMuestra) {
+        Query q = em.createQuery("SELECT d FROM DetCapaSegunRubro d WHERE d.idProducto.idProducto=:idProducto AND d.idNivelEducativo.idNivelEducativo=:idNivelEducativo and d.idMuestraInteres.idMuestraInteres=:idDetMuestra and d.estadoEliminacion = 0", DetCapaSegunRubro.class);
         q.setParameter("idProducto", idProducto);
         q.setParameter("idNivelEducativo", idNivelEducativo);
+        q.setParameter("idDetMuestra", idDetMuestra);
         if (q.getResultList().isEmpty()) {
             return null;
         } else {
@@ -445,6 +445,15 @@ public class ConamypeEJB {
      */
     @WebMethod(operationName = "updCapacidadByNitAndIdDet")
     public void updCapacidadByNitAndIdDet(String numeroNit, Integer idDet, BigInteger capacidad) {
+        Query q = em.createQuery("SELECT e FROM Empresa e WHERE e.numeroNit=:nit", Empresa.class);
+        q.setParameter("nit", numeroNit);
+
+        if (!q.getResultList().isEmpty()) {
+            Empresa emp = (Empresa) q.getSingleResult();
+            q = em.createQuery("SELECT d FROM DetRubroMuestraInteres d WHERE d.idEmpresa =:idEmp", DetRubroMuestraInteres.class);
+            q.setParameter("idEmp", q.getSingleResult());
+        }
+
         Query q = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa.numeroNit=:nit and c.idMuestraInteres.idDetProcesoAdq.idDetProcesoAdq =:idDet", CapaInstPorRubro.class);
         q.setParameter("nit", numeroNit);
         q.setParameter("idDet", idDet);
@@ -455,6 +464,8 @@ public class ConamypeEJB {
             capa.setCapacidadAcreditada(capacidad);
             capa.setCapacidadAdjudicada(BigInteger.ZERO);
             em.merge(capa);
+
+            Logger.getLogger(ProveedorEJB.class.getName()).log(Level.INFO, "actualizado {0}", numeroNit);
         }
     }
 

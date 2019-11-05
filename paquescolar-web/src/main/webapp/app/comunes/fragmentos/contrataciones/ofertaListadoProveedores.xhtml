@@ -3,33 +3,6 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://java.sun.com/jsf/core">
-    <p:dataViewGridItem>
-        <p:panel styleClass="panelStyle">
-            <h:panelGrid columns="1" style="width: 100%; text-align: left !important;">
-                <h:panelGrid columns="1">
-                    <h:outputText value="Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
-                    <h:outputText value="#{capaEmpresa.razonSocial}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
-
-                    <h:outputText value="Tipo Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
-                    <h:outputText value="#{capaEmpresa.distribuidor eq 1 ? 'PRODUCTOR' : 'DISTRIBUIDOR'}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
-
-                    <h:outputText value="Capacidad disponible" />
-                    <h:outputText value="#{capaEmpresa.capacidadAcreditada - capaEmpresa.capacidadAdjudicada}" style="font-weight: bold">
-                        <f:convertNumber pattern="#,###"/>
-                    </h:outputText>
-                </h:panelGrid>
-            </h:panelGrid>
-            <f:facet name="footer">
-                <h:panelGrid columns="2" columnClasses="col6,col6" style="width: 100%; text-align: center !important;">
-                    <p:commandButton oncomplete="PF('dlgProveedor').hide()" action="#{ofertaMB.onSelect(capaEmpresa.idEmpresa)}" 
-                                     update="tblParticipantes tbEmpresas" icon="fa fa-check-circle"/>
-
-                    <p:commandButton oncomplete="PF('dlgDetalleProveedor').show()" update="dlgDetalleProveedor" icon="fa fa-eye"
-                                     action="#{ofertaMB.cargarDetalleProveedor(capaEmpresa.idEmpresa)}"/>
-                </h:panelGrid>
-            </f:facet>
-        </p:panel>
-    </p:dataViewGridItem>
 
     <p:dataViewListItem>
         <h:panelGrid columns="2" style="width:100%" columnClasses="col10,col2">
@@ -46,7 +19,7 @@
                         <f:convertNumber pattern="#,###"/>
                     </h:outputText>
                     
-                    <h:outputText value="Porcentaje adjudicación " rendered="#{!menuController.isUsuarioDigitador}"/>
+                    <h:outputText value="Porcentaje adjudicación "/>
                     <h:outputText value="#{capaEmpresa.porcentajeAdjudicacion}" rendered="#{!menuController.isUsuarioDigitador}">
                         <f:convertNumber pattern="#,###.00"/>
                     </h:outputText>
@@ -83,11 +56,18 @@
 
             <p:outputPanel>
                 <h:panelGrid columns="2" style="width: 100%; text-align: center !important;">
-                    <p:commandButton oncomplete="PF('dlgProveedor').hide()" action="#{ofertaMB.onSelect(capaEmpresa.idEmpresa)}" 
-                                     update="tblParticipantes tbEmpresas" icon="fa fa-check-circle"/>
+                    <p:commandLink oncomplete="PF('dlgProveedor').hide()" action="#{ofertaMB.onSelect(capaEmpresa.idEmpresa)}" 
+                                   class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+                                   style="height: 30px" update="tblParticipantes tbEmpresas">
+                        <i class="fa fa-check-circle" style="height: 30px"></i>
+                        <f:setPropertyActionListener value="#{capaEmpresa}" target="#{ofertaMB.proveedorSeleccionado}" />
+                    </p:commandLink>
 
-                    <p:commandButton oncomplete="PF('dlgDetalleProveedor').show()" update="dlgDetalleProveedor" icon="fa fa-eye" 
-                                     action="#{ofertaMB.cargarDetalleProveedor(capaEmpresa.idEmpresa)}"/>
+                    <p:commandLink oncomplete="PF('dlgDetalleProveedor').show()" update="dlgDetalleProveedor" style="height: 30px"
+                                   class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+                                     action="#{ofertaMB.cargarDetalleProveedor(capaEmpresa.idEmpresa)}">
+                        <i class="fa fa-eye"></i>
+                    </p:commandLink>
                 </h:panelGrid>
             </p:outputPanel>
         </h:panelGrid>

@@ -85,6 +85,8 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
     private BigDecimal rubro = BigDecimal.ZERO;
     private BigDecimal idParticipante = BigDecimal.ZERO;
     private BigDecimal idMunicipio;
+    private HashMap<String, String> mapItems;
+
     private DetalleProcesoAdq detalleProceso = new DetalleProcesoAdq();
     private OfertaBienesServicios oferta;
     private Participantes participante;
@@ -677,6 +679,9 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                     lstDocumentosImp = utilEJB.getLstDocumentosImp(showGarantiaUsoTela);
                     showFechaOrdenInicio = !showGarantiaUsoTela;
 
+                    mapItems = entidadEducativaEJB.getNoItemsByCodigoEntidadAndIdProcesoAdq(codigoEntidad, detalleProceso,
+                            detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
+
                     switch (estadoEdicion) {
                         case 1: //BUSCAR RESOLUCION ADJUDICATIVA
                             if (contratoOrd == null) {
@@ -858,7 +863,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                             }
 
                             //adición de aclaracion al contrato de 2do uniforme para el año 2019 
-                            if (detalleProceso.getIdProcesoAdq().getIdAnho().getAnho().equals("2019")) {
+                            if (detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 6) {
                                 if (detalleProceso.getIdDetProcesoAdq() == 41) {
                                     param.put("pAclaracion", RESOURCE_BUNDLE.getString("aclaracionContrato2019") + " ");
                                 } else {
@@ -895,11 +900,20 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
         }
 
         //verificar selección de cotización
-        for (int i = 0; i < lstSelectDocumentosImp.size(); i++) {
-            Object valor = lstSelectDocumentosImp.get(i);
+        for (Object valor : lstSelectDocumentosImp) {
             if (valor instanceof String && valor.equals("8")) {
                 lstRptAImprimir.add(rptCotizacion());
-                break;
+            }
+            if (valor instanceof String && valor.equals("9")) {
+
+                param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES + "notasactas") + File.separator);
+
+                rptTemp = reportesEJB.getRpt(param,
+                        ContratosOrdenesComprasController.class.getClassLoader().
+                                getResourceAsStream("sv/gob/mined/apps/reportes/notasactas/rptProveedoresPorcentajeEval.jasper"),
+                        resolucionAdjudicativaEJB.generarRptActaRecomendacion(current.getIdResolucionAdj().getIdResolucionAdj()));
+
+                lstRptAImprimir.add(rptTemp);
             }
         }
 
