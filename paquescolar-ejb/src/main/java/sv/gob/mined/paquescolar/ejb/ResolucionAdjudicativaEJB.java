@@ -196,6 +196,10 @@ public class ResolucionAdjudicativaEJB {
             query = em.createNamedQuery("Contratacion.RptActaAdjudicacionParticipantes", ParticipanteDto.class);
             query.setParameter(1, res.getIdParticipante().getIdOferta().getIdOferta());
             lst.get(0).setLstParticipantes(query.getResultList());
+            
+            query = em.createNamedQuery("Contratacion.RptActaAdjudicacionItems", DetalleItemDto.class);
+            query.setParameter(1, res.getIdParticipante().getIdOferta().getIdOferta());
+            lst.get(0).setLstDetalleItem(query.getResultList());
 
             lst.get(0).setLstPorcentajeEval(proveedorEJB.getLstProveedorPorcentajeEval(res.getIdParticipante().getIdOferta().getIdOferta()));
         }

@@ -445,16 +445,7 @@ public class ConamypeEJB {
      */
     @WebMethod(operationName = "updCapacidadByNitAndIdDet")
     public void updCapacidadByNitAndIdDet(String numeroNit, Integer idDet, BigInteger capacidad) {
-        Query q = em.createQuery("SELECT e FROM Empresa e WHERE e.numeroNit=:nit", Empresa.class);
-        q.setParameter("nit", numeroNit);
-
-        if (!q.getResultList().isEmpty()) {
-            Empresa emp = (Empresa) q.getSingleResult();
-            q = em.createQuery("SELECT d FROM DetRubroMuestraInteres d WHERE d.idEmpresa =:idEmp", DetRubroMuestraInteres.class);
-            q.setParameter("idEmp", q.getSingleResult());
-        }
-
-        Query q = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa.numeroNit=:nit and c.idMuestraInteres.idDetProcesoAdq.idDetProcesoAdq =:idDet", CapaInstPorRubro.class);
+        Query q = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa.numeroNit=:nit and c.idMuestraInteres.idDetProcesoAdq.idDetProcesoAdq =:idDet and c.idMuestraInteres.estadoEliminacion=0", CapaInstPorRubro.class);
         q.setParameter("nit", numeroNit);
         q.setParameter("idDet", idDet);
         if (q.getResultList().isEmpty()) {
@@ -464,8 +455,7 @@ public class ConamypeEJB {
             capa.setCapacidadAcreditada(capacidad);
             capa.setCapacidadAdjudicada(BigInteger.ZERO);
             em.merge(capa);
-
-            Logger.getLogger(ProveedorEJB.class.getName()).log(Level.INFO, "actualizado {0}", numeroNit);
+            
         }
     }
 

@@ -603,7 +603,7 @@ public class ProveedorEJB {
         if (detProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq() != null) {
             idDetTemp = getIdDetProceso(detProcesoAdq, detProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq());
         } else {
-            idDetTemp = getIdDetProceso(detProcesoAdq, detProcesoAdq.getIdProcesoAdq());
+            idDetTemp = detProcesoAdq.getIdDetProcesoAdq();
         }
 
         Query q = em.createNativeQuery(findLstIdEmpresa(codDepartamento, codMunicipio, codCanton, idMunicipio, idMunicipios, detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue(), getIdDetProcesoPadre(detProcesoAdq), idDetTemp,
@@ -1305,7 +1305,7 @@ public class ProveedorEJB {
     }
 
     public void calcularNoItems(Integer idDet) {
-        idDet = 52;
+        //idDet = 52;
         Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion = 0 and p.idDetProcesoAdq.idDetProcesoAdq=:idDet ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
         q.setParameter("idDet", idDet);
 

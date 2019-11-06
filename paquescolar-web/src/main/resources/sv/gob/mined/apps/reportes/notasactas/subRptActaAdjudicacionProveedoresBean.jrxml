@@ -2,12 +2,14 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptActaAdjudicacionProveedores" pageWidth="535" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="70a234ea-f9ad-4d40-8bbc-f96b80044c49">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="pPorcentajeGeo" class="java.lang.String"/>
+	<parameter name="pPorcentajeCapa" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -61,19 +63,13 @@
 	</detail>
 	<columnFooter>
 		<band height="65" splitType="Stretch">
-			<staticText>
-				<reportElement uuid="50e22f20-440a-4075-8955-4f8a5a735216" key="staticText-1" x="15" y="2" width="520" height="63"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Justified">
+			<textField>
+				<reportElement uuid="e95983b3-eff5-4f1f-b286-4e53312a280d" key="staticText-1" x="15" y="2" width="520" height="63"/>
+				<textElement textAlignment="Justified" markup="none">
 					<font size="9"/>
 				</textElement>
-				<text><![CDATA[Posterior a la recepción de cotizaciones, se analizaron detenidamente las cotizaciones presentadas tomando en cuenta los criterios siguientes: a) presentación de declaración jurada de cumplimiento de especificaciones técnicas, plazo y lugar de entrega; b) oferta económica; c) capacidad de producción o de suministro proporcionada por el proveedor en su manifestación de interés y calificada por CONAMYPE; y d) priorizando artesanos y negocios pequeños de la localidad; estableciendo en orden de mérito las ofertas económicas (de menor a mayor precio) adjudicando a cada persona proveedora de acuerdo al siguiente detalle:]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA["Posterior a la generación e impresión de cotizaciones, se analizaron detenidamente tomando en cuenta los criterios siguientes: a) presentación de declaración jurada de cumplimiento de especificaciones técnicas, plazo y lugar de entrega; b) oferta económica 40%; c) capacidad de producción  de suministro proporcionada por el proveedor en su manifestación de interés y calificada por CONAMYPE "+$P{pPorcentajeCapa}+"%; y d) Ubicación geográfica "+$P{pPorcentajeGeo}+"%; estableciendo en orden de mérito las ofertas económicas (de menor a mayor precio) adjudicando a cada persona proveedora de acuerdo al siguiente detalle: "]]></textFieldExpression>
+			</textField>
 			<staticText>
 				<reportElement uuid="3a42e639-fade-4b54-8a1b-b637c0883547" key="staticText-4" x="1" y="2" width="14" height="17"/>
 				<box>
@@ -85,7 +81,7 @@
 				<textElement>
 					<font size="9"/>
 				</textElement>
-				<text><![CDATA[c)]]></text>
+				<text><![CDATA[b)]]></text>
 			</staticText>
 		</band>
 	</columnFooter>

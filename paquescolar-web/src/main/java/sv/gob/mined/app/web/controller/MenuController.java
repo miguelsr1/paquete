@@ -186,6 +186,6 @@ public class MenuController implements Serializable {
     }
 
     public Boolean getIsUsuarioDigitador() {
-        return (usuario.getIdTipoUsuario().getIdTipoUsuario().intValue() == 2);
+        return (usuario.getIdTipoUsuario().getIdTipoUsuario().intValue() != 1);
     }
 }
