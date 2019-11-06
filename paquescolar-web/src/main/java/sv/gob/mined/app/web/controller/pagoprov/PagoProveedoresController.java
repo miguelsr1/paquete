@@ -28,6 +28,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -1837,31 +1838,43 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
     }
 
     public void imprimirRequerimiento() {
-        List<JasperPrint> jasperPrintList = new ArrayList();
-
-        jasperPrintList.add(imprimirRpt(requerimientoFondos, JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento), "rptRequerimientoFondos.jasper", "requerimientoFondosDet"));
-        jasperPrintList.add(imprimirRpt(requerimientoFondos, JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento), "rptResumenRequerimiento.jasper", "resumenRequerimientoFondos"));
-
-        Reportes.generarReporte(jasperPrintList, "requerimiento_" + codigoDepartamento.replace(" ", ""));
+        try {
+            List<JasperPrint> jasperPrintList = new ArrayList();
+            
+            jasperPrintList.add(imprimirRpt(requerimientoFondos, JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento), "rptRequerimientoFondos.jasper", "requerimientoFondosDet"));
+            jasperPrintList.add(imprimirRpt(requerimientoFondos, JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento), "rptResumenRequerimiento.jasper", "resumenRequerimientoFondos"));
+            
+            Reportes.generarReporte(jasperPrintList, "requerimiento_" + codigoDepartamento.replace(" ", ""));
+        } catch (IOException | JRException ex) {
+            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void impRptPagoProve() {
-        List<JasperPrint> jasperPrintList = new ArrayList();
-
-        jasperPrintList.add(imprimirRptPagoProve(JsfUtil.getNombreDepartamentoByCodigo(getRecuperarProceso().getDepartamento())));
-
-        Reportes.generarReporte(jasperPrintList, "rptPagoProve_" + codigoDepartamento.replace(" ", ""));
+        try {
+            List<JasperPrint> jasperPrintList = new ArrayList();
+            
+            jasperPrintList.add(imprimirRptPagoProve(JsfUtil.getNombreDepartamentoByCodigo(getRecuperarProceso().getDepartamento())));
+            
+            Reportes.generarReporte(jasperPrintList, "rptPagoProve_" + codigoDepartamento.replace(" ", ""));
+        } catch (IOException | JRException ex) {
+            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void impRptReintegro() {
         if (reintegroRequerimiento.getIdReintegro() == null) {
             JsfUtil.mensajeAlerta("Primero debe de guardar los datos del cheque.");
         } else {
-            List<JasperPrint> jasperPrintList = new ArrayList();
-
-            jasperPrintList.add(imprimirRptReintegro(JsfUtil.getNombreDepartamentoByCodigo(getRecuperarProceso().getDepartamento())));
-
-            Reportes.generarReporte(jasperPrintList, "rptReintegro_" + codigoDepartamento.replace(" ", ""));
+            try {
+                List<JasperPrint> jasperPrintList = new ArrayList();
+                
+                jasperPrintList.add(imprimirRptReintegro(JsfUtil.getNombreDepartamentoByCodigo(getRecuperarProceso().getDepartamento())));
+                
+                Reportes.generarReporte(jasperPrintList, "rptReintegro_" + codigoDepartamento.replace(" ", ""));
+            } catch (IOException | JRException ex) {
+                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -1917,7 +1930,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
                 jasperPrintList.add(imprimirRptPlanilla(rpt, pNombreCheque));
             }
             Reportes.generarReporte(jasperPrintList, "rptsPlanilla-" + planillaPago.getIdPlanilla());
-        } catch (Exception e) {
+        } catch (IOException | JRException e) {
             if (planillaPago != null & planillaPago.getIdPlanilla() != null) {
                 JsfUtil.mensajeError("Ah ocurrido un error en la generacion de los documentos contractuales. Id Planilla: " + planillaPago.getIdPlanilla());
             } else {

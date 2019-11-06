@@ -789,8 +789,8 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                             }
 
                             param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES + "notasactas") + File.separator);
-                            param.put("pPorcentajeCapa", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue()==1 ? "25":"35");
-                            param.put("pPorcentajeGeo", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue()==1 ? "35":"25");
+                            param.put("pPorcentajeCapa", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "25" : "35");
+                            param.put("pPorcentajeGeo", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "35" : "25");
                             rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptActaAdjudicacion(current.getIdResolucionAdj().getIdResolucionAdj()));
 
                             lstRptAImprimir.add(rptTemp);
@@ -908,6 +908,8 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
             }
             if (valor instanceof String && valor.equals("9")) {
 
+                param.put("pPorcentajeCapa", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "25" : "35");
+                param.put("pPorcentajeGeo", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "35" : "25");
                 param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES + "notasactas") + File.separator);
 
                 rptTemp = reportesEJB.getRpt(param,
@@ -939,7 +941,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                         isPersonaNat = (current.getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdPersoneria().getIdPersoneria().intValue() == 1);
                         Reportes.generarReporte(imprimir(lstRptDocumentos, isPersonaNat), "documentos_" + codigoEntidad);
                     } catch (Exception ex) {
-                        Logger.getLogger(ContratosOrdenesCompras.class.getName()).log(Level.SEVERE, "id_resolucion: " + current, ex);
+                        Logger.getLogger(ContratosOrdenesCompras.class.getName()).log(Level.SEVERE, "Error en generacion del reporte id_resolucion: {0}", current.getIdResolucionAdj().getIdResolucionAdj());
                     }
                 }
             }

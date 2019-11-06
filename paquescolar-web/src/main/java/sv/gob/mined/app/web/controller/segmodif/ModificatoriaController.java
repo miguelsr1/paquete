@@ -7,6 +7,7 @@ package sv.gob.mined.app.web.controller.segmodif;
 
 import sv.gob.mined.app.web.controller.contratacion.ContratosOrdenesComprasController;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -1001,38 +1002,42 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
     }
 
     private void imprimirResolucionModificatoria(int idModif, Boolean isPersonaNatural) {
-        String nombreRpt = "";
-
-        List<JasperPrint> jasperPrintList = new ArrayList();
-        List<ContratoDto> lstModificacionContratos;
-
-        switch (idModif) {
-            case 1:
-            case 6:
-                nombreRpt = "rptModCantSinIncrementoMonto";
-                break;
-            case 4:
-                nombreRpt = "rptModProrroga";
-                break;
-            case 5:
-                nombreRpt = "rptModIncrementoMonto";
-                break;
+        try {
+            String nombreRpt = "";
+            
+            List<JasperPrint> jasperPrintList = new ArrayList();
+            List<ContratoDto> lstModificacionContratos;
+            
+            switch (idModif) {
+                case 1:
+                case 6:
+                    nombreRpt = "rptModCantSinIncrementoMonto";
+                    break;
+                case 4:
+                    nombreRpt = "rptModProrroga";
+                    break;
+                case 5:
+                    nombreRpt = "rptModIncrementoMonto";
+                    break;
+            }
+            
+            lstModificacionContratos = modificativaEJB.generarResolucionModificativa(resolucionesModificativas);
+            
+            if (nombreRpt.contains("rptModProrroga")) {
+                lstModificacionContratos.get(0).setFechaInicio(sumarRestarDiasFecha(resolucionesModificativas.getIdContrato().getFechaOrdenInicio(), 60));
+                lstModificacionContratos.get(0).setFechaFin(sumarRestarDiasFecha(resolucionesModificativas.getIdContrato().getFechaOrdenInicio(), 60 + resolucionesModificativas.getDiasProrroga()));
+            }
+            
+            if (isPersonaNatural) {
+                jasperPrintList.add(imprimirRpt(nombreRpt + "PerNat.jasper", lstModificacionContratos, "modificatoriaContrato"));
+            } else {
+                jasperPrintList.add(imprimirRpt(nombreRpt + "PerJur.jasper", lstModificacionContratos, "modificatoriaContrato"));
+            }
+            
+            Reportes.generarReporte(jasperPrintList, "modificatoriaContrato");
+        } catch (IOException | JRException ex) {
+            Logger.getLogger(ModificatoriaController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        lstModificacionContratos = modificativaEJB.generarResolucionModificativa(resolucionesModificativas);
-
-        if (nombreRpt.contains("rptModProrroga")) {
-            lstModificacionContratos.get(0).setFechaInicio(sumarRestarDiasFecha(resolucionesModificativas.getIdContrato().getFechaOrdenInicio(), 60));
-            lstModificacionContratos.get(0).setFechaFin(sumarRestarDiasFecha(resolucionesModificativas.getIdContrato().getFechaOrdenInicio(), 60 + resolucionesModificativas.getDiasProrroga()));
-        }
-
-        if (isPersonaNatural) {
-            jasperPrintList.add(imprimirRpt(nombreRpt + "PerNat.jasper", lstModificacionContratos, "modificatoriaContrato"));
-        } else {
-            jasperPrintList.add(imprimirRpt(nombreRpt + "PerJur.jasper", lstModificacionContratos, "modificatoriaContrato"));
-        }
-
-        Reportes.generarReporte(jasperPrintList, "modificatoriaContrato");
     }
 
     public Date sumarRestarDiasFecha(Date fecha, int dias) {
@@ -1045,18 +1050,22 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
     }
 
     private void imprimirContratoFormatoOriginal(Boolean isPersonaNatural) {
-        List<RptDocumentos> lstRptDocumentos;
-        List<Integer> lstRpt = new ArrayList();
-        lstRpt.add(7);
-
-        lstRptDocumentos = resolucionAdjudicativaEJB.getDocumentosAImprimir(detalleProceso.getIdDetProcesoAdq(), lstRpt);
-
-        List<JasperPrint> jasperPrintList
-                = ((ContratosOrdenesComprasController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                        getValue(FacesContext.getCurrentInstance().getELContext(), null, "contratosOrdenesComprasController")).
-                        imprimirDesdeModificativa(lstRptDocumentos, isPersonaNatural, resolucionesModificativas.getIdContrato(), codigoEntidad);
-
-        Reportes.generarReporte(jasperPrintList, "documentos_" + codigoEntidad);
+        try {
+            List<RptDocumentos> lstRptDocumentos;
+            List<Integer> lstRpt = new ArrayList();
+            lstRpt.add(7);
+            
+            lstRptDocumentos = resolucionAdjudicativaEJB.getDocumentosAImprimir(detalleProceso.getIdDetProcesoAdq(), lstRpt);
+            
+            List<JasperPrint> jasperPrintList
+                    = ((ContratosOrdenesComprasController) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                            getValue(FacesContext.getCurrentInstance().getELContext(), null, "contratosOrdenesComprasController")).
+                            imprimirDesdeModificativa(lstRptDocumentos, isPersonaNatural, resolucionesModificativas.getIdContrato(), codigoEntidad);
+            
+            Reportes.generarReporte(jasperPrintList, "documentos_" + codigoEntidad);
+        } catch (IOException | JRException ex) {
+            Logger.getLogger(ModificatoriaController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public JasperPrint imprimirRpt(String nombreRpt, List<?> lst, String nombrePdf) {

@@ -212,51 +212,55 @@ public class OfertaBienesServiciosEJB {
         q.setParameter(3, participante.getIdParticipante());
 
         List<VwCotizacion> lstCotizacion = q.getResultList();
-        VwCotizacion v = lstCotizacion.get(0);
+        try {
+            VwCotizacion v = lstCotizacion.get(0);
 
-        v.setLstDetalleOferta(new ArrayList());
-        v.setLstDetalleOfertaLibros(new ArrayList());
-        v.setLugarFecha(municipio.concat(",").concat(v.getFechaApertura()));
+            v.setLstDetalleOferta(new ArrayList());
+            v.setLstDetalleOfertaLibros(new ArrayList());
+            v.setLugarFecha(municipio.concat(",").concat(v.getFechaApertura()));
 
-        String nombreVista = "";
+            String nombreVista = "";
 
-        switch (idProceso.getIdRubroAdq().getIdRubroInteres().intValue()) {
-            case 1:
-            case 4:
-            case 5:
-                nombreVista = "VW_COTIZACION_UNIFORME";
-                break;
-            case 2:
-                nombreVista = "VW_COTIZACION_UTILES";
-                break;
-            case 3:
-                nombreVista = "VW_COTIZACION_ZAPATOS";
-                break;
-        }
-
-        q = em.createNativeQuery("select distinct * FROM " + nombreVista + " WHERE id_empresa=?1 and codigo_entidad=?2 and id_proceso_estadistica=?3 and (id_proceso_precio=?4 or id_proceso_precio=?5) order by to_number(no_item), id_nivel_educativo");
-        q.setParameter(1, participante.getIdEmpresa().getIdEmpresa());
-        q.setParameter(2, codigoEntidad);
-        q.setParameter(3, idProceso.getIdProcesoAdq().getIdProcesoAdq());
-        q.setParameter(4, idProceso.getIdProcesoAdq().getIdProcesoAdq());
-        q.setParameter(5, idProceso.getIdProcesoAdq().getPadreIdProcesoAdq() == null ? null : idProceso.getIdProcesoAdq().getPadreIdProcesoAdq().getIdProcesoAdq());
-
-        List lst2 = q.getResultList();
-
-        lst2.forEach((object1) -> {
-            Object[] datos1 = (Object[]) object1;
-            DetalleOfertas det = new DetalleOfertas();
-            det.setNoItem(datos1[9].toString());
-            det.setConsolidadoEspTec(datos1[0].toString().concat(", ").concat(datos1[1].toString()));
-            det.setCantidad(new BigInteger(datos1[2].toString()));
-            det.setPrecioUnitario(new BigDecimal(datos1[3].toString()));
-
-            if (det.getConsolidadoEspTec().contains("Libro")) {
-                v.getLstDetalleOfertaLibros().add(det);
-            } else {
-                v.getLstDetalleOferta().add(det);
+            switch (idProceso.getIdRubroAdq().getIdRubroInteres().intValue()) {
+                case 1:
+                case 4:
+                case 5:
+                    nombreVista = "VW_COTIZACION_UNIFORME";
+                    break;
+                case 2:
+                    nombreVista = "VW_COTIZACION_UTILES";
+                    break;
+                case 3:
+                    nombreVista = "VW_COTIZACION_ZAPATOS";
+                    break;
             }
-        });
+
+            q = em.createNativeQuery("select distinct * FROM " + nombreVista + " WHERE id_empresa=?1 and codigo_entidad=?2 and id_proceso_estadistica=?3 and (id_proceso_precio=?4 or id_proceso_precio=?5) order by to_number(no_item), id_nivel_educativo");
+            q.setParameter(1, participante.getIdEmpresa().getIdEmpresa());
+            q.setParameter(2, codigoEntidad);
+            q.setParameter(3, idProceso.getIdProcesoAdq().getIdProcesoAdq());
+            q.setParameter(4, idProceso.getIdProcesoAdq().getIdProcesoAdq());
+            q.setParameter(5, idProceso.getIdProcesoAdq().getPadreIdProcesoAdq() == null ? null : idProceso.getIdProcesoAdq().getPadreIdProcesoAdq().getIdProcesoAdq());
+
+            List lst2 = q.getResultList();
+
+            lst2.forEach((object1) -> {
+                Object[] datos1 = (Object[]) object1;
+                DetalleOfertas det = new DetalleOfertas();
+                det.setNoItem(datos1[9].toString());
+                det.setConsolidadoEspTec(datos1[0].toString().concat(", ").concat(datos1[1].toString()));
+                det.setCantidad(new BigInteger(datos1[2].toString()));
+                det.setPrecioUnitario(new BigDecimal(datos1[3].toString()));
+
+                if (det.getConsolidadoEspTec().contains("Libro")) {
+                    v.getLstDetalleOfertaLibros().add(det);
+                } else {
+                    v.getLstDetalleOferta().add(det);
+                }
+            });
+        } catch (java.lang.ArrayIndexOutOfBoundsException e) {
+            Logger.getLogger(OfertaBienesServiciosEJB.class.getName()).log(Level.WARNING, "Error en la generacion de la cotizacion {0} {1} {2}", new Object[]{codigoEntidad, participante, idProceso});
+        }
 
         return lstCotizacion;
     }

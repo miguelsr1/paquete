@@ -25,6 +25,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PrimeFaces;
@@ -868,51 +869,55 @@ public class PlanillaPagoEdtMB extends RecuperarProcesoUtil implements Serializa
     }
 
     public void imprimirDocumentos() {
-        boolean tempChequeEntPro;
-        String rpt = "";
-        String pNombreCheque;
-
-        List<JasperPrint> jasperPrintList = new ArrayList();
-        //artificio para impresion de planillas creadas previo a la tipificación de planillas
-        if (planillaPago.getIdEstadoPlanilla() == 0) {
-            tempChequeEntPro = planillaPago.getIdRequerimiento().getCredito() == 1;
-            pNombreCheque = nombreEntFinanciera;
-        } else {
-            tempChequeEntPro = showChequeEntProv;
-            switch (planillaPago.getIdTipoPlanilla()) {
-                case 1:
-                    pNombreCheque = planillaPago.getDetallePlanillaList().get(0).getIdDetalleDocPago().getIdDetRequerimiento().getRazonSocial();
-                    break;
-                case 3:
-                    pNombreCheque = nombreEntFinanciera;
-                    break;
-                default:
-                    pNombreCheque = "";
-                    break;
+        try {
+            boolean tempChequeEntPro;
+            String rpt = "";
+            String pNombreCheque;
+            
+            List<JasperPrint> jasperPrintList = new ArrayList();
+            //artificio para impresion de planillas creadas previo a la tipificación de planillas
+            if (planillaPago.getIdEstadoPlanilla() == 0) {
+                tempChequeEntPro = planillaPago.getIdRequerimiento().getCredito() == 1;
+                pNombreCheque = nombreEntFinanciera;
+            } else {
+                tempChequeEntPro = showChequeEntProv;
+                switch (planillaPago.getIdTipoPlanilla()) {
+                    case 1:
+                        pNombreCheque = planillaPago.getDetallePlanillaList().get(0).getIdDetalleDocPago().getIdDetRequerimiento().getRazonSocial();
+                        break;
+                    case 3:
+                        pNombreCheque = nombreEntFinanciera;
+                        break;
+                    default:
+                        pNombreCheque = "";
+                        break;
+                }
             }
-        }
-
-        for (Integer idRpt : tipoDocumentoImp) {
-            switch (idRpt) {
-                case 1: //Planilla de Pago
-                    rpt = tempChequeEntPro ? "rptTransferenciaCrediCheque" : "rptTransferenciaCheque";
-                    break;
-                case 2: //Matriz de Pago
-                    rpt = tempChequeEntPro ? "rptMatrizPagoCredito" : "rptMatrizPago";
-                    break;
-                case 3: //Formato Entrega de Cheques
-                    rpt = tempChequeEntPro ? "rptFormatoEntregaChequeCredito" : "rptFormatoEntregaCheque";
-                    break;
-                case 4: //Planilla de Reintegro
-                    rpt = "rptFormatoReintegro";
-                    break;
-                case 5: //Planilla Renta
-                    rpt = "rptTransferenciaRenta";
-                    break;
+            
+            for (Integer idRpt : tipoDocumentoImp) {
+                switch (idRpt) {
+                    case 1: //Planilla de Pago
+                        rpt = tempChequeEntPro ? "rptTransferenciaCrediCheque" : "rptTransferenciaCheque";
+                        break;
+                    case 2: //Matriz de Pago
+                        rpt = tempChequeEntPro ? "rptMatrizPagoCredito" : "rptMatrizPago";
+                        break;
+                    case 3: //Formato Entrega de Cheques
+                        rpt = tempChequeEntPro ? "rptFormatoEntregaChequeCredito" : "rptFormatoEntregaCheque";
+                        break;
+                    case 4: //Planilla de Reintegro
+                        rpt = "rptFormatoReintegro";
+                        break;
+                    case 5: //Planilla Renta
+                        rpt = "rptTransferenciaRenta";
+                        break;
+                }
+                jasperPrintList.add(imprimirRptPlanilla(rpt, pNombreCheque));
             }
-            jasperPrintList.add(imprimirRptPlanilla(rpt, pNombreCheque));
+            Reportes.generarReporte(jasperPrintList, "rptsPlanilla-" + planillaPago.getIdPlanilla());
+        } catch (IOException | JRException ex) {
+            Logger.getLogger(PlanillaPagoEdtMB.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Reportes.generarReporte(jasperPrintList, "rptsPlanilla-" + planillaPago.getIdPlanilla());
     }
 
     public JasperPrint imprimirRptPlanilla(String rpt, String pNombreCheque) {

@@ -182,9 +182,9 @@ public class SaldosEJB {
                 query.setParameter("idEmpresa", res.getIdParticipante().getIdEmpresa());
                 query.setParameter("idAnho", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho());
             } else {
-                query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idProcesoAdq=:idProcesoAdq and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
+                query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq=:idDetProcesoAdq and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
                 query.setParameter("idEmpresa", res.getIdParticipante().getIdEmpresa());
-                query.setParameter("idProcesoAdq", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq() == null ? res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq() : res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq().getIdProcesoAdq());
+                query.setParameter("idDetProcesoAdq", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq());
             }
             List<CapaInstPorRubro> lst = query.getResultList();
 

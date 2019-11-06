@@ -401,7 +401,7 @@ public class ParticipantesController implements Serializable {
             participante = utilEJB.find(Participantes.class, idParticipante);
             try {
                 detalleProceso = participante.getIdOferta().getIdDetProcesoAdq();
-                
+
                 //verificar si el proveedor seleccionado posee precios de referencia
                 if (proveedorEJB.isPrecioRef(participante.getIdEmpresa(), participante.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho())) {
                     //cargar estilos, unicamente si el rubro es zapatos
@@ -684,13 +684,17 @@ public class ParticipantesController implements Serializable {
         if (numRow > 1) {
             numRow--;
         }
-        PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":descripcionItem");
-        PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":precioUnitario");
-        PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":subTotal");
-        PrimeFaces.current().ajax().update(nombreTabla + ":" + numRow + ":totalCantidad");
-        PrimeFaces.current().ajax().update(nombreTabla + ":" + numRow + ":total");
-        if (!msjError.isEmpty()) {
-            JsfUtil.mensajeAlerta(msjError);
+        try {
+            PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":descripcionItem");
+            PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":precioUnitario");
+            PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":subTotal");
+            PrimeFaces.current().ajax().update(nombreTabla + ":" + numRow + ":totalCantidad");
+            PrimeFaces.current().ajax().update(nombreTabla + ":" + numRow + ":total");
+            if (!msjError.isEmpty()) {
+                JsfUtil.mensajeAlerta(msjError);
+            }
+        } catch (org.primefaces.expression.ComponentNotFoundException ex) {
+            Logger.getLogger(ParticipantesController.class.getName()).log(Level.WARNING, "No se encontro el componenete {0}:{1}", new Object[]{nombreTabla, numRow});
         }
     }
 

@@ -140,7 +140,7 @@ public class Reportes {
                 }
             }
             generarReporte(jasperPrintList, codigoEntidad);
-        } catch (JRException ex) {
+        } catch (JRException | IOException ex) {
             Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -150,19 +150,18 @@ public class Reportes {
      * @param jasperPrintList
      * @param nombreRpt
      */
-    public static void generarReporte(List<JasperPrint> jasperPrintList, String nombreRpt) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            JRPdfExporter exporter = new JRPdfExporter();
+    
+    //buscar las exceciones de este metodo y controlar los errores.
+    public static void generarReporte(List<JasperPrint> jasperPrintList, String nombreRpt) throws IOException, JRException {
 
-            exporter.setParameter(JRExporterParameter.JASPER_PRINT_LIST, jasperPrintList);
-            exporter.setParameter(JRPdfExporterParameter.IS_CREATING_BATCH_MODE_BOOKMARKS, Boolean.FALSE);
-            exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
-            exporter.exportReport();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        JRPdfExporter exporter = new JRPdfExporter();
 
-            UtilFile.downloadFileBytes(baos.toByteArray(), nombreRpt, UtilFile.CONTENIDO_PDF, UtilFile.EXTENSION_PDF);
-        } catch (IOException | JRException ex) {
-            Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        exporter.setParameter(JRExporterParameter.JASPER_PRINT_LIST, jasperPrintList);
+        exporter.setParameter(JRPdfExporterParameter.IS_CREATING_BATCH_MODE_BOOKMARKS, Boolean.FALSE);
+        exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
+        exporter.exportReport();
+
+        UtilFile.downloadFileBytes(baos.toByteArray(), nombreRpt, UtilFile.CONTENIDO_PDF, UtilFile.EXTENSION_PDF);
     }
 }
