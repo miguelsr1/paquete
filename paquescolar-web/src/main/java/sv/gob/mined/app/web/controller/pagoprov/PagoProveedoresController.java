@@ -1840,22 +1840,22 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
     public void imprimirRequerimiento() {
         try {
             List<JasperPrint> jasperPrintList = new ArrayList();
-            
+
             jasperPrintList.add(imprimirRpt(requerimientoFondos, JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento), "rptRequerimientoFondos.jasper", "requerimientoFondosDet"));
             jasperPrintList.add(imprimirRpt(requerimientoFondos, JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento), "rptResumenRequerimiento.jasper", "resumenRequerimientoFondos"));
-            
+
             Reportes.generarReporte(jasperPrintList, "requerimiento_" + codigoDepartamento.replace(" ", ""));
         } catch (IOException | JRException ex) {
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, "Error en la generacion del requerimiento {0}", requerimientoFondos.getFormatoRequerimiento());
         }
     }
 
     public void impRptPagoProve() {
         try {
             List<JasperPrint> jasperPrintList = new ArrayList();
-            
+
             jasperPrintList.add(imprimirRptPagoProve(JsfUtil.getNombreDepartamentoByCodigo(getRecuperarProceso().getDepartamento())));
-            
+
             Reportes.generarReporte(jasperPrintList, "rptPagoProve_" + codigoDepartamento.replace(" ", ""));
         } catch (IOException | JRException ex) {
             Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.SEVERE, null, ex);
@@ -1868,12 +1868,12 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
         } else {
             try {
                 List<JasperPrint> jasperPrintList = new ArrayList();
-                
+
                 jasperPrintList.add(imprimirRptReintegro(JsfUtil.getNombreDepartamentoByCodigo(getRecuperarProceso().getDepartamento())));
-                
+
                 Reportes.generarReporte(jasperPrintList, "rptReintegro_" + codigoDepartamento.replace(" ", ""));
             } catch (IOException | JRException ex) {
-                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, "Error en el reporte de Reintegro "+reintegroRequerimiento);
             }
         }
     }

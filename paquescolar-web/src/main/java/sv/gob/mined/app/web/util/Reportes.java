@@ -141,7 +141,7 @@ public class Reportes {
             }
             generarReporte(jasperPrintList, codigoEntidad);
         } catch (JRException | IOException ex) {
-            Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Reportes.class.getName()).log(Level.WARNING, "Error en la impresion de los documentos contractuales {0} anho {1}", new Object[]{codigoEntidad, anho});
         }
     }
 
@@ -150,7 +150,6 @@ public class Reportes {
      * @param jasperPrintList
      * @param nombreRpt
      */
-    
     //buscar las exceciones de este metodo y controlar los errores.
     public static void generarReporte(List<JasperPrint> jasperPrintList, String nombreRpt) throws IOException, JRException {
 

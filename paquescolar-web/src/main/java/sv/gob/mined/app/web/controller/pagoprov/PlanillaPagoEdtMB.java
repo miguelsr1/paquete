@@ -873,7 +873,7 @@ public class PlanillaPagoEdtMB extends RecuperarProcesoUtil implements Serializa
             boolean tempChequeEntPro;
             String rpt = "";
             String pNombreCheque;
-            
+
             List<JasperPrint> jasperPrintList = new ArrayList();
             //artificio para impresion de planillas creadas previo a la tipificación de planillas
             if (planillaPago.getIdEstadoPlanilla() == 0) {
@@ -893,7 +893,7 @@ public class PlanillaPagoEdtMB extends RecuperarProcesoUtil implements Serializa
                         break;
                 }
             }
-            
+
             for (Integer idRpt : tipoDocumentoImp) {
                 switch (idRpt) {
                     case 1: //Planilla de Pago
@@ -916,7 +916,7 @@ public class PlanillaPagoEdtMB extends RecuperarProcesoUtil implements Serializa
             }
             Reportes.generarReporte(jasperPrintList, "rptsPlanilla-" + planillaPago.getIdPlanilla());
         } catch (IOException | JRException ex) {
-            Logger.getLogger(PlanillaPagoEdtMB.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PlanillaPagoEdtMB.class.getName()).log(Level.WARNING, "Error en la impresion de los documentos de pago {0}", planillaPago);
         }
     }
 

@@ -5,6 +5,7 @@
 package sv.gob.mined.app.web.controller.contratacion;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -24,6 +25,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 import org.primefaces.PrimeFaces;
 import sv.gob.mined.app.web.controller.ParametrosMB;
@@ -904,7 +906,9 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
         //verificar selección de cotización
         for (Object valor : lstSelectDocumentosImp) {
             if (valor instanceof String && valor.equals("8")) {
-                lstRptAImprimir.add(rptCotizacion());
+                current.getIdResolucionAdj().getIdParticipante().getIdOferta().getParticipantesList().forEach((par) -> {
+                    lstRptAImprimir.add(rptCotizacion(par));
+                });
             }
             if (valor instanceof String && valor.equals("9")) {
 
@@ -940,8 +944,8 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                     try {
                         isPersonaNat = (current.getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdPersoneria().getIdPersoneria().intValue() == 1);
                         Reportes.generarReporte(imprimir(lstRptDocumentos, isPersonaNat), "documentos_" + codigoEntidad);
-                    } catch (Exception ex) {
-                        Logger.getLogger(ContratosOrdenesCompras.class.getName()).log(Level.SEVERE, "Error en generacion del reporte id_resolucion: {0}", current.getIdResolucionAdj().getIdResolucionAdj());
+                    } catch (IOException | JRException ex) {
+                        Logger.getLogger(ContratosOrdenesCompras.class.getName()).log(Level.WARNING, "Error en generacion del reporte id_resolucion: {0}", current.getIdResolucionAdj().getIdResolucionAdj());
                     }
                 }
             }
@@ -970,11 +974,11 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
         lstHistorialCambios = resolucionAdjudicativaEJB.findHistorialByIdResolucionAdj(resolucionAdj.getIdResolucionAdj());
     }
 
-    public JasperPrint rptCotizacion() {
+    public JasperPrint rptCotizacion(Participantes par) {
         String anho = "";
         String nombreRpt = "";
         HashMap param = new HashMap();
-        List<VwCotizacion> lst = ofertaBienesServiciosEJB.getLstCotizacion(VarSession.getNombreMunicipioSession(), codigoEntidad, detalleProceso, current.getIdResolucionAdj().getIdParticipante());
+        List<VwCotizacion> lst = ofertaBienesServiciosEJB.getLstCotizacion(VarSession.getNombreMunicipioSession(), codigoEntidad, detalleProceso, par);
         Boolean sobredemanda = getRecuperarProceso().getProcesoAdquisicion().getDescripcionProcesoAdq().contains("SOBREDEMANDA");
 
         //Para contratos antes de 2016, se tomara los formatos de rpt que no incluyen el año en el nombre del archivo jasper
