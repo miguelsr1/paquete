@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptActaAdjudicacion" pageWidth="612" pageHeight="792" columnWidth="528" leftMargin="42" rightMargin="42" topMargin="39" bottomMargin="39" uuid="244b56df-7b1c-4fca-9e9d-dde2f9b172eb">
 	<property name="ireport.zoom" value="1.3636363636363642"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="107"/>
+	<property name="ireport.y" value="71"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -125,13 +125,12 @@
 					<textElement textAlignment="Justified">
 						<font fontName="Arial" size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA["En reunión extraordinaria del ".concat($F{modalidadAdministrativa}).concat(" que administra el centro educativo ").concat($F{nombreCe}).concat(", código ").
+					<textFieldExpression><![CDATA["Dada la recomendación de la Comisión de Evaluación de Ofertas, en adelante la comisión, para las contrataciones del ".concat($F{nombreCe}).concat(", código ").
 concat($F{codigoEntidad}).concat(" a las ").concat($F{horaRegistro}+":"+$F{minutoRegistro}).concat(" horas del día ").
 concat(Herramientas.getNumDia($F{fechaApertura})+" del mes de "+Herramientas.getNomMes($F{fechaApertura})).
-concat(" del año "+Herramientas.getNumAnyo($F{fechaApertura})).concat(", los/las firmantes nos reunimos para evaluar técnica y ").
-concat("económicamente las cotizaciones presentadas para el proceso de compra ").concat($F{descripcionRubro}).concat(", realizado mediante la modalidad ").
-concat("de Libre Gestión y dar la recomendación de adjudicación respectiva.").
-concat("\n\nETAPAS DEL PROCESO:\n\n").
+concat(" del año "+Herramientas.getNumAnyo($F{fechaApertura})).concat(", los/las miembros del CDE abajo firmantes nos reunimos para tomar en consideración la recomendación resultante para el proceso de compra ").concat($F{descripcionRubro}).concat(", realizado mediante la modalidad ").
+concat("de Libre Gestión y tomar la decisión de adjudicación respectiva.").
+concat("\n\nETAPAS DEL PROCESO DE RECOMENDACIÓN:\n\n").
 concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{fechaApertura}+" a:")]]></textFieldExpression>
 				</textField>
 				<textField>
@@ -161,21 +160,14 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 						<subreportParameterExpression><![CDATA[$P{pPorcentajeGeo}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstParticipantes})]]></dataSourceExpression>
-					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subRptActaAdjudicacionProveedoresBean2017.jasper"]]></subreportExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subRptActaAdjudicacionProveedoresBean2020.jasper"]]></subreportExpression>
 				</subreport>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="198" splitType="Stretch">
+			<band height="152" splitType="Stretch">
 				<staticText>
-					<reportElement uuid="8e37bd84-3b2d-4f23-8a63-b84c3d8d4fcb" x="0" y="74" width="237" height="13"/>
-					<textElement>
-						<font fontName="Arial" size="8"/>
-					</textElement>
-					<text><![CDATA[Nombres y Firmas de quienes realizaron el análisis:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552" key="staticText-1" x="261" y="74" width="14" height="13"/>
+					<reportElement uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552" key="staticText-1" x="0" y="73" width="14" height="13"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -188,13 +180,13 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 					<text><![CDATA[F:]]></text>
 				</staticText>
 				<line>
-					<reportElement uuid="b817a9dc-45c9-4bfc-9eb3-aa7b3f30959f" key="line-1" x="275" y="83" width="168" height="1"/>
+					<reportElement uuid="b817a9dc-45c9-4bfc-9eb3-aa7b3f30959f" key="line-1" x="14" y="82" width="168" height="1"/>
 					<graphicElement>
 						<pen lineWidth="0.5"/>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552" key="staticText-1" x="261" y="147" width="14" height="13"/>
+					<reportElement uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552" key="staticText-1" x="284" y="73" width="14" height="13"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -207,13 +199,13 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 					<text><![CDATA[F:]]></text>
 				</staticText>
 				<line>
-					<reportElement uuid="b817a9dc-45c9-4bfc-9eb3-aa7b3f30959f" key="line-1" x="275" y="156" width="168" height="1"/>
+					<reportElement uuid="b817a9dc-45c9-4bfc-9eb3-aa7b3f30959f" key="line-1" x="305" y="82" width="168" height="1"/>
 					<graphicElement>
 						<pen lineWidth="0.5"/>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement uuid="c88d29b3-de73-4d88-bc77-1e6bce7d9fbf" key="staticText-4" x="443" y="70" width="63" height="13"/>
+					<reportElement uuid="c88d29b3-de73-4d88-bc77-1e6bce7d9fbf" key="staticText-4" x="182" y="69" width="63" height="13"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -226,7 +218,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 					<text><![CDATA[(sello OAE)]]></text>
 				</staticText>
 				<textField isBlankWhenNull="false">
-					<reportElement uuid="c0454f5e-8535-40d2-8b13-3a4f14ad76ab" key="textField-4" x="277" y="87" width="201" height="52"/>
+					<reportElement uuid="c0454f5e-8535-40d2-8b13-3a4f14ad76ab" key="textField-4" x="16" y="86" width="201" height="52"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -241,14 +233,14 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 "\nAdministración Escolar del Centro Educativo"]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="8e37bd84-3b2d-4f23-8a63-b84c3d8d4fcb" x="277" y="160" width="201" height="13"/>
+					<reportElement uuid="8e37bd84-3b2d-4f23-8a63-b84c3d8d4fcb" x="300" y="86" width="180" height="13"/>
 					<textElement>
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<text><![CDATA[Encargado(a) de Compra del organismo]]></text>
 				</staticText>
 				<staticText>
-					<reportElement uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552" key="staticText-1" x="240" y="184" width="217" height="13"/>
+					<reportElement uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552" key="staticText-1" x="272" y="109" width="217" height="13"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

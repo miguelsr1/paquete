@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -61,20 +63,15 @@ public class FilterWeb implements Filter {
         try {
             String user = (String) session.getAttribute("Usuario");
             if (user != null) {
-                try {
-                    chain.doFilter(request, response);
-                } catch (Exception e) {
-                    
-                }
+                chain.doFilter(request, response);
             } else {
                 session.setAttribute("msg", "Error Autenticacion");
                 session.setAttribute("errorPag", req.getRequestURI());
                 String uri = res.encodeRedirectURL(req.getContextPath() + OUTCOME_FALLO);
                 res.sendRedirect(uri);
             }
-        } catch (Throwable t) {
-            problem = t;
-            t.printStackTrace();
+        } catch (Exception ex) {
+            Logger.getLogger(FilterWeb.class.getName()).log(Level.WARNING, "Ah ocurrido un error: {0} peticion de {1}", new Object[]{ex.getMessage(), req.getContextPath()});
         }
         doAfterProcessing(request, response);
         if (problem != null) {

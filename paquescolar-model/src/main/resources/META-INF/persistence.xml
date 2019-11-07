@@ -115,6 +115,7 @@
     <class>sv.gob.mined.paquescolar.model.pojos.contratacion.ProveedorDisponibleDto</class>
     <class>sv.gob.mined.paquescolar.model.Canton</class>
     <class>sv.gob.mined.paquescolar.model.MunicipioAledanho</class>
+    <class>sv.gob.mined.paquescolar.model.InfoGeneralContratacion</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>
