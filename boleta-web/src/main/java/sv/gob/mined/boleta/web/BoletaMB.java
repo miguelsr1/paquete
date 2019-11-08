@@ -19,8 +19,8 @@ import java.util.logging.Logger;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.ejb.Asynchronous;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.mail.Address;
@@ -59,8 +59,39 @@ public class BoletaMB implements Serializable {
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("config");
 
-    @Resource(mappedName = "java:/MailService365")
+    @Resource(mappedName = "java:/MailBoleta")
     private Session mailSession;
+    private Properties config = new Properties();
+    private Properties configEmail = new Properties();
+
+    @PostConstruct
+    public void init() {
+        config = chargeEmailsProperties("config");
+//
+//        configEmail.put("mail.smtp.auth", config.getProperty("mail.smtp.auth"));
+//        //configEmail.put("mail.smtp.starttls.enable", config.getProperty("mail.smtp.starttls.enable"));
+//
+//        configEmail.put("mail.smtp.host", config.getProperty("mail.smtp.host"));
+//        configEmail.put("mail.smtp.port", config.getProperty("mail.smtp.port"));
+//
+//        configEmail.put("mail.user", config.getProperty("mail.user"));
+//        configEmail.put("mail.user.pass", config.getProperty("mail.user.pass"));
+//        //configEmail.put("mail.from", config.getProperty("mail.from"));
+//        //configEmail.put("mail.subject", config.getProperty("mail.subject"));
+//        //configEmail.put("mail.message", config.getProperty("mail.message"));
+//
+//        mailSession = Session.getInstance(configEmail, new Authenticator() {
+//
+//            @Override
+//            protected PasswordAuthentication getPasswordAuthentication() {
+//                return new PasswordAuthentication(
+//                        config.getProperty("mail.user"),
+//                        config.getProperty("mail.user.pass")
+//                );
+//            }
+//
+//        });
+    }
 
     public UploadedFile getFile() {
         return file;
@@ -94,10 +125,10 @@ public class BoletaMB implements Serializable {
             //Creating an iterator 
             iterator = lstPages.listIterator();
 
-            final Properties info = chargeEmailsProperties2();
+            final Properties info = chargeEmailsProperties("emails");
             int i = 1;
 
-            while (i < 10 || iterator.hasNext()) {
+            //while (i < 10 || iterator.hasNext()) {
                 DatosDto rowData = new DatosDto();
 
                 PDDocument pd = iterator.next();
@@ -116,7 +147,7 @@ public class BoletaMB implements Serializable {
                 pd.close();
 
                 i++;
-            }
+            //}
 
             document.close();
         } catch (IOException ex) {
@@ -130,11 +161,11 @@ public class BoletaMB implements Serializable {
         }
     }
 
-    public Properties chargeEmailsProperties2() {
+    public Properties chargeEmailsProperties(String nombre) {
         Properties info = null;
         try {
             info = new Properties();
-            InputStream input = BoletaMB.class.getClassLoader().getResourceAsStream("emails.properties");
+            InputStream input = BoletaMB.class.getClassLoader().getResourceAsStream(nombre + ".properties");
             //fin            
             info.load(input);
             input.close();
@@ -166,36 +197,34 @@ public class BoletaMB implements Serializable {
     public void enviarMail(String code, String remitente, PDDocument pDDocument) throws IOException {
         try {
             MimeMessage m = new MimeMessage(mailSession);
-            Address from = new InternetAddress("cesar.nieves@mined.gob.sv");
+            Address from = new InternetAddress("boleta@mined.edu.sv");
 
-            m.setFrom(from);
+            m.setFrom(from);remitente="miguel.sanchez@mined.gob.sv";
             m.setRecipients(Message.RecipientType.TO, remitente);
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             pDDocument.save(out);
             byte[] bytes = out.toByteArray();
 
-            BodyPart messageBodyPart1 = new MimeBodyPart(); 
+            BodyPart messageBodyPart1 = new MimeBodyPart();
             messageBodyPart1.setText(RESOURCE_BUNDLE.getString("mail.message"));
-            
-            MimeBodyPart messageBodyPart2 = new MimeBodyPart(); 
-            DataSource source = new FileDataSource("Boleta.pdf"); 
-            messageBodyPart2.setDataHandler(new DataHandler(source)); 
+
+            MimeBodyPart messageBodyPart2 = new MimeBodyPart();
+            DataSource source = new FileDataSource("Boleta.pdf");
+            messageBodyPart2.setDataHandler(new DataHandler(source));
             messageBodyPart2.setFileName("Boleta.pdf");
-            
+
             ByteArrayDataSource ds = new ByteArrayDataSource(bytes, "application/pdf");
             messageBodyPart2.setDataHandler(new DataHandler(ds));
-            
-            Multipart multipart = new MimeMultipart();    
-            multipart.addBodyPart(messageBodyPart1);     
+
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(messageBodyPart1);
             multipart.addBodyPart(messageBodyPart2);
-            
+
             m.setContent(multipart);
-            
-            
+
             //m.setDataHandler(new DataHandler(ds));
             //m.setFileName("Boleta.pdf");*/
-
             m.setSubject(code + " Boleta", "UTF-8");
             /*m.setSentDate(new java.util.Date());
             m.setText(RESOURCE_BUNDLE.getString("mail.message"), "UTF-8", "html");*/
