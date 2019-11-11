@@ -138,7 +138,7 @@
                     </f:facet>
 
                     <p:selectManyCheckbox value="#{contratosOrdenesComprasController.lstSelectDocumentosImp}" layout="responsive" columns="2" >
-                        <f:selectItems value="#{contratosOrdenesComprasController.lstDocumentosImp}" />
+                        <f:selectItems value="#{contratosOrdenesComprasController.lstDocumentosImp}" var="doc" itemValue="#{doc.value}" itemLabel="#{doc.label}"/>
                     </p:selectManyCheckbox>
 
                     <p:separator/>

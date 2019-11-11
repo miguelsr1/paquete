@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.AvanceContratosDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.SaldoProveedorDto;
 import sv.gob.mined.paquescolar.model.pojos.dashboard.TotalContratadoDto;
 import sv.gob.mined.paquescolar.model.pojos.dashboard.TotalResumenDto;
@@ -158,6 +159,20 @@ public class ServiciosJsonEJB {
         q.setParameter(1, codigoEntidad);
         q.setParameter(2, idProcesoAdq);
         q.setParameter(3, idRubro);
+        return q.getResultList();
+    }
+
+    public List<AvanceContratosDto> getLstAvanceContratosDtoByidDetalleProcesoAdq(Integer idDetProcesoAdq) {
+        Query q = em.createNamedQuery("Contratacion.AvanceContratosCeDto", AvanceContratosDto.class);
+        q.setParameter(1, idDetProcesoAdq);
+
+        return q.getResultList();
+    }
+    
+    public List<AvanceContratosDto> getLstAvanceContratosProveDtoByidDetalleProcesoAdq(Integer idDetProcesoAdq) {
+        Query q = em.createNamedQuery("Contratacion.AvanceContratosProvDto", AvanceContratosDto.class);
+        q.setParameter(1, idDetProcesoAdq);
+
         return q.getResultList();
     }
 }

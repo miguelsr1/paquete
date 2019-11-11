@@ -60,7 +60,9 @@ public class UtilFile {
         OutputStream outStream = response.getOutputStream();
         outStream.write(outArray);
         outStream.flush();
+        outStream.close();
         facesContext.responseComplete();
+        facesContext.renderResponse();
     }
 
     public static String getFechaGeneracionReporte() {

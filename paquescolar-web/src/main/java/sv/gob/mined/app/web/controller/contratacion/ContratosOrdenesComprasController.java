@@ -29,7 +29,6 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 import org.primefaces.PrimeFaces;
 import sv.gob.mined.app.web.controller.ParametrosMB;
-//import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.util.Bean2Excel;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
@@ -678,6 +677,16 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                     }
 
                     showGarantiaUsoTela = (rubro.intValue() == 1 || rubro.intValue() == 4 || rubro.intValue() == 5);
+                    lstSelectDocumentosImp.add(3);
+                    lstSelectDocumentosImp.add(4);
+                    lstSelectDocumentosImp.add(9);
+                    lstSelectDocumentosImp.add(8);
+                    lstSelectDocumentosImp.add(7);
+                    lstSelectDocumentosImp.add(5);
+
+                    if (showGarantiaUsoTela) {
+                        lstSelectDocumentosImp.add(6);
+                    }
                     lstDocumentosImp = utilEJB.getLstDocumentosImp(showGarantiaUsoTela);
                     showFechaOrdenInicio = !showGarantiaUsoTela;
 

@@ -25,6 +25,7 @@ import javax.persistence.Query;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.EstadoReserva;
 import sv.gob.mined.paquescolar.model.HistorialCamEstResAdj;
+import sv.gob.mined.paquescolar.model.InfoGeneralContratacion;
 import sv.gob.mined.paquescolar.model.Participantes;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.RptDocumentos;
@@ -130,7 +131,22 @@ public class ResolucionAdjudicativaEJB {
         String numeroContrato = getNumContrato(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad(), contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho().intValue());
         contratosOrdenesCompras.setNumeroContrato(numeroContrato.length() == 1 ? "0" + numeroContrato : numeroContrato);
         em.persist(contratosOrdenesCompras);
-
+        
+        InfoGeneralContratacion info = new InfoGeneralContratacion();
+        
+        info.setCantidadContrato(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getCantidad().longValue());
+        info.setCodigoDepartamento(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoDepartamento().getCodigoDepartamento());
+        info.setCodigoEntidad(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad());
+        info.setCodigoMunicipio(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoMunicipio());
+        info.setFechaInsercion(contratosOrdenesCompras.getFechaInsercion());
+        info.setIdContrato(contratosOrdenesCompras.getIdContrato().toBigInteger());
+        info.setIdDetProcesoAdq(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq().longValue());
+        info.setIdEmpresa(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdEmpresa().toBigInteger());
+        info.setMontoContrato(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getMonto());
+        info.setNombreDepartamento(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoDepartamento().getNombreDepartamento());
+        
+        em.persist(info);
+        
         agregarDatosAResumen(contratosOrdenesCompras);
 
         return contratosOrdenesCompras;
@@ -181,7 +197,7 @@ public class ResolucionAdjudicativaEJB {
         }
         return lst;
     }
-    
+
     public List<ContratoDto> generarRptActaRecomendacion(BigDecimal idResolucion) {
         List<ContratoDto> lst;
 
@@ -196,7 +212,7 @@ public class ResolucionAdjudicativaEJB {
             query = em.createNamedQuery("Contratacion.RptActaAdjudicacionParticipantes", ParticipanteDto.class);
             query.setParameter(1, res.getIdParticipante().getIdOferta().getIdOferta());
             lst.get(0).setLstParticipantes(query.getResultList());
-            
+
             query = em.createNamedQuery("Contratacion.RptActaAdjudicacionItems", DetalleItemDto.class);
             query.setParameter(1, res.getIdParticipante().getIdOferta().getIdOferta());
             lst.get(0).setLstDetalleItem(query.getResultList());
@@ -396,7 +412,13 @@ public class ResolucionAdjudicativaEJB {
     public HashMap<String, Object> aplicarReservaDeFondos(ResolucionesAdjudicativas resAdj,
             BigDecimal estadoReserva, String codigoEntidad, String comentarioReversion, String usuario) {
         Logger.getLogger(ResolucionAdjudicativaEJB.class.getName()).log(Level.INFO, "Usuario que aplica reserva: {0} del CE: {1}", new Object[]{usuario, codigoEntidad});
-
-        return saldosEJB.aplicarReservaDeFondos(resAdj, estadoReserva, codigoEntidad, comentarioReversion, usuario);
+        HashMap<String, Object> param = new HashMap();
+        try {
+            param = saldosEJB.aplicarReservaDeFondos(resAdj, estadoReserva, codigoEntidad, comentarioReversion, usuario);
+        } catch (Exception e) {
+            Logger.getLogger(ResolucionAdjudicativaEJB.class.getName()).log(Level.WARNING, "Es necesario volver aplicar la reserva: {0} del CE: {1}", new Object[]{usuario, codigoEntidad});
+            param.put("error", "Por favor, intenten nuevamente APLICAR la reserva.");
+        }
+        return param;
     }
 }

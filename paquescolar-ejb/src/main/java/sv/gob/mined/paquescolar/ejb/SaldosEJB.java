@@ -10,8 +10,10 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.AccessTimeout;
 import javax.ejb.LocalBean;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
@@ -33,6 +35,7 @@ import sv.gob.mined.paquescolar.model.TechoRubroEntEdu;
  */
 @Singleton
 @LocalBean
+@AccessTimeout(value=8000, unit = TimeUnit.MILLISECONDS)
 public class SaldosEJB {
 
     @PersistenceContext(unitName = "paquescolarUP")
@@ -114,6 +117,9 @@ public class SaldosEJB {
         q.setParameter(2, resAdj.getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad());
 
         q.executeUpdate();
+        
+        
+        q = em.createNativeQuery("delete info where id_det_proceso_adq = ?1 and codigo_entidad = ?2");
     }
 
     private HashMap<String, Object> existeDiponibilidad(TechoRubroEntEdu techoCE, ResolucionesAdjudicativas resAdj, HashMap<String, Object> param) {

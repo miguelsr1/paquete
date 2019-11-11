@@ -23,6 +23,7 @@ import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.ServiciosJsonEJB;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.Usuario;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.AvanceContratosDto;
 import sv.gob.mined.paquescolar.model.pojos.dashboard.TotalContratadoDto;
 import sv.gob.mined.paquescolar.model.pojos.dashboard.TotalResumenDto;
 import sv.gob.mined.paquescolar.model.pojos.dashboard.TotalTipoEmpDto;
@@ -52,6 +53,9 @@ public class DashboardMB extends RecuperarProcesoUtil implements Serializable {
     private List<TotalContratadoDto> lstTotalContratado = new ArrayList<>();
     private List<TotalTipoEmpDto> lstTotTipoEmp = new ArrayList<>();
     private List<TotalResumenDto> lstTotaGeneroEmp = new ArrayList<>();
+
+    private List<AvanceContratosDto> lstContratosCe = new ArrayList<>();
+    private List<AvanceContratosDto> lstContratosProv = new ArrayList<>();
 
     private BarChartModel barModel;
 
@@ -96,13 +100,20 @@ public class DashboardMB extends RecuperarProcesoUtil implements Serializable {
         return barModel;
     }
 
+    public List<AvanceContratosDto> getLstContratosCe() {
+        return lstContratosCe;
+    }
+
+    public List<AvanceContratosDto> getLstContratosProv() {
+        return lstContratosProv;
+    }
+
     public void updateDatos() {
         divisor = 1;
         departamentoContratado = new TotalContratadoDto();
         tipoEmpresa = new TotalTipoEmpDto();
         codigoDepartamento = "00";
         DetalleProcesoAdq detProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
-//anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), rubro);
         if (detProceso != null) {
             divisor = (detProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 1) ? 4 : 2;
 
@@ -243,5 +254,11 @@ public class DashboardMB extends RecuperarProcesoUtil implements Serializable {
                 cantidadTotalGenero = cantidadTotalGenero.add(ent.getCantidadEmp());
             }
         }
+    }
+    
+    public void generarDatosAvance(){
+        DetalleProcesoAdq detProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
+        lstContratosCe = serviciosJsonEJB.getLstAvanceContratosDtoByidDetalleProcesoAdq(detProceso.getIdDetProcesoAdq());
+        lstContratosProv = serviciosJsonEJB.getLstAvanceContratosProveDtoByidDetalleProcesoAdq(detProceso.getIdDetProcesoAdq());
     }
 }

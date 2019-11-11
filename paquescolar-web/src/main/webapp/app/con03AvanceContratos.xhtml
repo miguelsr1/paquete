@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:define name="head">
+
+        <style type="text/css">
+            .jqplot-xaxis-label, .jqplot-yaxis-label, .jqplot-y2axis-label, .jqplot-x2axis-label {
+                color: #757575; 
+            }
+
+            table.jqplot-table-legend {
+                background-color: #ffffff;
+                color: #757575;
+                border-color: #dce2e7;
+            }
+        </style>
+    </ui:define>
+
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+        <ui:define name="content">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        <p:menubar> 
+                            <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+                            <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+                            <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+                            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>  
+                        </p:menubar>
+
+                        <h3>
+                            <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                            <p:spacer width="10"/>
+                            <p:outputLabel value="Filtro de busqueda"/>
+                        </h3>
+
+                        <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10" 
+                                     style="width: 100%; border:0px none; background-color:transparent;"
+                                     styleClass="form-group ui-panelgrid-blank">
+                            <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
+                            <p:selectOneMenu id="cboRubro" value="#{dashboardMB.rubro}">
+                                <f:selectItem itemLabel="Seleccione un rubro" />
+                                <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                <p:ajax update="tblCantidadCe tblCantidadProv" listener="#{dashboardMB.generarDatosAvance()}"/>
+                            </p:selectOneMenu>
+
+                        </p:panelGrid>
+                    </div>
+                </div>
+                <div class="card ui-g-12">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Datos"/>
+                    </h1>
+
+                    <div class="ui-g-12 ui-md-5">
+                        <p:dataTable id="tblCantidadCe" value="#{dashboardMB.lstContratosCe}" var="contrato">
+                            <p:column headerText="Cod. Depa." width="30">
+                                <h:outputText value="#{contrato.codigoDepartamento}"/>
+                            </p:column>
+                            <p:column headerText="Nom.Departamento">
+                                <h:outputText value="#{contrato.nombreDepartamento}"/>
+                            </p:column>
+                            <p:column headerText="Cantidad C.E." width="60" styleClass="numero">
+                                <h:outputText value="#{contrato.cantidadCe}"/>
+                            </p:column>
+                            <p:column headerText="Monto Contratado" width="70" styleClass="numero">
+                                <h:outputText value="#{contrato.montoContrato}">
+                                    <f:convertNumber pattern="#,#00.00"/>
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                    <div class="ui-g-12 ui-md-1">
+                        
+                    </div>
+                    <div class="ui-g-12 ui-md-6">
+                        <p:dataTable id="tblCantidadProv" value="#{dashboardMB.lstContratosProv}" var="contrato">
+                            <p:column headerText="Cod. Depa." width="30">
+                                <h:outputText value="#{contrato.codigoDepartamento}"/>
+                            </p:column>
+                            <p:column headerText="Nombre Departamento">
+                                <h:outputText value="#{contrato.nombreDepartamento}"/>
+                            </p:column>
+                            <p:column headerText="Tipo Personeria">
+                                <h:outputText value="#{contrato.descripcionPersoneria}"/>
+                            </p:column>
+                            <p:column headerText="Cantidad" width="60" styleClass="numero">
+                                <h:outputText value="#{contrato.cantidadEmpresa}"/>
+                            </p:column>
+                            <p:column headerText="Monto Contratdo" width="70" styleClass="numero">
+                                <h:outputText value="#{contrato.montoContrato}">
+                                    <f:convertNumber pattern="#,#00.00"/>
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </div>
+            </div>
+
+            <p:dialog widgetVar="dlg" showEffect="fade" modal="true" header="Chart as an Image" resizable="false">
+                <p:outputPanel id="output" layout="block" style="width:500px;height:300px"/>
+            </p:dialog>
+        </ui:define>
+    </ui:composition>
+</html>

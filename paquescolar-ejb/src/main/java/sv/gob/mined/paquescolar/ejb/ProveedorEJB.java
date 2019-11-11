@@ -739,7 +739,7 @@ public class ProveedorEJB {
             case 4:
             case 5:
                 if (codigoCanton != null && !codigoCanton.isEmpty()) {
-                    return " case when mun_e.id_municipio = " + idMunicipio + " and emp.codigo_canton = '" + codigoCanton + "' then 35.00 when mun_e.id_municipio = " + idMunicipio + " and emp.codigo_canton != '" + codigoCanton + "' then 26.25 when mun_e.id_municipio in (" + idMunicipios + ") then 17.50 else 8.75 end porcentaje_geo ";
+                    return " case when mun_e.id_municipio = " + idMunicipio + " and nvl(emp.codigo_canton,'00') = '" + codigoCanton + "' then 35.00 when mun_e.id_municipio = " + idMunicipio + " and nvl(emp.codigo_canton,'00') != '" + codigoCanton + "' then 26.25 when mun_e.id_municipio in (" + idMunicipios + ") then 17.50 else 8.75 end porcentaje_geo ";
                 } else {
                     return " case when mun_e.id_municipio = " + idMunicipio + " then 35.00 when mun_e.id_municipio in (" + idMunicipios + ") then 23.00 else 12.00 end porcentaje_geo ";
                 }

@@ -555,4 +555,56 @@
             ]]>
         </query>
     </named-native-query>
+    <named-native-query name="Contratacion.AvanceContratosCeDto" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.AvanceContratosDto">
+        <query>
+            <![CDATA[
+                select 
+                    rownum              as idRow,
+                    codigo_departamento as codigoDepartamento,
+                    nombre_departamento as nombreDepartamento,
+                    cantidad_ce         as cantidadCe,
+                    monto               as montoContrato
+                from 
+                    (select 
+                        codigo_departamento,
+                        nombre_departamento,
+                        count(distinct codigo_entidad) cantidad_ce,
+                        sum(monto_contrato) monto
+                    from info_general_contratacion 
+                    where id_det_proceso_adq = ?1
+                    group by codigo_departamento,
+                        nombre_departamento
+                    order by codigo_departamento)
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Contratacion.AvanceContratosProvDto" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.AvanceContratosDto">
+        <query>
+            <![CDATA[
+                select 
+                    rownum              as idRow,
+                    codigo_departamento as codigoDepartamento,
+                    nombre_departamento as nombreDepartamento,
+                    descripcion_personeria as descripcionPersoneria,
+                    cantidad_empresa       as cantidadEmpresa,
+                    monto               as montoContrato
+                from 
+                    (select codigo_departamento,
+                        nombre_departamento,
+                        descripcion_personeria,
+                        count(distinct emp.id_empresa) cantidad_empresa,
+                        sum(monto_contrato) monto
+                    from info_general_contratacion  inf
+                        inner join empresa emp on inf.id_empresa = emp.id_empresa
+                        inner join tipo_personeria tip on tip.id_personeria = emp.id_personeria
+                    where id_det_proceso_adq = ?1
+                    group by codigo_departamento,
+                        nombre_departamento,
+                        descripcion_personeria
+                    order by codigo_departamento)
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>

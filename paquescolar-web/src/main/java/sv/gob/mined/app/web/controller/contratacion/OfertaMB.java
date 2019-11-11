@@ -416,10 +416,10 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                                 participante.setModificativa(BigInteger.ZERO);
                                 participante.setUsuarioInsercion(VarSession.getVariableSession("Usuario").toString());
 
-                                participante.setPorcentajeCapacidad(new BigDecimal(proveedorSeleccionado.getPorcentajeCapacidad()+proveedorSeleccionado.getPorcentajeCapacidadItem()));
+                                participante.setPorcentajeCapacidad(new BigDecimal(proveedorSeleccionado.getPorcentajeCapacidad() + proveedorSeleccionado.getPorcentajeCapacidadItem()));
                                 participante.setPorcentajeGeo(new BigDecimal(proveedorSeleccionado.getPorcentajeGeo()));
                                 participante.setPorcentajePrecio(new BigDecimal(proveedorSeleccionado.getPorcentajePrecio()));
-                                                                
+
                                 current.getParticipantesList().add(participante);
                             }
                         } else {
@@ -479,7 +479,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     }
 
     public void guardar() {
-        if (current.getCodigoEntidad() == null || current.getCodigoEntidad().getCodigoEntidad().isEmpty()) {
+        if (current == null || current.getCodigoEntidad() == null || current.getCodigoEntidad().getCodigoEntidad().isEmpty()) {
             JsfUtil.mensajeAlerta("Debe de agregar el centro escolar y el detalle de proveedores.");
         } else if (current.getFechaApertura() == null) {
             JsfUtil.mensajeAlerta("Debe de agregar la fecha de registro de la oferta.");

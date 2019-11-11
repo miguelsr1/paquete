@@ -693,7 +693,7 @@ public class ParticipantesController implements Serializable {
             if (!msjError.isEmpty()) {
                 JsfUtil.mensajeAlerta(msjError);
             }
-        } catch (org.primefaces.expression.ComponentNotFoundException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(ParticipantesController.class.getName()).log(Level.WARNING, "No se encontro el componenete {0}:{1}", new Object[]{nombreTabla, numRow});
         }
     }

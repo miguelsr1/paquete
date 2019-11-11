@@ -6,7 +6,9 @@
 package sv.gob.mined.paquescolar.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +19,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -33,7 +37,7 @@ public class InfoGeneralContratacion implements Serializable {
     @Basic(optional = false)
     @Column(name = "ID_INFO_GENERAL")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "info_general")
-    @SequenceGenerator(name="info_general", sequenceName = "SEQ_INFO_GENERAL_CON", allocationSize=1, initialValue=1)
+    @SequenceGenerator(name = "info_general", sequenceName = "SEQ_INFO_GENERAL_CON", allocationSize = 1, initialValue = 1)
     private Long idInfoGeneral;
     @Column(name = "CODIGO_ENTIDAD")
     private String codigoEntidad;
@@ -52,9 +56,13 @@ public class InfoGeneralContratacion implements Serializable {
     @Column(name = "NOMBRE_MUNICIPIO")
     private String nombreMunicipio;
     @Column(name = "MONTO_CONTRATO")
-    private BigInteger montoContrato;
+    private BigDecimal montoContrato;
     @Column(name = "CANTIDAD_CONTRATO")
     private Long cantidadContrato;
+    @Basic(optional = false)
+    @Column(name = "FECHA_INSERCION")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaInsercion;
 
     public InfoGeneralContratacion() {
     }
@@ -135,11 +143,11 @@ public class InfoGeneralContratacion implements Serializable {
         this.nombreMunicipio = nombreMunicipio;
     }
 
-    public BigInteger getMontoContrato() {
+    public BigDecimal getMontoContrato() {
         return montoContrato;
     }
 
-    public void setMontoContrato(BigInteger montoContrato) {
+    public void setMontoContrato(BigDecimal montoContrato) {
         this.montoContrato = montoContrato;
     }
 
@@ -165,15 +173,20 @@ public class InfoGeneralContratacion implements Serializable {
             return false;
         }
         InfoGeneralContratacion other = (InfoGeneralContratacion) object;
-        if ((this.idInfoGeneral == null && other.idInfoGeneral != null) || (this.idInfoGeneral != null && !this.idInfoGeneral.equals(other.idInfoGeneral))) {
-            return false;
-        }
-        return true;
+        return !((this.idInfoGeneral == null && other.idInfoGeneral != null) || (this.idInfoGeneral != null && !this.idInfoGeneral.equals(other.idInfoGeneral)));
     }
 
     @Override
     public String toString() {
         return "sv.gob.mined.paquescolar.model.InfoGeneralContratacion[ idInfoGeneral=" + idInfoGeneral + " ]";
     }
-    
+
+    public Date getFechaInsercion() {
+        return fechaInsercion;
+    }
+
+    public void setFechaInsercion(Date fechaInsercion) {
+        this.fechaInsercion = fechaInsercion;
+    }
+
 }
