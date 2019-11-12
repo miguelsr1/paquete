@@ -409,7 +409,6 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
             Logger.getLogger(ContratosOrdenesCompras.class.getName()).log(Level.INFO, null, "ContratosOrdenesComprasController.cargaInicialDeDatos()");
             Logger.getLogger(ContratosOrdenesCompras.class.getName()).log(Level.INFO, null, "=============================================================");
         }
-
     }
 
     private void cargarDocumentoLegal() {
@@ -454,6 +453,17 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                     resolucionAdjudicativaEJB.editContrato(current);
                 }
             }
+        }
+
+        lstSelectDocumentosImp.add(3);
+        lstSelectDocumentosImp.add(4);
+        lstSelectDocumentosImp.add(9);
+        lstSelectDocumentosImp.add(8);
+        lstSelectDocumentosImp.add(7);
+        lstSelectDocumentosImp.add(5);
+
+        if (showGarantiaUsoTela) {
+            lstSelectDocumentosImp.add(6);
         }
     }
 
@@ -677,16 +687,6 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                     }
 
                     showGarantiaUsoTela = (rubro.intValue() == 1 || rubro.intValue() == 4 || rubro.intValue() == 5);
-                    lstSelectDocumentosImp.add(3);
-                    lstSelectDocumentosImp.add(4);
-                    lstSelectDocumentosImp.add(9);
-                    lstSelectDocumentosImp.add(8);
-                    lstSelectDocumentosImp.add(7);
-                    lstSelectDocumentosImp.add(5);
-
-                    if (showGarantiaUsoTela) {
-                        lstSelectDocumentosImp.add(6);
-                    }
                     lstDocumentosImp = utilEJB.getLstDocumentosImp(showGarantiaUsoTela);
                     showFechaOrdenInicio = !showGarantiaUsoTela;
 

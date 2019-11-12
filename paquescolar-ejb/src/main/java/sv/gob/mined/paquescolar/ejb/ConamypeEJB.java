@@ -63,300 +63,310 @@ public class ConamypeEJB {
 
     @WebMethod
     public void setDatosProveedor(String jsonString, String clave) {
-        if (clave.equals("CONAMYPE_MINED2019")) {
-            //if (isActivoWsConamype()) {
-            if (true) {
-                try {
-                    String usuario;
-                    JSONParser jsonParser = new JSONParser();
-                    JSONObject json = (JSONObject) jsonParser.parse(jsonString);
+        Boolean activar = false;
 
-                    for (Object object : json.values()) {
-                        JSONObject json1 = (JSONObject) object;
-                        for (Object object1 : json1.values()) {
-                            JSONArray json2 = (JSONArray) object1;
-                            for (Object obj : json2) {
-                                JSONObject jsonObj = (JSONObject) obj;
+        switch (clave) {
+            case "CONAMYPE_MINED2019":
+                if (isActivoWsConamype()) {
+                    activar = true;
+                } else {
+                    Logger.getLogger(ConamypeEJB.class.getName()).log(Level.INFO, "WS NO ACTIVO");
+                }   break;
+            case "PRUEBAS_MINED":
+                activar = true;
+                break;
+            default:
+                Logger.getLogger(ConamypeEJB.class.getName()).log(Level.INFO, null, "Error en la clave de acceso");
+                break;
+        }
 
-                                Empresa empresa = proveedorEJB.findEmpresaByNit(jsonObj.get("nit").toString());
-                                Persona persona;
-                                usuario = "CONAMYPE_" + jsonObj.get("usuario").toString();
+        if (activar) {
+            try {
+                String usuario;
+                JSONParser jsonParser = new JSONParser();
+                JSONObject json = (JSONObject) jsonParser.parse(jsonString);
 
-                                if (empresa == null) {
-                                    //nuevo proveedor
-                                    empresa = new Empresa();
-                                    empresa.setUsuarioInsercion(usuario);
-                                    empresa.setFechaInsercion(new Date());
-                                    empresa.setEstadoEliminacion(BigInteger.ZERO);
+                for (Object object : json.values()) {
+                    JSONObject json1 = (JSONObject) object;
+                    for (Object object1 : json1.values()) {
+                        JSONArray json2 = (JSONArray) object1;
+                        for (Object obj : json2) {
+                            JSONObject jsonObj = (JSONObject) obj;
 
-                                    persona = new Persona();
-                                    persona.setUsuarioCreacion(usuario);
-                                    persona.setFechaInsercion(new Date());
-                                    persona.setEstadoEliminacion(BigInteger.ZERO);
-                                    persona.setUrlImagen("sin_foto.png");
+                            Empresa empresa = proveedorEJB.findEmpresaByNit(jsonObj.get("nit").toString());
+                            Persona persona;
+                            usuario = "CONAMYPE_" + jsonObj.get("usuario").toString();
 
-                                    empresa.setIdPersona(persona);
-                                    persona.setEmpresaList(new ArrayList());
-                                    persona.getEmpresaList().add(empresa);
-                                } else {
-                                    //actualizar proveedor
-                                    empresa.setUsuarioModificacion(usuario);
-                                    empresa.setFechaModificacion(new Date());
+                            if (empresa == null) {
+                                //nuevo proveedor
+                                empresa = new Empresa();
+                                empresa.setUsuarioInsercion(usuario);
+                                empresa.setFechaInsercion(new Date());
+                                empresa.setEstadoEliminacion(BigInteger.ZERO);
 
-                                    persona = empresa.getIdPersona();
-                                    persona.setUsuarioModificacion(usuario);
-                                    persona.setFechaModificacion(new Date());
-                                }
+                                persona = new Persona();
+                                persona.setUsuarioCreacion(usuario);
+                                persona.setFechaInsercion(new Date());
+                                persona.setEstadoEliminacion(BigInteger.ZERO);
+                                persona.setUrlImagen("sin_foto.png");
 
-                                empresa.setIdPersoneria(utilEJB.find(TipoPersoneria.class, new BigDecimal(jsonObj.get("personeria").toString())));
-                                empresa.setIdTipoEmpresa(utilEJB.find(TipoEmpresa.class, new BigDecimal(jsonObj.get("tipo_empresa").toString())));
-                                empresa.setNumeroNit(jsonObj.get("nit").toString().equals("") ? null : jsonObj.get("nit").toString());
-                                empresa.setIdEstadoRegistro(utilEJB.find(EstadoRegistro.class, new BigDecimal(jsonObj.get("estado_registro").toString())));
-                                empresa.setIdMunicipio(utilEJB.find(Municipio.class, new BigDecimal(jsonObj.get("id_municipio").toString())));
-                                empresa.setDireccionCompleta(jsonObj.get("direccion") == null ? null : jsonObj.get("direccion").toString());
-                                empresa.setCorreoElectronico(jsonObj.get("email") == null ? null : jsonObj.get("email").toString());
-                                empresa.setTelefonos(jsonObj.get("telefonos") == null ? null : jsonObj.get("telefonos").toString());
-                                empresa.setNumeroCelular(jsonObj.get("celular") == null ? null : jsonObj.get("celular").toString());
+                                empresa.setIdPersona(persona);
+                                persona.setEmpresaList(new ArrayList());
+                                persona.getEmpresaList().add(empresa);
+                            } else {
+                                //actualizar proveedor
+                                empresa.setUsuarioModificacion(usuario);
+                                empresa.setFechaModificacion(new Date());
 
-                                JSONObject js = (JSONObject) jsonParser.parse(jsonObj.get("representante_legal").toString());
-
-                                persona.setNumeroNit(js.get("nit").toString());
-                                persona.setIdMunicipio(utilEJB.find(Municipio.class, new BigDecimal(js.get("id_municipio").toString())));
-                                persona.setIdGenero(utilEJB.find(Genero.class, new BigDecimal(js.get("id_genero").toString())));
-                                persona.setPrimerNombre(js.get("primer_nombre") == null ? null : js.get("primer_nombre").toString());
-                                persona.setSegundoNombre(js.get("segundo_nombre") == null ? null : js.get("segundo_nombre").toString());
-                                persona.setPrimerApellido(js.get("primer_apellido") == null ? null : js.get("primer_apellido").toString());
-                                persona.setSegundoApellido(js.get("segundo_apellido") == null ? null : js.get("segundo_apellido").toString());
-                                persona.setAcasada(js.get("apellido_casada") == null ? null : js.get("apellido_casada").toString());
-                                persona.setNumeroDui(js.get("dui") == null ? null : js.get("dui").toString());
-                                persona.setNumeroTelefono(js.get("telefono") == null ? null : js.get("telefono").toString());
-                                persona.setNumeroCelular(js.get("celular") == null ? null : js.get("celular").toString());
-                                persona.setDomicilio(js.get("direccion") == null ? null : js.get("direccion").toString());
-                                persona.setProfesion(js.get("profesion") == null ? null : js.get("profesion").toString());
-                                persona.setEmail(js.get("email") == null ? null : js.get("email").toString());
-
-                                if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
-                                    if (js.get("apellido_casada") != null && !js.get("apellido_casada").toString().isEmpty()) {
-                                        empresa.setRazonSocial(
-                                                (js.get("primer_nombre") == null ? "" : js.get("primer_nombre").toString())
-                                                + (js.get("segundo_nombre") == null ? "" : " " + js.get("segundo_nombre").toString())
-                                                + (js.get("primer_apellido") == null ? "" : " " + js.get("primer_apellido").toString())
-                                                + (js.get("apellido_casada") == null ? "" : " " + js.get("apellido_casada").toString()));
-                                    } else {
-                                        empresa.setRazonSocial(
-                                                (js.get("primer_nombre") == null ? "" : js.get("primer_nombre").toString())
-                                                + (js.get("segundo_nombre") == null ? "" : " " + js.get("segundo_nombre").toString())
-                                                + (js.get("primer_apellido") == null ? "" : " " + js.get("primer_apellido").toString())
-                                                + (js.get("segundo_apellido") == null ? "" : " " + js.get("segundo_apellido").toString()));
-                                    }
-                                } else {
-                                    empresa.setRazonSocial(jsonObj.get("razon_social").toString().equals("") ? null : jsonObj.get("razon_social").toString());
-                                }
-
-                                js = (JSONObject) jsonParser.parse(jsonObj.get("datos_calificacion").toString());
-                                BigDecimal rubro = new BigDecimal(js.get("rubro").toString());
-
-                                if (rubro.intValue() == 4) {
-                                    rubro = rubro.add(BigDecimal.ONE.negate());
-                                }
-                                switch (rubro.intValue()) {
-                                    case 4:
-                                    case 1:
-                                        rubro = new BigDecimal(4);
-                                        break;
-                                }
-                                DetalleProcesoAdq detalleProceso = anhoProcesoEJB.getDetProcesoAdq(String.valueOf(Integer.parseInt(js.get("anho").toString()) + 1), rubro);
-
-                                DetRubroMuestraInteres detRubro = getDetRubroMuestraInteres(detalleProceso, empresa);
-                                if (detRubro == null) {
-                                    //nuevo registro de calificacion
-                                    detRubro = new DetRubroMuestraInteres();
-                                    detRubro.setUsuarioInsercion(usuario);
-                                    detRubro.setFechaInsercion(new Date());
-                                    detRubro.setEstadoEliminacion(BigInteger.ZERO);
-                                    detRubro.setIdEmpresa(empresa);
-                                    detRubro.setIdDetProcesoAdq(detalleProceso);
-                                    empresa.getDetRubroMuestraInteresList().add(detRubro);
-
-                                    CapaDistribucionAcre capaDistribucion = new CapaDistribucionAcre();
-                                    capaDistribucion.setCodigoDepartamento(utilEJB.find(Departamento.class, js.get("departamento").toString()));
-                                    capaDistribucion.setEstadoEliminacion(BigInteger.ZERO);
-                                    capaDistribucion.setUsuarioInsercion(usuario);
-                                    capaDistribucion.setFechaInsercion(new Date());
-                                    capaDistribucion.setIdMuestraInteres(detRubro);
-                                    detRubro.getCapaDistribucionAcreList().add(capaDistribucion);
-
-                                    CapaInstPorRubro capaInstalada = new CapaInstPorRubro();
-
-                                    if (js.containsKey("capacidad") && js.get("capacidad") != null) {
-                                        if (rubro.intValue() == 1) {
-                                            capaInstalada.setCapacidadAcreditada(new BigInteger(js.get("capacidad").toString()).multiply(new BigInteger("2")));
-                                        } else {
-                                            capaInstalada.setCapacidadAcreditada(new BigInteger(js.get("capacidad").toString()));
-                                        }
-                                    } else {
-                                        capaInstalada.setCapacidadAcreditada(BigInteger.ZERO);
-                                    }
-
-                                    capaInstalada.setCapacidadAdjudicada(BigInteger.ZERO);
-                                    capaInstalada.setEstadoEliminacion(BigInteger.ZERO);
-                                    capaInstalada.setFechaInsercion(new Date());
-                                    capaInstalada.setUsuarioInsercion(usuario);
-                                    capaInstalada.setIdMuestraInteres(detRubro);
-                                    detRubro.getCapaInstPorRubroList().add(capaInstalada);
-
-                                    detRubro.setDetCapaSegunRubroList(new ArrayList());
-                                    for (DetCapaSegunRubro item : detRubro.getDetCapaSegunRubroList()) {
-                                        item.setEstadoEliminacion(BigInteger.ONE);
-                                    }
-
-                                    JSONArray jsItems = (JSONArray) jsonParser.parse(js.get("items").toString());
-                                    for (Object itemTemp : jsItems.toArray()) {
-                                        JSONObject jsItem = (JSONObject) itemTemp;
-
-                                        if (rubro.intValue() == 3) {
-                                            DetCapaSegunRubro detItem = new DetCapaSegunRubro();
-                                            detItem.setEstadoEliminacion(BigInteger.ZERO);
-                                            detItem.setFechaInsercion(new Date());
-                                            detItem.setIdMuestraInteres(detRubro);
-                                            detItem.setUsuarioInsercion(usuario);
-                                            detItem.setIdProducto(utilEJB.find(CatalogoProducto.class, new BigDecimal(jsItem.get("id").toString())));
-                                            detItem.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal(1)));
-                                            detRubro.getDetCapaSegunRubroList().add(detItem);
-
-                                            detItem = new DetCapaSegunRubro();
-                                            detItem.setEstadoEliminacion(BigInteger.ZERO);
-                                            detItem.setFechaInsercion(new Date());
-                                            detItem.setIdMuestraInteres(detRubro);
-                                            detItem.setUsuarioInsercion(usuario);
-                                            detItem.setIdProducto(utilEJB.find(CatalogoProducto.class, new BigDecimal(jsItem.get("id").toString())));
-                                            detItem.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal(3)));
-                                            detRubro.getDetCapaSegunRubroList().add(detItem);
-
-                                            detItem = new DetCapaSegunRubro();
-                                            detItem.setEstadoEliminacion(BigInteger.ZERO);
-                                            detItem.setFechaInsercion(new Date());
-                                            detItem.setIdMuestraInteres(detRubro);
-                                            detItem.setUsuarioInsercion(usuario);
-                                            detItem.setIdProducto(utilEJB.find(CatalogoProducto.class, new BigDecimal(jsItem.get("id").toString())));
-                                            detItem.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal(4)));
-                                            detRubro.getDetCapaSegunRubroList().add(detItem);
-
-                                            detItem = new DetCapaSegunRubro();
-                                            detItem.setEstadoEliminacion(BigInteger.ZERO);
-                                            detItem.setFechaInsercion(new Date());
-                                            detItem.setIdMuestraInteres(detRubro);
-                                            detItem.setUsuarioInsercion(usuario);
-                                            detItem.setIdProducto(utilEJB.find(CatalogoProducto.class, new BigDecimal(jsItem.get("id").toString())));
-                                            detItem.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal(5)));
-                                            detRubro.getDetCapaSegunRubroList().add(detItem);
-
-                                            detItem = new DetCapaSegunRubro();
-                                            detItem.setEstadoEliminacion(BigInteger.ZERO);
-                                            detItem.setFechaInsercion(new Date());
-                                            detItem.setIdMuestraInteres(detRubro);
-                                            detItem.setUsuarioInsercion(usuario);
-                                            detItem.setIdProducto(utilEJB.find(CatalogoProducto.class, new BigDecimal(jsItem.get("id").toString())));
-                                            detItem.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal(6)));
-                                            detRubro.getDetCapaSegunRubroList().add(detItem);
-                                        } else {
-                                            DetCapaSegunRubro detItem = new DetCapaSegunRubro();
-                                            detItem.setEstadoEliminacion(BigInteger.ZERO);
-                                            detItem.setFechaInsercion(new Date());
-                                            detItem.setIdMuestraInteres(detRubro);
-                                            detItem.setUsuarioInsercion(usuario);
-
-                                            //Logger.getLogger(ConamypeEJB.class.getName()).log(Level.INFO, "{0}:::{1}", new Object[]{jsItem.get("id").toString(), jsItem.get("nivel").toString()});
-                                            detItem.setIdProducto(utilEJB.find(CatalogoProducto.class, new BigDecimal(jsItem.get("id").toString())));
-                                            detItem.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal(jsItem.get("nivel").toString())));
-                                            detRubro.getDetCapaSegunRubroList().add(detItem);
-                                        }
-                                    }
-
-                                    if (empresa.getIdEmpresa() == null) {
-                                        em.persist(empresa);
-                                    } else {
-                                        em.merge(empresa);
-                                    }
-                                    em.persist(detRubro);
-                                } else {
-                                    //actualizar registro de calificacion
-                                    detRubro.setUsuarioModificacion(usuario);
-                                    detRubro.setFechaModificacion(new Date());
-
-                                    CapaDistribucionAcre capaDistribucion = detRubro.getCapaDistribucionAcreList().get(0);
-                                    capaDistribucion.setCodigoDepartamento(utilEJB.find(Departamento.class, js.get("departamento").toString()));
-                                    capaDistribucion.setUsuarioModificacion(usuario);
-                                    capaDistribucion.setFechaModificacion(new Date());
-
-                                    CapaInstPorRubro capaInstalada = detRubro.getCapaInstPorRubroList().get(0);
-                                    if (rubro.intValue() == 1) {
-                                        capaInstalada.setCapacidadAcreditada(new BigInteger(js.get("capacidad") == null ? "0" : js.get("capacidad").toString()).multiply(new BigInteger("2")));
-                                    } else {
-                                        capaInstalada.setCapacidadAcreditada(new BigInteger(js.get("capacidad") == null ? "0" : js.get("capacidad").toString()));
-                                    }
-                                    //capaInstalada.setCapacidadAdjudicada(BigInteger.ZERO);
-                                    capaInstalada.setEstadoEliminacion(BigInteger.ZERO);
-                                    capaInstalada.setFechaModificacion(new Date());
-
-                                    for (DetCapaSegunRubro item : detRubro.getDetCapaSegunRubroList()) {
-                                        item.setEstadoEliminacion(BigInteger.ONE);
-                                    }
-
-                                    em.merge(detRubro);
-
-                                    JSONArray jsItems = (JSONArray) jsonParser.parse(js.get("items").toString());
-                                    for (Object itemTemp : jsItems.toArray()) {
-                                        JSONObject jsItem = (JSONObject) itemTemp;
-
-                                        DetCapaSegunRubro detCapaSegunRubro = findDetCapaSegunRubro(new BigDecimal(jsItem.get("id").toString()), new BigDecimal(jsItem.get("nivel").toString()), detRubro.getIdMuestraInteres());
-
-                                        if (detCapaSegunRubro == null) {
-                                            detCapaSegunRubro = new DetCapaSegunRubro();
-                                            detCapaSegunRubro.setEstadoEliminacion(BigInteger.ZERO);
-                                            detCapaSegunRubro.setFechaInsercion(new Date());
-                                            detCapaSegunRubro.setIdMuestraInteres(detRubro);
-                                            detCapaSegunRubro.setUsuarioInsercion(usuario);
-                                            detCapaSegunRubro.setIdProducto(utilEJB.find(CatalogoProducto.class, new BigDecimal(jsItem.get("id").toString())));
-                                            detCapaSegunRubro.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal(jsItem.get("nivel").toString())));
-                                            em.persist(detCapaSegunRubro);
-                                        } else {
-                                            detCapaSegunRubro.setEstadoEliminacion(BigInteger.ZERO);
-                                            em.merge(detCapaSegunRubro);
-                                        }
-                                    }
-                                }
-
-                                em.merge(empresa);
-
-                                //proveedor de zapatos
-                                for (ProveedorEmpresa proEmp : detRubro.getProveedorEmpresaList()) {
-                                    proEmp.setEstadoEliminacion(BigInteger.ONE);
-                                }
-
-                                if (rubro.intValue() == 3) {
-                                    JSONArray jsProveedores = (JSONArray) jsonParser.parse(js.get("proveedores").toString());
-                                    for (Object provTemp : jsProveedores.toArray()) {
-                                        JSONObject jsProv = (JSONObject) provTemp;
-                                        setProductorDeZapatos(usuario, detRubro, jsProv);
-                                    }
-                                }
-
-                                Logger.getLogger(ConamypeEJB.class.getName()).log(Level.INFO, "Empresa: {0}", empresa);
+                                persona = empresa.getIdPersona();
+                                persona.setUsuarioModificacion(usuario);
+                                persona.setFechaModificacion(new Date());
                             }
+
+                            empresa.setIdPersoneria(utilEJB.find(TipoPersoneria.class, new BigDecimal(jsonObj.get("personeria").toString())));
+                            empresa.setIdTipoEmpresa(utilEJB.find(TipoEmpresa.class, new BigDecimal(jsonObj.get("tipo_empresa").toString())));
+                            empresa.setNumeroNit(jsonObj.get("nit").toString().equals("") ? null : jsonObj.get("nit").toString());
+                            empresa.setIdEstadoRegistro(utilEJB.find(EstadoRegistro.class, new BigDecimal(jsonObj.get("estado_registro").toString())));
+                            empresa.setIdMunicipio(utilEJB.find(Municipio.class, new BigDecimal(jsonObj.get("id_municipio").toString())));
+                            empresa.setDireccionCompleta(jsonObj.get("direccion") == null ? null : jsonObj.get("direccion").toString());
+                            empresa.setCorreoElectronico(jsonObj.get("email") == null ? null : jsonObj.get("email").toString());
+                            empresa.setTelefonos(jsonObj.get("telefonos") == null ? null : jsonObj.get("telefonos").toString());
+                            empresa.setNumeroCelular(jsonObj.get("celular") == null ? null : jsonObj.get("celular").toString());
+
+                            JSONObject js = (JSONObject) jsonParser.parse(jsonObj.get("representante_legal").toString());
+
+                            persona.setNumeroNit(js.get("nit").toString());
+                            persona.setIdMunicipio(utilEJB.find(Municipio.class, new BigDecimal(js.get("id_municipio").toString())));
+                            persona.setIdGenero(utilEJB.find(Genero.class, new BigDecimal(js.get("id_genero").toString())));
+                            persona.setPrimerNombre(js.get("primer_nombre") == null ? null : js.get("primer_nombre").toString());
+                            persona.setSegundoNombre(js.get("segundo_nombre") == null ? null : js.get("segundo_nombre").toString());
+                            persona.setPrimerApellido(js.get("primer_apellido") == null ? null : js.get("primer_apellido").toString());
+                            persona.setSegundoApellido(js.get("segundo_apellido") == null ? null : js.get("segundo_apellido").toString());
+                            persona.setAcasada(js.get("apellido_casada") == null ? null : js.get("apellido_casada").toString());
+                            persona.setNumeroDui(js.get("dui") == null ? null : js.get("dui").toString());
+                            persona.setNumeroTelefono(js.get("telefono") == null ? null : js.get("telefono").toString());
+                            persona.setNumeroCelular(js.get("celular") == null ? null : js.get("celular").toString());
+                            persona.setDomicilio(js.get("direccion") == null ? null : js.get("direccion").toString());
+                            persona.setProfesion(js.get("profesion") == null ? null : js.get("profesion").toString());
+                            persona.setEmail(js.get("email") == null ? null : js.get("email").toString());
+
+                            if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
+                                if (js.get("apellido_casada") != null && !js.get("apellido_casada").toString().isEmpty()) {
+                                    empresa.setRazonSocial(
+                                            (js.get("primer_nombre") == null ? "" : js.get("primer_nombre").toString())
+                                            + (js.get("segundo_nombre") == null ? "" : " " + js.get("segundo_nombre").toString())
+                                            + (js.get("primer_apellido") == null ? "" : " " + js.get("primer_apellido").toString())
+                                            + (js.get("apellido_casada") == null ? "" : " " + js.get("apellido_casada").toString()));
+                                } else {
+                                    empresa.setRazonSocial(
+                                            (js.get("primer_nombre") == null ? "" : js.get("primer_nombre").toString())
+                                            + (js.get("segundo_nombre") == null ? "" : " " + js.get("segundo_nombre").toString())
+                                            + (js.get("primer_apellido") == null ? "" : " " + js.get("primer_apellido").toString())
+                                            + (js.get("segundo_apellido") == null ? "" : " " + js.get("segundo_apellido").toString()));
+                                }
+                            } else {
+                                empresa.setRazonSocial(jsonObj.get("razon_social").toString().equals("") ? null : jsonObj.get("razon_social").toString());
+                            }
+
+                            js = (JSONObject) jsonParser.parse(jsonObj.get("datos_calificacion").toString());
+                            BigDecimal rubro = new BigDecimal(js.get("rubro").toString());
+
+                            if (rubro.intValue() == 4) {
+                                rubro = rubro.add(BigDecimal.ONE.negate());
+                            }
+                            switch (rubro.intValue()) {
+                                case 4:
+                                case 1:
+                                    rubro = new BigDecimal(4);
+                                    break;
+                            }
+                            DetalleProcesoAdq detalleProceso = anhoProcesoEJB.getDetProcesoAdq(String.valueOf(Integer.parseInt(js.get("anho").toString()) + 1), rubro);
+
+                            DetRubroMuestraInteres detRubro = getDetRubroMuestraInteres(detalleProceso, empresa);
+                            if (detRubro == null) {
+                                //nuevo registro de calificacion
+                                detRubro = new DetRubroMuestraInteres();
+                                detRubro.setUsuarioInsercion(usuario);
+                                detRubro.setFechaInsercion(new Date());
+                                detRubro.setEstadoEliminacion(BigInteger.ZERO);
+                                detRubro.setIdEmpresa(empresa);
+                                detRubro.setIdDetProcesoAdq(detalleProceso);
+                                empresa.getDetRubroMuestraInteresList().add(detRubro);
+
+                                CapaDistribucionAcre capaDistribucion = new CapaDistribucionAcre();
+                                capaDistribucion.setCodigoDepartamento(utilEJB.find(Departamento.class, js.get("departamento").toString()));
+                                capaDistribucion.setEstadoEliminacion(BigInteger.ZERO);
+                                capaDistribucion.setUsuarioInsercion(usuario);
+                                capaDistribucion.setFechaInsercion(new Date());
+                                capaDistribucion.setIdMuestraInteres(detRubro);
+                                detRubro.getCapaDistribucionAcreList().add(capaDistribucion);
+
+                                CapaInstPorRubro capaInstalada = new CapaInstPorRubro();
+
+                                if (js.containsKey("capacidad") && js.get("capacidad") != null) {
+                                    if (rubro.intValue() == 1) {
+                                        capaInstalada.setCapacidadAcreditada(new BigInteger(js.get("capacidad").toString()).multiply(new BigInteger("2")));
+                                    } else {
+                                        capaInstalada.setCapacidadAcreditada(new BigInteger(js.get("capacidad").toString()));
+                                    }
+                                } else {
+                                    capaInstalada.setCapacidadAcreditada(BigInteger.ZERO);
+                                }
+
+                                capaInstalada.setCapacidadAdjudicada(BigInteger.ZERO);
+                                capaInstalada.setEstadoEliminacion(BigInteger.ZERO);
+                                capaInstalada.setFechaInsercion(new Date());
+                                capaInstalada.setUsuarioInsercion(usuario);
+                                capaInstalada.setIdMuestraInteres(detRubro);
+                                detRubro.getCapaInstPorRubroList().add(capaInstalada);
+
+                                detRubro.setDetCapaSegunRubroList(new ArrayList());
+                                for (DetCapaSegunRubro item : detRubro.getDetCapaSegunRubroList()) {
+                                    item.setEstadoEliminacion(BigInteger.ONE);
+                                }
+
+                                JSONArray jsItems = (JSONArray) jsonParser.parse(js.get("items").toString());
+                                for (Object itemTemp : jsItems.toArray()) {
+                                    JSONObject jsItem = (JSONObject) itemTemp;
+
+                                    if (rubro.intValue() == 3) {
+                                        DetCapaSegunRubro detItem = new DetCapaSegunRubro();
+                                        detItem.setEstadoEliminacion(BigInteger.ZERO);
+                                        detItem.setFechaInsercion(new Date());
+                                        detItem.setIdMuestraInteres(detRubro);
+                                        detItem.setUsuarioInsercion(usuario);
+                                        detItem.setIdProducto(utilEJB.find(CatalogoProducto.class, new BigDecimal(jsItem.get("id").toString())));
+                                        detItem.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal(1)));
+                                        detRubro.getDetCapaSegunRubroList().add(detItem);
+
+                                        detItem = new DetCapaSegunRubro();
+                                        detItem.setEstadoEliminacion(BigInteger.ZERO);
+                                        detItem.setFechaInsercion(new Date());
+                                        detItem.setIdMuestraInteres(detRubro);
+                                        detItem.setUsuarioInsercion(usuario);
+                                        detItem.setIdProducto(utilEJB.find(CatalogoProducto.class, new BigDecimal(jsItem.get("id").toString())));
+                                        detItem.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal(3)));
+                                        detRubro.getDetCapaSegunRubroList().add(detItem);
+
+                                        detItem = new DetCapaSegunRubro();
+                                        detItem.setEstadoEliminacion(BigInteger.ZERO);
+                                        detItem.setFechaInsercion(new Date());
+                                        detItem.setIdMuestraInteres(detRubro);
+                                        detItem.setUsuarioInsercion(usuario);
+                                        detItem.setIdProducto(utilEJB.find(CatalogoProducto.class, new BigDecimal(jsItem.get("id").toString())));
+                                        detItem.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal(4)));
+                                        detRubro.getDetCapaSegunRubroList().add(detItem);
+
+                                        detItem = new DetCapaSegunRubro();
+                                        detItem.setEstadoEliminacion(BigInteger.ZERO);
+                                        detItem.setFechaInsercion(new Date());
+                                        detItem.setIdMuestraInteres(detRubro);
+                                        detItem.setUsuarioInsercion(usuario);
+                                        detItem.setIdProducto(utilEJB.find(CatalogoProducto.class, new BigDecimal(jsItem.get("id").toString())));
+                                        detItem.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal(5)));
+                                        detRubro.getDetCapaSegunRubroList().add(detItem);
+
+                                        detItem = new DetCapaSegunRubro();
+                                        detItem.setEstadoEliminacion(BigInteger.ZERO);
+                                        detItem.setFechaInsercion(new Date());
+                                        detItem.setIdMuestraInteres(detRubro);
+                                        detItem.setUsuarioInsercion(usuario);
+                                        detItem.setIdProducto(utilEJB.find(CatalogoProducto.class, new BigDecimal(jsItem.get("id").toString())));
+                                        detItem.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal(6)));
+                                        detRubro.getDetCapaSegunRubroList().add(detItem);
+                                    } else {
+                                        DetCapaSegunRubro detItem = new DetCapaSegunRubro();
+                                        detItem.setEstadoEliminacion(BigInteger.ZERO);
+                                        detItem.setFechaInsercion(new Date());
+                                        detItem.setIdMuestraInteres(detRubro);
+                                        detItem.setUsuarioInsercion(usuario);
+
+                                        //Logger.getLogger(ConamypeEJB.class.getName()).log(Level.INFO, "{0}:::{1}", new Object[]{jsItem.get("id").toString(), jsItem.get("nivel").toString()});
+                                        detItem.setIdProducto(utilEJB.find(CatalogoProducto.class, new BigDecimal(jsItem.get("id").toString())));
+                                        detItem.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal(jsItem.get("nivel").toString())));
+                                        detRubro.getDetCapaSegunRubroList().add(detItem);
+                                    }
+                                }
+
+                                if (empresa.getIdEmpresa() == null) {
+                                    em.persist(empresa);
+                                } else {
+                                    em.merge(empresa);
+                                }
+                                em.persist(detRubro);
+                            } else {
+                                //actualizar registro de calificacion
+                                detRubro.setUsuarioModificacion(usuario);
+                                detRubro.setFechaModificacion(new Date());
+
+                                CapaDistribucionAcre capaDistribucion = detRubro.getCapaDistribucionAcreList().get(0);
+                                capaDistribucion.setCodigoDepartamento(utilEJB.find(Departamento.class, js.get("departamento").toString()));
+                                capaDistribucion.setUsuarioModificacion(usuario);
+                                capaDistribucion.setFechaModificacion(new Date());
+
+                                CapaInstPorRubro capaInstalada = detRubro.getCapaInstPorRubroList().get(0);
+                                if (rubro.intValue() == 1) {
+                                    capaInstalada.setCapacidadAcreditada(new BigInteger(js.get("capacidad") == null ? "0" : js.get("capacidad").toString()).multiply(new BigInteger("2")));
+                                } else {
+                                    capaInstalada.setCapacidadAcreditada(new BigInteger(js.get("capacidad") == null ? "0" : js.get("capacidad").toString()));
+                                }
+                                //capaInstalada.setCapacidadAdjudicada(BigInteger.ZERO);
+                                capaInstalada.setEstadoEliminacion(BigInteger.ZERO);
+                                capaInstalada.setFechaModificacion(new Date());
+
+                                for (DetCapaSegunRubro item : detRubro.getDetCapaSegunRubroList()) {
+                                    item.setEstadoEliminacion(BigInteger.ONE);
+                                }
+
+                                em.merge(detRubro);
+
+                                JSONArray jsItems = (JSONArray) jsonParser.parse(js.get("items").toString());
+                                for (Object itemTemp : jsItems.toArray()) {
+                                    JSONObject jsItem = (JSONObject) itemTemp;
+
+                                    DetCapaSegunRubro detCapaSegunRubro = findDetCapaSegunRubro(new BigDecimal(jsItem.get("id").toString()), new BigDecimal(jsItem.get("nivel").toString()), detRubro.getIdMuestraInteres());
+
+                                    if (detCapaSegunRubro == null) {
+                                        detCapaSegunRubro = new DetCapaSegunRubro();
+                                        detCapaSegunRubro.setEstadoEliminacion(BigInteger.ZERO);
+                                        detCapaSegunRubro.setFechaInsercion(new Date());
+                                        detCapaSegunRubro.setIdMuestraInteres(detRubro);
+                                        detCapaSegunRubro.setUsuarioInsercion(usuario);
+                                        detCapaSegunRubro.setIdProducto(utilEJB.find(CatalogoProducto.class, new BigDecimal(jsItem.get("id").toString())));
+                                        detCapaSegunRubro.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal(jsItem.get("nivel").toString())));
+                                        em.persist(detCapaSegunRubro);
+                                    } else {
+                                        detCapaSegunRubro.setEstadoEliminacion(BigInteger.ZERO);
+                                        em.merge(detCapaSegunRubro);
+                                    }
+                                }
+                            }
+
+                            em.merge(empresa);
+
+                            //proveedor de zapatos
+                            for (ProveedorEmpresa proEmp : detRubro.getProveedorEmpresaList()) {
+                                proEmp.setEstadoEliminacion(BigInteger.ONE);
+                            }
+
+                            if (rubro.intValue() == 3) {
+                                JSONArray jsProveedores = (JSONArray) jsonParser.parse(js.get("proveedores").toString());
+                                for (Object provTemp : jsProveedores.toArray()) {
+                                    JSONObject jsProv = (JSONObject) provTemp;
+                                    setProductorDeZapatos(usuario, detRubro, jsProv);
+                                }
+                            }
+
+                            Logger.getLogger(ConamypeEJB.class.getName()).log(Level.INFO, "Empresa: {0}", empresa);
                         }
                     }
-
-                } catch (NumberFormatException | ParseException ex) {
-                    Logger.getLogger(ConamypeEJB.class.getName()).log(Level.SEVERE, "Error en el json\n: json: {0}", jsonString);
-
-                    eMailEJB.enviarMailDeError("Error - WS CONAMYPE - MINED", "Ah ocurrido el sigueinte error en el proceso de exportación de proveedores.", ex);
                 }
-            } else {
-                Logger.getLogger(ConamypeEJB.class.getName()).log(Level.INFO, "WS NO ACTIVO");
+
+            } catch (NumberFormatException | ParseException ex) {
+                Logger.getLogger(ConamypeEJB.class.getName()).log(Level.SEVERE, "Error en el json\n: json: {0}", jsonString);
+
+                eMailEJB.enviarMailDeError("Error - WS CONAMYPE - MINED", "Ah ocurrido el sigueinte error en el proceso de exportación de proveedores.", ex);
             }
-        } else {
-            Logger.getLogger(ConamypeEJB.class.getName()).log(Level.INFO, null, "Error en la clave de acceso");
         }
     }
 
@@ -455,7 +465,7 @@ public class ConamypeEJB {
             capa.setCapacidadAcreditada(capacidad);
             capa.setCapacidadAdjudicada(BigInteger.ZERO);
             em.merge(capa);
-            
+
         }
     }
 

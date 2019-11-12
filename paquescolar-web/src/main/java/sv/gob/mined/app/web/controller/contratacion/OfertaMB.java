@@ -421,6 +421,8 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                                 participante.setPorcentajePrecio(new BigDecimal(proveedorSeleccionado.getPorcentajePrecio()));
 
                                 current.getParticipantesList().add(participante);
+
+                                JsfUtil.mensajeAlerta("Se agrego el proveedor seleccionado");
                             }
                         } else {
                             JsfUtil.mensajeAlerta("Este proveedor no esta calificado para este departamento.");

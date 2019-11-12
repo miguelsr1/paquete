@@ -25,6 +25,7 @@ import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.EstadoReserva;
 import sv.gob.mined.paquescolar.model.HistorialCamEstResAdj;
+import sv.gob.mined.paquescolar.model.InfoGeneralContratacion;
 import sv.gob.mined.paquescolar.model.Participantes;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.TechoRubroEntEdu;
@@ -35,7 +36,7 @@ import sv.gob.mined.paquescolar.model.TechoRubroEntEdu;
  */
 @Singleton
 @LocalBean
-@AccessTimeout(value=8000, unit = TimeUnit.MILLISECONDS)
+@AccessTimeout(value = 8000, unit = TimeUnit.MILLISECONDS)
 public class SaldosEJB {
 
     @PersistenceContext(unitName = "paquescolarUP")
@@ -117,9 +118,16 @@ public class SaldosEJB {
         q.setParameter(2, resAdj.getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad());
 
         q.executeUpdate();
-        
-        
-        q = em.createNativeQuery("delete info where id_det_proceso_adq = ?1 and codigo_entidad = ?2");
+
+        q = em.createQuery("SELECT c FROM ContratosOrdenesCompras c WHERE c.idResolucionAdj.idResolucionAdj=:idRes and c.estadoEliminacion=0", InfoGeneralContratacion.class);
+        q.setParameter("idRes", resAdj.getIdResolucionAdj());
+
+        if (!q.getResultList().isEmpty()) {
+            q = em.createNativeQuery("delete INFO_GENERAL_CONTRATACION where id_contrato = ?1");
+            q.setParameter(1, 0);
+
+            q.executeUpdate();
+        }
     }
 
     private HashMap<String, Object> existeDiponibilidad(TechoRubroEntEdu techoCE, ResolucionesAdjudicativas resAdj, HashMap<String, Object> param) {
@@ -255,21 +263,21 @@ public class SaldosEJB {
     }
 
     /**
-      Recuperar la cantidad a contratar para un proveedor en particular
-     
-      param idParticipante identificador del participante de la oferta
-      return
-     
-    private BigInteger getCantidadAdjudicadaActual(BigDecimal idParticipante) {
-        BigInteger total;
-
-        Query q = em.createNativeQuery("SELECT nvl(sum(cantidad),0) FROM DETALLE_OFERTAS WHERE id_participante=?1 and estado_eliminacion=0 and id_producto not in (1)");
-        q.setParameter(1, idParticipante);
-        total = ((BigDecimal) q.getSingleResult()).toBigInteger();
-
-        return total;
-    }*/
-
+     * Recuperar la cantidad a contratar para un proveedor en particular
+     *
+     * param idParticipante identificador del participante de la oferta return
+     *
+     * private BigInteger getCantidadAdjudicadaActual(BigDecimal idParticipante)
+     * { BigInteger total;
+     *
+     * Query q = em.createNativeQuery("SELECT nvl(sum(cantidad),0) FROM
+     * DETALLE_OFERTAS WHERE id_participante=?1 and estado_eliminacion=0 and
+     * id_producto not in (1)"); q.setParameter(1, idParticipante); total =
+     * ((BigDecimal) q.getSingleResult()).toBigInteger();
+     *
+     * return total;
+    }
+     */
     private void historialCambioEstado(ResolucionesAdjudicativas res,
             BigInteger estadoAnterior,
             BigInteger estadoNuevo,

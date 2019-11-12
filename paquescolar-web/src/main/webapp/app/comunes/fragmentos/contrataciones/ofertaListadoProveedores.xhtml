@@ -56,7 +56,7 @@
 
             <p:outputPanel>
                 <h:panelGrid columns="2" style="width: 100%; text-align: center !important;">
-                    <p:commandLink oncomplete="PF('dlgProveedor').hide()" action="#{ofertaMB.onSelect(capaEmpresa.idEmpresa)}" 
+                    <p:commandLink action="#{ofertaMB.onSelect(capaEmpresa.idEmpresa)}" 
                                    class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
                                    style="height: 30px" update="tblParticipantes tbEmpresas">
                         <i class="fa fa-check-circle" style="height: 30px"></i>
