@@ -665,6 +665,7 @@ public class ProveedorEJB {
                 + "        tbl.precio_promedio,\n"
                 + "        round((((min(tbl.precio_promedio) OVER (order by tbl.precio_promedio))*100)/tbl.precio_promedio)*0.4,2) as porcentaje_precio,\n"
                 + "        mun_e.id_municipio,\n"
+                + "        mun_e.codigo_departamento,\n"
                 + "        emp.codigo_canton,\n"
                 + "        tbl.porcentaje_capacidad as porcentaje_capacidad_i,\n"
                 + "        " + getParteSelectUbicacion(idRubro, codCanton, idMunicipio, codDep, idMunicipios) + "\n"
@@ -672,7 +673,7 @@ public class ProveedorEJB {
                 + "        inner join empresa emp                  on emp.id_empresa = det.id_empresa\n"
                 + "        inner join municipio mun_e              on mun_e.id_municipio = emp.id_municipio\n"
                 + "        inner join departamento dep_e           on mun_e.codigo_departamento = dep_e.codigo_departamento\n"
-                + "        inner join capa_distribucion_acre cda   on det.id_muestra_interes = cda.id_muestra_interes and cda.id_capa_distribucion in (select id_capa_distribucion from dis_municipio_interes dis inner join municipio mun on mun.id_municipio = dis.id_municipio where dis.id_capa_distribucion = cda.id_capa_distribucion and " + (municipioIgual ? "mun.codigo_municipio ='" + codMun + "'and mun.codigo_departamento = '" + codDep + "'" : "mun.id_municipio in (" + idMunicipios + ")") + (municipioIgual?" ":" dis.id_municipio ="+idMunicipio) + ")\n"
+                + "        inner join capa_distribucion_acre cda   on det.id_muestra_interes = cda.id_muestra_interes and cda.id_capa_distribucion in (select id_capa_distribucion from dis_municipio_interes dis inner join municipio mun on mun.id_municipio = dis.id_municipio where dis.estado_eliminacion = 0 and dis.id_capa_distribucion = cda.id_capa_distribucion and " + (municipioIgual ? "mun.codigo_municipio ='" + codMun + "'and mun.codigo_departamento = '" + codDep + "'" : "mun.id_municipio in (" + (idMunicipios.isEmpty() ? idMunicipio : idMunicipios + "," + idMunicipio) + ")") + ")\n"
                 + "        inner join (select id_empresa, round(avg(precio_referencia),3) precio_promedio,((count(id_empresa)*100)/" + noItems.split(",").length + ")*" + getPorcentajePorItems(idRubro) + " porcentaje_capacidad\n"
                 + "                    from precios_Ref_rubro_emp\n"
                 + "                    where id_empresa in (select id_empresa from empresa_no_item where id_det_proceo_adq = " + idDetProcesoAdqPrecio + " " + (municipioIgual ? " and (" + noItemSeparados + ")" : "") + ") and\n"
@@ -691,10 +692,13 @@ public class ProveedorEJB {
                 + "                    end porcentaje_capacidad\n"
                 + "                from det_rubro_muestra_interes det\n"
                 + "                    inner join capa_inst_por_rubro cip      on det.id_muestra_interes = cip.id_muestra_interes\n"
+                + "                    inner join capa_distribucion_acre dis on dis.id_muestra_interes = det.id_muestra_interes \n" 
+                + "                    inner join dis_municipio_interes mun on mun.id_capa_distribucion = dis.id_capa_distribucion and mun.id_municipio =  " + idMunicipio
                 + "                where det.id_det_proceso_adq in (" + idDetProcesoAdq + ") and\n"
                 + "                    det.estado_eliminacion = 0) tb2 on tb1.id_empresa = tb2.id_empresa\n"
                 + "where \n"
                 + "    id_municipio " + (municipioIgual ? "=" : "<>") + " (select id_municipio from municipio where codigo_municipio = '" + codMun + "' and codigo_departamento = '" + codDep + "') \n"
+                + "    " + (idRubro == 2 ? " and codigo_departamento = '" + codDep + "' " : "")
                 + "order by\n"
                 + "    (porcentaje_precio+porcentaje_geo+porcentaje_capacidad_i+porcentaje_capacidad) desc,((capacidad_adjudicada*100)/capacidad_acreditada) asc";
 

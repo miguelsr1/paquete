@@ -5,7 +5,6 @@
  */
 package sv.gob.mined.app.web.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +28,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -442,6 +442,9 @@ public class RptExcel {
 
     public static void generarRptExcelGenerico(HSSFWorkbook wb, int colsNumEnteros[], int colsNumDecimal[]) {
         HSSFSheet sheet = wb.getSheetAt(0);
+        HSSFCellStyle style = wb.createCellStyle();
+        HSSFCellStyle styleNumber = wb.createCellStyle();
+        styleNumber.setAlignment(HorizontalAlignment.RIGHT);
         FORMATO_DATA = wb.createDataFormat();
 
         for (int j = 1; j <= sheet.getLastRowNum(); j++) {
@@ -450,12 +453,12 @@ public class RptExcel {
                 String valor = row.getCell(i).getRichStringCellValue().getString();
                 for (Integer colsNumEntero : colsNumEnteros) {
                     if (i == colsNumEntero) {
-                        escribirNumero(valor, j, i, wb.createCellStyle(), true, sheet);
+                        escribirNumero(valor, j, i, styleNumber, true, sheet);
                     }
                 }
                 for (Integer colsNumEntero : colsNumDecimal) {
                     if (i == colsNumEntero) {
-                        escribirNumero(valor, j, i, wb.createCellStyle(), false, sheet);
+                        escribirNumero(valor, j, i, styleNumber, false, sheet);
                     }
                 }
             }
