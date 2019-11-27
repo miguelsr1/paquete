@@ -1,0 +1,30 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
+                xmlns:jsf="http://xmlns.jcp.org/jsf">
+    <ui:define name="content">
+        <h:form enctype="multipart/form-data" prependId="false">
+            <div class="card">
+                <p:panel header="Envío de boletas de pago">
+                    <h:outputText value="Seleccione el archivo a procesar"/>
+                    <br/>
+                    <p:fileUpload value="#{boletaMB.file}" mode="simple" skinSimple="true" update="tblDatos"/>
+                    <br/>
+                    <p:commandButton value="Submit" action="#{boletaMB.upload}" update="tblDatos" ajax="false"/>
+                    <br/><br/>
+                    <p:dataTable id="tblDatos" value="#{boletaMB.lstDatos}" var="dato">
+                        <p:column headerText="Código">
+                            <h:outputText value="#{dato.codigo}"/>
+                        </p:column>
+                        <p:column headerText="Correo electrónico">
+                            <h:outputText value="#{dato.correoElectronico}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>
