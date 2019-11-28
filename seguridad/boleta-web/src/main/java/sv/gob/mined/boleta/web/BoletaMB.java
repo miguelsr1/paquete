@@ -22,10 +22,12 @@ import javax.annotation.Resource;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.mail.Address;
+import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -198,7 +200,7 @@ public class BoletaMB implements Serializable {
     public void enviarMail(String code, String remitente, PDDocument pDDocument) throws IOException {
         try {
             MimeMessage m = new MimeMessage(mailSession);
-            Address from = new InternetAddress("boleta01@admin.mined.edu.sv");
+            Address from = new InternetAddress("boletas02@admin.mined.edu.sv");
 
             m.setFrom(from);
             remitente = "miguel.sanchez@admin.mined.edu.sv";

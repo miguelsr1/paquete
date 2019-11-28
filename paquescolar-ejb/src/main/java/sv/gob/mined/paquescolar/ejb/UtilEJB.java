@@ -72,6 +72,7 @@ public class UtilEJB {
             lstDocumentosImp.add(new SelectItem(3, "Acta Adjudicación"));
             lstDocumentosImp.add(new SelectItem(4, "Nota Adjudicación"));
             lstDocumentosImp.add(new SelectItem(9, "Acta de Recomendación"));
+            lstDocumentosImp.add(new SelectItem(10, "Declaración Adjudicatorio"));
             lstDocumentosImp.add(new SelectItem(8, "Cotización"));
             lstDocumentosImp.add(new SelectItem(7, "Contrato"));
             lstDocumentosImp.add(new SelectItem(5, "Garantía Contrato"));

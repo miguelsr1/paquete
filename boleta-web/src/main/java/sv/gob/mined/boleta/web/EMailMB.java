@@ -36,7 +36,7 @@ public class EMailMB implements Serializable {
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("Bundle");
 
-    @Resource(mappedName = "java:/MailService365")
+    @Resource(mappedName = "java:/MailBoleta")
     private Session mailSession;
 
     @Asynchronous

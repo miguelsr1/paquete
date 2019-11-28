@@ -1789,6 +1789,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
 
     public void recuperarRequerimientos() {
         detalleProcesoAdq = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
+        anho = detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho().substring(2);
         isRubroUniforme = idRubro.intValue() == 1 || idRubro.intValue() == 4 || idRubro.intValue() == 5;
         lstRequerimientoFondos = proveedorEJB.getLstRequerimientos(codigoDepartamento, detalleProcesoAdq.getIdDetProcesoAdq());
     }

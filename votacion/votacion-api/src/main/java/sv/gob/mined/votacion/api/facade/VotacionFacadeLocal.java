@@ -7,6 +7,7 @@ package sv.gob.mined.votacion.api.facade;
 
 import java.util.List;
 import javax.ejb.Local;
+import sv.gob.mined.votacion.model.votacion.entities.Candidato;
 import sv.gob.mined.votacion.model.votacion.dto.DirectorDto;
 
 /**
@@ -15,6 +16,8 @@ import sv.gob.mined.votacion.model.votacion.dto.DirectorDto;
  */
 @Local
 public interface VotacionFacadeLocal {
-    
+
     public List<DirectorDto> getLstDirectores(String dui, String nip, String nombre, String nombreCe, String codigoDepartamento);
+
+    public void guardarCandidato(Candidato candidato);
 }

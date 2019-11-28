@@ -10,4 +10,17 @@
             <var>config</var>
         </resource-bundle>
     </application>
+    
+    <component>
+        <component-type>org.primefaces.component.ParadiseMenu</component-type>
+        <component-class>org.primefaces.paradise.component.ParadiseMenu</component-class>
+    </component>
+    
+    <render-kit>
+        <renderer>
+            <component-family>org.primefaces.component</component-family>
+            <renderer-type>org.primefaces.component.ParadiseMenuRenderer</renderer-type>
+            <renderer-class>org.primefaces.paradise.component.ParadiseMenuRenderer</renderer-class>
+        </renderer>
+    </render-kit>
 </faces-config>

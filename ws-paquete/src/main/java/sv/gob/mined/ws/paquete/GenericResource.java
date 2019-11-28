@@ -18,6 +18,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.ServiciosJsonEJB;
 
 /**
@@ -27,10 +28,12 @@ import sv.gob.mined.paquescolar.ejb.ServiciosJsonEJB;
  */
 @Path("generic")
 public class GenericResource {
-
+    
     @EJB
     private ServiciosJsonEJB serviciosJsonEJB;
-
+    @EJB
+    private AnhoProcesoEJB anhoProcesoEJB;
+    
     @Context
     private UriInfo context;
 
@@ -52,7 +55,7 @@ public class GenericResource {
         //TODO return proper representation object
         Map<String, Object> map = new HashMap();
         map.put("listado", serviciosJsonEJB.getResumenPagoJsonByDepaAndDetProcesoAdq("01", 35));
-
+        
         return Response.ok(map).build();
     }
 
@@ -65,7 +68,7 @@ public class GenericResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public void putJson(String content) {
     }
-
+    
     @GET
     @Path("/validarUsuario")
     @Produces(MediaType.APPLICATION_JSON)
@@ -77,7 +80,22 @@ public class GenericResource {
         } else {
             map.put("msj", "Usuario o Clave de acceso no válidas");
         }
-
+        
+        return Response.ok(map).header("Access-Control-Allow-Origin", "*").build();
+    }
+    
+    @GET
+    @Path("/lstAnho")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getLstAnho() {
+        Map<String, Object> map = new HashMap();
+        map.put("respuesta", anhoProcesoEJB.getLstAnhos());
+        if ((Boolean) map.get("validar")) {
+            map.put("keyToken", "00");
+        } else {
+            map.put("msj", "Usuario o Clave de acceso no válidas");
+        }
+        
         return Response.ok(map).header("Access-Control-Allow-Origin", "*").build();
     }
 }

@@ -42,6 +42,15 @@
         <filter-name>Character Encoding Filter</filter-name>
         <servlet-name>Faces Servlet</servlet-name>
     </filter-mapping>
+    
+    <servlet>
+        <servlet-name>DynamicImageServlet</servlet-name>
+        <servlet-class>sv.gob.mined.apps.utilitario.servlet.DynamicImageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DynamicImageServlet</servlet-name>
+        <url-pattern>/DynamicImageServlet</url-pattern>
+    </servlet-mapping>    
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>

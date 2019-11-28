@@ -37,6 +37,7 @@ import sv.gob.mined.paquescolar.model.DetalleRequerimiento;
 import sv.gob.mined.paquescolar.model.DisMunicipioInteres;
 import sv.gob.mined.paquescolar.model.Empresa;
 import sv.gob.mined.paquescolar.model.EmpresaNoItem;
+import sv.gob.mined.paquescolar.model.EmpresaPreciosRef;
 import sv.gob.mined.paquescolar.model.EntidadFinanciera;
 import sv.gob.mined.paquescolar.model.NivelEducativo;
 import sv.gob.mined.paquescolar.model.Participantes;
@@ -692,7 +693,7 @@ public class ProveedorEJB {
                 + "                    end porcentaje_capacidad\n"
                 + "                from det_rubro_muestra_interes det\n"
                 + "                    inner join capa_inst_por_rubro cip      on det.id_muestra_interes = cip.id_muestra_interes\n"
-                + "                    inner join capa_distribucion_acre dis on dis.id_muestra_interes = det.id_muestra_interes \n" 
+                + "                    inner join capa_distribucion_acre dis on dis.id_muestra_interes = det.id_muestra_interes \n"
                 + "                    inner join dis_municipio_interes mun on mun.id_capa_distribucion = dis.id_capa_distribucion and mun.id_municipio =  " + idMunicipio
                 + "                where det.id_det_proceso_adq in (" + idDetProcesoAdq + ") and\n"
                 + "                    det.estado_eliminacion = 0) tb2 on tb1.id_empresa = tb2.id_empresa\n"
@@ -1375,6 +1376,151 @@ public class ProveedorEJB {
                 case "13":
                     emp.setItem13("13");
                     break;
+            }
+        }
+    }
+
+    public void calcularNoItems(Integer idDet, String numeroNit) {
+        //idDet = 52;
+        Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.idEmpresa.numeroNit=:nit and p.estadoEliminacion = 0 and p.idDetProcesoAdq.idDetProcesoAdq=:idDet ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
+        q.setParameter("idDet", idDet);
+        q.setParameter("nit", numeroNit);
+
+        List<PreciosRefRubroEmp> lstPre = q.getResultList();
+        BigDecimal idEmpTemp = BigDecimal.ZERO;
+        EmpresaNoItem emp = null;
+
+        for (PreciosRefRubroEmp precios : lstPre) {
+
+            if (idEmpTemp.intValue() == 0) {
+                idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
+                emp = new EmpresaNoItem();
+                emp.setIdEmpresa(idEmpTemp);
+                emp.setIdDetProceoAdq(idDet);
+            } else if (idEmpTemp.intValue() == precios.getIdEmpresa().getIdEmpresa().intValue()) {
+
+            } else {
+                em.persist(emp);
+
+                idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
+                emp = new EmpresaNoItem();
+                emp.setIdEmpresa(idEmpTemp);
+                emp.setIdDetProceoAdq(idDet);
+            }
+
+            switch (precios.getNoItem()) {
+                case "1":
+                    emp.setItem1("1");
+                    break;
+                case "2":
+                    emp.setItem2("2");
+                    break;
+                case "3":
+                    emp.setItem3("3");
+                    break;
+                case "4":
+                    emp.setItem4("4");
+                    break;
+                case "5":
+                    emp.setItem5("5");
+                    break;
+                case "6":
+                    emp.setItem6("6");
+                    break;
+                case "7":
+                    emp.setItem7("7");
+                    break;
+                case "8":
+                    emp.setItem8("8");
+                    break;
+                case "9":
+                    emp.setItem9("9");
+                    break;
+                case "10":
+                    emp.setItem10("10");
+                    break;
+                case "11":
+                    emp.setItem11("11");
+                    break;
+                case "12":
+                    emp.setItem12("12");
+                    break;
+                case "13":
+                    emp.setItem13("13");
+                    break;
+            }
+        }
+    }
+
+    public void calcularPreRef(Integer idDet) {
+        //idDet = 52;
+        Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion = 0 and p.idDetProcesoAdq.idDetProcesoAdq=:idDet ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
+        q.setParameter("idDet", idDet);
+
+        List<PreciosRefRubroEmp> lstPre = q.getResultList();
+        BigDecimal idEmpTemp = BigDecimal.ZERO;
+        EmpresaPreciosRef emp = null;
+
+        for (PreciosRefRubroEmp precios : lstPre) {
+
+            if (idEmpTemp.intValue() == 0) {
+                idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
+                emp = new EmpresaPreciosRef();
+                emp.setIdEmpresa(idEmpTemp);
+                emp.setIdDetProceoAdq(idDet);
+            } else {
+                if (idEmpTemp.intValue() == precios.getIdEmpresa().getIdEmpresa().intValue()) {
+
+                } else {
+                    em.persist(emp);
+
+                    idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
+                    emp = new EmpresaPreciosRef();
+                    emp.setIdEmpresa(idEmpTemp);
+                    emp.setIdDetProceoAdq(idDet);
+                }
+
+                switch (precios.getNoItem()) {
+                    case "1":
+                        emp.setItem1(precios.getPrecioReferencia());
+                        break;
+                    case "2":
+                        emp.setItem2(precios.getPrecioReferencia());
+                        break;
+                    case "3":
+                        emp.setItem3(precios.getPrecioReferencia());
+                        break;
+                    case "4":
+                        emp.setItem4(precios.getPrecioReferencia());
+                        break;
+                    case "5":
+                        emp.setItem5(precios.getPrecioReferencia());
+                        break;
+                    case "6":
+                        emp.setItem6(precios.getPrecioReferencia());
+                        break;
+                    case "7":
+                        emp.setItem7(precios.getPrecioReferencia());
+                        break;
+                    case "8":
+                        emp.setItem8(precios.getPrecioReferencia());
+                        break;
+                    case "9":
+                        emp.setItem9(precios.getPrecioReferencia());
+                        break;
+                    case "10":
+                        emp.setItem10(precios.getPrecioReferencia());
+                        break;
+                    case "11":
+                        emp.setItem11(precios.getPrecioReferencia());
+                        break;
+                    case "12":
+                        emp.setItem12(precios.getPrecioReferencia());
+                        break;
+                    case "13":
+                        emp.setItem13(precios.getPrecioReferencia());
+                        break;
+                }
             }
         }
     }

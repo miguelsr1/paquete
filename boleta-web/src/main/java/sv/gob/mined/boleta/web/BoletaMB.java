@@ -17,8 +17,6 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.faces.bean.ManagedBean;
@@ -42,7 +40,7 @@ import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.primefaces.model.UploadedFile;
-import sv.gob.mined.boleta.Dto.DatosDto;
+import sv.gob.mined.boleta.dto.DatosDto;
 
 /**
  *
@@ -63,6 +61,7 @@ public class BoletaMB implements Serializable {
 
     //@Resource(mappedName = "java:/MailBoleta")
     private Session mailSession;
+
     private Properties config = new Properties();
     private Properties configEmail = new Properties();
 
@@ -127,24 +126,29 @@ public class BoletaMB implements Serializable {
             int i = 1;
 
             while (iterator.hasNext()) {
-                DatosDto rowData = new DatosDto();
 
-                PDDocument pd = iterator.next();
+                if (i < 4) {
+                    DatosDto rowData = new DatosDto();
 
-                String code = getCode2(pd, "         )", 0, 15).substring(8);
-                if (info.containsKey(code)) {
-                    String email = info.getProperty(code);
-                    rowData.setCodigo(code);
-                    rowData.setCorreoElectronico(email);
+                    PDDocument pd = iterator.next();
 
-                    enviarMail(code, email, pd);
+                    String code = getCode2(pd, "         )", 0, 15).substring(8);
+                    if (info.containsKey(code)) {
+                        String email = info.getProperty(code);
+                        rowData.setCodigo(code);
+                        rowData.setCorreoElectronico(email);
 
-                    lstDatos.add(rowData);
-                    System.out.println("envio " + i);
+                        enviarMail(code, email, pd);
+
+                        lstDatos.add(rowData);
+                        System.out.println("envio " + i);
+                    }
+                    pd.close();
+
+                    i++;
+                }else{
+                    break;
                 }
-                pd.close();
-
-                i++;
             }
 
             document.close();
@@ -181,7 +185,7 @@ public class BoletaMB implements Serializable {
     }
 
     public static String getCode2(PDDocument pDDocument, String strEndIdentifier, int offSet, int back) {
-        String returnString = "";
+        String returnString;
         try {
             PDFTextStripper tStripper = new PDFTextStripper();
             tStripper.setStartPage(1);
@@ -205,7 +209,7 @@ public class BoletaMB implements Serializable {
             Address from = new InternetAddress("boleta@mined.edu.sv");
 
             m.setFrom(from);
-            //remitente = "miguel.sanchez@mined.gob.sv";
+            remitente = "miguel.sanchez@admin.mined.edu.sv";
             m.setRecipients(Message.RecipientType.TO, remitente);
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -237,6 +241,7 @@ public class BoletaMB implements Serializable {
             m.setText(RESOURCE_BUNDLE.getString("mail.message"), "UTF-8", "html");*/
             Transport.send(m);
 
+            pDDocument.close();
         } catch (MessagingException ex) {
             Logger.getLogger(EMailMB.class
                     .getName()).log(Level.INFO, "Error en el envio de correo", ex);

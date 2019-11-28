@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import sv.gob.mined.votacion.api.util.Constantes;
+import sv.gob.mined.votacion.model.votacion.entities.Candidato;
 import sv.gob.mined.votacion.model.votacion.dto.DirectorDto;
 
 /**
@@ -78,6 +79,15 @@ public class VotacionFacade implements VotacionFacadeLocal {
             }
         }
         return q.getResultList();
+    }
+
+    @Override
+    public void guardarCandidato(Candidato candidato) {
+        if(candidato.getIdCandidato() == null){
+            em.persist(candidato);
+        }else{
+            em.merge(candidato);
+        }
     }
 
 }

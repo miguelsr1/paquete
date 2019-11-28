@@ -1,48 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="494ffdf3-e02c-4282-b47c-bedbea3a135e">
-	<property name="ireport.zoom" value="1.6105100000000008"/>
-	<property name="ireport.x" value="35"/>
+	<property name="ireport.zoom" value="1.7715610000000013"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<parameter name="pRubro" class="java.lang.String"/>
 	<parameter name="ubicacionImagenes" class="java.lang.String">
 		<defaultValueExpression><![CDATA["/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="idContrato" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pAnho" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[]]>
+		<![CDATA[select 
+    ciudad_firma,
+    nombre_departamento,
+    TO_CHAR(FECHA_CON, 'HH') hora,
+    TO_CHAR(FECHA_CON, 'mm') minuto,
+    TO_CHAR(FECHA_CON, 'dd') dia,
+    TO_CHAR(FECHA_CON, 'MM') mes,
+    TO_CHAR(FECHA_CON, 'yyyy') anho,
+    numero_contrato,
+    descripcion_rubro,
+    nombre_presentante,
+    razon_social,
+    nit_representante,
+    codigo_entidad,
+    nombre,
+    direccion_emp,    
+    celular_emp,
+    telefono_emp,
+    numero_dui,
+    numero_nit
+from vw_rpt_contrato_jur_cabecera
+where id_contrato = $P{idContrato}]]>
 	</queryString>
-	<field name="rubro" class="java.lang.String">
-		<fieldDescription><![CDATA[rubro]]></fieldDescription>
-	</field>
-	<field name="duiRepre" class="java.lang.String">
-		<fieldDescription><![CDATA[duiRepre]]></fieldDescription>
-	</field>
-	<field name="anho" class="java.lang.String">
-		<fieldDescription><![CDATA[anho]]></fieldDescription>
-	</field>
-	<field name="fecha" class="java.util.Date">
-		<fieldDescription><![CDATA[fecha]]></fieldDescription>
-	</field>
-	<field name="nitRepre" class="java.lang.String">
-		<fieldDescription><![CDATA[nitRepre]]></fieldDescription>
-	</field>
-	<field name="razonSocial" class="java.lang.String">
-		<fieldDescription><![CDATA[razonSocial]]></fieldDescription>
-	</field>
-	<field name="ciudad" class="java.lang.String">
-		<fieldDescription><![CDATA[ciudad]]></fieldDescription>
-	</field>
-	<field name="direccionRepre" class="java.lang.String">
-		<fieldDescription><![CDATA[direccionRepre]]></fieldDescription>
-	</field>
-	<field name="direccionEmpresa" class="java.lang.String">
-		<fieldDescription><![CDATA[direccionEmpresa]]></fieldDescription>
-	</field>
-	<field name="representanteLegal" class="java.lang.String">
-		<fieldDescription><![CDATA[representanteLegal]]></fieldDescription>
-	</field>
-	<field name="nitEmpresa" class="java.lang.String">
-		<fieldDescription><![CDATA[nitEmpresa]]></fieldDescription>
-	</field>
+	<field name="CIUDAD_FIRMA" class="java.lang.String"/>
+	<field name="NOMBRE_DEPARTAMENTO" class="java.lang.String"/>
+	<field name="HORA" class="java.lang.String"/>
+	<field name="MINUTO" class="java.lang.String"/>
+	<field name="DIA" class="java.lang.String"/>
+	<field name="MES" class="java.lang.String"/>
+	<field name="ANHO" class="java.lang.String"/>
+	<field name="NUMERO_CONTRATO" class="java.lang.String"/>
+	<field name="DESCRIPCION_RUBRO" class="java.lang.String"/>
+	<field name="NOMBRE_PRESENTANTE" class="java.lang.String"/>
+	<field name="RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="NIT_REPRESENTANTE" class="java.lang.String"/>
+	<field name="CODIGO_ENTIDAD" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="DIRECCION_EMP" class="java.lang.String"/>
+	<field name="CELULAR_EMP" class="java.lang.String"/>
+	<field name="TELEFONO_EMP" class="java.lang.String"/>
+	<field name="NUMERO_DUI" class="java.lang.String"/>
+	<field name="NUMERO_NIT" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -73,7 +83,7 @@
 	<pageHeader>
 		<band height="49" splitType="Stretch">
 			<textField>
-				<reportElement uuid="19876f79-7df9-4794-a033-eb3746e7c7dd" x="22" y="0" width="533" height="42"/>
+				<reportElement uuid="19876f79-7df9-4794-a033-eb3746e7c7dd" x="22" y="5" width="533" height="42"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA["DECLARACIÓN JURADA DE ADJUDICATARIO, DE NO INCURRIR EN LAS SITUACIONES DE INCAPACIDAD DEL ART. 25, NI INHABILIDADES DEL ART. 26, AMBOS DE LA LACAP"]]></textFieldExpression>
 			</textField>
@@ -86,31 +96,17 @@
 		<band height="47" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
 				<reportElement uuid="bdafee93-0adf-43a4-b29b-4052dc81284b" x="22" y="0" width="533" height="47"/>
-				<textElement textAlignment="Justified">
-					<paragraph lineSpacing="Single"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["En la ciudad de " + $F{ciudad} + ", a las " + Herramientas.getHora($F{fecha})+ " horas del día " + Herramientas.getNumDia($F{fecha}) + " del mes "+Herramientas.getNomMes($F{fecha})+" del año " + 
-Herramientas.getNumAnyo($F{fecha}) + ", Yo " + $F{razonSocial} + " con Documento Único de Identidad (DUI) número " + $F{duiRepre} + ", del domicilio de "+
-$F{direccionRepre} + ", POR ESTE MEDIO Y DE MANERA EXPRESA, BAJO JURAMENTO HAGO LAS SIGUIENTES DECLARACIONES: A) Autorizo al Ministerio de Educación, Ciencia "+
-"y Tecnología (MINEDUCYT) a incorporar mi Oferta Global, y que fue presentada esta misma fecha, al Sistema Electrónico de Compras Públicas (COMPRASAL) de la "+
-"Unidad Normativa de Adquisiciones y Contrataciones de la Administración Pública del Ministerio de Hacienda, para que forme parte de mi registro al igual que "+
-"los demás requisitos. B) Que aceptaré las adjudicaciones a mi favor, en los municipios que detallo en la oferta global; B) Asimismo declaro que conozco y "+
-"acepto todos los lineamientos, instructivos, requisitos y exigencias emitidos para la ejecución del Programa Dotación de Paquetes Escolares vigentes; "+
-"C) Me comprometo a someterme a las sanciones que el/los Organismo(s) de Administración Escolar o el MINEDUCYT estime(n) pertinentes; D) Declaro que conozco "+
-"las consecuencias de negarme a aceptar las adjudicaciones, sabedor(a) que son el resultado de la calificación otorgada por la CONAMYPE y mi oferta y que no "+
-"existe impedimento para cumplir con las adjudicaciones, excepto en los casos en que obtenga prueba en contrario, y que no sea imputable a mi persona; E) "+
-"Declaro que conozco ampliamente las inhabilitaciones y excepciones a la capacidad de ofertar y contratar descritas en los artículos 25, 26 158 y 159 de la "+
-"LACAP, además de las consecuencias de hacer caso omiso a lo dispuesto en ellos, como lo es la nulidad de los contratos y la denuncia correspondiente. Por "+
-"lo que expreso no encontrarme inhabilitado ni exceptuado para poder ofertar y contratar con la Administración Pública; F) Que la prestación del servicio o el suministro de "+ $P{pRubro}+
-", me comprometo a realizarla total e indiscutiblemente de acuerdo a las Especificaciones Técnicas establecidas por el Ministerio de Educación, Ciencia y "+
-"Tecnología las cuales conozco y estoy consciente de la obligatoriedad de cumplimiento, entregarlo en el plazo establecido y en el Centro Educativo acorde "+
-"a la forma establecida en los lineamientos y las consecuencias en contrario; G) En caso que se encontraran inconsistencias en las Especificaciones Técnicas "+
-"de los bienes entregados por mi persona, que afecten la prestación del servicio o el suministro de los bienes, me comprometo a aceptar las correcciones "+
-"necesarias para ejecutar debidamente dicho contrato, asumiéndolo dentro del mismo costo; H) Manifiesto que mi negocio está ubicado en " + $F{direccionEmpresa} + 
-"y propongo que dicha dirección sea utilizada por los contratantes para dirigir sus notificaciones; I) Me comprometo a someterme a las sanciones que el Organismo "+
-"de Administración Escolar o el Ministerio de Educación, Ciencia y Tecnología estime pertinentes; J) Acerca de mi Oferta Máxima: Acepto suministrar al MINEDUCYT "+
-"y Centros Educativos adjudicados la capacidad establecida en la carta de calificación de CONAMYPE correspondiente a las contrataciones para entrega del 2020; "+
-"K) Que para los efectos legales de esta declaración, señalo como domicilio esta ciudad a cuyos tribunales me someto expresamente. Y firmo."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["En el municipio de "+$F{CIUDAD_FIRMA}+" del Departamento de "+$F{NOMBRE_DEPARTAMENTO}+" a las "+$F{HORA}+" horas con "+$F{MINUTO}+" minutos del día "+$F{DIA}+
+", de "+$F{MES}+" de dos mil diecinueve, en las instalaciones del lugar destinado para la realización de las firma de documentos contractuales con número ME-"+$F{NUMERO_CONTRATO}+
+" del rubro de "+$F{DESCRIPCION_RUBRO}+" "+$P{pAnho}+" del Programa de Dotación de Paquetes Escolares del Ministerio de Educación Ciencia y Tecnología; "+
+"yo "+$F{NOMBRE_PRESENTANTE}+" mayor de edad, con número de Documento Único de Identidad "+$F{NUMERO_DUI}+", actuando en mi calidad de representante legal de la"+
+" empresa "+$F{RAZON_SOCIAL}+" quien es adjudicataria del contrato antes referido para las entregas del año "+$P{pAnho}+" al Centro Educativo "+$F{NOMBRE}+" con código de infraestructura: "+$F{CODIGO_ENTIDAD}+
+", al que en adelante denominaré \"centro educativo\"; y por dicha calidad, <style isBold='true' pdfFontName='Helvetica-Bold'>BAJO JURAMENTO DECLARO EN NOMBRE DE MI REPRESENTADA</style> que: que: me encuentro seguro de "+
+"poder cumplir con las obligaciones que emanan del contrato antes descrito; que conozco las leyes relacionadas en materia de contrataciones administrativas y ni yo ni ninguno de los socios nos encontramos en ninguna de las causales de inhabilitación del Art. 26 de la Ley de Adquisiciones y Contrataciones de la Administración Pública, especialmente por no tener parientes hasta el cuarto grado de consanguinidad ni cónyuge o conviviente ni pariente de este en segundo grado de afinidad, con ningún empleado ya sea administrativo, docente y/o miembro del Organismo de Administración Escolar del Centro Educativo, así como de cualquiera de las figuras descritas en los literales del a) al c) del mismo artículo. Declaro en nombre propio y de mi representada, ser responsable, de las afirmaciones de la presente declaración, y establezco la siguiente dirección y números de teléfono y para cualquier acto de comunicación que sea necesario realizar a mi persona o mi representada: Dirección: "+$F{DIRECCION_EMP}+", teléfono: "+$F{CELULAR_EMP}+", y/o teléfono fijo: "+$F{TELEFONO_EMP}
++"; estoy consciente de las consecuencias que implica la falsedad de información y/o documentos."]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -119,26 +115,26 @@ $F{direccionRepre} + ", POR ESTE MEDIO Y DE MANERA EXPRESA, BAJO JURAMENTO HAGO 
 	</columnFooter>
 	<pageFooter>
 		<band height="60" splitType="Stretch">
-			<textField>
-				<reportElement uuid="a9c162c9-9b30-496d-b0e1-b810afdd01c8" x="22" y="0" width="512" height="15"/>
+			<staticText>
+				<reportElement uuid="160cc708-7a0c-43a3-9ace-ea49e159e4ac" x="22" y="0" width="512" height="15"/>
 				<textElement/>
-				<textFieldExpression><![CDATA["Nombre de la Persona Proveedora: " + $F{representanteLegal}]]></textFieldExpression>
+				<text><![CDATA[Firma de Persona Proveedora: _____________________________________________]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="a9c162c9-9b30-496d-b0e1-b810afdd01c8" x="22" y="15" width="512" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["Nombre de la Persona Proveedora: " + $F{NOMBRE_PRESENTANTE}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement uuid="d3cf0a89-512a-498b-9f55-5b3b1582ab63" x="22" y="30" width="437" height="15"/>
 				<textElement/>
-				<textFieldExpression><![CDATA["No DUI: "+$F{duiRepre}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["No DUI: "+$F{NUMERO_DUI}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement uuid="c99b2154-eed0-4c3a-a9bf-c0bde0363cc9" x="22" y="45" width="437" height="15"/>
 				<textElement/>
-				<textFieldExpression><![CDATA["No NIT: "+$F{nitRepre}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["No NIT: "+$F{NUMERO_NIT}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement uuid="160cc708-7a0c-43a3-9ace-ea49e159e4ac" x="22" y="15" width="512" height="15"/>
-				<textElement/>
-				<text><![CDATA[Firma de Persona Proveedora: _____________________________________________]]></text>
-			</staticText>
 		</band>
 	</pageFooter>
 	<summary>

@@ -851,6 +851,15 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                     break;
                 case 1://DSConnection SQL
                     switch (rptDoc.getIdTipoRpt().getIdTipoRpt()) {
+                        case 10://Declaracion adjudicatorio
+                            param.put("idContrato", current.getIdContrato());
+                            param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
+                            param.put("pAnho", detalleProceso.getIdProcesoAdq().getIdAnho().getAnho());
+
+                            nombreRpt = rptDoc.getNombreRpt().concat(perNatural ? "PerNat" : "PerJur").concat(param.get("pAnho").toString());
+                            rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(nombreRpt + ".jasper"));
+                            lstRptAImprimir.add(rptTemp);
+                            break;
                         case 7://Contrato
                             Boolean bachillerato = false;
                             Boolean libros = false;

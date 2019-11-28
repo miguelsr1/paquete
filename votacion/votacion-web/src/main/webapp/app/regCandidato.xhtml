@@ -16,14 +16,11 @@
                 <p:panelGrid columns="1" 
                              style="width: 100%; border:0px none; background-color:transparent;" styleClass="form-group ui-panelgrid-blank">
                     <p:outputLabel value="DUI"/>
-                    <p:inputMask mask="99999999-9"/>
+                    <p:inputMask mask="99999999-9" value="#{candidatoView.candidato.dui}"/>
                     <p:outputLabel value="Nombres"/>
-                    <p:outputPanel>
-                        <p:inputText placeholder="Nombres" size="30"/><p:spacer width="5"/>
-                        <p:inputText placeholder="Apellidos" size="30"/>
-                    </p:outputPanel>
+                    <p:inputText placeholder="Nombres" size="60" value="#{candidatoView.candidato.nombres}"/>
                     <p:outputLabel value="Departamento"/>
-                    <p:selectOneMenu>
+                    <p:selectOneMenu value="#{candidatoView.candidato.codigoDepartamento}">
                         <f:selectItems value="#{votacionView.lstDepartamentos}" var="dep" itemValue="#{dep.codigoDepartamento}" itemLabel="#{dep.nombreDepartamento}"/>
                     </p:selectOneMenu>
                     <p:outputLabel value="Hoja de vida"/>
@@ -31,14 +28,14 @@
                         <p:fileUpload value="#{fileUploadView.file}" mode="simple" skinSimple="true"/>
                     </p:outputPanel>
                     <p:outputLabel value="Resumen de hoja de vida"/>
-                    <p:inputTextarea rows="3" cols="100" />
+                    <p:inputTextarea rows="3" cols="100" value="#{candidatoView.candidato.resumenCv}"/>
                 </p:panelGrid>
                 <p:graphicImage name="foto.jpg" library="images" width="150"/>
             </p:panelGrid>
 
             <f:facet name="footer">
                 <p:commandButton value="Cancelar" icon="fa fa-ban" />
-                <p:commandButton value="Guardar" icon="fa fa-save" />
+                <p:commandButton value="Guardar" icon="fa fa-save" action="#{candidatoView.guardar()}"/>
             </f:facet>
         </p:panel>
     </ui:define>

@@ -1,0 +1,36 @@
+
+.pageColumnMid{
+    float : left;
+    vertical-align: middle !important;
+    clear : none;
+    height: 82px;
+    padding-left: 30px;
+}
+.pageColumnLeft{
+    float : left;
+    clear : none;
+    text-align: center;
+    height: 82px;
+    padding-top: 6px;
+    margin-left: 70px;
+}
+
+body .ui-widget-overlay {
+    background-color: #424242;
+    opacity: 0.3;
+    filter: alpha(opacity=70);
+}
+.ui-growl {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 500px !important;
+}
+.ui-growl-message {
+    padding: 0 0 5px 0;
+    width: 422px !important;
+    float: right;
+}
+body .ui-growl {
+    top: 119px !important;
+}

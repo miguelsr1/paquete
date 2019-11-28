@@ -88,6 +88,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     private Boolean showUpdateEmpresa = false;
     private String nit;
 
+    private String numeroNit;
     private String rowEdit;
     private String fotoProveedor;
     private String estiloZapato;
@@ -438,6 +439,14 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         return tapPersona;
     }
     // </editor-fold>  
+
+    public String getNumeroNit() {
+        return numeroNit;
+    }
+
+    public void setNumeroNit(String numeroNit) {
+        this.numeroNit = numeroNit;
+    }
 
     public void cargarFotografias() {
         carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + empresa.getNumeroNit() + File.separator);
@@ -1458,4 +1467,18 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
             proveedorEJB.calcularNoItems(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq());
         }
     }
+    
+    public void calcularNoItemByNit() {
+        if (getRecuperarProceso().getProcesoAdquisicion() != null) {
+            proveedorEJB.calcularNoItems(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq(), numeroNit);
+        }
+    }
+    
+    public void calcularPreciosEmp() {
+        if (getRecuperarProceso().getProcesoAdquisicion() != null) {
+            proveedorEJB.calcularPreRef(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq());
+        }
+    }
+    
+    
 }
