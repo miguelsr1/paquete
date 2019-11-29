@@ -9,8 +9,9 @@ import java.io.Serializable;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-//import sv.gob.mined.seguridad.api.UsuarioFacade;
-//import sv.gob.mined.seguridad.model.Usuario;
+import javax.faces.context.FacesContext;
+import sv.gob.mined.seguridad.api.UsuarioFacade;
+import sv.gob.mined.seguridad.model.Usuario;
 import sv.gob.mined.utils.jsf.JsfUtil;
 
 /**
@@ -23,9 +24,9 @@ public class LoginController implements Serializable {
 
     private String username;
     private String password;
-//
-//    @EJB
-//    private UsuarioFacade usuarioFacade;
+
+    @EJB
+    private UsuarioFacade usuarioFacade;
 
     public LoginController() {
     }
@@ -48,14 +49,16 @@ public class LoginController implements Serializable {
 
     public String isUsuarioValido() {
         try {
-//            Usuario usu = usuarioFacade.findUsuarioByLogin(username, password);
-//            if (usu != null) {
-//                return "/app/envio.mined?faces-redirect=true";
-//            } else {
-//                JsfUtil.mensajeAlerta("Usuario/Password equivocados");
-//                return null;
-//            }
-            return null;
+            Usuario usu = usuarioFacade.findUsuarioByLogin(username, password);
+            if (usu != null) {
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.getExternalContext().getSessionMap().put("usuario", username);
+                context.getExternalContext().getSessionMap().put("clave", password);
+                return "/app/envio.mined?faces-redirect=true";
+            } else {
+                JsfUtil.mensajeAlerta("Usuario/Password equivocados");
+                return null;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return null;

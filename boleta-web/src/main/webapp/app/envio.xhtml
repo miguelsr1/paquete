@@ -6,15 +6,22 @@
                 template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
                 xmlns:jsf="http://xmlns.jcp.org/jsf">
     <ui:define name="content">
-        <h:form enctype="multipart/form-data" prependId="false">
+        <h:form prependId="false">
             <div class="card">
                 <p:panel header="Envío de boletas de pago">
                     <h:outputText value="Seleccione el archivo a procesar"/>
                     <br/>
-                    <p:fileUpload value="#{boletaMB.file}" mode="simple" skinSimple="true" update="tblDatos"/>
                     <br/>
-                    <p:commandButton value="Submit" action="#{boletaMB.upload}" update="tblDatos" ajax="false"/>
+                    
+                    <p:fileUpload fileUploadListener="#{boletaMB.handleFileUpload}" mode="advanced" fileLimit="1"
+                                  skinSimple="true" auto="true" label="Seleccionar" allowTypes="/(\.|\/)(pdf)$/" />
+                    <br/>
+                    <br/>
+                    <p:commandButton value="Enviar" icon="fa fa-envelope" action="#{boletaMB.upload}">
+                        <p:ajax update="tblDatos"/>
+                    </p:commandButton>
                     <br/><br/>
+                    
                     <p:dataTable id="tblDatos" value="#{boletaMB.lstDatos}" var="dato">
                         <p:column headerText="Código">
                             <h:outputText value="#{dato.codigo}"/>

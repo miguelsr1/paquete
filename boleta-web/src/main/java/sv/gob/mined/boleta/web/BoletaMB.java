@@ -21,6 +21,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
@@ -39,8 +40,11 @@ import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.primefaces.PrimeFaces;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import sv.gob.mined.boleta.dto.DatosDto;
+import sv.gob.mined.utils.jsf.JsfUtil;
 
 /**
  *
@@ -50,6 +54,7 @@ import sv.gob.mined.boleta.dto.DatosDto;
 @SessionScoped
 public class BoletaMB implements Serializable {
 
+    private String usuario, clave;
     private List<DatosDto> lstDatos = new ArrayList();
 
     private UploadedFile file;
@@ -67,6 +72,11 @@ public class BoletaMB implements Serializable {
 
     @PostConstruct
     public void init() {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        usuario = context.getExternalContext().getSessionMap().get("usuario").toString();
+        clave = context.getExternalContext().getSessionMap().get("clave").toString();
+
         config = chargeEmailsProperties("config");
 
         configEmail.put("mail.smtp.auth", "true");
@@ -75,17 +85,16 @@ public class BoletaMB implements Serializable {
         configEmail.put("mail.smtp.host", "smtp.office365.com");
         configEmail.put("mail.smtp.port", "587");
 
-        configEmail.put("mail.user", "boleta@mined.edu.sv");
-        configEmail.put("mail.user.pass", config.getProperty("mail.user.pass"));
-        configEmail.put("mail.from", "boleta@mined.edu.sv");
-        //configEmail.put("mail.subject", config.getProperty("mail.subject"));
-        //configEmail.put("mail.message", config.getProperty("mail.message"));
+        configEmail.put("mail.user", usuario);
+        configEmail.put("mail.user.pass", clave);
+        configEmail.put("mail.from", usuario);
 
         mailSession = Session.getInstance(configEmail, new Authenticator() {
 
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("boleta@mined.edu.sv", "Var68602");
+                return new PasswordAuthentication(usuario,
+                        clave);
             }
         });
     }
@@ -96,6 +105,11 @@ public class BoletaMB implements Serializable {
 
     public void setFile(UploadedFile file) {
         this.file = file;
+    }
+
+    public void handleFileUpload(FileUploadEvent file) {
+        this.file = file.getFile();
+        JsfUtil.mensajeInformacion("El archivo esta listo para poder enviarse");
     }
 
     public List<DatosDto> getLstDatos() {
@@ -109,7 +123,6 @@ public class BoletaMB implements Serializable {
     }
 
     public void splitPages() {
-        List<PDDocument> Pages2;
         try {
             document = PDDocument.load(file.getInputstream(), MemoryUsageSetting.setupTempFileOnly());
 
@@ -138,15 +151,15 @@ public class BoletaMB implements Serializable {
                         rowData.setCodigo(code);
                         rowData.setCorreoElectronico(email);
 
-                        enviarMail(code, email, pd);
-
+                        //enviarMail(code, email, pd);
                         lstDatos.add(rowData);
+                        PrimeFaces.current().ajax().update("tblDatos");
                         System.out.println("envio " + i);
                     }
                     pd.close();
 
                     i++;
-                }else{
+                } else {
                     break;
                 }
             }
@@ -206,7 +219,7 @@ public class BoletaMB implements Serializable {
     public void enviarMail(String code, String remitente, PDDocument pDDocument) throws IOException {
         try {
             MimeMessage m = new MimeMessage(mailSession);
-            Address from = new InternetAddress("boleta@mined.edu.sv");
+            Address from = new InternetAddress(usuario);
 
             m.setFrom(from);
             remitente = "miguel.sanchez@admin.mined.edu.sv";
