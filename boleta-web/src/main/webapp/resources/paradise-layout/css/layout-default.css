@@ -486,7 +486,7 @@
     .dashboard .stats ul li .statsbar {
         width: 100%; } }
 .login-body {
-    background: url("#{resource['paradise-layout:images/login/bg-login.png']}");
+    /*background: url("#{resource['paradise-layout:images/login/bg-login.png']}");*/
     background-size: cover;
     height: auto; }
 .login-body .login-panel {
@@ -1155,7 +1155,8 @@ body {
         padding-top: 15px;
         left: 0; }
     .layout-wrapper.layout-menu-static .layout-content {
-        margin-left: 290px; }
+        /*margin-left: 290px; */
+    }
     .layout-wrapper.layout-menu-static .layout-footer {
         margin-left: 290px; }
     .layout-wrapper.layout-menu-static.layout-menu-static-inactive .layout-menu-wrapper {

@@ -7,30 +7,61 @@
                 xmlns:jsf="http://xmlns.jcp.org/jsf">
     <ui:define name="content">
         <h:form prependId="false">
-            <div class="card">
-                <p:panel header="Envío de boletas de pago">
-                    <h:outputText value="Seleccione el archivo a procesar"/>
-                    <br/>
-                    <br/>
-                    
-                    <p:fileUpload fileUploadListener="#{boletaMB.handleFileUpload}" mode="advanced" fileLimit="1"
-                                  skinSimple="true" auto="true" label="Seleccionar" allowTypes="/(\.|\/)(pdf)$/" />
-                    <br/>
-                    <br/>
-                    <p:commandButton value="Enviar" icon="fa fa-envelope" action="#{boletaMB.upload}">
-                        <p:ajax update="tblDatos"/>
-                    </p:commandButton>
-                    <br/><br/>
-                    
-                    <p:dataTable id="tblDatos" value="#{boletaMB.lstDatos}" var="dato">
-                        <p:column headerText="Código">
-                            <h:outputText value="#{dato.codigo}"/>
-                        </p:column>
-                        <p:column headerText="Correo electrónico">
-                            <h:outputText value="#{dato.correoElectronico}"/>
-                        </p:column>
-                    </p:dataTable>
-                </p:panel>
+            <p:messages id="messages" showDetail="true" closable="true" escape="false">
+                <p:autoUpdate />
+            </p:messages>
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <p:panel id="pnlFile" visible="#{boletaMB.visible}">
+                        <p:outputLabel value="Seleccione el archivo a procesar"/>
+                        <br/>
+                        <br/>
+                        <p:fileUpload fileUploadListener="#{boletaMB.handleFileUpload}" mode="advanced" fileLimit="1"
+                                      skinSimple="true" auto="true" label="Seleccionar" allowTypes="/(\.|\/)(pdf)$/" />
+                        <br/>
+                        <br/>
+                        <p:outputLabel value="Seleccione un mes y año"/> <p:spacer width="10"/>
+                        <p:calendar pattern="MM_yyyy" value="#{boletaMB.fecha}" size="7">
+                            <p:ajax event="dateSelect" listener="#{boletaMB.cargarArchivos()}" update="pnlPendiente pnlProcesado"/>
+                        </p:calendar>
+                    </p:panel>
+                </div>
+                <div class="ui-g-12  ui-lg-6">
+                    <p:panel id="pnlPendiente" header="Archivos pendientes">
+
+                        <p:dataTable id="tblPendiente" value="#{boletaMB.lstPendientes}" var="dato">
+                            <p:column headerText="Archivo">
+                                <p:outputLabel value="#{dato.nombreArchivo}"/>
+                            </p:column>
+                            <p:column headerText="Fecha subida" width="90">
+                                <p:outputLabel value="#{dato.fechaCreado}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="Num. Paginas" width="50">
+                                <p:outputLabel value="#{dato.numeroPaginas}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>  
+                </div>
+                <div class="ui-g-12  ui-lg-6">
+                    <p:panel id="pnlProcesado" header="Archivos Procesados">
+
+                        <p:dataTable id="tblProcesado" value="#{boletaMB.lstProcesados}" var="dato">
+                            <p:column headerText="Archivo">
+                                <p:outputLabel value="#{dato.nombreArchivo}"/>
+                            </p:column>
+                            <p:column headerText="Fecha procesado" width="90">
+                                <p:outputLabel value="#{dato.fechaCreado}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="Num. Paginas" width="50">
+                                <p:outputLabel value="#{dato.numeroPaginas}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>  
+                </div>
             </div>
         </h:form>
     </ui:define>

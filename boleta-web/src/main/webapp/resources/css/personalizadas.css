@@ -34,3 +34,14 @@ body .ui-widget-overlay {
 body .ui-growl {
     top: 119px !important;
 }
+#ajax_gif{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left:0;
+    right:0;
+    margin: auto;
+    width:60px;
+    height: 60px;
+    z-index:1000; text-align: center; background: white;
+}

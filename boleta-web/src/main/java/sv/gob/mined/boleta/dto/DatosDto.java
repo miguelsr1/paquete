@@ -6,6 +6,7 @@
 package sv.gob.mined.boleta.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  *
@@ -13,30 +14,36 @@ import java.io.Serializable;
  */
 public class DatosDto implements Serializable {
 
-    private String codigo;
-    private String correoElectronico;
+    private String nombreArchivo;
+    private Integer numeroPaginas;
+    private Date fechaCreado;
 
     public DatosDto() {
     }
 
-    public String getCodigo() {
-        return codigo;
+    public String getNombreArchivo() {
+        return nombreArchivo;
     }
 
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
+    public void setNombreArchivo(String nombreArchivo) {
+        this.nombreArchivo = nombreArchivo;
     }
 
-    public String getCorreoElectronico() {
-        return correoElectronico;
+    public Integer getNumeroPaginas() {
+        return numeroPaginas;
     }
 
-    public void setCorreoElectronico(String correoElectronico) {
-        this.correoElectronico = correoElectronico;
+    public void setNumeroPaginas(Integer numeroPaginas) {
+        this.numeroPaginas = numeroPaginas;
     }
 
-    @Override
-    public String toString() {
-        return "DatosDto{" + "codigo=" + codigo + ", correoElectronico=" + correoElectronico + '}';
+    public Date getFechaCreado() {
+        return fechaCreado;
     }
+
+    public void setFechaCreado(Date fechaCreado) {
+        this.fechaCreado = fechaCreado;
+    }
+
+    
 }
