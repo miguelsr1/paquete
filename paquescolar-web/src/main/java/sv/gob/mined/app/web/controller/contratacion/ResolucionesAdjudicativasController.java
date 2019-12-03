@@ -310,6 +310,11 @@ public class ResolucionesAdjudicativasController implements Serializable {
         }
         return exito;
     }
+    
+    public void reversionMasiva(){
+        resolucionAdjudicativaEJB.reversionMasiva();
+        JsfUtil.mensajeUpdate();
+    }
 
     public void buscarSaldoPresupuestoCE(Integer idDetProcesoAdq) {
         if (codigoEntidad.length() == 5) {

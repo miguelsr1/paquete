@@ -131,9 +131,9 @@ public class ResolucionAdjudicativaEJB {
         String numeroContrato = getNumContrato(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad(), contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho().intValue());
         contratosOrdenesCompras.setNumeroContrato(numeroContrato.length() == 1 ? "0" + numeroContrato : numeroContrato);
         em.persist(contratosOrdenesCompras);
-        
+
         InfoGeneralContratacion info = new InfoGeneralContratacion();
-        
+
         info.setCantidadContrato(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getCantidad().longValue());
         info.setCodigoDepartamento(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoDepartamento().getCodigoDepartamento());
         info.setCodigoEntidad(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad());
@@ -144,9 +144,9 @@ public class ResolucionAdjudicativaEJB {
         info.setIdEmpresa(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdEmpresa().toBigInteger());
         info.setMontoContrato(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getMonto());
         info.setNombreDepartamento(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoDepartamento().getNombreDepartamento());
-        
+
         em.persist(info);
-        
+
         agregarDatosAResumen(contratosOrdenesCompras);
 
         return contratosOrdenesCompras;
@@ -420,5 +420,21 @@ public class ResolucionAdjudicativaEJB {
             param.put("error", "Por favor, intenten nuevamente APLICAR la reserva.");
         }
         return param;
+    }
+
+    public void reversionMasiva() {
+        Query q = em.createNativeQuery("SELECT id_resolucion_adj, id_det_proceso_adq, codigo_entidad FROM TEMP");
+        List lst = q.getResultList();
+        lst.forEach((object) -> {
+            Object[] datos1 = (Object[]) object;
+            ResolucionesAdjudicativas res = em.find(ResolucionesAdjudicativas.class, datos1[0]);
+            HashMap<String, Object> param  = aplicarReservaDeFondos(res, new BigDecimal(3), datos1[2].toString(), "error capacidad CONAMYPE", "RAFAARIAS");
+            if(param.containsKey("error")){
+                Logger.getLogger(ResolucionAdjudicativaEJB.class.getName()).log(Level.SEVERE, param.get("error").toString());
+            }else{
+                
+            }
+        });
+
     }
 }
