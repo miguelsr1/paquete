@@ -50,11 +50,14 @@ import sv.gob.mined.utils.jsf.JsfUtil;
 @ViewScoped
 public class BoletaMB implements Serializable {
 
+    private Boolean deshabilitar = true;
     private String usuario;
     private String clave;
     private String codDepa;
     private String mesAnho;
+    private String nombreArchivo;
     private Date fecha;
+    private Boolean aceptar = false;
     private SimpleDateFormat sdf = new SimpleDateFormat("MM_yyyy");
     private List<DatosDto> lstPendientes = new ArrayList();
     private List<DatosDto> lstProcesados = new ArrayList();
@@ -115,6 +118,10 @@ public class BoletaMB implements Serializable {
         }
     }
 
+    public String getNombreArchivo() {
+        return nombreArchivo;
+    }
+
     public Properties chargeEmailsProperties(String nombre) {
         Properties info = null;
         try {
@@ -138,6 +145,10 @@ public class BoletaMB implements Serializable {
 
         File carpetaProcesados = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator + "procesado" + File.separator);
         cargarDatosDeArchivos(lstProcesados, carpetaProcesados);
+
+        if (!lstPendientes.isEmpty()) {
+            JsfUtil.mensajeInformacion("Existen archivos pendientes de envío, estos estan en cola de espera para ser procesados.");
+        }
     }
 
     private void cargarDatosDeArchivos(List<DatosDto> lst, File carpeta) throws IOException {
@@ -162,6 +173,12 @@ public class BoletaMB implements Serializable {
         } else {
             carpeta.mkdir();
         }
+
+        deshabilitar = false;
+    }
+
+    public Boolean getDeshabilitar() {
+        return deshabilitar;
     }
 
     public Date getFecha() {
@@ -183,24 +200,21 @@ public class BoletaMB implements Serializable {
     public void handleFileUpload(FileUploadEvent file) throws FileNotFoundException, IOException {
         if (mesAnho != "") {
             this.file = file.getFile();
-            JsfUtil.mensajeInformacion("El archivo esta en cola para ser procesado. Al finalizar se enviara un correo notificando el envío de las boletas.");
 
             File carpeta = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator);
             if (!carpeta.exists()) {
                 carpeta.mkdir();
             }
 
-            Path folder = Paths.get(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho);
-            String filename = FilenameUtils.getBaseName(file.getFile().getFileName());
-            String extension = FilenameUtils.getExtension(file.getFile().getFileName());
-            Path arc = Files.createTempFile(folder, filename + "-", "." + extension);
+            Path folder = Paths.get(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator + file.getFile().getFileName());
+            Path arc = Files.createFile(folder);
 
             try (InputStream input = file.getFile().getInputstream()) {
                 Files.copy(input, arc, StandardCopyOption.REPLACE_EXISTING);
             }
 
-            cargarArchivos();
-        }else{
+            //cargarArchivos();
+        } else {
             JsfUtil.mensajeAlerta("Debe de seleccionar un mes y un año de PAGO");
         }
     }
