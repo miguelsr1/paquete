@@ -13,18 +13,19 @@
             <div class="ui-g">
                 <div class="ui-g-12">
                     <p:panel id="pnlFile">
+                        <p:outputLabel value="Seleccione un mes y año"/> <p:spacer width="10"/>
+                        <p:calendar pattern="MM_yyyy" value="#{boletaMB.fecha}" size="7">
+                            <p:ajax event="dateSelect" listener="#{boletaMB.cargarArchivos()}" update="pnlPendiente pnlProcesado"/>
+                        </p:calendar>
+                        <br/>
+                        <br/>
                         <p:outputLabel value="Seleccione el archivo a procesar"/>
                         <br/>
                         <br/>
                         <p:fileUpload fileUploadListener="#{boletaMB.handleFileUpload}" mode="advanced"
                                       skinSimple="true" auto="true" label="Seleccionar" allowTypes="/(\.|\/)(pdf)$/" update="pnlPendiente pnlProcesado"/>
                         <br/>
-                        <br/>
-                        <p:outputLabel value="Seleccione un mes y año"/> <p:spacer width="10"/>
-                        <p:calendar pattern="MM_yyyy" value="#{boletaMB.fecha}" size="7">
-                            <p:ajax event="dateSelect" listener="#{boletaMB.cargarArchivos()}" update="pnlPendiente pnlProcesado"/>
-                        </p:calendar>
-                        <br/>
+
                         <p:commandButton value="Verificar" action="#{boletaMB.verificarArchivosPendientes()}"/>
                     </p:panel>
                 </div>

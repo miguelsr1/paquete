@@ -155,7 +155,7 @@ public class BoletaMB implements Serializable {
                     dato.setNumeroPaginas(pdc.getNumberOfPages());
 
                     lst.add(dato);
-                    
+
                     pdc.close();
                 }
             }
@@ -181,24 +181,28 @@ public class BoletaMB implements Serializable {
     }
 
     public void handleFileUpload(FileUploadEvent file) throws FileNotFoundException, IOException {
-        this.file = file.getFile();
-        JsfUtil.mensajeInformacion("El archivo esta en cola para ser procesado. Al finalizar se enviara un correo notificando el envío de las boletas.");
+        if (mesAnho != "") {
+            this.file = file.getFile();
+            JsfUtil.mensajeInformacion("El archivo esta en cola para ser procesado. Al finalizar se enviara un correo notificando el envío de las boletas.");
 
-        File carpeta = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator);
-        if (!carpeta.exists()) {
-            carpeta.mkdir();
+            File carpeta = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator);
+            if (!carpeta.exists()) {
+                carpeta.mkdir();
+            }
+
+            Path folder = Paths.get(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho);
+            String filename = FilenameUtils.getBaseName(file.getFile().getFileName());
+            String extension = FilenameUtils.getExtension(file.getFile().getFileName());
+            Path arc = Files.createTempFile(folder, filename + "-", "." + extension);
+
+            try (InputStream input = file.getFile().getInputstream()) {
+                Files.copy(input, arc, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            cargarArchivos();
+        }else{
+            JsfUtil.mensajeAlerta("Debe de seleccionar un mes y un año de PAGO");
         }
-
-        Path folder = Paths.get(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho);
-        String filename = FilenameUtils.getBaseName(file.getFile().getFileName());
-        String extension = FilenameUtils.getExtension(file.getFile().getFileName());
-        Path arc = Files.createTempFile(folder, filename + "-", "." + extension);
-
-        try (InputStream input = file.getFile().getInputstream()) {
-            Files.copy(input, arc, StandardCopyOption.REPLACE_EXISTING);
-        }
-
-        cargarArchivos();
     }
 
     public List<DatosDto> getLstPendientes() {
