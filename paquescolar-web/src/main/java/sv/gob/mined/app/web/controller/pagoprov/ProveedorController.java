@@ -43,6 +43,7 @@ import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DualListModel;
 import sv.gob.mined.app.web.controller.ParametrosMB;
+import sv.gob.mined.app.web.controller.contratacion.ContratosOrdenesComprasController;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.Reportes;
@@ -58,6 +59,7 @@ import sv.gob.mined.paquescolar.ejb.UtilEJB;
 import sv.gob.mined.paquescolar.model.CapaDistribucionAcre;
 import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.CatalogoProducto;
+import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.Departamento;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.DisMunicipioInteres;
@@ -630,7 +632,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                 if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
                     cargarPrecioRef();
                 }
-            }else{
+            } else {
                 Logger.getLogger(ProveedorController.class
                         .getName()).log(Level.WARNING, "No se pudo convertir el objeto a la clase Empresa{0}", event.getObject());
             }
@@ -1467,18 +1469,41 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
             proveedorEJB.calcularNoItems(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq());
         }
     }
-    
+
     public void calcularNoItemByNit() {
         if (getRecuperarProceso().getProcesoAdquisicion() != null) {
             proveedorEJB.calcularNoItems(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq(), numeroNit);
         }
     }
-    
+
     public void calcularPreciosEmp() {
         if (getRecuperarProceso().getProcesoAdquisicion() != null) {
             proveedorEJB.calcularPreRef(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq());
         }
     }
-    
-    
+
+    public void imprimirDeclaraciones() {
+        try {
+            String nombreRpt;
+            JasperPrint rptTemp;
+            List<JasperPrint> lstRptAImprimir = new ArrayList();
+            ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+            
+            for (ContratosOrdenesCompras contratosOrdenesCompras : proveedorEJB.getLstContratosByNitAndAnho(empresa.getNumeroNit(), getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getAnho())) {
+                HashMap param = new HashMap();
+                param.put("idContrato", contratosOrdenesCompras.getIdContrato());
+                param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
+                param.put("pAnho", detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho());
+                
+                nombreRpt = "sv/gob/mined/apps/reportes/declaracion/rptDeclaracionAdjudicatorio".concat(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdPersoneria().getIdPersoneria().intValue() == 1 ? "PerNat" : "PerJur").concat(param.get("pAnho").toString());
+                rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(nombreRpt + ".jasper"));
+                lstRptAImprimir.add(rptTemp);
+            }
+            
+            Reportes.generarReporte(lstRptAImprimir, "documentos_prov_" + empresa.getNumeroNit());
+        } catch (IOException | JRException ex) {
+            Logger.getLogger(ProveedorController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 }

@@ -1,0 +1,35 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+                        <p:menuitem value="Consultar" icon="fa fa-search" disabled="false" onclick="onClick('btnModificar');"/>
+                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{proveedorController.imprimirDeclaraciones()}" />
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+
+                    <p:panel visible="false">
+                        <p:commandButton id="btnModificar" value="ok" actionListener="#{proveedorController.filtroProveedores}">
+                            <p:ajax event="dialogReturn" listener="#{proveedorController.buscarAdjudicacionesProveedor}"  update="pnlFoto" />
+                        </p:commandButton>
+                    </p:panel>
+
+                    <ui:include src="/app/comunes/datosGenProveedor.xhtml"/>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -26,6 +26,7 @@ import sv.gob.mined.paquescolar.model.Bancos;
 import sv.gob.mined.paquescolar.model.CapaDistribucionAcre;
 import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.CatalogoProducto;
+import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.CuentaBancaria;
 import sv.gob.mined.paquescolar.model.Departamento;
 import sv.gob.mined.paquescolar.model.DetRubroMuestraInteres;
@@ -1554,5 +1555,12 @@ public class ProveedorEJB {
         if (i == 0) {
             System.out.println("empresa no encontrada: " + numeroNit);
         }
+    }
+    
+    public List<ContratosOrdenesCompras> getLstContratosByNitAndAnho(String numeroNit, String anho){
+        Query q = em.createQuery("SELECT c FROM ContratosOrdenesCompras c WHERE c.idResolucionAdj.idParticipante.idEmpresa.numeroNit=:nit and c.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq.idProcesoAdq.idAnho.anho=:anho ORDER BY c.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoEntidad", ContratosOrdenesCompras.class);
+        q.setParameter("nit", numeroNit);
+        q.setParameter("anho", anho);
+        return q.getResultList();
     }
 }
