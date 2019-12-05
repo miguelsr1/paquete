@@ -18,7 +18,6 @@ import java.nio.file.attribute.FileTime;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -34,7 +33,6 @@ import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.servlet.ServletContext;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
@@ -292,6 +290,6 @@ public class BoletaMB implements Serializable {
 //        }
 //    }
     public void verificarArchivosPendientes() {
-        leerBoletasEJB.leerArchivosPendientes(mailSession, codDepa);
+        leerBoletasEJB.leerArchivosPendientes(mailSession, codDepa, usuario);
     }
 }

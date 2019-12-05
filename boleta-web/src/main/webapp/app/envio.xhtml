@@ -41,11 +41,11 @@
                         </p:outputPanel>
                     </h:panelGrid>
                     <br/>
-                    <p:outputLabel value="Seleccione los archivos a procesar"/>
+                    <p:outputLabel value="Seleccione los archivos a procesar (Tamaño max. 20MB)"/>
                     <br/>
                     <p:fileUpload id="updFile" widgetVar="updFile" fileUploadListener="#{boletaMB.handleFileUpload}" mode="advanced" dragDropSupport="false"
                                   multiple="true" auto="false" disabled="#{boletaMB.deshabilitar}" allowTypes="/(\.|\/)(pdf)$/" 
-                                  skinSimple="true" label="Seleccionar" uploadLabel="Cargar" cancelLabel="Cancelar"
+                                  skinSimple="true" label="Seleccionar" uploadLabel="Cargar" cancelLabel="Cancelar" fileLimit="20000000"
                                   oncomplete="updateTabla()" onstart="popupConfirm(event)" update="@this"/>
                     <br/>
 
