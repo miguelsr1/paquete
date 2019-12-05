@@ -75,34 +75,56 @@ public class LeerBoletasEJB {
         Boolean continuar = false;
         int numPage = 0;
         int interacion = 0;
+        int siguienteInteracion = 0;
+        int contadorDeCortes = 0;
         try {
             document = PDDocument.load(file);
 
             numPage = document.getNumberOfPages();
 
             Splitter splitter = new Splitter();
-            
+
             if (document.getNumberOfPages() > 1000) {
-                splitter.setSplitAtPage(1000); //<----- separar el documento cada 1000 paginas
+                siguienteInteracion = 1000;
+                splitter.setStartPage(1);
+                splitter.setEndPage(siguienteInteracion);
+                contadorDeCortes = siguienteInteracion;
+                //splitter.setSplitAtPage(1000); //<----- separar el documento cada 1000 paginas
+                interacion = ((int) (numPage / 1000)) + 1;
             }
 
-            for (PDDocument pd : splitter.split(document)) {
-                String code = getCodigoDocente(pd, "         )", 0, 15).substring(8);
+            do {
+                interacion--;
+                for (PDDocument pd : splitter.split(document)) {
+                    String code = getCodigoDocente(pd, "         )", 0, 15).substring(8);
 
-                ultimo = code.equals(ultimoCodigoProcesado);
+                    ultimo = code.equals(ultimoCodigoProcesado);
 
-                if (ultimo && continuar) {
-                    if (info.containsKey(code)) {
-                        String email = info.getProperty(code);
-                        Logger.getGlobal().log(Level.INFO, email);
-                        //eMailEJB.enviarMail(code, email, usuario, RESOURCE_BUNDLE.getString("mail.message"), pd, mailSession);
+                    if (ultimo && continuar) {
+                        if (info.containsKey(code)) {
+                            String email = info.getProperty(code);
+                            Logger.getGlobal().log(Level.INFO, email);
+                            //eMailEJB.enviarMail(code, email, usuario, RESOURCE_BUNDLE.getString("mail.message"), pd, mailSession);
+                        }
+                    }
+
+                    if (ultimo && !continuar) {
+                        continuar = true;
                     }
                 }
+                if (interacion > 0) {
+                    siguienteInteracion = siguienteInteracion + 1000;
+                    splitter = new Splitter();
+                    splitter.setStartPage(contadorDeCortes);
+                    if (document.getNumberOfPages() > siguienteInteracion) {
+                        splitter.setEndPage(siguienteInteracion);
+                    } else {
+                        splitter.setEndPage(document.getNumberOfPages());
+                    }
 
-                if (ultimo && !continuar) {
-                    continuar = true;
+                    contadorDeCortes = 2000 + 1;
                 }
-            }
+            } while (interacion != 0);
 
             document.close();
         } catch (IOException ex) {
