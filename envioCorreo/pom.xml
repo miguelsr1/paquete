@@ -23,7 +23,7 @@
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
-            <version>5.0</version>
+            <version>7.0</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
@@ -43,6 +43,13 @@
             <version>2.0.17</version>
             <type>jar</type>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.primefaces.themes/all-themes -->
+        <dependency>
+            <groupId>org.primefaces.themes</groupId>
+            <artifactId>all-themes</artifactId>
+            <version>1.0.10</version>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -13,6 +13,14 @@
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.mined</url-pattern>
     </servlet-mapping>
+    <context-param>
+        <param-name>primefaces.FONT_AWESOME</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>omega</param-value>
+    </context-param>
     <session-config>
         <session-timeout>
             30

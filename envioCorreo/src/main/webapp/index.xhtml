@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Facelet Title</title>
     </h:head>
@@ -11,6 +12,20 @@
             <p:inputText value="#{enviarCorreoMB.codigoUltimo}"/>
             <p:commandButton value="Enviar" action="#{enviarCorreoMB.buscarCodigoUltimo()}"/>
         </h:form>
+
+        <p:ajaxStatus style="display:block;margin-bottom:2em;height:24px;">
+            <f:facet name="default">
+                <h:outputText value="Status: StandBy" />
+            </f:facet>
+
+            <f:facet name="start">
+                <i class="fa fa-spinner fa-spin fa-3x fa-fw" style="font-size: 12px"></i>
+            </f:facet>
+
+            <f:facet name="complete">
+                <h:outputText value="Status: Completed" />
+            </f:facet>
+        </p:ajaxStatus>
     </h:body>
 </html>
 

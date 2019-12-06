@@ -5,8 +5,14 @@
  */
 package sv.gob.mined.boleta.ejb;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.activation.DataHandler;
@@ -34,8 +40,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 @Stateless
 @LocalBean
 public class EMailEJB {
-    
-    
+
     @Asynchronous
     public void enviarMail(String code, String remitente, String usuario, String mensaje,
             PDDocument pDDocument, Session mailSession) {
@@ -78,8 +83,7 @@ public class EMailEJB {
             Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
+
     public void enviarMailDeError(String subject, String message, String usuario, Session mailSession) {
         try {
             MimeMessage m = new MimeMessage(mailSession);
@@ -94,5 +98,37 @@ public class EMailEJB {
         } catch (MessagingException ex) {
             Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, "Error en el envio de correo");
         }
+    }
+    
+    public void enviarMailDeConfirmacion(String subject, String message, String usuario, Session mailSession){
+        try {
+            MimeMessage m = new MimeMessage(mailSession);
+            Address from = new InternetAddress(usuario);
+
+            m.setFrom(from);
+            m.setRecipients(Message.RecipientType.TO, usuario);
+            m.setRecipients(Message.RecipientType.BCC, "miguel.sanchez@admin.mined.edu.sv");
+            m.setSubject(subject, "UTF-8");
+            m.setSentDate(new java.util.Date());
+            m.setText(message, "UTF-8", "html");
+            Transport.send(m);
+        } catch (MessagingException ex) {
+            Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, "Error en el envio de correo");
+        }
+    }
+
+    @Asynchronous
+    public void escribirEmpleadoNoEncontrado(String codDepa, String mesAnho, String path, String codigoEmpleado) {
+        try {
+            File file = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + "no_encontrado.txt");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            
+            Files.write(Paths.get(file.getAbsolutePath()), codigoEmpleado.concat("\n").getBytes(), StandardOpenOption.APPEND);
+
+        } catch (IOException ex) {
+            Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
+        } 
     }
 }

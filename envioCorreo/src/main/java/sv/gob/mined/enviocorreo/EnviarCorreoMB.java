@@ -5,9 +5,17 @@
  */
 package sv.gob.mined.enviocorreo;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -25,7 +33,7 @@ import sv.gob.mined.boleta.ejb.LeerBoletasEJB;
  */
 @ManagedBean
 @ViewScoped
-public class EnviarCorreoMB {
+public class EnviarCorreoMB implements Serializable {
 
     private String codigoUltimo;
 
@@ -37,17 +45,16 @@ public class EnviarCorreoMB {
     private Properties config = new Properties();
     private Properties configEmail = new Properties();
 
-    
-
     @EJB
     private LeerBoletasEJB leerBoletasEJB;
+    
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("parametros");
 
     @PostConstruct
     public void init() {
         //usuario = context.getExternalContext().getSessionMap().get("usuario").toString();
-        
+
         mesAnho = "12_2019";
-        
 
         config = chargeEmailsProperties("config");
 
@@ -70,7 +77,7 @@ public class EnviarCorreoMB {
             }
         });
     }
-    
+
     public Properties chargeEmailsProperties(String nombre) {
         Properties info = null;
         try {
@@ -94,6 +101,6 @@ public class EnviarCorreoMB {
     }
 
     public void buscarCodigoUltimo() {
-        leerBoletasEJB.leerArchivosPendientesByUltimoProcesado(mailSession, "12", usuario, "0803906");
+        leerBoletasEJB.leerArchivosPendientesByUltimoProcesado(mailSession, "12", usuario, codigoUltimo, mesAnho);
     }
 }
