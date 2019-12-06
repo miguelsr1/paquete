@@ -117,18 +117,5 @@ public class EMailEJB {
         }
     }
 
-    @Asynchronous
-    public void escribirEmpleadoNoEncontrado(String codDepa, String mesAnho, String path, String codigoEmpleado) {
-        try {
-            File file = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + "no_encontrado.txt");
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            
-            Files.write(Paths.get(file.getAbsolutePath()), codigoEmpleado.concat("\n").getBytes(), StandardOpenOption.APPEND);
-
-        } catch (IOException ex) {
-            Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-    }
+    
 }

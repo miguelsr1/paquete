@@ -15,11 +15,9 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
-import javax.ejb.Stateless;
 import javax.mail.Session;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -33,6 +31,8 @@ public class LeerBoletasEJB {
 
     @EJB
     private EMailEJB eMailEJB;
+    @EJB
+    private BitacoraDeProcesoEJB bitacoraDeProcesoEJB;
 
     //@Asynchronous
     public void leerArchivosPendientes(Session mailSession, String codDepa, String usuario) {
@@ -58,7 +58,7 @@ public class LeerBoletasEJB {
             }
         }
 
-        for (String pathArchivo : pathArchivosProcesados) {
+        pathArchivosProcesados.forEach((pathArchivo) -> {
             try {
                 File folderProcesado = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + "12_2019" + File.separator + "procesado" + File.separator);
                 if (!folderProcesado.exists()) {
@@ -73,7 +73,7 @@ public class LeerBoletasEJB {
             } catch (IOException ex) {
                 Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        });
     }
 
     public void leerArchivosPendientesByUltimoProcesado(Session mailSession, String codDepa, String usuario, String codigo, String mesAnho) {
@@ -99,7 +99,7 @@ public class LeerBoletasEJB {
             }
         }
 
-        for (String pathArchivo : pathArchivosProcesados) {
+        pathArchivosProcesados.forEach((pathArchivo) -> {
             try {
                 File folderProcesado = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator + "procesado" + File.separator);
                 if (!folderProcesado.exists()) {
@@ -111,7 +111,7 @@ public class LeerBoletasEJB {
             } catch (IOException ex) {
                 Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        });
     }
 
     public void continuarEnvio(Session mailSession, String codDepa, String usuario, String ultimoCodigoProcesado, String mesAnho) {
@@ -123,9 +123,9 @@ public class LeerBoletasEJB {
         PDDocument document = null;
         Boolean ultimo = false;
         Boolean continuar = false;
-        int interacion = 0;
+        int interacion;
         int siguienteInteracion = 0;
-        int contadorDeCortes = 0;
+        int contadorDeCortes;
 
         int boletasEnviadas = 0;
         int docenteNoEncontrados = 0;
@@ -142,7 +142,6 @@ public class LeerBoletasEJB {
             if (document.getNumberOfPages() > 1000) {
                 siguienteInteracion = 1000;
                 splitter.setEndPage(siguienteInteracion);
-                contadorDeCortes = siguienteInteracion;
 
                 interacion = ((int) (document.getNumberOfPages() / 1000)) + 1;
             } else {
@@ -166,7 +165,7 @@ public class LeerBoletasEJB {
                             //eMailEJB.enviarMail(code, email, usuario, RESOURCE_BUNDLE.getString("mail.message"), pd, mailSession);
                             boletasEnviadas++;
                         } else {
-                            eMailEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, path, code);
+                            bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, path, code);
                             docenteNoEncontrados++;
                             //Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.WARNING, "No existe este empleado: {0}", code);
                         }
@@ -220,9 +219,9 @@ public class LeerBoletasEJB {
     public void splitPages(File file, String codDepa, Session mailSession, Properties info, String usuario, String mesAnho, String path) {
         StringBuilder sb = new StringBuilder("");
         PDDocument document = null;
-        int interacion = 0;
+        int interacion;
+        int contadorDeCortes;
         int siguienteInteracion = 0;
-        int contadorDeCortes = 0;
 
         int boletasEnviadas = 0;
         int docenteNoEncontrados = 0;
@@ -240,7 +239,7 @@ public class LeerBoletasEJB {
             if (document.getNumberOfPages() > 1000) {
                 siguienteInteracion = 1000;
                 splitter.setEndPage(siguienteInteracion);
-                contadorDeCortes = siguienteInteracion;
+                
                 interacion = ((int) (document.getNumberOfPages() / 1000)) + 1;
             } else {
                 splitter.setEndPage(document.getNumberOfPages());
@@ -258,7 +257,7 @@ public class LeerBoletasEJB {
                         eMailEJB.enviarMail(code, email, usuario, RESOURCE_BUNDLE.getString("mail.message"), pd, mailSession);
                         boletasEnviadas++;
                     } else {
-                        eMailEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, path, code);
+                        bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, path, code);
                         docenteNoEncontrados++;
                         //Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.WARNING, "No existe este empleado: {0}", code);
                     }
