@@ -26,7 +26,7 @@ public class CorreoEJB {
     @EJB
     LeerBoletasEJB leerBoletasEJB;
     
-    @Schedule(minute = "9", hour = "8")
+    @Schedule(minute = "15", hour = "8")
     public void iniciarEnvioDeBoletas(){
         String usuario = "boletas02@admin.mined.edu.sv";
         String clave = "Fot12752";

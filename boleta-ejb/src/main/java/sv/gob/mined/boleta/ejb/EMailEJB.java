@@ -5,18 +5,11 @@
  */
 package sv.gob.mined.boleta.ejb;
 
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.activation.DataHandler;
-import javax.ejb.Asynchronous;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.mail.Address;
@@ -109,6 +102,7 @@ public class EMailEJB {
             m.setFrom(from);
             m.setRecipients(Message.RecipientType.TO, usuario);
             m.setRecipients(Message.RecipientType.BCC, "miguel.sanchez@admin.mined.edu.sv");
+            m.setRecipients(Message.RecipientType.BCC, "guillermo.castro@mined.gob.sv");
             m.setSentDate(new java.util.Date());
             m.setText(message, "UTF-8", "html");
             Transport.send(m);

@@ -117,6 +117,6 @@ public class EnviarCorreoMB implements Serializable {
     }
 
     public void buscarCodigoUltimo() {
-        leerBoletasEJB.leerArchivosPendientesByUltimoProcesado(mailSession, "12", usuario, codigoUltimo, mesAnho);
+        leerBoletasEJB.leerArchivosPendientesByUltimoProcesado(mailSession, "12", usuario, codigoUltimo, mesAnho, "");
     }
 }
