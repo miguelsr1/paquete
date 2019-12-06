@@ -5,17 +5,10 @@
  */
 package sv.gob.mined.enviocorreo;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.List;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -39,24 +32,22 @@ public class EnviarCorreoMB implements Serializable {
 
     private Session mailSession;
 
-    private String usuario = "miguel.sanchez@admin.mined.edu.sv";
-    private String clave = "miguelsr15.";
+    private String usuario = "";
+    private String clave = "";
+    private String codDepa = "";
     private String mesAnho = "12_2019";
-    private Properties config = new Properties();
-    private Properties configEmail = new Properties();
 
     @EJB
     private LeerBoletasEJB leerBoletasEJB;
-    
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("parametros");
 
     @PostConstruct
     public void init() {
-        //usuario = context.getExternalContext().getSessionMap().get("usuario").toString();
-
         mesAnho = "12_2019";
+    }
 
-        config = chargeEmailsProperties("config");
+    public void enviarCorreos() {
+        //config = chargeEmailsProperties("config");
+        Properties configEmail = new Properties();
 
         configEmail.put("mail.smtp.auth", "true");
         configEmail.put("mail.smtp.starttls.enable", "true");
@@ -72,10 +63,35 @@ public class EnviarCorreoMB implements Serializable {
 
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(usuario,
-                        clave);
+                return new PasswordAuthentication(usuario, clave);
             }
         });
+
+        leerBoletasEJB.leerArchivosPendientes(mailSession, codDepa, usuario);
+    }
+
+    public String getCodDepa() {
+        return codDepa;
+    }
+
+    public void setCodDepa(String codDepa) {
+        this.codDepa = codDepa;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getClave() {
+        return clave;
+    }
+
+    public void setClave(String clave) {
+        this.clave = clave;
     }
 
     public Properties chargeEmailsProperties(String nombre) {

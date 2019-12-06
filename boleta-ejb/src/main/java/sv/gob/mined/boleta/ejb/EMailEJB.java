@@ -41,7 +41,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 @LocalBean
 public class EMailEJB {
 
-    @Asynchronous
+    
     public void enviarMail(String code, String remitente, String usuario, String mensaje,
             PDDocument pDDocument, Session mailSession) {
         try {
@@ -70,7 +70,7 @@ public class EMailEJB {
             multipart.addBodyPart(messageBodyPart2);
 
             m.setContent(multipart);
-            m.setSubject(code + " Boleta", "UTF-8");
+            m.setSubject("Boleta de Pago", "UTF-8");
             Transport.send(m);
 
             pDDocument.close();
@@ -88,10 +88,10 @@ public class EMailEJB {
         try {
             MimeMessage m = new MimeMessage(mailSession);
             Address from = new InternetAddress(usuario);
+            m.setSubject(subject, "UTF-8");
 
             m.setFrom(from);
             m.setRecipients(Message.RecipientType.TO, "miguel.sanchez@mined.gob.sv");
-            m.setSubject(subject, "UTF-8");
             m.setSentDate(new java.util.Date());
             m.setText(message, "UTF-8", "html");
             Transport.send(m);
@@ -104,11 +104,11 @@ public class EMailEJB {
         try {
             MimeMessage m = new MimeMessage(mailSession);
             Address from = new InternetAddress(usuario);
+            m.setSubject(subject, "UTF-8");
 
             m.setFrom(from);
             m.setRecipients(Message.RecipientType.TO, usuario);
             m.setRecipients(Message.RecipientType.BCC, "miguel.sanchez@admin.mined.edu.sv");
-            m.setSubject(subject, "UTF-8");
             m.setSentDate(new java.util.Date());
             m.setText(message, "UTF-8", "html");
             Transport.send(m);
