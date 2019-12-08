@@ -23,6 +23,9 @@
                 <f:facet name="footer">
                     <p:commandButton value="Enviar" action="#{enviarCorreoMB.enviarCorreos()}"/>
                     <p:commandButton value="Continuar" action="#{enviarCorreoMB.enviarCorreos()}"/>
+                    <p:commandButton value="Separar" action="#{enviarCorreoMB.separacionDeBoletas()}"/>
+                    <p:commandButton value="Separar Todo" action="#{enviarCorreoMB.separacionDeBoletasTotal()}"/>
+                    <p:commandButton value="Enviar 1 solo correo" action="#{enviarCorreoMB.enviarUnSoloCorreo()}"/>
                 </f:facet>
             </p:panelGrid>
         </h:form>

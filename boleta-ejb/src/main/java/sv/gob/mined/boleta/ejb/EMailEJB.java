@@ -6,6 +6,7 @@
 package sv.gob.mined.boleta.ejb;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,7 +35,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 @LocalBean
 public class EMailEJB {
 
-    
     public void enviarMail(String code, String remitente, String usuario, String mensaje,
             PDDocument pDDocument, Session mailSession) {
         try {
@@ -69,11 +69,58 @@ public class EMailEJB {
             pDDocument.close();
             out.close();
         } catch (MessagingException ex) {
-            Logger.getLogger(EMailEJB.class.getName()).log(Level.INFO, "Error en el envio de correo a: {0} - código: {1}", new Object[]{remitente, code});
+            Logger.getLogger(EMailEJB.class.getName()).log(Level.WARNING, "Error en el envio de correo a: {0} - código: {1}", new Object[]{remitente, code});
+            Logger.getLogger(EMailEJB.class.getName()).log(Level.WARNING, "Error", ex);
 
             enviarMailDeError("eMail Boleta - Error", "Error en el envio de correo a: " + remitente + " - código: " + code, usuario, mailSession);
         } catch (IOException ex) {
-            Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+        }
+    }
+
+    public Boolean enviarMail(String code, String remitente, String usuario, String mensaje,
+            File path, Session mailSession) {
+        try {
+            MimeMessage m = new MimeMessage(mailSession);
+            Address from = new InternetAddress(usuario);
+
+            m.setFrom(from);
+            m.setRecipients(Message.RecipientType.TO, remitente);
+
+            BodyPart messageBodyPart1 = new MimeBodyPart();
+
+            messageBodyPart1.setContent(mensaje, "text/html");
+
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(messageBodyPart1);
+            int contador = 1;
+            for (File boleta : path.listFiles()) {
+                ByteArrayOutputStream out;
+                try (PDDocument document = PDDocument.load(boleta)) {
+                    out = new ByteArrayOutputStream();
+                    document.save(out);
+                    byte[] bytes = out.toByteArray();
+                    MimeBodyPart messageBodyPart2 = new MimeBodyPart();
+                    ByteArrayDataSource ds = new ByteArrayDataSource(bytes, "application/pdf");
+                    messageBodyPart2.setDataHandler(new DataHandler(ds));
+                    messageBodyPart2.setFileName("Boleta_" + contador + ".pdf");
+                    multipart.addBodyPart(messageBodyPart2);
+                }
+                out.close();
+
+                contador++;
+            }
+
+            m.setContent(multipart);
+            m.setSubject("Boleta de Pago", "UTF-8");
+            Transport.send(m);
+            return true;
+        } catch (MessagingException | IOException ex) {
+            Logger.getLogger(EMailEJB.class.getName()).log(Level.WARNING, "Error en el envio de correo a: {0} - código: {1}", new Object[]{remitente, code});
+            Logger.getLogger(EMailEJB.class.getName()).log(Level.WARNING, "Error", ex);
+
+            enviarMailDeError("eMail Boleta - Error", "Error en el envio de correo a: " + remitente + " - código: " + code, usuario, mailSession);
+            return false;
         }
     }
 
@@ -92,8 +139,8 @@ public class EMailEJB {
             Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, "Error en el envio de correo");
         }
     }
-    
-    public void enviarMailDeConfirmacion(String subject, String message, String usuario, Session mailSession){
+
+    public void enviarMailDeConfirmacion(String subject, String message, String usuario, Session mailSession) {
         try {
             MimeMessage m = new MimeMessage(mailSession);
             Address from = new InternetAddress(usuario);
@@ -102,7 +149,7 @@ public class EMailEJB {
             m.setFrom(from);
             m.setRecipients(Message.RecipientType.TO, usuario);
             m.setRecipients(Message.RecipientType.BCC, "miguel.sanchez@admin.mined.edu.sv");
-            m.setRecipients(Message.RecipientType.BCC, "guillermo.castro@mined.gob.sv");
+            //m.setRecipients(Message.RecipientType.BCC, "guillermo.castro@mined.gob.sv");
             m.setSentDate(new java.util.Date());
             m.setText(message, "UTF-8", "html");
             Transport.send(m);
@@ -111,5 +158,4 @@ public class EMailEJB {
         }
     }
 
-    
 }

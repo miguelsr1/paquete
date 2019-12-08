@@ -38,4 +38,24 @@ public class BitacoraDeProcesoEJB {
             Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    @Asynchronous
+    public void correoNoEnviado(String codDepa, String mesAnho, String path, String codigoEmpleado) {
+        try {
+            File carpetaError = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + "errores");
+            if (!carpetaError.exists()) {
+                carpetaError.mkdir();
+            }
+
+            File file = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + "errores" + File.separator + "correo_no_enviador.txt");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            Files.write(Paths.get(file.getAbsolutePath()), codigoEmpleado.concat("\n").getBytes(), StandardOpenOption.APPEND);
+
+        } catch (IOException ex) {
+            Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

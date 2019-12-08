@@ -13,6 +13,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
@@ -45,9 +46,6 @@ public class LeerBoletasEJB {
                             if (archivoBoleta.isFile() && (archivoBoleta.getName().toUpperCase().contains("PDF"))) {
                                 splitPages(archivoBoleta, codDepa, mailSession, info, usuario, "12_2019", RESOURCE_BUNDLE.getString("path_archivo"));
 
-                                /*moverArchivoProcesado(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + "12_2019" + File.separator + "procesado" + File.separator,
-                                        archivoBoleta.getAbsolutePath(),
-                                        archivoBoleta.getName());*/
                                 Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.INFO, archivoBoleta.getName());
                             }
                         }
@@ -57,7 +55,7 @@ public class LeerBoletasEJB {
         }
     }
 
-    public void leerArchivosPendientesByUltimoProcesado(Session mailSession, String codDepa, String usuario, 
+    public void leerArchivosPendientesByUltimoProcesado(Session mailSession, String codDepa, String usuario,
             String codigo, String mesAnho, String nombreArchivo) {
         Properties info = chargeEmailsProperties("emails0212");
 
@@ -70,9 +68,6 @@ public class LeerBoletasEJB {
                             if (archivoBoleta.isFile() && (archivoBoleta.getName().toUpperCase().contains("PDF")) && archivoBoleta.getName().equals(nombreArchivo)) {
                                 splitPagesByCodigo(archivoBoleta, codDepa, mailSession, info, usuario, codigo, mesAnho, RESOURCE_BUNDLE.getString("path_archivo"));
 
-                                /*moverArchivoProcesado(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + "12_2019" + File.separator + "procesado" + File.separator,
-                                        archivoBoleta.getAbsolutePath(),
-                                        archivoBoleta.getName());*/
                                 Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.INFO, archivoBoleta.getName());
                             }
                         }
@@ -81,10 +76,6 @@ public class LeerBoletasEJB {
             }
         }
     }
-
-    /*public void continuarEnvio(Session mailSession, String codDepa, String usuario, String ultimoCodigoProcesado, String mesAnho) {
-        leerArchivosPendientesByUltimoProcesado(mailSession, codDepa, usuario, ultimoCodigoProcesado, mesAnho);
-    }*/
 
     public void splitPagesByCodigo(File file, String codDepa, Session mailSession, Properties info, String usuario, String ultimoCodigoProcesado, String mesAnho, String path) {
         StringBuilder sb = new StringBuilder("");
@@ -192,20 +183,6 @@ public class LeerBoletasEJB {
         }
     }
 
-    /*private void moverArchivoProcesado(String pathDirectorioProcesado, String path, String nombreArchivo) {
-        try {
-            File folderProcesado = new File(pathDirectorioProcesado);
-            if (!folderProcesado.exists()) {
-                folderProcesado.mkdir();
-            }
-            //mover archivo a carpeta de procesados
-            Path temp = Files.move(Paths.get(path + File.separator + nombreArchivo),
-                    Paths.get(folderProcesado.getAbsolutePath() + File.separator + nombreArchivo), StandardCopyOption.REPLACE_EXISTING);
-
-        } catch (IOException ex) {
-            Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }*/
     public void splitPages(File file, String codDepa, Session mailSession, Properties info, String usuario, String mesAnho, String path) {
         StringBuilder sb = new StringBuilder("");
         PDDocument document = null;
@@ -331,6 +308,58 @@ public class LeerBoletasEJB {
             returnString = "No ParaGraph Found";
         }
         return returnString;
+    }
+
+    @Asynchronous
+    public void enviarUnSoloCorreo(String codDepa, String mesAnho, Session mailSession, String usuario) {
+        String pathRoot = RESOURCE_BUNDLE.getString("path_archivo");
+        File carpeta = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator);
+        Properties info = chargeEmailsProperties("emails0212");
+        Boolean errorEnvioEmail = false;
+
+        int boletasEnviadas = 0;
+        int docenteNoEncontrados = 0;
+        int correosNoEnviados = 0;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
+
+        StringBuilder sb = new StringBuilder();
+        sb = sb.append("Se han enviado boletas de pago.").append("<br/>")
+                .append("Hora de inicio: ").append(sdf.format(new Date())).append("<br/>");
+
+        for (File carpetaDocente : carpeta.listFiles()) {
+            if (carpetaDocente.isDirectory() && !carpetaDocente.getName().equals("procesado")) {
+                if (info.containsKey(carpetaDocente.getName())) {
+                    String email = info.getProperty(carpetaDocente.getName());
+                    Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.INFO, "{0} - {1}", new Object[]{email, carpetaDocente.getName()});
+
+                    errorEnvioEmail = eMailEJB.enviarMail(carpetaDocente.getName(), email, usuario, RESOURCE_BUNDLE.getString("mail.message"), carpetaDocente, mailSession);
+                    if (errorEnvioEmail) {
+                        bitacoraDeProcesoEJB.correoNoEnviado(codDepa, mesAnho, pathRoot, carpetaDocente.getName());
+                        correosNoEnviados++;
+                    } else {
+                        for (File boleta : carpetaDocente.listFiles()) {
+                            boleta.delete();
+                        }
+                        carpeta.delete();
+                        
+                        boletasEnviadas++;
+                    }
+                } else {
+                    bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, pathRoot, carpetaDocente.getName());
+                    docenteNoEncontrados++;
+                    Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.WARNING, "No existe este empleado: {0}", carpetaDocente.getName());
+                }
+            }
+        }
+
+        sb = sb.append("Hora de fin: ").append(sdf.format(new Date())).append("<br/>");
+        sb = sb.append("Número de boletas enviadas: ").append(boletasEnviadas).append("<br/>");
+        sb = sb.append("Número de docente no encontrados: ").append(docenteNoEncontrados).append("<br/>");
+        sb = sb.append("Número de correos no enviados debido a un error: ").append(correosNoEnviados).append("<br/>");
+
+        eMailEJB.enviarMailDeConfirmacion("Envio de boletas de pago", sb.toString(), usuario, mailSession);
+        //Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.INFO, sb.toString());
     }
 
 }

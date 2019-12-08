@@ -3,12 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sv.gob.mined.boleta.web;
+package sv.gob.mined.boleta.ejb;
 
 import java.util.Properties;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
-import javax.ejb.Schedule;
 import javax.ejb.Stateless;
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;

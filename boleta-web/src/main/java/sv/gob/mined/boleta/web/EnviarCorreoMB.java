@@ -19,6 +19,7 @@ import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import sv.gob.mined.boleta.ejb.LeerBoletasEJB;
+import sv.gob.mined.boleta.ejb.SeparacionBoletasFacade;
 
 /**
  *
@@ -41,13 +42,19 @@ public class EnviarCorreoMB implements Serializable {
     @EJB
     private LeerBoletasEJB leerBoletasEJB;
 
+    @EJB
+    private SeparacionBoletasFacade sbf;
+
     @PostConstruct
     public void init() {
         mesAnho = "12_2019";
     }
 
     public void enviarCorreos() {
-        //config = chargeEmailsProperties("config");
+        leerBoletasEJB.leerArchivosPendientes(getMailSession(), codDepa, usuario);
+    }
+
+    private Session getMailSession() {
         Properties configEmail = new Properties();
 
         configEmail.put("mail.smtp.auth", "true");
@@ -68,7 +75,7 @@ public class EnviarCorreoMB implements Serializable {
             }
         });
 
-        leerBoletasEJB.leerArchivosPendientes(mailSession, codDepa, usuario);
+        return mailSession;
     }
 
     public String getNombreArchivo() {
@@ -127,5 +134,17 @@ public class EnviarCorreoMB implements Serializable {
 
     public void buscarCodigoUltimo() {
         leerBoletasEJB.leerArchivosPendientesByUltimoProcesado(mailSession, codDepa, usuario, codigoUltimo, mesAnho, nombreArchivo);
+    }
+
+    public void separacionDeBoletas() {
+        sbf.separacion(mesAnho, codDepa);
+    }
+    
+    public void separacionDeBoletasTotal() {
+        sbf.separacionTotal(mesAnho);
+    }
+
+    public void enviarUnSoloCorreo() {
+        leerBoletasEJB.enviarUnSoloCorreo(codDepa, mesAnho, getMailSession(), usuario);
     }
 }
