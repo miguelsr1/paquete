@@ -6,7 +6,9 @@
 package sv.gob.mined.boleta.ejb;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -15,6 +17,8 @@ import java.util.logging.Logger;
 import javax.ejb.Asynchronous;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -35,26 +39,30 @@ public class SeparacionBoletasFacade {
         SimpleDateFormat sdf = new SimpleDateFormat("HHmmsszzz");
 
         for (File carpetaDepa : carpetaRoot.listFiles()) {
-            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.INFO, "SEPARACION TOTAL - Hora de inicio + {0}", new Date());
             if (carpetaDepa.isDirectory() && carpetaDepa.getName().equals(codDepa)) {
+                Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.INFO, "SEPARACION - Hora de inicio + {0}", new Date());
                 for (File carpetaPorFecha : carpetaDepa.listFiles()) {
                     if (carpetaPorFecha.isDirectory() && carpetaPorFecha.getName().equals(mesAnho)) {
-                        for (File archivoBoleta : carpetaPorFecha.listFiles()) {
-                            if (archivoBoleta.isFile() && (archivoBoleta.getName().toUpperCase().contains("PDF"))) {
-                                try {
+                        try {
+                            for (File archivoBoleta : carpetaPorFecha.listFiles()) {
+                                if (archivoBoleta.isFile() && (archivoBoleta.getName().toUpperCase().contains("PDF"))) {
+
+                                    //consolidar boletas por docente
                                     splitPages(archivoBoleta, codDepa, mesAnho, RESOURCE_BUNDLE.getString("path_archivo"), sdf);
-                                } catch (Exception ex) {
-                                    Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Error en el archivo: {0}", archivoBoleta.getName());
-                                    Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Mensaje: {0}", ex.getMessage());
-                                    Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Causa: {0}", ex.getCause());
-                                    Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Clase: {0}", ex.getClass().getName());
                                 }
                             }
+                            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.INFO, "Unificación de boletas - Hora de fin + {0}", new Date());
+                            //unificar boletas en un solo archivo por docente
+                            unirBoletasUnSolaArchivo(carpetaPorFecha);
+                        } catch (IOException ex) {
+                            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Mensaje: {0}", ex.getMessage());
+                            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Causa: {0}", ex.getCause());
+                            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Clase: {0}", ex.getClass().getName());
                         }
                     }
                 }
+                Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.INFO, "SEPARACION - Hora de fin + {0}", new Date());
             }
-            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.INFO, "SEPARACION TOTAL - Hora de fin + {0}", new Date());
         }
     }
 
@@ -68,23 +76,46 @@ public class SeparacionBoletasFacade {
             if (carpetaDepa.isDirectory()) {
                 for (File carpetaPorFecha : carpetaDepa.listFiles()) {
                     if (carpetaPorFecha.isDirectory() && carpetaPorFecha.getName().equals(mesAnho)) {
-                        for (File archivoBoleta : carpetaPorFecha.listFiles()) {
-                            if (archivoBoleta.isFile() && (archivoBoleta.getName().toUpperCase().contains("PDF"))) {
-                                try {
+                        try {
+                            for (File archivoBoleta : carpetaPorFecha.listFiles()) {
+                                if (archivoBoleta.isFile() && (archivoBoleta.getName().toUpperCase().contains("PDF"))) {
+                                    //consolidar boletas por docente
                                     splitPages(archivoBoleta, carpetaDepa.getName(), mesAnho, RESOURCE_BUNDLE.getString("path_archivo"), sdf);
-                                } catch (Exception ex) {
-                                    Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "DEPA : {0} Error en el archivo: {1}", new Object[]{carpetaDepa.getName(), archivoBoleta.getName()});
-                                    Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Mensaje: {0}", ex.getMessage());
-                                    Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Causa: {0}", ex.getCause());
-                                    Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Clase: {0}", ex.getClass().getName());
                                 }
                             }
+                            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.INFO, "Unificación de boletas - Hora de fin + {0}", new Date());
+                            //unificar boletas en un solo archivo por docente
+                            unirBoletasUnSolaArchivo(carpetaPorFecha);
+                        } catch (IOException ex) {
+                            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Mensaje: {0}", ex.getMessage());
+                            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Causa: {0}", ex.getCause());
+                            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Clase: {0}", ex.getClass().getName());
                         }
                     }
                 }
             }
             Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.INFO, "SEPARACION TOTAL " + carpetaDepa.getName() + " - Hora de fin + {0}", new Date());
         }
+    }
+
+    private void unirBoletasUnSolaArchivo(File carpetaPorFecha) throws FileNotFoundException, IOException {
+        for (File carpetaDocente : carpetaPorFecha.listFiles()) {
+            if (carpetaDocente.isDirectory() && !carpetaDocente.getName().equals("procesado")) {
+                PDFMergerUtility PDFmerger = new PDFMergerUtility();
+                PDFmerger.setDestinationFileName(carpetaPorFecha.getPath() + File.separator + carpetaDocente.getName() + ".pdf");
+
+                for (File boleta : carpetaDocente.listFiles()) {
+                    PDFmerger.addSource(boleta);
+                }
+                PDFmerger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+
+                for (File boleta : carpetaDocente.listFiles()) {
+                    boleta.delete();
+                }
+                carpetaDocente.delete();
+            }
+        }
+
     }
 
     private void splitPages(File file, String codDepa, String mesAnho, String path, SimpleDateFormat sdf) {

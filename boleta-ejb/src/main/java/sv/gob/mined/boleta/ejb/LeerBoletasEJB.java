@@ -311,7 +311,7 @@ public class LeerBoletasEJB {
     }
 
     @Asynchronous
-    public void enviarUnSoloCorreo(String codDepa, String mesAnho, Session mailSession, String usuario) {
+    public void enviarUnSoloCorreo(String codDepa, String mesAnho, Session mailSession, String usuario)  {
         String pathRoot = RESOURCE_BUNDLE.getString("path_archivo");
         File carpeta = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator);
         Properties info = chargeEmailsProperties("emails0212");
@@ -327,28 +327,35 @@ public class LeerBoletasEJB {
         sb = sb.append("Se han enviado boletas de pago.").append("<br/>")
                 .append("Hora de inicio: ").append(sdf.format(new Date())).append("<br/>");
 
-        for (File carpetaDocente : carpeta.listFiles()) {
-            if (carpetaDocente.isDirectory() && !carpetaDocente.getName().equals("procesado")) {
-                if (info.containsKey(carpetaDocente.getName())) {
-                    String email = info.getProperty(carpetaDocente.getName());
-                    Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.INFO, "{0} - {1}", new Object[]{email, carpetaDocente.getName()});
+        for (File boleta : carpeta.listFiles()) {
+            if (boleta.isFile() && boleta.getName().toUpperCase().contains("PDF")) {
+                if (info.containsKey(boleta.getName().toUpperCase().replace(".PDF", ""))) {
+                    String email = info.getProperty(boleta.getName().toUpperCase().replace(".PDF", ""));
 
-                    errorEnvioEmail = eMailEJB.enviarMail(carpetaDocente.getName(), email, usuario, RESOURCE_BUNDLE.getString("mail.message"), carpetaDocente, mailSession);
-                    if (errorEnvioEmail) {
-                        bitacoraDeProcesoEJB.correoNoEnviado(codDepa, mesAnho, pathRoot, carpetaDocente.getName());
+                    errorEnvioEmail = eMailEJB.enviarMail(email, usuario, RESOURCE_BUNDLE.getString("mail.message"), boleta, mailSession);
+                    Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.INFO, "{0} - {1}", new Object[]{email, boleta.getName().toUpperCase().replace(".PDF", "")});
+                    if (!errorEnvioEmail) {
+                        bitacoraDeProcesoEJB.correoNoEnviado(codDepa, mesAnho, pathRoot, boleta.getName().toUpperCase().replace(".PDF", ""));
                         correosNoEnviados++;
                     } else {
-                        for (File boleta : carpetaDocente.listFiles()) {
-                            boleta.delete();
+                        try {
+                            //mover archivo procesado
+                            File folderProcesado = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator + "procesado" + File.separator);
+                            if (!folderProcesado.exists()) {
+                                folderProcesado.mkdir();
+                            }
+                            Path temp = Files.move(Paths.get(boleta.getAbsolutePath()),
+                                    Paths.get(folderProcesado.getAbsolutePath() + File.separator + boleta.getName()), StandardCopyOption.REPLACE_EXISTING);
+                            
+                            boletasEnviadas++;
+                        } catch (IOException ex) {
+                            Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        carpeta.delete();
-                        
-                        boletasEnviadas++;
                     }
                 } else {
-                    bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, pathRoot, carpetaDocente.getName());
+                    bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, pathRoot, boleta.getName().toUpperCase().replace(".PDF", ""));
                     docenteNoEncontrados++;
-                    Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.WARNING, "No existe este empleado: {0}", carpetaDocente.getName());
+                    Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.WARNING, "No existe este empleado: {0}", boleta.getName().toUpperCase().replace(".PDF", ""));
                 }
             }
         }

@@ -33,12 +33,12 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>seguridad-api</artifactId>
+            <artifactId>boleta-ejb</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>boleta-ejb</artifactId>
+            <artifactId>seguridad-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

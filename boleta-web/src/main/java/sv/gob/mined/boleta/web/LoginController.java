@@ -27,7 +27,7 @@ public class LoginController implements Serializable {
 
     @EJB
     private UsuarioFacade usuarioFacade;
-
+   
     public LoginController() {
     }
 
@@ -57,7 +57,7 @@ public class LoginController implements Serializable {
                 return "/app/envio.mined?faces-redirect=true";
             } else {
                 JsfUtil.mensajeAlerta("Usuario/Password equivocados");
-                return null;
+            return null;
             }
         } catch (Exception e) {
             e.printStackTrace();

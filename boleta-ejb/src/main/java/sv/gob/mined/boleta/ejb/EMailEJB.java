@@ -12,7 +12,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.activation.DataHandler;
 import javax.ejb.LocalBean;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -33,6 +37,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
  */
 @Stateless
 @LocalBean
+@TransactionManagement(TransactionManagementType.CONTAINER)
 public class EMailEJB {
 
     public void enviarMail(String code, String remitente, String usuario, String mensaje,
@@ -78,7 +83,8 @@ public class EMailEJB {
         }
     }
 
-    public Boolean enviarMail(String code, String remitente, String usuario, String mensaje,
+    @Lock(LockType.WRITE)
+    public Boolean enviarMail(String remitente, String usuario, String mensaje,
             File path, Session mailSession) {
         try {
             MimeMessage m = new MimeMessage(mailSession);
@@ -94,32 +100,32 @@ public class EMailEJB {
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(messageBodyPart1);
             int contador = 1;
-            for (File boleta : path.listFiles()) {
-                ByteArrayOutputStream out;
-                try (PDDocument document = PDDocument.load(boleta)) {
-                    out = new ByteArrayOutputStream();
-                    document.save(out);
-                    byte[] bytes = out.toByteArray();
-                    MimeBodyPart messageBodyPart2 = new MimeBodyPart();
-                    ByteArrayDataSource ds = new ByteArrayDataSource(bytes, "application/pdf");
-                    messageBodyPart2.setDataHandler(new DataHandler(ds));
-                    messageBodyPart2.setFileName("Boleta_" + contador + ".pdf");
-                    multipart.addBodyPart(messageBodyPart2);
-                }
-                out.close();
-
-                contador++;
+            //for (File boleta : path.listFiles()) {
+            ByteArrayOutputStream out;
+            try (PDDocument document = PDDocument.load(path)) {
+                out = new ByteArrayOutputStream();
+                document.save(out);
+                byte[] bytes = out.toByteArray();
+                MimeBodyPart messageBodyPart2 = new MimeBodyPart();
+                ByteArrayDataSource ds = new ByteArrayDataSource(bytes, "application/pdf");
+                messageBodyPart2.setDataHandler(new DataHandler(ds));
+                messageBodyPart2.setFileName("Boleta_" + contador + ".pdf");
+                multipart.addBodyPart(messageBodyPart2);
             }
+            out.close();
+
+            contador++;
+            //}
 
             m.setContent(multipart);
             m.setSubject("Boleta de Pago", "UTF-8");
             Transport.send(m);
             return true;
         } catch (MessagingException | IOException ex) {
-            Logger.getLogger(EMailEJB.class.getName()).log(Level.WARNING, "Error en el envio de correo a: {0} - código: {1}", new Object[]{remitente, code});
+            Logger.getLogger(EMailEJB.class.getName()).log(Level.WARNING, "Error en el envio de correo a: {0} - código: {1}", new Object[]{remitente, path.getName()});
             Logger.getLogger(EMailEJB.class.getName()).log(Level.WARNING, "Error", ex);
 
-            enviarMailDeError("eMail Boleta - Error", "Error en el envio de correo a: " + remitente + " - código: " + code, usuario, mailSession);
+            enviarMailDeError("eMail Boleta - Error", "Error en el envio de correo a: " + remitente + " - código: " + path.getName(), usuario, mailSession);
             return false;
         }
     }
