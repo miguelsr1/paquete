@@ -18,8 +18,7 @@ import sv.gob.mined.boleta.ejb.LeerBoletasEJB;
  *
  * @author DesarrolloPc
  */
-@Stateless
-@LocalBean
+
 public class CorreoEJB {
     
     @EJB

@@ -43,7 +43,7 @@ public class Usuario implements Serializable {
     private Character cambiarClave;
     @Column(name = "CLAVE_ACCESO")
     private String claveAcceso;
-    @Column(name = "CORREO_ELECTRONICO")
+    @Column(name = "CORRE_ELECTRONICO")
     private String correoElectronico;
     @Column(name = "DUI")
     private String dui;

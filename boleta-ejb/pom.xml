@@ -28,6 +28,22 @@
             <type>jar</type>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>eclipselink</artifactId>
+            <version>2.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jboss-vfs</artifactId>
+            <version>3.1.0.Final</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>7.0</version>
@@ -82,7 +98,36 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>  
+                <groupId>au.com.alderaan</groupId>  
+                <artifactId>eclipselink-staticweave-maven-plugin</artifactId>  
+                <version>1.0.3</version>  
+                <executions>  
+                    <execution>  
+                        <phase>process-classes</phase>  
+                        <goals>  
+                            <goal>weave</goal>  
+                        </goals>  
+                        <configuration>  
+                            <logLevel>ALL</logLevel>  
+                        </configuration>
+                    </execution>  
+                </executions>  
+                <dependencies>  
+                    <dependency>  
+                        <groupId>org.eclipse.persistence</groupId>  
+                        <artifactId>eclipselink</artifactId>  
+                        <version>2.5.2</version>  
+                    </dependency>  
+                </dependencies>  
+            </plugin>
         </plugins>
     </build>
-
+    <repositories>
+        <repository>
+            <id>unknown-jars-temp-repo</id>
+            <name>A temporary repository created by NetBeans for libraries and jars it could not identify. Please replace the dependencies in this repository with correct ones and delete this repository.</name>
+            <url>file:${project.basedir}/lib</url>
+        </repository>
+    </repositories>
 </project>

@@ -18,6 +18,7 @@ import javax.faces.bean.ViewScoped;
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
+import sv.gob.mined.boleta.ejb.EnvioDeBoletasFacade;
 import sv.gob.mined.boleta.ejb.LeerBoletasEJB;
 import sv.gob.mined.boleta.ejb.SeparacionBoletasFacade;
 
@@ -44,6 +45,8 @@ public class EnviarCorreoMB implements Serializable {
 
     @EJB
     private SeparacionBoletasFacade sbf;
+    @EJB
+    private EnvioDeBoletasFacade envioDeBoletasFacade;
 
     @PostConstruct
     public void init() {
@@ -146,5 +149,9 @@ public class EnviarCorreoMB implements Serializable {
 
     public void enviarUnSoloCorreo() {
         leerBoletasEJB.enviarUnSoloCorreo(codDepa, mesAnho, getMailSession(), usuario);
+    }
+    
+    public void enviarUrl(){
+        envioDeBoletasFacade.enviarBoletasDePago(codDepa, mesAnho);
     }
 }
