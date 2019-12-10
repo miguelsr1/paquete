@@ -5,6 +5,7 @@
  */
 package sv.gob.mined.boleta.ejb;
 
+import java.io.File;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -24,13 +25,12 @@ public class PersistenciaFacade {
     @PersistenceContext(unitName = "boletaPU")
     private EntityManager em;
 
-
     public void guardarCodigoGeneradoPorNip(Long idCodigo, String nip, String codigoGenerado) {
         DetalleCodigo detalleCodigo = new DetalleCodigo();
         detalleCodigo.setCodigoGenerado(codigoGenerado);
         detalleCodigo.setIdCodigo(idCodigo);
         detalleCodigo.setNip(nip);
-        
+
         em.persist(detalleCodigo);
     }
 
@@ -50,5 +50,18 @@ public class PersistenciaFacade {
             codigoGenerado = (CodigoGenerado) q.getResultList().get(0);
         }
         return codigoGenerado.getIdCodigo();
+    }
+
+    public String getDetalleCodigo(String codigoGenerado) {
+        Query q = em.createQuery("SELECT d FROM DetalleCodigo d WHERE d.codigoGenerado=:codigo", DetalleCodigo.class);
+        q.setParameter("codigo", codigoGenerado);
+
+        DetalleCodigo det = (DetalleCodigo) q.getSingleResult();
+
+        q = em.createQuery("SELECT c FROM CodigoGenerado c WHERE c.idCodigo=:id", CodigoGenerado.class);
+        q.setParameter("id", det.getIdCodigo());
+        CodigoGenerado cod = (CodigoGenerado) q.getSingleResult();
+
+        return cod.getCodigoDepartamento() + File.separator + cod.getMesAnho() + File.separator + "procesado" + File.separator + det.getNip() + ".pdf";
     }
 }

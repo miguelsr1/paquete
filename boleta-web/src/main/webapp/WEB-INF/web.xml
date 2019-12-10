@@ -58,11 +58,19 @@
             <max-request-size>418018841</max-request-size>
             <file-size-threshold>20485760</file-size-threshold>
         </multipart-config>
-        
     </servlet>
     <servlet-mapping>
         <servlet-name>FileUploadServlet</servlet-name>
         <url-pattern>/FileUploadServlet</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>DescargarBoleta</servlet-name>
+        <servlet-class>sv.gob.mined.boleta.web.DescargarBoleta</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DescargarBoleta</servlet-name>
+        <url-pattern>/DescargarBoleta</url-pattern>
     </servlet-mapping>
     
     <servlet>

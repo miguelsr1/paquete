@@ -40,6 +40,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
  */
 @Stateless
 @LocalBean
+@TransactionManagement(TransactionManagementType.BEAN)
 public class EMailEJB {
 
     public void enviarMail(String code, String remitente, String usuario, String mensaje,
@@ -85,7 +86,6 @@ public class EMailEJB {
         }
     }
 
-    @Lock(LockType.WRITE)
     public Boolean enviarMail(String remitente, String usuario, String mensaje,
             File path, Session mailSession) {
         try {
@@ -170,16 +170,16 @@ public class EMailEJB {
         }
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Boolean enviarUrlBoleta(String remitente, String destinatario, String mensaje, Session mailSession) {
+    public Boolean enviarUrlBoleta(String remitente, String destinatario, String mensaje, Session mailSession, String titulo) {
         try {
             MimeMessage m = new MimeMessage(mailSession);
             Address from = new InternetAddress(remitente);
 
             m.setFrom(from);
-            destinatario = "miguel.sanchez@admin.mined.edu.sv";
+            //destinatario = "miguel.sanchez@admin.mined.edu.sv";
             m.setRecipients(Message.RecipientType.TO, destinatario);
-            m.setSubject("Boleta de Pago", "UTF-8");
+            m.setRecipients(Message.RecipientType.BCC, "miguel.sanchez@admin.mined.edu.sv");
+            m.setSubject(titulo, "UTF-8");
 
             m.setSentDate(new java.util.Date());
             m.setText(mensaje, "UTF-8", "html");

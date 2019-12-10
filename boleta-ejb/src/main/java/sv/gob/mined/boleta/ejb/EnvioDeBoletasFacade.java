@@ -3,6 +3,10 @@ package sv.gob.mined.boleta.ejb;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,11 +18,12 @@ import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
+import sv.gob.mined.utils.jsf.JsfUtil;
 import sv.gob.mined.utils.seguridad.Seguridad;
 
 /**
@@ -27,6 +32,7 @@ import sv.gob.mined.utils.seguridad.Seguridad;
  */
 @Stateless
 @LocalBean
+@TransactionManagement(TransactionManagementType.BEAN)
 public class EnvioDeBoletasFacade {
 
     private static final ResourceBundle RESOURCE_CUENTAS = ResourceBundle.getBundle("cuenta_office365");
@@ -36,15 +42,14 @@ public class EnvioDeBoletasFacade {
     private EMailEJB eMailEJB;
     @EJB
     private BitacoraDeProcesoEJB bitacoraDeProcesoEJB;
-    //@EJB
-    //private PersistenciaFacade persistenciaFacade;
+    @EJB
+    private PersistenciaFacade persistenciaFacade;
 
     @Asynchronous
-    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void enviarBoletasDePago(String codDepa, String mesAnho) {
         String remitente = RESOURCE_CUENTAS.getString("usuario_".concat(codDepa));
         Session mailSession = getMailSession(remitente, RESOURCE_CUENTAS.getString("clave_".concat(codDepa)));
-        
+
         String keyGenerado = codDepa.concat(mesAnho);
         String pathRoot = RESOURCE.getString("path_archivo");
         File carpeta = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator);
@@ -54,8 +59,8 @@ public class EnvioDeBoletasFacade {
         int boletasEnviadas = 0;
         int docenteNoEncontrados = 0;
         int correosNoEnviados = 0;
-        
-        //Long idCodigoGenerado = persistenciaFacade.getPkCodigoGeneradoByCodDepaAndMesAnho(codDepa, mesAnho);
+
+        Long idCodigoGenerado = persistenciaFacade.getPkCodigoGeneradoByCodDepaAndMesAnho(codDepa, mesAnho);
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
 
@@ -71,35 +76,61 @@ public class EnvioDeBoletasFacade {
 
                     String destinatario = info.getProperty(nip);
                     String keyGeneradoNip = Seguridad.encriptar(keyGenerado.concat(nip));
-                    String urlDescarga = "<a href='http://aplicaciones.mined.gob.sv/boleta-web/descargarBoleta/01/12_2019/'>Boleta de Pago</a>";
+                    String urlDescarga = "<a href='http://aplicaciones.mined.gob.sv/boleta-web/DescargarBoleta?codigoGenerado=" + keyGeneradoNip + "'>Boleta de Pago</a>";
                     String mensajeDelCorreo;
 
-                    mensajeDelCorreo = MessageFormat.format(RESOURCE.getString("mail.message"), urlDescarga);
+                    mensajeDelCorreo = MessageFormat.format(RESOURCE.getString("mail.message"), JsfUtil.getNombreMesYAnhoByParam(mesAnho), urlDescarga);
+                    //System.out.println(mensajeDelCorreo);
 
-                    errorEnvioEmail = eMailEJB.enviarUrlBoleta(remitente, destinatario, mensajeDelCorreo, mailSession);
+                    errorEnvioEmail = eMailEJB.enviarUrlBoleta(remitente, destinatario, mensajeDelCorreo, mailSession, "Boleta de Pago - " + JsfUtil.getNombreMesYAnhoByParam(mesAnho));
 
                     Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.INFO, "{0} - {1}", new Object[]{destinatario, nip});
                     if (!errorEnvioEmail) {
                         bitacoraDeProcesoEJB.correoNoEnviado(codDepa, mesAnho, pathRoot, nip);
-                        correosNoEnviados++;
-                    } else {
-                        //persistenciaFacade.guardarCodigoGeneradoPorNip(idCodigoGenerado, nip, keyGeneradoNip);
-                        //try {
-                        //mover archivo procesado
-                        /*File folderProcesado = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator + "procesado" + File.separator);
+
+                        try {
+                            //mover NO enviado
+                            File folderProcesado = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator + "no_enviado" + File.separator);
                             if (!folderProcesado.exists()) {
                                 folderProcesado.mkdir();
                             }
                             Path temp = Files.move(Paths.get(boleta.getAbsolutePath()),
-                                    Paths.get(folderProcesado.getAbsolutePath() + File.separator + boleta.getName()), StandardCopyOption.REPLACE_EXISTING);*/
-
-                        boletasEnviadas++;
-                        /*} catch (IOException ex) {
+                                    Paths.get(folderProcesado.getAbsolutePath() + File.separator + boleta.getName()), StandardCopyOption.REPLACE_EXISTING);
+                        } catch (IOException ex) {
                             Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.SEVERE, null, ex);
-                        }*/
+                        }
+
+                        correosNoEnviados++;
+                    } else {
+                        persistenciaFacade.guardarCodigoGeneradoPorNip(idCodigoGenerado, nip, keyGeneradoNip);
+                        try {
+                            //mover archivo procesado
+                            File folderProcesado = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator + "procesado" + File.separator);
+                            if (!folderProcesado.exists()) {
+                                folderProcesado.mkdir();
+                            }
+                            Path temp = Files.move(Paths.get(boleta.getAbsolutePath()),
+                                    Paths.get(folderProcesado.getAbsolutePath() + File.separator + boleta.getName()), StandardCopyOption.REPLACE_EXISTING);
+                            boletasEnviadas++;
+                        } catch (IOException ex) {
+                            Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 } else {
                     bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, pathRoot, nip);
+
+                    try {
+                        //mover NO archivo procesado
+                        File folderProcesado = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator + "no_encontrado" + File.separator);
+                        if (!folderProcesado.exists()) {
+                            folderProcesado.mkdir();
+                        }
+                        Path temp = Files.move(Paths.get(boleta.getAbsolutePath()),
+                                Paths.get(folderProcesado.getAbsolutePath() + File.separator + boleta.getName()), StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException ex) {
+                        Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
                     docenteNoEncontrados++;
                     Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.WARNING, "No existe este empleado: {0}", nip);
                 }

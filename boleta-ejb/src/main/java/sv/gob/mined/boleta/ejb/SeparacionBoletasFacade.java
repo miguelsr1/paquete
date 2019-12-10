@@ -13,12 +13,11 @@ import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.ApplicationException;
 import javax.ejb.Asynchronous;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.multipdf.Splitter;
@@ -31,13 +30,12 @@ import org.apache.pdfbox.text.PDFTextStripper;
  */
 @Stateless
 @LocalBean
-@ApplicationException(rollback = false)
+@TransactionManagement(TransactionManagementType.BEAN)
 public class SeparacionBoletasFacade extends Exception {
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("parametros");
 
     @Asynchronous
-    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void separacion(String mesAnho, String codDepa) {
         File carpetaRoot = new File(RESOURCE_BUNDLE.getString("path_archivo"));
         SimpleDateFormat sdf = new SimpleDateFormat("HHmmsszzz");
