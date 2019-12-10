@@ -10,11 +10,12 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
@@ -26,7 +27,6 @@ import sv.gob.mined.utils.seguridad.Seguridad;
  */
 @Stateless
 @LocalBean
-@TransactionManagement(TransactionManagementType.CONTAINER)
 public class EnvioDeBoletasFacade {
 
     private static final ResourceBundle RESOURCE_CUENTAS = ResourceBundle.getBundle("cuenta_office365");
@@ -36,9 +36,11 @@ public class EnvioDeBoletasFacade {
     private EMailEJB eMailEJB;
     @EJB
     private BitacoraDeProcesoEJB bitacoraDeProcesoEJB;
-    @EJB
-    private PersistenciaFacade persistenciaFacade;
+    //@EJB
+    //private PersistenciaFacade persistenciaFacade;
 
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void enviarBoletasDePago(String codDepa, String mesAnho) {
         String remitente = RESOURCE_CUENTAS.getString("usuario_".concat(codDepa));
         Session mailSession = getMailSession(remitente, RESOURCE_CUENTAS.getString("clave_".concat(codDepa)));
@@ -53,7 +55,7 @@ public class EnvioDeBoletasFacade {
         int docenteNoEncontrados = 0;
         int correosNoEnviados = 0;
         
-        Long idCodigoGenerado = persistenciaFacade.getPkCodigoGeneradoByCodDepaAndMesAnho(codDepa, mesAnho);
+        //Long idCodigoGenerado = persistenciaFacade.getPkCodigoGeneradoByCodDepaAndMesAnho(codDepa, mesAnho);
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
 
@@ -81,7 +83,7 @@ public class EnvioDeBoletasFacade {
                         bitacoraDeProcesoEJB.correoNoEnviado(codDepa, mesAnho, pathRoot, nip);
                         correosNoEnviados++;
                     } else {
-                        persistenciaFacade.guardarCodigoGeneradoPorNip(idCodigoGenerado, nip, keyGeneradoNip);
+                        //persistenciaFacade.guardarCodigoGeneradoPorNip(idCodigoGenerado, nip, keyGeneradoNip);
                         //try {
                         //mover archivo procesado
                         /*File folderProcesado = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator + "procesado" + File.separator);

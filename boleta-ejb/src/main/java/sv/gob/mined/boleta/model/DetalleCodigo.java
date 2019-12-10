@@ -23,7 +23,7 @@ import javax.persistence.Table;
  * @author misanchez
  */
 @Entity
-@Table(name = "DETALLE_CODIGO", schema = "BOLETA")
+@Table(name = "DETALLE_CODIGO")
 @NamedQueries({
     @NamedQuery(name = "DetalleCodigo.findAll", query = "SELECT d FROM DetalleCodigo d")})
 public class DetalleCodigo implements Serializable {

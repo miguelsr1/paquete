@@ -8,15 +8,17 @@ package sv.gob.mined.boleta.ejb;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.ApplicationException;
 import javax.ejb.Asynchronous;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.multipdf.Splitter;
@@ -29,11 +31,13 @@ import org.apache.pdfbox.text.PDFTextStripper;
  */
 @Stateless
 @LocalBean
-public class SeparacionBoletasFacade {
+@ApplicationException(rollback = false)
+public class SeparacionBoletasFacade extends Exception {
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("parametros");
 
     @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void separacion(String mesAnho, String codDepa) {
         File carpetaRoot = new File(RESOURCE_BUNDLE.getString("path_archivo"));
         SimpleDateFormat sdf = new SimpleDateFormat("HHmmsszzz");
@@ -146,15 +150,16 @@ public class SeparacionBoletasFacade {
                     //obtener codigo del empleado de la boleta
                     String codigo = getCodigoDocente(pd, "         )", 0, 15).substring(8);
 
-                    //crear archivo con el codigo
-                    File carpetaCodigo = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + codigo);
-                    if (!carpetaCodigo.exists()) {
-                        carpetaCodigo.mkdir();
+                    if (!codigo.isEmpty()) {
+                        //crear archivo con el codigo
+                        File carpetaCodigo = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + codigo);
+                        if (!carpetaCodigo.exists()) {
+                            carpetaCodigo.mkdir();
+                        }
+
+                        //crear archivo pdf
+                        pd.save(path + File.separator + codDepa + File.separator + mesAnho + File.separator + codigo + File.separator + sdf.format(new Date()) + ".pdf");
                     }
-
-                    //crear archivo pdf
-                    pd.save(path + File.separator + codDepa + File.separator + mesAnho + File.separator + codigo + File.separator + sdf.format(new Date()) + ".pdf");
-
                     pd.close();
                 }
                 if (interacion > 0) {
@@ -189,15 +194,20 @@ public class SeparacionBoletasFacade {
     }
 
     private String getCodigoDocente(PDDocument pDDocument, String strEndIdentifier, int offSet, int back) throws IOException {
-        String returnString;
-        PDFTextStripper tStripper = new PDFTextStripper();
-        tStripper.setStartPage(1);
-        tStripper.setEndPage(1);
-        String pdfFileInText = tStripper.getText(pDDocument);
-        String strEnd = strEndIdentifier;
-        int endInddex = pdfFileInText.indexOf(strEnd) + offSet;
-        int startInddex = endInddex - back;
-        returnString = pdfFileInText.substring(startInddex, endInddex);
+        String returnString = "";
+        try {
+            PDFTextStripper tStripper = new PDFTextStripper();
+            tStripper.setStartPage(1);
+            tStripper.setEndPage(1);
+            String pdfFileInText = tStripper.getText(pDDocument);
+            String strEnd = strEndIdentifier;
+            int endInddex = pdfFileInText.indexOf(strEnd) + offSet;
+            int startInddex = endInddex - back;
+            returnString = pdfFileInText.substring(startInddex, endInddex);
+        } catch (Exception e) {
+            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.WARNING, "Error obteniendo el codigo del docente");
+        }
+
         return returnString;
     }
 }

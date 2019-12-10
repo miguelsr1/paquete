@@ -16,6 +16,8 @@ import javax.ejb.LocalBean;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.mail.Address;
@@ -168,7 +170,7 @@ public class EMailEJB {
         }
     }
 
-    
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Boolean enviarUrlBoleta(String remitente, String destinatario, String mensaje, Session mailSession) {
         try {
             MimeMessage m = new MimeMessage(mailSession);

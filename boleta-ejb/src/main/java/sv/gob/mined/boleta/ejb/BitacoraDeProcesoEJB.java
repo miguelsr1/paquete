@@ -15,6 +15,8 @@ import java.util.logging.Logger;
 import javax.ejb.Asynchronous;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 /**
  *
@@ -25,6 +27,7 @@ import javax.ejb.Stateless;
 public class BitacoraDeProcesoEJB {
 
     @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void escribirEmpleadoNoEncontrado(String codDepa, String mesAnho, String path, String codigoEmpleado) {
         try {
             File file = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + "no_encontrado.txt");
@@ -40,6 +43,7 @@ public class BitacoraDeProcesoEJB {
     }
 
     @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void correoNoEnviado(String codDepa, String mesAnho, String path, String codigoEmpleado) {
         try {
             File carpetaError = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + "errores");
