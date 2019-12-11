@@ -212,4 +212,49 @@ public class JsfUtil {
         FacesContext context = FacesContext.getCurrentInstance();
         context.getExternalContext().getSessionMap().clear();
     }
+
+    public static String getNombreMesYAnhoByParam(String mesAnho) {
+        String valor = "";
+        String param[] = mesAnho.split("_");
+        switch (param[0]) {
+            case "01":
+                valor = "enero";
+                break;
+            case "02":
+                valor = "febrero";
+                break;
+            case "03":
+                valor = "marzo";
+                break;
+            case "04":
+                valor = "abril";
+                break;
+            case "05":
+                valor = "mayo";
+                break;
+            case "06":
+                valor = "junio";
+                break;
+            case "07":
+                valor = "julio";
+                break;
+            case "08":
+                valor = "agosto";
+                break;
+            case "09":
+                valor = "septiembre";
+                break;
+            case "10":
+                valor = "octubre";
+                break;
+            case "11":
+                valor = "noviembre";
+                break;
+            default:
+                valor = "diciembre";
+                break;
+        }
+        valor = valor + " de " + param[1];
+        return valor;
+    }
 }
