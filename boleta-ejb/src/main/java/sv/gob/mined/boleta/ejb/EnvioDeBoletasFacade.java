@@ -65,7 +65,7 @@ public class EnvioDeBoletasFacade {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
 
         StringBuilder sb = new StringBuilder();
-        sb = sb.append("Se han enviado boletas de pago.").append("<br/>")
+        sb = sb.append("Se han enviado boletas de pago del departamento ").append(JsfUtil.getNombreDepartamentoByCodigo(codDepa)).append(".").append("<br/>")
                 .append("Hora de inicio: ").append(sdf.format(new Date())).append("<br/>");
 
         for (File boleta : carpeta.listFiles()) {
@@ -84,7 +84,6 @@ public class EnvioDeBoletasFacade {
 
                     errorEnvioEmail = eMailEJB.enviarUrlBoleta(remitente, destinatario, mensajeDelCorreo, mailSession, "Boleta de Pago - " + JsfUtil.getNombreMesYAnhoByParam(mesAnho));
 
-                    Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.INFO, "{0} - {1}", new Object[]{destinatario, nip});
                     if (!errorEnvioEmail) {
                         bitacoraDeProcesoEJB.correoNoEnviado(codDepa, mesAnho, pathRoot, nip);
 

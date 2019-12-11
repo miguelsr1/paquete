@@ -56,7 +56,7 @@ public class PersistenciaFacade {
         Query q = em.createQuery("SELECT d FROM DetalleCodigo d WHERE d.codigoGenerado=:codigo", DetalleCodigo.class);
         q.setParameter("codigo", codigoGenerado);
 
-        DetalleCodigo det = (DetalleCodigo) q.getSingleResult();
+        DetalleCodigo det = (DetalleCodigo) q.getResultList().get(0);
 
         q = em.createQuery("SELECT c FROM CodigoGenerado c WHERE c.idCodigo=:id", CodigoGenerado.class);
         q.setParameter("id", det.getIdCodigo());

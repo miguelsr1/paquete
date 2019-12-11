@@ -8,6 +8,10 @@ package sv.gob.mined.boleta.ejb;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -51,6 +55,13 @@ public class SeparacionBoletasFacade extends Exception {
 
                                     //consolidar boletas por docente
                                     splitPages(archivoBoleta, codDepa, mesAnho, RESOURCE_BUNDLE.getString("path_archivo"), sdf);
+
+                                    File folderArchivoOriginal = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator + "archivo_original" + File.separator);
+                                    if (!folderArchivoOriginal.exists()) {
+                                        folderArchivoOriginal.mkdir();
+                                    }
+                                    Path temp = Files.move(Paths.get(archivoBoleta.getAbsolutePath()),
+                                            Paths.get(folderArchivoOriginal.getAbsolutePath() + File.separator + archivoBoleta.getName()), StandardCopyOption.REPLACE_EXISTING);
                                 }
                             }
                             Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.INFO, "Unificación de boletas - Hora de fin + {0}", new Date());
@@ -102,7 +113,7 @@ public class SeparacionBoletasFacade extends Exception {
 
     private void unirBoletasUnSolaArchivo(File carpetaPorFecha) throws FileNotFoundException, IOException {
         for (File carpetaDocente : carpetaPorFecha.listFiles()) {
-            if (carpetaDocente.isDirectory() && !carpetaDocente.getName().equals("procesado")) {
+            if (carpetaDocente.isDirectory() && !carpetaDocente.getName().equals("procesado") && !carpetaDocente.getName().equals("archivo_original")) {
                 PDFMergerUtility PDFmerger = new PDFMergerUtility();
                 PDFmerger.setDestinationFileName(carpetaPorFecha.getPath() + File.separator + carpetaDocente.getName() + ".pdf");
 
@@ -145,19 +156,26 @@ public class SeparacionBoletasFacade extends Exception {
             do {
                 interacion--;
                 for (PDDocument pd : splitter.split(document)) {
-                    //obtener codigo del empleado de la boleta
-                    String codigo = getCodigoDocente(pd, "         )", 0, 15).substring(8);
+                    String codTemp = "";
+                    try {
+                        codTemp = getCodigoDocente(pd, "         )", 0, 15, file.getName());
+                        //obtener codigo del empleado de la boleta
+                        String codigo = codTemp.substring(8);
 
-                    if (!codigo.isEmpty()) {
-                        //crear archivo con el codigo
-                        File carpetaCodigo = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + codigo);
-                        if (!carpetaCodigo.exists()) {
-                            carpetaCodigo.mkdir();
+                        if (!codigo.isEmpty()) {
+                            //crear archivo con el codigo
+                            File carpetaCodigo = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + codigo);
+                            if (!carpetaCodigo.exists()) {
+                                carpetaCodigo.mkdir();
+                            }
+
+                            //crear archivo pdf
+                            pd.save(path + File.separator + codDepa + File.separator + mesAnho + File.separator + codigo + File.separator + sdf.format(new Date()) + ".pdf");
                         }
-
-                        //crear archivo pdf
-                        pd.save(path + File.separator + codDepa + File.separator + mesAnho + File.separator + codigo + File.separator + sdf.format(new Date()) + ".pdf");
+                    } catch (StringIndexOutOfBoundsException e) {
+                        Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "DEPA {0} - Error obteniendo el nip del docente{1}", new Object[]{codDepa, codTemp});
                     }
+
                     pd.close();
                 }
                 if (interacion > 0) {
@@ -185,26 +203,20 @@ public class SeparacionBoletasFacade extends Exception {
                 Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Muy probablemente, este archivo no es de boletas de pagos");
             }
 
-            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Mensaje: {0}", ex.getMessage());
-            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Causa: {0}", ex.getCause());
-            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Clase: {0}", ex.getClass().getName());
+            ex.printStackTrace();
         }
     }
 
-    private String getCodigoDocente(PDDocument pDDocument, String strEndIdentifier, int offSet, int back) throws IOException {
+    private String getCodigoDocente(PDDocument pDDocument, String strEndIdentifier, int offSet, int back, String nombreArchivo) throws IOException {
         String returnString = "";
-        try {
-            PDFTextStripper tStripper = new PDFTextStripper();
-            tStripper.setStartPage(1);
-            tStripper.setEndPage(1);
-            String pdfFileInText = tStripper.getText(pDDocument);
-            String strEnd = strEndIdentifier;
-            int endInddex = pdfFileInText.indexOf(strEnd) + offSet;
-            int startInddex = endInddex - back;
-            returnString = pdfFileInText.substring(startInddex, endInddex);
-        } catch (Exception e) {
-            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.WARNING, "Error obteniendo el codigo del docente");
-        }
+        PDFTextStripper tStripper = new PDFTextStripper();
+        tStripper.setStartPage(1);
+        tStripper.setEndPage(1);
+        String pdfFileInText = tStripper.getText(pDDocument);
+        String strEnd = strEndIdentifier;
+        int endInddex = pdfFileInText.indexOf(strEnd) + offSet;
+        int startInddex = endInddex - back;
+        returnString = pdfFileInText.substring(startInddex, endInddex);
 
         return returnString;
     }

@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -38,8 +39,7 @@ public class DescargarBoleta extends HttpServlet {
         try {
             File boleta = obtenerArchivoFacade.obtenerArchivo(codigoGenerado);
             response.setContentType("application/pdf");
-            response.setHeader("Content-disposition", "attachment; filename="+codigoGenerado+".pdf");
-            
+            response.setHeader("Content-disposition", "attachment; filename=" + codigoGenerado + ".pdf");
 
             try (InputStream in = new BufferedInputStream(new FileInputStream(boleta));
                     OutputStream out = response.getOutputStream()) {
@@ -52,7 +52,23 @@ public class DescargarBoleta extends HttpServlet {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(DescargarBoleta.class.getName()).log(Level.SEVERE, null, ex);
+            PrintWriter out;
+            String title = "Error en la descarga de la boleta";
+
+            // primero selecciona el tipo de contenidos y otros campos de cabecera de la respuesta
+            response.setContentType("text/html");
+            // Luego escribe los datos de la respuesta
+            out = response.getWriter();
+            out.println("<HTML><HEAD><TITLE>");
+            out.println(title);
+            out.println("</TITLE></HEAD><BODY>");
+            out.println("<H1>" + title + "</H1>");
+            out.println("<P>Por favor escribir un correo para notificar de su situación</P>");
+            out.println("<br/>");
+            out.println("<a href=\"mailto:boleta@mined.edu.sv\">Admin Boletas</a>");
+            out.println("</BODY></HTML>");
+            out.close();
+            Logger.getLogger(DescargarBoleta.class.getName()).log(Level.SEVERE, "Se ha generado de error en la descarga de la boleta: {0}", codigoGenerado);
         }
     }
 }
