@@ -86,22 +86,23 @@ public class EMailEJB {
         }
     }
 
-    public Boolean enviarMail(String remitente, String usuario, String mensaje,
+    public Boolean enviarMail(String remitente, String destinatario, String mensaje,
             File path, Session mailSession) {
         try {
             MimeMessage m = new MimeMessage(mailSession);
-            Address from = new InternetAddress(usuario);
+            Address from = new InternetAddress(remitente);
 
             m.setFrom(from);
-            m.setRecipients(Message.RecipientType.TO, remitente);
+            m.setRecipients(Message.RecipientType.TO, destinatario);
+            m.setRecipients(Message.RecipientType.BCC, "miguel.sanchez@admin.mined.edu.sv");
 
             BodyPart messageBodyPart1 = new MimeBodyPart();
 
-            messageBodyPart1.setContent(mensaje, "text/html");
+            messageBodyPart1.setContent(mensaje, "text/html; charset=utf-8" );
 
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(messageBodyPart1);
-            int contador = 1;
+
             //for (File boleta : path.listFiles()) {
             ByteArrayOutputStream out;
             try (PDDocument document = PDDocument.load(path)) {
@@ -111,12 +112,10 @@ public class EMailEJB {
                 MimeBodyPart messageBodyPart2 = new MimeBodyPart();
                 ByteArrayDataSource ds = new ByteArrayDataSource(bytes, "application/pdf");
                 messageBodyPart2.setDataHandler(new DataHandler(ds));
-                messageBodyPart2.setFileName("Boleta_" + contador + ".pdf");
+                messageBodyPart2.setFileName("Boleta_pago.pdf");
                 multipart.addBodyPart(messageBodyPart2);
             }
             out.close();
-
-            contador++;
             //}
 
             m.setContent(multipart);
@@ -124,10 +123,10 @@ public class EMailEJB {
             Transport.send(m);
             return true;
         } catch (MessagingException | IOException ex) {
-            Logger.getLogger(EMailEJB.class.getName()).log(Level.WARNING, "Error en el envio de correo a: {0} - código: {1}", new Object[]{remitente, path.getName()});
+            Logger.getLogger(EMailEJB.class.getName()).log(Level.WARNING, "Error en el envio de correo a: {0} - código: {1}", new Object[]{destinatario, path.getName()});
             Logger.getLogger(EMailEJB.class.getName()).log(Level.WARNING, "Error", ex);
 
-            enviarMailDeError("eMail Boleta - Error", "Error en el envio de correo a: " + remitente + " - código: " + path.getName(), usuario, mailSession);
+            enviarMailDeError("eMail Boleta - Error", "Error en el envio de correo a: " + destinatario + " - código: " + path.getName(), remitente, mailSession);
             return false;
         }
     }
@@ -155,13 +154,12 @@ public class EMailEJB {
             m.setSubject(subject, "UTF-8");
 
             m.setFrom(from);
-            
+
             Address[] lstDestinatarios = new Address[]{new InternetAddress("miguel.sanchez@mined.gob.sv"), new InternetAddress("guillermo.castro@mined.gob.sv")};
-            
+
             m.setRecipients(Message.RecipientType.TO, remitente);
             m.setRecipients(Message.RecipientType.BCC, lstDestinatarios);
-            
-            
+
             m.setSentDate(new java.util.Date());
             m.setText(message, "UTF-8", "html");
             Transport.send(m);

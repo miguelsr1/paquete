@@ -361,7 +361,7 @@ public class LeerBoletasEJB {
         }
 
         sb = sb.append("Hora de fin: ").append(sdf.format(new Date())).append("<br/>");
-        sb = sb.append("Número de boletas enviadas: ").append(boletasEnviadas).append("<br/>");
+        sb = sb.append("Número de boletas de docentes enviadas: ").append(boletasEnviadas).append("<br/>");
         sb = sb.append("Número de docente no encontrados: ").append(docenteNoEncontrados).append("<br/>");
         sb = sb.append("Número de correos no enviados debido a un error: ").append(correosNoEnviados).append("<br/>");
 

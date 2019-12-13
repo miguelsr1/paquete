@@ -21,13 +21,13 @@
                 <p:outputLabel value="Nombre archivo "/>
                 <p:inputText value="#{enviarCorreoMB.codigoUltimo}"/>
                 <f:facet name="footer">
-                    <p:commandButton value="Enviar" action="#{enviarCorreoMB.enviarCorreos()}"/>
-                    <p:commandButton value="Continuar" action="#{enviarCorreoMB.enviarCorreos()}"/>
+                    <p:commandButton value="Enviar" action="#{enviarCorreoMB.enviarCorreos()}" rendered="false"/>
+                    <p:commandButton value="Continuar" action="#{enviarCorreoMB.enviarCorreos()}" rendered="false"/>
                     <p:commandButton value="Separar" action="#{enviarCorreoMB.separacionDeBoletas()}"/>
-                    <p:commandButton value="Separar Todo" action="#{enviarCorreoMB.separacionDeBoletasTotal()}"/>
+                    <p:commandButton value="Separar Todo" action="#{enviarCorreoMB.separacionDeBoletasTotal()}" rendered="false"/>
                     <p:commandButton value="Enviar 1 solo correo" action="#{enviarCorreoMB.enviarUnSoloCorreo()}"/>
                     <p:spacer width="10"/>
-                    <p:commandButton value="Enviar URL" action="#{enviarCorreoMB.enviarUrl()}"/>
+                    <p:commandButton value="Enviar URL" action="#{enviarCorreoMB.enviarBoleta()}"/>
                 </f:facet>
             </p:panelGrid>
         </h:form>

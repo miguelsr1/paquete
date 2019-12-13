@@ -52,7 +52,7 @@ public class DescargarBoleta extends HttpServlet {
                 }
             }
         } catch (IOException ex) {
-            PrintWriter out;
+            /*PrintWriter out;
             String title = "Error en la descarga de la boleta";
 
             // primero selecciona el tipo de contenidos y otros campos de cabecera de la respuesta
@@ -67,8 +67,9 @@ public class DescargarBoleta extends HttpServlet {
             out.println("<br/>");
             out.println("<a href=\"mailto:boleta@mined.edu.sv\">Admin Boletas</a>");
             out.println("</BODY></HTML>");
-            out.close();
+            out.close();*/
             Logger.getLogger(DescargarBoleta.class.getName()).log(Level.SEVERE, "Se ha generado de error en la descarga de la boleta: {0}", codigoGenerado);
+            Logger.getLogger(DescargarBoleta.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

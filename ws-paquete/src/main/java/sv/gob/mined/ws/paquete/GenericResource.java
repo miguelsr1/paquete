@@ -15,6 +15,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -28,12 +29,11 @@ import sv.gob.mined.paquescolar.ejb.ServiciosJsonEJB;
  */
 @Path("generic")
 public class GenericResource {
-    
-    @EJB
-    private ServiciosJsonEJB serviciosJsonEJB;
-    @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
-    
+
+//    @EJB
+//    private ServiciosJsonEJB serviciosJsonEJB;
+//    @EJB
+//    private AnhoProcesoEJB anhoProcesoEJB;
     @Context
     private UriInfo context;
 
@@ -49,7 +49,7 @@ public class GenericResource {
      *
      * @return an instance of java.lang.String
      */
-    @GET
+    /*@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getJson() {
         //TODO return proper representation object
@@ -57,19 +57,21 @@ public class GenericResource {
         map.put("listado", serviciosJsonEJB.getResumenPagoJsonByDepaAndDetProcesoAdq("01", 35));
         
         return Response.ok(map).build();
-    }
-
+    }*/
     /**
      * PUT method for updating or creating an instance of GenericResource
      *
      * @param content representation for the resource
      */
     @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void putJson(String content) {
+    @Consumes("text/plain")
+    @Produces("text/plain")
+    public String putJson(@PathParam("dato") String dato) {
+        System.out.println(dato);
+        return "";
     }
-    
-    @GET
+
+    /* @GET
     @Path("/validarUsuario")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getValidarUsuario(@QueryParam("user") String user, @QueryParam("pass") String pass) {
@@ -97,5 +99,5 @@ public class GenericResource {
         }
         
         return Response.ok(map).header("Access-Control-Allow-Origin", "*").build();
-    }
+    }*/
 }

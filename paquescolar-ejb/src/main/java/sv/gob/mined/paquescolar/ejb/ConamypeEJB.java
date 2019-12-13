@@ -463,7 +463,7 @@ public class ConamypeEJB {
         } else {
             CapaInstPorRubro capa = (CapaInstPorRubro) q.getResultList().get(0);
             capa.setCapacidadAcreditada(capacidad);
-            capa.setCapacidadAdjudicada(BigInteger.ZERO);
+            //capa.setCapacidadAdjudicada(BigInteger.ZERO);
             em.merge(capa);
 
         }

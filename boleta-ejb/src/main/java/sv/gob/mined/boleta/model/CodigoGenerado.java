@@ -6,6 +6,7 @@
 package sv.gob.mined.boleta.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +17,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -26,6 +29,19 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "CodigoGenerado.findAll", query = "SELECT c FROM CodigoGenerado c")})
 public class CodigoGenerado implements Serializable {
+
+    @Column(name = "FECHA_INICIO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaInicio;
+    @Column(name = "FECHA_FIN")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaFin;
+    @Column(name = "ENVIADO")
+    private Integer enviado;
+    @Column(name = "SIN_CORREO")
+    private Integer sinCorreo;
+    @Column(name = "ERROR")
+    private Integer error;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -93,6 +109,46 @@ public class CodigoGenerado implements Serializable {
     @Override
     public String toString() {
         return "sv.gob.mined.boleta.model.CodigoGenerado[ idCodigo=" + idCodigo + " ]";
+    }
+
+    public Date getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(Date fechaIniicio) {
+        this.fechaInicio = fechaIniicio;
+    }
+
+    public Date getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(Date fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
+    public Integer getEnviado() {
+        return enviado;
+    }
+
+    public void setEnviado(Integer enviado) {
+        this.enviado = enviado;
+    }
+
+    public Integer getSinCorreo() {
+        return sinCorreo;
+    }
+
+    public void setSinCorreo(Integer sinCorreo) {
+        this.sinCorreo = sinCorreo;
+    }
+
+    public Integer getError() {
+        return error;
+    }
+
+    public void setError(Integer error) {
+        this.error = error;
     }
 
 }

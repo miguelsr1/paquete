@@ -154,4 +154,8 @@ public class EnviarCorreoMB implements Serializable {
     public void enviarUrl(){
         envioDeBoletasFacade.enviarBoletasDePago(codDepa, mesAnho);
     }
+    
+    public void enviarBoleta(){
+        envioDeBoletasFacade.enviarBoletasDePagoPdf(codDepa, mesAnho);
+    }
 }
