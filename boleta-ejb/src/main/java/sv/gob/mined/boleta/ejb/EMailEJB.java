@@ -43,7 +43,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 @TransactionManagement(TransactionManagementType.BEAN)
 public class EMailEJB {
 
-    public void enviarMail(String code, String remitente, String usuario, String mensaje,
+    /*public void enviarMail(String code, String remitente, String usuario, String mensaje,
             PDDocument pDDocument, Session mailSession) {
         try {
             MimeMessage m = new MimeMessage(mailSession);
@@ -84,7 +84,7 @@ public class EMailEJB {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-    }
+    }*/
 
     public Boolean enviarMail(String remitente, String destinatario, String mensaje,
             File path, Session mailSession) {

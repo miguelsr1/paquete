@@ -11,8 +11,8 @@
                 var respuesta = confirm("¿Esta seguro de querer cargar estos archivos? Luego no se podrán eliminar");
                 if (respuesta == false) {
                     $(".ui-fileupload-upload").removeClass("ui-state-disabled").removeAttr("aria-disabled").removeAttr("disabled");
-                    event.xhr.abort();                    
-                } 
+                    event.xhr.abort();
+                }
             }
         </script>
     </ui:define>
@@ -34,7 +34,7 @@
                         <p:outputLabel value="Seleccione un mes y año referente a la fecha de pago"/> 
                         <p:outputPanel>
                             <p:calendar pattern="MM_yyyy" value="#{boletaMB.fecha}" size="7">
-                                <p:ajax event="dateSelect" listener="#{boletaMB.cargarArchivos()}" update="pnlPendiente pnlProcesado updFile"/>
+                                <p:ajax event="dateSelect" listener="#{boletaMB.cargarArchivos()}" update="tblPendiente tblProcesado pngResumen updFile"/>
                             </p:calendar>
                             <p:spacer width="5"/>
                             <p:outputLabel value="NOTA: No importa el dia seleccionado" style="font-weight: bold;"/>
@@ -45,19 +45,12 @@
                     <br/>
                     <p:fileUpload id="updFile" widgetVar="updFile" fileUploadListener="#{boletaMB.handleFileUpload}" mode="advanced" dragDropSupport="false"
                                   multiple="true" auto="false" disabled="#{boletaMB.deshabilitar}" allowTypes="/(\.|\/)(pdf)$/" 
-                                  skinSimple="true" label="Seleccionar" uploadLabel="Cargar" cancelLabel="Cancelar" fileLimit="20000000"
-                                  oncomplete="updateTabla()" onstart="popupConfirm(event)" update="@this"/>
+                                  skinSimple="true" label="Seleccionar" uploadLabel="Cargar" cancelLabel="Cancelar" fileLimit="20000000" update="@this"/>
                     <br/>
-
-
-                    
-                    
-                    <p:remoteCommand name="updateTabla" action="#{boletaMB.cargarArchivos()}" update="pnlPendiente pnlProcesado" />
-                    <p:commandButton value="Verificar" action="#{boletaMB.verificarArchivosPendientes()}" rendered="false"/>
                 </div>
-                <div class="ui-g-12  ui-lg-6">
-                    <p:panel id="pnlPendiente" header="Archivos pendientes de enviar">
-
+                <div class="ui-g-12 ui-lg-8">
+                    <div class="card">
+                        <h1>Archivos PENDIENTES</h1>
                         <p:dataTable id="tblPendiente" value="#{boletaMB.lstPendientes}" var="dato">
                             <p:column headerText="Archivo">
                                 <p:outputLabel value="#{dato.nombreArchivo}"/>
@@ -73,25 +66,67 @@
                                 </p:outputLabel>
                             </p:column>
                         </p:dataTable>
-                    </p:panel>  
-                </div>
-                <div class="ui-g-12  ui-lg-6">
-                    <p:panel id="pnlProcesado" header="Archivos Procesados">
-
-                        <p:dataTable id="tblProcesado" value="#{boletaMB.lstProcesados}" var="dato">
+                        <br/>
+                        <h1>Archivos PROCESADOS</h1>
+                        <p:dataTable id="tblProcesado" value="#{boletaMB.lstArchivoOriginales}" var="dato">
                             <p:column headerText="Archivo">
                                 <p:outputLabel value="#{dato.nombreArchivo}"/>
                             </p:column>
-                            <p:column headerText="Fecha procesado" width="80" style="text-align: center;">
+                            <p:column headerText="Fecha subida" width="80" style="text-align: center;">
                                 <p:outputLabel value="#{dato.fechaCreado}">
                                     <f:convertDateTime pattern="dd/MM/yyyy"/>
                                 </p:outputLabel>
                             </p:column>
-                            <p:column headerText="Num. Paginas" width="50" style="text-align: right;">
-                                <p:outputLabel value="#{dato.numeroPaginas}"/>
+                            <p:column headerText="Num. Boletas" width="50" style="text-align: right;">
+                                <p:outputLabel value="#{dato.numeroPaginas}">
+                                    <f:convertNumber pattern="#,##0"/>
+                                </p:outputLabel>
                             </p:column>
                         </p:dataTable>
-                    </p:panel>  
+                    </div>
+                </div>
+
+
+                <div class="ui-g-12  ui-lg-4">
+                    <div class="card">
+                        <h1>Resumen de las boletas procesas</h1>
+                        <p:panelGrid columns="2" id="pngResumen" style="width: 100%; border:0px none; background-color:transparent;"
+                                     columnClasses="col7, col5_label"
+                                     styleClass="form-group ui-panelgrid-blank">
+                            <p:outputLabel value="Fecha y hora de inicio: "/>
+                            <p:outputLabel value="#{boletaMB.codigoGenerado.fechaInicio}">
+                                <f:convertDateTime pattern="dd/MM/yyyy  -  HH:mm:ss"/>
+                            </p:outputLabel>
+                            <p:outputLabel value="Fecha y hora de fin: "/>
+                            <p:outputLabel value="#{boletaMB.codigoGenerado.fechaFin}">
+                                <f:convertDateTime pattern="dd/MM/yyyy  -  HH:mm:ss"/>
+                            </p:outputLabel>
+                            <p:outputLabel value="Número de docentes: "/>
+                            <p:outputLabel value="#{boletaMB.codigoGenerado.enviado}" style="text-align: right;">
+                                <f:convertNumber pattern="#,##0"/>
+                            </p:outputLabel>
+                            <p:outputLabel value="Correos no enviados: "/>
+                            <p:outputPanel>
+                                <p:commandLink value="Ver">
+                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                </p:commandLink>
+                                <p:spacer width="10"/>
+                                <p:outputLabel value="#{boletaMB.codigoGenerado.error}" style="text-align: right;">
+                                    <f:convertNumber pattern="#,##0"/>
+                                </p:outputLabel>
+                            </p:outputPanel>
+                            <p:outputLabel value="Docentes sin correo registrado: "/>
+                            <p:outputPanel>
+                                <p:commandLink value="ver">
+                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                </p:commandLink>
+                                <p:spacer width="10"/>
+                                <p:outputLabel value="#{boletaMB.codigoGenerado.sinCorreo}" style="text-align: right;">
+                                    <f:convertNumber pattern="#,##0"/>
+                                </p:outputLabel>
+                            </p:outputPanel>
+                        </p:panelGrid>
+                    </div>
                 </div>
             </div>
         </h:form>

@@ -6,6 +6,7 @@
 package sv.gob.mined.boleta.ejb;
 
 import java.io.File;
+import java.util.Date;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -44,7 +45,7 @@ public class PersistenciaFacade {
             codigoGenerado = new CodigoGenerado();
             codigoGenerado.setMesAnho(mesAnho);
             codigoGenerado.setCodigoDepartamento(codDepa);
-
+            codigoGenerado.setFechaInicio(new Date());
             em.persist(codigoGenerado);
         } else {
             codigoGenerado = (CodigoGenerado) q.getResultList().get(0);
@@ -63,5 +64,46 @@ public class PersistenciaFacade {
         CodigoGenerado cod = (CodigoGenerado) q.getSingleResult();
 
         return cod.getCodigoDepartamento() + File.separator + cod.getMesAnho() + File.separator + "procesado" + File.separator + det.getNip() + ".pdf";
+    }
+
+    public Integer getCantidadDeBoletasEnviadas(String codigoDepartamento) {
+        Query q = em.createNativeQuery("select count(distinct nip) num_docentes from detalle_codigo dc inner join codigo_generado cg on dc.id_codigo = cg.id_codigo where cg.codigo_Departamento=:codDepa");
+        q.setParameter("codDepa", codigoDepartamento);
+        return (Integer) q.getSingleResult();
+    }
+
+    public CodigoGenerado getCodigoGenerado(String codigoDepartamento, String mesAnho) {
+        Query q = em.createQuery("SELECT c FROM CodigoGenerado c WHERE c.codigoDepartamento=:codDepa and c.mesAnho=:mesAnho", CodigoGenerado.class);
+        q.setParameter("codDepa", codigoDepartamento);
+        q.setParameter("mesAnho", mesAnho);
+        return q.getResultList().isEmpty() ? new CodigoGenerado() : (CodigoGenerado) q.getResultList().get(0);
+    }
+
+    public CodigoGenerado registrarFinDeProcesoDeEnvio(String pathRoot, String codigoDepartamento, String mesAnho) {
+        CodigoGenerado codigoGenerado = getCodigoGenerado(codigoDepartamento, mesAnho);
+
+        //calcular boletas no procesadas, no enviadas y enviadas
+        File folderRoot = new File(pathRoot + File.separator + codigoDepartamento + File.separator + mesAnho + File.separator);
+        for (File folder : folderRoot.listFiles()) {
+            if (folder.isDirectory()) {
+                switch (folder.getName()) {
+                    case "no_encontrado":
+                        codigoGenerado.setSinCorreo(folder.listFiles().length);
+                        break;
+                    case "no_enviado":
+                        codigoGenerado.setError(folder.listFiles().length);
+                        break;
+                    case "procesado":
+                        codigoGenerado.setEnviado(folder.listFiles().length);
+                        break;
+                }
+            }
+        }
+
+        codigoGenerado.setFechaFin(new Date());
+        
+        em.merge(codigoGenerado);
+
+        return codigoGenerado;
     }
 }

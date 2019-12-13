@@ -19,25 +19,22 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.mail.Authenticator;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
 import javax.servlet.ServletContext;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import sv.gob.mined.boleta.dto.DatosDto;
-import sv.gob.mined.boleta.ejb.LeerBoletasEJB;
+import sv.gob.mined.boleta.ejb.PersistenciaFacade;
+import sv.gob.mined.boleta.model.CodigoGenerado;
 import sv.gob.mined.utils.jsf.JsfUtil;
 
 /**
@@ -45,9 +42,10 @@ import sv.gob.mined.utils.jsf.JsfUtil;
  * @author misanchez
  */
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class BoletaMB implements Serializable {
 
+    private Boolean showUploadBoletas = true;
     private Boolean deshabilitar = true;
     private String usuario;
     private String clave;
@@ -57,52 +55,27 @@ public class BoletaMB implements Serializable {
     private Date fecha;
     private Boolean aceptar = false;
     private SimpleDateFormat sdf = new SimpleDateFormat("MM_yyyy");
+
+    private CodigoGenerado codigoGenerado = new CodigoGenerado();
     private List<DatosDto> lstPendientes = new ArrayList();
-    private List<DatosDto> lstProcesados = new ArrayList();
+    private List<DatosDto> lstArchivosOriginales = new ArrayList();
 
     private UploadedFile file;
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("parametros");
 
-    private Session mailSession;
-
-    private Properties config = new Properties();
-    private Properties configEmail = new Properties();
-
     @EJB
-    private LeerBoletasEJB leerBoletasEJB;
+    private PersistenciaFacade persistenciaFacade;
 
     @PostConstruct
     public void init() {
         FacesContext context = FacesContext.getCurrentInstance();
 
         if (context.getExternalContext().getSessionMap().containsKey("usuario")) {
-
             usuario = context.getExternalContext().getSessionMap().get("usuario").toString();
+            clave = context.getExternalContext().getSessionMap().get("clave").toString();
             codDepa = usuario.substring(7, 9);
             mesAnho = "12_2019";
-            clave = context.getExternalContext().getSessionMap().get("clave").toString();
-
-            config = chargeEmailsProperties("config");
-
-            configEmail.put("mail.smtp.auth", "true");
-            configEmail.put("mail.smtp.starttls.enable", "true");
-
-            configEmail.put("mail.smtp.host", "smtp.office365.com");
-            configEmail.put("mail.smtp.port", "587");
-
-            configEmail.put("mail.user", usuario);
-            configEmail.put("mail.user.pass", clave);
-            configEmail.put("mail.from", usuario);
-
-            mailSession = Session.getInstance(configEmail, new Authenticator() {
-
-                @Override
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(usuario,
-                            clave);
-                }
-            });
         } else {
             try {
                 JsfUtil.limpiarVariableSession();
@@ -116,33 +89,39 @@ public class BoletaMB implements Serializable {
         }
     }
 
+    public Boolean getShowUploadBoletas() {
+        return showUploadBoletas;
+    }
+
+    public void setShowUploadBoletas(Boolean showUploadBoletas) {
+        this.showUploadBoletas = showUploadBoletas;
+    }
+
     public String getNombreArchivo() {
         return nombreArchivo;
     }
 
-    public Properties chargeEmailsProperties(String nombre) {
-        Properties info = null;
-        try {
-            info = new Properties();
-            try (InputStream input = LeerBoletasEJB.class.getClassLoader().getResourceAsStream(nombre + ".properties")) {
-                info.load(input);
-            }
+    public CodigoGenerado getCodigoGenerado() {
+        return codigoGenerado;
+    }
 
-        } catch (IOException ex) {
-            Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return info;
+    public void setCodigoGenerado(CodigoGenerado codigoGenerado) {
+        this.codigoGenerado = codigoGenerado;
     }
 
     public void cargarArchivos() throws IOException {
-        mesAnho = sdf.format(fecha);
+        lstArchivosOriginales.clear();
         lstPendientes.clear();
-        lstProcesados.clear();
+        mesAnho = sdf.format(fecha);
+
+        codigoGenerado = persistenciaFacade.getCodigoGenerado(codDepa, mesAnho);
+        showUploadBoletas = codigoGenerado.getIdCodigo() != null;
+
         File carpetaPendientes = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho);
         cargarDatosDeArchivos(lstPendientes, carpetaPendientes);
 
-        File carpetaProcesados = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator + "procesado" + File.separator);
-        cargarDatosDeArchivos(lstProcesados, carpetaProcesados);
+        File carpetaProcesados = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator + "archivo_original" + File.separator);
+        cargarDatosDeArchivos(lstArchivosOriginales, carpetaProcesados);
 
         if (!lstPendientes.isEmpty()) {
             JsfUtil.mensajeInformacion("Existen archivos pendientes de envío, estos estan en cola de espera para ser procesados.");
@@ -210,8 +189,6 @@ public class BoletaMB implements Serializable {
             try (InputStream input = file.getFile().getInputstream()) {
                 Files.copy(input, arc, StandardCopyOption.REPLACE_EXISTING);
             }
-
-            //cargarArchivos();
         } else {
             JsfUtil.mensajeAlerta("Debe de seleccionar un mes y un año de PAGO");
         }
@@ -221,75 +198,11 @@ public class BoletaMB implements Serializable {
         return lstPendientes;
     }
 
-    public List<DatosDto> getLstProcesados() {
-        return lstProcesados;
+    public List<DatosDto> getLstArchivoOriginales() {
+        return lstArchivosOriginales;
     }
-//
-//    public void upload() {
-//        if (file != null) {
-//            splitPages();
-//            file = null;
-//
-//            document = null;
-//        }
-//    }
 
-//    //@Asynchronous
-//    public void enviarMail(String code, String remitente, PDDocument pDDocument) throws IOException {
-//        try {
-//            MimeMessage m = new MimeMessage(mailSession);
-//            Address from = new InternetAddress(usuario);
-//
-//            m.setFrom(from);
-//            //remitente = "miguel.sanchez@admin.mined.edu.sv";
-//            m.setRecipients(Message.RecipientType.TO, remitente);
-//
-//            ByteArrayOutputStream out = new ByteArrayOutputStream();
-//            pDDocument.save(out);
-//            byte[] bytes = out.toByteArray();
-//
-//            BodyPart messageBodyPart1 = new MimeBodyPart();
-//            messageBodyPart1.setText(RESOURCE_BUNDLE.getString("mail.message"));
-//
-//            MimeBodyPart messageBodyPart2 = new MimeBodyPart();
-//
-//            ByteArrayDataSource ds = new ByteArrayDataSource(bytes, "application/pdf");
-//            messageBodyPart2.setDataHandler(new DataHandler(ds));
-//            messageBodyPart2.setFileName("Boleta.pdf");
-//
-//            Multipart multipart = new MimeMultipart();
-//            multipart.addBodyPart(messageBodyPart1);
-//            multipart.addBodyPart(messageBodyPart2);
-//
-//            m.setContent(multipart);
-//            m.setSubject(code + " Boleta", "UTF-8");
-//            Transport.send(m);
-//
-//            pDDocument.close();
-//            out.close();
-//        } catch (MessagingException ex) {
-//            Logger.getLogger(BoletaMB.class.getName()).log(Level.INFO, "Error en el envio de correo a: {0} - código: {1}", new Object[]{remitente, code});
-//
-//            enviarMailDeError("eMail Boleta - Error", "Error en el envio de correo a: " + remitente + " - código: " + code);
-//        }
-//    }
-//
-//    public void enviarMailDeError(String subject, String message) {
-//        try {
-//            MimeMessage m = new MimeMessage(mailSession);
-//            Address from = new InternetAddress(usuario);
-//
-//            m.setFrom(from);
-//            m.setRecipients(Message.RecipientType.TO, "miguel.sanchez@mined.gob.sv");
-//            m.setSubject(subject, "UTF-8");
-//            m.setSentDate(new java.util.Date());
-//            m.setText(message, "UTF-8", "html");
-//            Transport.send(m);
-//        } catch (MessagingException ex) {
-//            Logger.getLogger(BoletaMB.class.getName()).log(Level.INFO, "Error en el envio de correo", ex);
-//        }
-//    }
-    public void verificarArchivosPendientes() {
-        leerBoletasEJB.leerArchivosPendientes(mailSession, codDepa, usuario);
+    public Integer getCantidadDeBoletasEnviadas() {
+        return persistenciaFacade.getCantidadDeBoletasEnviadas(codDepa);
     }
 }

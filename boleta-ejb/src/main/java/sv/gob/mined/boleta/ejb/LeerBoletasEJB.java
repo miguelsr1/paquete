@@ -221,7 +221,7 @@ public class LeerBoletasEJB {
                     if (info.containsKey(code)) {
                         String email = info.getProperty(code);
                         Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.INFO, "{0} - {1}", new Object[]{email, code});
-                        eMailEJB.enviarMail(code, email, usuario, RESOURCE_BUNDLE.getString("mail.message"), pd, mailSession);
+                        //eMailEJB.enviarMail(code, email, usuario, RESOURCE_BUNDLE.getString("mail.message"), pd, mailSession);
                         boletasEnviadas++;
                     } else {
                         bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, path, file.getName().concat("::").concat(code));
@@ -335,7 +335,7 @@ public class LeerBoletasEJB {
                     errorEnvioEmail = eMailEJB.enviarMail(email, usuario, RESOURCE_BUNDLE.getString("mail.message"), boleta, mailSession);
                     Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.INFO, "{0} - {1}", new Object[]{email, boleta.getName().toUpperCase().replace(".PDF", "")});
                     if (!errorEnvioEmail) {
-                        bitacoraDeProcesoEJB.correoNoEnviado(codDepa, mesAnho, pathRoot, boleta.getName().toUpperCase().replace(".PDF", ""));
+                        bitacoraDeProcesoEJB.correoNoEnviadoPorErrorGenerado(codDepa, mesAnho, pathRoot, boleta.getName().toUpperCase().replace(".PDF", ""));
                         correosNoEnviados++;
                     } else {
                         try {

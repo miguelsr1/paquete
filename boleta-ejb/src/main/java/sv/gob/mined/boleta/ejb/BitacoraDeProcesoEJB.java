@@ -44,14 +44,14 @@ public class BitacoraDeProcesoEJB {
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void correoNoEnviado(String codDepa, String mesAnho, String path, String codigoEmpleado) {
+    public void correoNoEnviadoPorErrorGenerado(String codDepa, String mesAnho, String path, String codigoEmpleado) {
         try {
             File carpetaError = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + "errores");
             if (!carpetaError.exists()) {
                 carpetaError.mkdir();
             }
 
-            File file = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + "errores" + File.separator + "correo_no_enviador.txt");
+            File file = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + "errores" + File.separator + "correo_no_enviado.txt");
             if (!file.exists()) {
                 file.createNewFile();
             }
