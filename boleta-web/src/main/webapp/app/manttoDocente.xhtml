@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
+                xmlns:jsf="http://xmlns.jcp.org/jsf">
+    <ui:define name="head">
+        <script type="text/javascript">
+            function popupConfirm(event) {
+                var respuesta = confirm("¿Esta seguro de querer cargar estos archivos? Luego no se podrán eliminar");
+                if (respuesta == false) {
+                    $(".ui-fileupload-upload").removeClass("ui-state-disabled").removeAttr("aria-disabled").removeAttr("disabled");
+                    event.xhr.abort();
+                }
+            }
+        </script>
+    </ui:define>
+    <ui:define name="content">
+        <h:form prependId="false">
+            <div class="ui-g">
+                <div class="card ui-g-12">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Envio de boletas de pago"/>
+                    </h1>
+
+                    <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <p:outputLabel value="NIP"/>
+                        <p:inputText value="#{docenteController.correoDocente.nip}"/>
+                        <p:outputLabel value="Genero"/>
+                        <p:selectOneMenu value="#{docenteController.correoDocente.genero}">
+                            <f:selectItem itemValue="null" itemLabel="Seleccione un valor" noSelectionOption="true"/>
+                            <f:selectItem itemValue="F" itemLabel="Femenino" />
+                            <f:selectItem itemValue="M" itemLabel="Masculino" />
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Primer Nombre"/>
+                        <p:inputText value="#{docenteController.correoDocente.primerNombre}"/>
+                        <p:outputLabel value="Segundo Nombre"/>
+                        <p:inputText value="#{docenteController.correoDocente.segundoNombre}"/>
+                        <p:outputLabel value="Tercer Nombre"/>
+                        <p:inputText value="#{docenteController.correoDocente.tercerNombre}"/>
+                        <p:outputLabel value="Primer Apellido"/>
+                        <p:inputText value="#{docenteController.correoDocente.primerApellido}"/>
+                        <p:outputLabel value="Segundo Apellido"/>
+                        <p:inputText value="#{docenteController.correoDocente.segundoApellido}"/>
+                        <p:outputLabel value="Apellido de casada"/>
+                        <p:inputText value="#{docenteController.correoDocente.apellidoCasada}"/>
+                        <p:outputLabel value="Correo electrónico"/>
+                        <p:inputText value="#{docenteController.correoDocente.correoElectronico}"/>
+                    </p:panelGrid>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>
