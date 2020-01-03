@@ -147,26 +147,39 @@ public class CreditosEJB {
         return q.getResultList();
     }
 
-    public void guardarCredito(CreditoBancario creditoBancario, String usuario) {
+    public CreditoBancario guardarCredito(CreditoBancario creditoBancario, String usuario) {
         if (creditoBancario.getIdCredito() == null) {
-            crearCredito(creditoBancario, usuario);
+            return crearCredito(creditoBancario, usuario);
         } else {
-            editCreditoBancario(creditoBancario, usuario);
+            return editCreditoBancario(creditoBancario, usuario);
         }
     }
 
-    public void crearCredito(CreditoBancario creditoBancario, String usuario) {
+    public CreditoBancario crearCredito(CreditoBancario creditoBancario, String usuario) {
         creditoBancario.setFechaInsercion(new Date());
         creditoBancario.setUsuarioInsercion(usuario);
         creditoBancario.setEstadoEliminacion(BigInteger.ZERO);
         em.persist(creditoBancario);
+
+        return em.find(CreditoBancario.class, creditoBancario.getIdCredito());
     }
 
     public CreditoBancario editCreditoBancario(CreditoBancario creditoBancario, String usuario) {
-        creditoBancario.setFechaModificacion(new Date());
+        creditoBancario.getDetalleCreditoList().stream().map((detalleCredito) -> {
+            if (detalleCredito.getEliminado()) {
+                detalleCredito.setFechaEliminacion(new Date());
+                detalleCredito.setUsuarioModificacion(usuario);
+            }
+            return detalleCredito;
+        }).forEachOrdered((detalleCredito) -> {
+            em.merge(detalleCredito);
+        });
+
+        /*creditoBancario.setFechaModificacion(new Date());
         creditoBancario.setUsuarioModificacion(usuario);
-        creditoBancario = em.merge(creditoBancario);
-        return creditoBancario;
+        creditoBancario = em.merge(creditoBancario);*/
+
+        return em.find(CreditoBancario.class, creditoBancario.getIdCredito());
     }
 
     public List<ContratosOrdenesCompras> getLstContratosDisponiblesCreditos(Empresa empresa, DetalleProcesoAdq proceso) {

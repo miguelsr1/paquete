@@ -58,6 +58,8 @@ public class CreditoBancarioController implements Serializable {
 
     private int rowEdit = 0;
     private String numeroNit = "";
+
+    private Boolean visibleFiltro = true;
     private Boolean usuarioEntidadFinanciera = false;
     private Boolean deshabilitado = true;
     private Boolean visibleLista = false;
@@ -104,7 +106,7 @@ public class CreditoBancarioController implements Serializable {
     public AnhoProcesoEJB anhoProcesoEJB;
     @EJB
     private UtilEJB utilEJB;
-    
+
     @ManagedProperty("#{recuperarProceso}")
     private RecuperarProceso recuperarProceso;
 
@@ -131,6 +133,14 @@ public class CreditoBancarioController implements Serializable {
         selectEstadoCredito.add(selectActivo2);
     }
 
+    public Boolean getVisibleFiltro() {
+        return visibleFiltro;
+    }
+
+    public void setVisibleFiltro(Boolean visibleFiltro) {
+        this.visibleFiltro = visibleFiltro;
+    }
+
     public void agregarEntidades() {
         for (EntidadFinanciera entFinan : lstEntidadFinanciera) {
             EntFinanDetProAdq ent = new EntFinanDetProAdq();
@@ -143,7 +153,7 @@ public class CreditoBancarioController implements Serializable {
         }
         visibleDlgEntidades = false;
     }
-    
+
     public RecuperarProceso getRecuperarProceso() {
         return recuperarProceso;
     }
@@ -189,7 +199,9 @@ public class CreditoBancarioController implements Serializable {
         lstRubros = creditosEJB.getLstRubrosHabilitados(recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq(), entidadSeleccionado.getCodEntFinanciera());
     }*/
     public void updateEntidadHabilitarCredito() {
-        lstEntFinanDetProAdq = creditosEJB.getLstEntidadesCredito(detalleProceso.getIdDetProcesoAdq());
+        if (detalleProceso != null) {
+            lstEntFinanDetProAdq = creditosEJB.getLstEntidadesCredito(detalleProceso.getIdDetProcesoAdq());
+        }
     }
 
     public void guardar() {
@@ -468,6 +480,8 @@ public class CreditoBancarioController implements Serializable {
                     credito.setNumeroNit(empresa.getNumeroNit());
 
                     lstContratosDisponibles = creditosEJB.getLstContratosDisponiblesCreditos(empresa, detalleProceso);
+
+                    visibleFiltro = false;
                     switch (VarSession.getVariableSessionED()) {
                         case 1:
                             visibleDatosGen = true;
@@ -554,7 +568,7 @@ public class CreditoBancarioController implements Serializable {
         if (VarSession.getVariableSessionED() == 1) {
             credito.setCodEntFinanciera(entidadSeleccionado);
         }
-        creditosEJB.guardarCredito(credito, VarSession.getVariableSessionUsuario());
+        credito = creditosEJB.guardarCredito(credito, VarSession.getVariableSessionUsuario());
         JsfUtil.mensajeInformacion("Operación realizada satisfactoriamente");
     }
 

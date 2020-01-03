@@ -60,8 +60,6 @@ public class CatalogosGeneralesController implements Serializable {
     public void init() {
         Manifest manifest;
         try {
-            lstMunicipiosAledanho = datosGeograficosEJB.getLstMunicipiosAledanhos();
-            
             InputStream is = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/META-INF/MANIFEST.MF");
             manifest = new Manifest();
             manifest.read(is);
@@ -76,6 +74,9 @@ public class CatalogosGeneralesController implements Serializable {
     }
 
     public List<MunicipioAledanho> getLstMunicipiosAledanho() {
+        if (lstMunicipiosAledanho == null || lstMunicipiosAledanho.isEmpty()) {
+            lstMunicipiosAledanho = datosGeograficosEJB.getLstMunicipiosAledanhos();
+        }
         return lstMunicipiosAledanho;
     }
 

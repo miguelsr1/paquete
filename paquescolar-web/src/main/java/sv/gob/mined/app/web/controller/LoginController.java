@@ -76,9 +76,13 @@ public class LoginController implements Serializable {
         Usuario usu = loginEJBLocal.isUsuarioValido(usuario, clave);
 
         if (usu == null) {
-            JsfUtil.mensajeError("Clave y/o Usuario incorrectos.");
+            JsfUtil.mensajeError("Se estan presentando problemas de comunicación con la base de datos. NOTIFICAR AL ADMINISTRADOR.");
             return "";
-        } else {
+        } else if(usu.getIdUsuario() == null){
+            JsfUtil.mensajeAlerta("Clave y/o Usuario incorrectos.");
+            return "";
+        }
+        else {
             if (usu.getActivo().intValue() == 1) {
                 if (usu.getRangoFechaLogin().intValue() == 0) {
                     return usuarioOkRedireccionar(usu);

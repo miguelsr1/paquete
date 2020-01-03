@@ -5,6 +5,7 @@
 package sv.gob.mined.paquescolar.ejb;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
@@ -82,7 +83,12 @@ public class DatosGeograficosEJB {
     }
 
     public List<MunicipioAledanho> getLstMunicipiosAledanhos() {
-        Query q = em.createQuery("SELECT m FROM MunicipioAledanho m", MunicipioAledanho.class);
-        return q.getResultList();
+        try {
+            Query q = em.createQuery("SELECT m FROM MunicipioAledanho m", MunicipioAledanho.class);
+            return q.getResultList();
+        } catch (Throwable e) {
+            return new ArrayList();
+        }
+
     }
 }

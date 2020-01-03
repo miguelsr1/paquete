@@ -297,6 +297,64 @@ body .ui-growl {
     z-index: 250;
 }
 
-body .ui-datatable .ui-datatable-data > tr td {
+/*body .ui-datatable .ui-datatable-data > tr td {
     padding: 2px 12px !important;
+}*/
+
+
+body .ui-datatable.ui-datatable-borderless .ui-paginator-top {
+    border-left: 0 none !important;
+    border-right: 0 none !important;
+    border-bottom: #dddddd !important; }
+body .ui-datatable.ui-datatable-borderless .ui-paginator-bottom {
+    border-left: 0 none !important;
+    border-right: 0 none !important;
+    border-top: #dddddd !important; }
+body .ui-datatable.ui-datatable-borderless .ui-datatable-header {
+    border-top: 0 none !important;
+    border-left: 0 none !important;
+    border-right: 0 none !important; }
+body .ui-datatable.ui-datatable-borderless .ui-datatable-footer {
+    border-bottom: 0 none !important;
+    border-left: 0 none !important;
+    border-right: 0 none !important; }
+body .ui-datatable.ui-datatable-borderless thead > tr > th {
+    border: 0 none !important; 
+    border-bottom: 2px solid #c7cdd1 !important;
+}
+body .ui-datatable.ui-datatable-borderless .ui-datatable-data {
+    border: 0 none !important; ;
+}
+body .ui-datatable.ui-datatable-borderless .ui-datatable-data > tr {
+    border: 0 none !important; ;
+}
+body .ui-datatable.ui-datatable-borderless .ui-datatable-data > tr > td {
+    border: 0 none !important; ;
+}
+
+@media (max-width: 35em) {
+    .ui-datatable-reflow .ui-datatable-data {
+        border-color: transparent !important; }
+    .ui-datatable-reflow .ui-datatable-data > tr:first-child {
+        border-top: 0 none; }
+    .ui-datatable-reflow .ui-paginator.ui-paginator-top {
+        border-bottom: 1px solid #dddddd; } }
+
+.ui-dialog .ui-dialog-titlebar {
+
+    padding: .4em .4em .4em 1em;
+    position: relative;
+    border: 0;
+    border-bottom-color: currentcolor;
+    border-bottom-style: none;
+    border-bottom-width: 0px;
+    padding: 15px !important;
+    border-bottom: 1px solid #dddddd;
+}
+body .ui-widget-header {
+    background: #f5f5f5;
+    
+    border: 1px solid #dddddd;
+    font-weight: bold;
+    font-size: 14px;
 }

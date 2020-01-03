@@ -38,9 +38,11 @@ public class LoginEJB {
 
             if (!q.getResultList().isEmpty()) {
                 usu = (Usuario) q.getResultList().get(0);
+            }else{
+                usu = new Usuario();
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
         } finally {
             return usu;
         }
