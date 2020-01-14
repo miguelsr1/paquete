@@ -67,7 +67,8 @@
                         </p:panelGrid>
                         <br/>
                         <p:dataTable id="tblResumen" widgetVar="tblResumen" var="ceNoDisponible" value="#{creditoBancarioController.listaProvGral}" 
-                                     emptyMessage="No hay ningun credito" paginator="true" paginatorPosition="top"> 
+                                     emptyMessage="No hay ningun credito" paginator="true" paginatorPosition="top"
+                                     styleClass="ui-datatable-borderless ui-datatable-reflow"> 
                             <f:facet name="header">
                                 <p:spacer width="10" height="8"/>
                                 <h:commandLink style="float:right;">

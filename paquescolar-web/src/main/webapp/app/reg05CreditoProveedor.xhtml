@@ -13,7 +13,7 @@
             <p:menuitem value="Modificar"  ajax="true" action="#{creditoBancarioController.editCredito}" 
                         update="pnlFiltro" icon="fa fa-edit"/>
             <p:menuitem value="Guardar"  ajax="true" actionListener="#{creditoBancarioController.guardarCredito}" 
-                        disabled="#{menuController.usuarioSoloLectura}" update="pnlFiltro pnlEdicion pnlListadoCreditos" icon="fa fa-save"/>
+                        disabled="#{menuController.usuarioSoloLectura}" update="pnlFiltro pnlEdicion pnlDatosCredito pngDatosCredito pnlListadoCreditos" icon="fa fa-save"/>
             <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
             <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
@@ -54,7 +54,7 @@
 
 
                         <p:commandButton   value="Buscar" icon="ui-icon-search" 
-                                           update="pnlFiltro pnlEdicion pnlListadoCreditos pnlDatosGenerales"
+                                           update="pnlFiltro pnlEdicion pnlListadoCreditos pnlDatosGenerales pnlDatosCredito"
                                            action="#{creditoBancarioController.buscarEmpresa}" 
                                            disabled="#{creditoBancarioController.deshabilitado}" />  
                     </p:panelGrid>
@@ -80,7 +80,7 @@
                     </div>
                 </div>
             </div>
-            <div jsf:id="pnlDatosCredito" class="ui-g-12 ui-lg-7" style="display:#{(creditoBancarioController.visibleDatosGen)?'block':'none'}" >
+            <div jsf:id="pnlDatosCredito" class="ui-g-12 ui-lg-7" style="display:#{(creditoBancarioController.visibleDatosCredito)?'block':'none'}" >
                 <div class="card">
                     <h1>
                         <i class="fa fa-credit-card blue" style="font-size: 16px;"></i>
@@ -88,7 +88,7 @@
                         <h:outputText value="Datos del crédito"/>
                     </h1>
 
-                    <p:panelGrid columns="4" styleClass="ui-panelgrid-blank form-group form-elements" >
+                    <p:panelGrid id="pngDatosCredito" columns="4" styleClass="ui-panelgrid-blank form-group form-elements" >
                         <p:outputLabel value="Número Refe.:" />
                         <p:inputText id="refPrestamo" value="#{creditoBancarioController.credito.refPrestamo}" 
                                      disabled="#{!creditoBancarioController.visibleEdicion}" size="15"/>
@@ -105,10 +105,13 @@
                         <p:calendar id="fechaAprobacion" pattern="dd/MM/yyyy" value="#{creditoBancarioController.credito.fechaAprobacion}"  
                                     showOn="button" effect="fade" locale="es" navigator="true"
                                     converterMessage="Error en el formato de la fecha de aprobación, el formato debe de ser dd/MM/yyyy"  
-                                    disabled="#{!creditoBancarioController.visibleEdicion}" size="10"/>
+                                    disabled="#{!creditoBancarioController.visibleEdicion}" size="10">
+                            <p:ajax event="dateSelect" update="fechaVencimiento" />
+                        </p:calendar>
                         <p:outputLabel value="Fecha vencimiento:" />
                         <p:calendar id="fechaVencimiento" pattern="dd/MM/yyyy" value="#{creditoBancarioController.credito.fechaVencimiento}" 
                                     showOn="button" effect="fade" locale="es" navigator="true"
+                                    mindate="#{creditoBancarioController.credito.fechaAprobacion}"
                                     converterMessage="Error en el formato de la fecha de vencimiento, el formato debe de ser dd/MM/yyyy" 
                                     disabled="#{!creditoBancarioController.visibleEdicion}" size="10" /> 
                     </p:panelGrid>

@@ -6,26 +6,25 @@
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
+        <p:menubar> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" disabled="true" />
+            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true" />
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{pagoProveedoresController.impRptPagoProve}"/>
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options" class="centradoVertical">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" disabled="true" />
-                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true" />
-                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{pagoProveedoresController.impRptPagoProve}"/>
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
-
-                        <f:facet  name="options" class="centradoVertical">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-
-                    <h3>
+                    <h1>
                         <i class="fa fa-filter blue" style="font-size: 16px;"></i>
                         <p:spacer width="10" height="8"/>
                         <p:outputLabel value="Filtro de busqueda"/>
-                    </h3>
+                    </h1>
                     <h:panelGrid columns="2">
                         <h:outputText value="Departamento"/>
                         <p:selectOneMenu id="codigoDepartamento" value="#{pagoProveedoresController.codigoDepartamento}"  required="true" disabled="#{parametrosMB.usuarioDepartamental}" >
@@ -40,7 +39,7 @@
                             <p:spacer width="10"/>
                             <p:outputLabel id="nombreCE" value="#{pagoProveedoresController.entidadEducativa.nombre}" style="font-weight: bold"/>
                         </h:panelGrid>
-                        
+
                         <p:commandButton value="Filtrar" action="#{pagoProveedoresController.generarRptLiquidacion}" update="pnlDatos"/>
                     </h:panelGrid>
                 </div>
@@ -53,7 +52,8 @@
                     </h1>
 
                     <h:panelGrid id="pnlDatos">
-                        <p:dataTable id="tblDatos" value="#{pagoProveedoresController.lstEmailProveeCredito}" var="reg">
+                        <p:dataTable id="tblDatos" value="#{pagoProveedoresController.lstEmailProveeCredito}" var="reg"
+                                     styleClass="ui-datatable-borderless ui-datatable-reflow">
 
                             <p:columnGroup type="header">
                                 <p:row>
@@ -81,7 +81,7 @@
                             <p:column headerText="Rubro" style="font-size: 10px;">
                                 <p:outputLabel value="#{reg.descripcionRubro}"/>
                             </p:column>
-                            <p:column headerText="N.I.T." style="font-size: 10px;">
+                            <p:column headerText="N.I.T.">
                                 <p:outputLabel value="#{reg.numeroNitEmp}"/>
                             </p:column>
                             <p:column headerText="Razon Social" style="font-size: 10px;">
@@ -100,7 +100,7 @@
                                     <f:convertDateTime pattern="dd/MM/yyyy"/>
                                 </p:outputLabel>
                             </p:column>
-                            <p:column headerText="Monto ($)" style="text-align: right;font-size: 10px;">
+                            <p:column headerText="Monto ($)" style="text-align: right;">
                                 <p:outputLabel value="#{reg.montoActual}">
                                     <f:convertNumber pattern="$ #,##0.00"/>
                                 </p:outputLabel>
@@ -110,7 +110,7 @@
                 </div>
             </div>
         </div>
-        
+
         <p:remoteCommand name="findEntidad" update="nombreCE" actionListener="#{pagoProveedoresController.buscarEntidadEducativa}" />
     </ui:define>
 </ui:composition>

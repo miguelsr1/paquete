@@ -69,7 +69,8 @@
                     </h1>
 
                     <p:dataTable id="tblDatos" value="#{pagoProveedoresController.lstBusquedaPlanillas}" var="pla" scrollable="true" 
-                                 paginator="true" paginatorPosition="top" rows="10">
+                                 paginator="true" paginatorPosition="top" rows="10"
+                                 styleClass="ui-datatable-borderless ui-datatable-reflow">
                         <f:facet name="header">
                             <p:spacer width="10" height="8"/>
                             <h:commandLink style="float:right;">

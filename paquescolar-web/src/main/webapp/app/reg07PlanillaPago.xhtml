@@ -20,150 +20,150 @@
             </f:facet>  
         </p:menubar>
         <p:blockUI block="mbMenu" trigger="mGuardar" />
-        
+
         <div class="ui-g">
             <div class="ui-g-12">
-                <div class="card">
-                    <h:panelGroup id="pnlFiltro" style="display:#{(pagoProveedoresController.filtro)?'block':'none'}">
-                        <h3>
-                            <i class="fa fa-filter blue" style="font-size: 16px;"></i>
-                            <p:spacer width="10" height="8"/>
-                            <p:outputLabel value="Filtro de busqueda"/>
-                        </h3>
-                        <p:panelGrid columns="2" columnClasses="col3_label,col9" 
-                                     styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
-                            <h:outputText value="Departamento"/>
-                            <p:selectOneMenu id="codigoDepartamento" value="#{pagoProveedoresController.codigoDepartamento}" disabled="#{parametrosMB.usuarioDepartamental}" >
-                                <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
-                                <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
-                                <p:ajax listener="#{pagoProveedoresController.clearRubroAndRequerimiento}"  update="codigoDepartamento cboRubro cboRequerimiento"/>
-                            </p:selectOneMenu>
+                <div class="card" jsf:id="pnlFiltro" style="display:#{(pagoProveedoresController.filtro)?'block':'none'}">
+                    <h1>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h1>
+                    <p:panelGrid columns="2" columnClasses="col3_label,col9" 
+                                 styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+                        <h:outputText value="Departamento"/>
+                        <p:selectOneMenu id="codigoDepartamento" value="#{pagoProveedoresController.codigoDepartamento}" disabled="#{parametrosMB.usuarioDepartamental}" >
+                            <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
+                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
+                            <p:ajax listener="#{pagoProveedoresController.clearRubroAndRequerimiento}"  update="codigoDepartamento cboRubro cboRequerimiento"/>
+                        </p:selectOneMenu>
 
-                            <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
-                            <p:selectOneMenu id="cboRubro" value="#{pagoProveedoresController.idRubro}">
-                                <f:selectItem itemLabel="Seleccione un rubro" itemValue="0" />
-                                <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
-                                <p:ajax listener="#{pagoProveedoresController.recuperarRequerimientos}" update="cboRequerimiento"/>
-                            </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
+                        <p:selectOneMenu id="cboRubro" value="#{pagoProveedoresController.idRubro}">
+                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="0" />
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <p:ajax listener="#{pagoProveedoresController.recuperarRequerimientos}" update="cboRequerimiento"/>
+                        </p:selectOneMenu>
 
-                            <p:outputLabel value="Requerimiento de Fondo:" rendered="#{pagoProveedoresController.seleccionPlanilla}"/>
-                            <p:selectOneMenu id="cboRequerimiento" value="#{pagoProveedoresController.idReq}" rendered="#{pagoProveedoresController.seleccionPlanilla}" autoWidth="true" >
-                                <f:selectItem itemLabel="Seleccione un requerimiento" itemValue="" />
-                                <f:selectItems value="#{pagoProveedoresController.lstRequerimientoFondos}" var="req" itemValue="#{req.idRequerimiento}" itemLabel="#{req.formatoRequerimiento} - #{req.componente}" />
-                            </p:selectOneMenu>
+                        <p:outputLabel value="Requerimiento de Fondo:" rendered="#{pagoProveedoresController.seleccionPlanilla}"/>
+                        <p:selectOneMenu id="cboRequerimiento" value="#{pagoProveedoresController.idReq}" rendered="#{pagoProveedoresController.seleccionPlanilla}" autoWidth="true" >
+                            <f:selectItem itemLabel="Seleccione un requerimiento" itemValue="" />
+                            <f:selectItems value="#{pagoProveedoresController.lstRequerimientoFondos}" var="req" itemValue="#{req.idRequerimiento}" itemLabel="#{req.formatoRequerimiento} - #{req.componente}" />
+                        </p:selectOneMenu>
 
-                            <p:commandButton value="Filtrar" icon="fa fa-filter" action="#{pagoProveedoresController.buscarRequerimientos}" update="pnlDatos" rendered="#{pagoProveedoresController.seleccionRequerimiento}"/>
-                            <p:commandButton value="Filtrar" icon="fa fa-filter" action="#{pagoProveedoresController.buscarPlanillas}" update="pnlDatos cboTipoDocImp" rendered="#{pagoProveedoresController.seleccionPlanilla}"/>
-                        </p:panelGrid>
-                    </h:panelGroup>
+                        <p:commandButton value="Filtrar" icon="fa fa-filter" action="#{pagoProveedoresController.buscarRequerimientos}" update="pnlDatos" rendered="#{pagoProveedoresController.seleccionRequerimiento}"/>
+                        <p:commandButton value="Filtrar" icon="fa fa-filter" action="#{pagoProveedoresController.buscarPlanillas}" update="pnlDatos cboTipoDocImp" rendered="#{pagoProveedoresController.seleccionPlanilla}"/>
+                    </p:panelGrid>
                 </div>
 
-                <div class="card clearfix">
-                    <h:panelGroup id="pnlDatos" style="display:#{(pagoProveedoresController.filtro)?'block':'none'}">
-                        <h1>
-                            <i class="fa fa-list-ol blue" style="font-size: 16px;"></i>
-                            <p:spacer width="10" height="8"/>
-                            <p:outputLabel value="#{pagoProveedoresController.seleccionRequerimiento?'Requerimiento de Fondos':'Planillas de Pago'}"/>
-                        </h1>
-                        <!-- REQUERIMIENTO DE FONDOS -->
-                        <p:dataTable value="#{pagoProveedoresController.lstResumenRequerimiento}" var="req" 
-                                     rowKey="#{req.idRequerimiento}" style="margin-bottom:0" rowIndexVar="id"
-                                     rendered="#{pagoProveedoresController.seleccionRequerimiento}"
-                                     rowStyleClass="#{(req.montoTotal - req.montoTotalPlanilla - req.montoReintegrar) gt 0 ? null : 'filaCompletada'}">
+                <div jsf:id="pnlDatos" class="card clearfix" style="display:#{(pagoProveedoresController.filtro)?'block':'none'}">
+                    <h1>
+                        <i class="fa fa-list-ol blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="#{pagoProveedoresController.seleccionRequerimiento?'Requerimiento de Fondos':'Planillas de Pago'}"/>
+                    </h1>
+                    <!-- REQUERIMIENTO DE FONDOS -->
+                    <p:dataTable value="#{pagoProveedoresController.lstResumenRequerimiento}" var="req" 
+                                 rowKey="#{req.idRequerimiento}" style="margin-bottom:0" rowIndexVar="id"
+                                 rendered="#{pagoProveedoresController.seleccionRequerimiento}"
+                                 rowStyleClass="#{(req.montoTotal - req.montoTotalPlanilla - req.montoReintegrar) gt 0 ? null : 'filaCompletada'}"
+                                 styleClass="ui-datatable-borderless ui-datatable-reflow">
 
-                            <p:column headerText="id Req." width="35" >
-                                <p:outputLabel value="#{req.idRequerimiento}"/>
-                            </p:column>
-                            <p:column headerText="Concepto">
-                                <p:outputLabel value="#{req.concepto}"/>
-                            </p:column>
-                            <p:column headerText="Num. Req." width="90">
-                                <p:outputLabel value="#{req.formatoRequerimiento}"/>
-                            </p:column>
-                            <p:column headerText="Monto ($)" width="70" styleClass="numero">
-                                <h:outputText value="#{req.montoTotal}">
-                                    <f:convertNumber pattern="#,##0.00"/>
-                                </h:outputText>
-                            </p:column>
-                            <p:column headerText="# Planillas" width="50" styleClass="numero">
-                                <h:outputText value="#{req.cantidadPlanilla}"/>
-                            </p:column>
-                            <p:column headerText="Pagado ($)" width="70" styleClass="numero">
-                                <h:outputText value="#{req.montoTotalPlanilla}">
-                                    <f:convertNumber pattern="#,##0.00"/>
-                                </h:outputText>
-                            </p:column>
-                            <p:column headerText="Pediente($)" width="70" styleClass="numero">
-                                <h:outputText value="#{req.montoTotal - req.montoTotalPlanilla}">
-                                    <f:convertNumber pattern="#,##0.00"/>
-                                </h:outputText>
-                            </p:column>
-                            <p:column headerText="Reintegrar($)" width="70" styleClass="numero">
-                                <h:outputText value="#{req.montoReintegrar}">
-                                    <f:convertNumber pattern="#,##0.00"/>
-                                </h:outputText>
-                            </p:column>
+                        <p:column headerText="id Req." width="35" >
+                            <p:outputLabel value="#{req.idRequerimiento}"/>
+                        </p:column>
+                        <p:column headerText="Concepto">
+                            <p:outputLabel value="#{req.concepto}"/>
+                        </p:column>
+                        <p:column headerText="Num. Req." width="90">
+                            <p:outputLabel value="#{req.formatoRequerimiento}"/>
+                        </p:column>
+                        <p:column headerText="Monto ($)" width="70" styleClass="numero">
+                            <h:outputText value="#{req.montoTotal}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="# Planillas" width="50" styleClass="numero">
+                            <h:outputText value="#{req.cantidadPlanilla}"/>
+                        </p:column>
+                        <p:column headerText="Pagado ($)" width="70" styleClass="numero">
+                            <h:outputText value="#{req.montoTotalPlanilla}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Pediente($)" width="70" styleClass="numero">
+                            <h:outputText value="#{req.montoTotal - req.montoTotalPlanilla}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Reintegrar($)" width="70" styleClass="numero">
+                            <h:outputText value="#{req.montoReintegrar}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </h:outputText>
+                        </p:column>
 
-                            <p:column headerText="Saldo ($)" width="70" styleClass="numero">
-                                <h:outputText value="#{req.montoTotal - req.montoTotalPlanilla - req.montoReintegrar}">
-                                    <f:convertNumber pattern="#,##0.00"/>
-                                </h:outputText>
-                            </p:column>
-                            
-                            <p:column headerText="Seleccionar" width="70" style="text-align: center;">
-                                <p:commandLink action="#{pagoProveedoresController.selectRequerimiento}" update="dlgEntidadesFinancieras dlgTipoPlanilla">
-                                    <f:setPropertyActionListener value="#{req.idRequerimiento}" target="#{pagoProveedoresController.idReq}"/> 
-                                    <i class="fa fa-hand-o-right blue" style="font-size: 17px;"></i>
-                                </p:commandLink> 
-                            </p:column>
-                        </p:dataTable>
+                        <p:column headerText="Saldo ($)" width="70" styleClass="numero">
+                            <h:outputText value="#{req.montoTotal - req.montoTotalPlanilla - req.montoReintegrar}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </h:outputText>
+                        </p:column>
 
-                        <!-- PLANILLAS DE PAGO -->
-                        <p:dataTable value="#{pagoProveedoresController.lstPlanillas}" var="pla" id="tblPlanillasPago" widgetVar="tblPlanillasPago"
-                                     rowKey="#{pla.idPlanilla}" style="margin-bottom:0" rowIndexVar="id"
-                                     rendered="#{!pagoProveedoresController.seleccionRequerimiento}" emptyMessage="No hay planillas creadas">
+                        <p:column headerText="Seleccionar" width="70" style="text-align: center;">
+                            <p:commandLink action="#{pagoProveedoresController.selectRequerimiento}" update="dlgEntidadesFinancieras dlgTipoPlanilla">
+                                <f:setPropertyActionListener value="#{req.idRequerimiento}" target="#{pagoProveedoresController.idReq}"/> 
+                                <i class="fa fa-hand-o-right blue" style="font-size: 17px;"></i>
+                            </p:commandLink> 
+                        </p:column>
+                    </p:dataTable>
 
-                            <p:column headerText="id Pla." width="30">
-                                <p:outputLabel value="#{pla.idPlanilla}"/>
-                            </p:column>
-                            <p:column headerText="Requerimiento" width="100">
+                    <!-- PLANILLAS DE PAGO -->
+                    <p:dataTable value="#{pagoProveedoresController.lstPlanillas}" var="pla" id="tblPlanillasPago" widgetVar="tblPlanillasPago"
+                                 rowKey="#{pla.idPlanilla}" style="margin-bottom:0" rowIndexVar="id"
+                                 rendered="#{!pagoProveedoresController.seleccionRequerimiento}" emptyMessage="No hay planillas creadas"
+                                 styleClass="ui-datatable-borderless ui-datatable-reflow">
 
-                                <p:outputLabel value="#{pla.idRequerimiento.formatoRequerimiento}"/>
-                            </p:column>
-                            <p:column headerText="Concepto">
-                                <p:outputLabel value="#{pla.idRequerimiento.componente}"/>
-                            </p:column>
-                            <p:column headerText="Estado" width="100" styleClass="colCenter">
-                                <p:outputLabel value="#{pla.idEstadoPlanilla eq 1 ? 'DIGITADA' : 'PAGADA'}"/>
-                            </p:column>
-                            <p:column headerText="Monto Total" width="70" styleClass="numero">
-                                <p:outputLabel value="#{pla.montoTotal}">
-                                    <f:convertNumber pattern="#,##0.00"/>
+                        <p:column headerText="id Pla." width="30">
+                            <p:outputLabel value="#{pla.idPlanilla}"/>
+                        </p:column>
+                        <p:column headerText="Requerimiento" width="100">
+
+                            <p:outputLabel value="#{pla.idRequerimiento.formatoRequerimiento}"/>
+                        </p:column>
+                        <p:column headerText="Concepto">
+                            <p:outputLabel value="#{pla.idRequerimiento.componente}"/>
+                        </p:column>
+                        <p:column headerText="Estado" width="100" styleClass="colCenter">
+                            <p:outputLabel value="#{pla.idEstadoPlanilla eq 1 ? 'DIGITADA' : 'PAGADA'}"/>
+                        </p:column>
+                        <p:column headerText="Monto Total" width="70" styleClass="numero">
+                            <p:outputLabel value="#{pla.montoTotal}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Fecha Elaboracion" width="80" style="text-align: center;">
+                            <p:outputLabel value="#{pla.fechaInsercion}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Seleccionar" width="70" style="text-align: center;">
+                            <p:commandLink action="#{pagoProveedoresController.selectPlanilla}" update="pnlFiltro pnlDatos pnlRequerimiento pnlDatosPlanilla pnlRequerimiento">
+                                <f:setPropertyActionListener value="#{pla}" target="#{pagoProveedoresController.planillaPago}"/> 
+                                <i class="fa fa-hand-o-right blue" style="font-size: 17px;"></i>
+                            </p:commandLink> 
+                        </p:column>
+                        <p:column headerText="Borrar" width="40" style="text-align: center;">
+                            <p:commandLink oncomplete="PF('confirmDialog').show();">
+                                <p:outputLabel> 
+                                    <i class="fa fa-trash-o red" style="font-size: 16px;"></i>
                                 </p:outputLabel>
-                            </p:column>
-                            <p:column headerText="Fecha Elaboracion" width="80" style="text-align: center;">
-                                <p:outputLabel value="#{pla.fechaInsercion}">
-                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
-                                </p:outputLabel>
-                            </p:column>
-                            <p:column headerText="Seleccionar" width="70" style="text-align: center;">
-                                <p:commandLink action="#{pagoProveedoresController.selectPlanilla}" update="pnlFiltro pnlDatos pnlRequerimiento tbDetallePlanilla">
-                                    <f:setPropertyActionListener value="#{pla}" target="#{pagoProveedoresController.planillaPago}"/> 
-                                    <i class="fa fa-hand-o-right blue" style="font-size: 17px;"></i>
-                                </p:commandLink> 
-                            </p:column>
-                            <p:column headerText="Borrar" width="40" style="text-align: center;">
-                                <p:commandLink oncomplete="PF('confirmDialog').show();">
-                                    <p:outputLabel> 
-                                        <i class="fa fa-trash-o red" style="font-size: 16px;"></i>
-                                    </p:outputLabel>
-                                    <f:setPropertyActionListener value="#{pla.idPlanilla}" target="#{pagoProveedoresController.idPlanilla}"/>  
-                                </p:commandLink>
-                            </p:column>
-                        </p:dataTable>
-                    </h:panelGroup>
-                    <ui:include src="/app/comunes/fragmentos/pagoProveedores/planillaPago.xhtml"/>
+                                <f:setPropertyActionListener value="#{pla.idPlanilla}" target="#{pagoProveedoresController.idPlanilla}"/>  
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+
                 </div>
+
+                <ui:include src="/app/comunes/fragmentos/pagoProveedores/planillaPago.xhtml"/>
             </div>
         </div>
 
@@ -197,7 +197,8 @@
             <br/>
             <p:dataTable id="tblSeleccionados" widgetVar="tblSeleccionados" value="#{pagoProveedoresController.lstDetalleRequerimiento}" var="detalleRequerimiento" rowKey="#{detalleRequerimiento.idDetRequerimiento}"
                          selectionMode="multiple" selection="#{pagoProveedoresController.lstDetalleRequerimientoSeleccionado}" rowIndexVar="rowId" scrollable="true" scrollHeight="300" 
-                         emptyMessage="Ya no hay contratos para asociar a la planilla">
+                         emptyMessage="Ya no hay contratos para asociar a la planilla"
+                         styleClass="ui-datatable-borderless ui-datatable-reflow">
                 <p:ajax event="rowSelect" listener="#{pagoProveedoresController.validarDetalleRequerimiento}" update="txtNumCe txtMontoCe"/>
 
                 <f:facet name="header">
@@ -394,7 +395,8 @@
                   header="Seleccione una Entidad Financiera" showEffect="fade" hideEffect="fade">
             <h:panelGrid columns="1">
                 <p:dataTable value="#{pagoProveedoresController.lstEntFinRequerimiento}" var="financiera" rowIndexVar="idRow"
-                             selection="#{pagoProveedoresController.entidadFinanciera}" selectionMode="single" rowKey="#{financiera.codEntFinanciera}">
+                             selection="#{pagoProveedoresController.entidadFinanciera}" selectionMode="single" rowKey="#{financiera.codEntFinanciera}"
+                             styleClass="ui-datatable-borderless ui-datatable-reflow">
                     <p:column headerText="Id" width="10">
                         #{idRow+1}
                     </p:column>
@@ -416,7 +418,7 @@
         <p:dialog id="dlgTipoPlanilla" visible="#{pagoProveedoresController.dlgShowTipoPlanilla}" widgetVar="dlgTipoPlanilla" modal="true" width="400" header="Seleccione Tipo de Planilla" resizable="false" showEffect="fade" hideEffect="fade">
             <div class="bloque1 propiedadBloque1 textoConSombra" >
                 <div class="subItem2">
-                    <p:commandLink action="#{pagoProveedoresController.cerrarDlgTipoPlanilla}" styleClass="secciones" update="pnlFiltro pnlDatos pnlRequerimiento tbDetallePlanilla dlgSeleccionProveedor">
+                    <p:commandLink action="#{pagoProveedoresController.cerrarDlgTipoPlanilla}" styleClass="secciones" update="pnlFiltro pnlDatos pnlRequerimiento tbDetallePlanilla dlgSeleccionProveedor pnlDatosPlanilla">
                         <h:panelGrid columns="1" style="width: 100%;">
                             <i class="fa fa-user" style="font-size: 38px; color: #33afde;"></i>
                             <h:outputText value="Un proveedor" style="font-size: 12px;"/>
@@ -427,7 +429,7 @@
                     <h:outputText value="Se crea un solo cheque por planilla para el proveedor seleccionado"/>
                 </div>
                 <div class="subItem2">
-                    <p:commandLink action="#{pagoProveedoresController.cerrarDlgTipoPlanilla}" styleClass="secciones" update="pnlFiltro pnlDatos pnlRequerimiento tbDetallePlanilla">
+                    <p:commandLink action="#{pagoProveedoresController.cerrarDlgTipoPlanilla}" styleClass="secciones" update="pnlFiltro pnlDatos pnlRequerimiento tbDetallePlanilla pnlDatosPlanilla">
                         <h:panelGrid columns="1" style="width: 100%;">
                             <i class="fa fa-users" style="font-size: 38px; color: #00DD00;"></i>
                             <h:outputText value ="Más de un Proveedor" style="font-size: 12px;"/>
@@ -444,7 +446,8 @@
         <p:dialog id="dlgSeleccionProveedor" visible="#{pagoProveedoresController.dlgShowSeleccionProveedor}" widgetVar="dlgSeleccionProveedor" modal="true" width="600" header="Seleccione un Proveedor" resizable="false" showEffect="fade" hideEffect="fade">
             <h:panelGrid columns="1">
                 <p:dataTable value="#{pagoProveedoresController.lstProveedores}" var="prov" rowIndexVar="idRow" selection="#{pagoProveedoresController.proveedor}" 
-                             selectionMode="single" rowKey="#{prov.numeroNit}" scrollable="true" scrollHeight="300">
+                             selectionMode="single" rowKey="#{prov.numeroNit}" scrollable="true" scrollHeight="300"
+                             styleClass="ui-datatable-borderless ui-datatable-reflow">
                     <p:column headerText="Id" width="10" >
                         #{idRow+1}
                     </p:column>
@@ -459,7 +462,7 @@
 
             <f:facet name="footer">
                 <h:panelGrid columns="2">
-                    <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{pagoProveedoresController.cerrarDlgSeleccioneProveedor}" onclick="PF('dlgSeleccionProveedor').hide();" update="pnlFiltro pnlDatos pnlRequerimiento tbDetallePlanilla "/>
+                    <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{pagoProveedoresController.cerrarDlgSeleccioneProveedor}" onclick="PF('dlgSeleccionProveedor').hide();" update="pnlFiltro pnlDatos pnlRequerimiento pnlDatosPlanilla pnlRequerimiento"/>
                     <p:commandButton value="Cancelar" icon="fa fa-times-circle" onclick="PF('dlgSeleccionProveedor').hide();"/>
                 </h:panelGrid>
             </f:facet>

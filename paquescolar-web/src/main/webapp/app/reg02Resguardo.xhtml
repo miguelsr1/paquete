@@ -63,7 +63,8 @@
                     </h1>
 
                     <p:dataTable id="tblDetalleOferta" value="#{resguardoMB.lstResguardoBienes}" var="resguardo" rowKey="#{resguardo.idResguardo}" rowIndexVar="rowId"
-                                 rowStyleClass="#{resguardo.estadoEliminacion eq 1 ? 'filaEliminada' : null}">
+                                 rowStyleClass="#{resguardo.estadoEliminacion eq 1 ? 'filaEliminada' : null}"
+                                 styleClass="ui-datatable-borderless ui-datatable-reflow">
                         <p:column headerText="#" width="50" styleClass="centrado">
                             #{rowId +1 }
                         </p:column>

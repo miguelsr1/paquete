@@ -1738,6 +1738,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
     }
 
     public void generarRptLiquidacion() {
+        anho = getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getAnho().substring(2);
         lstEmailProveeCredito = pagoProveedoresEJB.getDatosRptLiquidacion(codigoDepartamento, anho, getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq(), codigoEntidad);
     }
 
@@ -2286,9 +2287,10 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
     }
 
     public void generarArchivoF910() {
-        if (anho.length() == 2) {
+        anho = getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getAnho();
+        /*if (anho.length() == 2) {
             anho = "20" + anho;
-        }
+        }*/
         lstProveedores = pagoProveedoresEJB.getDatosF910(codigoDepartamento, Integer.parseInt(anho));
         if (lstProveedores.isEmpty()) {
             JsfUtil.mensajeInformacion("No se existen datos para el año seleccionado");

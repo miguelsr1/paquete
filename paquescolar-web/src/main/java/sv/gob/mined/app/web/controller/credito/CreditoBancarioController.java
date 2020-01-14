@@ -63,7 +63,7 @@ public class CreditoBancarioController implements Serializable {
     private Boolean usuarioEntidadFinanciera = false;
     private Boolean deshabilitado = true;
     private Boolean visibleLista = false;
-    private Boolean visibleDatosGen = false;
+    private Boolean visibleDatosCredito = false;
     private Boolean visibleEdicion = false;
     private Boolean visibleEstadoCreditoActivo = false;
     private Boolean visibleEstadoCreditoCancelado = false;
@@ -400,12 +400,8 @@ public class CreditoBancarioController implements Serializable {
         this.deshabilitado = deshabilitado;
     }
 
-    public Boolean getVisibleDatosGen() {
-        return visibleDatosGen;
-    }
-
-    public void setVisibleDatosGen(Boolean visibleDatosGen) {
-        this.visibleDatosGen = visibleDatosGen;
+    public Boolean getVisibleDatosCredito() {
+        return visibleDatosCredito;
     }
 
     public Boolean getVisibleEdicion() {
@@ -422,7 +418,7 @@ public class CreditoBancarioController implements Serializable {
         } else {
             credito = new CreditoBancario();
             credito.setCreditoActivo(BigInteger.ONE);
-            credito.setDetalleCreditoList(new ArrayList<DetalleCredito>());
+            credito.setDetalleCreditoList(new ArrayList());
             lstCreditoActivos.clear();
             lstDetalleCredito.clear();
             deshabilitado = false;
@@ -484,11 +480,11 @@ public class CreditoBancarioController implements Serializable {
                     visibleFiltro = false;
                     switch (VarSession.getVariableSessionED()) {
                         case 1:
-                            visibleDatosGen = true;
+                            visibleDatosCredito = true;
                             visibleEdicion = true;
                             break;
                         case 2:
-                            visibleDatosGen = true;
+                            visibleDatosCredito = false;
                             visibleLista = true;
                             lstCreditoActivos = creditosEJB.findCreditoBancarioByEmpresa(empresa.getNumeroNit(), detalleProceso);
                             break;
@@ -509,7 +505,7 @@ public class CreditoBancarioController implements Serializable {
                 || entidadSeleccionado.getCodEntFinanciera().equals(credito.getCodEntFinanciera().getCodEntFinanciera())) {
             setVisibleLista(false);
             setVisibleEdicion(true);
-            //quitarEliminadosDetalleCredito();
+            visibleDatosCredito = true;
             visibleEstadoCreditoActivo = true;
         } else {
             JsfUtil.mensajeAlerta("No posee derechos de ver registros de otras entidades financieras");
@@ -568,7 +564,7 @@ public class CreditoBancarioController implements Serializable {
         if (VarSession.getVariableSessionED() == 1) {
             credito.setCodEntFinanciera(entidadSeleccionado);
         }
-        credito = creditosEJB.guardarCredito(credito, VarSession.getVariableSessionUsuario());
+        creditosEJB.guardarCredito(credito, VarSession.getVariableSessionUsuario());
         JsfUtil.mensajeInformacion("Operación realizada satisfactoriamente");
     }
 

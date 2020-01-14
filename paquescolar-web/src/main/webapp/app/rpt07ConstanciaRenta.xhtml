@@ -22,21 +22,20 @@
         </script>
     </ui:define>
     <ui:define name="content">
+        <p:menubar id="mbMenu"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" disabled="true"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options" class="centradoVertical">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" disabled="true"/>
-                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true"/>
-                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
-
-                        <f:facet  name="options" class="centradoVertical">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-
                     <p:panel id="pnlDatos"> 
                         <p:tabView>
                             <p:tab title="Constancia Retención">
@@ -65,7 +64,8 @@
                                     <p:outputLabel styleClass="negrita" value="#{pagoProveedoresController.empresa.telefonos}, #{pagoProveedoresController.empresa.numeroCelular}" />
                                 </p:panelGrid>
 
-                                <p:dataTable id="tblDatos" value="#{pagoProveedoresController.lstRentaProve}" var="renta" sortBy="#{pagoProveedoresController.numeroNit}" rowIndexVar="row">
+                                <p:dataTable id="tblDatos" value="#{pagoProveedoresController.lstRentaProve}" var="renta" sortBy="#{pagoProveedoresController.numeroNit}" 
+                                             rowIndexVar="row" styleClass="ui-datatable-borderless ui-datatable-reflow">
                                     <f:facet name="header" class="centradoVertical">
                                         <p:spacer width="10" height="8"/>
                                         <h:commandLink action="#{pagoProveedoresController.generarCertificacion}" style="float: right;">
@@ -77,15 +77,15 @@
                                     <p:column headerText="#" style="text-align: center;" width="30">
                                         <h:outputText value="#{row+1}"/>
                                     </p:column>
-                                    <p:column headerText="id.Planilla" width="80">
+                                    <p:column headerText="id.Planilla" width="70" style="text-align: center;">
                                         <p:commandLink action="#{pagoProveedoresController.verPlanillaPago}" value="#{renta.idPlanilla}" oncomplete="PF('dlgPlanillaPago').show();">
                                             <f:setPropertyActionListener value="#{renta.idPlanilla}" target="#{pagoProveedoresController.idPlanilla}"/>
                                         </p:commandLink>
                                     </p:column>
-                                    <p:column headerText="Num.Cheque">
+                                    <p:column headerText="Num.Cheque" style="text-align: center;">
                                         #{renta.numCheque}
                                     </p:column>
-                                    <p:column headerText="Fecha Cheque">
+                                    <p:column headerText="Fecha Cheque" style="text-align: center;">
                                         <h:outputText value="#{renta.fechaCheque}">
                                             <f:convertDateTime pattern="dd/MM/yyyy"/>
                                         </h:outputText>
@@ -188,10 +188,10 @@
             </div>
         </div>
 
-        <p:dialog id="dlgPlanillaPago" widgetVar="dlgPlanillaPago" header="Planilla de Pago" width="900" height="600" modal="true" resizable="false">
+        <p:dialog id="dlgPlanillaPago" widgetVar="dlgPlanillaPago" header="Planilla de Pago" width="1000" height="550" modal="true" resizable="false">
             <ui:include src="/app/comunes/fragmentos/pagoProveedores/planillaPago.xhtml"/>
         </p:dialog>
-        
+
         <ui:include src="/app/comunes/fragmentos/pagoProveedores/dlgNotificacionEmail.xhtml"/>
 
         <p:dialog id="dlgEsperar" widgetVar="dlgEsperar" header="Información" modal="true" height="50">

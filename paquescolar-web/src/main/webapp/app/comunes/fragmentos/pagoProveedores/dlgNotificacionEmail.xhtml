@@ -14,7 +14,8 @@
             <p:inputText value="#{pagoProveedoresController.emailUnico}" readonly="true" size="60"/>
         </p:panelGrid>
         <br/>
-        <p:dataTable value="#{pagoProveedoresController.lstEmailProveeCredito}" var="prov" rowIndexVar="rowId" scrollable="true" scrollHeight="300">
+        <p:dataTable value="#{pagoProveedoresController.lstEmailProveeCredito}" var="prov" rowIndexVar="rowId" scrollable="true" scrollHeight="300"
+                     styleClass="ui-datatable-borderless ui-datatable-reflow">
             <f:facet name="header">
                 <h:outputText value="Listado de Proveedores a notificar."/>
             </f:facet>

@@ -6,26 +6,26 @@
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
+        <p:menubar id="mbMenu"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+            <p:menuitem value="Consultar" icon="fa fa-search" disabled="false" onclick="onClick('btnModificar');"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+        
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
-                        <p:menuitem value="Consultar" icon="fa fa-search" disabled="false" onclick="onClick('btnModificar');"/>
-                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
-
-                        <f:facet  name="options">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-
-                    <h3>
+                    <h1>
                         <i class="fa fa-filter blue" style="font-size: 16px;"></i>
                         <p:spacer width="10" height="8"/>
                         <p:outputLabel value="Filtro de busqueda"/>
-                    </h3>
+                    </h1>
 
                     <p:panelGrid id="panel"  columns="2" columnClasses="col2_label,col10" 
                                  style="width: 100%; border:0px none; background-color:transparent;"
@@ -54,7 +54,7 @@
                         <h:outputText value="Saldo Actuales"/>
                     </h1>
 
-                    <p:dataTable  id="tblDetalleAdj" var="saldo" value="#{consultasContratacionMB.lstSaldos}" >  
+                    <p:dataTable  id="tblDetalleAdj" var="saldo" value="#{consultasContratacionMB.lstSaldos}" styleClass="ui-datatable-borderless ui-datatable-reflow">  
                         <p:column headerText="NIT" width="110">
                             <h:outputText value="#{saldo.numeroNit}" />  
                         </p:column>
@@ -65,7 +65,7 @@
                         <p:column headerText="Rubro" width="110">  
                             <h:outputText value="#{saldo.rubro}" />  
                         </p:column>
-                        
+
                         <p:column headerText="Capacidad Calificada" width="70" styleClass="numero">
                             <h:outputText value="#{saldo.capacidadCalificada}" />  
                         </p:column>

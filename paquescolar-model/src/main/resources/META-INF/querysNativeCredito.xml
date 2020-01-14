@@ -227,7 +227,7 @@
                         result-class="sv.gob.mined.paquescolar.model.EntidadFinanciera">
         <query>
             <![CDATA[
-            SELECT 
+            SELECT distinct
                 ent.* 
             FROM entidad_financiera ent
                 INNER JOIN ent_finan_det_pro_adq efd     ON ent.cod_ent_financiera = efd.cod_ent_financiera
@@ -247,7 +247,7 @@
                         result-class="sv.gob.mined.paquescolar.model.EntidadFinanciera">
         <query>
             <![CDATA[
-            SELECT 
+            SELECT distinct
                 ent.* 
             FROM entidad_financiera ent
                 INNER JOIN ent_finan_det_pro_adq efd     ON ent.cod_ent_financiera = efd.cod_ent_financiera

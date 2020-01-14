@@ -147,24 +147,24 @@ public class CreditosEJB {
         return q.getResultList();
     }
 
-    public CreditoBancario guardarCredito(CreditoBancario creditoBancario, String usuario) {
+    public void guardarCredito(CreditoBancario creditoBancario, String usuario) {
         if (creditoBancario.getIdCredito() == null) {
-            return crearCredito(creditoBancario, usuario);
+            crearCredito(creditoBancario, usuario);
         } else {
-            return editCreditoBancario(creditoBancario, usuario);
+            editCreditoBancario(creditoBancario, usuario);
         }
     }
 
-    public CreditoBancario crearCredito(CreditoBancario creditoBancario, String usuario) {
+    public void crearCredito(CreditoBancario creditoBancario, String usuario) {
         creditoBancario.setFechaInsercion(new Date());
         creditoBancario.setUsuarioInsercion(usuario);
         creditoBancario.setEstadoEliminacion(BigInteger.ZERO);
         em.persist(creditoBancario);
 
-        return em.find(CreditoBancario.class, creditoBancario.getIdCredito());
+        em.find(CreditoBancario.class, creditoBancario.getIdCredito());
     }
 
-    public CreditoBancario editCreditoBancario(CreditoBancario creditoBancario, String usuario) {
+    public void editCreditoBancario(CreditoBancario creditoBancario, String usuario) {
         creditoBancario.getDetalleCreditoList().stream().map((detalleCredito) -> {
             if (detalleCredito.getEliminado()) {
                 detalleCredito.setFechaEliminacion(new Date());
@@ -175,11 +175,11 @@ public class CreditosEJB {
             em.merge(detalleCredito);
         });
 
-        /*creditoBancario.setFechaModificacion(new Date());
+        creditoBancario.setFechaModificacion(new Date());
         creditoBancario.setUsuarioModificacion(usuario);
-        creditoBancario = em.merge(creditoBancario);*/
+        creditoBancario = em.merge(creditoBancario);
 
-        return em.find(CreditoBancario.class, creditoBancario.getIdCredito());
+        //return em.find(CreditoBancario.class, creditoBancario.getIdCredito());
     }
 
     public List<ContratosOrdenesCompras> getLstContratosDisponiblesCreditos(Empresa empresa, DetalleProcesoAdq proceso) {

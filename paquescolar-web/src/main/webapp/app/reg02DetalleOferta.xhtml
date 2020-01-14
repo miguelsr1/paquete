@@ -77,7 +77,8 @@
                         <p:dataTable id="tblDetalleOferta" value="#{participantesController.lstDetalleOferta}" var="detalle" 
                                      editable="true" editMode="cell" emptyMessage="No hay registros" sortBy="#{detalle.estadoEliminacion}"
                                      rowKey="#{detalle.idDetalleOfe}" widgetVar="tblDetalleOferta" rowIndexVar="rowId"
-                                     rowStyleClass="#{detalle.estadoEliminacion eq 1 ? 'filaEliminada' : null}">
+                                     rowStyleClass="#{detalle.estadoEliminacion eq 1 ? 'filaEliminada' : null}"
+                                     styleClass="ui-datatable-borderless ui-datatable-reflow">
 
                             <p:ajax id="event" event="cellEdit" listener="#{participantesController.onCellEdit}" onsuccess="updDetalleOferta();"/>
 
@@ -87,10 +88,10 @@
                                 <p:outputLabel value="#{detalle.idDetalleOfe}" />
                             </p:column>
 
-                            <p:column headerText="No Item" width="30" id="item">
+                            <p:column headerText="No Item" width="30" id="item" style="text-align: right;">
                                 <p:cellEditor>  
                                     <f:facet name="output">
-                                        <p:inputNumber inputStyle="text-align: right;" size="2" minValue="0" maxValue="13" decimalPlaces="0" value="#{detalle.noItem}" disabled="#{detalle.estadoEliminacion eq 1}" readonly="#{participantesController.modifDesac}" />
+                                        <h:outputText value="#{detalle.noItem}"/>
                                     </f:facet>
                                     <f:facet name="input">
                                         <p:inputNumber inputStyle="text-align: right;" minValue="0" maxValue="13" decimalPlaces="0" value="#{detalle.noItem}" disabled="#{detalle.estadoEliminacion eq 1}" readonly="#{participantesController.modifDesac}" />

@@ -26,7 +26,7 @@
                         <p:outputLabel value="Filtro de busqueda"/>
                     </h1>
                     <h:panelGrid columns="3"> 
-                        <p:outputLabel value="1. Anho:" />  
+                        <p:outputLabel value="Anho:" />  
                         <p:selectOneMenu id="idProceso" value="#{creditoBancarioController.anho}" effect="fade">
                             <f:selectItem itemLabel="--" itemValue="" />  
                             <f:selectItems value="#{catalogosGeneralesController.lstAnho}" var="anho" itemLabel="#{anho.anho}" itemValue="#{anho.idAnho}" />
@@ -41,7 +41,7 @@
                         <h:outputText value="Datos"/>
                     </h1>
                     <p:dataTable id="tblCeNoDisponibles" var="ceNoDisponible" value="#{creditoBancarioController.listaResumenGen}" 
-                                 emptyMessage="No hay ningun credito" > 
+                                 emptyMessage="No hay ningun credito" styleClass="ui-datatable-borderless ui-datatable-reflow"> 
                         <f:facet name="header">
                             <p:spacer width="10" height="8"/>
                             <h:commandLink style="float:right;">

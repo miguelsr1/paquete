@@ -1382,6 +1382,10 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                  */
                 if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
                     detalleProcesoAdq = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres());
+                    
+                    /*for (DetalleProcesoAdq det : getRecuperarProceso().getProcesoAdquisicion().getDetalleProcesoAdqList()) {
+                        if(det.getIdRubroAdq().)
+                    }*/
 
                     lstResumenAdj = proveedorEJB.resumenAdjProveedor(empresa.getNumeroNit(), detalleProcesoAdq.getIdDetProcesoAdq());
                     if (lstResumenAdj.isEmpty()) {

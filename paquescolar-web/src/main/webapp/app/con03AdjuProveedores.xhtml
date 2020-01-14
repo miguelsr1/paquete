@@ -6,28 +6,28 @@
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
+        <p:menubar id="mbMenu"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+            <p:menuitem value="Consultar" icon="fa fa-search" disabled="false" onclick="onClick('btnModificar');"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
-                        <p:menuitem value="Consultar" icon="fa fa-search" disabled="false" onclick="onClick('btnModificar');"/>
-                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
-
-                        <f:facet  name="options">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
+                    <ui:include src="/app/comunes/datosGenProveedor.xhtml"/>
 
                     <p:panel visible="false">
                         <p:commandButton id="btnModificar" value="ok" actionListener="#{proveedorController.filtroProveedores}">
                             <p:ajax event="dialogReturn" listener="#{proveedorController.buscarAdjudicacionesProveedor}"  update="pnlFoto adjudicaciones lblNombreEmpresa" />
                         </p:commandButton>
                     </p:panel>
-
-                    <ui:include src="/app/comunes/datosGenProveedor.xhtml"/>
                 </div>
 
                 <div class="card card-w-title">
@@ -37,7 +37,8 @@
                         <p:outputLabel value="Resumen de adjudicaciones"/>
                     </h1>
                     <p:outputPanel id="adjudicaciones">
-                        <p:dataTable id="tblResumenAdj" var="empresa" value="#{proveedorController.lstResumenAdj}" rowIndexVar="rowId" sortBy="#{empresa.estadoEliminacion}">
+                        <p:dataTable id="tblResumenAdj" var="empresa" value="#{proveedorController.lstResumenAdj}" rowIndexVar="rowId" 
+                                     sortBy="#{empresa.estadoEliminacion}" styleClass="ui-datatable-borderless ui-datatable-reflow">
                             <f:facet name="header">
                                 <p:spacer width="10" height="8"/>
                                 <h:commandLink style="float:right;">
@@ -59,7 +60,7 @@
                             <p:column headerText="Nombre">  
                                 <h:outputText value="#{empresa.nombre}" />  
                             </p:column>  
-                            <p:column headerText="Rubro"  width="140">  
+                            <p:column headerText="Rubro"  width="160">  
                                 <h:outputText value="#{empresa.rubro}" />  
                             </p:column>  
                             <p:column headerText="Cantidad" style="text-align: right" width="50" >  

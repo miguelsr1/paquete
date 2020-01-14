@@ -28,7 +28,9 @@
                                 <p:outputLabel value="Habilitar Procesos"/>
                             </f:facet>
                             <p:dataTable value="#{creditoBancarioController.lstDetalleProcesoCredito}" var="det" rowKey="#{det.idDetProcesoAdq}"
-                                         selection="#{creditoBancarioController.detalleProceso}" selectionMode="single">
+                                         selection="#{creditoBancarioController.detalleProceso}" selectionMode="single"
+                                         styleClass="ui-datatable-borderless ui-datatable-reflow">
+                                
                                 <p:ajax event="rowSelect" listener="#{creditoBancarioController.updateEntidadHabilitarCredito}" update="tblEntidades"/>
 
                                 <p:column headerText="id" width="25">
@@ -52,7 +54,7 @@
                                 <p:commandButton value="Agregar" actionListener="#{creditoBancarioController.openDialogEntidades}" update="dlgEntidadesFinancieras" icon="fa fa-plus-circle" style="float: right;"/>
                             </f:facet>
                             <p:dataTable id="tblEntidades" value="#{creditoBancarioController.lstEntFinanDetProAdq}" var="ent"
-                                         emptyMessage="No hay entidades">
+                                         emptyMessage="No hay entidades" styleClass="ui-datatable-borderless ui-datatable-reflow">
                                 <p:column headerText="Nombre">
                                     <h:outputText value="#{ent.codEntFinanciera.nombreEntFinan}"/>
                                 </p:column>
@@ -67,9 +69,9 @@
         </div>
 
         <p:dialog id="dlgEntidadesFinancieras"  widgetVar="dlgEntidadesFinancieras" header="Seleccionar entidades" 
-                  visible="#{creditoBancarioController.visibleDlgEntidades}" width="600" height="300">
+                  visible="#{creditoBancarioController.visibleDlgEntidades}" width="600" height="300" modal="true">
             <p:dataTable id="tblEntidadesDisponibles" value="#{creditoBancarioController.lstEntFinanHabilitadoCredito}" var="entidad" rowKey="#{entidad.codEntFinanciera}"
-                         selection="#{creditoBancarioController.lstEntidadFinanciera}" selectionMode="multiple">
+                         selection="#{creditoBancarioController.lstEntidadFinanciera}" selectionMode="multiple" styleClass="ui-datatable-borderless ui-datatable-reflow">
                 <p:column headerText="Código" width="40">
                     <h:outputText value="#{entidad.codEntFinanciera}"/>
                 </p:column>

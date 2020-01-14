@@ -6,26 +6,25 @@
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
+        <p:menubar id="mbMenu"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" disabled="true" />
+            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" action="#{pagoProveedoresController.editarReintegro}" update="pnlFiltro" />
+            <p:menuitem value="Guardar" icon="fa fa-save" action="#{pagoProveedoresController.guardarReintegro}"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{pagoProveedoresController.impRptReintegro}"/>
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options" class="centradoVertical">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" disabled="true" />
-                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" action="#{pagoProveedoresController.editarReintegro}" update="pnlFiltro" />
-                        <p:menuitem value="Guardar" icon="fa fa-save" action="#{pagoProveedoresController.guardarReintegro}"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{pagoProveedoresController.impRptReintegro}"/>
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
-
-                        <f:facet  name="options" class="centradoVertical">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-
-                    <h3>
+                    <h1>
                         <i class="fa fa-filter blue" style="font-size: 16px;"></i>
                         <p:spacer width="10" height="8"/>
                         <p:outputLabel value="Filtro de busqueda"/>
-                    </h3>
+                    </h1>
                     <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col3_label,col9" 
                                  styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
                         <h:outputText value="Departamento"/>
@@ -68,16 +67,16 @@
                         <p:inputNumber value="#{pagoProveedoresController.reintegroRequerimiento.montoCheque}" inputStyle="ttext-align: right;"/>
                     </p:panelGrid>
 
-                    
-                     <h1>
+
+                    <h1>
                         <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
                         <p:spacer width="10"/>
                         <h:outputText value="Lista de Pagos"/>
                     </h1>
-                    
+
                     <h:panelGrid id="pnlDatos">
                         <p:dataTable id="tblDatos" value="#{pagoProveedoresController.lstProveedores}" var="reg">
-                            
+
                             <p:column headerText="No" style="text-align: center;" width="30">
                                 <p:outputLabel value="#{reg.idRow}"/>
                             </p:column>
