@@ -6,9 +6,13 @@
 package sv.gob.mined.boleta.web;
 
 import java.io.Serializable;
+import java.util.List;
+import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import sv.gob.mined.boleta.ejb.PersistenciaFacade;
 import sv.gob.mined.boleta.model.CorreoDocente;
+import sv.gob.mined.boleta.model.DominiosCorreo;
 
 /**
  *
@@ -18,7 +22,12 @@ import sv.gob.mined.boleta.model.CorreoDocente;
 @ViewScoped
 public class DocenteController implements Serializable {
 
+    private String criterioBusqueda;
+    private Integer idDominio;
     private CorreoDocente correoDocente = new CorreoDocente();
+    
+    @EJB
+    private PersistenciaFacade persistenciaFacade;
 
     public DocenteController() {
     }
@@ -31,4 +40,23 @@ public class DocenteController implements Serializable {
         this.correoDocente = correoDocente;
     }
 
+    public Integer getIdDominio() {
+        return idDominio;
+    }
+
+    public void setIdDominio(Integer idDominio) {
+        this.idDominio = idDominio;
+    }
+
+    public List<DominiosCorreo> getLstDominiosCorreo(){
+        return persistenciaFacade.getLstDominiosCorreo();
+    }
+    
+    public void guardarDocente(){
+        
+    }
+    
+    public List<CorreoDocente> getLstCorreoDocente(){
+        return persistenciaFacade.getLstCorreoDocentes();
+    }
 }

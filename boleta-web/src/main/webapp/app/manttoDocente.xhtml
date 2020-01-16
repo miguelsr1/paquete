@@ -6,54 +6,78 @@
                 template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
                 xmlns:jsf="http://xmlns.jcp.org/jsf">
     <ui:define name="head">
-        <script type="text/javascript">
-            function popupConfirm(event) {
-                var respuesta = confirm("¿Esta seguro de querer cargar estos archivos? Luego no se podrán eliminar");
-                if (respuesta == false) {
-                    $(".ui-fileupload-upload").removeClass("ui-state-disabled").removeAttr("aria-disabled").removeAttr("disabled");
-                    event.xhr.abort();
-                }
+        <style type="text/css">
+            .ui-datatable {
+                margin-bottom: 25px
             }
-        </script>
+
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+
+            .ui-button-text-only .ui-button-text {
+                padding: 0.3em 0.4em;
+            }
+
+            .ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-header .ui-chkbox {
+                visibility: hidden;
+            }
+
+            .ui-filter-column .ui-column-customfilter .custom-filter {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .year-spinner input {
+                width: 100%;
+                box-sizing: border-box;
+            }
+        </style>
     </ui:define>
     <ui:define name="content">
         <h:form prependId="false">
             <div class="ui-g">
-                <div class="card ui-g-12">
-                    <h1>
-                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
-                        <p:spacer width="10"/>
-                        <h:outputText value="Envio de boletas de pago"/>
-                    </h1>
+                <div class="ui-g-12">
+                    <p:panel>
+                        <f:facet name="header">
+                            <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                            <p:spacer width="10"/>
+                            <h:outputText value="Envio de boletas de pago"/>
+                        </f:facet>
 
-                    <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10" 
-                                 style="width: 100%; border:0px none; background-color:transparent;"
-                                 styleClass="form-group ui-panelgrid-blank">
-                        <p:outputLabel value="NIP"/>
-                        <p:inputText value="#{docenteController.correoDocente.nip}"/>
-                        <p:outputLabel value="Genero"/>
-                        <p:selectOneMenu value="#{docenteController.correoDocente.genero}">
-                            <f:selectItem itemValue="null" itemLabel="Seleccione un valor" noSelectionOption="true"/>
-                            <f:selectItem itemValue="F" itemLabel="Femenino" />
-                            <f:selectItem itemValue="M" itemLabel="Masculino" />
-                        </p:selectOneMenu>
-                        <p:outputLabel value="Primer Nombre"/>
-                        <p:inputText value="#{docenteController.correoDocente.primerNombre}"/>
-                        <p:outputLabel value="Segundo Nombre"/>
-                        <p:inputText value="#{docenteController.correoDocente.segundoNombre}"/>
-                        <p:outputLabel value="Tercer Nombre"/>
-                        <p:inputText value="#{docenteController.correoDocente.tercerNombre}"/>
-                        <p:outputLabel value="Primer Apellido"/>
-                        <p:inputText value="#{docenteController.correoDocente.primerApellido}"/>
-                        <p:outputLabel value="Segundo Apellido"/>
-                        <p:inputText value="#{docenteController.correoDocente.segundoApellido}"/>
-                        <p:outputLabel value="Apellido de casada"/>
-                        <p:inputText value="#{docenteController.correoDocente.apellidoCasada}"/>
-                        <p:outputLabel value="Correo electrónico"/>
-                        <p:inputText value="#{docenteController.correoDocente.correoElectronico}"/>
-                    </p:panelGrid>
+                        <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10" 
+                                     style="width: 100%; border:0px none; background-color:transparent;"
+                                     styleClass="form-group ui-panelgrid-blank">
+                            <p:outputLabel value="NIP"/>
+                            <p:inputText value="#{docenteController.correoDocente.nip}"/>
+                            <p:outputLabel value="Nombres"/>
+                            <p:inputText value="#{docenteController.correoDocente.primerNombre}" size="50"/>
+                            <p:outputLabel value="Apellidos"/>
+                            <p:inputText value="#{docenteController.correoDocente.primerApellido}" size="50"/>
+                            <p:outputLabel value="Correo electrónico"/>
+                            <p:outputPanel>
+                                <p:inputText value="#{docenteController.correoDocente.correoElectronico}"/>
+                                <p:spacer width="10"/>
+                                <p:selectOneMenu value="#{docenteController.idDominio}">
+                                    <f:selectItems value="#{docenteController.lstDominiosCorreo}" var="dominio" itemValue="#{dominio.idDominio}" itemLabel="#{dominio.dominio}"/>
+                                </p:selectOneMenu>
+                            </p:outputPanel>
+                        </p:panelGrid>
+
+                        <f:facet name="footer">
+                            <p:commandButton value="Buscar"/>
+                            <p:spacer width="5"/>
+                            <p:commandButton value="Guardar"/>
+                        </f:facet>
+                    </p:panel>
                 </div>
             </div>
+
+            <p:dialog>
+                <p:outputLabel value="Nombre o NIP"/>
+                <p:inputText value="#{docenteController.correoDocente.nip}"/>
+                
+            </p:dialog>
         </h:form>
     </ui:define>
 </ui:composition>

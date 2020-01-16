@@ -112,7 +112,7 @@ public class EMailEJB {
                 MimeBodyPart messageBodyPart2 = new MimeBodyPart();
                 ByteArrayDataSource ds = new ByteArrayDataSource(bytes, "application/pdf");
                 messageBodyPart2.setDataHandler(new DataHandler(ds));
-                messageBodyPart2.setFileName("Boleta_pago.pdf");
+                messageBodyPart2.setFileName("boleta_pago.pdf");
                 multipart.addBodyPart(messageBodyPart2);
             }
             out.close();

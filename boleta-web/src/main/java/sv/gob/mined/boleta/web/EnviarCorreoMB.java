@@ -8,6 +8,8 @@ package sv.gob.mined.boleta.web;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,10 +40,14 @@ public class EnviarCorreoMB implements Serializable {
     private String clave = "";
     private String codDepa = "";
     private String nombreArchivo = "";
+    private String mes;
+    private String anho;
     private String mesAnho = "12_2019";
 
     @EJB
     private LeerBoletasEJB leerBoletasEJB;
+    
+    private SimpleDateFormat sdf = new SimpleDateFormat("MM_yyyy");
 
     @EJB
     private SeparacionBoletasFacade sbf;
@@ -50,7 +56,27 @@ public class EnviarCorreoMB implements Serializable {
 
     @PostConstruct
     public void init() {
-        mesAnho = "12_2019";
+        //mesAnho = "12_2019";
+        mes = sdf.format(new Date()).split("_")[0];
+        anho = sdf.format(new Date()).split("_")[1];
+        
+        System.out.println(mes + " - " + anho);
+    }
+
+    public String getMes() {
+        return mes;
+    }
+
+    public void setMes(String mes) {
+        this.mes = mes;
+    }
+
+    public String getAnho() {
+        return anho;
+    }
+
+    public void setAnho(String anho) {
+        this.anho = anho;
     }
 
     public void enviarCorreos() {
@@ -140,22 +166,24 @@ public class EnviarCorreoMB implements Serializable {
     }
 
     public void separacionDeBoletas() {
+        mesAnho = mes.concat("_").concat(anho);
         sbf.separacion(mesAnho, codDepa);
     }
-    
+
     public void separacionDeBoletasTotal() {
         sbf.separacionTotal(mesAnho);
     }
 
     public void enviarUnSoloCorreo() {
+        mesAnho = mes.concat("_").concat(anho);
         leerBoletasEJB.enviarUnSoloCorreo(codDepa, mesAnho, getMailSession(), usuario);
     }
-    
-    public void enviarUrl(){
+
+    public void enviarUrl() {
         envioDeBoletasFacade.enviarBoletasDePago(codDepa, mesAnho);
     }
-    
-    public void enviarBoleta(){
+
+    public void enviarBoleta() {
         envioDeBoletasFacade.enviarBoletasDePagoPdf(codDepa, mesAnho);
     }
 }

@@ -5,6 +5,8 @@
     <jta-data-source>java:/BoletaDS</jta-data-source>
     <class>sv.gob.mined.boleta.model.CodigoGenerado</class>
     <class>sv.gob.mined.boleta.model.DetalleCodigo</class>
+    <class>sv.gob.mined.boleta.model.CorreoDocente</class>
+    <class>sv.gob.mined.boleta.model.DominiosCorreo</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>

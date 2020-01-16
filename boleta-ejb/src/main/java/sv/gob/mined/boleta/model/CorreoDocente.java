@@ -6,6 +6,7 @@
 package sv.gob.mined.boleta.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +17,9 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -26,6 +30,19 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "CorreoDocente.findAll", query = "SELECT c FROM CorreoDocente c")})
 public class CorreoDocente implements Serializable {
+
+    @Size(max = 200)
+    @Column(name = "USUARIO_INSERCION")
+    private String usuarioInsercion;
+    @Column(name = "FECHA_INSERCION")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaInsercion;
+    @Size(max = 200)
+    @Column(name = "USUARIO_MODIFICACION")
+    private String usuarioModificacion;
+    @Column(name = "FECHA_MODIFICACION")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaModificacion;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -52,6 +69,10 @@ public class CorreoDocente implements Serializable {
     private String apellidoCasada;
     @Column(name = "GENERO")
     private String genero;
+    @Column(name = "DUI")
+    private String dui;
+    @Column(name = "NIT")
+    private String nit;
 
     public CorreoDocente() {
     }
@@ -154,15 +175,60 @@ public class CorreoDocente implements Serializable {
             return false;
         }
         CorreoDocente other = (CorreoDocente) object;
-        if ((this.idCorreo == null && other.idCorreo != null) || (this.idCorreo != null && !this.idCorreo.equals(other.idCorreo))) {
-            return false;
-        }
-        return true;
+        return !((this.idCorreo == null && other.idCorreo != null) || (this.idCorreo != null && !this.idCorreo.equals(other.idCorreo)));
     }
 
     @Override
     public String toString() {
         return "sv.gob.mined.boleta.model.CorreoDocente[ idCorreo=" + idCorreo + " ]";
+    }
+
+    public String getDui() {
+        return dui;
+    }
+
+    public void setDui(String dui) {
+        this.dui = dui;
+    }
+
+    public String getNit() {
+        return nit;
+    }
+
+    public void setNit(String nit) {
+        this.nit = nit;
+    }
+
+    public String getUsuarioInsercion() {
+        return usuarioInsercion;
+    }
+
+    public void setUsuarioInsercion(String usuarioInsercion) {
+        this.usuarioInsercion = usuarioInsercion;
+    }
+
+    public Date getFechaInsercion() {
+        return fechaInsercion;
+    }
+
+    public void setFechaInsercion(Date fechaInsercion) {
+        this.fechaInsercion = fechaInsercion;
+    }
+
+    public String getUsuarioModificacion() {
+        return usuarioModificacion;
+    }
+
+    public void setUsuarioModificacion(String usuarioModificacion) {
+        this.usuarioModificacion = usuarioModificacion;
+    }
+
+    public Date getFechaModificacion() {
+        return fechaModificacion;
+    }
+
+    public void setFechaModificacion(Date fechaModificacion) {
+        this.fechaModificacion = fechaModificacion;
     }
     
 }

@@ -7,13 +7,16 @@ package sv.gob.mined.boleta.ejb;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import sv.gob.mined.boleta.model.CodigoGenerado;
+import sv.gob.mined.boleta.model.CorreoDocente;
 import sv.gob.mined.boleta.model.DetalleCodigo;
+import sv.gob.mined.boleta.model.DominiosCorreo;
 
 /**
  *
@@ -101,9 +104,39 @@ public class PersistenciaFacade {
         }
 
         codigoGenerado.setFechaFin(new Date());
-        
+
         em.merge(codigoGenerado);
 
         return codigoGenerado;
+    }
+
+    public List<DominiosCorreo> getLstDominiosCorreo() {
+        Query q = em.createQuery("SELECT d FROM DominiosCorreo d ORDER BY d.dominio", DominiosCorreo.class);
+        return q.getResultList();
+    }
+
+    public void guardarDominio(DominiosCorreo dominio) {
+        if (dominio.getIdDominio() == null) {
+            em.persist(dominio);
+        } else {
+            em.merge(dominio);
+        }
+    }
+    
+    public void guardarDocente(CorreoDocente correo, String usuario) {
+        if (correo.getIdCorreo()== null) {
+            correo.setFechaInsercion(new Date());
+            correo.setUsuarioInsercion(usuario);
+            em.persist(correo);
+        } else {
+            correo.setFechaModificacion(new Date());
+            correo.setUsuarioModificacion(usuario);
+            em.merge(correo);
+        }
+    }
+    
+    public List<CorreoDocente> getLstCorreoDocentes(){
+        Query q = em.createQuery("SELECT c FROM CorreoDocente c ORDER BY c.idCorreo", CorreoDocente.class);
+        return q.getResultList();
     }
 }

@@ -69,7 +69,7 @@ public class DescargarBoleta extends HttpServlet {
             out.println("</BODY></HTML>");
             out.close();*/
             Logger.getLogger(DescargarBoleta.class.getName()).log(Level.SEVERE, "Se ha generado de error en la descarga de la boleta: {0}", codigoGenerado);
-            Logger.getLogger(DescargarBoleta.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(DescargarBoleta.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

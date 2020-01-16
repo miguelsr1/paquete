@@ -50,6 +50,8 @@ public class BoletaMB implements Serializable {
     private String usuario;
     private String clave;
     private String codDepa;
+    private String mes;
+    private String anho;
     private String mesAnho;
     private String nombreArchivo;
     private Date fecha;
@@ -72,10 +74,20 @@ public class BoletaMB implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
 
         if (context.getExternalContext().getSessionMap().containsKey("usuario")) {
-            usuario = context.getExternalContext().getSessionMap().get("usuario").toString();
-            clave = context.getExternalContext().getSessionMap().get("clave").toString();
-            codDepa = usuario.substring(7, 9);
-            mesAnho = "12_2019";
+            try {
+                usuario = context.getExternalContext().getSessionMap().get("usuario").toString();
+                clave = context.getExternalContext().getSessionMap().get("clave").toString();
+                codDepa = usuario.substring(7, 9);
+                
+                mes = sdf.format(new Date()).split("_")[0];
+                anho = sdf.format(new Date()).split("_")[1];
+                
+                System.out.println(mes + " - " + anho);
+                
+                cargarArchivos();
+            } catch (IOException ex) {
+                Logger.getLogger(BoletaMB.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else {
             try {
                 JsfUtil.limpiarVariableSession();
@@ -87,6 +99,22 @@ public class BoletaMB implements Serializable {
                 Logger.getLogger(BoletaMB.class.getName()).log(Level.SEVERE, "Error haciendo logout", ex);
             }
         }
+    }
+
+    public String getMes() {
+        return mes;
+    }
+
+    public void setMes(String mes) {
+        this.mes = mes;
+    }
+
+    public String getAnho() {
+        return anho;
+    }
+
+    public void setAnho(String anho) {
+        this.anho = anho;
     }
 
     public Boolean getShowUploadBoletas() {
@@ -112,7 +140,7 @@ public class BoletaMB implements Serializable {
     public void cargarArchivos() throws IOException {
         lstArchivosOriginales.clear();
         lstPendientes.clear();
-        mesAnho = sdf.format(fecha);
+        mesAnho = mes.concat("_").concat(anho);
 
         codigoGenerado = persistenciaFacade.getCodigoGenerado(codDepa, mesAnho);
         showUploadBoletas = codigoGenerado.getIdCodigo() != null;
@@ -189,6 +217,8 @@ public class BoletaMB implements Serializable {
             try (InputStream input = file.getFile().getInputstream()) {
                 Files.copy(input, arc, StandardCopyOption.REPLACE_EXISTING);
             }
+            
+            cargarArchivos();
         } else {
             JsfUtil.mensajeAlerta("Debe de seleccionar un mes y un año de PAGO");
         }
