@@ -192,7 +192,7 @@ public class EnvioDeBoletasFacade {
 
                     mensajeDelCorreo = MessageFormat.format(RESOURCE.getString("mail.messagePdf"), JsfUtil.getNombreMesYAnhoByParam(mesAnho));
 
-                    errorEnvioEmail = eMailEJB.enviarMail(remitente, destinatario, mensajeDelCorreo, boleta, mailSession);
+                    errorEnvioEmail = eMailEJB.enviarMail(remitente, destinatario, mensajeDelCorreo, "", boleta, mailSession);
 
                     if (!errorEnvioEmail) {
                         //Las boletas que fallan al enviarse por correo son enviadas a la carpeta NO_ENVIADO

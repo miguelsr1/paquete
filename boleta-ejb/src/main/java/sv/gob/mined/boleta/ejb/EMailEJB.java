@@ -85,20 +85,20 @@ public class EMailEJB {
             ex.printStackTrace();
         }
     }*/
-
-    public Boolean enviarMail(String remitente, String destinatario, String mensaje,
+    public Boolean enviarMail(String destinatario, String remitente, String mensaje, String nombreMesAnho,
             File path, Session mailSession) {
         try {
             MimeMessage m = new MimeMessage(mailSession);
             Address from = new InternetAddress(remitente);
 
             m.setFrom(from);
+            //destinatario = "miguel.sanchez@admin.mined.edu.sv";
             m.setRecipients(Message.RecipientType.TO, destinatario);
             m.setRecipients(Message.RecipientType.BCC, "miguel.sanchez@admin.mined.edu.sv");
 
             BodyPart messageBodyPart1 = new MimeBodyPart();
 
-            messageBodyPart1.setContent(mensaje, "text/html; charset=utf-8" );
+            messageBodyPart1.setContent(mensaje, "text/html; charset=utf-8");
 
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(messageBodyPart1);
@@ -119,7 +119,7 @@ public class EMailEJB {
             //}
 
             m.setContent(multipart);
-            m.setSubject("Boleta de Pago", "UTF-8");
+            m.setSubject("Boleta de Pago de " + nombreMesAnho, "UTF-8");
             Transport.send(m);
             return true;
         } catch (MessagingException | IOException ex) {
