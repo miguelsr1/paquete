@@ -1,0 +1,63 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <p:menubar id="mbMenu"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+            <p:menuitem value="Consultar" icon="fa fa-search" disabled="false" onclick="onClick('btnModificar');"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <h1>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h1>
+
+                    <p:panelGrid id="panel"  columns="2" columnClasses="col2_label,col10" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <p:outputLabel value="Rubro de adquisición: " />
+                        <p:selectOneMenu id="idRubroInteres" value="#{consultasContratacionMB.idRubro}" required="true" requiredMessage="El rubro es requerido">
+                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="0" />  
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Departamento: " />
+                        <p:selectOneMenu id="cboDepartamento" value="#{consultasContratacionMB.codigoDepartamento}"  required="true" requiredMessage="El departamento es requerido">
+                            <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
+                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.nombreDepartamento}"/>
+                        </p:selectOneMenu>
+
+                        <p:commandButton action="#{consultasContratacionMB.consultaSaldo}" value="Buscar" ajax="true" id="ingresar"
+                                         update="tblDetalleAdj"/>
+                    </p:panelGrid>
+                </div>
+
+                <div class="card card-w-title">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10" />
+                        <p:outputLabel value="Resumen de adjudicaciones"/>
+                    </h1>
+                    <p:outputPanel id="adjudicaciones">
+
+                    </p:outputPanel>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

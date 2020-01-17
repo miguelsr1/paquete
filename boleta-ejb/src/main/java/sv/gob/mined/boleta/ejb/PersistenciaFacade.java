@@ -93,7 +93,7 @@ public class PersistenciaFacade {
                     case "no_encontrado":
                         codigoGenerado.setSinCorreo(folder.listFiles().length);
                         break;
-                    case "no_enviado":
+                    case "errores":
                         codigoGenerado.setError(folder.listFiles().length);
                         break;
                     case "procesado":
