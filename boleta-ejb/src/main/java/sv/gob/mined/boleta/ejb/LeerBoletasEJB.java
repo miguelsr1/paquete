@@ -22,6 +22,8 @@ import javax.mail.Session;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import sv.gob.mined.boleta.model.CodigoGenerado;
+import sv.gob.mined.utils.jsf.JsfUtil;
 
 @Singleton
 @LocalBean
@@ -33,6 +35,8 @@ public class LeerBoletasEJB {
     private EMailEJB eMailEJB;
     @EJB
     private BitacoraDeProcesoEJB bitacoraDeProcesoEJB;
+    @EJB
+    private PersistenciaFacade persistenciaFacade;
 
     //@Asynchronous
     public void leerArchivosPendientes(Session mailSession, String codDepa, String usuario) {
@@ -320,15 +324,17 @@ public class LeerBoletasEJB {
         Properties info = chargeEmailsProperties("emails0212");
         Boolean errorEnvioEmail = false;
 
-        int boletasEnviadas = 0;
+        /*int boletasEnviadas = 0;
         int docenteNoEncontrados = 0;
-        int correosNoEnviados = 0;
+        int correosNoEnviados = 0;*/
+        
+        Long idCodigoGenerado = persistenciaFacade.getPkCodigoGeneradoByCodDepaAndMesAnho(codDepa, mesAnho);
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
 
-        StringBuilder sb = new StringBuilder();
+        /*StringBuilder sb = new StringBuilder();
         sb = sb.append("Se han enviado boletas de pago.").append("<br/>")
-                .append("Hora de inicio: ").append(sdf.format(new Date())).append("<br/>");
+                .append("Hora de inicio: ").append(sdf.format(new Date())).append("<br/>");*/
 
         //Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.INFO, "lectura de boletas en path: " + (pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator));
         for (File boleta : carpeta.listFiles()) {
@@ -341,7 +347,7 @@ public class LeerBoletasEJB {
                     Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.INFO, "{0} - {1}", new Object[]{email, boleta.getName().toUpperCase().replace(".PDF", "")});
                     if (!errorEnvioEmail) {
                         bitacoraDeProcesoEJB.correoNoEnviadoPorErrorGenerado(codDepa, mesAnho, pathRoot, boleta.getName().toUpperCase().replace(".PDF", ""));
-                        correosNoEnviados++;
+                        //correosNoEnviados++;
                     } else {
                         try {
                             //mover archivo procesado
@@ -352,23 +358,34 @@ public class LeerBoletasEJB {
                             Path temp = Files.move(Paths.get(boleta.getAbsolutePath()),
                                     Paths.get(folderProcesado.getAbsolutePath() + File.separator + boleta.getName()), StandardCopyOption.REPLACE_EXISTING);
 
-                            boletasEnviadas++;
+                            //boletasEnviadas++;
                         } catch (IOException ex) {
                             Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 } else {
                     bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, pathRoot, boleta.getName().toUpperCase().replace(".PDF", ""));
-                    docenteNoEncontrados++;
+                    //docenteNoEncontrados++;
                     Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.WARNING, "No existe este empleado: {0}", boleta.getName().toUpperCase().replace(".PDF", ""));
                 }
             }
         }
+        
+        CodigoGenerado codigoGenerado = persistenciaFacade.registrarFinDeProcesoDeEnvio(pathRoot, codDepa, mesAnho);
 
-        sb = sb.append("Hora de fin: ").append(sdf.format(new Date())).append("<br/>");
+        StringBuilder sb = new StringBuilder();
+        sb = sb.append("Se han enviado boletas de pago del departamento ").append(JsfUtil.getNombreDepartamentoByCodigo(codDepa)).append(".").append("<br/>")
+                .append("Hora de inicio: ").append(sdf.format(codigoGenerado.getFechaInicio())).append("<br/>");
+
+        sb = sb.append("Hora de fin: ").append(codigoGenerado.getFechaFin()).append("<br/>");
+        sb = sb.append("Número de boletas enviadas: ").append(codigoGenerado.getEnviado()).append("<br/>");
+        sb = sb.append("Número de docente no encontrados: ").append(codigoGenerado.getSinCorreo()).append("<br/>");
+        sb = sb.append("Número de correos no enviados debido a un error: ").append(codigoGenerado.getError()).append("<br/>");
+        
+        /*sb = sb.append("Hora de fin: ").append(sdf.format(new Date())).append("<br/>");
         sb = sb.append("Número de boletas de docentes enviadas: ").append(boletasEnviadas).append("<br/>");
         sb = sb.append("Número de docente no encontrados: ").append(docenteNoEncontrados).append("<br/>");
-        sb = sb.append("Número de correos no enviados debido a un error: ").append(correosNoEnviados).append("<br/>");
+        sb = sb.append("Número de correos no enviados debido a un error: ").append(correosNoEnviados).append("<br/>");*/
 
         eMailEJB.enviarMailDeConfirmacion("Envio de boletas de pago", sb.toString(), usuario, mailSession);
         //Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.INFO, sb.toString());

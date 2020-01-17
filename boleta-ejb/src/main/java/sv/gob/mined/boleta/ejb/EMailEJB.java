@@ -11,13 +11,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.activation.DataHandler;
-import javax.ejb.Asynchronous;
 import javax.ejb.LocalBean;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.mail.Address;
@@ -92,7 +87,6 @@ public class EMailEJB {
             Address from = new InternetAddress(remitente);
 
             m.setFrom(from);
-            //destinatario = "miguel.sanchez@admin.mined.edu.sv";
             m.setRecipients(Message.RecipientType.TO, destinatario);
             m.setRecipients(Message.RecipientType.BCC, "miguel.sanchez@admin.mined.edu.sv");
 
@@ -103,7 +97,6 @@ public class EMailEJB {
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(messageBodyPart1);
 
-            //for (File boleta : path.listFiles()) {
             ByteArrayOutputStream out;
             try (PDDocument document = PDDocument.load(path)) {
                 out = new ByteArrayOutputStream();
@@ -116,7 +109,6 @@ public class EMailEJB {
                 multipart.addBodyPart(messageBodyPart2);
             }
             out.close();
-            //}
 
             m.setContent(multipart);
             m.setSubject("Boleta de Pago de " + nombreMesAnho, "UTF-8");
