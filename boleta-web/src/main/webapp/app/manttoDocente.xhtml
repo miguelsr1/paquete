@@ -36,9 +36,12 @@
     </ui:define>
     <ui:define name="content">
         <h:form prependId="false">
+            <p:messages id="messages" showDetail="true" closable="false" escape="false">
+                <p:autoUpdate />
+            </p:messages>
             <div class="ui-g">
                 <div class="ui-g-12">
-                    <p:panel>
+                    <p:panel id="pnlDatos">
                         <f:facet name="header">
                             <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
                             <p:spacer width="10"/>
@@ -56,7 +59,7 @@
                             <p:inputText value="#{docenteController.correoDocente.primerApellido}" size="50"/>
                             <p:outputLabel value="Correo electrónico"/>
                             <p:outputPanel>
-                                <p:inputText value="#{docenteController.correoDocente.correoElectronico}"/>
+                                <p:inputText value="#{docenteController.correoSinDominio}"/>
                                 <p:spacer width="10"/>
                                 <p:selectOneMenu value="#{docenteController.idDominio}">
                                     <f:selectItems value="#{docenteController.lstDominiosCorreo}" var="dominio" itemValue="#{dominio.idDominio}" itemLabel="#{dominio.dominio}"/>
@@ -65,18 +68,37 @@
                         </p:panelGrid>
 
                         <f:facet name="footer">
-                            <p:commandButton value="Buscar"/>
+                            <p:commandButton value="Nuevo" action="#{docenteController.nuevoDocente()}" update="pnlFiltro"/>
                             <p:spacer width="5"/>
-                            <p:commandButton value="Guardar"/>
+                            <p:commandButton value="Modificar" onclick="PF('dlgBusqueda').show();"/>
+                            <p:spacer width="5"/>
+                            <p:commandButton value="Guardar" action="#{docenteController.guardarDocente()}"/>
                         </f:facet>
                     </p:panel>
                 </div>
             </div>
 
-            <p:dialog>
-                <p:outputLabel value="Nombre o NIP"/>
-                <p:inputText value="#{docenteController.correoDocente.nip}"/>
-                
+            <p:dialog id="dlgBusqueda" widgetVar="dlgBusqueda" width="800" modal="true">
+                <p:outputPanel>
+                    <p:outputLabel value="NIP:"/><p:spacer width="5"/>
+                    <p:inputText size="30" value="#{docenteController.criterioBusqueda}"/><p:spacer width="5"/>
+                    <p:commandButton value="Buscar" action="#{docenteController.buscar()}" icon="fa fa-search" update="tblCorreos"/>
+                </p:outputPanel>
+                <br/>
+                <p:dataTable id="tblCorreos" value="#{docenteController.lstCorreoDocente}" var="correo" rowKey="#{correo.idCorreo}"
+                             selection="#{docenteController.docenteSeleccionado}" selectionMode="single">
+                    <p:ajax event="rowSelect" listener="#{docenteController.cerrarDlg}" oncomplete="PF('dlgBusqueda').hide()"  update="pnlDatos"/>
+
+                    <p:column headerText="NIP" width="50">
+                        <p:outputLabel value="#{correo.nip}"/>
+                    </p:column>
+                    <p:column headerText="Correo">
+                        <p:outputLabel value="#{correo.correoElectronico}"/>
+                    </p:column>
+                    <p:column headerText="Nombre Completo">
+                        <p:outputLabel value="#{correo.primerNombre} #{correo.primerApellido}"/>
+                    </p:column>
+                </p:dataTable>
             </p:dialog>
         </h:form>
     </ui:define>

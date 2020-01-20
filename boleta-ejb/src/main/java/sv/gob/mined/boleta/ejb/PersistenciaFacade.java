@@ -29,7 +29,7 @@ public class PersistenciaFacade {
     @PersistenceContext(unitName = "boletaPU")
     private EntityManager em;
 
-    public void guardarCodigoGeneradoPorNip(Long idCodigo, String nip, String codigoGenerado) {
+    public void guardarCodigoGeneradoPorNip(Integer idCodigo, String nip, String codigoGenerado) {
         DetalleCodigo detalleCodigo = new DetalleCodigo();
         detalleCodigo.setCodigoGenerado(codigoGenerado);
         detalleCodigo.setIdCodigo(idCodigo);
@@ -38,7 +38,7 @@ public class PersistenciaFacade {
         em.persist(detalleCodigo);
     }
 
-    public Long getPkCodigoGeneradoByCodDepaAndMesAnho(String codDepa, String mesAnho) {
+    public Integer getPkCodigoGeneradoByCodDepaAndMesAnho(String codDepa, String mesAnho) {
         CodigoGenerado codigoGenerado;
 
         Query q = em.createQuery("SELECT c FROM CodigoGenerado c WHERE c.codigoDepartamento=:codDepa AND c.mesAnho=:mesAnho", CodigoGenerado.class);
@@ -122,21 +122,37 @@ public class PersistenciaFacade {
             em.merge(dominio);
         }
     }
-    
-    public void guardarDocente(CorreoDocente correo, String usuario) {
-        if (correo.getIdCorreo()== null) {
-            correo.setFechaInsercion(new Date());
-            correo.setUsuarioInsercion(usuario);
-            em.persist(correo);
+
+    public int guardarDocente(CorreoDocente correo, String usuario) {
+        if (correo.getIdCorreo() == null) {
+            Query q = em.createQuery("SELECT c FROM CorreoDocente c WHERE c.nip=:nip or c.correoElectronico=:correo", CorreoDocente.class);
+            q.setParameter("nip", correo.getNip());
+            q.setParameter("correo", correo.getCorreoElectronico());
+            if (q.getResultList().isEmpty()) {
+                correo.setFechaInsercion(new Date());
+                correo.setUsuarioInsercion(usuario);
+                em.persist(correo);
+                return 1;
+            } else {
+                return 0;
+            }
         } else {
             correo.setFechaModificacion(new Date());
             correo.setUsuarioModificacion(usuario);
             em.merge(correo);
+            return 1;
         }
     }
-    
-    public List<CorreoDocente> getLstCorreoDocentes(){
+
+    public List<CorreoDocente> getLstCorreoDocentes() {
         Query q = em.createQuery("SELECT c FROM CorreoDocente c ORDER BY c.idCorreo", CorreoDocente.class);
+        return q.getResultList();
+    }
+
+    public List<CorreoDocente> getLstCorreoDocenteByCriterio(String criterio) {
+        Query q = em.createQuery("SELECT c FROM CorreoDocente c WHERE c.nip like :nip or c.correoElectronico like :correo ORDER BY c.idCorreo", CorreoDocente.class);
+        q.setParameter("nip", "%" + criterio + "%");
+        q.setParameter("correo", "%" + criterio + "%");
         return q.getResultList();
     }
 }

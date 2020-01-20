@@ -54,7 +54,7 @@ public class LoginController implements Serializable {
                 FacesContext context = FacesContext.getCurrentInstance();
                 context.getExternalContext().getSessionMap().put("usuario", username);
                 context.getExternalContext().getSessionMap().put("clave", password);
-                return "/app/envio.mined?faces-redirect=true";
+                return "/app/menu.mined?faces-redirect=true";
             } else {
                 JsfUtil.mensajeAlerta("Usuario/Password equivocados");
             return null;

@@ -37,7 +37,7 @@ public class DetalleCodigo implements Serializable {
     @SequenceGenerator(name = "detalleCodigo", sequenceName = "SEQ_DETALLE_COD", allocationSize = 1, initialValue = 1)
     private BigDecimal idDetalleCodigo;
     @Column(name = "ID_CODIGO")
-    private Long idCodigo;
+    private Integer idCodigo;
     @Column(name = "NIP")
     private String nip;
     @Column(name = "CODIGO_GENERADO")
@@ -58,11 +58,11 @@ public class DetalleCodigo implements Serializable {
         this.idDetalleCodigo = idDetalleCodigo;
     }
 
-    public Long getIdCodigo() {
+    public Integer getIdCodigo() {
         return idCodigo;
     }
 
-    public void setIdCodigo(Long idCodigo) {
+    public void setIdCodigo(Integer idCodigo) {
         this.idCodigo = idCodigo;
     }
 

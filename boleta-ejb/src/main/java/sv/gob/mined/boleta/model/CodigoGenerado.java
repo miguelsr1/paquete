@@ -49,7 +49,7 @@ public class CodigoGenerado implements Serializable {
     @Column(name = "ID_CODIGO")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "codigoGenerado")
     @SequenceGenerator(name = "codigoGenerado", sequenceName = "SEQ_CODIGO_GENERADO", allocationSize = 1, initialValue = 1)
-    private Long idCodigo;
+    private Integer idCodigo;
     @Column(name = "CODIGO_DEPARTAMENTO")
     private String codigoDepartamento;
     @Column(name = "MES_ANHO")
@@ -58,15 +58,15 @@ public class CodigoGenerado implements Serializable {
     public CodigoGenerado() {
     }
 
-    public CodigoGenerado(Long idCodigo) {
+    public CodigoGenerado(Integer idCodigo) {
         this.idCodigo = idCodigo;
     }
 
-    public Long getIdCodigo() {
+    public Integer getIdCodigo() {
         return idCodigo;
     }
 
-    public void setIdCodigo(Long idCodigo) {
+    public void setIdCodigo(Integer idCodigo) {
         this.idCodigo = idCodigo;
     }
 
