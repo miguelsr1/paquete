@@ -607,7 +607,7 @@
             ]]>
         </query>
     </named-native-query>
-    <named-native-query name="Contratacion.ResumenContratoDto" 
+    <!--named-native-query name="Contratacion.ResumenContratoDto" 
                         result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.ResumenContratoDto">
         <query>
             <![CDATA[
@@ -674,5 +674,5 @@
                     vw.codigo_entidad
             ]]>
         </query>
-    </named-native-query>
+    </named-native-query-->
 </entity-mappings>

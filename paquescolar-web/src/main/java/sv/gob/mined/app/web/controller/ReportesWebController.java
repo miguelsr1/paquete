@@ -92,8 +92,8 @@ public class ReportesWebController extends RecuperarProcesoUtil implements Seria
     }
 
     public void resumenContratacionesXls(Object document) {
-        int[] numEnt = {0, 14};
-        int[] numDec = {15};
+        int[] numEnt = {0, 10};
+        int[] numDec = {11};
         RptExcel.generarRptExcelGenerico((HSSFWorkbook) document, numEnt, numDec);
     }
 

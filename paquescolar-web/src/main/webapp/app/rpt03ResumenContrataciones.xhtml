@@ -73,10 +73,25 @@
                         <p:column headerText="#{bundle['tabla.departamento']}" width="120">
                             <p:outputLabel value="#{prov.nombreDepartamentoCe}"/>
                         </p:column>
+                        <p:column headerText="#{bundle['tabla.municipio']}" width="120">
+                            <p:outputLabel value="#{prov.nombreMunicipioCe}"/>
+                        </p:column>
                         <p:column headerText="#{bundle['tabla.codEnt']}" width="40">
                             <p:outputLabel value="#{prov.codigoEntidad}"/>
                         </p:column>
-                        <p:column headerText="#{bundle['tabla.nit']}" width="110">
+                        <p:column headerText="#{bundle['tabla.nomEnt']}" width="40">
+                            <p:outputLabel value="#{prov.nombreCe}"/>
+                        </p:column>
+                        <p:column headerText="Director" width="40">
+                            <p:outputLabel value="#{prov.miembroFirma}"/>
+                        </p:column>
+                        <p:column headerText="Tel.Director 1">
+                            <p:outputLabel value="#{prov.telDirector}"/>
+                        </p:column>
+                        <p:column headerText="Tel.Director 2">
+                            <p:outputLabel value="#{prov.telDirector2}"/>
+                        </p:column>
+                        <p:column headerText="#{bundle['tabla.nit']}">
                             <p:outputLabel value="#{prov.numeroNit}"/>
                         </p:column>
                         <p:column headerText="#{bundle['tabla.proveedor']}">
@@ -90,9 +105,21 @@
                                 <f:convertNumber pattern="#,##0.00"/>
                             </h:outputText>
                         </p:column>
+                        <p:column headerText="Prov.Celular">
+                            <p:outputLabel value="#{prov.celularEmp}"/>
+                        </p:column>
+                        <p:column headerText="Prov.Telefono">
+                            <p:outputLabel value="#{prov.telefonoEmp}"/>
+                        </p:column>
+                        <p:column headerText="Prov.Telefono 2">
+                            <p:outputLabel value="#{prov.telefonoEmp2}"/>
+                        </p:column>
+                        <p:column headerText="Prov.Telefono 3">
+                            <p:outputLabel value="#{prov.telefonoEmp3}"/>
+                        </p:column>
 
                         <p:summaryRow>
-                            <p:column colspan="4" style="text-align:right">
+                            <p:column colspan="10" style="text-align:right">
                                 <h:outputText value="Total:" />
                             </p:column>
                             <p:column styleClass="numero">

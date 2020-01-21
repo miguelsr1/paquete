@@ -107,7 +107,7 @@ public class RptExcel {
             return new ByteArrayInputStream(outByteStream.toByteArray());*/
         } catch (IOException | InvalidFormatException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
-            
+
             //return null;
         }
     }
@@ -149,7 +149,9 @@ public class RptExcel {
         }
         style.setDataFormat(entero ? FORMATO_DATA.getFormat("#,##0") : FORMATO_DATA.getFormat("#,##0.00"));
         cell.setCellStyle(style);
-        cell.setCellValue(entero ? Integer.parseInt(text) : Double.parseDouble(text));
+        if (text != null && !text.isEmpty()) {
+            cell.setCellValue(entero ? Integer.parseInt(text) : Double.parseDouble(text));
+        }
     }
 
     private static void generarArchivo(Workbook wb, String nombreFile) {
@@ -442,7 +444,7 @@ public class RptExcel {
 
     public static void generarRptExcelGenerico(HSSFWorkbook wb, int colsNumEnteros[], int colsNumDecimal[]) {
         HSSFSheet sheet = wb.getSheetAt(0);
-        HSSFCellStyle style = wb.createCellStyle();
+
         HSSFCellStyle styleNumber = wb.createCellStyle();
         styleNumber.setAlignment(HorizontalAlignment.RIGHT);
         FORMATO_DATA = wb.createDataFormat();

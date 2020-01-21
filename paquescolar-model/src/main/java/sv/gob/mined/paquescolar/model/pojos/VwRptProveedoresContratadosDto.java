@@ -39,6 +39,12 @@ public class VwRptProveedoresContratadosDto implements Serializable {
     private String telefonoEmp;
     private String celularEmp;
     private String numeroNit;
+    private String miembroFirma;
+    private String telDirector;
+    private String telDirector2;
+    private String numeroTelefono;
+    private String telefonoEmp2;
+    private String telefonoEmp3;
 
     public VwRptProveedoresContratadosDto() {
     }
@@ -177,5 +183,53 @@ public class VwRptProveedoresContratadosDto implements Serializable {
 
     public void setIdContrato(BigDecimal idContrato) {
         this.idContrato = idContrato;
+    }
+
+    public String getMiembroFirma() {
+        return miembroFirma;
+    }
+
+    public void setMiembroFirma(String miembroFirma) {
+        this.miembroFirma = miembroFirma;
+    }
+
+    public String getTelDirector() {
+        return telDirector;
+    }
+
+    public void setTelDirector(String telDirector) {
+        this.telDirector = telDirector;
+    }
+
+    public String getTelDirector2() {
+        return telDirector2;
+    }
+
+    public void setTelDirector2(String telDirector2) {
+        this.telDirector2 = telDirector2;
+    }
+
+    public String getNumeroTelefono() {
+        return numeroTelefono;
+    }
+
+    public void setNumeroTelefono(String numeroTelefono) {
+        this.numeroTelefono = numeroTelefono;
+    }
+
+    public String getTelefonoEmp2() {
+        return telefonoEmp2;
+    }
+
+    public void setTelefonoEmp2(String telefonoEmp2) {
+        this.telefonoEmp2 = telefonoEmp2;
+    }
+
+    public String getTelefonoEmp3() {
+        return telefonoEmp3;
+    }
+
+    public void setTelefonoEmp3(String telefonoEmp3) {
+        this.telefonoEmp3 = telefonoEmp3;
     }
 }

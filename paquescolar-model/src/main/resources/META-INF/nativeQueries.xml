@@ -28,7 +28,13 @@
                 NOMBRE_MUNICIPIO_EMP    as nombreMunicipioEmp,
                 CANTIDAD_CONTRATO       as cantidadContrato,
                 MONTO_CONTRATO          as montoContrato,
-                ID_CONTRATO             as idContrato
+                ID_CONTRATO             as idContrato,
+                miembro_firma       as miembroFirma,
+                tel_director        as telDirector,
+                tel_director2       as telDirector2,
+                numero_telefono     as numeroTelefono,
+                num_telefono2       as telefonoEmp2,
+                num_telefono3       as telefonoEmp3
             FROM 
                 VW_RPT_RESUMEN_CONTRATACION 
             WHERE 
