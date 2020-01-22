@@ -371,7 +371,7 @@ public class LeerBoletasEJB {
         sb = sb.append("Se han enviado boletas de pago del departamento ").append(JsfUtil.getNombreDepartamentoByCodigo(codDepa)).append(".").append("<br/>")
                 .append("Hora de inicio: ").append(sdf.format(codigoGenerado.getFechaInicio())).append("<br/>");
 
-        sb = sb.append("Hora de fin: ").append(codigoGenerado.getFechaFin()).append("<br/>");
+        sb = sb.append("Hora de fin: ").append(sdf.format(codigoGenerado.getFechaFin())).append("<br/>");
         sb = sb.append("Número de boletas enviadas: ").append(codigoGenerado.getEnviado()).append("<br/>");
         sb = sb.append("Número de docente no encontrados: ").append(codigoGenerado.getSinCorreo()).append("<br/>");
         sb = sb.append("Número de correos no enviados debido a un error: ").append(codigoGenerado.getError()).append("<br/>");

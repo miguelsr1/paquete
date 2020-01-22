@@ -114,11 +114,11 @@
                                 <f:convertDateTime pattern="dd/MM/yyyy - HH:mm"/>
                             </p:outputLabel>
                             <p:outputLabel value="Fecha y hora de fin: "/>
-                            <p:outputLabel value="#{boletaMB.codigoGenerado.fechaFin}">
+                            <p:outputLabel value="#{boletaMB.fechaInicio}">
                                 <f:convertDateTime pattern="dd/MM/yyyy  -  HH:mm" />
                             </p:outputLabel>
                             <p:outputLabel value="Número de docentes: "/>
-                            <p:outputLabel value="#{boletaMB.codigoGenerado.enviado}" style="text-align: right;">
+                            <p:outputLabel value="#{boletaMB.fechaFin}" style="text-align: right;">
                                 <f:convertNumber pattern="#,##0"/>
                             </p:outputLabel>
                             <p:outputLabel value="Correos no enviados: "/>

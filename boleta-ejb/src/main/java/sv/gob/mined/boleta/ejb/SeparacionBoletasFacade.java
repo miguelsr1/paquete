@@ -42,7 +42,7 @@ public class SeparacionBoletasFacade extends Exception {
     @Asynchronous
     public void separacion(String mesAnho, String codDepa) {
         File carpetaRoot = new File(RESOURCE_BUNDLE.getString("path_archivo"));
-        SimpleDateFormat sdf = new SimpleDateFormat("HHmmsszzz");
+        SimpleDateFormat sdf = new SimpleDateFormat("HHmmssSSS");
 
         for (File carpetaDepa : carpetaRoot.listFiles()) {
             if (carpetaDepa.isDirectory() && carpetaDepa.getName().equals(codDepa)) {

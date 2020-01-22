@@ -36,7 +36,7 @@
     </ui:define>
     <ui:define name="content">
         <h:form prependId="false">
-            <p:messages id="messages" showDetail="true" closable="false" escape="false">
+            <p:messages id="messages" closable="false" escape="false">
                 <p:autoUpdate />
             </p:messages>
             <div class="ui-g">
@@ -51,15 +51,26 @@
                         <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10" 
                                      style="width: 100%; border:0px none; background-color:transparent;"
                                      styleClass="form-group ui-panelgrid-blank">
-                            <p:outputLabel value="NIP"/>
-                            <p:inputText value="#{docenteController.correoDocente.nip}"/>
-                            <p:outputLabel value="Nombres"/>
-                            <p:inputText value="#{docenteController.correoDocente.primerNombre}" size="50"/>
-                            <p:outputLabel value="Apellidos"/>
-                            <p:inputText value="#{docenteController.correoDocente.primerApellido}" size="50"/>
-                            <p:outputLabel value="Correo electrónico"/>
+                            <p:outputLabel for="Nip" value="NIP"/>
+                            <p:inputText id="Nip" value="#{docenteController.correoDocente.nip}" required="true" style="text-transform: uppercase;"
+                                         maxlength="7" 
+                                         validatorMessage="El formato del NIP esta erroneo. Longitud 7">
+                                <f:validateRegex pattern="^([AIai0-9][0-9]{6}+)$"/>
+                            </p:inputText>
+                            <p:outputLabel for="Nombres" value="Nombres"/>
+                            <p:inputText id="Nombres" value="#{docenteController.correoDocente.primerNombre}" size="50" style="text-transform: uppercase;" required="true"/>
+                            <p:outputLabel for="Apellidos" value="Apellidos"/>
+                            <p:inputText id="Apellidos" value="#{docenteController.correoDocente.primerApellido}" size="50" style="text-transform: uppercase;" required="true"/>
+                            <p:outputLabel for="Nit" value="NIT"/>
+                            <p:inputMask id="Nit" value="#{docenteController.correoDocente.nit}" mask="9999-999999-999-9" required="true"/>
+                            <p:outputLabel for="Dui" value="DUI"/>
+                            <p:inputMask id="Dui" value="#{docenteController.correoDocente.dui}" mask="99999999-9" required="true"/>
+                            <p:outputLabel for="Correo" value="Correo electrónico"/>
                             <p:outputPanel>
-                                <p:inputText value="#{docenteController.correoSinDominio}"/>
+                                <p:inputText id="Correo" value="#{docenteController.correoSinDominio}" style="text-transform: lowercase;" 
+                                             required="true" validatorMessage="Solo se permiten minusculas y caracteres .(punto) _ (guion bajo) - (guion medio) ">
+                                     <f:validateRegex pattern="^[a-z.\S_-]+$" />
+                                </p:inputText>
                                 <p:spacer width="10"/>
                                 <p:selectOneMenu value="#{docenteController.idDominio}">
                                     <f:selectItems value="#{docenteController.lstDominiosCorreo}" var="dominio" itemValue="#{dominio.idDominio}" itemLabel="#{dominio.dominio}"/>
@@ -68,11 +79,12 @@
                         </p:panelGrid>
 
                         <f:facet name="footer">
-                            <p:commandButton value="Nuevo" action="#{docenteController.nuevoDocente()}" update="pnlFiltro"/>
+                            <p:commandButton value="Nuevo" action="#{docenteController.nuevoDocente()}" update="pnlFiltro" 
+                                             process="@this" validateClient="true"/>
                             <p:spacer width="5"/>
-                            <p:commandButton value="Modificar" onclick="PF('dlgBusqueda').show();"/>
+                            <p:commandButton value="Modificar" action="#{docenteController.modificarDocente()}" process="@this" onclick="PF('dlgBusqueda').show();"/>
                             <p:spacer width="5"/>
-                            <p:commandButton value="Guardar" action="#{docenteController.guardarDocente()}"/>
+                            <p:commandButton value="Guardar" action="#{docenteController.guardarDocente()}" validateClient="true"/>
                         </f:facet>
                     </p:panel>
                 </div>
@@ -81,9 +93,11 @@
             <p:dialog id="dlgBusqueda" widgetVar="dlgBusqueda" width="800" modal="true">
                 <p:outputPanel>
                     <p:outputLabel value="NIP:"/><p:spacer width="5"/>
-                    <p:inputText size="30" value="#{docenteController.criterioBusqueda}"/><p:spacer width="5"/>
-                    <p:commandButton value="Buscar" action="#{docenteController.buscar()}" icon="fa fa-search" update="tblCorreos"/>
+                    <p:inputText id="txtCriterio" size="30" value="#{docenteController.criterioBusqueda}"/><p:spacer width="5"/>
+                    <p:commandButton value="Buscar" process="@this,txtCriterio" action="#{docenteController.buscar()}" icon="fa fa-search" update="tblCorreos lblMensaje"/><p:spacer width="5"/>
+                    <p:outputLabel id="lblMensaje" value="#{docenteController.mensaje}" class="ui-message ui-staticmessage ui-message-info ui-widget ui-corner-all" />
                 </p:outputPanel>
+                
                 <br/>
                 <p:dataTable id="tblCorreos" value="#{docenteController.lstCorreoDocente}" var="correo" rowKey="#{correo.idCorreo}"
                              selection="#{docenteController.docenteSeleccionado}" selectionMode="single">

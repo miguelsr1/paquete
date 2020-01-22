@@ -25,6 +25,11 @@ import sv.gob.mined.utils.jsf.JsfUtil;
 @ViewScoped
 public class DocenteController implements Serializable {
 
+    public String getMensaje() {
+        return mensaje;
+    }
+
+    private String mensaje;
     private String criterioBusqueda;
     private String correoSinDominio;
     private Integer idDominio;
@@ -88,6 +93,12 @@ public class DocenteController implements Serializable {
 
     public void buscar() {
         lstCorreos = persistenciaFacade.getLstCorreoDocenteByCriterio(criterioBusqueda);
+        if (lstCorreos.isEmpty()) {
+            mensaje = "No se han encontrado coincidencias";
+        } else {
+            mensaje = "";
+        }
+
     }
 
     public void cerrarDlg() {
@@ -108,11 +119,13 @@ public class DocenteController implements Serializable {
 
     public void guardarDocente() {
         FacesContext context = FacesContext.getCurrentInstance();
-        correoDocente.setCorreoElectronico(correoSinDominio.concat(getDominioCorreo(idDominio)));
+        correoDocente.setPrimerNombre(correoDocente.getPrimerNombre().toUpperCase());
+        correoDocente.setPrimerApellido(correoDocente.getPrimerApellido().toUpperCase());
+        correoDocente.setCorreoElectronico(correoSinDominio.concat(getDominioCorreo(idDominio)).toLowerCase());
         int valor = persistenciaFacade.guardarDocente(correoDocente, context.getExternalContext().getSessionMap().get("usuario").toString());
-        if(valor == 1){
+        if (valor == 1) {
             JsfUtil.mensajeUpdate();
-        }else{
+        } else {
             JsfUtil.mensajeAlerta("Ya existe un usuario con el NIP o correo electronico ingresado");
         }
     }
@@ -129,8 +142,13 @@ public class DocenteController implements Serializable {
                 return "";
         }
     }
-    
-    public void nuevoDocente(){
+
+    public void nuevoDocente() {
         correoDocente = new CorreoDocente();
+    }
+
+    public void modificarDocente() {
+        criterioBusqueda = "";
+        lstCorreos.clear();
     }
 }

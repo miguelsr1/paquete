@@ -57,6 +57,7 @@ public class BoletaMB implements Serializable {
     private Date fecha;
     private Boolean aceptar = false;
     private SimpleDateFormat sdf = new SimpleDateFormat("MM_yyyy");
+    private SimpleDateFormat sdf2 = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a");
 
     private CodigoGenerado codigoGenerado = new CodigoGenerado();
     private List<DatosDto> lstPendientes = new ArrayList();
@@ -78,12 +79,12 @@ public class BoletaMB implements Serializable {
                 usuario = context.getExternalContext().getSessionMap().get("usuario").toString();
                 clave = context.getExternalContext().getSessionMap().get("clave").toString();
                 codDepa = usuario.substring(7, 9);
-                
+
                 mes = sdf.format(new Date()).split("_")[0];
                 anho = sdf.format(new Date()).split("_")[1];
-                
+
                 System.out.println(mes + " - " + anho);
-                
+
                 cargarArchivos();
             } catch (IOException ex) {
                 Logger.getLogger(BoletaMB.class.getName()).log(Level.SEVERE, null, ex);
@@ -98,6 +99,22 @@ public class BoletaMB implements Serializable {
             } catch (IOException ex) {
                 Logger.getLogger(BoletaMB.class.getName()).log(Level.SEVERE, "Error haciendo logout", ex);
             }
+        }
+    }
+
+    public String getFechaInicio() {
+        if (codigoGenerado.getFechaInicio() != null) {
+            return sdf2.format(codigoGenerado.getFechaInicio());
+        } else {
+            return "";
+        }
+    }
+
+    public String getFechaFin() {
+        if (codigoGenerado.getFechaFin() != null) {
+            return sdf2.format(codigoGenerado.getFechaFin());
+        } else {
+            return "";
         }
     }
 
@@ -217,7 +234,7 @@ public class BoletaMB implements Serializable {
             try (InputStream input = file.getFile().getInputstream()) {
                 Files.copy(input, arc, StandardCopyOption.REPLACE_EXISTING);
             }
-            
+
             cargarArchivos();
         } else {
             JsfUtil.mensajeAlerta("Debe de seleccionar un mes y un año de PAGO");
