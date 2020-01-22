@@ -66,7 +66,7 @@ import sv.gob.mined.paquescolar.model.pojos.modificativa.VwContratoModificatoria
  *
  * @author DesarrolloPc
  */
-@ManagedBean(name = "modificatoriaController")
+ @ManagedBean(name = "modificatoriaController")
 @ViewScoped
 public class ModificatoriaController extends RecuperarProcesoUtil implements Serializable {
 
@@ -614,13 +614,22 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                                 break;
                             case 6: //VARIACIONES DE CANTIDAD SIN INCREMENTO DE MONTO
                                 BigDecimal diferencia = getMontoAdjudicadoOld().subtract(getMontoAdjudicadoNew());
-                                BigDecimal veintePorciento = getMontoAdjudicadoOld().multiply(new BigDecimal("0.20"));
+                                if (diferencia.compareTo(BigDecimal.ZERO) == -1) {
+                                    JsfUtil.mensajeAlerta("No se permiten incremento en el monto total original del contrato.");
+                                    validacion = false;
+                                }
+
+                                /**
+                                 * 21-ENERO-2020 Se elimina esta restricción por
+                                 * cambios realizados por la UNAC
+                                 */
+                                /*BigDecimal veintePorciento = getMontoAdjudicadoOld().multiply(new BigDecimal("0.20"));
                                 if (veintePorciento.compareTo(diferencia) == -1) {
                                     JsfUtil.mensajeAlerta("No se permiten disminuciones menores al 20% del monto total del contrato.");
                                     validacion = false;
                                 } else {
                                     validacion = true;
-                                }
+                                }*/
                                 break;
                         }
 

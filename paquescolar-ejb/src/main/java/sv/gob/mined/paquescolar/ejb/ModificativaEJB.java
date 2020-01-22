@@ -693,4 +693,6 @@ public class ModificativaEJB {
         q.setParameter(1, idContrato);
         return (((BigDecimal) q.getSingleResult()).intValue() > 0);
     }
+    
+    
 }
