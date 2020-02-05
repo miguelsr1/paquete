@@ -155,4 +155,12 @@ public class PersistenciaFacade {
         q.setParameter("correo", "%" + criterio + "%");
         return q.getResultList();
     }
+
+    public void updateCorreoByNIP(String nip) {
+        Query q = em.createQuery("SELECT c FROM CorreoDocente c WHERE c.nip=:nip", CorreoDocente.class);
+        q.setParameter("nip", nip);
+        if(q.getResultList().isEmpty()){
+            System.out.println("vacio");
+        }
+    }
 }

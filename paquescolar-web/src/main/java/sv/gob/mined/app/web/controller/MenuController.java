@@ -58,7 +58,7 @@ public class MenuController implements Serializable {
             VarSession.setVariableSession("Usuario", usuario.getIdPersona().getUsuario());
             VarSession.setVariableSession("idTipoUsuario", usuario.getIdTipoUsuario().getIdTipoUsuario().intValue());
             //if (!usuario.getCodigoDepartamento().equals("00")) {
-                codigoDepartamento = usuario.getCodigoDepartamento();
+            codigoDepartamento = usuario.getCodigoDepartamento();
             //}
             armarMenu();
         }
@@ -175,7 +175,6 @@ public class MenuController implements Serializable {
         }
     }
 
-
     public String verResumenGeneralContrataciones() {
         if ((Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {
             return "dashboard";
@@ -186,6 +185,20 @@ public class MenuController implements Serializable {
     }
 
     public Boolean getIsUsuarioDigitador() {
-        return (usuario.getIdTipoUsuario().getIdTipoUsuario().intValue() != 1);
+        ParametrosMB param = (ParametrosMB) JsfUtil.getControllerByName("parametrosMB");
+        if (param.getProceso().getDescripcionProcesoAdq().contains("SOBREDEMANDA")) {
+            switch (usuario.getIdTipoUsuario().getIdTipoUsuario().intValue()) {
+                case 1:
+                case 2:
+                case 6:
+                    return false;
+                default:
+                    return true;
+
+            }
+        } else {
+
+            return (usuario.getIdTipoUsuario().getIdTipoUsuario().intValue() != 1);
+        }
     }
 }

@@ -301,4 +301,10 @@ public class JsfUtil {
             return null;
         }
     }
+    
+    public static Object getControllerByName(String name){
+         return FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, name);
+         
+    }
 }

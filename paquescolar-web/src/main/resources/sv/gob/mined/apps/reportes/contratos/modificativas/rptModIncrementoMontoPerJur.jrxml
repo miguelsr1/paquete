@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptContratoPersonaJuridicaZapatos" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="07e1e5af-9848-4273-96b4-6595abfd46c0">
 	<property name="ireport.zoom" value="1.3310000000000013"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.y" value="0"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -118,6 +118,9 @@
 	</field>
 	<field name="horaRegistro" class="java.lang.String">
 		<fieldDescription><![CDATA[horaRegistro]]></fieldDescription>
+	</field>
+	<field name="fechaNota" class="java.util.Date">
+		<fieldDescription><![CDATA[fechaNota]]></fieldDescription>
 	</field>
 	<group name="codigoEntidad">
 		<groupExpression><![CDATA[$F{codigoEntidad}]]></groupExpression>
@@ -509,7 +512,7 @@ $F{descripcionRubro}+"\n"+$F{nombreCe}+"\n"+"Fuente Financiamiento: GOES"]]></te
 .concat(Herramientas.aLetras($F{montoContratoModif}).trim()).concat(" Dólares de los Estados Unidos de América (US$ ")
 .concat((($F{montoContratoModif}.doubleValue())*100)/100 + ") IVA INCLUIDO; por un período de ").concat($F{plazoContrato}).concat(", contados a partir del ").concat(Herramientas.getNumDia($F{fechaOrdenInicio})).concat(" del mes de ")
 .concat(Herramientas.getNomMes($F{fechaOrdenInicio})).concat(" de ").concat(Herramientas.getNumAnyo($F{fechaOrdenInicio})).concat("\n\nCONSIDERANDO:\n")
-.concat("Que en nota fecha __________").concat(", el Presidente del ").concat($F{modalidadAdministrativa}).concat(", comunica al proveedor ").concat($F{razonSocial})
+.concat("Que en nota fecha "+ (new SimpleDateFormat("dd/MM/yyyy")).format($F{fechaNota})).concat(", el Presidente del ").concat($F{modalidadAdministrativa}).concat(", comunica al proveedor ").concat($F{razonSocial})
 .concat(", que al analizar y comparar la matricula rápida del año ").concat($F{anhoContrato}).concat(" y la matricula actual del ").concat($F{nombreCe})
 .concat(", es necesario realizar cambios en el contrato, según el siguiente detalle:")]]></textFieldExpression>
 			</textField>
@@ -528,7 +531,7 @@ $F{descripcionRubro}+"\n"+$F{nombreCe}+"\n"+"Fuente Financiamiento: GOES"]]></te
 				<textElement>
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Que en nota de fecha _____________, la persona proveedora ".concat($F{razonSocial}).concat(" manifiesta estar de acuerdo en dichos cambios, y legalizar estas")
+				<textFieldExpression><![CDATA["Que en nota de fecha "+(new SimpleDateFormat("dd/MM/yyyy").format($F{fechaNota}))+", la persona proveedora ".concat($F{razonSocial}).concat(" manifiesta estar de acuerdo en dichos cambios, y legalizar estas")
 .concat(" modificaciones por medio de documento legal, manteniendo los precios unitarios pactados en el contrato original, sin incrementar el monto del contrato.\n\n")
 .concat("Que la Cláusula XIII Modificación, del referido Contrato, establece: \"De común acuerdo, el presente contrato podrá ser modificado. En tal caso, la institución")
 .concat(" contratante emitirá la correspondiente resolución, y para que surta efecto legal, esta modificativa debe ser firmada por el Presidente del Organismo ")

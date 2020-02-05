@@ -761,7 +761,7 @@ public class EstadisticasCensoController implements Serializable {
             List<TechoRubroEntEdu> lstTechos = entidadEducativaEJB.getLstTechosByProceso(procesoAdquisicion.getIdProcesoAdq(), codigoEntidad);
 
             techoUni = getTecho(lstTechos, detProAdqUni);
-            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 5) {
+            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 5 && !procesoAdquisicion.getDescripcionProcesoAdq().contains("SOBREDEMANDA")) {
                 techoUni2 = getTecho(lstTechos, detProAdqUni2);
             }
             techoUti = getTecho(lstTechos, detProAdqUti);
@@ -1036,11 +1036,13 @@ public class EstadisticasCensoController implements Serializable {
             } else {
                 techoUni.setMontoPresupuestado(calcularPresupuesto(4));
 
-                techoUni2.setMontoPresupuestado(calcularPresupuesto(5));
-                if (techoUni2.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
-                    techoUni2.setMontoDisponible(techoUni2.getMontoPresupuestado());
-                } else {
-                    techoUni2.setMontoDisponible(techoUni2.getMontoPresupuestado().add(techoUni2.getMontoAdjudicado().negate()));
+                if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 5 && !procesoAdquisicion.getDescripcionProcesoAdq().contains("SOBREDEMANDA")) {
+                    techoUni2.setMontoPresupuestado(calcularPresupuesto(5));
+                    if (techoUni2.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
+                        techoUni2.setMontoDisponible(techoUni2.getMontoPresupuestado());
+                    } else {
+                        techoUni2.setMontoDisponible(techoUni2.getMontoPresupuestado().add(techoUni2.getMontoAdjudicado().negate()));
+                    }
                 }
             }
 
@@ -1070,8 +1072,9 @@ public class EstadisticasCensoController implements Serializable {
             if (!msjError.replace("Hubo error en los niveles: ", "").isEmpty()) {
                 JsfUtil.mensajeError(msjError);
             }
-
             if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() < 6) {
+                error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUti, techoZap);
+            } else if (procesoAdquisicion.getDescripcionProcesoAdq().contains("SOBREDEMANDA")) {
                 error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUti, techoZap);
             } else {
                 error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUni2, techoUti, techoZap);

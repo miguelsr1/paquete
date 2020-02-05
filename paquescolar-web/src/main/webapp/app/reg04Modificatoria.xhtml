@@ -6,26 +6,26 @@
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" oncomplete="onClick('btoBuscarC');"
+                        update="pnlFiltro" action="#{modificatoriaController.validarProcesoAdquisicion}"
+                        actionListener="#{modificatoriaController.prepararCreacion}"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" oncomplete="onClick('btoBuscarC');"
+                        action="#{modificatoriaController.validarProcesoAdquisicion}" 
+                        actionListener="#{modificatoriaController.prepararEdicion}"
+                        update="pnlFiltro"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" action="#{modificatoriaController.guardar}" ajax="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{ofertaMB.imprimirAnalisisEconomico}" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options" class="centradoVertical">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar id="menuBar" styleClass="divSticky"> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" oncomplete="onClick('btoBuscarC');"
-                                    update="pnlFiltro" action="#{modificatoriaController.validarProcesoAdquisicion}"
-                                    actionListener="#{modificatoriaController.prepararCreacion}"/>
-                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" oncomplete="onClick('btoBuscarC');"
-                                    action="#{modificatoriaController.validarProcesoAdquisicion}" 
-                                    actionListener="#{modificatoriaController.prepararEdicion}"
-                                    update="pnlFiltro"/>
-                        <p:menuitem value="Guardar" icon="fa fa-save" action="#{modificatoriaController.guardar}" ajax="true"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{ofertaMB.imprimirAnalisisEconomico}" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
-
-                        <f:facet  name="options" class="centradoVertical">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-
                     <p:panel header="Seleccionar Contrato" visible="false">
                         <p:commandButton id="btoBuscarC" actionListener="#{modificatoriaController.mostrarFiltroContrato(false)}">
                             <p:ajax event="dialogReturn" listener="#{modificatoriaController.onContratoModifChosen}" update="pnlFiltro pnlDatos"/>
@@ -88,6 +88,8 @@
                         </p:outputPanel>
 
                         <h:panelGrid columns="2">
+                            <h:outputText value="Fecha de Orden Inicio:"/>
+                            <p:calendar locale="es" value="#{modificatoriaController.fechaOrdenInicio}" pattern="dd/MM/yyyy" size="10"/>
                             <h:outputText value="Fecha de Solicitud:"/>
                             <h:panelGroup>
                                 <p:calendar locale="es" value="#{modificatoriaController.resolucionesModificativas.fechaSolicitud}" pattern="dd/MM/yyyy" size="10"/>

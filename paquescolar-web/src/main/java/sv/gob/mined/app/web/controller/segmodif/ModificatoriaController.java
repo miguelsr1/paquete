@@ -66,7 +66,7 @@ import sv.gob.mined.paquescolar.model.pojos.modificativa.VwContratoModificatoria
  *
  * @author DesarrolloPc
  */
- @ManagedBean(name = "modificatoriaController")
+@ManagedBean(name = "modificatoriaController")
 @ViewScoped
 public class ModificatoriaController extends RecuperarProcesoUtil implements Serializable {
 
@@ -83,18 +83,20 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
     private int tipoConsulta = 0;
     private Integer cantidadTotalNew;
     private Integer cantidadTotalOld;
-    private BigDecimal idRubro = BigDecimal.ZERO;
-    private BigDecimal idEstadoReserva = BigDecimal.ZERO;
-    private BigDecimal idTipoModif = BigDecimal.ZERO;
-    private BigDecimal montoTotalNew;
-    private BigDecimal montoTotalOld;
-    private BigDecimal saldoActual = BigDecimal.ZERO;
 
     private String codigoEntidad;
     private String msjError = "";
     private String msjInformacion = "";
     private String descripcionTipoModif = "";
 
+    private Date fechaOrdenInicio;
+
+    private BigDecimal idRubro = BigDecimal.ZERO;
+    private BigDecimal idEstadoReserva = BigDecimal.ZERO;
+    private BigDecimal idTipoModif = BigDecimal.ZERO;
+    private BigDecimal montoTotalNew;
+    private BigDecimal montoTotalOld;
+    private BigDecimal saldoActual = BigDecimal.ZERO;
     private BigDecimal montoAdjudicacionActual = BigDecimal.ZERO;
     private BigDecimal montoSaldo = BigDecimal.ZERO;
 
@@ -140,6 +142,14 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
         techoCE.setMontoAdjudicado(BigDecimal.ZERO);
         techoCE.setMontoDisponible(BigDecimal.ZERO);
         techoCE.setMontoPresupuestado(BigDecimal.ZERO);
+    }
+
+    public Date getFechaOrdenInicio() {
+        return fechaOrdenInicio;
+    }
+
+    public void setFechaOrdenInicio(Date fechaOrdenInicio) {
+        this.fechaOrdenInicio = fechaOrdenInicio;
     }
 
     public String getMsjInformacion() {
@@ -417,6 +427,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
             detalle.setEstadoEliminacion(Short.parseShort("0"));
             detalle.setFechaInsercion(new Date());
             detalle.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+            detalle.setIdResolucionModif(resolucionesModificativas);
             lstDetalleModificativas.add(detalle);
         }
     }
@@ -602,10 +613,18 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                                 validacion = true;
                                 break;
                             case 4: //POR PRORROGA EN PLAZO CONTRACTUAL
-                                if (resolucionesModificativas.getDiasProrroga() >= 30 && resolucionesModificativas.getDiasProrroga() <= 60) {
+                                if (idRubro.intValue() == 2) {
+                                    if (resolucionesModificativas.getDiasProrroga() > 0
+                                            && resolucionesModificativas.getDiasProrroga() <= 30) {
+                                        validacion = true;
+                                    } else {
+                                        JsfUtil.mensajeAlerta("Los días de prorroga deben de estar entre 1 y 30 días");
+                                        validacion = false;
+                                    }
+                                } else if (resolucionesModificativas.getDiasProrroga() > 0 && resolucionesModificativas.getDiasProrroga() <= 60) {
                                     validacion = true;
                                 } else {
-                                    JsfUtil.mensajeAlerta("Los días de prorroga deben de estar entre 30 y 60 días");
+                                    JsfUtil.mensajeAlerta("Los días de prorroga deben de estar entre 1 y 60 días");
                                     validacion = false;
                                 }
                                 break;
@@ -614,7 +633,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                                 break;
                             case 6: //VARIACIONES DE CANTIDAD SIN INCREMENTO DE MONTO
                                 BigDecimal diferencia = getMontoAdjudicadoOld().subtract(getMontoAdjudicadoNew());
-                                if (diferencia.compareTo(BigDecimal.ZERO) == -1) {
+                                if (diferencia.compareTo(BigDecimal.ZERO) == -1) { 
                                     JsfUtil.mensajeAlerta("No se permiten incremento en el monto total original del contrato.");
                                     validacion = false;
                                 }
@@ -634,6 +653,20 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                         }
 
                         if (validacion) {
+                            switch (idRubro.intValue()) {
+                                case 1:
+                                case 4:
+                                case 5:
+                                    if (contratoOriginal.getFechaOrdenInicio() == null) {
+                                        contratoOriginal.setFechaOrdenInicio(fechaOrdenInicio);
+                                        contratoOriginal.setFechaModificacion(new Date());
+                                        contratoOriginal.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
+
+                                        resolucionAdjudicativaEJB.editContrato(contratoOriginal);
+                                    }
+                                    break;
+                            }
+
                             resolucionesModificativas.setIdModifContrato(new TipoModifContrato(idTipoModif));
                             resolucionesModificativas.setValor(getMontoAdjudicadoNew().add(getMontoAdjudicadoOld().negate()).negate());
                             if (modificativaEJB.guardarModificatoria(resolucionesModificativas, VarSession.getVariableSessionUsuario()) == true) {
@@ -752,6 +785,11 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                 vwBusquedaContrato = modificativaEJB.getContratosById(vwContratoModificatoria.getIdContrato());
 
                 contratoOriginal = utilEJB.find(ContratosOrdenesCompras.class, vwContratoModificatoria.getIdContrato());
+
+                if (contratoOriginal.getFechaOrdenInicio() != null) {
+                    fechaOrdenInicio = contratoOriginal.getFechaOrdenInicio();
+                }
+
                 idRubro = contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres();
                 detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
 
@@ -810,7 +848,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                     resolucionesModificativas.setIdResModifPadre(utilEJB.find(ResolucionesModificativas.class, vwContratoModificatoria.getIdResolucionModif()));
                 }
 
-                lstTipoModifContratos = modificativaEJB.getLstTipoModifContrato(Short.valueOf("0"));
+                lstTipoModifContratos = modificativaEJB.getLstTipoModifByTipoUsuario(VarSession.getUsuarioSession().getIdTipoUsuario().getIdTipoUsuario());
                 lstItem = proveedorEJB.findItemProveedor(contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdEmpresa(), detalleProceso);
             } else if (vwContratoModificatoria.getIdResolucionAdj() != null
                     && vwContratoModificatoria.getIdResModifPadre() != null
@@ -826,7 +864,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                     contratoOriginal = resolucionesModificativas.getIdContrato();
                     idRubro = contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres();
                     detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
-                    lstTipoModifContratos = modificativaEJB.getLstTipoModifContrato(Short.valueOf("0"));
+                    lstTipoModifContratos = modificativaEJB.getLstTipoModifByTipoUsuario(VarSession.getUsuarioSession().getIdTipoUsuario().getIdTipoUsuario());
                     lstItem = proveedorEJB.findItemProveedor(contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdEmpresa(), detalleProceso);
                     idTipoModif = resolucionesModificativas.getIdModifContrato().getIdModifContrato();
                 }
@@ -1001,10 +1039,11 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
             case 4:
             case 5:
             case 6:
+            case 3:
                 imprimirResolucionModificatoria(idTipoModif.intValue(), isPersonaNatural);
                 break;
             case 2:
-            case 3:
+            //case 3:
                 imprimirContratoFormatoOriginal(isPersonaNatural);
                 break;
         }
@@ -1025,6 +1064,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                 case 4:
                     nombreRpt = "rptModProrroga";
                     break;
+                case 3:
                 case 5:
                     nombreRpt = "rptModIncrementoMonto";
                     break;
@@ -1032,6 +1072,8 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
 
             lstModificacionContratos = modificativaEJB.generarResolucionModificativa(resolucionesModificativas);
 
+            lstModificacionContratos.get(0).setFechaCreacionModif(lstModificacionContratos.get(0).getFechaResolucion());
+            
             if (nombreRpt.contains("rptModProrroga")) {
                 lstModificacionContratos.get(0).setFechaInicio(sumarRestarDiasFecha(resolucionesModificativas.getIdContrato().getFechaOrdenInicio(), 60));
                 lstModificacionContratos.get(0).setFechaFin(sumarRestarDiasFecha(resolucionesModificativas.getIdContrato().getFechaOrdenInicio(), 60 + resolucionesModificativas.getDiasProrroga()));

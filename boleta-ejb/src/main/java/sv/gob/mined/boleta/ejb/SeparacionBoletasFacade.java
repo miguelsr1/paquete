@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -112,7 +113,9 @@ public class SeparacionBoletasFacade extends Exception {
     }
 
     private void unirBoletasUnSolaArchivo(File carpetaPorFecha) throws FileNotFoundException, IOException {
-        for (File carpetaDocente : carpetaPorFecha.listFiles()) {
+        File[] lstPDf = carpetaPorFecha.listFiles();
+        Arrays.sort(lstPDf) ;
+        for (File carpetaDocente : lstPDf) {
             if (carpetaDocente.isDirectory() && !carpetaDocente.getName().equals("procesado") && !carpetaDocente.getName().equals("archivo_original")) {
                 PDFMergerUtility PDFmerger = new PDFMergerUtility();
                 PDFmerger.setDestinationFileName(carpetaPorFecha.getPath() + File.separator + carpetaDocente.getName() + ".pdf");

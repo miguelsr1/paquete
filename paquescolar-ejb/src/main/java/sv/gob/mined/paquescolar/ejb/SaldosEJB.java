@@ -23,10 +23,12 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
+import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.EstadoReserva;
 import sv.gob.mined.paquescolar.model.HistorialCamEstResAdj;
 import sv.gob.mined.paquescolar.model.InfoGeneralContratacion;
 import sv.gob.mined.paquescolar.model.Participantes;
+import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.TechoRubroEntEdu;
 
@@ -195,7 +197,11 @@ public class SaldosEJB {
                 query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idAnho=:idAnho and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
                 query.setParameter("idEmpresa", res.getIdParticipante().getIdEmpresa());
                 query.setParameter("idAnho", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho());
-            } else {
+            } else if(res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getDescripcionProcesoAdq().contains("SOBREDEMANDA")){
+                query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq=:idDetProcesoAdq and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
+                query.setParameter("idEmpresa", res.getIdParticipante().getIdEmpresa());
+                query.setParameter("idDetProcesoAdq", getDetalleProcesoDotacion(res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq(), res.getIdParticipante().getIdOferta().getIdDetProcesoAdq()));
+            }else{
                 query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq=:idDetProcesoAdq and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
                 query.setParameter("idEmpresa", res.getIdParticipante().getIdEmpresa());
                 query.setParameter("idDetProcesoAdq", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq());
@@ -241,6 +247,15 @@ public class SaldosEJB {
             Logger.getLogger(ResolucionAdjudicativaEJB.class.getName()).log(Level.SEVERE, null, e);
             return param;
         }
+    }
+    
+    private DetalleProcesoAdq getDetalleProcesoDotacion(ProcesoAdquisicion procesoPadre, DetalleProcesoAdq detalleSobredemanda){
+        for (DetalleProcesoAdq detalleProcesoAdq : procesoPadre.getDetalleProcesoAdqList()) {
+            if(detalleSobredemanda.getIdRubroAdq().getIdRubroInteres().intValue() == detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()){
+                return detalleProcesoAdq;
+            }
+        }
+        return null;
     }
 
     private BigDecimal getAdjParticipante(Participantes par) {

@@ -5,13 +5,19 @@
  */
 package sv.gob.mined.boleta.web;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 import sv.gob.mined.boleta.ejb.PersistenciaFacade;
 import sv.gob.mined.boleta.model.CorreoDocente;
 import sv.gob.mined.boleta.model.DominiosCorreo;
@@ -25,10 +31,8 @@ import sv.gob.mined.utils.jsf.JsfUtil;
 @ViewScoped
 public class DocenteController implements Serializable {
 
-    public String getMensaje() {
-        return mensaje;
-    }
-
+    private Boolean deshabilitar = true;
+    private Boolean mostrar = true;
     private String mensaje;
     private String criterioBusqueda;
     private String correoSinDominio;
@@ -41,6 +45,37 @@ public class DocenteController implements Serializable {
     private PersistenciaFacade persistenciaFacade;
 
     public DocenteController() {
+    }
+
+    @PostConstruct
+    public void init() {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        if (context.getExternalContext().getSessionMap().containsKey("usuario")) {
+
+        } else {
+            try {
+                JsfUtil.limpiarVariableSession();
+                context.getExternalContext().getSessionMap().clear();
+                ExternalContext externalContext = context.getExternalContext();
+                externalContext.redirect(((ServletContext) externalContext.getContext()).getContextPath() + "/index.mined");
+                System.gc();
+            } catch (IOException ex) {
+                Logger.getLogger(BoletaMB.class.getName()).log(Level.SEVERE, "Error haciendo logout", ex);
+            }
+        }
+    }
+
+    public Boolean getMostrar() {
+        return mostrar;
+    }
+
+    public Boolean getDeshabilitar() {
+        return deshabilitar;
+    }
+
+    public String getMensaje() {
+        return mensaje;
     }
 
     public String getCorreoSinDominio() {
@@ -145,9 +180,16 @@ public class DocenteController implements Serializable {
 
     public void nuevoDocente() {
         correoDocente = new CorreoDocente();
+        mostrar = true;
+        criterioBusqueda = "";
+        lstCorreos.clear();
+        correoSinDominio = "";
+        deshabilitar = false;
     }
 
     public void modificarDocente() {
+        deshabilitar = true;
+        mostrar = false;
         criterioBusqueda = "";
         lstCorreos.clear();
     }

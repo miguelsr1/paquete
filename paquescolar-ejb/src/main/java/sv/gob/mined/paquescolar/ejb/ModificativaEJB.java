@@ -30,6 +30,7 @@ import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.ResolucionesModificativas;
 import sv.gob.mined.paquescolar.model.TechoRubroEntEdu;
 import sv.gob.mined.paquescolar.model.TipoModifContrato;
+import sv.gob.mined.paquescolar.model.TipoUsuario;
 import sv.gob.mined.paquescolar.model.pojos.VwDepartamentoModificativas;
 import sv.gob.mined.paquescolar.model.pojos.VwDetalleModificativas;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ContratoDto;
@@ -89,7 +90,7 @@ public class ModificativaEJB {
         }
 
         try {
-            Logger.getLogger(ModificativaEJB.class.getName()).log(Level.INFO, "SELECT * FROM VW_BUSQUEDA_CONTRATO WHERE {0}", where);
+            //Logger.getLogger(ModificativaEJB.class.getName()).log(Level.INFO, "SELECT * FROM VW_BUSQUEDA_CONTRATO WHERE {0}", where);
             Query q = em.createNativeQuery("SELECT * FROM VW_BUSQUEDA_CONTRATO WHERE " + where);
             if (fecha1 != null && fecha2 == null) {
                 q.setParameter(1, fecha1);
@@ -412,9 +413,10 @@ public class ModificativaEJB {
     private HashMap<String, Object> existeDisponibilidadesCE(TechoRubroEntEdu techoCE, BigDecimal valorReserva, HashMap<String, Object> param) {
 
         if (techoCE.getMontoDisponible().intValue() - valorReserva.intValue() < 0) {
-        } else {
-            param.put("error", "El centro escolar " + techoCE.getCodigoEntidad() + " no posee disponibilidad presupuestaria!"
+            param.put("error", "El centro escolar " + techoCE.getCodigoEntidad() + " no posee disponibilidad presupuestaria!\n"
                     + "Monto Disponible: " + techoCE.getMontoDisponible() + " Monto Adjudicado: " + valorReserva);
+        } else {
+
         }
         return param;
     }
@@ -438,9 +440,9 @@ public class ModificativaEJB {
     }
 
     public List getSaldoParticipante(ResolucionesModificativas resModif) {
-        String sql = String.format("SELECT NVL(FN_GETSALDOPROVEEDOR(%d, %d, %d), 0) FROM DUAL",
-                resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq(),
-                resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq() == null ? resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq() : resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq().getIdProcesoAdq(),
+        String sql = String.format("SELECT NVL(FN_GETSALDOPROVEEDOR(%d, %d), 0) FROM DUAL",
+                resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho().intValue(),
+                //resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq() == null ? resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq() : resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq().getIdProcesoAdq(),
                 resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdEmpresa().intValue());
 
         Query q = em.createNativeQuery(sql);
@@ -693,6 +695,16 @@ public class ModificativaEJB {
         q.setParameter(1, idContrato);
         return (((BigDecimal) q.getSingleResult()).intValue() > 0);
     }
-    
-    
+
+    public List<TipoModifContrato> getLstTipoModifByTipoUsuario(BigDecimal idTipoUsuario) {
+        String ids = "";
+        if (idTipoUsuario.intValue() == 1) {
+            ids = "1,3,4,5,6";
+        } else {
+            ids = "3,4";
+        }
+        Query q = em.createQuery("SELECT t FROM TipoModifContrato t WHERE t.idModifContrato in ("+ids+") ORDER by t.idModifContrato", TipoModifContrato.class);
+        
+        return q.getResultList();
+    }
 }

@@ -607,72 +607,74 @@
             ]]>
         </query>
     </named-native-query>
-    <!--named-native-query name="Contratacion.ResumenContratoDto" 
-                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.ResumenContratoDto">
+    <named-native-query name="Contratacion.Matricula" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.CantidadPorNivelDto">
         <query>
             <![CDATA[
-                select
-                    dep.codigo_departamento as codigoDepartamento,
-                    dep.nombre_departamento as nombreDepartamento,
-                    mun.codigo_municipio    as codigoMunicipio,
-                    mun.nombre_municipio    as nombreMunicipio,
-                    vw.codigo_entidad       as codigoEntidad,
-                    vw.nombre               as nombre,
-                    con.miembro_firma       as miembroFirma,
-                    org.tel_director        as telDirector1,
-                    org.tel_director2       as telDirector2,
-                    rub.nombre_corto        as rubro,
-                    emp.numero_nit          as numeroNit,
-                    emp.razon_social        as razonSocial,
-                    sum(det.cantidad)       as cantidad,
-                    sum(det.cantidad*det.precio_unitario) as monto,
-                    per.numero_celular      as numeroCelular,
-                    per.numero_telefono     as numProvTelefono1,
-                    per.num_telefono2       as numProvTelefono2,
-                    per.num_telefono3       as numProvTelefono3
+                select 
+                    codigo_entidad  as codigoEntidad,
+                    sum(par_fem) parFem,
+                    sum(par_mas) parMas,
+                    sum(grado_1_fem) grado1Fem,
+                    sum(grado_1_mas) grado1Mas,
+                    sum(grado_2_fem) grado2Fem,
+                    sum(grado_2_mas) grado2Mas,
+                    sum(grado_3_fem) grado3Fem,
+                    sum(grado_3_mas) grado3Mas,
+                    sum(grado_4_fem) grado4Fem,
+                    sum(grado_4_mas) grado4Mas,
+                    sum(grado_5_fem) grado5Fem,
+                    sum(grado_5_mas) grado5Mas,
+                    sum(grado_6_fem) grado6Fem,
+                    sum(grado_6_mas) grado6Mas,
+                    sum(grado_7_fem) grado7Fem,
+                    sum(grado_7_mas) grado7Mas,
+                    sum(grado_8_fem) grado8Fem,
+                    sum(grado_8_mas) grado8Mas,
+                    sum(grado_9_fem) grado9Fem,
+                    sum(grado_9_mas) grado9Mas,
+                    sum(media_1_fem) media1Fem,
+                    sum(media_1_mas) media1Mas,
+                    sum(media_2_fem) media2Fem,
+                    sum(media_2_mas) media2Mas,
+                    sum(media_3_fem) media3Fem,
+                    sum(media_3_mas) media3Mas
+                from (select 
+                    est.codigo_entidad,
+                    case est.id_nivel_educativo when 1 then nvl(femenimo,0) else 0 end par_fem,
+                    case est.id_nivel_educativo when 1 then nvl(masculino,0) else 0 end par_mas,
+                    case est.id_nivel_educativo when 10 then nvl(femenimo,0) else 0 end grado_1_fem,
+                    case est.id_nivel_educativo when 10 then nvl(masculino,0) else 0 end grado_1_mas,
+                    case est.id_nivel_educativo when 11 then nvl(femenimo,0) else 0 end grado_2_fem,
+                    case est.id_nivel_educativo when 11 then nvl(masculino,0) else 0 end grado_2_mas,
+                    case est.id_nivel_educativo when 12 then nvl(femenimo,0) else 0 end grado_3_fem,
+                    case est.id_nivel_educativo when 12 then nvl(masculino,0) else 0 end grado_3_mas,
+                    case est.id_nivel_educativo when 13 then nvl(femenimo,0) else 0 end grado_4_fem,
+                    case est.id_nivel_educativo when 13 then nvl(masculino,0) else 0 end grado_4_mas,
+                    case est.id_nivel_educativo when 14 then nvl(femenimo,0) else 0 end grado_5_fem,
+                    case est.id_nivel_educativo when 14 then nvl(masculino,0) else 0 end grado_5_mas,
+                    case est.id_nivel_educativo when 15 then nvl(femenimo,0) else 0 end grado_6_fem,
+                    case est.id_nivel_educativo when 15 then nvl(masculino,0) else 0 end grado_6_mas,
+                    case est.id_nivel_educativo when 7 then nvl(femenimo,0) else 0 end grado_7_fem,
+                    case est.id_nivel_educativo when 7 then nvl(masculino,0) else 0 end grado_7_mas,
+                    case est.id_nivel_educativo when 8 then nvl(femenimo,0) else 0 end grado_8_fem,
+                    case est.id_nivel_educativo when 8 then nvl(masculino,0) else 0 end grado_8_mas,
+                    case est.id_nivel_educativo when 9 then nvl(femenimo,0) else 0 end grado_9_fem,
+                    case est.id_nivel_educativo when 9 then nvl(masculino,0) else 0 end grado_9_mas,
+                    case est.id_nivel_educativo when 16 then nvl(femenimo,0) else 0 end media_1_fem,
+                    case est.id_nivel_educativo when 16 then nvl(masculino,0) else 0 end media_1_mas,
+                    case est.id_nivel_educativo when 17 then nvl(femenimo,0) else 0 end media_2_fem,
+                    case est.id_nivel_educativo when 17 then nvl(masculino,0) else 0 end media_2_mas,
+                    case est.id_nivel_educativo when 18 then nvl(femenimo,0) else 0 end media_3_fem,
+                    case est.id_nivel_educativo when 18 then nvl(masculino,0) else 0 end media_3_mas
                 from
-                    contratos_ordenes_compras con
-                    inner join resoluciones_adjudicativas res   on res.id_resolucion_adj = con.id_resolucion_adj
-                    inner join participantes par                on res.id_participante = par.id_participante
-                    inner join empresa emp                      on par.id_empresa = emp.id_empresa
-                    inner join persona per                      on per.id_persona = emp.id_persona
-                    inner join detalle_ofertas det              on par.id_participante = det.id_participante
-                    inner join oferta_bienes_servicios ofe      on par.id_oferta = ofe.id_oferta
-                    inner join detalle_proceso_adq dpa          on ofe.id_det_proceso_adq = dpa.id_det_proceso_adq
-                    inner join rubros_amostrar_interes rub      on rub.id_rubro_interes = dpa.id_rubro_adq
-                    inner join vw_catalogo_entidad_educativa vw on vw.codigo_entidad = ofe.codigo_entidad
-                    inner join organizacion_educativa org       on org.codigo_entidad = ofe.codigo_entidad
-                    inner join departamento dep                 on vw.codigo_departamento = dep.codigo_departamento
-                    inner join municipio mun                    on vw.codigo_municipio = mun.codigo_municipio and dep.codigo_departamento = mun.codigo_departamento
-                where 
-                    res.estado_eliminacion = 0 and
-                    par.estado_eliminacion = 0 and
-                    det.estado_eliminacion = 0 and
-                    ofe.estado_eliminacion = 0 and
-                    res.id_estado_reserva = 2 and
-                    ofe.id_det_proceso_adq in ?1 and
-                    org.firma_contrato = 1
-                group by
-                    dep.codigo_departamento,
-                    dep.nombre_departamento,
-                    mun.codigo_municipio,
-                    mun.nombre_municipio,
-                    vw.codigo_entidad,
-                    vw.nombre,
-                    con.miembro_firma,
-                    org.tel_director,
-                    org.tel_director2,
-                    rub.nombre_corto,
-                    emp.numero_nit,
-                    emp.razon_social,
-                    per.numero_celular,
-                    per.numero_telefono,
-                    per.num_telefono2,
-                    per.num_telefono3
-                order by 
-                    dep.codigo_departamento, 
-                    vw.codigo_entidad
+                    estadistica_censo est
+                    inner join nivel_educativo niv      on niv.id_nivel_educativo = est.id_nivel_educativo
+                    inner join proceso_adquisicion pro  on pro.id_proceso_adq = est.id_proceso_adq
+                where
+                    pro.id_anho = ?1 and estado_eliminacion = 0)
+                group by codigo_entidad
             ]]>
         </query>
-    </named-native-query-->
+    </named-native-query>
 </entity-mappings>
