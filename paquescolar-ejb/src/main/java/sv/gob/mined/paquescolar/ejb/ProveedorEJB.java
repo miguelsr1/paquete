@@ -52,6 +52,7 @@ import sv.gob.mined.paquescolar.model.TipoPersoneria;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.DetalleAdjudicacionEmpDto;
 import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.CantidadPorNivelDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleContratacionPorItemDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.PrecioReferenciaEmpresaDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ProveedorDisponibleDto;
@@ -1462,8 +1463,8 @@ public class ProveedorEJB {
         return q.getResultList();
     }
 
-    public List<DetalleContratacionPorItemDto> getLstContratacionPorItemByIdAnho(Integer idAnho) {
-        Query q = em.createNamedQuery("Contratacion.Matricula", DetalleContratacionPorItemDto.class);
+    public List<CantidadPorNivelDto> getLstContratacionPorItemByIdAnho(Integer idAnho) {
+        Query q = em.createNamedQuery("Contratacion.Matricula", CantidadPorNivelDto.class);
         q.setParameter(1, idAnho);
         return q.getResultList();
     }

@@ -46,7 +46,7 @@ public class EnviarCorreoMB implements Serializable {
 
     @EJB
     private LeerBoletasEJB leerBoletasEJB;
-    
+
     private SimpleDateFormat sdf = new SimpleDateFormat("MM_yyyy");
 
     @EJB
@@ -59,11 +59,6 @@ public class EnviarCorreoMB implements Serializable {
         //mesAnho = "12_2019";
         mes = sdf.format(new Date()).split("_")[0];
         anho = sdf.format(new Date()).split("_")[1];
-        
-        Properties info = chargeEmailsProperties("cuenta_office365");
-        clave = info.getProperty("clave_".concat(codDepa));
-        
-        System.out.println(mes + " - " + anho);
     }
 
     public String getMes() {
@@ -141,7 +136,6 @@ public class EnviarCorreoMB implements Serializable {
     public void setClave(String clave) {
         this.clave = clave;
     }*/
-
     public Properties chargeEmailsProperties(String nombre) {
         Properties info = null;
         try {
@@ -169,15 +163,25 @@ public class EnviarCorreoMB implements Serializable {
     }
 
     public void separacionDeBoletas() {
+        Properties info = chargeEmailsProperties("cuenta_office365");
+        clave = info.getProperty("clave_".concat(codDepa));
+
+        System.out.println(mes + " - " + anho + " - " + clave);
+        
         mesAnho = mes.concat("_").concat(anho);
         sbf.separacion(mesAnho, codDepa);
     }
 
     public void separacionDeBoletasTotal() {
-        sbf.separacionTotal(mesAnho);
+        //sbf.separacionTotal(mesAnho);
     }
 
     public void enviarUnSoloCorreo() {
+        Properties info = chargeEmailsProperties("cuenta_office365");
+        clave = info.getProperty("clave_".concat(codDepa));
+
+        System.out.println(mes + " - " + anho + " - " + clave);
+        
         mesAnho = mes.concat("_").concat(anho);
         leerBoletasEJB.enviarUnSoloCorreo(codDepa, mesAnho, getMailSession(), usuario);
     }

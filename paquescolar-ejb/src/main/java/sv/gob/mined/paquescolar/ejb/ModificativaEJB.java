@@ -412,7 +412,7 @@ public class ModificativaEJB {
 
     private HashMap<String, Object> existeDisponibilidadesCE(TechoRubroEntEdu techoCE, BigDecimal valorReserva, HashMap<String, Object> param) {
 
-        if (techoCE.getMontoDisponible().intValue() - valorReserva.intValue() < 0) {
+        if (techoCE.getMontoDisponible().intValue() + valorReserva.intValue() < 0) {
             param.put("error", "El centro escolar " + techoCE.getCodigoEntidad() + " no posee disponibilidad presupuestaria!\n"
                     + "Monto Disponible: " + techoCE.getMontoDisponible() + " Monto Adjudicado: " + valorReserva);
         } else {
@@ -440,9 +440,9 @@ public class ModificativaEJB {
     }
 
     public List getSaldoParticipante(ResolucionesModificativas resModif) {
-        String sql = String.format("SELECT NVL(FN_GETSALDOPROVEEDOR(%d, %d), 0) FROM DUAL",
+        String sql = String.format("SELECT NVL(FN_GETSALDOPROVEEDOR(%d, %d, %d), 0) FROM DUAL",
                 resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho().intValue(),
-                //resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq() == null ? resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq() : resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq().getIdProcesoAdq(),
+                resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq(),
                 resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdEmpresa().intValue());
 
         Query q = em.createNativeQuery(sql);

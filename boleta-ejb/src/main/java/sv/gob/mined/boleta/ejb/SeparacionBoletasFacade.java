@@ -15,10 +15,12 @@ import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
@@ -28,6 +30,7 @@ import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import sv.gob.mined.boleta.model.CorreoDocente;
 
 /**
  *
@@ -40,10 +43,14 @@ public class SeparacionBoletasFacade extends Exception {
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("parametros");
 
+    @EJB
+    public PersistenciaFacade persistenciaFacade;
+
     @Asynchronous
     public void separacion(String mesAnho, String codDepa) {
         File carpetaRoot = new File(RESOURCE_BUNDLE.getString("path_archivo"));
         SimpleDateFormat sdf = new SimpleDateFormat("HHmmssSSS");
+        int TIPO_ARCHIVO;
 
         for (File carpetaDepa : carpetaRoot.listFiles()) {
             if (carpetaDepa.isDirectory() && carpetaDepa.getName().equals(codDepa)) {
@@ -54,8 +61,18 @@ public class SeparacionBoletasFacade extends Exception {
                             for (File archivoBoleta : carpetaPorFecha.listFiles()) {
                                 if (archivoBoleta.isFile() && (archivoBoleta.getName().toUpperCase().contains("PDF"))) {
 
+                                    //verificar el nombre del archivo
+                                    switch (archivoBoleta.getName().toLowerCase()) {
+                                        case "renta":
+                                            TIPO_ARCHIVO = 1;
+                                            break;
+                                        default:
+                                            TIPO_ARCHIVO = 2;
+                                            break;
+                                    }
+
                                     //consolidar boletas por docente
-                                    splitPages(archivoBoleta, codDepa, mesAnho, RESOURCE_BUNDLE.getString("path_archivo"), sdf);
+                                    splitPages(archivoBoleta, codDepa, mesAnho, RESOURCE_BUNDLE.getString("path_archivo"), sdf, TIPO_ARCHIVO);
 
                                     File folderArchivoOriginal = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator + "archivo_original" + File.separator);
                                     if (!folderArchivoOriginal.exists()) {
@@ -80,7 +97,7 @@ public class SeparacionBoletasFacade extends Exception {
         }
     }
 
-    @Asynchronous
+    /*@Asynchronous
     public void separacionTotal(String mesAnho) {
         File carpetaRoot = new File(RESOURCE_BUNDLE.getString("path_archivo"));
         SimpleDateFormat sdf = new SimpleDateFormat("HHmmsszzz");
@@ -110,11 +127,10 @@ public class SeparacionBoletasFacade extends Exception {
             }
             Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.INFO, "SEPARACION TOTAL " + carpetaDepa.getName() + " - Hora de fin + {0}", new Date());
         }
-    }
-
+    }*/
     private void unirBoletasUnSolaArchivo(File carpetaPorFecha) throws FileNotFoundException, IOException {
         File[] lstPDf = carpetaPorFecha.listFiles();
-        Arrays.sort(lstPDf) ;
+        Arrays.sort(lstPDf);
         for (File carpetaDocente : lstPDf) {
             if (carpetaDocente.isDirectory() && !carpetaDocente.getName().equals("procesado") && !carpetaDocente.getName().equals("archivo_original")) {
                 PDFMergerUtility PDFmerger = new PDFMergerUtility();
@@ -134,11 +150,26 @@ public class SeparacionBoletasFacade extends Exception {
 
     }
 
-    private void splitPages(File file, String codDepa, String mesAnho, String path, SimpleDateFormat sdf) {
+    /**
+     *
+     * @param file
+     * @param codDepa
+     * @param mesAnho
+     * @param path
+     * @param sdf
+     * @param tipoArchivo
+     */
+    private void splitPages(File file, String codDepa, String mesAnho, String path, SimpleDateFormat sdf, int tipoArchivo) {
         PDDocument document = null;
         int interacion;
         int contadorDeCortes;
         int siguienteInteracion = 0;
+
+        List<CorreoDocente> lstCorreo;
+
+        if (tipoArchivo == 1) {
+            lstCorreo = persistenciaFacade.getLstCorreoDocentes();
+        }
 
         try {
             document = PDDocument.load(file);

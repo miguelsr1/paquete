@@ -18,7 +18,9 @@ import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.RptExcel;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.CantidadPorNivelDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleContratacionPorItemDto;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto;
 
 /**
  *
@@ -34,6 +36,7 @@ public class ReportesWebController extends RecuperarProcesoUtil implements Seria
     private BigDecimal montoTotal;
     private BigDecimal cantidadTotal;
     private List<VwRptProveedoresContratadosDto> lstProveedoresHaciendaDto = new ArrayList<>();
+    private List<CantidadPorNivelDto> lstCantidadPorNivelDtos = new ArrayList();
 
     @EJB
     private ProveedorEJB proveedorEJB;
@@ -81,6 +84,18 @@ public class ReportesWebController extends RecuperarProcesoUtil implements Seria
             cantidadTotal = cantidadTotal.add(vwRptProveedoresHaciendaDto.getCantidadContrato());
             montoTotal = montoTotal.add((vwRptProveedoresHaciendaDto.getMontoContrato()));
         }
+    }
+    
+    public void generarRptMatricula() {
+        lstCantidadPorNivelDtos =  proveedorEJB.getLstContratacionPorItemByIdAnho(getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getIdAnho().intValue());
+    }
+
+    public List<CantidadPorNivelDto> getLstCantidadPorNivelDtos() {
+        return lstCantidadPorNivelDtos;
+    }
+
+    public void setLstCantidadPorNivelDtos(List<CantidadPorNivelDto> lstCantidadPorNivelDtos) {
+        this.lstCantidadPorNivelDtos = lstCantidadPorNivelDtos;
     }
 
     public BigDecimal getMontoTotal() {

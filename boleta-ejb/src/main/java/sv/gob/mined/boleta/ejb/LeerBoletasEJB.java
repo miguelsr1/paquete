@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +16,6 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -332,7 +330,6 @@ public class LeerBoletasEJB {
         String email;
         
         List<CorreoDocente> lstCorreo = persistenciaFacade.getLstCorreoDocentes();
-        Stream<CorreoDocente> strCorreo = lstCorreo.stream().parallel();
 
         File folderError = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator + "errores" + File.separator);
         if (!folderError.exists()) {
@@ -346,10 +343,12 @@ public class LeerBoletasEJB {
         if (!folderNoEncontrado.exists()) {
             folderNoEncontrado.mkdir();
         } 
+        
+        persistenciaFacade.getPkCodigoGeneradoByCodDepaAndMesAnho(codDepa, mesAnho);
 
         for (File boleta : carpeta.listFiles()) {
             if (boleta.isFile() && boleta.getName().toUpperCase().contains("PDF")) {
-                email = getCorreoByNip(boleta.getName().toUpperCase().replace(".PDF", ""), strCorreo);
+                email = getCorreoByNip(boleta.getName().toUpperCase().replace(".PDF", ""), lstCorreo);
                 
                 if (email != null) {
                     mensaje = MessageFormat.format(RESOURCE_BUNDLE.getString("mail.message"), nombreMesAnho);
@@ -387,8 +386,8 @@ public class LeerBoletasEJB {
         eMailEJB.enviarMailDeConfirmacion("Envio de boletas de pago", sb.toString(), usuario, mailSession);
     }
     
-    private String getCorreoByNip(String nip, Stream<CorreoDocente> strCorreo){
-        Optional<CorreoDocente> correoDoc = strCorreo.
+    private String getCorreoByNip(String nip, List<CorreoDocente> lstCorreo){
+        Optional<CorreoDocente> correoDoc = lstCorreo.stream().parallel().
                 filter(cDoc -> cDoc.getNip().equals(nip)).findAny();
         if (correoDoc.isPresent()) {
             return correoDoc.get().getCorreoElectronico();
