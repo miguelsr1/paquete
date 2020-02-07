@@ -163,4 +163,9 @@ public class PersistenciaFacade {
             System.out.println("vacio");
         }
     }
+    
+    public List<CorreoDocente> getLstCorreos() {
+        Query q = em.createQuery("SELECT c FROM CorreoDocente c", CorreoDocente.class);
+        return q.getResultList();
+    }
 }

@@ -9,11 +9,15 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -23,6 +27,7 @@ import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import sv.gob.mined.boleta.model.CodigoGenerado;
+import sv.gob.mined.boleta.model.CorreoDocente;
 import sv.gob.mined.utils.jsf.JsfUtil;
 
 @Singleton
@@ -321,8 +326,13 @@ public class LeerBoletasEJB {
         String nombreMesAnho = getNombreMes(mesAnho.split("_")[0]).concat(" de ").concat(mesAnho.split("_")[1]);
         String pathRoot = RESOURCE_BUNDLE.getString("path_archivo");
         File carpeta = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator);
-        Properties info = chargeEmailsProperties("emails0212");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
+        //Properties info = chargeEmailsProperties("emails0212");
         Boolean errorEnvioEmail = false;
+        String email;
+        
+        List<CorreoDocente> lstCorreo = persistenciaFacade.getLstCorreoDocentes();
+        Stream<CorreoDocente> strCorreo = lstCorreo.stream().parallel();
 
         File folderError = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator + "errores" + File.separator);
         if (!folderError.exists()) {
@@ -335,16 +345,13 @@ public class LeerBoletasEJB {
         File folderNoEncontrado = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator + "no_encontrado" + File.separator);
         if (!folderNoEncontrado.exists()) {
             folderNoEncontrado.mkdir();
-        }
-
-        Integer idCodigoGenerado = persistenciaFacade.getPkCodigoGeneradoByCodDepaAndMesAnho(codDepa, mesAnho);
-
-         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
+        } 
 
         for (File boleta : carpeta.listFiles()) {
             if (boleta.isFile() && boleta.getName().toUpperCase().contains("PDF")) {
-                if (info.containsKey(boleta.getName().toUpperCase().replace(".PDF", ""))) {
-                    String email = info.getProperty(boleta.getName().toUpperCase().replace(".PDF", ""));
+                email = getCorreoByNip(boleta.getName().toUpperCase().replace(".PDF", ""), strCorreo);
+                
+                if (email != null) {
                     mensaje = MessageFormat.format(RESOURCE_BUNDLE.getString("mail.message"), nombreMesAnho);
 
                     errorEnvioEmail = eMailEJB.enviarMail(email, usuario, mensaje, nombreMesAnho, boleta, mailSession);
@@ -378,6 +385,16 @@ public class LeerBoletasEJB {
 
 
         eMailEJB.enviarMailDeConfirmacion("Envio de boletas de pago", sb.toString(), usuario, mailSession);
+    }
+    
+    private String getCorreoByNip(String nip, Stream<CorreoDocente> strCorreo){
+        Optional<CorreoDocente> correoDoc = strCorreo.
+                filter(cDoc -> cDoc.getNip().equals(nip)).findAny();
+        if (correoDoc.isPresent()) {
+            return correoDoc.get().getCorreoElectronico();
+        } else {
+            return null;
+        }
     }
 
     private String getNombreMes(String mes) {
