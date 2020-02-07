@@ -60,6 +60,9 @@ public class EnviarCorreoMB implements Serializable {
         mes = sdf.format(new Date()).split("_")[0];
         anho = sdf.format(new Date()).split("_")[1];
         
+        Properties info = chargeEmailsProperties("cuenta_office365");
+        clave = info.getProperty("clave_".concat(codDepa));
+        
         System.out.println(mes + " - " + anho);
     }
 
@@ -131,13 +134,13 @@ public class EnviarCorreoMB implements Serializable {
         this.usuario = usuario;
     }
 
-    public String getClave() {
+    /*public String getClave() {
         return clave;
     }
 
     public void setClave(String clave) {
         this.clave = clave;
-    }
+    }*/
 
     public Properties chargeEmailsProperties(String nombre) {
         Properties info = null;
