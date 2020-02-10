@@ -428,16 +428,22 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
     public void editSeguimiento() {
         Boolean existe;
         if (contratoSelecionado.getIdContrato() != null) {
-            existe = validarSiSeguimientoExiste();
-            if (!existe) {
-                crearSeguimiento();
-            }
+            existe = recepcionEJB.existeModificativaByIdContrato(contratoSelecionado.getIdContrato());
 
             if (existe) {
-                contratoSelecionado = new VwBusquedaContratos();
-                JsfUtil.mensajeAlerta("Este contrato ya esta en seguimiento");
+                JsfUtil.mensajeAlerta("Este contrato tiene una modificativa en estado DIGITADA, debe de APLICAR la modificativa antes de registrar las entregas.");
             } else {
-                PrimeFaces.current().dialog().closeDynamic(contratoSelecionado);
+                existe = validarSiSeguimientoExiste();
+                if (!existe) {
+                    crearSeguimiento();
+                }
+
+                if (existe) {
+                    contratoSelecionado = new VwBusquedaContratos();
+                    JsfUtil.mensajeAlerta("Este contrato ya esta en seguimiento");
+                } else {
+                    PrimeFaces.current().dialog().closeDynamic(contratoSelecionado);
+                }
             }
         }
     }

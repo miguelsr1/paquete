@@ -826,4 +826,10 @@ public class RecepcionEJB {
             return con.getIdResolucionAdj().getIdParticipante().getDetalleOfertasList();
         }
     }
+
+    public Boolean existeModificativaByIdContrato(BigDecimal idContrato) {
+        Query q = em.createQuery("SELECT r FROM ResolucionesModificativas r WHERE r.estadoEliminacion = 0 and r.idEstadoReserva = 1 and r.idResModifPadre is null and r.idContrato.idContrato=:idContrato", ResolucionesModificativas.class);
+        q.setParameter("idContrato", idContrato);
+        return q.getResultList().size() > 0;
+    }
 }

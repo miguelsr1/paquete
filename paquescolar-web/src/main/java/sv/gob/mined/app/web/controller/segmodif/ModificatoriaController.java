@@ -1127,6 +1127,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
             HashMap param = new HashMap();
             param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES) + File.separator);
             param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
+            param.put("pJustificacion", resolucionesModificativas.getJustificacionModificativa());
             if (nombreRpt.contains("rptModProrroga")) {
                 param.put("JUSTIFICACION", resolucionesModificativas.getJustificacionModificativa());
                 param.put("DIAS_PRORROGA", resolucionesModificativas.getDiasProrroga().toString());

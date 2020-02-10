@@ -38,7 +38,7 @@ import sv.gob.mined.boleta.model.CorreoDocente;
  */
 @Stateless
 @LocalBean
-@TransactionManagement(TransactionManagementType.BEAN)
+//@TransactionManagement(TransactionManagementType.BEAN)
 public class SeparacionBoletasFacade extends Exception {
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("parametros");
