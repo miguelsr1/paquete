@@ -42,8 +42,6 @@ public class EnvioDeBoletasFacade {
     @EJB
     private EMailEJB eMailEJB;
     @EJB
-    private BitacoraDeProcesoEJB bitacoraDeProcesoEJB;
-    @EJB
     private PersistenciaFacade persistenciaFacade;
 
     @Asynchronous
@@ -55,7 +53,7 @@ public class EnvioDeBoletasFacade {
         String pathRoot = RESOURCE.getString("path_archivo");
         File carpeta = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator);
         Properties info = chargeEmailsProperties("emails0212");
-        Boolean errorEnvioEmail = false;
+        Boolean errorEnvioEmail;
 
         int boletasEnviadas = 0;
         int docenteNoEncontrados = 0;
@@ -86,7 +84,7 @@ public class EnvioDeBoletasFacade {
                     errorEnvioEmail = eMailEJB.enviarUrlBoleta(remitente, destinatario, mensajeDelCorreo, mailSession, "Boleta de Pago - " + JsfUtil.getNombreMesYAnhoByParam(mesAnho));
 
                     if (!errorEnvioEmail) {
-                        bitacoraDeProcesoEJB.correoNoEnviadoPorErrorGenerado(codDepa, mesAnho, pathRoot, nip);
+                        //bitacoraDeProcesoEJB.correoNoEnviadoPorErrorGenerado(codDepa, mesAnho, pathRoot, nip);
 
                         try {
                             //mover NO enviado
@@ -117,7 +115,7 @@ public class EnvioDeBoletasFacade {
                         }
                     }
                 } else {
-                    bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, pathRoot, nip);
+                    //bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, pathRoot, nip);
 
                     try {
                         //mover NO archivo procesado

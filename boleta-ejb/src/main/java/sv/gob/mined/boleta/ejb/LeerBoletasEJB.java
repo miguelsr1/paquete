@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
-import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.mail.Session;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -28,7 +28,7 @@ import sv.gob.mined.boleta.model.CodigoGenerado;
 import sv.gob.mined.boleta.model.CorreoDocente;
 import sv.gob.mined.utils.jsf.JsfUtil;
 
-@Singleton
+@Stateless
 @LocalBean
 public class LeerBoletasEJB {
 
@@ -36,8 +36,6 @@ public class LeerBoletasEJB {
 
     @EJB
     private EMailEJB eMailEJB;
-    @EJB
-    private BitacoraDeProcesoEJB bitacoraDeProcesoEJB;
     @EJB
     private PersistenciaFacade persistenciaFacade;
 
@@ -132,7 +130,7 @@ public class LeerBoletasEJB {
                             //eMailEJB.enviarMail(code, email, usuario, RESOURCE_BUNDLE.getString("mail.message"), pd, mailSession);
                             boletasEnviadas++;
                         } else {
-                            bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, path, file.getName().concat("::").concat(code));
+                            //bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, path, file.getName().concat("::").concat(code));
                             docenteNoEncontrados++;
                             //Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.WARNING, "No existe este empleado: {0}", code);
                         }
@@ -232,7 +230,7 @@ public class LeerBoletasEJB {
                         //eMailEJB.enviarMail(code, email, usuario, RESOURCE_BUNDLE.getString("mail.message"), pd, mailSession);
                         boletasEnviadas++;
                     } else {
-                        bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, path, file.getName().concat("::").concat(code));
+                        //bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, path, file.getName().concat("::").concat(code));
                         docenteNoEncontrados++;
                         //Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.WARNING, "No existe este empleado: {0}", code);
                     }
@@ -357,14 +355,14 @@ public class LeerBoletasEJB {
 
                     Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.INFO, "{0} - {1}", new Object[]{email, boleta.getName().toUpperCase().replace(".PDF", "")});
                     if (!errorEnvioEmail) {
-                        bitacoraDeProcesoEJB.correoNoEnviadoPorErrorGenerado(codDepa, mesAnho, pathRoot, boleta.getName().toUpperCase().replace(".PDF", ""));
+                        //bitacoraDeProcesoEJB.correoNoEnviadoPorErrorGenerado(codDepa, mesAnho, pathRoot, boleta.getName().toUpperCase().replace(".PDF", ""));
                         moverBoletaAOtraUbicacion(boleta, folderError);
                     } else {
                         //mover archivo procesado
                         moverBoletaAOtraUbicacion(boleta, folderProcesado);
                     }
                 } else {
-                    bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, pathRoot, boleta.getName().toUpperCase().replace(".PDF", ""));
+                    //bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, pathRoot, boleta.getName().toUpperCase().replace(".PDF", ""));
                     moverBoletaAOtraUbicacion(boleta, folderNoEncontrado);
                     Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.WARNING, "No existe este empleado: {0}", boleta.getName().toUpperCase().replace(".PDF", ""));
                 }

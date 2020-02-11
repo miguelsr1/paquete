@@ -154,8 +154,8 @@ public class DocenteController implements Serializable {
 
     public void guardarDocente() {
         FacesContext context = FacesContext.getCurrentInstance();
-        correoDocente.setPrimerNombre(correoDocente.getPrimerNombre().toUpperCase());
-        correoDocente.setPrimerApellido(correoDocente.getPrimerApellido().toUpperCase());
+        correoDocente.setPrimerNombre(correoDocente.getPrimerNombre() != null ? correoDocente.getPrimerNombre().toUpperCase() : null);
+        correoDocente.setPrimerApellido(correoDocente.getPrimerApellido() != null ? correoDocente.getPrimerApellido().toUpperCase() : null);
         correoDocente.setCorreoElectronico(correoSinDominio.concat(getDominioCorreo(idDominio)).toLowerCase());
         int valor = persistenciaFacade.guardarDocente(correoDocente, context.getExternalContext().getSessionMap().get("usuario").toString());
         if (valor == 1) {

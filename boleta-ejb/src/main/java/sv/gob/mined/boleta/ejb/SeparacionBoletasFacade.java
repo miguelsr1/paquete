@@ -13,9 +13,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,14 +25,13 @@ import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import sv.gob.mined.boleta.model.CorreoDocente;
+import sv.gob.mined.boleta.util.Constante;
 
 /**
  *
@@ -60,15 +61,15 @@ public class SeparacionBoletasFacade extends Exception {
                         try {
                             for (File archivoBoleta : carpetaPorFecha.listFiles()) {
                                 if (archivoBoleta.isFile() && (archivoBoleta.getName().toUpperCase().contains("PDF"))) {
+                                    System.out.println("Archivo: " + archivoBoleta.getName());
 
                                     //verificar el nombre del archivo
-                                    switch (archivoBoleta.getName().toLowerCase()) {
-                                        case "renta":
-                                            TIPO_ARCHIVO = 1;
-                                            break;
-                                        default:
-                                            TIPO_ARCHIVO = 2;
-                                            break;
+                                    if (archivoBoleta.getName().toLowerCase().contains("renta")) {
+                                        TIPO_ARCHIVO = Constante.PDF_RENTA;
+                                    } else if (archivoBoleta.getName().toLowerCase().contains("constancia")) {
+                                        TIPO_ARCHIVO = Constante.PDF_CONSTANCIA;
+                                    } else {
+                                        TIPO_ARCHIVO = Constante.PDF_BOLETA_PAGO;
                                     }
 
                                     //consolidar boletas por docente
@@ -97,37 +98,6 @@ public class SeparacionBoletasFacade extends Exception {
         }
     }
 
-    /*@Asynchronous
-    public void separacionTotal(String mesAnho) {
-        File carpetaRoot = new File(RESOURCE_BUNDLE.getString("path_archivo"));
-        SimpleDateFormat sdf = new SimpleDateFormat("HHmmsszzz");
-
-        for (File carpetaDepa : carpetaRoot.listFiles()) {
-            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.INFO, "SEPARACION TOTAL " + carpetaDepa.getName() + " - Hora de inicio + {0}", new Date());
-            if (carpetaDepa.isDirectory()) {
-                for (File carpetaPorFecha : carpetaDepa.listFiles()) {
-                    if (carpetaPorFecha.isDirectory() && carpetaPorFecha.getName().equals(mesAnho)) {
-                        try {
-                            for (File archivoBoleta : carpetaPorFecha.listFiles()) {
-                                if (archivoBoleta.isFile() && (archivoBoleta.getName().toUpperCase().contains("PDF"))) {
-                                    //consolidar boletas por docente
-                                    splitPages(archivoBoleta, carpetaDepa.getName(), mesAnho, RESOURCE_BUNDLE.getString("path_archivo"), sdf);
-                                }
-                            }
-                            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.INFO, "Unificación de boletas - Hora de fin + {0}", new Date());
-                            //unificar boletas en un solo archivo por docente
-                            unirBoletasUnSolaArchivo(carpetaPorFecha);
-                        } catch (IOException ex) {
-                            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Mensaje: {0}", ex.getMessage());
-                            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Causa: {0}", ex.getCause());
-                            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "Clase: {0}", ex.getClass().getName());
-                        }
-                    }
-                }
-            }
-            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.INFO, "SEPARACION TOTAL " + carpetaDepa.getName() + " - Hora de fin + {0}", new Date());
-        }
-    }*/
     private void unirBoletasUnSolaArchivo(File carpetaPorFecha) throws FileNotFoundException, IOException {
         File[] lstPDf = carpetaPorFecha.listFiles();
         Arrays.sort(lstPDf);
@@ -161,11 +131,17 @@ public class SeparacionBoletasFacade extends Exception {
      */
     private void splitPages(File file, String codDepa, String mesAnho, String path, SimpleDateFormat sdf, int tipoArchivo) {
         PDDocument document = null;
-        int interacion;
-        int contadorDeCortes;
+
+        int cont = 0;
+        int interacion = 0;
+        int indexPosicion = 0;
+        int contadorDeCortes = 0;
         int siguienteInteracion = 0;
 
-        List<CorreoDocente> lstCorreo;
+        String nipTemp = "";
+        String cadenaDeBusqueda = "";
+
+        List<CorreoDocente> lstCorreo = new ArrayList();
 
         if (tipoArchivo == 1) {
             lstCorreo = persistenciaFacade.getLstCorreoDocentes();
@@ -173,7 +149,6 @@ public class SeparacionBoletasFacade extends Exception {
 
         try {
             document = PDDocument.load(file);
-
             Splitter splitter = new Splitter();
             splitter.setStartPage(1);
 
@@ -187,25 +162,101 @@ public class SeparacionBoletasFacade extends Exception {
                 interacion = 1;
             }
 
+            switch (tipoArchivo) {
+                case Constante.PDF_RENTA:
+                    cadenaDeBusqueda = "DURANTE EL PERIODO";
+                    indexPosicion = 15;
+                    break;
+                case Constante.PDF_CONSTANCIA:
+                    cadenaDeBusqueda = " en mi";
+                    indexPosicion = 7;
+                    break;
+                default:
+                    cadenaDeBusqueda = "         )";
+                    indexPosicion = 15;
+                    break;
+            }
+
             do {
                 interacion--;
+
+                cont = 0;
+
                 for (PDDocument pd : splitter.split(document)) {
                     String codTemp = "";
+
                     try {
-                        codTemp = getCodigoDocente(pd, "         )", 0, 15, file.getName());
-                        //obtener codigo del empleado de la boleta
-                        String codigo = codTemp.substring(8);
+                        codTemp = getCodigoDocente(pd, cadenaDeBusqueda, 0, indexPosicion, file.getName(), nipTemp);
 
-                        if (!codigo.isEmpty()) {
-                            //crear archivo con el codigo
-                            File carpetaCodigo = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + codigo);
-                            if (!carpetaCodigo.exists()) {
-                                carpetaCodigo.mkdir();
-                            }
+                        switch (tipoArchivo) {
+                            case Constante.PDF_RENTA:
+                            case Constante.PDF_CONSTANCIA:
+                                if (tipoArchivo == Constante.PDF_CONSTANCIA) {
 
-                            //crear archivo pdf
-                            pd.save(path + File.separator + codDepa + File.separator + mesAnho + File.separator + codigo + File.separator + sdf.format(new Date()) + ".pdf");
+                                } else {
+                                    codTemp = codTemp.substring(0, 4).concat("-").
+                                            concat(codTemp.substring(4, 10)).concat("-").
+                                            concat(codTemp.substring(10, 13)).concat("-").
+                                            concat(codTemp.substring(13, 14));
+                                    codTemp = getNipByNit(codTemp, lstCorreo);
+                                }
+
+                                //se encontro el NIP
+                                if (codTemp != null && !codTemp.isEmpty() && !codTemp.equals("DOCENTE_SIN_NIP")) {
+                                    //Si es la primera iteración, se hace respalda el NIP encontrado para futuras compraciones
+                                    if (nipTemp.isEmpty()) {
+                                        nipTemp = codTemp;
+
+                                        File carpetaCodigo = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + nipTemp);
+                                        if (!carpetaCodigo.exists()) {
+                                            carpetaCodigo.mkdir();
+                                        }
+
+                                        pd.save(path + File.separator + codDepa + File.separator + mesAnho + File.separator + nipTemp + File.separator + sdf.format(new Date()) + ".pdf");
+                                        //pdTemporal = pdfClone.getDestination();
+                                    } else {//Se compara el NIP actual con el NIP bandera
+                                        if (nipTemp.equals(codTemp)) {
+                                            //El NIP es igual al NIP bandera, se agrega esta hoja al listado que se esta generando
+                                        } else {
+                                            //El NIP cambio, por lo tanto esta es una nueva hoja, se debe de mandar a persistir el listado 
+                                            //del NIP anterior.
+                                            nipTemp = codTemp;
+
+                                            File carpetaCodigo = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + nipTemp);
+                                            if (!carpetaCodigo.exists()) {
+                                                carpetaCodigo.mkdir();
+                                            }
+                                            //se limpia el listado y se agrega la hora actual
+                                        }
+                                        pd.save(path + File.separator + codDepa + File.separator + mesAnho + File.separator + nipTemp + File.separator + sdf.format(new Date()) + ".pdf");
+                                    }
+                                } else {
+                                    nipTemp = "DOCENTE_SIN_NIP";
+                                    File carpetaCodigo = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + nipTemp);
+                                    if (!carpetaCodigo.exists()) {
+                                        carpetaCodigo.mkdir();
+                                    }
+
+                                    pd.save(path + File.separator + codDepa + File.separator + mesAnho + File.separator + nipTemp + File.separator + sdf.format(new Date()) + ".pdf");
+                                }
+                                break;
+                            default:
+                                //obtener codigo del empleado de la boleta
+                                String codigo = codTemp.substring(8);
+
+                                if (!codigo.isEmpty()) {
+                                    //crear archivo con el codigo
+                                    File carpetaCodigo = new File(path + File.separator + codDepa + File.separator + mesAnho + File.separator + codigo);
+                                    if (!carpetaCodigo.exists()) {
+                                        carpetaCodigo.mkdir();
+                                    }
+
+                                    //crear archivo pdf
+                                    pd.save(path + File.separator + codDepa + File.separator + mesAnho + File.separator + codigo + File.separator + sdf.format(new Date()) + ".pdf");
+                                }
+                                break;
                         }
+
                     } catch (StringIndexOutOfBoundsException e) {
                         Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.SEVERE, "DEPA {0} - Error obteniendo el nip del docente{1}", new Object[]{codDepa, codTemp});
                     }
@@ -241,7 +292,7 @@ public class SeparacionBoletasFacade extends Exception {
         }
     }
 
-    private String getCodigoDocente(PDDocument pDDocument, String strEndIdentifier, int offSet, int back, String nombreArchivo) throws IOException {
+    private String getCodigoDocente(PDDocument pDDocument, String strEndIdentifier, int offSet, int back, String nombreArchivo, String nipOld) throws IOException {
         String returnString = "";
         PDFTextStripper tStripper = new PDFTextStripper();
         tStripper.setStartPage(1);
@@ -249,9 +300,27 @@ public class SeparacionBoletasFacade extends Exception {
         String pdfFileInText = tStripper.getText(pDDocument);
         String strEnd = strEndIdentifier;
         int endInddex = pdfFileInText.indexOf(strEnd) + offSet;
-        int startInddex = endInddex - back;
-        returnString = pdfFileInText.substring(startInddex, endInddex);
+        if (endInddex != -1) {
+            int startInddex = endInddex - back;
+            returnString = pdfFileInText.substring(startInddex, endInddex);
+            if (returnString.contains("_______")) {
+                returnString = "";
+            }
+        } else {
+            returnString = nipOld;
+        }
 
         return returnString;
+    }
+
+    private static String getNipByNit(String nit, List<CorreoDocente> lstCorreo) {
+        Optional<CorreoDocente> correoDoc = lstCorreo.stream().parallel().
+                filter(cDoc -> (cDoc.getNit() != null && cDoc.getNit().equals(nit))).findAny();
+        if (correoDoc.isPresent()) {
+            return correoDoc.get().getNip();
+        } else {
+            Logger.getLogger(SeparacionBoletasFacade.class.getName()).log(Level.INFO, "No esta el nip del NIT: {0}", nit);
+            return "DOCENTE_SIN_NIP";
+        }
     }
 }

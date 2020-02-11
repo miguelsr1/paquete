@@ -8,6 +8,8 @@ package sv.gob.mined.boleta.ejb;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -50,6 +52,7 @@ public class PersistenciaFacade {
             codigoGenerado.setCodigoDepartamento(codDepa);
             codigoGenerado.setFechaInicio(new Date());
             em.persist(codigoGenerado);
+            Logger.getLogger(PersistenciaFacade.class.getName()).log(Level.INFO, codDepa + " - " + mesAnho + "Código Generado: " + codigoGenerado.getIdCodigo());
         } else {
             codigoGenerado = (CodigoGenerado) q.getResultList().get(0);
         }
@@ -87,17 +90,35 @@ public class PersistenciaFacade {
 
         //calcular boletas no procesadas, no enviadas y enviadas
         File folderRoot = new File(pathRoot + File.separator + codigoDepartamento + File.separator + mesAnho + File.separator);
+        int cantidadNoEncontrado = 0;
+        int cantidadErrores = 0;
+        int cantidadProcesado = 0;
         for (File folder : folderRoot.listFiles()) {
             if (folder.isDirectory()) {
                 switch (folder.getName()) {
                     case "no_encontrado":
-                        codigoGenerado.setSinCorreo(folder.listFiles().length);
+                        for (File listFile : folder.listFiles()) {
+                            if (listFile.getName().toUpperCase().contains("PDF")) {
+                                cantidadNoEncontrado += 1;
+                            }
+                        }
+                        codigoGenerado.setSinCorreo(cantidadNoEncontrado);
                         break;
                     case "errores":
-                        codigoGenerado.setError(folder.listFiles().length);
+                        for (File listFile : folder.listFiles()) {
+                            if (listFile.getName().toUpperCase().contains("PDF")) {
+                                cantidadErrores += 1;
+                            }
+                        }
+                        codigoGenerado.setError(cantidadErrores);
                         break;
                     case "procesado":
-                        codigoGenerado.setEnviado(folder.listFiles().length);
+                        for (File listFile : folder.listFiles()) {
+                            if (listFile.getName().toUpperCase().contains("PDF")) {
+                                cantidadProcesado += 1;
+                            }
+                        }
+                        codigoGenerado.setEnviado(cantidadProcesado);
                         break;
                 }
             }
@@ -159,11 +180,11 @@ public class PersistenciaFacade {
     public void updateCorreoByNIP(String nip) {
         Query q = em.createQuery("SELECT c FROM CorreoDocente c WHERE c.nip=:nip", CorreoDocente.class);
         q.setParameter("nip", nip);
-        if(q.getResultList().isEmpty()){
+        if (q.getResultList().isEmpty()) {
             System.out.println("vacio");
         }
     }
-    
+
     public List<CorreoDocente> getLstCorreos() {
         Query q = em.createQuery("SELECT c FROM CorreoDocente c", CorreoDocente.class);
         return q.getResultList();

@@ -5,18 +5,8 @@
  */
 package sv.gob.mined.boleta.ejb;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.ejb.Asynchronous;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 
 /**
  *
@@ -26,7 +16,7 @@ import javax.ejb.TransactionAttributeType;
 @LocalBean
 public class BitacoraDeProcesoEJB {
 
-    @Asynchronous
+    /*@Asynchronous
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void escribirEmpleadoNoEncontrado(String codDepa, String mesAnho, String path, String codigoEmpleado) {
         try {
@@ -40,9 +30,9 @@ public class BitacoraDeProcesoEJB {
         } catch (IOException ex) {
             Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+    }*/
 
-    @Asynchronous
+    /*@Asynchronous
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void correoNoEnviadoPorErrorGenerado(String codDepa, String mesAnho, String path, String codigoEmpleado) {
         try {
@@ -61,5 +51,5 @@ public class BitacoraDeProcesoEJB {
         } catch (IOException ex) {
             Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+    }*/
 }
