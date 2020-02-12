@@ -17,6 +17,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileTime;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -30,6 +31,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import sv.gob.mined.boleta.dto.DatosDto;
@@ -62,6 +64,8 @@ public class BoletaMB implements Serializable {
     private CodigoGenerado codigoGenerado = new CodigoGenerado();
     private List<DatosDto> lstPendientes = new ArrayList();
     private List<DatosDto> lstArchivosOriginales = new ArrayList();
+    private List<String> lstNoEnviados = new ArrayList<>();
+    private List<String> lstErrores = new ArrayList<>();
 
     private UploadedFile file;
 
@@ -100,6 +104,14 @@ public class BoletaMB implements Serializable {
                 Logger.getLogger(BoletaMB.class.getName()).log(Level.SEVERE, "Error haciendo logout", ex);
             }
         }
+    }
+
+    public List<String> getLstNoEnviados() {
+        return lstNoEnviados;
+    }
+
+    public List<String> getLstErrores() {
+        return lstErrores;
     }
 
     public String getFechaInicio() {
@@ -175,21 +187,24 @@ public class BoletaMB implements Serializable {
 
     private void cargarDatosDeArchivos(List<DatosDto> lst, File carpeta) throws IOException {
         if (carpeta.exists()) {
-            for (File listFile : carpeta.listFiles()) {
-                if (listFile.isFile()) {
-                    DatosDto dato = new DatosDto();
+            for (File filePdf : carpeta.listFiles()) {
+                if (filePdf.isFile() && filePdf.getName().toUpperCase().contains("PDF")) {
+                    try {
+                        DatosDto dato = new DatosDto();
 
-                    Path pathFile = listFile.toPath();
-                    FileTime fTime = (FileTime) Files.getAttribute(pathFile, "creationTime");
-                    PDDocument pdc = PDDocument.load(listFile);
+                        Path pathFile = filePdf.toPath();
+                        FileTime fTime = (FileTime) Files.getAttribute(pathFile, "creationTime");
+                        PDDocument pdc = PDDocument.load(filePdf);
 
-                    dato.setFechaCreado(new Date(fTime.toMillis()));
-                    dato.setNombreArchivo(listFile.getName());
-                    dato.setNumeroPaginas(pdc.getNumberOfPages());
+                        dato.setFechaCreado(new Date(fTime.toMillis()));
+                        dato.setNombreArchivo(filePdf.getName());
+                        dato.setNumeroPaginas(pdc.getNumberOfPages());
 
-                    lst.add(dato);
-
-                    pdc.close();
+                        lst.add(dato);
+                        pdc.close();
+                    } catch (java.io.IOException e) {
+                        Logger.getLogger(BoletaMB.class.getName()).log(Level.WARNING, "Error en el archivo: " + filePdf.getName());
+                    }
                 }
             }
         } else {
@@ -229,7 +244,12 @@ public class BoletaMB implements Serializable {
             }
 
             Path folder = Paths.get(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator + file.getFile().getFileName());
-            Path arc = Files.createFile(folder);
+            Path arc;
+            if (folder.toFile().exists()) {
+                arc = folder;
+            } else {
+                arc = Files.createFile(folder);
+            }
 
             try (InputStream input = file.getFile().getInputstream()) {
                 Files.copy(input, arc, StandardCopyOption.REPLACE_EXISTING);
@@ -251,5 +271,29 @@ public class BoletaMB implements Serializable {
 
     public Integer getCantidadDeBoletasEnviadas() {
         return persistenciaFacade.getCantidadDeBoletasEnviadas(codDepa);
+    }
+
+    private List<String> getLst(String nombreCarpeta) {
+        List<String> lst = new ArrayList();
+
+        File carpeta = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator + nombreCarpeta);
+        if (carpeta.exists()) {
+            lst = Arrays.asList(carpeta.list());
+        }
+
+        return lst;
+    }
+
+    public void openDlgNoEviados() {
+        lstNoEnviados = getLst("no_encontrado");
+        lstNoEnviados.replaceAll(s -> s.replace(".pdf", ""));
+
+        PrimeFaces.current().executeScript("PF('dlgNoEnviados').show()");
+    }
+
+    public void openDlgErrores() {
+        lstErrores = getLst("errores");
+        lstErrores.replaceAll(s -> s.replace(".pdf", ""));
+        PrimeFaces.current().executeScript("PF('dlgErrores').show()");
     }
 }

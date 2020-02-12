@@ -93,7 +93,7 @@
                                     <f:convertDateTime pattern="dd/MM/yyyy"/>
                                 </p:outputLabel>
                             </p:column>
-                            <p:column headerText="Num. Boletas" width="50" style="text-align: right;">
+                            <p:column headerText="Num. Pag." width="50" style="text-align: right;">
                                 <p:outputLabel value="#{dato.numeroPaginas}">
                                     <f:convertNumber pattern="#,##0"/>
                                 </p:outputLabel>
@@ -118,12 +118,12 @@
                                 <f:convertDateTime pattern="dd/MM/yyyy  -  HH:mm" />
                             </p:outputLabel>
                             <p:outputLabel value="Número de docentes: "/>
-                            <p:outputLabel value="#{boletaMB.fechaFin}" style="text-align: right;">
+                            <p:outputLabel value="#{boletaMB.codigoGenerado.enviado}" style="text-align: right;">
                                 <f:convertNumber pattern="#,##0"/>
                             </p:outputLabel>
                             <p:outputLabel value="Correos no enviados: "/>
                             <p:outputPanel>
-                                <p:commandLink value="Ver">
+                                <p:commandLink value="Ver" action="#{boletaMB.openDlgErrores()}" update="tblErrores">
                                     <i class="fa fa-eye" aria-hidden="true"></i>
                                 </p:commandLink>
                                 <p:spacer width="10"/>
@@ -133,7 +133,7 @@
                             </p:outputPanel>
                             <p:outputLabel value="Docentes sin correo registrado: "/>
                             <p:outputPanel>
-                                <p:commandLink value="ver">
+                                <p:commandLink value="ver" action="#{boletaMB.openDlgNoEviados()}" update="tblNoEnviados">
                                     <i class="fa fa-eye" aria-hidden="true"></i>
                                 </p:commandLink>
                                 <p:spacer width="10"/>
@@ -145,6 +145,29 @@
                     </div>
                 </div>
             </div>
+
+
+            <p:dialog id="dlgNoEnviados" widgetVar="dlgNoEnviados" header="Listado de NIP sin CORREO" width="500" height="400" modal="true">
+                <p:dataTable id="tblNoEnviados" value="#{boletaMB.lstNoEnviados}" rowIndexVar="rowId" var="nip">
+                    <p:column headerText="#" width="10" style="text-align: center;">
+                        <h:outputText value="#{rowId+1}" />
+                    </p:column>
+                    <p:column headerText="NIP">
+                        <h:outputText value="#{nip}" />
+                    </p:column>
+                </p:dataTable>
+            </p:dialog>
+            
+            <p:dialog id="dlgErrores" widgetVar="dlgErrores" header="Listado de ERROR de envio" width="500" height="400" modal="true">
+                <p:dataTable id="tblErrores" value="#{boletaMB.lstErrores}" rowIndexVar="rowId" var="nip">
+                    <p:column headerText="#" width="10" style="text-align: center;">
+                        <h:outputText value="#{rowId+1}" />
+                    </p:column>
+                    <p:column headerText="NIP">
+                        <h:outputText value="#{nip}" />
+                    </p:column>
+                </p:dataTable>
+            </p:dialog>
         </h:form>
     </ui:define>
 </ui:composition>

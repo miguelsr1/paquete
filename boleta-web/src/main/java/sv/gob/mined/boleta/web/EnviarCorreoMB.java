@@ -172,10 +172,6 @@ public class EnviarCorreoMB implements Serializable {
         sbf.separacion(mesAnho, codDepa);
     }
 
-    public void separacionDeBoletasTotal() {
-        //sbf.separacionTotal(mesAnho);
-    }
-
     public void enviarUnSoloCorreo() {
         Properties info = chargeEmailsProperties("cuenta_office365");
         clave = info.getProperty("clave_".concat(codDepa));

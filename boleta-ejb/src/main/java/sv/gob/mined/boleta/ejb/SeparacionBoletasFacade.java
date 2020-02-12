@@ -15,6 +15,7 @@ import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,7 @@ import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import org.apache.commons.io.comparator.NameFileComparator;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.multipdf.Splitter;
@@ -61,12 +63,10 @@ public class SeparacionBoletasFacade extends Exception {
                         try {
                             for (File archivoBoleta : carpetaPorFecha.listFiles()) {
                                 if (archivoBoleta.isFile() && (archivoBoleta.getName().toUpperCase().contains("PDF"))) {
-                                    System.out.println("Archivo: " + archivoBoleta.getName());
-
                                     //verificar el nombre del archivo
-                                    if (archivoBoleta.getName().toLowerCase().contains("renta")) {
+                                    if (archivoBoleta.getName().toLowerCase().contains("renta"+codDepa)) {
                                         TIPO_ARCHIVO = Constante.PDF_RENTA;
-                                    } else if (archivoBoleta.getName().toLowerCase().contains("constancia")) {
+                                    } else if (archivoBoleta.getName().toLowerCase().contains("constancia"+codDepa)) {
                                         TIPO_ARCHIVO = Constante.PDF_CONSTANCIA;
                                     } else {
                                         TIPO_ARCHIVO = Constante.PDF_BOLETA_PAGO;
@@ -101,14 +101,20 @@ public class SeparacionBoletasFacade extends Exception {
     private void unirBoletasUnSolaArchivo(File carpetaPorFecha) throws FileNotFoundException, IOException {
         File[] lstPDf = carpetaPorFecha.listFiles();
         Arrays.sort(lstPDf);
+
         for (File carpetaDocente : lstPDf) {
             if (carpetaDocente.isDirectory() && !carpetaDocente.getName().equals("procesado") && !carpetaDocente.getName().equals("archivo_original")) {
                 PDFMergerUtility PDFmerger = new PDFMergerUtility();
                 PDFmerger.setDestinationFileName(carpetaPorFecha.getPath() + File.separator + carpetaDocente.getName() + ".pdf");
 
-                for (File boleta : carpetaDocente.listFiles()) {
+                File[] files = carpetaDocente.listFiles();
+
+                Arrays.sort(files, NameFileComparator.NAME_COMPARATOR);
+
+                for (File boleta : files) {
                     PDFmerger.addSource(boleta);
                 }
+
                 PDFmerger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
 
                 for (File boleta : carpetaDocente.listFiles()) {
@@ -118,6 +124,30 @@ public class SeparacionBoletasFacade extends Exception {
             }
         }
 
+    }
+
+    public File[] getFileOrder(File[] files) {
+        Arrays.sort(files, new Comparator<File>() {
+            @Override
+            public int compare(File o1, File o2) {
+                int n1 = extractNumber(o2.getName());
+                int n2 = extractNumber(o1.getName());
+                return n1 - n2;
+            }
+
+            private int extractNumber(String name) {
+                int i = 0;
+                try {
+                    i = Integer.parseInt(name);
+                } catch (NumberFormatException e) {
+                    i = 0; // if filename does not match the format
+                    // then default to 0
+                }
+                return i;
+            }
+        });
+
+        return files;
     }
 
     /**
