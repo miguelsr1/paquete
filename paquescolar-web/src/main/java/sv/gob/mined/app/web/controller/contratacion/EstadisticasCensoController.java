@@ -761,8 +761,15 @@ public class EstadisticasCensoController implements Serializable {
             List<TechoRubroEntEdu> lstTechos = entidadEducativaEJB.getLstTechosByProceso(procesoAdquisicion.getIdProcesoAdq(), codigoEntidad);
 
             techoUni = getTecho(lstTechos, detProAdqUni);
-            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 5 && !procesoAdquisicion.getDescripcionProcesoAdq().contains("SOBREDEMANDA")) {
-                techoUni2 = getTecho(lstTechos, detProAdqUni2);
+            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 5) {
+                for (DetalleProcesoAdq detProcesoAdq : procesoAdquisicion.getDetalleProcesoAdqList()) {
+                    switch (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
+                        case 5:
+                            techoUni2 = getTecho(lstTechos, detProAdqUni2);
+                            break;
+                    }
+                }
+
             }
             techoUti = getTecho(lstTechos, detProAdqUti);
             techoZap = getTecho(lstTechos, detProAdqZap);
@@ -922,6 +929,7 @@ public class EstadisticasCensoController implements Serializable {
 
     public void guardar() {
         Boolean error;
+        Boolean isSegundoUniforme = false;
 
         estaditicaCiclo1.setFemenimo(est1grado.getFemenimo().add(est2grado.getFemenimo()).add(est3grado.getFemenimo()));
         estaditicaCiclo1.setMasculino(est1grado.getMasculino().add(est2grado.getMasculino()).add(est3grado.getMasculino()));
@@ -1034,14 +1042,21 @@ public class EstadisticasCensoController implements Serializable {
             if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() < 6) {//menor a 2018
                 techoUni.setMontoPresupuestado(calcularPresupuesto(1));
             } else {
-                techoUni.setMontoPresupuestado(calcularPresupuesto(4));
-
-                if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 5 && !procesoAdquisicion.getDescripcionProcesoAdq().contains("SOBREDEMANDA")) {
-                    techoUni2.setMontoPresupuestado(calcularPresupuesto(5));
-                    if (techoUni2.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
-                        techoUni2.setMontoDisponible(techoUni2.getMontoPresupuestado());
-                    } else {
-                        techoUni2.setMontoDisponible(techoUni2.getMontoPresupuestado().add(techoUni2.getMontoAdjudicado().negate()));
+                //if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 5) {
+                for (DetalleProcesoAdq detProcesoAdq : procesoAdquisicion.getDetalleProcesoAdqList()) {
+                    switch (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
+                        case 4:
+                            techoUni.setMontoPresupuestado(calcularPresupuesto(4));
+                            break;
+                        case 5:
+                            isSegundoUniforme = true;
+                            techoUni2.setMontoPresupuestado(calcularPresupuesto(5));
+                            if (techoUni2.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
+                                techoUni2.setMontoDisponible(techoUni2.getMontoPresupuestado());
+                            } else {
+                                techoUni2.setMontoDisponible(techoUni2.getMontoPresupuestado().add(techoUni2.getMontoAdjudicado().negate()));
+                            }
+                            break;
                     }
                 }
             }
@@ -1072,14 +1087,19 @@ public class EstadisticasCensoController implements Serializable {
             if (!msjError.replace("Hubo error en los niveles: ", "").isEmpty()) {
                 JsfUtil.mensajeError(msjError);
             }
+
             if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() < 6) {
                 error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUti, techoZap);
             } else if (procesoAdquisicion.getDescripcionProcesoAdq().contains("SOBREDEMANDA")) {
-                error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUti, techoZap);
+                if (isSegundoUniforme) {
+                    error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUni2, techoUti, techoZap);
+                } else {
+                    error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUti, techoZap);
+                }
             } else {
                 error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUni2, techoUti, techoZap);
             }
-
+            
             if (error) {
                 JsfUtil.mensajeError("No se ha podido crear el presupuesto del C.E.");
             }
