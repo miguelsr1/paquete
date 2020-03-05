@@ -48,12 +48,18 @@ import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 public class EstadisticasCensoController implements Serializable {
 
     private String codigoEntidad;
+    private String nombre;
+    private String telefono1;
+    private String telefono2;
+    private String numeroDui;
+
     private Boolean deshabilitado = true;
     private Boolean isProcesoAdq = true;
     private Boolean uniformes = true;
     private Boolean utiles = true;
     private Boolean zapatos = true;
     private Boolean declaracion = true;
+    private Boolean editDirector = false;
     private BigInteger totalAlumnosMas = BigInteger.ZERO;
     private BigInteger totalAlumnosFem = BigInteger.ZERO;
     private BigInteger totalMatricula = BigInteger.ZERO;
@@ -158,6 +164,46 @@ public class EstadisticasCensoController implements Serializable {
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getTelefono1() {
+        return telefono1;
+    }
+
+    public void setTelefono1(String telefono1) {
+        this.telefono1 = telefono1;
+    }
+
+    public String getTelefono2() {
+        return telefono2;
+    }
+
+    public void setTelefono2(String telefono2) {
+        this.telefono2 = telefono2;
+    }
+
+    public String getNumeroDui() {
+        return numeroDui;
+    }
+
+    public void setNumeroDui(String numeroDui) {
+        this.numeroDui = numeroDui;
+    }
+
+    public Boolean getEditDirector() {
+        return editDirector;
+    }
+
+    public void setEditDirector(Boolean editDirector) {
+        this.editDirector = editDirector;
+    }
+
     public Boolean getDeclaracion() {
         return declaracion;
     }
@@ -726,8 +772,12 @@ public class EstadisticasCensoController implements Serializable {
                     organizacionEducativa.setFechaInsercion(new Date());
                     organizacionEducativa.setFirmaContrato(BigInteger.ONE);
                     organizacionEducativa.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+                } else {
+                    nombre = organizacionEducativa.getNombreMiembro();
+                    telefono1 = organizacionEducativa.getTelDirector();
+                    telefono2 = organizacionEducativa.getTelDirector2();
+                    numeroDui = organizacionEducativa.getNumeroDui();
                 }
-
                 isProcesoAdq = false;
                 entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
 
@@ -1099,7 +1149,7 @@ public class EstadisticasCensoController implements Serializable {
             } else {
                 error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUni2, techoUti, techoZap);
             }
-            
+
             if (error) {
                 JsfUtil.mensajeError("No se ha podido crear el presupuesto del C.E.");
             }
@@ -1107,7 +1157,10 @@ public class EstadisticasCensoController implements Serializable {
             if (organizacionEducativa.getIdOrganizacionEducativa() == null) {
                 entidadEducativaEJB.create(organizacionEducativa);
             } else {
-                entidadEducativaEJB.edit(organizacionEducativa);
+                if (editDirector) {
+                    entidadEducativaEJB.edit(organizacionEducativa);
+                    entidadEducativaEJB.updateNombreDirectorContratoYPago(codigoEntidad, procesoAdquisicion.getIdAnho().getIdAnho().intValue(), nombre);
+                }
             }
         }
     }
@@ -1265,5 +1318,16 @@ public class EstadisticasCensoController implements Serializable {
     public void updateCantidadesCiclo3() {
         getEstaditicaCiclo3().setFemenimo(getEst7grado().getFemenimo().add(getEst8grado().getFemenimo()).add(getEst9grado().getFemenimo()));
         getEstaditicaCiclo3().setMasculino(getEst7grado().getMasculino().add(getEst8grado().getMasculino()).add(getEst9grado().getMasculino()));
+    }
+
+    public void editNombre() {
+        if (editDirector) {
+
+        } else {
+            nombre = organizacionEducativa.getNombreMiembro();
+            telefono1 = organizacionEducativa.getTelDirector();
+            telefono2 = organizacionEducativa.getTelDirector2();
+            numeroDui = organizacionEducativa.getNumeroDui();
+        }
     }
 }

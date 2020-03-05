@@ -548,4 +548,13 @@ public class EntidadEducativaEJB {
 
         return mapItems;
     }
+    
+    public void updateNombreDirectorContratoYPago(String codigoEntidad, Integer idAnho,  String nombreDirector){
+        Query q = em.createNamedQuery("SP_UPD_NOMBRE_DIRECTOR");
+        q.setParameter("P_COD_ENT", codigoEntidad);
+        q.setParameter("P_ID_ANHO", idAnho);
+        q.setParameter("P_NOMBRE", nombreDirector);
+        
+        q.getResultList();
+    }
 }

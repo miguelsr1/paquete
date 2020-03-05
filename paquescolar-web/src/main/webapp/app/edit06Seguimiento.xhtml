@@ -35,14 +35,14 @@
                     <p:panelGrid columns="2" styleClass="ui-panelgrid-blank form-group form-elements"
                                  style="width: 100%; border:0px none; background-color:transparent;"
                                  columnClasses="ui-g-12 ui-md-7,ui-g-12 ui-md-5">
-                        <p:outputPanel>
+                        <p:outputPanel id="pnlContrato">
                             <h4>                                
                                 <i class="fa fa-list-ol verde" aria-hidden="true"></i>
                                 <p:spacer width="10"/>
                                 <h:outputText value="Detalles del contrato"  style="font-style: italic; font-weight: bold;"/>
                                 <p:separator />
                             </h4>
-                            <p:panelGrid id="pnlContrato" columns="2" columnClasses="col4_label,col8" 
+                            <p:panelGrid columns="2" columnClasses="col4_label,col8" 
                                          styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
                                 <h:outputText value="#{bundle['compra.rubroAdq']}: "/>
                                 <p:outputLabel value="#{segFisicoController.rubroAdquisicion}" style="font-weight: bold;"/>
@@ -77,16 +77,12 @@
                                 <p:panelGrid columns="2" columnClasses="col6,col6" 
                                              styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
                                     <h:outputLabel value="#{segFisicoController.esDosUniformes ? 'Fecha Inicio Primera Entrega:':'Fecha:'}"/>
-                                    <p:calendar value="#{segFisicoController.fechaEntregaUno}" pattern="dd/MM/yyyy" size="10" id="fechaUno" locale="es" navigator="true" >
-                                        <p:ajax event="dateSelect" listener="#{segFisicoController.onDateSelect}" />
-                                    </p:calendar>
+                                    <p:calendar value="#{segFisicoController.fechaEntregaUno}" pattern="dd/MM/yyyy" size="10" id="fechaUno" locale="es" navigator="true"  disabled="true"/>
                                 </p:panelGrid>
                                 <p:panelGrid columns="2" columnClasses="col6,col6" rendered="#{segFisicoController.esDosUniformes}"
                                              styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
                                     <h:outputLabel value="Fecha Inicio Segunda Entrega:"/>
-                                    <p:calendar value="#{segFisicoController.fechaEntregaDos}" pattern="dd/MM/yyyy" size="10" id="fechaDos" locale="es" navigator="true" >
-                                        <p:ajax event="dateSelect" listener="#{segFisicoController.onDateSelect}" />
-                                    </p:calendar>
+                                    <p:calendar value="#{segFisicoController.fechaEntregaDos}" pattern="dd/MM/yyyy" size="10" id="fechaDos" locale="es" navigator="true" />
                                 </p:panelGrid>
                             </p:outputPanel>      
                         </p:outputPanel>

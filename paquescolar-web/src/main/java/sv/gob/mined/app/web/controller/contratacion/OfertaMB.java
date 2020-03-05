@@ -580,7 +580,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                 } else {
                     cantidadAlumnos = entidadEducativaEJB.getCantidadTotalByCodEntAndIdProcesoAdq(codigoEntidad, getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq());
 
-                    if (cantidadAlumnos == null) {
+                    if (cantidadAlumnos == null || cantidadAlumnos.intValue() == 0) {
                         JsfUtil.mensajeAlerta("Es necesario registrar las estadisticas para este centro educativo");
                     } else {
                         getSelected().setIdDetProcesoAdq(detalleProceso);

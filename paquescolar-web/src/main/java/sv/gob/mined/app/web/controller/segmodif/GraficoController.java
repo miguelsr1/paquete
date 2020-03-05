@@ -55,6 +55,7 @@ import sv.gob.mined.paquescolar.model.pojos.GraficoTipoEmpresaDTO;
 import sv.gob.mined.paquescolar.model.pojos.ReporteGeneralDTO;
 import sv.gob.mined.paquescolar.model.pojos.ReporteProveedorDTO;
 import sv.gob.mined.paquescolar.model.pojos.recepcion.ReportePorDepartamentoDto;
+import sv.gob.mined.paquescolar.model.pojos.recepcion.RptEntregasGeneralPorDepartamentoDto;
 import sv.gob.mined.paquescolar.model.view.VwSeguimientoRptCentroEscolar;
 
 /**
@@ -86,6 +87,7 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
     private Integer totalmunicipios = 0;
     private Integer uniformes = 0;
     private Integer zapatos = 0;
+    private Integer idDetProcesoAdq = 0;
     private String porcentajeAvance;
     private String tipoEmp1 = "";
     private String totaltipoEmp1 = "";
@@ -125,6 +127,14 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public Integer getIdDetProcesoAdq() {
+        return idDetProcesoAdq;
+    }
+
+    public void setIdDetProcesoAdq(Integer idDetProcesoAdq) {
+        this.idDetProcesoAdq = idDetProcesoAdq;
+    }
+
     public Boolean getMostrarGraficoCentroEducativo() {
         return mostrarGraficoCentroEducativo;
     }
@@ -442,9 +452,9 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
         }
     }
 
-    public void dowloadDepartamentoFile(List<ReportePorDepartamentoDto> lista) {
+    public void dowloadDepartamentoFile(List<RptEntregasGeneralPorDepartamentoDto> lista) {
         HSSFCellStyle style;
-        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/sispaqescolar/reporte/cuadro_seguimiento_departamento.xls")) {
+        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/excel/rptSegEntregaPorDepartamento.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             style = wb1.createCellStyle();
@@ -455,29 +465,23 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
             style.setBorderLeft(BorderStyle.THIN);
 
             s1 = wb1.getSheetAt(0);   //sheet by index
-            Integer B = 1;
-            Integer C = 2;
-            Integer D = 3;
-            Integer E = 4;
-            Integer F = 5;
-            Integer G = 6;
-            Integer H = 7;
-            Integer I = 8;
-            Integer J = 9;
-            Integer K = 10;
-            Integer i = 6;
-            for (ReportePorDepartamentoDto row : lista) {
-                escribirValor(row.getNombreDepartamento(), i, B, style);
-                escribirValor(row.getTotalContratosUtiles().toString(), i, C, style);
-                escribirValor(row.getTotalEntregasUtiles().toString(), i, D, style);
-                escribirValor(row.getTotalContratosZapatos().toString(), i, E, style);
-                escribirValor(row.getTotalEntregasZapatos().toString(), i, F, style);
-                escribirValor(row.getTotalContratosUniforme().toString(), i, G, style);
-                escribirValor(row.getTotalEntregasUniforme().toString(), i, H, style);
-                escribirValor(row.getTotalContratos().toString(), i, I, style);
-                escribirValor(row.getTotalEntregas().toString(), i, J, style);
 
-                escribirNumero(row.getPorcentajeDeAvance(), i, K, style, false);
+            Integer i = 1;
+            for (RptEntregasGeneralPorDepartamentoDto row : lista) {
+                escribirNumero(row.getRownum(), i, 0, style, true);
+                escribirValor(row.getNombreDepartamento(), i, 1, style);
+                escribirValor(row.getNombreMunicipio(), i, 2, style);
+                escribirValor(row.getCodigoEntidad(), i, 3, style);
+                escribirValor(row.getNombre(), i, 4, style);
+                escribirValor(row.getDescripcionRubro(), i, 5, style);
+                escribirValor(row.getNumeroNit(), i, 6, style);
+                escribirValor(row.getRazonSocial(), i, 7, style);
+                escribirNumero(row.getCantidadTotal(), i, 8, style, false);
+                escribirNumero(row.getMontoTotal(), i, 9, style, false);
+                escribirValor(row.getEstadoReserva(), i, 10, style);
+                escribirValor(row.getObservacion(), i, 11, style);
+                escribirValor(row.getFormatoRequerimiento(), i, 12, style);
+                
                 i++;
             }
             generarArchivo(wb1, "REPORTE_DEPARTAMENTO");
@@ -488,6 +492,9 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
 
     private void escribirNumero(String text, Integer row, Integer col, CellStyle style, Boolean entero) {
         HSSFRow hrow = s1.getRow(row);
+        if (hrow == null) {
+            hrow = s1.createRow(row);
+        }
         HSSFCell cell = hrow.getCell(col);
         if (cell == null) {
             hrow.createCell(col);
@@ -496,7 +503,33 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
         cell.setCellType(CellType.NUMERIC);
         style.setDataFormat(entero ? FORMATO_DATA.getFormat("#,##0") : FORMATO_DATA.getFormat("#,##0.00"));
         cell.setCellStyle(style);
-        cell.setCellValue(entero ? Integer.parseInt(text) : Double.parseDouble(text));
+        cell.setCellValue(entero ? Integer.parseInt(text.replace(".00", "")) : Double.parseDouble(text));
+    }
+
+    private void escribirNumero(BigDecimal text, Integer row, Integer col, CellStyle style, Boolean entero) {
+        HSSFRow hrow = s1.getRow(row);
+        if (hrow == null) {
+            hrow = s1.createRow(row);
+        }
+        HSSFCell cell = hrow.getCell(col);
+        if (cell == null) {
+            hrow.createCell(col);
+            cell = hrow.getCell(col);
+        }
+
+        if (text == null) {
+            cell.setCellValue(0);
+        } else {
+            if (entero) {
+                cell.setCellValue(text.intValue());
+            } else {
+                cell.setCellType(CellType.NUMERIC);
+                style.setDataFormat(FORMATO_DATA.getFormat("#,##0.00"));
+                cell.setCellStyle(style);
+
+                cell.setCellValue(text.doubleValue());
+            }
+        }
     }
 
     public void dowloadFile(List<ReporteGeneralDTO> lista) throws FileNotFoundException, IOException, InvalidFormatException, URISyntaxException {
@@ -655,9 +688,7 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
 
     public void generarReportesDepartamentoExcel() {
         if (getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq() != null) {
-            List<ReportePorDepartamentoDto> lista = recepcionEJB.getLstReporteGeneralDepartamento(getRecuperarProceso().getProcesoAdquisicion().getDetalleProcesoAdqList().get(0).getIdDetProcesoAdq(),
-                    getRecuperarProceso().getProcesoAdquisicion().getDetalleProcesoAdqList().get(1).getIdDetProcesoAdq(),
-                    getRecuperarProceso().getProcesoAdquisicion().getDetalleProcesoAdqList().get(2).getIdDetProcesoAdq());
+            List<RptEntregasGeneralPorDepartamentoDto> lista = recepcionEJB.getLstRpteGeneralDepartamento(idDetProcesoAdq);
             dowloadDepartamentoFile(lista);
         }
     }

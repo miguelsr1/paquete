@@ -6,6 +6,7 @@ package sv.gob.mined.paquescolar.ejb;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -183,13 +184,25 @@ public class CreditosEJB {
     }
 
     public List<ContratosOrdenesCompras> getLstContratosDisponiblesCreditos(Empresa empresa, DetalleProcesoAdq proceso) {
+        List<ContratosOrdenesCompras> lst = new ArrayList();
+        
         Query q = em.createQuery("SELECT c FROM ContratosOrdenesCompras c WHERE c.estadoEliminacion=0 and c.idResolucionAdj.estadoEliminacion = 0 and c.idResolucionAdj.idEstadoReserva.idEstadoReserva=2 and c.idResolucionAdj.idParticipante.idEmpresa=:idEmpresa and c.idResolucionAdj.idParticipante.estadoEliminacion=0 and c.idResolucionAdj.idParticipante.idOferta.estadoEliminacion=0 and c.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq=:idProceso and c.idContrato not in (SELECT d.idContrato.idContrato FROM DetalleCredito d WHERE d.estadoEliminacion=0 and d.idCredito.idDetProcesoAdq=:idProceso and d.idCredito.numeroNit=:numeroNit) order by c.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoEntidad", ContratosOrdenesCompras.class);
         q.setParameter("idEmpresa", empresa);
         q.setParameter("idProceso", proceso);
 
         q.setParameter("numeroNit", empresa.getNumeroNit());
 
-        return q.getResultList();
+        lst.addAll(q.getResultList());
+        
+        q = em.createQuery("SELECT r.idContrato FROM ResolucionesModificativas r WHERE r.idEstadoReserva=2 and r.estadoEliminacion=0 and r.idContrato.idResolucionAdj.idParticipante.idEmpresa=:idEmpresa and r.idContrato.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq=:idProceso and r.idContrato.idContrato not in (SELECT d.idContrato.idContrato FROM DetalleCredito d WHERE d.estadoEliminacion=0 and d.idCredito.idDetProcesoAdq=:idProceso and d.idCredito.numeroNit=:numeroNit) ", ContratosOrdenesCompras.class);
+        q.setParameter("idEmpresa", empresa);
+        q.setParameter("idProceso", proceso);
+
+        q.setParameter("numeroNit", empresa.getNumeroNit());
+        
+        lst.addAll(q.getResultList());
+        
+        return lst;
     }
 
     public List<ResumenCreditosDto> generarResumen(BigDecimal idAnho) {

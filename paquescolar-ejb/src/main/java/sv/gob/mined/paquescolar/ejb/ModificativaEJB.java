@@ -54,6 +54,16 @@ public class ModificativaEJB {
     @EJB
     ResolucionAdjudicativaEJB resolucionAdjudicativaEJB;
 
+    public VwBusquedaContratos getVwBusquedaContratoByIdContrato(BigDecimal idContrato) {
+        Query q = em.createNamedQuery("Modificativa.BusquedaContratoById", VwBusquedaContratos.class);
+        q.setParameter(1, idContrato);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (VwBusquedaContratos) q.getSingleResult();
+        }
+    }
+
     public List<VwBusquedaContratos> getLstBusquedaContrato(DetalleProcesoAdq proceso, String codigoEntidad, String codigoDepartamento, String numeroNit, Date fecha1, Date fecha2, String numeroContrato, int op) {
         List<VwBusquedaContratos> lstContratos = new ArrayList();
         String where = "";
@@ -66,7 +76,7 @@ public class ModificativaEJB {
         if (codigoDepartamento != null && !codigoDepartamento.equals("00")) {
             where += (where.isEmpty() ? "" : " AND ").concat(" codigo_departamento='" + codigoDepartamento + "'");
         }
-        if (!numeroNit.isEmpty()) {
+        if (numeroNit != null && !numeroNit.isEmpty()) {
             where += (where.isEmpty() ? "" : " AND ").concat(" numero_nit='" + numeroNit + "'");
         }
         if (fecha1 != null) {
@@ -75,7 +85,7 @@ public class ModificativaEJB {
         if (fecha2 != null) {
             where += (where.isEmpty() ? "" : " AND ").concat(" fecha_insercion < ?");
         }
-        if (!numeroContrato.isEmpty()) {
+        if (numeroContrato != null && !numeroContrato.isEmpty()) {
             where += (where.isEmpty() ? "" : " AND ").concat(" numero_contrato='" + numeroContrato + "'");
         }
 
@@ -262,6 +272,16 @@ public class ModificativaEJB {
         return q.getResultList();
     }
 
+    public VwContratoModificatoria getContratoModificatorioEnDigitacion(BigDecimal idContrato) {
+        Query q = em.createNamedQuery("Modificativa.BusquedaContratoModifDigitada", VwContratoModificatoria.class);
+        q.setParameter(1, idContrato);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (VwContratoModificatoria) q.getResultList().get(0);
+        }
+    }
+
     public Boolean validarCambioEstado(ResolucionesModificativas resAdj, BigDecimal idEstadoReserva) {
         Boolean resultado = false;
         if ((resAdj.getIdEstadoReserva().intValue() == 1 && idEstadoReserva.intValue() == 2) || (resAdj.getIdEstadoReserva().intValue() == 3 && idEstadoReserva.intValue() == 2)) {
@@ -428,10 +448,12 @@ public class ModificativaEJB {
         lista = getSaldoParticipante(resModif);
         if (lista != null && !lista.isEmpty()) {
             disponibilidadProveedor = ((BigDecimal) lista.get(0)).toBigInteger();
-            if (disponibilidadProveedor.compareTo(cantidadAdjudicada) != -1) {
-            } else {
-                param.put("error", "El proveedor no posee disponibilidad para este rubro! Cantidad disponible:" + disponibilidadProveedor.intValue()
-                        + " Cantidad de Adjudicada: " + cantidadAdjudicada.intValue());
+            if (cantidadAdjudicada.intValue() > 0) {
+                if (disponibilidadProveedor.compareTo(cantidadAdjudicada) != -1) {
+                } else {
+                    param.put("error", "El proveedor no posee disponibilidad para este rubro! Cantidad disponible:" + disponibilidadProveedor.intValue()
+                            + " Cantidad de Adjudicada: " + cantidadAdjudicada.intValue());
+                }
             }
         } else {
             param.put("error", "El proveedor no posee disponibilidad para este rubro!");
@@ -703,8 +725,8 @@ public class ModificativaEJB {
         } else {
             ids = "3,4";
         }
-        Query q = em.createQuery("SELECT t FROM TipoModifContrato t WHERE t.idModifContrato in ("+ids+") ORDER by t.idModifContrato", TipoModifContrato.class);
-        
+        Query q = em.createQuery("SELECT t FROM TipoModifContrato t WHERE t.idModifContrato in (" + ids + ") ORDER by t.idModifContrato", TipoModifContrato.class);
+
         return q.getResultList();
     }
 }

@@ -118,4 +118,10 @@ public class UtilEJB {
             return 0;
         }
     }
+    
+    public List<String> getLstCcPagoByCodDepa(String codigoDepartamento){
+        Query q = em.createQuery("SELECT l.cuentaCorreo FROM ListaNotificacionPago l wHERE l.codigoDepartamento=:codDepa and l.activo=1");
+        q.setParameter("codDepa", codigoDepartamento);
+        return q.getResultList();
+    }
 }

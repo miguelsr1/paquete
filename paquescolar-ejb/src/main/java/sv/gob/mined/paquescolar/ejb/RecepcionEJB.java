@@ -28,6 +28,7 @@ import sv.gob.mined.paquescolar.model.pojos.ReporteProveedorDTO;
 import sv.gob.mined.paquescolar.model.pojos.recepcion.DetalleItems;
 import sv.gob.mined.paquescolar.model.pojos.recepcion.ReportePorDepartamentoDto;
 import sv.gob.mined.paquescolar.model.pojos.modificativa.VwBusquedaContratos;
+import sv.gob.mined.paquescolar.model.pojos.recepcion.RptEntregasGeneralPorDepartamentoDto;
 import sv.gob.mined.paquescolar.model.view.VwBusquedaSeguimientos;
 import sv.gob.mined.paquescolar.model.view.VwSeguimientoRptCentroEscolar;
 import sv.gob.mined.paquescolar.util.Constantes;
@@ -288,6 +289,12 @@ public class RecepcionEJB {
         query.setParameter(1, idDetProcesoUniformes);
         query.setParameter(2, idDetProcesoUtiles);
         query.setParameter(3, idDetProcesoZapatos);
+        return query.getResultList();
+    }
+    
+    public List<RptEntregasGeneralPorDepartamentoDto> getLstRpteGeneralDepartamento(Integer idDetProceso) {
+        Query query = em.createNamedQuery("Recepcion.RptGeneralPorDepartamento", RptEntregasGeneralPorDepartamentoDto.class);
+        query.setParameter(1, idDetProceso);
         return query.getResultList();
     }
 
@@ -808,7 +815,7 @@ public class RecepcionEJB {
         List<DetalleOfertas> lstDetalleOferta = new ArrayList<>();
         ContratosOrdenesCompras con = em.find(ContratosOrdenesCompras.class, idContrato);
         if (con.getModificativa() == 1) {
-            Query q = em.createNativeQuery("SELECT * FROM resoluciones_modificativas WHERE id_contrato = ?1 and id_res_modif_padre is null and estado_eliminacion = 0", ResolucionesModificativas.class);
+            Query q = em.createNativeQuery("SELECT * FROM resoluciones_modificativas WHERE id_contrato = ?1 and id_estado_reserva = 2 and estado_eliminacion = 0", ResolucionesModificativas.class);
             q.setParameter(1, idContrato);
             ResolucionesModificativas res = (ResolucionesModificativas) q.getSingleResult();
             for (DetalleModificativa detModif : res.getDetalleModificativaList()) {

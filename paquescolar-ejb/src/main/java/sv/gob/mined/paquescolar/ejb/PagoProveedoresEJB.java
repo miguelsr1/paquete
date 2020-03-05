@@ -22,6 +22,7 @@ import sv.gob.mined.paquescolar.model.DetalleDocPago;
 import sv.gob.mined.paquescolar.model.DetallePlanilla;
 import sv.gob.mined.paquescolar.model.DetallePreCarga;
 import sv.gob.mined.paquescolar.model.DetalleRequerimiento;
+import sv.gob.mined.paquescolar.model.ListaNotificacionPago;
 import sv.gob.mined.paquescolar.model.PlanillaPago;
 import sv.gob.mined.paquescolar.model.PlanillaPagoCheque;
 import sv.gob.mined.paquescolar.model.PreCarga;
@@ -544,7 +545,7 @@ public class PagoProveedoresEJB {
     }
 
     public ResolucionesModificativas getUltimaModificativa(BigDecimal idContrato) {
-        Query q = em.createQuery("SELECT r FROM ResolucionesModificativas r WHERE r.idContrato.idContrato=:idCon and r.idResModifPadre is null ", ResolucionesModificativas.class);
+        Query q = em.createQuery("SELECT r FROM ResolucionesModificativas r WHERE r.idContrato.idContrato=:idCon and r.idEstadoReserva=2", ResolucionesModificativas.class);
         q.setParameter("idCon", idContrato);
         if (q.getResultList().isEmpty()) {
             return null;
@@ -585,4 +586,23 @@ public class PagoProveedoresEJB {
         return q.getResultList();
     }
 
+    public int guardarNotificacionPago(ListaNotificacionPago listaNotificacionPago) {
+        try {
+            if (listaNotificacionPago.getIdLista() == null) {
+                em.persist(listaNotificacionPago);
+                return 1;
+            } else {
+                em.merge(listaNotificacionPago);
+                return 2;
+            }
+        } catch (Exception e) {
+            return 3;
+        }
+    }
+
+    public List<ListaNotificacionPago> getLstNotificacionPagosByCodDepa(String codigoDepartamento) {
+        Query q = em.createQuery("SELECT l FROM ListaNotificacionPago l WHERE l.codigoDepartamento=:codDepa ORDER BY l.idLista", ListaNotificacionPago.class);
+        q.setParameter("codDepa", codigoDepartamento);
+        return q.getResultList();
+    }
 }

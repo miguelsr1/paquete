@@ -20,6 +20,7 @@ import org.primefaces.event.ToggleEvent;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.VarSession;
+import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.ModificativaEJB;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.pojos.modificativa.VwBusquedaContratos;
@@ -52,6 +53,8 @@ public class FiltroContratoModificativaMB extends RecuperarProcesoUtil implement
 
     @EJB
     private ModificativaEJB modificativaEJB;
+    @EJB
+    private EntidadEducativaEJB entidadEducativaEJB;
 
     /**
      * Creates a new instance of FiltroContratoModificativaMB
@@ -183,7 +186,7 @@ public class FiltroContratoModificativaMB extends RecuperarProcesoUtil implement
         } else if (idRubro == null || idRubro.compareTo(BigDecimal.ZERO) == 0) {
             JsfUtil.mensajeAlerta("El campo Rubro de adquisicion es obligatorio");
         } else {
-            lstContratos = modificativaEJB.getLstBusquedaContrato(detalleProceso, codigoEntidad, codigoDepartamento, numeroNit, fecha1, fecha2, numeroContrato, op);
+            lstContratos = modificativaEJB.getLstBusquedaContrato(detalleProceso, codigoEntidad, null, null, null, null, null, op);
             if (lstContratos.isEmpty()) {
                 JsfUtil.mensajeInformacion("No se encontrarón coincidencias.");
             }
@@ -244,6 +247,13 @@ public class FiltroContratoModificativaMB extends RecuperarProcesoUtil implement
         onContratoChosen(event);
         if (vwContratoModificatoria != null) {
             selectContrato();
+        }
+    }
+
+    public void buscarEntidadEducativa() {
+        entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
+        if (entidadEducativa == null) {
+            JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + codigoEntidad);
         }
     }
 }

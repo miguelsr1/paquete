@@ -1875,7 +1875,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
 
                 Reportes.generarReporte(jasperPrintList, "rptReintegro_" + codigoDepartamento.replace(" ", ""));
             } catch (IOException | JRException ex) {
-                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, "Error en el reporte de Reintegro "+reintegroRequerimiento);
+                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, "Error en el reporte de Reintegro " + reintegroRequerimiento);
             }
         }
     }
@@ -2081,8 +2081,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
                         emailTemp = emailUnico;
                     }
 
-                    //eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ",        , getMensajeDeNotificacion(planillaPago, planillaPago.getDetallePlanillaList(), false));
-                    eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", emailTemp, getMensajeDeNotificacion(planillaPago, lstDetallePlanilla, false));
+                    eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", emailTemp, getMensajeDeNotificacion(planillaPago, lstDetallePlanilla, false), codigoDepartamento);
 
                     //Si es planilla tipo credito, enviar notificacion a proveedores incluidos en la planilla de pago
                     if (planillaPago.getIdTipoPlanilla() == 3) {
@@ -2091,8 +2090,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
                                 emailTemp = datosProveDto.getCorreoElectronico();
                             }
                             if (datosProveDto.getCorreoElectronico() != null && !datosProveDto.getCorreoElectronico().isEmpty()) {
-                                //eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ",        , getMensajeDeNotificacion(planillaPago, pagoProveedoresEJB.getLstDetallePlanillaByIdPlanillaAndNit(planillaPago.getIdPlanilla(), datosProveDto.getNumeroNit()), true));
-                                eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", emailTemp, getMensajeDeNotificacion(planillaPago, pagoProveedoresEJB.getLstDetallePlanillaByIdPlanillaAndNit(planillaPago.getIdPlanilla(), datosProveDto.getNumeroNit()), true));
+                                eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", emailTemp, getMensajeDeNotificacion(planillaPago, pagoProveedoresEJB.getLstDetallePlanillaByIdPlanillaAndNit(planillaPago.getIdPlanilla(), datosProveDto.getNumeroNit()), true), codigoDepartamento);
                             }
                         }
                     }

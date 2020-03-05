@@ -5,6 +5,7 @@
  */
 package sv.gob.mined.paquescolar.ejb;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
@@ -65,19 +66,24 @@ public class EMailEJB {
      * @param message - contenido del mensaje.
      */
     @Asynchronous
-    public void enviarMail(String subject, String remitente, String message) {
+    public void enviarMail(String subject, String remitente, String message, String codigoDepartamento) {
         try {
+            int i = 0;
             String listaDeCorreosBcc = utilEJB.getValorDeParametro("PAGO_CORREO_NOTIFICACION_COPIA");
             MimeMessage m = new MimeMessage(mailSession);
             Address from = new InternetAddress(utilEJB.getValorDeParametro("PAGO_CORREO_NOTIFICACION"));
+            List<String> lstCcCorreo = utilEJB.getLstCcPagoByCodDepa(codigoDepartamento);
 
             m.setFrom(from);
             m.setRecipients(Message.RecipientType.TO, remitente);
 
-            Address[] lstAddressBcc = new Address[listaDeCorreosBcc.split(",").length];
-            for (int i = 0; i < listaDeCorreosBcc.split(",").length; i++) {
+            Address[] lstAddressBcc = new Address[listaDeCorreosBcc.split(",").length + lstCcCorreo.size()];
+            for (i = 0; i < listaDeCorreosBcc.split(",").length; i++) {
                 lstAddressBcc[i] = new InternetAddress(listaDeCorreosBcc.split(",")[i]);
-
+            }
+            for (String string : utilEJB.getLstCcPagoByCodDepa(codigoDepartamento)) {
+                lstAddressBcc[i] = new InternetAddress(string);
+                i++;
             }
             m.setRecipients(Message.RecipientType.BCC, lstAddressBcc);
 

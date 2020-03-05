@@ -119,6 +119,8 @@
     <class>sv.gob.mined.paquescolar.model.pojos.contratacion.AvanceContratosDto</class>
     <class>sv.gob.mined.paquescolar.model.EmpresaPreciosRef</class>
     <class>sv.gob.mined.paquescolar.model.pojos.contratacion.CantidadPorNivelDto</class>
+    <class>sv.gob.mined.paquescolar.model.ListaNotificacionPago</class>
+    <class>sv.gob.mined.paquescolar.model.pojos.recepcion.RptEntregasGeneralPorDepartamentoDto</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>

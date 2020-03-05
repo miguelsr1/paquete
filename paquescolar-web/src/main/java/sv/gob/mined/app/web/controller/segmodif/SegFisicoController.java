@@ -103,8 +103,13 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
         String idContrato = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("idContrato");
 
         if (idContrato != null && !idContrato.isEmpty()) {
-            showPnlNewSeguimiento = false;
-            inicializarValores(idContrato);
+            if (recepcionEJB.existeModificativaByIdContrato(new BigDecimal(idContrato))) {
+                JsfUtil.mensajeInformacion("Debe de aplicar la modificativa que tiene registrada este contrato");
+            }else{
+                showPnlNewSeguimiento = false;
+                inicializarValores(idContrato);
+                cargarContrato(recepcionEJB.getContratosById(new BigDecimal(idContrato)));
+            }
         }
         rubro = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getRubro();
@@ -385,6 +390,9 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
         recepcion = recepcionEJB.getRecepcion(contratoSelecionado.getIdContrato());
         lstDetalleRecepcion = recepcionEJB.getLstDetalleRecepcionByFk(recepcion.getIdRecepcion());
         listaOfertas = recepcionEJB.getItemDeContratoVigente(contratoSelecionado.getIdContrato());
+        
+        fechaEntregaUno = recepcion.getIdContrato().getFechaOrdenInicio();
+        
         if (VarSession.isVariableSession("idDetalleSeguimiento")) {
             detalleItem = utilEJB.find(DetalleRecepcion.class, VarSession.getVariableSession("idDetalleSeguimiento")).getNoItem();
             calcularTotalEDit();
@@ -619,14 +627,18 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
      */
     public void onContratoChosen(SelectEvent event) {
         if (event.getObject() instanceof VwBusquedaContratos) {
-            contratoSelecionado = (VwBusquedaContratos) event.getObject();
-            //isUniforme = isContratoUniformes(contratoSelecionado.getIdRubroAdq());
-            recepcion = recepcionEJB.getRecepcion(contratoSelecionado.getIdContrato());
-            if (recepcion.getIdRecepcion() == null) {
-                recepcion.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-            }
-            listaOfertas = recepcionEJB.getItemDeContratoVigente(recepcion.getIdContrato().getIdContrato());
+            cargarContrato((VwBusquedaContratos) event.getObject());
         }
+    }
+
+    private void cargarContrato(VwBusquedaContratos contrato) {
+        contratoSelecionado = contrato;
+        recepcion = recepcionEJB.getRecepcion(contratoSelecionado.getIdContrato());
+        if (recepcion.getIdRecepcion() == null) {
+            recepcion.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+        }
+        fechaEntregaUno = recepcion.getIdContrato().getFechaOrdenInicio();
+        listaOfertas = recepcionEJB.getItemDeContratoVigente(recepcion.getIdContrato().getIdContrato());
     }
 
     public void actualizarTblDetalleRecepcion(SelectEvent event) {
@@ -718,7 +730,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
 
     }
 
-    public void onDateSelect(SelectEvent event) {
+    /*public void onDateSelect(SelectEvent event) {
         if (fechaEntregaUno != null) {
             recepcion.setFechaOrdenInicioEntrega1(fechaEntregaUno);
         }
@@ -727,7 +739,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
         }
 
         this.recepcionEJB.guardarRecepcion(recepcion);
-    }
+    }*/
 
     public DetalleRecepcion getDetalleRecepcion() {
         if (VarSession.isVariableSession("idDetalleSeguimiento")) {

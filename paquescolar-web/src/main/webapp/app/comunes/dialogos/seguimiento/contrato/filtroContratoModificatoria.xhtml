@@ -70,7 +70,7 @@
                     <p:spacer width="10" height="8"/>
                     <p:outputLabel value="Filtro de busqueda"/>
                 </f:facet>
-                <p:panelGrid columns="4" columnClasses="col3_label,col4,col2_label,col3"
+                <p:panelGrid columns="2" columnClasses="col3_label,col9"
                              styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
                     <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
                     <p:selectOneMenu id="cboRubro" value="#{filtroContratoModificativaMB.idRubro}">
@@ -78,28 +78,16 @@
                         <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                         <p:ajax update="pnlFiltro" listener="#{filtroContratoModificativaMB.buscarProceso}" />
                     </p:selectOneMenu>
-                    <p:spacer />
-                    <p:spacer />
 
                     <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
-                    <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{filtroContratoModificativaMB.codigoEntidad}" size="5" autocomplete="off" requiredMessage="Codigo de infraestructura"/>
-                    <p:spacer />
-                    <p:spacer />
-
-                    <h:outputText value="Departamento C.E.:" />
-                    <p:selectOneMenu id="cboDepartamento" value="#{filtroContratoModificativaMB.codigoDepartamento}">
-                        <f:selectItem noSelectionOption="true" itemLabel="Seleccione un departamento" />
-                        <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
-                    </p:selectOneMenu>
-                    <h:outputText value="N.I.T.:" />
-                    <p:inputMask value="#{filtroContratoModificativaMB.numeroNit}" mask="9999-999999-999-9"/>
-
-                    <h:outputText value="Fecha inicial:"/>
-                    <p:calendar value="#{filtroContratoModificativaMB.fecha1}" placeholder="dd/MM/yyyy" locale="es" pattern="dd/MM/yyyy" size="10" showOn="button"/>
-                    <h:outputText value="Fecha fin:"/>
-                    <p:calendar value="#{filtroContratoModificativaMB.fecha2}" placeholder="dd/MM/yyyy" locale="es" pattern="dd/MM/yyyy" size="10" showOn="button"/>
-                    <h:outputText value="Número de contrato:"/>
-                    <p:inputText value="#{filtroContratoModificativaMB.numeroContrato}"/>
+                    <p:outputPanel id="codigoEntidad" >
+                        <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{filtroContratoModificativaMB.codigoEntidad}" size="5" autocomplete="off" requiredMessage="Codigo de infraestructura"
+                                     onkeyup="return this.value.length >= 5">
+                            <p:ajax event="keyup" update="nombreCE" listener="#{filtroContratoModificativaMB.buscarEntidadEducativa}"/>
+                        </p:inputText>
+                        <p:spacer width="10"/>
+                        <p:outputLabel id="nombreCE" value="#{filtroContratoModificativaMB.entidadEducativa.nombre}" style="font-weight: bold"/>
+                    </p:outputPanel>
 
                     <p:commandButton value="Buscar" icon="fa fa-search" action="#{filtroContratoModificativaMB.buscarContratos}" update="pnlDatos"/>  
                     <p:ajaxStatus id="ajaxIcon" style="width:160px;height:16px;">

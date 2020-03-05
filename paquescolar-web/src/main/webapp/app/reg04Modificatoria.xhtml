@@ -87,6 +87,10 @@
                             </i>
                         </p:outputPanel>
 
+                        <p:panel visible="false">
+                            <p:inputText id="idContrato" value="#{modificatoriaController.idContratoTemp}"/>
+                        </p:panel>
+
                         <h:panelGrid columns="2">
                             <h:outputText value="Fecha de Orden Inicio:"/>
                             <p:calendar locale="es" value="#{modificatoriaController.fechaOrdenInicio}" pattern="dd/MM/yyyy" size="10"/>

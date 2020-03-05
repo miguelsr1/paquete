@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="534" leftMargin="39" rightMargin="39" topMargin="39" bottomMargin="39" uuid="532d2f01-e732-4bb6-93c1-b671e031b563">
+	<property name="ireport.zoom" value="1.3310000000000004"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="143"/>
+	<parameter name="idContrato" class="java.lang.String">
+		<defaultValueExpression><![CDATA[200571]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select 
+    vw.iniciales_modalidad,
+    vw.codigo_entidad,
+    vw.nombre,
+    dep.nombre_departamento,
+    mun.nombre_municipio,
+    'N° ME-'||con.numero_contrato||'/'||anho.anho||'/'||'COD:'||vw.codigo_entidad,
+    emp.razon_social,
+    con.fecha_orden_inicio
+from contratos_ordenes_compras con
+    inner join resoluciones_adjudicativas   res on res.id_resolucion_adj = con.id_resolucion_adj
+    inner join participantes par                on res.id_participante = par.id_participante
+    inner join empresa emp                      on par.id_empresa = emp.id_empresa
+    inner join oferta_bienes_servicios ofe      on par.id_oferta = ofe.id_oferta
+    inner join detalle_proceso_adq dpa          on ofe.id_det_proceso_adq = dpa.id_det_proceso_adq
+    inner join proceso_adquisicion pro          on pro.id_proceso_adq = dpa.id_proceso_adq
+    inner join anho                             on pro.id_anho = anho.id_anho    
+    inner join vw_catalogo_entidad_educativa vw on vw.codigo_entidad = ofe.codigo_entidad
+    inner join municipio mun                    on vw.codigo_municipio = mun.codigo_municipio and vw.codigo_departamento = mun.codigo_departamento
+    inner join departamento dep                 on vw.codigo_departamento = dep.codigo_departamento
+where
+    con.estado_eliminacion = 0 and
+    res.estado_eliminacion = 0 and
+    res.id_estado_reserva = 5  and
+    par.estado_eliminacion = 0 and
+    ofe.estado_eliminacion = 0 and
+    con.id_contrato = $P{idContrato}]]>
+	</queryString>
+	<field name="INICIALES_MODALIDAD" class="java.lang.String"/>
+	<field name="CODIGO_ENTIDAD" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="NOMBRE_DEPARTAMENTO" class="java.lang.String"/>
+	<field name="NOMBRE_MUNICIPIO" class="java.lang.String"/>
+	<field name="&apos;N°ME-&apos;||CON.NUMERO_CONTRATO||&apos;/&apos;||ANHO.ANHO||&apos;/&apos;||&apos;COD:&apos;||VW.CODIGO_ENTIDAD" class="java.lang.String"/>
+	<field name="RAZON_SOCIAL" class="java.lang.String"/>
+	<field name="FECHA_ORDEN_INICIO" class="java.sql.Timestamp"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="232" splitType="Stretch">
+			<textField>
+				<reportElement uuid="6768bcb2-0b99-4ea6-9251-a3344aceb041" x="0" y="33" width="534" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ACTA DE RECEPCIÓN DE BIENES Y SERVICIOS"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="ea13348e-e6f6-48a4-92ce-6fb63faf220d" x="0" y="76" width="534" height="54"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["ORGANISMO DE ADMINISTRACIÓN ESCOLAR: "+$F{INICIALES_MODALIDAD}+"\n"+
+"QUE ADMINISTRA EL CENTRO EDUCATIVO: "+$F{NOMBRE}+"\n"+
+"CÓDIGO No.: "+$F{CODIGO_ENTIDAD}+" DEPARTAMENTO: "+$F{NOMBRE_DEPARTAMENTO}+" MUNICIPIO: "+$F{NOMBRE_MUNICIPIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

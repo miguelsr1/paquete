@@ -478,17 +478,25 @@
                             <p:spacer width="10"/>
                             <h:outputText value="Presidente de Organismo de Adminitración Escolar"/>
                         </f:facet>
-                        <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-12">
+
+                        <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                            <p:selectBooleanCheckbox value="#{estadisticasCensoController.editDirector}">
+                                <p:ajax update="pngDirector" listener="#{estadisticasCensoController.editNombre}"/>
+                            </p:selectBooleanCheckbox>
+                            <p:outputLabel value="Editar"/>
+                        </h:panelGrid>
+
+                        <p:panelGrid id="pngDirector" columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-12">
                             <h:outputText value="Nombre: "/>
-                            <p:inputText style="width: 100%;" value="#{estadisticasCensoController.organizacionEducativa.nombreMiembro}" disabled="#{estadisticasCensoController.deshabilitado}"/>
+                            <p:inputText style="width: 100%;" value="#{estadisticasCensoController.nombre}" disabled="#{!estadisticasCensoController.editDirector}"/>
                             <h:outputText value="Teléfono: "/>
-                            <p:inputText size="10" maxlength="8" value="#{estadisticasCensoController.organizacionEducativa.telDirector}"/>
+                            <p:inputText size="10" maxlength="8" value="#{estadisticasCensoController.telefono1}" disabled="#{!estadisticasCensoController.editDirector}"/>
                             <h:outputText value="Teléfono 2: "/>
-                            <p:inputText size="10" maxlength="8" value="#{estadisticasCensoController.organizacionEducativa.telDirector2}"/>
+                            <p:inputText size="10" maxlength="8" value="#{estadisticasCensoController.telefono2}" disabled="#{!estadisticasCensoController.editDirector}"/>
                             <h:outputText value="Número DUI: "/>
-                            <p:inputMask mask="99999999-9" size="10" maxlength="11" value="#{estadisticasCensoController.organizacionEducativa.numeroDui}"/>
+                            <p:inputMask mask="99999999-9" size="10" maxlength="11" value="#{estadisticasCensoController.numeroDui}" disabled="#{!estadisticasCensoController.editDirector}"/>
                             <h:outputText value="Modalidad del C.E. : "/>
-                            <p:inputText size="5" readonly="true" value="#{estadisticasCensoController.entidadEducativa.inicialesModalidad}"/>
+                            <p:inputText size="5" readonly="true" value="#{estadisticasCensoController.entidadEducativa.inicialesModalidad}" disabled="true}"/>
                         </p:panelGrid>
                     </p:panel>
                 </div>

@@ -59,5 +59,29 @@
         </query>
     </named-native-query>
     
+    <named-native-query name="Modificativa.BusquedaContratoModifDigitada" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.modificativa.VwContratoModificatoria">
+        <query>
+            <![CDATA[
+            SELECT 
+                rownum              as idRow,
+                ID_RESOLUCION_ADJ   as idResolucionAdj,
+                ID_ESTADO_RESERVA   as idEstadoReserva,
+                DESCRIPCION_RESERVA as descripcionReserva,
+                FECHA_INSERCION     as fechaInsercion,
+                CANTIDAD            as cantidad,
+                MONTO               as monto,
+                ID_CONTRATO         as idContrato,
+                ID_RESOLUCION_MODIF as idResolucionModif,
+                ID_RES_MODIF_PADRE  AS idResModifPadre 
+            FROM 
+                vw_MO_Busqueda_contrato 
+            WHERE id_contrato = ?1 and
+                id_estado_reserva = 1
+            ORDER BY ID_RESOLUCION_MODIF
+            ]]>
+        </query>
+    </named-native-query>
+    
     
 </entity-mappings>

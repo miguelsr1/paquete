@@ -39,7 +39,6 @@ import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.VarSession;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.ModificativaEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.ejb.ResolucionAdjudicativaEJB;
@@ -84,6 +83,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
     private Integer cantidadTotalNew;
     private Integer cantidadTotalOld;
 
+    private BigDecimal idContratoTemp = BigDecimal.ZERO;
     private String codigoEntidad;
     private String msjError = "";
     private String msjInformacion = "";
@@ -142,6 +142,21 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
         techoCE.setMontoAdjudicado(BigDecimal.ZERO);
         techoCE.setMontoDisponible(BigDecimal.ZERO);
         techoCE.setMontoPresupuestado(BigDecimal.ZERO);
+
+        if (JsfUtil.isExisteParametroUrl("idContrato")) {
+            idContratoTemp = new BigDecimal(JsfUtil.getParametroUrl("idContrato"));
+            //vwBusquedaContrato = modificativaEJB.getContratosById(idContratoTemp);
+            vwContratoModificatoria = modificativaEJB.getContratoModificatorioEnDigitacion(idContratoTemp);
+            cargarModif(vwContratoModificatoria);
+        }
+    }
+
+    public BigDecimal getIdContratoTemp() {
+        return idContratoTemp;
+    }
+
+    public void setIdContratoTemp(BigDecimal idContratoTemp) {
+        this.idContratoTemp = idContratoTemp;
     }
 
     public Date getFechaOrdenInicio() {
@@ -182,6 +197,8 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
 
     public void prepararCreacion() {
         VarSession.setVariableSession("op", 1);
+        resolucionesModificativas = new ResolucionesModificativas();
+        lstDetalleModificativas.clear();
     }
 
     public void prepararEdicion() {
@@ -591,7 +608,8 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
         return total;
     }
 
-    public void guardar() {
+    public String guardar() {
+        String urlRed = null;
         if (vwBusquedaContrato != null && vwBusquedaContrato.getIdContrato() != null) {
             if (resolucionesModificativas.getFechaNota() != null && resolucionesModificativas.getFechaResolucion() != null && resolucionesModificativas.getFechaSolicitud() != null) {
                 if (idTipoModif == null || idTipoModif.compareTo(BigDecimal.ZERO) == 0) {
@@ -633,7 +651,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                                 break;
                             case 6: //VARIACIONES DE CANTIDAD SIN INCREMENTO DE MONTO
                                 BigDecimal diferencia = getMontoAdjudicadoOld().subtract(getMontoAdjudicadoNew());
-                                if (diferencia.compareTo(BigDecimal.ZERO) == -1) { 
+                                if (diferencia.compareTo(BigDecimal.ZERO) == -1) {
                                     JsfUtil.mensajeAlerta("No se permiten incremento en el monto total original del contrato.");
                                     validacion = false;
                                 }
@@ -672,7 +690,8 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                             if (modificativaEJB.guardarModificatoria(resolucionesModificativas, VarSession.getVariableSessionUsuario()) == true) {
                                 JsfUtil.mensajeError("Ah ocurrido un error.");
                             } else {
-                                JsfUtil.mensajeInsert();
+                                //JsfUtil.mensajeInsert();
+                                urlRed = "reg04AprobacionModificatoria.mined?includeViewParams=true&idContrato=" + resolucionesModificativas.getIdContrato().getIdContrato().intValue();
                             }
                         }
                     }
@@ -683,6 +702,8 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
         } else {
             JsfUtil.mensajeAlerta("Debe de seleccionar un contrato!");
         }
+
+        return urlRed;
     }
 
     private Boolean validarCambioDePrecio() {
@@ -717,13 +738,17 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                 HashMap<String, Object> param = modificativaEJB.aplicarReservaDeFondos(resolucionesModificativas, idEstadoReserva, VarSession.getVariableSessionUsuario());
                 Boolean exito = !param.containsKey("error");
                 if (exito) {
-                    JsfUtil.mensajeInformacion("Cambio aplicado satisfactoriamente.");
+                    PrimeFaces.current().executeScript("PF('dlgPregunta').show()");
                 } else {
                     PrimeFaces.current().ajax().update("frmPrincipal");
                     JsfUtil.mensajeAlerta(param.get("error").toString());
                 }
             }
         }
+    }
+    
+    public void redirigirAModEntregas(){
+        JsfUtil.redireccionar("reg06Seguimiento.mined?faces-redirect=true&idContrato="+resolucionesModificativas.getIdContrato().getIdContrato().intValue());
     }
 
     public void eliminarDetalle() {
@@ -780,6 +805,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
         lstDetalleModificativas.clear();
         if (event.getObject() instanceof VwContratoModificatoria) {
             vwContratoModificatoria = (VwContratoModificatoria) event.getObject();
+            idContratoTemp = vwContratoModificatoria.getIdContrato();
 
             if (VarSession.getVariableSession("op").toString().equals("1")) {
                 vwBusquedaContrato = modificativaEJB.getContratosById(vwContratoModificatoria.getIdContrato());
@@ -874,23 +900,27 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
 
     public void onCargarModificativa(SelectEvent event) {
         if (event.getObject() instanceof VwContratoModificatoria) {
-            vwContratoModificatoria = (VwContratoModificatoria) event.getObject();
-            vwBusquedaContrato = modificativaEJB.getContratosById(vwContratoModificatoria.getIdContrato());
-            contratoExtinsion.setIdContrato(utilEJB.find(ContratosOrdenesCompras.class, vwContratoModificatoria.getIdContrato()));
-            idRubro = contratoExtinsion.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres();
-            resolucionesModificativas = utilEJB.find(ResolucionesModificativas.class, vwContratoModificatoria.getIdResolucionModif());
-            if (resolucionesModificativas == null) {
-                JsfUtil.mensajeInformacion("Ha seleccionado el contrato original, y no una modificativa ya creada.");
-            } else {
-                idTipoModif = resolucionesModificativas.getIdModifContrato().getIdModifContrato();
-                lstDetalleModificativas = resolucionesModificativas.getDetalleModificativaList();
-                techoCE = resolucionAdjudicativaEJB.findTechoRubroEntEdu(resolucionesModificativas.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad(),
-                        resolucionesModificativas.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq());
-                idEstadoReserva = resolucionesModificativas.getIdEstadoReserva();
+            cargarModif((VwContratoModificatoria) event.getObject());
+        }
+    }
 
-                montoAdjudicacionActual = getMontoAdjudicadoNew().add(getMontoAdjudicadoOld().negate());
-                montoSaldo = techoCE.getMontoAdjudicado().add(montoAdjudicacionActual);
-            }
+    private void cargarModif(VwContratoModificatoria vw) {
+        vwContratoModificatoria = vw;
+        vwBusquedaContrato = modificativaEJB.getContratosById(vwContratoModificatoria.getIdContrato());
+        contratoExtinsion.setIdContrato(utilEJB.find(ContratosOrdenesCompras.class, vwContratoModificatoria.getIdContrato()));
+        idRubro = contratoExtinsion.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres();
+        resolucionesModificativas = utilEJB.find(ResolucionesModificativas.class, vwContratoModificatoria.getIdResolucionModif());
+        if (resolucionesModificativas == null) {
+            JsfUtil.mensajeInformacion("Ha seleccionado el contrato original, y no una modificativa ya creada.");
+        } else {
+            idTipoModif = resolucionesModificativas.getIdModifContrato().getIdModifContrato();
+            lstDetalleModificativas = resolucionesModificativas.getDetalleModificativaList();
+            techoCE = resolucionAdjudicativaEJB.findTechoRubroEntEdu(resolucionesModificativas.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad(),
+                    resolucionesModificativas.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq());
+            idEstadoReserva = resolucionesModificativas.getIdEstadoReserva();
+
+            montoAdjudicacionActual = getMontoAdjudicadoNew().add(getMontoAdjudicadoOld().negate());
+            montoSaldo = techoCE.getMontoAdjudicado().add(montoAdjudicacionActual);
         }
     }
 
@@ -1043,7 +1073,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                 imprimirResolucionModificatoria(idTipoModif.intValue(), isPersonaNatural);
                 break;
             case 2:
-            //case 3:
+                //case 3:
                 imprimirContratoFormatoOriginal(isPersonaNatural);
                 break;
         }
@@ -1073,7 +1103,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
             lstModificacionContratos = modificativaEJB.generarResolucionModificativa(resolucionesModificativas);
 
             lstModificacionContratos.get(0).setFechaCreacionModif(lstModificacionContratos.get(0).getFechaResolucion());
-            
+
             if (nombreRpt.contains("rptModProrroga")) {
                 lstModificacionContratos.get(0).setFechaInicio(sumarRestarDiasFecha(resolucionesModificativas.getIdContrato().getFechaOrdenInicio(), 60));
                 lstModificacionContratos.get(0).setFechaFin(sumarRestarDiasFecha(resolucionesModificativas.getIdContrato().getFechaOrdenInicio(), 60 + resolucionesModificativas.getDiasProrroga()));
@@ -1128,6 +1158,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
             param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES) + File.separator);
             param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
             param.put("pJustificacion", resolucionesModificativas.getJustificacionModificativa());
+            param.put("pPlazoEntrega", resolucionesModificativas.getIdContrato().getPlazoPrevistoEntrega().intValue());
             if (nombreRpt.contains("rptModProrroga")) {
                 param.put("JUSTIFICACION", resolucionesModificativas.getJustificacionModificativa());
                 param.put("DIAS_PRORROGA", resolucionesModificativas.getDiasProrroga().toString());

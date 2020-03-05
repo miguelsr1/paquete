@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptContratoPersonaJuridicaZapatos" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="07e1e5af-9848-4273-96b4-6595abfd46c0">
 	<property name="ireport.zoom" value="1.3310000000000013"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.y" value="192"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -448,7 +448,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["RESOLUCIÓN MODIFICATIVA POR INCREMENTO EN EL MONTO DEL CONTRATO\n"+
 "N° ME-"+$F{numeroContrato}+"/"+$F{anhoContrato}+"\n\n"+
-$F{descripcionRubro}+"\n"+$F{nombreCe}+"\n"+"Fuente Financiamiento: GOES"]]></textFieldExpression>
+$F{descripcionRubro}+" "+$F{anhoContrato}+"\n"+$F{nombreCe}+"\n"+"Fuente Financiamiento: GOES"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement uuid="aba0ff22-1c29-41a5-a438-278710302dd1" x="0" y="92" width="510" height="57"/>
@@ -458,16 +458,17 @@ $F{descripcionRubro}+"\n"+$F{nombreCe}+"\n"+"Fuente Financiamiento: GOES"]]></te
 				<textFieldExpression><![CDATA["En la ciudad de ".concat($F{ciudadFirma}).concat(", a las ").concat($F{horaRegistro}).concat(" horas y ").concat($F{minutoRegistro}).concat(" minutos del día ")
 .concat(Herramientas.getNumDia($F{fechaCreacionModif})).concat(" del mes de ").concat(Herramientas.getNomMes($F{fechaCreacionModif})).concat(" de ")
 .concat(Herramientas.getNumAnyo($F{fechaCreacionModif})).concat("\n\n")
-.concat("VISTO:\n").concat("El contrato No ME-").concat($F{numeroContrato}).concat("/").concat($F{anhoContrato}).concat(", referente a ").concat($F{descripcionRubro})
-.concat(" "+$F{codigoEntidad}+" "+$F{nombreCe}).concat(", suscrito entre el ").concat($F{modalidadAdministrativa}).concat(" y el(la) señor(a) ").concat($F{nombreRepresentante})
+.concat("VISTO:\n").concat("El contrato No ME-").concat($F{numeroContrato}).concat("/").concat($F{anhoContrato}).concat(", referente a ").concat($F{descripcionRubro}+" "+$F{anhoContrato}+"; ")
+.concat($F{nombreCe}+" "+$F{codigoEntidad}).concat(", suscrito entre el ").concat($F{modalidadAdministrativa}).concat(" y el(la) señor(a) ").concat($F{nombreRepresentante})
 .concat(", quien actúa en su calidad de Representante Legal de la Sociedad ").concat($F{razonSocial}).concat(", de fecha ").concat(Herramientas.getNumDia($F{fechaContratoModif})).concat(" del mes de ")
 .concat(Herramientas.getNomMes($F{fechaContratoModif})).concat(" de ").concat(Herramientas.getNumAnyo($F{fechaContratoModif})).concat(", por un monto total de ")
 .concat(Herramientas.aLetras($F{montoContratoModif}).trim()).concat(" Dólares de los Estados Unidos de América (US$ ")
-.concat((($F{montoContratoModif}.doubleValue())*100)/100 + ") IVA INCLUIDO; por un período de ").concat($F{plazoContrato}).concat(", contados a partir del ").concat(Herramientas.getNumDia($F{fechaOrdenInicio})).concat(" del mes de ")
+.concat(Herramientas.getFormatoMonto2($F{montoContratoModif})+ ") IVA INCLUIDO; por un período de ").concat($F{plazoContrato}).concat(" días, contados a partir del ").concat(Herramientas.getNumDia($F{fechaOrdenInicio})).concat(" del mes de ")
 .concat(Herramientas.getNomMes($F{fechaOrdenInicio})).concat(" de ").concat(Herramientas.getNumAnyo($F{fechaOrdenInicio}))
+.concat(" al ").concat(Herramientas.addDiasAFecha($F{fechaOrdenInicio}, Integer.parseInt($F{plazoContrato})))
 .concat("\n\nCONSIDERANDO:\n").concat("Que en nota fecha "+ (new SimpleDateFormat("dd/MM/yyyy")).format($F{fechaNota}))
-.concat(", el Presidente del ").concat($F{modalidadAdministrativa}).concat(", comunica al proveedor ").concat($F{razonSocial})
-.concat(",  que al analizar y comparar la matricula final del año ").concat($F{anhoContrato}).concat(" y la matricula actual del Centro Educativo")
+.concat(", "+$F{nombreMiembro}+" el Presidente del ").concat($F{modalidadAdministrativa}).concat(", comunica al proveedor "+$F{nombreRepresentante}+" Representante Legal de ").concat($F{razonSocial})
+.concat(",  que al analizar y comparar la matricula final del año ").concat(String.valueOf(Integer.parseInt($F{anhoContrato})-1)).concat(" y la matricula actual del Centro Educativo")
 .concat(" es necesario realizar cambios en el contrato por ").concat($P{pJustificacion}).concat(", es necesario realizar las respectivas modificaciones en cuanto a ")
 .concat("cantidades y la disminución en el monto del contrato en base al Art.  83-A de la LACAP, el cual no exceda del 20% del monto original, por lo que le pide ")
 .concat("que manifieste por escrito si está de acuerdo en realizar estos cambios, según el siguiente detalle: ")]]></textFieldExpression>
@@ -487,7 +488,7 @@ $F{descripcionRubro}+"\n"+$F{nombreCe}+"\n"+"Fuente Financiamiento: GOES"]]></te
 				<textElement textAlignment="Justified">
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Que en nota de fecha "+(new SimpleDateFormat("dd/MM/yyyy").format($F{fechaNota}))+", "+$F{razonSocial}+", Representante Legal de ".concat($F{razonSocial}).concat(" manifiesta estar de acuerdo en dichos cambios, y legalizar estas")
+				<textFieldExpression><![CDATA["Que en nota de fecha "+(new SimpleDateFormat("dd/MM/yyyy").format($F{fechaNota}))+", "+$F{nombreRepresentante}+", Representante Legal de "+$F{razonSocial}+", Representante Legal de ".concat($F{razonSocial}).concat(" manifiesta estar de acuerdo en dichos cambios, y legalizar estas")
 .concat(" modificaciones por medio de documento legal, (incrementando/disminuyendo el monto total del contrato o manteniendo los precios unitarios pactados en el contrato original, sin incrementar el monto del contrato).\n\n")
 .concat("Que la Cláusula XIV Modificación, del referido Contrato, establece: \"De común acuerdo, el presente contrato podrá ser modificado. En tal caso, la institución contratante emitirá la correspondiente resolución, y para que surta efecto legal, esta modificativa debe ser firmada por el/la presidente/a del Organismo contratante y el Contratista, la cual formará parte integrante del presente contrato\".\n\n")
 .concat("Que de conformidad a los artículos 1416 \"Todo contrato legalmente celebrado, es obligatorio para los contratantes, y sólo cesan sus efectos entre las partes por el consentimiento mutuo de éstas o por causas legales\" y 1417 del Código Civil, los contratos deben ejecutarse de buena fe y, por consiguiente, obligan no solo a lo que en ellos se expresa, sino a todas las cosas que emanan precisamente de la naturaleza de la obligación, y que los contratos pueden modificar sus efectos con el consentimiento mutuo de las partes contratantes.\n\n")

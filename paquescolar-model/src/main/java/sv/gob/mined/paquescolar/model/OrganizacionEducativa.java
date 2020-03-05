@@ -20,6 +20,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.eclipse.persistence.annotations.Direction;
+import org.eclipse.persistence.annotations.NamedStoredProcedureQueries;
+import org.eclipse.persistence.annotations.NamedStoredProcedureQuery;
+import org.eclipse.persistence.annotations.StoredProcedureParameter;
 
 /**
  *
@@ -29,6 +33,18 @@ import javax.persistence.TemporalType;
 @Table(name = "ORGANIZACION_EDUCATIVA")
 @NamedQueries({
     @NamedQuery(name = "OrganizacionEducativa.findAll", query = "SELECT o FROM OrganizacionEducativa o")})
+
+@NamedStoredProcedureQueries({
+    @NamedStoredProcedureQuery(
+            name = "SP_UPD_NOMBRE_DIRECTOR",
+            procedureName = "SP_UPD_NOMBRE_DIRECTOR",
+            returnsResultSet = false,
+            parameters = {
+                @StoredProcedureParameter(queryParameter = "P_COD_ENT", name = "P_COD_ENT", direction = Direction.IN, type = Integer.class),
+                @StoredProcedureParameter(queryParameter = "P_ID_ANHO", name = "P_ID_ANHO", direction = Direction.IN, type = Integer.class),
+                @StoredProcedureParameter(queryParameter = "P_NOMBRE", name = "P_NOMBRE", direction = Direction.IN, type = String.class)
+            }
+    )})
 public class OrganizacionEducativa implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation

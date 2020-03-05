@@ -139,7 +139,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 						<font fontName="Arial" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["ACTA DE ADJUDICACION\n"+
-"\""+$F{descripcionRubro}+"\""]]></textFieldExpression>
+"\""+$P{descripcionRubro}+"\""]]></textFieldExpression>
 				</textField>
 				<image>
 					<reportElement uuid="d662ed9c-377b-4d74-87d4-2293e65456b4" key="image-1" x="0" y="0" width="60" height="60"/>
