@@ -19,8 +19,8 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import sv.gob.mined.boleta.ejb.PersistenciaFacade;
-import sv.gob.mined.boleta.model.CorreoDocente;
-import sv.gob.mined.boleta.model.DominiosCorreo;
+import sv.gob.mined.boleta.api.model.CorreoDocente;
+import sv.gob.mined.boleta.api.model.DominiosCorreo;
 import sv.gob.mined.utils.jsf.JsfUtil;
 
 /**

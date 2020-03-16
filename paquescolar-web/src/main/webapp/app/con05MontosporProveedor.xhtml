@@ -115,6 +115,11 @@
                                     <f:convertNumber pattern="#,##0.00"/>
                                 </h:outputText>
                             </p:column> 
+                            <p:column headerText="Monto Modificativa($)" width="55" styleClass="numero" >  
+                                <h:outputText value="#{ceNoDisponible.montoModificativa}" >  
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputText>
+                            </p:column> 
                         </p:dataTable> 
                     </p:outputPanel>
                 </div>

@@ -23,7 +23,7 @@ import javax.persistence.Table;
  * @author misanchez
  */
 @Entity
-@Table(name = "GRUPO")
+@Table(name = "GRUPO", schema = "SEGURIDAD_V2")
 @NamedQueries({
     @NamedQuery(name = "Grupo.findAll", query = "SELECT g FROM Grupo g")})
 public class Grupo implements Serializable {

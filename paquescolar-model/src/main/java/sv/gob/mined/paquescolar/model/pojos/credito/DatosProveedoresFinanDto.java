@@ -43,8 +43,17 @@ public class DatosProveedoresFinanDto implements Serializable {
     private BigInteger idRubroInteres;
     private BigInteger idProceso;
     private BigDecimal montoContrato;
+    private BigDecimal montoModificativa;
 
     public DatosProveedoresFinanDto() {
+    }
+
+    public BigDecimal getMontoModificativa() {
+        return montoModificativa;
+    }
+
+    public void setMontoModificativa(BigDecimal montoModificativa) {
+        this.montoModificativa = montoModificativa;
     }
 
     public BigDecimal getIdRow() {

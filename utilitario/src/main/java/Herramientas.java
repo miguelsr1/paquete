@@ -291,6 +291,21 @@ public class Herramientas {
 
         return cadena.toString();
     }
+    
+    public static String addDiasAFecha(Date fecha, int dias){
+        String fechaStr = "%s del mes de %s de %s";
+         
+        Calendar c = Calendar.getInstance();
+        c.setTime(fecha);
+        
+        c.add(Calendar.DATE, dias);
+        
+        Date tmp = c.getTime();
+        
+        fechaStr = String.format(fechaStr, getNumDia(tmp), getNomMes(tmp), getNumAnyo(tmp));
+        
+        return fechaStr;
+    }
 
     private static StringBuilder triTexto(int n) {
         StringBuilder result = new StringBuilder();

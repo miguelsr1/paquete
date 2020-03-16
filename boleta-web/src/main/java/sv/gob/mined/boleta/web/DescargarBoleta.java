@@ -5,21 +5,8 @@
  */
 package sv.gob.mined.boleta.web;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.ejb.EJB;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import sv.gob.mined.boleta.ejb.ObtenerArchivoFacade;
+//import sv.gob.mined.boleta.ejb.ObtenerArchivoFacade;
 
 /**
  *
@@ -28,10 +15,10 @@ import sv.gob.mined.boleta.ejb.ObtenerArchivoFacade;
 public class DescargarBoleta extends HttpServlet {
 
     private final int ARBITARY_SIZE = 1048;
-    @EJB
-    private ObtenerArchivoFacade obtenerArchivoFacade;
+    /*@EJB
+    private ObtenerArchivoFacade obtenerArchivoFacade;*/
 
-    @Override
+    /*@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Get image file.
         String codigoGenerado = request.getParameter("codigoGenerado");
@@ -68,8 +55,8 @@ public class DescargarBoleta extends HttpServlet {
             out.println("<a href=\"mailto:boleta@mined.edu.sv\">Admin Boletas</a>");
             out.println("</BODY></HTML>");
             out.close();*/
-            Logger.getLogger(DescargarBoleta.class.getName()).log(Level.SEVERE, "Se ha generado de error en la descarga de la boleta: {0}", codigoGenerado);
+            //Logger.getLogger(DescargarBoleta.class.getName()).log(Level.SEVERE, "Se ha generado de error en la descarga de la boleta: {0}", codigoGenerado);
             //Logger.getLogger(DescargarBoleta.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+        /*}
+    */
 }

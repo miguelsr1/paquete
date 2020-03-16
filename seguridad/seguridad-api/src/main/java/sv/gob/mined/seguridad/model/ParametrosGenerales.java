@@ -20,7 +20,7 @@ import javax.persistence.Table;
  * @author misanchez
  */
 @Entity
-@Table(name = "PARAMETROS_GENERALES")
+@Table(name = "PARAMETROS_GENERALES", schema = "SEGURIDAD_V2")
 @NamedQueries({
     @NamedQuery(name = "ParametrosGenerales.findAll", query = "SELECT p FROM ParametrosGenerales p")})
 public class ParametrosGenerales implements Serializable {

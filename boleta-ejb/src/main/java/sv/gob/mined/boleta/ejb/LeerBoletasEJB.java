@@ -40,7 +40,7 @@ public class LeerBoletasEJB {
     private PersistenciaFacade persistenciaFacade;
 
     //@Asynchronous
-    public void leerArchivosPendientes(Session mailSession, String codDepa, String usuario) {
+    /*public void leerArchivosPendientes(Session mailSession, String codDepa, String usuario) {
         Properties info = chargeEmailsProperties("emails0212");
 
         File carpetaRoot = new File(RESOURCE_BUNDLE.getString("path_archivo"));
@@ -59,9 +59,9 @@ public class LeerBoletasEJB {
                 }
             }
         }
-    }
+    }*/
 
-    public void leerArchivosPendientesByUltimoProcesado(Session mailSession, String codDepa, String usuario,
+ /*public void leerArchivosPendientesByUltimoProcesado(Session mailSession, String codDepa, String usuario,
             String codigo, String mesAnho, String nombreArchivo) {
         Properties info = chargeEmailsProperties("emails0212");
 
@@ -81,8 +81,7 @@ public class LeerBoletasEJB {
                 }
             }
         }
-    }
-
+    }*/
     public void splitPagesByCodigo(File file, String codDepa, Session mailSession, Properties info, String usuario, String ultimoCodigoProcesado, String mesAnho, String path) {
         StringBuilder sb = new StringBuilder("");
         PDDocument document = null;
@@ -317,16 +316,24 @@ public class LeerBoletasEJB {
     }
 
     @Asynchronous
-    public void enviarUnSoloCorreo(String codDepa, String mesAnho, Session mailSession, String usuario) {
-        String mensaje;
+    public void enviarUnSoloCorreo(String codDepa, String mesAnho,
+            Session mailSession, String usuario,
+            String mensajeCorreo, String tituloCorreo) {
+
         String nombreMesAnho = getNombreMes(mesAnho.split("_")[0]).concat(" de ").concat(mesAnho.split("_")[1]);
         String pathRoot = RESOURCE_BUNDLE.getString("path_archivo");
         File carpeta = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
-        //Properties info = chargeEmailsProperties("emails0212");
-        Boolean errorEnvioEmail = false;
+        Boolean errorEnvioEmail;
         String email;
-        
+
+        if (mensajeCorreo != null && !mensajeCorreo.isEmpty()) {
+            
+        }else{
+            mensajeCorreo = MessageFormat.format(RESOURCE_BUNDLE.getString("mail.message"), nombreMesAnho);
+            tituloCorreo = "Boleta de Pago de " + nombreMesAnho;
+        }
+
         List<CorreoDocente> lstCorreo = persistenciaFacade.getLstCorreoDocentes();
 
         File folderError = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator + "errores" + File.separator);
@@ -340,18 +347,16 @@ public class LeerBoletasEJB {
         File folderNoEncontrado = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator + "no_encontrado" + File.separator);
         if (!folderNoEncontrado.exists()) {
             folderNoEncontrado.mkdir();
-        } 
-        
+        }
+
         persistenciaFacade.getPkCodigoGeneradoByCodDepaAndMesAnho(codDepa, mesAnho);
 
         for (File boleta : carpeta.listFiles()) {
             if (boleta.isFile() && boleta.getName().toUpperCase().contains("PDF")) {
                 email = getCorreoByNip(boleta.getName().toUpperCase().replace(".PDF", ""), lstCorreo);
-                
-                if (email != null) {
-                    mensaje = MessageFormat.format(RESOURCE_BUNDLE.getString("mail.message"), nombreMesAnho);
 
-                    errorEnvioEmail = eMailEJB.enviarMail(email, usuario, mensaje, nombreMesAnho, boleta, mailSession);
+                if (email != null) {
+                    errorEnvioEmail = eMailEJB.enviarMail(email, usuario, tituloCorreo, mensajeCorreo, nombreMesAnho, boleta, mailSession);
 
                     Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.INFO, "{0} - {1}", new Object[]{email, boleta.getName().toUpperCase().replace(".PDF", "")});
                     if (!errorEnvioEmail) {
@@ -380,11 +385,10 @@ public class LeerBoletasEJB {
         sb = sb.append("Número de docente no encontrados: ").append(codigoGenerado.getSinCorreo()).append("<br/>");
         sb = sb.append("Número de correos no enviados debido a un error: ").append(codigoGenerado.getError()).append("<br/>");
 
-
         eMailEJB.enviarMailDeConfirmacion("Envio de boletas de pago", sb.toString(), usuario, mailSession);
     }
-    
-    private String getCorreoByNip(String nip, List<CorreoDocente> lstCorreo){
+
+    private String getCorreoByNip(String nip, List<CorreoDocente> lstCorreo) {
         Optional<CorreoDocente> correoDoc = lstCorreo.stream().parallel().
                 filter(cDoc -> cDoc.getNip().equals(nip)).findAny();
         if (correoDoc.isPresent()) {

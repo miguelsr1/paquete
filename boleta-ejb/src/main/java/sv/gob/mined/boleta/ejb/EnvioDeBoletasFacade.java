@@ -7,14 +7,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -23,9 +19,6 @@ import javax.ejb.TransactionManagementType;
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
-import sv.gob.mined.boleta.model.CodigoGenerado;
-import sv.gob.mined.utils.jsf.JsfUtil;
-import sv.gob.mined.utils.seguridad.Seguridad;
 
 /**
  *
@@ -44,7 +37,7 @@ public class EnvioDeBoletasFacade {
     @EJB
     private PersistenciaFacade persistenciaFacade;
 
-    @Asynchronous
+    /*@Asynchronous
     public void enviarBoletasDePago(String codDepa, String mesAnho) {
         String remitente = RESOURCE_CUENTAS.getString("usuario_".concat(codDepa));
         Session mailSession = getMailSession(remitente, RESOURCE_CUENTAS.getString("clave_".concat(codDepa)));
@@ -141,7 +134,7 @@ public class EnvioDeBoletasFacade {
         sb = sb.append("Número de correos no enviados debido a un error: ").append(correosNoEnviados).append("<br/>");
 
         eMailEJB.enviarMailDeConfirmacion("Envio de boletas de pago", sb.toString(), remitente, mailSession);
-    }
+    }*/
 
     /**
      * procedimiento probado - 13 dic
@@ -149,7 +142,7 @@ public class EnvioDeBoletasFacade {
      * @param codDepa
      * @param mesAnho
      */
-    @Asynchronous
+    /*@Asynchronous
     public void enviarBoletasDePagoPdf(String codDepa, String mesAnho) {
         Boolean errorEnvioEmail;
         String remitente = RESOURCE_CUENTAS.getString("usuario_".concat(codDepa));
@@ -195,33 +188,17 @@ public class EnvioDeBoletasFacade {
                     if (!errorEnvioEmail) {
                         //Las boletas que fallan al enviarse por correo son enviadas a la carpeta NO_ENVIADO
                         moverBoletaAOtraUbicacion(boleta, folderNoEnviado);
-                        /*try {
-                            temp = Files.move(Paths.get(boleta.getAbsolutePath()),
-                                    Paths.get(folderNoEnviado.getAbsolutePath() + File.separator + boleta.getName()), StandardCopyOption.REPLACE_EXISTING);
-                        } catch (IOException ex) {
-                            Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.SEVERE, null, ex);
-                        }*/
+                        
                     } else {
                         //Los docentes encontrados son enviados a la carpeta PROCESADO
                         persistenciaFacade.guardarCodigoGeneradoPorNip(idCodigoGenerado, nip, keyGeneradoNip);
                         moverBoletaAOtraUbicacion(boleta, folderProcesado);
-                        /*try {
-                            //mover archivo procesado
-                            temp = Files.move(Paths.get(boleta.getAbsolutePath()),
-                                    Paths.get(folderProcesado.getAbsolutePath() + File.separator + boleta.getName()), StandardCopyOption.REPLACE_EXISTING);
-                        } catch (IOException ex) {
-                            Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.SEVERE, null, ex);
-                        }*/
+
                     }
                 } else {
                     //Los docentes no encontrados son enviados a la carpeta NO_ENCONTRADO
                     moverBoletaAOtraUbicacion(boleta, folderNoEncontrado);
-                    /*try {
-                        temp = Files.move(Paths.get(boleta.getAbsolutePath()),
-                                Paths.get(folderNoEncontrado.getAbsolutePath() + File.separator + boleta.getName()), StandardCopyOption.REPLACE_EXISTING);
-                    } catch (IOException ex) {
-                        Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.SEVERE, null, ex);
-                    }*/
+              
                     Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.WARNING, "No existe este empleado: {0}", nip);
                 }
             }
@@ -239,7 +216,7 @@ public class EnvioDeBoletasFacade {
         sb = sb.append("Número de correos no enviados debido a un error: ").append(codigoGenerado.getError()).append("<br/>");
 
         eMailEJB.enviarMailDeConfirmacion("Envio de boletas de pago", sb.toString(), remitente, mailSession);
-    }
+    }*/
 
     private void moverBoletaAOtraUbicacion(File boleta, File folder) {
         try {

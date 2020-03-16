@@ -76,6 +76,10 @@
                                     <f:selectItems value="#{docenteController.lstDominiosCorreo}" var="dominio" itemValue="#{dominio.idDominio}" itemLabel="#{dominio.dominio}"/>
                                 </p:selectOneMenu>
                             </p:outputPanel>
+                            
+                            
+                            <p:outputLabel value="Activar"/>
+                            <p:selectBooleanCheckbox value="#{docenteController.correoDocente.activar}"/>
                         </p:panelGrid>
 
                         <f:facet name="footer">

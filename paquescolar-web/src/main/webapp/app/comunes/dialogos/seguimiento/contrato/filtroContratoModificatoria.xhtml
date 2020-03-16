@@ -117,7 +117,6 @@
                 <p:dataTable id="tblContratos" widgetVar="tblContratos" value="#{filtroContratoModificativaMB.lstContratos}" var="contrato" 
                              rowIndexVar="rowId" rowKey="#{contrato.idContrato}"
                              emptyMessage="No se encontrarón coincidencias con los criterios de búsqueda" 
-                             paginator="true" paginatorPosition="top" rows="10" scrollable="true" scrollRows="4" scrollHeight="240"
                              rowStyleClass="#{contrato.idResolucionAdj eq 4 ? 'filaEliminada' : null}"> 
 
                     <p:ajax event="rowToggle" listener="#{filtroContratoModificativaMB.onRowToggle}"  />
@@ -128,16 +127,7 @@
                     <p:column headerText="#" style="text-align: center" width="15">
                         #{rowId+1}
                     </p:column>
-                    <p:column headerText="Departamento" width="85">
-                        <h:outputText value="#{contrato.nombreDepartamento}"/>
-                    </p:column>
-                    <p:column headerText="Cód. Entidad" width="50">
-                        <h:outputText value="#{contrato.codigoEntidad}"/>
-                    </p:column>
-                    <p:column headerText="Nombre C.E.">
-                        <h:outputText value="#{contrato.nombreCe}"/>
-                    </p:column>
-                    <p:column headerText="Núm. Contrato" width="50">
+                    <p:column headerText="Núm. Contrato" width="100">
                         <h:outputText value="ME-#{contrato.numeroContrato}"/>
                     </p:column>
                     <p:column headerText="N.I.T. proveedor" width="110">

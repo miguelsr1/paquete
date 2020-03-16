@@ -42,18 +42,18 @@
                             <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
                             <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}"/>
                         </p:selectOneMenu>
-                        <p:outputLabel value="N.I.T.:" />
-                        <p:inputMask id="nit" mask="9999-999999-999-9"  value="#{segFisicoController.numeroNit}" 
+                        <!--p:outputLabel value="N.I.T.:" />
+                        <p:inputMask id="nit" mask="9999-999999-999-9"  value="{segFisicoController.numeroNit}" 
                                      size="17"/>
                         <h:outputText value="Proveedor:"/>
-                        <p:inputText value="#{segFisicoController.razonSocial}" size="55"/>
+                        <p:inputText value="{segFisicoController.razonSocial}" size="55"/>
                         <h:outputText value="Departamento C.E.:" />
-                        <p:selectOneMenu id="cboDepartamento" value="#{segFisicoController.codigoDepartamento}" >
+                        <p:selectOneMenu id="cboDepartamento" value="{segFisicoController.codigoDepartamento}" >
                             <f:selectItem noSelectionOption="true" itemLabel="Seleccione un departamento" />
-                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}"/>
+                            <f:selectItems value="{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="{depa.codigoDepartamento}" itemLabel="{depa.codigoDepartamento} - {depa.nombreDepartamento}"/>
                         </p:selectOneMenu>
                         <h:outputText value="Numero Contrato:"/>
-                        <p:inputText value="#{segFisicoController.numeroContrato}"/>
+                        <p:inputText value="{segFisicoController.numeroContrato}"/-->
                     </p:panelGrid>
                     <p:commandButton value="Buscar" icon="ui-icon-search" action="#{segFisicoController.buscarSeguimiento}" update="pnlDatos"/>  
                 </div>
@@ -65,24 +65,17 @@
                     </h1>
                     <p:dataTable id="pnlDatos" value="#{segFisicoController.lstSeguimientos}" var="seguimiento" rowIndexVar="rowId" rowKey="#{seguimiento.idContrato}"
                                  emptyMessage="No se encontrarón coincidencias con los criterios de búsqueda" 
-                                 paginator="true" paginatorPosition="top" rows="10"
-                                 rowStyleClass="#{seguimiento.estado eq 'EN PROCESO' ? 'filaVerde' : null}"> 
+                                 rowStyleClass="#{seguimiento.estado eq 'ENTREGADO' ? 'filaCompletada' : null}"> 
                         <p:column headerText="#" style="text-align: center" width="10">
                             #{rowId+1}
                         </p:column>
-                        <p:column headerText="Departamento" width="90">
+                        <p:column headerText="Departamento" width="110">
                             <h:outputText value="#{seguimiento.nombreDepartamento}"/>
                         </p:column>
-                        <p:column headerText="Cód. Entidad" width="30">
-                            <h:outputText value="#{seguimiento.codigoEntidad}"/>
-                        </p:column>
-                        <p:column headerText="Nombre C.E." width="100">
-                            <h:outputText value="#{seguimiento.nombreCe}"/>
-                        </p:column>
-                        <p:column headerText="N.I.T. proveedor" width="100">
+                        <p:column headerText="N.I.T. proveedor" width="110">
                             <h:outputText value="#{seguimiento.numeroNit}"/>
                         </p:column>
-                        <p:column headerText="Proveedor" width="100">
+                        <p:column headerText="Proveedor">
                             <h:outputText value="#{seguimiento.razonSocial}"/>
                         </p:column>
                         <p:column headerText="Monto $" styleClass="numero"  width="60">
@@ -90,7 +83,7 @@
                                 <f:convertNumber pattern="#,###.00"/>
                             </h:outputText>
                         </p:column>
-                        <p:column headerText="Estado" style="text-align: center;"  width="70">
+                        <p:column headerText="Estado" style="text-align: center;"  width="80">
                             <h:outputText value="#{seguimiento.estado}"/>
                         </p:column>
                         <p:column headerText="Ver" style="text-align: center;" width="15">
@@ -100,7 +93,7 @@
                                 <i class="fa fa-eye" style="font-size: 17px;"></i>
                             </p:commandLink>
                         </p:column>
-                        <p:column headerText="Borrar" style="text-align: center;" width="20">
+                        <p:column headerText="Borrar" style="text-align: center;" width="30">
                             <p:commandLink oncomplete="PF('confirmDialog').show();">
                                 <p:outputLabel rendered="#{!seguimiento.estadoEliminacion}"> <i class="fa fa-trash-o" style="font-size: 16px;"></i></p:outputLabel>
                                 <f:setPropertyActionListener value="#{seguimiento.idRecepcion}" target="#{segFisicoController.idRecepcion}"/>  

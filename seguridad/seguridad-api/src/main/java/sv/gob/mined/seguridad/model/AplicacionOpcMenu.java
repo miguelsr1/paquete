@@ -23,7 +23,7 @@ import javax.persistence.Table;
  * @author misanchez
  */
 @Entity
-@Table(name = "APLICACION_OPC_MENU")
+@Table(name = "APLICACION_OPC_MENU", schema = "SEGURIDAD_V2")
 @NamedQueries({
     @NamedQuery(name = "AplicacionOpcMenu.findAll", query = "SELECT a FROM AplicacionOpcMenu a")})
 public class AplicacionOpcMenu implements Serializable {

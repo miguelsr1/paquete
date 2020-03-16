@@ -98,9 +98,9 @@ public class ResolucionesAdjudicativasController implements Serializable {
     public BigDecimal getIdResolucionAdj() {
         return current.getIdResolucionAdj();
     }
-    
-    public void setIdResolucionAdj(BigDecimal idResolucionAdj){
-        
+
+    public void setIdResolucionAdj(BigDecimal idResolucionAdj) {
+
     }
 
     public BigDecimal getIdParticipante() {
@@ -176,11 +176,14 @@ public class ResolucionesAdjudicativasController implements Serializable {
     }
 
     public List<EstadoReserva> getLstEstadoReservaModif() {
-        return resolucionAdjudicativaEJB.getLstEstadoReservaModif();
+        if (VarSession.getVariableSessionUsuario().equals("MSANCHEZ")) {
+            return resolucionAdjudicativaEJB.findEstadoReservaEntities();
+        } else {
+            return resolucionAdjudicativaEJB.getLstEstadoReservaModif();
+        }
     }
 
     //</editor-fold>
-    
     public void prepareEdit() {
         VarSession.setVariableSessionED("2");
         deshabilitar = false;
@@ -310,8 +313,8 @@ public class ResolucionesAdjudicativasController implements Serializable {
         }
         return exito;
     }
-    
-    public void reversionMasiva(){
+
+    public void reversionMasiva() {
         resolucionAdjudicativaEJB.reversionMasiva();
         JsfUtil.mensajeUpdate();
     }

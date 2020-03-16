@@ -38,50 +38,9 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 @TransactionManagement(TransactionManagementType.BEAN)
 public class EMailEJB {
 
-    /*public void enviarMail(String code, String remitente, String usuario, String mensaje,
-            PDDocument pDDocument, Session mailSession) {
-        try {
-            MimeMessage m = new MimeMessage(mailSession);
-            Address from = new InternetAddress(usuario);
-
-            m.setFrom(from);
-            //remitente = "miguel.sanchez@admin.mined.edu.sv";
-            m.setRecipients(Message.RecipientType.TO, remitente);
-
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            pDDocument.save(out);
-            byte[] bytes = out.toByteArray();
-
-            BodyPart messageBodyPart1 = new MimeBodyPart();
-            messageBodyPart1.setText(mensaje);
-
-            MimeBodyPart messageBodyPart2 = new MimeBodyPart();
-
-            ByteArrayDataSource ds = new ByteArrayDataSource(bytes, "application/pdf");
-            messageBodyPart2.setDataHandler(new DataHandler(ds));
-            messageBodyPart2.setFileName("Boleta.pdf");
-
-            Multipart multipart = new MimeMultipart();
-            multipart.addBodyPart(messageBodyPart1);
-            multipart.addBodyPart(messageBodyPart2);
-
-            m.setContent(multipart);
-            m.setSubject("Boleta de Pago", "UTF-8");
-            Transport.send(m);
-
-            pDDocument.close();
-            out.close();
-        } catch (MessagingException ex) {
-            Logger.getLogger(EMailEJB.class.getName()).log(Level.WARNING, "Error en el envio de correo a: {0} - código: {1}", new Object[]{remitente, code});
-            Logger.getLogger(EMailEJB.class.getName()).log(Level.WARNING, "Error", ex);
-
-            enviarMailDeError("eMail Boleta - Error", "Error en el envio de correo a: " + remitente + " - código: " + code, usuario, mailSession);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }*/
-    public Boolean enviarMail(String destinatario, String remitente, String mensaje, String nombreMesAnho,
-            File path, Session mailSession) {
+    public Boolean enviarMail(String destinatario, String remitente,
+            String titulo, String mensaje,
+            String nombreMesAnho, File path, Session mailSession) {
         try {
             MimeMessage m = new MimeMessage(mailSession);
             Address from = new InternetAddress(remitente);
@@ -111,7 +70,8 @@ public class EMailEJB {
             out.close();
 
             m.setContent(multipart);
-            m.setSubject("Boleta de Pago de " + nombreMesAnho, "UTF-8");
+            m.setSubject(titulo, "UTF-8");
+            //m.setSubject("Boleta de Pago de " + nombreMesAnho, "UTF-8");
             Transport.send(m);
             return true;
         } catch (MessagingException | IOException ex) {
@@ -160,7 +120,7 @@ public class EMailEJB {
         }
     }
 
-    public Boolean enviarUrlBoleta(String remitente, String destinatario, String mensaje, Session mailSession, String titulo) {
+    /*public Boolean enviarUrlBoleta(String remitente, String destinatario, String mensaje, Session mailSession, String titulo) {
         try {
             MimeMessage m = new MimeMessage(mailSession);
             Address from = new InternetAddress(remitente);
@@ -184,6 +144,5 @@ public class EMailEJB {
             enviarMailDeError("eMail Boleta - Error", "Error en el envio de correo a: " + destinatario, remitente, mailSession);
             return false;
         }
-    }
-
+    }*/
 }

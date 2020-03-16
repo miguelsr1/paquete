@@ -344,9 +344,9 @@ public class EdicionSeguimientoMB implements Serializable {
                 salida = true;
             }
         } catch (Exception e) {
-            System.out.println("Error compracion de fechas");
+            /*System.out.println("Error compracion de fechas");
             System.out.println("FechaRecepcionTotal " + fechaRecepcionTotal);
-            System.out.println("fechaInicio2 " + fechaInicio2);
+            System.out.println("fechaInicio2 " + fechaInicio2);*/
         }
 
         return salida;
@@ -412,21 +412,6 @@ public class EdicionSeguimientoMB implements Serializable {
         errorValidacion = cantidadPendienteItem.intValue() == 0;
         if (errorValidacion) {
             JsfUtil.mensajeInformacion("Este item ya ha sido entregado completamente");
-        }
-    }
-
-    private void calcularTotalRecibidoByItem() {
-        //item recibidos parcialmente
-        for (DetalleRecepcion detalle : lstDetalleRecepcion) {
-            if (noItem.equals(detalle.getNoItem())) {
-                if (detalle.getTipoEntrega() != null) {
-                    if (detalle.getTipoEntrega().equals(tipoEntrega)) {
-                        cantidadTotalRecibidaItem = cantidadTotalRecibidaItem.add(detalle.getCantidadEntregada());
-                    }
-                } else {
-                    cantidadTotalRecibidaItem = cantidadTotalRecibidaItem.add(detalle.getCantidadEntregada());
-                }
-            }
         }
     }
 

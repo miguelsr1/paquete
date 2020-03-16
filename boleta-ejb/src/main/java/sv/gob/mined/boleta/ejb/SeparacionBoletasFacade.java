@@ -103,7 +103,12 @@ public class SeparacionBoletasFacade extends Exception {
         Arrays.sort(lstPDf);
 
         for (File carpetaDocente : lstPDf) {
-            if (carpetaDocente.isDirectory() && !carpetaDocente.getName().equals("procesado") && !carpetaDocente.getName().equals("archivo_original")) {
+            if (carpetaDocente.isDirectory() && 
+                    !carpetaDocente.getName().equals("procesado") && 
+                    !carpetaDocente.getName().equals("archivo_original") && 
+                    !carpetaDocente.getName().equals("DOCENTE_SIN_NIP") && 
+                    !carpetaDocente.getName().equals("errores") && 
+                    !carpetaDocente.getName().equals("no_encontrado")) {
                 PDFMergerUtility PDFmerger = new PDFMergerUtility();
                 PDFmerger.setDestinationFileName(carpetaPorFecha.getPath() + File.separator + carpetaDocente.getName() + ".pdf");
 

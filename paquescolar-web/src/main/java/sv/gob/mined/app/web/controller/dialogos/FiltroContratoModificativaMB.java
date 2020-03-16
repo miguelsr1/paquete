@@ -206,10 +206,18 @@ public class FiltroContratoModificativaMB extends RecuperarProcesoUtil implement
                     }
                     break;
                 case 2:
-                    if (vwContratoModificatoria.getIdEstadoReserva().intValue() == 1 || vwContratoModificatoria.getIdEstadoReserva().intValue() == 2 || vwContratoModificatoria.getIdEstadoReserva().intValue() == 5) {
-                        PrimeFaces.current().dialog().closeDynamic(vwContratoModificatoria);
+                    if (VarSession.getVariableSessionUsuario().equals("MSANCHEZ")) {
+                        if (vwContratoModificatoria.getIdEstadoReserva().intValue() == 1 || vwContratoModificatoria.getIdEstadoReserva().intValue() == 2 || vwContratoModificatoria.getIdEstadoReserva().intValue() == 5 || vwContratoModificatoria.getIdEstadoReserva().intValue() == 3) {
+                            PrimeFaces.current().dialog().closeDynamic(vwContratoModificatoria);
+                        } else {
+                            JsfUtil.mensajeAlerta("El contrato seleccionado no tiene la RESERVA DE FONDOS en estado DIGITADA");
+                        }
                     } else {
-                        JsfUtil.mensajeAlerta("El contrato seleccionado no tiene la RESERVA DE FONDOS en estado DIGITADA");
+                        if (vwContratoModificatoria.getIdEstadoReserva().intValue() == 1 || vwContratoModificatoria.getIdEstadoReserva().intValue() == 2 || vwContratoModificatoria.getIdEstadoReserva().intValue() == 5) {
+                            PrimeFaces.current().dialog().closeDynamic(vwContratoModificatoria);
+                        } else {
+                            JsfUtil.mensajeAlerta("El contrato seleccionado no tiene la RESERVA DE FONDOS en estado DIGITADA");
+                        }
                     }
                     break;
                 case 3:

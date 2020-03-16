@@ -1158,6 +1158,7 @@ public class EstadisticasCensoController implements Serializable {
                 entidadEducativaEJB.create(organizacionEducativa);
             } else {
                 if (editDirector) {
+                    organizacionEducativa.setNombreMiembro(nombre);
                     entidadEducativaEJB.edit(organizacionEducativa);
                     entidadEducativaEJB.updateNombreDirectorContratoYPago(codigoEntidad, procesoAdquisicion.getIdAnho().getIdAnho().intValue(), nombre);
                 }

@@ -20,8 +20,7 @@ import javax.faces.bean.ViewScoped;
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
-import sv.gob.mined.boleta.ejb.EnvioDeBoletasFacade;
-import sv.gob.mined.boleta.ejb.LeerBoletasEJB;
+import sv.gob.mined.boleta.ejb.LeerBoletasFacade;
 import sv.gob.mined.boleta.ejb.SeparacionBoletasFacade;
 
 /**
@@ -32,7 +31,9 @@ import sv.gob.mined.boleta.ejb.SeparacionBoletasFacade;
 @ViewScoped
 public class EnviarCorreoMB implements Serializable {
 
-    private String codigoUltimo;
+    //private String codigoUltimo;
+    private String mensajeCorreo;
+    private String tituloCorreo;
 
     private Session mailSession;
 
@@ -45,20 +46,34 @@ public class EnviarCorreoMB implements Serializable {
     private String mesAnho = "12_2019";
 
     @EJB
-    private LeerBoletasEJB leerBoletasEJB;
+    private LeerBoletasFacade leerBoletasEJB;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("MM_yyyy");
 
     @EJB
     private SeparacionBoletasFacade sbf;
-    @EJB
-    private EnvioDeBoletasFacade envioDeBoletasFacade;
 
     @PostConstruct
     public void init() {
         //mesAnho = "12_2019";
         mes = sdf.format(new Date()).split("_")[0];
         anho = sdf.format(new Date()).split("_")[1];
+    }
+
+    public String getMensajeCorreo() {
+        return mensajeCorreo;
+    }
+
+    public void setMensajeCorreo(String mensajeCorreo) {
+        this.mensajeCorreo = mensajeCorreo;
+    }
+
+    public String getTituloCorreo() {
+        return tituloCorreo;
+    }
+
+    public void setTituloCorreo(String tituloCorreo) {
+        this.tituloCorreo = tituloCorreo;
     }
 
     public String getMes() {
@@ -77,9 +92,9 @@ public class EnviarCorreoMB implements Serializable {
         this.anho = anho;
     }
 
-    public void enviarCorreos() {
-        leerBoletasEJB.leerArchivosPendientes(getMailSession(), codDepa, usuario);
-    }
+    /*public void enviarCorreos() {
+        //leerBoletasEJB.leerArchivosPendientes(getMailSession(), codDepa, usuario);
+    }*/
 
     private Session getMailSession() {
         Properties configEmail = new Properties();
@@ -145,48 +160,38 @@ public class EnviarCorreoMB implements Serializable {
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(LeerBoletasEJB.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EnviarCorreoMB.class.getName()).log(Level.SEVERE, null, ex);
         }
         return info;
     }
 
-    public String getCodigoUltimo() {
-        return codigoUltimo;
-    }
-
-    public void setCodigoUltimo(String codigoUltimo) {
-        this.codigoUltimo = codigoUltimo;
-    }
-
-    public void buscarCodigoUltimo() {
-        leerBoletasEJB.leerArchivosPendientesByUltimoProcesado(mailSession, codDepa, usuario, codigoUltimo, mesAnho, nombreArchivo);
-    }
-
     public void separacionDeBoletas() {
+        codDepa = usuario.substring(7, 9);
         Properties info = chargeEmailsProperties("cuenta_office365");
         clave = info.getProperty("clave_".concat(codDepa));
 
         System.out.println(mes + " - " + anho + " - " + clave);
-        
+
         mesAnho = mes.concat("_").concat(anho);
         sbf.separacion(mesAnho, codDepa);
     }
 
     public void enviarUnSoloCorreo() {
+        codDepa = usuario.substring(7, 9);
         Properties info = chargeEmailsProperties("cuenta_office365");
         clave = info.getProperty("clave_".concat(codDepa));
 
         System.out.println(mes + " - " + anho + " - " + clave);
-        
+
         mesAnho = mes.concat("_").concat(anho);
-        leerBoletasEJB.enviarUnSoloCorreo(codDepa, mesAnho, getMailSession(), usuario);
+        leerBoletasEJB.enviarUnSoloCorreo(codDepa, mesAnho, getMailSession(), usuario, mensajeCorreo, tituloCorreo);
     }
 
-    public void enviarUrl() {
+    /*public void enviarUrl() {
         envioDeBoletasFacade.enviarBoletasDePago(codDepa, mesAnho);
     }
 
     public void enviarBoleta() {
         envioDeBoletasFacade.enviarBoletasDePagoPdf(codDepa, mesAnho);
-    }
+    }*/
 }

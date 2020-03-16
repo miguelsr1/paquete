@@ -22,7 +22,7 @@ import sv.gob.mined.utils.seguridad.Seguridad;
 @LocalBean
 public class UsuarioFacade  {
 
-    @PersistenceContext
+    @PersistenceContext(unitName = "sv.gob.mined_seguridad-model_jar_1.0PU")
     public EntityManager em;
 
     public Usuario findUsuarioByLogin(String login, String password) {

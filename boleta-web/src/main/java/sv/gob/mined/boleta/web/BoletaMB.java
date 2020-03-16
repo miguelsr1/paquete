@@ -36,7 +36,7 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import sv.gob.mined.boleta.dto.DatosDto;
 import sv.gob.mined.boleta.ejb.PersistenciaFacade;
-import sv.gob.mined.boleta.model.CodigoGenerado;
+import sv.gob.mined.boleta.api.model.CodigoGenerado;
 import sv.gob.mined.utils.jsf.JsfUtil;
 
 /**
@@ -194,16 +194,15 @@ public class BoletaMB implements Serializable {
 
                         Path pathFile = filePdf.toPath();
                         FileTime fTime = (FileTime) Files.getAttribute(pathFile, "creationTime");
-                        PDDocument pdc = PDDocument.load(filePdf);
+                        try ( PDDocument pdc = PDDocument.load(filePdf)) {
+                            dato.setFechaCreado(new Date(fTime.toMillis()));
+                            dato.setNombreArchivo(filePdf.getName());
+                            dato.setNumeroPaginas(pdc.getNumberOfPages());
 
-                        dato.setFechaCreado(new Date(fTime.toMillis()));
-                        dato.setNombreArchivo(filePdf.getName());
-                        dato.setNumeroPaginas(pdc.getNumberOfPages());
-
-                        lst.add(dato);
-                        pdc.close();
+                            lst.add(dato);
+                        }
                     } catch (java.io.IOException e) {
-                        Logger.getLogger(BoletaMB.class.getName()).log(Level.WARNING, "Error en el archivo: " + filePdf.getName());
+                        Logger.getLogger(BoletaMB.class.getName()).log(Level.WARNING, "Error en el archivo: {0}", filePdf.getName());
                     }
                 }
             }
@@ -235,7 +234,7 @@ public class BoletaMB implements Serializable {
     }
 
     public void handleFileUpload(FileUploadEvent file) throws FileNotFoundException, IOException {
-        if (mesAnho != "") {
+        if (!mesAnho.equals("")) {
             this.file = file.getFile();
 
             File carpeta = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator);
@@ -251,7 +250,7 @@ public class BoletaMB implements Serializable {
                 arc = Files.createFile(folder);
             }
 
-            try (InputStream input = file.getFile().getInputstream()) {
+            try ( InputStream input = file.getFile().getInputstream()) {
                 Files.copy(input, arc, StandardCopyOption.REPLACE_EXISTING);
             }
 
@@ -267,10 +266,6 @@ public class BoletaMB implements Serializable {
 
     public List<DatosDto> getLstArchivoOriginales() {
         return lstArchivosOriginales;
-    }
-
-    public Integer getCantidadDeBoletasEnviadas() {
-        return persistenciaFacade.getCantidadDeBoletasEnviadas(codDepa);
     }
 
     private List<String> getLst(String nombreCarpeta) {

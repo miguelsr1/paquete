@@ -1965,8 +1965,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
         param.put("pUniforme", detalleProcesoAdq.getIdDetProcesoAdq() == 25 ? 1 : 0);
         param.put("pIdRequerimiento", req.getIdRequerimiento().intValue());
         param.put("pAnho", "20" + anho);
-        jp
-                = reportesEJB.getRpt(param, PagoProveedoresController.class
+        jp = reportesEJB.getRpt(param, PagoProveedoresController.class
                         .getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + nombreRpt)));
         return jp;
     }

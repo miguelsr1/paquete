@@ -432,7 +432,7 @@ public class ModificativaEJB {
 
     private HashMap<String, Object> existeDisponibilidadesCE(TechoRubroEntEdu techoCE, BigDecimal valorReserva, HashMap<String, Object> param) {
 
-        if (techoCE.getMontoDisponible().intValue() + valorReserva.intValue() < 0) {
+        if (techoCE.getMontoDisponible().add(valorReserva).compareTo(BigDecimal.ZERO) == -1) {
             param.put("error", "El centro escolar " + techoCE.getCodigoEntidad() + " no posee disponibilidad presupuestaria!\n"
                     + "Monto Disponible: " + techoCE.getMontoDisponible() + " Monto Adjudicado: " + valorReserva);
         } else {
@@ -721,9 +721,9 @@ public class ModificativaEJB {
     public List<TipoModifContrato> getLstTipoModifByTipoUsuario(BigDecimal idTipoUsuario) {
         String ids = "";
         if (idTipoUsuario.intValue() == 1) {
-            ids = "1,3,4,5,6";
+            ids = "1,3,4,5,6,13";
         } else {
-            ids = "3,4";
+            ids = "3,4,13";
         }
         Query q = em.createQuery("SELECT t FROM TipoModifContrato t WHERE t.idModifContrato in (" + ids + ") ORDER by t.idModifContrato", TipoModifContrato.class);
 

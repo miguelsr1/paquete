@@ -16,7 +16,7 @@ public class App
         
         Date fecha = ts;
         
-        System.out.println(Herramientas.getFormatoLetrasHoraYFecha(fecha));
+        System.out.println(Herramientas.addDiasAFecha(new Date(), 60));
         
     }
 }

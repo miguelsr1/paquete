@@ -4,6 +4,7 @@
  */
 package sv.gob.mined.app.web.controller.segmodif;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -25,9 +26,11 @@ import org.primefaces.event.SelectEvent;
 import sv.gob.mined.app.web.controller.ParametrosMB;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
+import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.RecepcionEJB;
+import sv.gob.mined.paquescolar.ejb.ReportesEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.DetalleOfertas;
@@ -47,13 +50,16 @@ import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 @ManagedBean
 @ViewScoped
 public class SegFisicoController extends RecuperarProcesoUtil implements Serializable {
-
+    
     @EJB
     private RecepcionEJB recepcionEJB;
     @EJB
     private EntidadEducativaEJB entidadEducativaEJB;
     @EJB
     private UtilEJB utilEJB;
+    @EJB
+    public ReportesEJB reportesEJB;
+    
     private BigDecimal rubro = BigDecimal.ZERO;
     private String codigoDepartamento;
     private DetalleRecepcion detalleRecepcion = new DetalleRecepcion();
@@ -81,7 +87,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
     private Boolean showPnlNewSeguimiento = true;
     private Date fechaEntregaUno;
     private Date fechaEntregaDos;
-
+    
     private String detalleItem = "";
     private String tipoentrega = "1";
     private String tipoentregaEdt = "1";
@@ -97,25 +103,26 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
      */
     public SegFisicoController() {
     }
-
+    
     @PostConstruct
     public void ini() {
         String idContrato = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("idContrato");
-
+        
         if (idContrato != null && !idContrato.isEmpty()) {
             if (recepcionEJB.existeModificativaByIdContrato(new BigDecimal(idContrato))) {
                 JsfUtil.mensajeInformacion("Debe de aplicar la modificativa que tiene registrada este contrato");
-            }else{
+            } else {
                 showPnlNewSeguimiento = false;
                 inicializarValores(idContrato);
                 cargarContrato(recepcionEJB.getContratosById(new BigDecimal(idContrato)));
+                verificarEntregaCompleta();
             }
         }
         rubro = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getRubro();
         esDosUniformes = (rubro.intValue() == 1);
     }
-
+    
     public void nuevoSeguimiento() {
         recepcion = new RecepcionBienesServicios();
         VarSession.removeVariableSession("idContrato");
@@ -125,19 +132,19 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
     public List<DetalleRecepcion> getLstDetalleRecepcion() {
         return lstDetalleRecepcion;
     }
-
+    
     public void setLstDetalleRecepcion(List<DetalleRecepcion> lstDetalleRecepcion) {
         this.lstDetalleRecepcion = lstDetalleRecepcion;
     }
-
+    
     public BigDecimal getIdRecepcion() {
         return idRecepcion;
     }
-
+    
     public void setIdRecepcion(BigDecimal idRecepcion) {
         this.idRecepcion = idRecepcion;
     }
-
+    
     public Boolean getShowPnlNewSeguimiento() {
         return showPnlNewSeguimiento;
     }
@@ -150,23 +157,23 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
     public List<DetalleOfertas> getListaOfertasOriginal() {
         return listaOfertasOriginal;
     }
-
+    
     public void setShowPnlNewSeguimiento(Boolean showPnlNewSeguimiento) {
         this.showPnlNewSeguimiento = showPnlNewSeguimiento;
     }
-
+    
     public void buscarProceso() {
         detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
     }
-
+    
     public String getCodigoEntidad() {
         return codigoEntidad;
     }
-
+    
     public void setCodigoEntidad(String codigoEntidad) {
         this.codigoEntidad = codigoEntidad;
     }
-
+    
     public BigDecimal getRubro() {
         if (rubro == null) {
             if (VarSession.isCookie("rubro")) {
@@ -175,7 +182,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
         }
         return rubro;
     }
-
+    
     public void setRubro(BigDecimal rubro) {
         if (rubro != null) {
             VarSession.crearCookie("rubro", rubro.toString());
@@ -183,67 +190,67 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
                     getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB");
             controller.setRubro(rubro);
             controller.findDetalleProcesoAdq();*/
-
+            
             this.rubro = rubro;
         }
     }
-
+    
     public String getNumeroNit() {
         return numeroNit;
     }
-
+    
     public void setNumeroNit(String numeroNit) {
         this.numeroNit = numeroNit;
     }
-
+    
     public String getRazonSocial() {
         return razonSocial;
     }
-
+    
     public void setRazonSocial(String razonSocial) {
         this.razonSocial = razonSocial;
     }
-
+    
     public String getCodigoDepartamento() {
         return codigoDepartamento;
     }
-
+    
     public void setCodigoDepartamento(String codigoDepartamento) {
         this.codigoDepartamento = codigoDepartamento;
     }
-
+    
     public VwCatalogoEntidadEducativa getEntidadEducativa() {
         return entidadEducativa;
     }
-
+    
     public void setEntidadEducativa(VwCatalogoEntidadEducativa entidadEducativa) {
         this.entidadEducativa = entidadEducativa;
     }
-
+    
     public String getNumeroContrato() {
         return numeroContrato;
     }
-
+    
     public void setNumeroContrato(String numeroContrato) {
         this.numeroContrato = numeroContrato;
     }
-
+    
     public List<VwBusquedaContratos> getLstContratos() {
         return lstContratos;
     }
-
+    
     public void setLstContratos(List<VwBusquedaContratos> lstContratos) {
         this.lstContratos = lstContratos;
     }
-
+    
     public List<RecepcionBienesServicios> getRecepciones() {
         return recepciones;
     }
-
+    
     public void setRecepciones(List<RecepcionBienesServicios> recepciones) {
         this.recepciones = recepciones;
     }
-
+    
     public VwBusquedaContratos getContratoSelecionado() {
         if (contratoSelecionado != null) {
             return contratoSelecionado;
@@ -252,68 +259,68 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             return contratoSelecionado;
         }
     }
-
+    
     public void setContratoSelecionado(VwBusquedaContratos contratoSelecionado) {
         this.contratoSelecionado = contratoSelecionado;
     }
-
+    
     public BigDecimal getRubroSeg() {
         return rubro;
     }
-
+    
     public void setRubroSeg(BigDecimal rubro) {
         this.rubro = rubro;
     }
-
+    
     public List<VwBusquedaSeguimientos> getLstSeguimientos() {
         return lstSeguimientos;
     }
-
+    
     public void setLstSeguimientos(List<VwBusquedaSeguimientos> lstSeguimientos) {
         this.lstSeguimientos = lstSeguimientos;
     }
-
+    
     public ContratosOrdenesCompras getContratoOrden() {
         contratoOrden = recepcionEJB.getContratoOrdenCompra(contratoSelecionado.getIdContrato());
         return contratoOrden;
     }
-
+    
     public void setContratoOrden(ContratosOrdenesCompras contratoOrden) {
         this.contratoOrden = contratoOrden;
     }
-
+    
     public String getDetalleItem() {
         return detalleItem;
     }
-
+    
     public void setDetalleItem(String detalleItem) {
         this.detalleItem = detalleItem;
     }
-
+    
     public BigInteger getTotalEntregado() {
         return totalEntregado;
     }
-
+    
     public void setTotalEntregado(BigInteger totalEntregado) {
         this.totalEntregado = totalEntregado;
     }
-
+    
     public BigInteger getCantidadPendiente() {
         return cantidadPendiente;
     }
-
+    
     public void setCantidadPendiente(BigInteger cantidadPendiente) {
         this.cantidadPendiente = cantidadPendiente;
     }
-
+    
     public BigInteger getCantidadTotalDetalle() {
         return cantidadTotalDetalle;
     }
-
+    
     public void setCantidadTotalDetalle(BigInteger cantidadTotalDetalle) {
         this.cantidadTotalDetalle = cantidadTotalDetalle;
     }
-
+    
     public String getEstadoSeguimiento() {
         if (recepcion.getIdRecepcion() == null || recepcion.getIdEstadoSeguimiento().getIdEstadoSeguimiento() == null) {
             return "EN PROCESO";
@@ -321,70 +328,74 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             return recepcion.getIdEstadoSeguimiento().getDescripcionEstado();
         }
     }
-
+    
     public Boolean getMensajeAlerta() {
         return mensajeAlerta;
     }
-
+    
     public void setMensajeAlerta(Boolean mensajeAlerta) {
         this.mensajeAlerta = mensajeAlerta;
     }
-
+    
     public BigInteger getTotalEntregado1() {
         return totalEntregado1;
     }
-
+    
     public void setTotalEntregado1(BigInteger totalEntregado1) {
         this.totalEntregado1 = totalEntregado1;
     }
-
+    
     public boolean isDisabledCantidad() {
         return disabledCantidad;
     }
-
+    
     public void setDisabledCantidad(boolean disabledCantidad) {
         this.disabledCantidad = disabledCantidad;
     }
-
+    
     public void setTipoentrega(String tipoentrega) {
         this.tipoentrega = tipoentrega;
     }
-
+    
     public Date getFechaEntregaUno() {
         if (recepcion.getFechaOrdenInicioEntrega1() != null) {
             fechaEntregaUno = recepcion.getFechaOrdenInicioEntrega1();
         }
         return fechaEntregaUno;
     }
-
+    
     public void setFechaEntregaUno(Date fechaEntregaUno) {
         this.fechaEntregaUno = fechaEntregaUno;
     }
-
+    
     public Date getFechaEntregaDos() {
         if (recepcion.getFechaOrdenInicioEntrega1() != null) {
             fechaEntregaDos = recepcion.getFechaOrdenInicioEntrega2();
         }
         return fechaEntregaDos;
     }
-
+    
     public void setFechaEntregaDos(Date fechaEntregaDos) {
         this.fechaEntregaDos = fechaEntregaDos;
     }
-
+    
     public void setListaOfertas(List<DetalleOfertas> listaOfertas) {
         this.listaOfertas = listaOfertas;
     }
-
+    
     public void setDisableBtnTotal(Boolean disableBtnTotal) {
         this.disableBtnTotal = disableBtnTotal;
     }
-
+    
     public RecepcionBienesServicios getRecepcion() {
         return recepcion;
     }
 
     // </editor-fold>
+    public Boolean getUniforme() {
+        return contratoSelecionado != null && contratoSelecionado.getIdRubroAdq() != null && (contratoSelecionado.getIdRubroAdq().intValue() == 4 || contratoSelecionado.getIdRubroAdq().intValue() == 5);
+    }
+    
     private void inicializarValores(String idContrato) {
         contratoSelecionado = recepcionEJB.getContratosById(new BigDecimal(idContrato));
         recepcion = recepcionEJB.getRecepcion(contratoSelecionado.getIdContrato());
@@ -400,7 +411,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             calcularPendiente();
         }
     }
-
+    
     public void buscarContrato() {
         lstContratos.clear();
         if (rubro == null) {
@@ -412,7 +423,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             lstContratos = recepcionEJB.getLstBusquedaContratosFisico(detalleProceso, codigoEntidad, codigoDepartamento, numeroNit, numeroContrato, razonSocial);
         }
     }
-
+    
     public void buscarSeguimiento() {
         lstSeguimientos = new ArrayList();
         if (rubro == null) {
@@ -432,12 +443,12 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             }
         }
     }
-
+    
     public void editSeguimiento() {
         Boolean existe;
         if (contratoSelecionado.getIdContrato() != null) {
             existe = recepcionEJB.existeModificativaByIdContrato(contratoSelecionado.getIdContrato());
-
+            
             if (existe) {
                 JsfUtil.mensajeAlerta("Este contrato tiene una modificativa en estado DIGITADA, debe de APLICAR la modificativa antes de registrar las entregas.");
             } else {
@@ -445,7 +456,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
                 if (!existe) {
                     crearSeguimiento();
                 }
-
+                
                 if (existe) {
                     contratoSelecionado = new VwBusquedaContratos();
                     JsfUtil.mensajeAlerta("Este contrato ya esta en seguimiento");
@@ -455,26 +466,29 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             }
         }
     }
-
+    
     private boolean validarSiSeguimientoExiste() {
         return this.recepcionEJB.ifExisteRecepcion(contratoSelecionado.getIdContrato());
     }
-
+    
     public void crearSeguimiento() {
         ContratosOrdenesCompras contrato = recepcionEJB.getContratoOrdenCompra(contratoSelecionado.getIdContrato());
-
+        
         if (contrato != null) {
             recepcion.setEstadoEliminacion(BigInteger.ZERO);
             recepcion.setIdEstadoSeguimiento(new EstadoSeguimiento(1));
             recepcion.setFechaInsercion(new Date());
             recepcion.setIdContrato(contrato);
             recepcion.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+            if (contrato.getFechaOrdenInicio() != null) {
+                recepcion.setFechaOrdenInicioEntrega1(contrato.getFechaOrdenInicio());
+            }
             this.recepcionEJB.guardarRecepcion(recepcion);
         } else {
             JsfUtil.mensajeAlerta("Ah ocurrido un error. Por favor vuelva a seleccionar el contrato.");
         }
     }
-
+    
     public void showDlgEntregaTotal() {
         boolean validarAdicionDetalle = true;
         if (contratoSelecionado.getIdContrato() != null) {
@@ -486,7 +500,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
                 boolean cuadrarPrimeraEntrega = cuadraPrimeraEntregaUniformes();
                 if ((cuadrarPrimeraEntrega && segundaEntregaEscero()) || sumEntregaTotal1UniformeEntregas().equals(BigInteger.ZERO)) {
                     VarSession.setVariableSession("cuadradaPrimeraEntrega", cuadrarPrimeraEntrega);
-
+                    
                     Map<String, Object> opt = new HashMap();
                     opt.put("modal", true);
                     opt.put("draggable", true);
@@ -501,7 +515,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
                 JsfUtil.mensajeAlerta("Debe de ingresar la fecha de orden de inicio");
                 validarAdicionDetalle = false;
             }
-
+            
             if (validarAdicionDetalle) {
                 Map<String, Object> opt = new HashMap();
                 opt.put("modal", true);
@@ -510,14 +524,14 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
                 opt.put("contentHeight", 340);
                 opt.put("contentWidth", 500);
                 PrimeFaces.current().dialog().openDynamic("/app/comunes/dialogos/seguimiento/fisico/dlgDetalleSeguimientoEntregaTotal.mined", opt, null);
-
+                
             }
         } else {
             JsfUtil.mensajeAlerta("No ha seleccionado contrato");
         }
-
+        
     }
-
+    
     public void showDlgAgregarRecepcion() {
         boolean validarAdicionDetalle = true;
         if (esDosUniformes) {
@@ -537,7 +551,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             JsfUtil.mensajeAlerta("No ha seleccionado contrato");
             validarAdicionDetalle = false;
         }
-
+        
         if (validarAdicionDetalle) {
             String op = JsfUtil.getRequestParameter("nuevo");
             /*
@@ -548,10 +562,11 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             if (op.equals("1")) {//nuevo
                 detalleRecepcion = new DetalleRecepcion();
             }
-
+            
             VarSession.setVariableSession("op", op);
             VarSession.setVariableSession("idDetalleSeguimiento", detalleRecepcion.getIdDetalleRecepcion());
-
+            VarSession.setVariableSession("fechaOrdenInicio", recepcion.getFechaOrdenInicioEntrega1());
+            
             VarSession.setVariableSession("esDosUniformes", esDosUniformes);
             VarSession.setVariableSession("idContrato", contratoSelecionado.getIdContrato());
             if (esDosUniformes) {
@@ -567,7 +582,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             PrimeFaces.current().dialog().openDynamic("/app/comunes/dialogos/seguimiento/fisico/dlgDetalleSeguimientoNuevo.mined", opt, null);
         }
     }
-
+    
     public void eliminarDetalleSeguimientoSeg() throws IOException {
         if (detalleRecepcion.getIdRecepcion() == null) {
             detalleRecepcion = new DetalleRecepcion();
@@ -584,16 +599,16 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             PrimeFaces.current().dialog().openDynamic("/app/comunes/msgConfirmacion.mined", opt, null);
         }
     }
-
+    
     public void actualizarsaldoEdit() {
         totalEntregado1 = totalEntregado;
         totalEntregado = totalEntregado.add(detalleRecepcion.getCantidadEntregada());
         totalEntregado = totalEntregado.subtract(totalEntregado1);
         cantidadPendiente = cantidadTotalDetalle.subtract(totalEntregado);
-
+        
         mensajeAlerta = false;
     }
-
+    
     public void buscarEntidadEducativa() {
         if (codigoEntidad.length() == 5) {
             detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
@@ -605,14 +620,14 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             entidadEducativa = null;
         }
     }
-
+    
     public OfertaBienesServicios getSelected() {
         if (current == null) {
             current = new OfertaBienesServicios();
         }
         return current;
     }
-
+    
     public void onEntidadChosen(SelectEvent event) {
         entidadEducativa = (VwCatalogoEntidadEducativa) event.getObject();
         getSelected().getCodigoEntidad().setCodigoEntidad(entidadEducativa.getCodigoEntidad());
@@ -630,7 +645,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             cargarContrato((VwBusquedaContratos) event.getObject());
         }
     }
-
+    
     private void cargarContrato(VwBusquedaContratos contrato) {
         contratoSelecionado = contrato;
         recepcion = recepcionEJB.getRecepcion(contratoSelecionado.getIdContrato());
@@ -640,11 +655,17 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
         fechaEntregaUno = recepcion.getIdContrato().getFechaOrdenInicio();
         listaOfertas = recepcionEJB.getItemDeContratoVigente(recepcion.getIdContrato().getIdContrato());
     }
-
+    
     public void actualizarTblDetalleRecepcion(SelectEvent event) {
         lstDetalleRecepcion = recepcionEJB.getLstDetalleRecepcionByFk(recepcion.getIdRecepcion());
+        verificarEntregaCompleta();
+        
+        if (disableBtnTotal) {
+            recepcion.setIdEstadoSeguimiento(utilEJB.find(EstadoSeguimiento.class, 2));
+            recepcionEJB.guardarRecepcion(recepcion);
+        }
     }
-
+    
     public void showDlgFiltroContrato() {
         Map<String, Object> opt = new HashMap();
         opt.put("modal", true);
@@ -654,7 +675,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
         opt.put("contentWidth", 900);
         PrimeFaces.current().dialog().openDynamic("/app/comunes/dialogos/seguimiento/fisico/filtroContratoSeguimiento", opt, null);
     }
-
+    
     public void findItemBydetalle() {
         contratoOrden = recepcionEJB.getContratoOrdenCompra(contratoSelecionado.getIdContrato());
         contratoOrden.getIdResolucionAdj().getIdParticipante().getDetalleOfertasList().forEach((detalle) -> {
@@ -664,13 +685,13 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             }
         });
     }
-
+    
     public void modificardetalleContratoEdt() {
         detalleRecepcion.setTipoEntrega(tipoentregaEdt);
         detalleRecepcion.setNoItem(detalleItem);
-
+        
         Boolean escero = siContratoSaldoCero();
-
+        
         if (VarSession.isVariableSession("idDetalleSeguimiento")) {
             detalleRecepcion.setFechaModificacion(new Date());
             detalleRecepcion.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
@@ -683,10 +704,10 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
         recepcionEJB.guardarDetalleRecepcion(detalleRecepcion, escero);
         VarSession.removeVariableSession("idDetalleSeguimiento");
         detalleRecepcion = new DetalleRecepcion();
-
+        
         PrimeFaces.current().dialog().closeDynamic(detalleRecepcion);
     }
-
+    
     public void modificardetalleContrato() {
         findItemBydetalle();
         if (esDosUniformes) {
@@ -707,10 +728,10 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
         recepcionEJB.guardarDetalleRecepcion(detalleRecepcion, escero);
         VarSession.removeVariableSession("idDetalleSeguimiento");
         detalleRecepcion = new DetalleRecepcion();
-
+        
         PrimeFaces.current().dialog().closeDynamic(detalleRecepcion);
     }
-
+    
     public void eliminardetalleContrato() {
         if (VarSession.isVariableSession("idDetalleSeguimiento")) {
             BigDecimal idDetalleRecepcion = (BigDecimal) VarSession.getVariableSession("idDetalleSeguimiento");
@@ -719,15 +740,15 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             recepcionEJB.guardarDetalleRecepcion(detalleRecepcion, false);
             this.detalleRecepcion = new DetalleRecepcion();
             VarSession.removeVariableSession("idDetalleSeguimiento");
-
+            
         }
         PrimeFaces.current().dialog().closeDynamic(detalleRecepcion);
-
+        
     }
-
+    
     public void cancelareliminardetalleContrato() {
         PrimeFaces.current().dialog().closeDynamic(detalleRecepcion);
-
+        
     }
 
     /*public void onDateSelect(SelectEvent event) {
@@ -740,7 +761,6 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
 
         this.recepcionEJB.guardarRecepcion(recepcion);
     }*/
-
     public DetalleRecepcion getDetalleRecepcion() {
         if (VarSession.isVariableSession("idDetalleSeguimiento")) {
             if (VarSession.isVariableSession("nuevo")) {
@@ -755,27 +775,27 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
         }
         return detalleRecepcion;
     }
-
+    
     public void setDetalleRecepcion(DetalleRecepcion detalleRecepcion) {
         this.detalleRecepcion = detalleRecepcion;
     }
-
+    
     private boolean cuadraPrimeraEntregaUniformes() {
         return sumEntregaTotal1UniformeContrato().equals(sumEntregaTotal1UniformeEntregas());
     }
-
+    
     private boolean segundaEntregaEscero() {
         return sumEntregaTotal2Uniforme().equals(BigInteger.ZERO);
     }
-
+    
     private boolean cuadraentregaUniformes() {
         return sumEntregaTotal2UniformeContrato().equals(sumEntregaTotal2UniformeEntregas());
     }
-
+    
     private boolean cuadraentregaOtrosRubros() {
         return sumEntregaTotal2UniformeContrato().equals(sumEntregaTotal2UniformeEntregas());
     }
-
+    
     private BigInteger sumEntregaTotal2UniformeContrato() {
         BigInteger total = BigInteger.ZERO;
         for (DetalleOfertas detalle : listaOfertas) {
@@ -783,15 +803,15 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
         }
         return total;
     }
-
+    
     private BigInteger sumEntregaTotal2UniformeEntregas() {
         BigInteger total = BigInteger.ZERO;
-        for (DetalleRecepcion detRecepcion : recepcion.getDetalleRecepcionList()) {
+        for (DetalleRecepcion detRecepcion : lstDetalleRecepcion) {
             total = total.add(detRecepcion.getCantidadEntregada());
         }
         return total;
     }
-
+    
     private BigInteger sumEntregaTotal1UniformeContrato() {
         BigInteger total = BigInteger.ZERO;
         for (DetalleOfertas detalle : listaOfertas) {
@@ -803,10 +823,10 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
         }
         return total;
     }
-
+    
     private BigInteger sumEntregaTotal1UniformeEntregas() {
         BigInteger total = BigInteger.ZERO;
-        for (DetalleRecepcion detRecepcion : recepcion.getDetalleRecepcionList()) {
+        for (DetalleRecepcion detRecepcion : lstDetalleRecepcion) {
             if (esDosUniformes) {
                 if (detRecepcion.getTipoEntrega().equals("1")) {
                     total = total.add(detRecepcion.getCantidadEntregada());
@@ -817,26 +837,26 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
         }
         return total;
     }
-
+    
     private BigInteger sumEntregaTotal2Uniforme() {
         BigInteger total = BigInteger.ZERO;
-        for (DetalleRecepcion detRecepcion : recepcion.getDetalleRecepcionList()) {
+        for (DetalleRecepcion detRecepcion : lstDetalleRecepcion) {
             if (detRecepcion.getTipoEntrega().equals("2")) {
                 total = total.add(detRecepcion.getCantidadEntregada());
             }
         }
         return total;
     }
-
+    
     public void calcularTotalporItemDet() {
         contratoOrden = recepcionEJB.getContratoOrdenCompra(contratoSelecionado.getIdContrato());
         contratoOrden.getIdResolucionAdj().getIdParticipante().getDetalleOfertasList().forEach((detalle) -> {
             if ((detalle.getNoItem() + " " + detalle.getConsolidadoEspTec()).equals(detalleItem)) {
-
+                
                 cantidadTotalDetalle = detalle.getCantidad();
                 if (VarSession.isVariableSession("rubroConfeccion")) {
                     Boolean rubroConfeccion = (Boolean) VarSession.getVariableSession("rubroConfeccion");
-
+                    
                     if (rubroConfeccion) {
                         if (contratoOrden.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq() == null) {
                             cantidadTotalDetalle = BigInteger.valueOf(cantidadTotalDetalle.intValue() / 2);
@@ -848,7 +868,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             }
         });
     }
-
+    
     public void calcularTotalporItem() {
         contratoOrden = recepcionEJB.getContratoOrdenCompra(contratoSelecionado.getIdContrato());
         contratoOrden.getIdResolucionAdj().getIdParticipante().getDetalleOfertasList().forEach((detalle) -> {
@@ -856,7 +876,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
                 cantidadTotalDetalle = detalle.getCantidad();
                 if (VarSession.isVariableSession("rubroConfeccion")) {
                     Boolean rubroConfeccion = (Boolean) VarSession.getVariableSession("rubroConfeccion");
-
+                    
                     if (rubroConfeccion) {
                         if (contratoOrden.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq() == null) {
                             cantidadTotalDetalle = BigInteger.valueOf(cantidadTotalDetalle.intValue() / 2);
@@ -868,7 +888,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             }
         });
     }
-
+    
     public void calcularTotalEDit() {
         totalEntregado = BigInteger.ZERO;
         recepcion.getDetalleRecepcionList().forEach((detalle) -> {
@@ -886,7 +906,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
             }
         });
     }
-
+    
     public void calcularPendiente() {
         Integer valor;
         valor = cantidadTotalDetalle.intValue();
@@ -894,7 +914,7 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
         Integer total = valor - valor2;
         cantidadPendiente = BigInteger.valueOf(total);
     }
-
+    
     public Boolean siContratoSaldoCero() {
         Boolean escero = false;
         BigInteger totaldetalles = BigInteger.ZERO;
@@ -913,17 +933,17 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
                 totaldetalles = totaldetalles.add(valor);
             }
         }
-
+        
         BigDecimal cantidadTotalContrato = contratoSelecionado.getCantidad();
         BigInteger cantidadDetalle = detalleRecepcion.getCantidadEntregada();
         Long resultado = cantidadTotalContrato.longValue() - (totaldetalles.longValue() + cantidadDetalle.longValue());
         if (resultado == 0) {
             escero = true;
         }
-
+        
         return escero;
     }
-
+    
     public String getTipoentrega() {
         if (VarSession.isVariableSession("segundaEntrega")) {
             Boolean segundaentrega = (Boolean) VarSession.getVariableSession("segundaEntrega");
@@ -938,34 +958,37 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
                 } else {
                     tipoentrega = "1";
                 }
-
+                
             } else {
                 tipoentrega = "1";
             }
         }
         return tipoentrega;
     }
-
+    
     public List<DetalleOfertas> getListaOfertas() {
         return listaOfertas;
     }
-
+    
     public Boolean getDisableBtnTotal() {
+        return disableBtnTotal;
+        
+    }
+    
+    private void verificarEntregaCompleta() {
         if (recepcion.getDetalleRecepcionList() != null && !recepcion.getDetalleRecepcionList().isEmpty()) {
             if (!esDosUniformes) {
                 disableBtnTotal = cuadraentregaOtrosRubros();
-
+                
             } else {
-
+                
                 disableBtnTotal = cuadraentregaUniformes();
             }
         } else {
             disableBtnTotal = false;
         }
-        return disableBtnTotal;
-
     }
-
+    
     public String getRubroAdquisicion() {
         if (contratoSelecionado != null && contratoSelecionado.getIdContrato() != null) {
             switch (contratoSelecionado.getIdRubroAdq().intValue()) {
@@ -983,11 +1006,11 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
         }
         return "";
     }
-
+    
     public Boolean getEsDosUniformes() {
         return esDosUniformes;
     }
-
+    
     public String getTipoentregaEdt() {
         if (VarSession.isVariableSession("idDetalleSeguimiento")) {
             BigDecimal iddetalleRecepcion = (BigDecimal) VarSession.getVariableSession("idDetalleSeguimiento");
@@ -996,13 +1019,39 @@ public class SegFisicoController extends RecuperarProcesoUtil implements Seriali
         }
         return tipoentregaEdt;
     }
-
+    
     public void setTipoentregaEdt(String tipoentregaEdt) {
         this.tipoentregaEdt = tipoentregaEdt;
     }
-
+    
     public void eliminarRecepcionBienesYServicios() {
         recepcionEJB.eliminarRecepcion(idRecepcion, VarSession.getVariableSessionUsuario());
         buscarSeguimiento();
     }
+    
+    public void onDateSelect(SelectEvent event) {
+        if (fechaEntregaUno != null) {
+            ContratosOrdenesCompras contrato = recepcion.getIdContrato();
+            contrato.setFechaOrdenInicio(fechaEntregaUno);
+            recepcion.setFechaOrdenInicioEntrega1(fechaEntregaUno);
+            
+            this.utilEJB.updateEntity(contrato);
+            this.recepcionEJB.guardarRecepcion(recepcion);
+        }
+    }
+    
+    public void imprimir() {
+        String nombreReporte = "rptActaRecepcionPer";
+        if (recepcion.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdPersoneria().getIdPersoneria().intValue() == 1) {
+            nombreReporte += "Nat";
+        } else {
+            nombreReporte += "Jur";
+        }
+        
+        HashMap param = new HashMap();
+        param.put("idContrato", recepcion.getIdContrato().getIdContrato().intValue());
+        
+        Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/pagoproveedor" + File.separator, nombreReporte, "rptActaRecepcion_");
+    }
+    
 }

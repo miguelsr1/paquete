@@ -19,6 +19,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 /**
@@ -73,6 +74,11 @@ public class CorreoDocente implements Serializable {
     private String dui;
     @Column(name = "NIT")
     private String nit;
+    @Column(name = "ACTIVO")
+    private Short activo;
+
+    @Transient
+    private Boolean activar = false;
 
     public CorreoDocente() {
     }
@@ -230,5 +236,24 @@ public class CorreoDocente implements Serializable {
     public void setFechaModificacion(Date fechaModificacion) {
         this.fechaModificacion = fechaModificacion;
     }
-    
+
+    public Short getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Short activo) {
+        this.activo = activo;
+    }
+
+    public Boolean getActivar() {
+        if (activo == null) {
+            return false;
+        } else {
+            return activo == 1;
+        }
+    }
+
+    public void setActivar(Boolean activar) {
+        activo = activar ? (short) 1 : 0;
+    }
 }
