@@ -111,9 +111,9 @@
                 var montoTotalUti = Number($("#lblParUti").val()) + Number($("#lblCIUti").val()) + Number($("#lblCIIUti").val()) + Number($("#lblCIIIUti").val()) + Number($("#lblBacUti").val()) + Number($("#lblG1Uti").val()) + Number($("#lblG2Uti").val()) + Number($("#lblG3Uti").val()) + Number($("#lblG4Uti").val()) + Number($("#lblG5Uti").val()) + Number($("#lblG6Uti").val()) + Number($("#lblG7Uti").val()) + Number($("#lblG8Uti").val()) + Number($("#lblG9Uti").val()) + Number($("#lblB1Uti").val()) + Number($("#lblB2Uti").val());
                 var montoTotalZap = Number($("#lblParZap").val()) + Number($("#lblCIZap").val()) + Number($("#lblCIIZap").val()) + Number($("#lblCIIIZap").val()) + Number($("#lblBacZap").val());
 
-                $("#lblTotalUni").text(montoTotalUni);
+                $("#lblTotalUni").text(intlRound(montoTotalUni));
                 $("#lblTotalUti").text(intlRound(montoTotalUti));
-                $("#lblTotalZap").text(montoTotalZap);
+                $("#lblTotalZap").text(intlRound(montoTotalZap));
             }
         </script>
     </ui:define>

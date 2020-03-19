@@ -292,9 +292,16 @@ public class RecepcionEJB {
         return query.getResultList();
     }
     
-    public List<RptEntregasGeneralPorDepartamentoDto> getLstRpteGeneralDepartamento(Integer idDetProceso) {
+    public List<RptEntregasGeneralPorDepartamentoDto> getLstRpteGeneral(Integer idDetProceso) {
+        Query query = em.createNamedQuery("Recepcion.RptGeneral", RptEntregasGeneralPorDepartamentoDto.class);
+        query.setParameter(1, idDetProceso);
+        return query.getResultList();
+    }
+    
+    public List<RptEntregasGeneralPorDepartamentoDto> getLstRpteGeneralDepartamento(Integer idDetProceso, String codigoDepartamento) {
         Query query = em.createNamedQuery("Recepcion.RptGeneralPorDepartamento", RptEntregasGeneralPorDepartamentoDto.class);
         query.setParameter(1, idDetProceso);
+        query.setParameter(2, codigoDepartamento);
         return query.getResultList();
     }
 

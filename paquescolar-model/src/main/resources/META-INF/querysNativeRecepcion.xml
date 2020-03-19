@@ -47,7 +47,7 @@
         </query>
     </named-native-query>
     
-    <named-native-query name="Recepcion.RptGeneralPorDepartamento" 
+    <named-native-query name="Recepcion.RptGeneral" 
                         result-class="sv.gob.mined.paquescolar.model.pojos.recepcion.RptEntregasGeneralPorDepartamentoDto">
         <query>
             <![CDATA[
@@ -106,6 +106,71 @@
                     vw_rpt_seg_general_depa_modif
                 where
                     id_det_proceso_adq = ?1)
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="Recepcion.RptGeneralPorDepartamento" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.recepcion.RptEntregasGeneralPorDepartamentoDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum,
+                nombre_departamento as nombreDepartamento,
+                nombre_municipio    as nombreMunicipio,
+                codigo_entidad      as codigoEntidad,
+                nombre              as nombre,
+                descripcion_rubro   as descripcionRubro,
+                numero_nit          as numeroNit,
+                razon_social        as razonSocial,
+                cantidad_total      as cantidadTotal,
+                monto_total         as montoTotal,
+                estado_reserva      as estadoReserva,
+                observacion,
+                id_contrato         as idContrato,
+                id_det_proceso_adq  as idDepProcesoAdq,
+                formato_requerimiento as formatoRequerimiento
+            from (select 
+                    nombre_departamento,
+                    nombre_municipio,
+                    codigo_entidad,
+                    nombre,
+                    descripcion_rubro,
+                    numero_nit,
+                    razon_social,
+                    cantidad_total,
+                    monto_total,
+                    estado_reserva,
+                    observacion,
+                    id_contrato,
+                    id_det_proceso_adq,
+                    formato_requerimiento
+                from
+                    vw_rpt_seg_general_depa
+                where
+                    id_det_proceso_adq = ?1 and
+                    codigo_departamento = ?2
+                union
+                select 
+                    nombre_departamento,
+                    nombre_municipio,
+                    codigo_entidad,
+                    nombre,
+                    descripcion_rubro,
+                    numero_nit,
+                    razon_social,
+                    cantidad_total,
+                    monto_total,
+                    estado_reserva,
+                    observacion,
+                    id_contrato,
+                    id_det_proceso_adq,
+                    formato_requerimiento
+                from
+                    vw_rpt_seg_general_depa_modif
+                where
+                    id_det_proceso_adq = ?1 and
+                    codigo_departamento = ?2)
             ]]>
         </query>
     </named-native-query>

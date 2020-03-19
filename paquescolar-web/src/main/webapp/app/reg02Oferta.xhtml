@@ -69,6 +69,13 @@
                                  emptyMessage="No se han agregado proveedores" rowIndexVar="rowId" styleClass="ui-datatable-borderless ui-datatable-reflow"
                                  rowKey="#{participante.idParticipante}" rowStyleClass="#{participante.estadoEliminacion eq 1 ? 'filaEliminada' : null}">
 
+                        <f:facet name="header">
+                            <h:commandLink>  
+                                <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                                <p:dataExporter type="xls" target="tblParticipantes" fileName="centrosComprometidosEnCredito" />  
+                            </h:commandLink>  
+                        </f:facet>
+                        
                         <p:column headerText="Id" width="40" styleClass="centrado">
                             <p:outputLabel value="#{participante.idParticipante}" />
                         </p:column>

@@ -45,7 +45,6 @@ import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.RptExcel;
 import sv.gob.mined.app.web.util.UtilFile;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.RecepcionEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
@@ -54,7 +53,6 @@ import sv.gob.mined.paquescolar.model.pojos.DetalleContratacionDto;
 import sv.gob.mined.paquescolar.model.pojos.GraficoTipoEmpresaDTO;
 import sv.gob.mined.paquescolar.model.pojos.ReporteGeneralDTO;
 import sv.gob.mined.paquescolar.model.pojos.ReporteProveedorDTO;
-import sv.gob.mined.paquescolar.model.pojos.recepcion.ReportePorDepartamentoDto;
 import sv.gob.mined.paquescolar.model.pojos.recepcion.RptEntregasGeneralPorDepartamentoDto;
 import sv.gob.mined.paquescolar.model.view.VwSeguimientoRptCentroEscolar;
 
@@ -124,6 +122,7 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
     @PostConstruct
     public void ini() {
         mostrarGrafico = false;
+        codigoDepartamento = getRecuperarProceso().getDepartamento();
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
@@ -481,7 +480,7 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
                 escribirValor(row.getEstadoReserva(), i, 10, style);
                 escribirValor(row.getObservacion(), i, 11, style);
                 escribirValor(row.getFormatoRequerimiento(), i, 12, style);
-                
+
                 i++;
             }
             generarArchivo(wb1, "REPORTE_DEPARTAMENTO");
@@ -688,7 +687,12 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
 
     public void generarReportesDepartamentoExcel() {
         if (getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq() != null) {
-            List<RptEntregasGeneralPorDepartamentoDto> lista = recepcionEJB.getLstRpteGeneralDepartamento(idDetProcesoAdq);
+            List<RptEntregasGeneralPorDepartamentoDto> lista;
+            if (codigoDepartamento.equals("00")) {
+                lista = recepcionEJB.getLstRpteGeneral(idDetProcesoAdq);
+            } else {
+                lista = recepcionEJB.getLstRpteGeneralDepartamento(idDetProcesoAdq, codigoDepartamento);
+            }
             dowloadDepartamentoFile(lista);
         }
     }

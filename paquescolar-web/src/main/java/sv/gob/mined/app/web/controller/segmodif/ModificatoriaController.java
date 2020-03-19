@@ -295,6 +295,17 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                 deshabilitarAgregar = true;
                 deshabilitarEliminar = true;
                 break;
+            case 13:
+                deshabilitarAgregar = true;
+                deshabilitarEliminar = true;
+                
+                lstDetalleModificativas.forEach((detalle) -> {
+                    detalle.setCantidadNew(detalle.getCantidadOld());
+                    if (idTipoModif.intValue() == 13) {
+                        detalle.setPrecioUnitarioNew(detalle.getPrecioUnitarioOld());
+                    }
+                });
+                break;
         }
     }
 

@@ -23,20 +23,20 @@
             </f:facet>  
         </p:menubar>
 
+        <p:panel header="Seleccionar Contrato" visible="false">
+            <p:commandButton id="btoBuscarC" actionListener="#{modificatoriaController.mostrarFiltroContrato(false)}">
+                <p:ajax event="dialogReturn" listener="#{modificatoriaController.onContratoModifChosen}" update="pnlFiltro pnlDatos"/>
+            </p:commandButton>
+        </p:panel>
+
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:panel header="Seleccionar Contrato" visible="false">
-                        <p:commandButton id="btoBuscarC" actionListener="#{modificatoriaController.mostrarFiltroContrato(false)}">
-                            <p:ajax event="dialogReturn" listener="#{modificatoriaController.onContratoModifChosen}" update="pnlFiltro pnlDatos"/>
-                        </p:commandButton>
-                    </p:panel>
-
-                    <h3>
+                    <h1>
                         <i class="fa fa-file-text-o blue" style="font-size: 16px;"></i>
                         <p:spacer width="10" height="8"/>
                         <p:outputLabel value="Datos Generales del Contrato"/>
-                    </h3>
+                    </h1>
 
                     <p:outputPanel id="pnlFiltro" >
                         <p:panelGrid columns="2" columnClasses="col3_label,col9"
@@ -92,26 +92,31 @@
                         </p:panel>
 
                         <h:panelGrid columns="2">
-                            <h:outputText value="Fecha de Orden Inicio:"/>
-                            <p:calendar locale="es" value="#{modificatoriaController.fechaOrdenInicio}" pattern="dd/MM/yyyy" size="10"/>
-                            <h:outputText value="Fecha de Solicitud:"/>
-                            <h:panelGroup>
-                                <p:calendar locale="es" value="#{modificatoriaController.resolucionesModificativas.fechaSolicitud}" pattern="dd/MM/yyyy" size="10"/>
-                                <p:spacer width="13" height="8"/>
-                                <h:outputText value="Fecha de Nota:"/>
-                                <p:spacer width="8" height="8"/>
-                                <p:calendar locale="es" value="#{modificatoriaController.resolucionesModificativas.fechaNota}" pattern="dd/MM/yyyy" size="10"/>
-                                <p:spacer width="13" height="8"/>
-                                <h:outputText value="Fecha de Resolucion"/>
-                                <p:spacer width="8" height="8"/>
-                                <p:calendar locale="es" value="#{modificatoriaController.resolucionesModificativas.fechaResolucion}" pattern="dd/MM/yyyy" size="10"/>
-                            </h:panelGroup>
                             <h:outputText value="Tipo de Modificación:"/>
                             <p:selectOneMenu id="cboTipoModif" value="#{modificatoriaController.idTipoModif}">
                                 <f:selectItem itemLabel="Seleccione un valor"/>
                                 <f:selectItems value="#{modificatoriaController.lstTipoModifContratos}" var="idTipoModif" itemValue="#{idTipoModif.idModifContrato}" itemLabel="#{idTipoModif.descripcionModificativa}"/>
                                 <p:ajax update="pnlDatos tblDetalleItems pnlMsjInfo" listener="#{modificatoriaController.deshabilitarAcciones}" process="@this,pnlDatos"/>
                             </p:selectOneMenu>
+                            <h:outputText value="Fecha de Orden Inicio:" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
+                            <p:calendar locale="es" value="#{modificatoriaController.fechaOrdenInicio}" pattern="dd/MM/yyyy" size="10" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
+                            <h:outputText value="Fecha de Solicitud:"/>
+                            <h:panelGroup>
+                                <p:calendar locale="es" value="#{modificatoriaController.resolucionesModificativas.fechaSolicitud}" pattern="dd/MM/yyyy" size="10"/>
+                                <p:spacer width="13" height="8"/>
+                                <h:outputText value="Fecha de Orden Inicio:" rendered="#{modificatoriaController.idTipoModif eq 13}"/>
+                                <p:spacer width="8" height="8" rendered="#{modificatoriaController.idTipoModif eq 13}"/>
+                                <p:calendar locale="es" value="#{modificatoriaController.fechaOrdenInicio}" pattern="dd/MM/yyyy" size="10" rendered="#{modificatoriaController.idTipoModif eq 13}"/>
+
+                                <h:outputText value="Fecha de Nota:" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
+                                <p:spacer width="8" height="8" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
+                                <p:calendar locale="es" value="#{modificatoriaController.resolucionesModificativas.fechaNota}" pattern="dd/MM/yyyy" size="10" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
+                                <p:spacer width="13" height="8" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
+                                <h:outputText value="Fecha de Resolucion" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
+                                <p:spacer width="8" height="8" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
+                                <p:calendar locale="es" value="#{modificatoriaController.resolucionesModificativas.fechaResolucion}" pattern="dd/MM/yyyy" size="10" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
+                            </h:panelGroup>
+
                             <h:outputText value="Prorroga:" rendered="#{modificatoriaController.idTipoModif eq 4}"/>
                             <h:panelGroup rendered="#{modificatoriaController.idTipoModif eq 4}">
                                 <p:inputText value="#{modificatoriaController.resolucionesModificativas.diasProrroga}" size="5" style="text-align: right;" />
