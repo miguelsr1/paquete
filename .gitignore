@@ -49,3 +49,4 @@ hs_err_pid*
 /seguridad/utils/target/
 /boleta-ejb/target/
 /envioCorreo/target/
+/boleta-api/target/
