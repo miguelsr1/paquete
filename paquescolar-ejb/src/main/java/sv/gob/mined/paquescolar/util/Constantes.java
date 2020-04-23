@@ -67,7 +67,8 @@ public class Constantes {
             + "    ID_DET_PROCESO_ADQ  as idProceso,"
             + "    MONTO_CONTRATO      as montoContrato,"
             + "    DESCRIP_CRED_ACT    as descripCredAct,"
-            + "    monto_modificativa  as montoModificativa"
+            + "    monto_modificativa  as montoModificativa,"
+            + "    ref_prestamo        as refPrestamo"
             + " FROM vw_datos_proveedores_finan ";
 
     public static final String QUERY_RECEPCION_FIND_CONTRATOS_FISICOS = "select "

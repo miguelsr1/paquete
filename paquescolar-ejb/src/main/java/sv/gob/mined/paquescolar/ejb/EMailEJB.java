@@ -64,11 +64,12 @@ public class EMailEJB {
      * @param subject asunto del mail
      * @param remitente - destinatarios.
      * @param message - contenido del mensaje.
+     * @param codigoDepartamento
      */
     @Asynchronous
     public void enviarMail(String subject, String remitente, String message, String codigoDepartamento) {
         try {
-            int i = 0;
+            int i;
             String listaDeCorreosBcc = utilEJB.getValorDeParametro("PAGO_CORREO_NOTIFICACION_COPIA");
             MimeMessage m = new MimeMessage(mailSession);
             Address from = new InternetAddress(utilEJB.getValorDeParametro("PAGO_CORREO_NOTIFICACION"));

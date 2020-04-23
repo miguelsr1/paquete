@@ -17,6 +17,11 @@
             <version>2.1</version>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>utilitario</artifactId>
+            <version>1.2.2</version>
+        </dependency>
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
             <version>7.0</version>
@@ -56,11 +61,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.4</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>utilitario</artifactId>
-            <version>1.2.1</version>
         </dependency>
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
