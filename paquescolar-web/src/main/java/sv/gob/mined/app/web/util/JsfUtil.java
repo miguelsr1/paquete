@@ -2,6 +2,7 @@ package sv.gob.mined.app.web.util;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -21,6 +22,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import sv.gob.mined.app.web.controller.CatalogosGeneralesController;
@@ -306,5 +308,14 @@ public class JsfUtil {
          return FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, name);
          
+    }
+    
+    public static void redirectToIndex() {
+        try {
+            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+            externalContext.redirect(externalContext.getRequestContextPath());
+        } catch (IOException ex) {
+            Logger.getLogger(JsfUtil.class.getName()).log(Level.INFO, "Error redireccionando al Index", ex);
+        }
     }
 }

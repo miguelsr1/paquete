@@ -1640,12 +1640,6 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
                 || (detalleRequerimiento.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue() == 4)
                 || (detalleRequerimiento.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue() == 5);
 
-        //verificación del tipo de rubro y personeria natural para determinar si aplica o no el calculo de renta
-        renderMontoRenta = (isRubroUniforme
-                && proveedorEJB.isPersonaNatural(detalleDocPago.getIdDetRequerimiento().getNumeroNit()));
-        //Si aplica, se realiza el calculo del monto de renta
-        calculoDeRenta();
-
         //verificar si ha existido modificativa al contrato original
         if (!contratoModificado) {
             contratoModificado = pagoProveedoresEJB.isContratoConModificativa(new BigDecimal(detalleRequerimiento.getIdContrato()));
@@ -1670,6 +1664,12 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
                 }
             }
         }
+
+        //verificación del tipo de rubro y personeria natural para determinar si aplica o no el calculo de renta
+        renderMontoRenta = (isRubroUniforme
+                && proveedorEJB.isPersonaNatural(detalleDocPago.getIdDetRequerimiento().getNumeroNit()));
+        //Si aplica, se realiza el calculo del monto de renta
+        calculoDeRenta();
 
         dlgEdtDetDocPago = true;
     }
@@ -1966,7 +1966,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
         param.put("pIdRequerimiento", req.getIdRequerimiento().intValue());
         param.put("pAnho", "20" + anho);
         jp = reportesEJB.getRpt(param, PagoProveedoresController.class
-                        .getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + nombreRpt)));
+                .getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + nombreRpt)));
         return jp;
     }
 
@@ -2341,13 +2341,23 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
     }
 
     public void buscarPlanilla() {
+        Integer idDet;
         if (montoTotal != null && montoTotal.intValue() == 0) {
             montoTotal = BigDecimal.ZERO;
         }
         if (idPlanilla != null && idPlanilla.intValue() == 0) {
             idPlanilla = BigDecimal.ZERO;
         }
-        lstBusquedaPlanillas = pagoProveedoresEJB.buscarPlanillas(idPlanilla, montoTotal, numeroNit, nombreEntFinanciera, getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq(), numeroCheque, fechaCheque);
+
+        if (idRubro.intValue() == 0) {
+            idDet = null;
+        } else {
+            idDet = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        }
+
+        lstBusquedaPlanillas = pagoProveedoresEJB.buscarPlanillas(idPlanilla, montoTotal, numeroNit,
+                nombreEntFinanciera, getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq(),
+                numeroCheque, fechaCheque, codigoDepartamento, idDet);
     }
 
     public void postProcessXLS(Object document) {

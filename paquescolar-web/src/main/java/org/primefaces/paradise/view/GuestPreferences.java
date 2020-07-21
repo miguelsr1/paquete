@@ -96,6 +96,6 @@ public class GuestPreferences implements Serializable {
             System.gc();
         } catch (IOException ex) {
             Logger.getLogger(PersonaController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+}
     }
 }

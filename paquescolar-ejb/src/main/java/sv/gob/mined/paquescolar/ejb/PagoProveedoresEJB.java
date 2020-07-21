@@ -525,7 +525,8 @@ public class PagoProveedoresEJB {
         q.executeUpdate();
     }
 
-    public List<DatosBusquedaPlanillaDto> buscarPlanillas(BigDecimal idPlanilla, BigDecimal monto, String numeroNit, String nombreEntFinan, Integer idProcesoAdq, String numeroCheque, Date fechaCheque) {
+    public List<DatosBusquedaPlanillaDto> buscarPlanillas(BigDecimal idPlanilla, BigDecimal monto, String numeroNit, 
+            String nombreEntFinan, Integer idProcesoAdq, String numeroCheque, Date fechaCheque, String codigoDepartamento, Integer idDetProcesoAdq) {
         String strWhere = Constantes.addCampoToWhere("", "ID_PLANILLA", idPlanilla);
         strWhere = Constantes.addCampoToWhere(strWhere, "MONTO_ACTUAL", monto);
         strWhere = Constantes.addCampoToWhere(strWhere, "NUMERO_NIT", numeroNit);
@@ -533,6 +534,8 @@ public class PagoProveedoresEJB {
         strWhere = Constantes.addCampoToWhere(strWhere, "id_proceso_adq", idProcesoAdq);
         strWhere = Constantes.addCampoToWhere(strWhere, "numero_cheque", numeroCheque);
         strWhere = Constantes.addCampoToWhere(strWhere, "fecha_cheque", fechaCheque);
+        strWhere = Constantes.addCampoToWhere(strWhere, "codigo_departamento", codigoDepartamento);
+        strWhere = Constantes.addCampoToWhere(strWhere, "id_det_proceso_adq", idDetProcesoAdq);
         //System.out.println("QUERY\n=========================" + Constantes.QUERY_PAGOS_BUSQUEDA_PLANILLA + strWhere + " ORDER BY ID_PLANILLA\n================");
         Query q = em.createNativeQuery(Constantes.QUERY_PAGOS_BUSQUEDA_PLANILLA + strWhere + " ORDER BY ID_PLANILLA", DatosBusquedaPlanillaDto.class);
         return q.getResultList();

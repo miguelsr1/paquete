@@ -130,12 +130,14 @@ public class EntidadEducativaEJB {
         Boolean error = true;
         try {
             for (TechoRubroEntEdu techo : lstTecho) {
-                if (techo.getIdRubroTecho() == null) {
-                    em.persist(techo);
-                } else {
-                    techo.setFechaModificacion(new Date());
-                    techo.setUsuarioModificacion(usuario);
-                    em.merge(techo);
+                if (techo != null) {
+                    if (techo.getIdRubroTecho() == null) {
+                        em.persist(techo);
+                    } else {
+                        techo.setFechaModificacion(new Date());
+                        techo.setUsuarioModificacion(usuario);
+                        em.merge(techo);
+                    }
                 }
             }
             error = false;
@@ -357,7 +359,6 @@ public class EntidadEducativaEJB {
         }
         return idNiveles;
     }*/
-    
     public HashMap<String, String> getNoItemsByCodigoEntidadAndIdProcesoAdq(String codigoEntidad, DetalleProcesoAdq detProcesoAdq, boolean isUniforme) {
         String noItemSeparados = "";
         String noItems = "";
@@ -414,6 +415,7 @@ public class EntidadEducativaEJB {
                             }
                             break;
                         case 2://utiles
+                        case 6://mascarillas
                             if (fem.intValue() > 0 || mas.intValue() > 0) {
                                 noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_1 = '1'";
                                 noItems += (noItems.isEmpty() ? "" : " , ") + "'1'";
@@ -447,6 +449,7 @@ public class EntidadEducativaEJB {
                     idNivelesCe += idNivelesCe.isEmpty() ? "3" : ",3";
                     switch (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
                         case 2://utiles
+                        case 6://mascarilla
                             if (fem.intValue() > 0 || mas.intValue() > 0) {
                                 noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_2 = '2'";
                                 noItems += (noItems.isEmpty() ? "" : " , ") + "'2'";
@@ -468,6 +471,7 @@ public class EntidadEducativaEJB {
                     idNivelesCe += idNivelesCe.isEmpty() ? "4" : ",4";
                     switch (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
                         case 2://utiles
+                        case 6://mascarilla
                             if (fem.intValue() > 0 || mas.intValue() > 0) {
                                 noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_3 = '3'";
                                 noItems += (noItems.isEmpty() ? "" : " , ") + "'3'";
@@ -489,6 +493,7 @@ public class EntidadEducativaEJB {
                     idNivelesCe += idNivelesCe.isEmpty() ? "5" : ",5";
                     switch (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
                         case 2://utiles
+                        case 6://mascarilla
                             if (fem.intValue() > 0 || mas.intValue() > 0) {
                                 noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_4 = '4'";
                                 noItems += (noItems.isEmpty() ? "" : " , ") + "'4'";
@@ -522,6 +527,7 @@ public class EntidadEducativaEJB {
                             }
                             break;
                         case 2://utiles
+                        case 6://mascarilla
                             if (fem.intValue() > 0 || mas.intValue() > 0) {
                                 noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_5 = '5'";
                                 noItems += (noItems.isEmpty() ? "" : " , ") + "'5'";
@@ -548,13 +554,13 @@ public class EntidadEducativaEJB {
 
         return mapItems;
     }
-    
-    public void updateNombreDirectorContratoYPago(String codigoEntidad, Integer idAnho,  String nombreDirector){
+
+    public void updateNombreDirectorContratoYPago(String codigoEntidad, Integer idAnho, String nombreDirector) {
         Query q = em.createNamedQuery("SP_UPD_NOMBRE_DIRECTOR");
         q.setParameter("P_COD_ENT", codigoEntidad);
         q.setParameter("P_ID_ANHO", idAnho);
         q.setParameter("P_NOMBRE", nombreDirector);
-        
+
         q.getResultList();
     }
 }

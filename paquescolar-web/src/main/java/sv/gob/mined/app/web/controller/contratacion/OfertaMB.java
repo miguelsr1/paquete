@@ -35,7 +35,6 @@ import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.OfertaBienesServiciosEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
-import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.Empresa;
 import sv.gob.mined.paquescolar.model.OfertaBienesServicios;

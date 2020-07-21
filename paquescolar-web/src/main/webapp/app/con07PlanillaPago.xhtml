@@ -58,6 +58,25 @@
                         <div class="ui-g-12 ui-md-6 ui-lg-4">
                             <p:inputText value="#{pagoProveedoresController.numeroCheque}" style="width: 90%;"/>
                         </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-2">
+                            <p:outputLabel value="Departamento"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:selectOneMenu id="codigoDepartamento" value="#{pagoProveedoresController.codigoDepartamento}" disabled="#{parametrosMB.usuarioDepartamental}" >
+                                <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
+                                <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />                                
+                            </p:selectOneMenu>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-6 ui-lg-2">
+                            <p:outputLabel value="#{bundle['compra.rubroAdq']}"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:selectOneMenu id="cboRubro" value="#{pagoProveedoresController.idRubro}">
+                                <f:selectItem itemLabel="Seleccione un rubro" itemValue="0" />
+                                <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            </p:selectOneMenu>
+                        </div>
                     </div>
                     <p:commandButton value="Buscar" action="#{pagoProveedoresController.buscarPlanilla}" icon="fa fa-search" update="tblDatos"/>
                 </div>
@@ -132,13 +151,13 @@
                 </div>
             </div>
         </div>
-        
+
 
         <p:dialog id="dlgPlanillaPago" widgetVar="dlgPlanillaPago" header="Planilla de Pago" width="900" height="600" modal="true" resizable="false">
             <ui:include src="/app/comunes/fragmentos/pagoProveedores/planillaPago.xhtml"/>
         </p:dialog>
         <p:panel id="pnlDatos" visible="false"></p:panel>
-        
+
         <ui:include src="/app/comunes/fragmentos/pagoProveedores/dlgNotificacionEmail.xhtml"/>
     </ui:define>
 </ui:composition>

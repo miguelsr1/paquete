@@ -1722,4 +1722,38 @@ public class ProveedorEJB {
         q.setParameter("anho", anho);
         return q.getResultList();
     }
+
+    private Empresa findEmpresaByCodSeg(String codigoSeg) {
+        Empresa emp = null;
+        Query q;
+        List lst;
+
+        q = em.createNativeQuery("SELECT id_empresa FROM EMPRESA_CODIGO_SEG WHERE codigo_seguridad=?1 AND usuario_activado = 0");
+        q.setParameter(1, codigoSeg);
+
+        lst = q.getResultList();
+
+        if (!lst.isEmpty()) {
+            emp = findEmpresaByPk((BigDecimal) lst.get(0));
+        }
+
+        return emp;
+    }
+
+    /**
+     *
+     * @param codigoSeg
+     * @param nit
+     * @param dui
+     * @return
+     */
+    public Boolean validarCodigoSegEmpresa(String codigoSeg, String nit, String dui) {
+        Boolean codigoOperacion;
+        Empresa emp = findEmpresaByCodSeg(codigoSeg);
+
+        codigoOperacion = emp.getIdPersona().getNumeroNit().equals(nit)
+                && emp.getIdPersona().getNumeroDui().equals(dui);
+
+        return codigoOperacion;
+    }
 }

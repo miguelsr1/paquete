@@ -13,6 +13,8 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSubMenu;
@@ -200,5 +202,10 @@ public class MenuController implements Serializable {
 
             return (usuario.getIdTipoUsuario().getIdTipoUsuario().intValue() != 1);
         }
+    }
+    
+    public void cerrarSession(){
+        ((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false)).invalidate();
+        JsfUtil.redirectToIndex();
     }
 }

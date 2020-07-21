@@ -88,6 +88,7 @@ public class EstadisticasCensoController implements Serializable {
     private DetalleProcesoAdq detProAdqUni2;
     private DetalleProcesoAdq detProAdqUti;
     private DetalleProcesoAdq detProAdqZap;
+    private DetalleProcesoAdq detProAdqMascarilla;
     private EstadisticaCenso estaditicaPar = new EstadisticaCenso();
     private EstadisticaCenso estaditicaCiclo1 = new EstadisticaCenso();
     private EstadisticaCenso estaditicaCiclo2 = new EstadisticaCenso();
@@ -123,6 +124,12 @@ public class EstadisticasCensoController implements Serializable {
     private PreciosRefRubro preCicloIIIZap = new PreciosRefRubro();
     private PreciosRefRubro preBacZap = new PreciosRefRubro();
 
+    private PreciosRefRubro preParMascarilla = new PreciosRefRubro();
+    private PreciosRefRubro preCicloIMascarilla = new PreciosRefRubro();
+    private PreciosRefRubro preCicloIIMascarilla = new PreciosRefRubro();
+    private PreciosRefRubro preCicloIIIMascarilla = new PreciosRefRubro();
+    private PreciosRefRubro preBacMascarilla = new PreciosRefRubro();
+
     private PreciosRefRubro preGrado1Uti = new PreciosRefRubro();
     private PreciosRefRubro preGrado2Uti = new PreciosRefRubro();
     private PreciosRefRubro preGrado3Uti = new PreciosRefRubro();
@@ -139,6 +146,7 @@ public class EstadisticasCensoController implements Serializable {
     private TechoRubroEntEdu techoUni2 = new TechoRubroEntEdu();
     private TechoRubroEntEdu techoUti = new TechoRubroEntEdu();
     private TechoRubroEntEdu techoZap = new TechoRubroEntEdu();
+    private TechoRubroEntEdu techoMascarilla = new TechoRubroEntEdu();
     @EJB
     private EntidadEducativaEJB entidadEducativaEJB;
     @EJB
@@ -790,6 +798,7 @@ public class EstadisticasCensoController implements Serializable {
 
                 detProAdqUti = JsfUtil.findDetalle(procesoAdquisicion, new BigDecimal(2));
                 detProAdqZap = JsfUtil.findDetalle(procesoAdquisicion, new BigDecimal(3));
+                detProAdqMascarilla = JsfUtil.findDetalle(procesoAdquisicion, new BigDecimal(6));
 
                 recuperarEstadisticas();
                 recuperarPreciosMaxRef();
@@ -823,6 +832,7 @@ public class EstadisticasCensoController implements Serializable {
             }
             techoUti = getTecho(lstTechos, detProAdqUti);
             techoZap = getTecho(lstTechos, detProAdqZap);
+            techoMascarilla = getTecho(lstTechos, detProAdqMascarilla);
         }
     }
 
@@ -897,7 +907,6 @@ public class EstadisticasCensoController implements Serializable {
             }
 
             lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqZap);
-
             if (lstPrecios.isEmpty()) {
                 JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
             } else {
@@ -906,6 +915,20 @@ public class EstadisticasCensoController implements Serializable {
                 preCicloIIZap = getPrecioMax(lstPrecios, 4);
                 preCicloIIIZap = getPrecioMax(lstPrecios, 5);
                 preBacZap = getPrecioMax(lstPrecios, 6);
+            }
+
+            if (detProAdqMascarilla != null) {
+                lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqMascarilla);
+
+                if (lstPrecios.isEmpty()) {
+                    JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
+                } else {
+                    preParMascarilla = getPrecioMax(lstPrecios, 1);
+                    preCicloIMascarilla = getPrecioMax(lstPrecios, 3);
+                    preCicloIIMascarilla = getPrecioMax(lstPrecios, 4);
+                    preCicloIIIMascarilla = getPrecioMax(lstPrecios, 5);
+                    preBacMascarilla = getPrecioMax(lstPrecios, 6);
+                }
             }
         }
     }
@@ -940,10 +963,12 @@ public class EstadisticasCensoController implements Serializable {
     private TechoRubroEntEdu getTecho(List<TechoRubroEntEdu> lstTechos, DetalleProcesoAdq detProcesoAdq) {
         TechoRubroEntEdu techo = null;
 
-        Optional<TechoRubroEntEdu> techoOptional = lstTechos.stream()
-                .filter(te -> te.getIdDetProcesoAdq().getIdDetProcesoAdq().compareTo(detProcesoAdq.getIdDetProcesoAdq()) == 0).findAny();
-        if (techoOptional.isPresent()) {
-            techo = techoOptional.get();
+        if (detProcesoAdq != null) {
+            Optional<TechoRubroEntEdu> techoOptional = lstTechos.stream()
+                    .filter(te -> te.getIdDetProcesoAdq().getIdDetProcesoAdq().compareTo(detProcesoAdq.getIdDetProcesoAdq()) == 0).findAny();
+            if (techoOptional.isPresent()) {
+                techo = techoOptional.get();
+            }
         }
 
         if (techo == null) {
@@ -1092,7 +1117,6 @@ public class EstadisticasCensoController implements Serializable {
             if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() < 6) {//menor a 2018
                 techoUni.setMontoPresupuestado(calcularPresupuesto(1));
             } else {
-                //if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 5) {
                 for (DetalleProcesoAdq detProcesoAdq : procesoAdquisicion.getDetalleProcesoAdqList()) {
                     switch (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
                         case 4:
@@ -1111,23 +1135,36 @@ public class EstadisticasCensoController implements Serializable {
                 }
             }
 
-            if (techoUni.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
-                techoUni.setMontoDisponible(techoUni.getMontoPresupuestado());
-            } else {
-                techoUni.setMontoDisponible(techoUni.getMontoPresupuestado().add(techoUni.getMontoAdjudicado().negate()));
+            if (techoUni != null) {
+                if (techoUni.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
+                    techoUni.setMontoDisponible(techoUni.getMontoPresupuestado());
+                } else {
+                    techoUni.setMontoDisponible(techoUni.getMontoPresupuestado().add(techoUni.getMontoAdjudicado().negate()));
+                }
             }
-
-            techoUti.setMontoPresupuestado(calcularPresupuesto(2));
-            if (techoUti.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
-                techoUti.setMontoDisponible(techoUti.getMontoPresupuestado());
-            } else {
-                techoUti.setMontoDisponible(techoUti.getMontoPresupuestado().add(techoUti.getMontoAdjudicado().negate()));
+            if (techoUti != null) {
+                techoUti.setMontoPresupuestado(calcularPresupuesto(2));
+                if (techoUti.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
+                    techoUti.setMontoDisponible(techoUti.getMontoPresupuestado());
+                } else {
+                    techoUti.setMontoDisponible(techoUti.getMontoPresupuestado().add(techoUti.getMontoAdjudicado().negate()));
+                }
             }
-            techoZap.setMontoPresupuestado(calcularPresupuesto(3));
-            if (techoZap.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
-                techoZap.setMontoDisponible(techoZap.getMontoPresupuestado());
-            } else {
-                techoZap.setMontoDisponible(techoZap.getMontoPresupuestado().add(techoZap.getMontoAdjudicado().negate()));
+            if (techoZap != null) {
+                techoZap.setMontoPresupuestado(calcularPresupuesto(3));
+                if (techoZap.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
+                    techoZap.setMontoDisponible(techoZap.getMontoPresupuestado());
+                } else {
+                    techoZap.setMontoDisponible(techoZap.getMontoPresupuestado().add(techoZap.getMontoAdjudicado().negate()));
+                }
+            }
+            if (techoMascarilla != null) {
+                techoMascarilla.setMontoPresupuestado(calcularPresupuesto(6));
+                if (techoMascarilla.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
+                    techoMascarilla.setMontoDisponible(techoMascarilla.getMontoPresupuestado());
+                } else {
+                    techoMascarilla.setMontoDisponible(techoMascarilla.getMontoPresupuestado().add(techoMascarilla.getMontoAdjudicado().negate()));
+                }
             }
 
             if (!msjInfo.replace("Se guardaron los niveles: ", "").isEmpty()) {
@@ -1139,15 +1176,15 @@ public class EstadisticasCensoController implements Serializable {
             }
 
             if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() < 6) {
-                error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUti, techoZap);
+                error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUti, techoZap, techoMascarilla);
             } else if (procesoAdquisicion.getDescripcionProcesoAdq().contains("SOBREDEMANDA")) {
                 if (isSegundoUniforme) {
-                    error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUni2, techoUti, techoZap);
+                    error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUni2, techoUti, techoZap, techoMascarilla);
                 } else {
-                    error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUti, techoZap);
+                    error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUti, techoZap, techoMascarilla);
                 }
             } else {
-                error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUni2, techoUti, techoZap);
+                error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUni2, techoUti, techoZap, techoMascarilla);
             }
 
             if (error) {
@@ -1217,6 +1254,13 @@ public class EstadisticasCensoController implements Serializable {
                 preCiclo2Temp = preCicloIIZap;
                 preCiclo3Temp = preCicloIIIZap;
                 preBacTemp = preBacZap;
+                break;
+            case 6:
+                preParTemp = preParMascarilla;
+                preCiclo1Temp = preCicloIMascarilla;
+                preCiclo2Temp = preCicloIIMascarilla;
+                preCiclo3Temp = preCicloIIIMascarilla;
+                preBacTemp = preBacMascarilla;
                 break;
             default://para rubro 4 y 5, 1er y 2do uniforme respectivamente
                 preParTemp = preParUni;

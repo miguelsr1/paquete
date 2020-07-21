@@ -14,6 +14,12 @@
         </f:facet>
         <title>Sistema de Paquetes Escolares</title>
         <h:outputScript name="funciones-1.js" library="js"/>
+
+        <style>
+            body .ui-tabs .ui-tabs-panel {
+                padding: 6px 0px !important;
+            }
+        </style>
     </h:head>
 
     <h:body styleClass="login-body">
@@ -33,23 +39,63 @@
                                 <p:outputLabel value="Sistema de Paquetes Escolares" style="font-size: 30px; padding-top: 25px; font-family: 'Bembo Std' !important"/>
                             </div>
                             <div class="ui-g-12">
-                                <p:outputLabel for="username" value="Usuario" style="font-size: 18px; font-family: 'Bembo Std' !important"/>
-                                <div class="input-wrapper">
-                                    <p:inputText id="username" styleClass="textMayuscula" onkeyup="return cUpper(this);" placeholder="USUARIO" value="#{loginController.usuario}"/>
-                                    <i class="fa fa-user" />
-                                </div>
+                                <p:tabView >
+                                    <p:tab title="Funcionario">
+                                        <f:facet name="title">
+                                            <h:outputText value="Funcionario"/>
+                                            <i class="fa fa-user" style="font-size: 18px;" />
+                                        </f:facet>
+                                        <br/>
+                                        <div class="ui-g-12">
+                                            <p:outputLabel for="username" value="Usuario" style="font-size: 18px; font-family: 'Bembo Std' !important"/>
+                                            <p:inputText id="username" styleClass="textMayuscula" onkeyup="return cUpper(this);" placeholder="USUARIO" value="#{loginController.usuario}"/>
+                                        </div>
+                                        <div class="ui-g-12">
+                                            <p:outputLabel for="password" value="Clave de acceso" style="font-size: 18px; font-family: Bembo Std !important" />
+                                            <div class="input-wrapper">
+                                                <p:password id="password" placeholder="CLAVE DE ACCESO" feedback="false" value="#{loginController.clave}" />
+                                                <i class="fa fa-lock" />
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-12 button-container">
+                                            <p:commandButton id="btnIngresar" value="Ingresar" styleClass="blue-btn raised-btn" action="#{loginController.isUsuarioValido}"/>
+                                            <p:blockUI block="btnIngresar" trigger="btnIngresar"  />
+                                            <h:outputText value="."/>
+                                        </div>
+                                        <p:spacer width="5"/>
+                                        
+                                    </p:tab>
+                                    <p:tab title="Proveedor">
+                                        <f:facet name="title">
+                                            <h:outputText value="Proveedor"/>
+                                            <i class="fa fa-address-card-o" style="font-size: 18px;" />
+                                        </f:facet>
+                                        <br/>
+                                        <div class="ui-g-12">
+                                            <p:outputLabel for="nit" value="N.I.T." style="font-size: 18px; font-family: 'Bembo Std' !important"/>
+                                            <p:inputMask id="nit" mask="9999-999999-999-9" onkeyup="return cUpper(this);" placeholder="0000-000000-000-0" value="#{loginController.usuario}"/>
+                                        </div>
+                                        <div class="ui-g-12">
+                                            <p:outputLabel for="passwordEmp" value="Clave de acceso" style="font-size: 18px; font-family: Bembo Std !important" />
+                                            <div class="input-wrapper">
+                                                <p:password id="passwordEmp" placeholder="CLAVE DE ACCESO" feedback="false" value="#{loginController.clave}" />
+                                                <i class="fa fa-lock" />
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-12 button-container">
+                                            <p:commandButton id="btnIngresarEmp" value="Ingresar" styleClass="blue-btn raised-btn" action="#{loginController.isUsuarioValido}"/>
+                                            <p:blockUI block="btnIngresarEmp" trigger="btnIngresarEmp"  />
+
+
+                                            <p:commandLink value="Activar usuario" action="validarProveedor" >
+                                                <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+                                            </p:commandLink>
+                                        </div>
+                                        <p:spacer width="5"/>
+                                    </p:tab>
+                                </p:tabView>
                             </div>
-                            <div class="ui-g-12">
-                                <p:outputLabel for="password" value="Clave de acceso" style="font-size: 18px; font-family: Bembo Std !important" />
-                                <div class="input-wrapper">
-                                    <p:password id="password" placeholder="CLAVE DE ACCESO" feedback="false" value="#{loginController.clave}" />
-                                    <i class="fa fa-lock" />
-                                </div>
-                            </div>
-                            <div class="ui-g-12 button-container">
-                                <p:commandButton id="btnIngresar" value="Ingresar" styleClass="blue-btn raised-btn" action="#{loginController.isUsuarioValido}"/>
-                                <p:blockUI block="btnIngresar" trigger="btnIngresar"  />
-                            </div>
+
                             <div class="ui-g-12">
                                 <div class="ui-g-4" style="height: 50px;">
                                     <h:outputText value="versión #{catalogosGeneralesController.version}" style="font-size: 14px; font-family: 'Bembo Std'"/>

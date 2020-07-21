@@ -358,3 +358,10 @@ body .ui-widget-header {
     font-weight: bold;
     font-size: 13px;
 }
+
+body .ui-state-disabled {
+  opacity: .35;
+  filter: Alpha(Opacity=35);
+  background-image: none;
+  -webkit-text-fill-color: #880000;
+  }
