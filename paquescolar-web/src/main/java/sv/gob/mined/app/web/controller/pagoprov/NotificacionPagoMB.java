@@ -14,9 +14,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.app.web.util.JsfUtil;
-import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.PagoProveedoresEJB;
-import sv.gob.mined.paquescolar.model.EntidadFinanciera;
 import sv.gob.mined.paquescolar.model.ListaNotificacionPago;
 
 /**

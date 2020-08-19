@@ -124,4 +124,21 @@ public class EMailEJB {
             Logger.getLogger(EMailEJB.class.getName()).log(Level.INFO, "Error en el envio de correo", ex);
         }
     }
+
+    @Asynchronous
+    public void enviarMail(String remitente, String titulo, String cuerpo) {
+        try {
+            MimeMessage m = new MimeMessage(mailSession);
+            Address from = new InternetAddress(utilEJB.getValorDeParametro("PAGO_CORREO_NOTIFICACION"));
+
+            m.setFrom(from);
+            m.setRecipients(Message.RecipientType.TO, remitente);
+            m.setSubject(titulo, "UTF-8");
+            m.setSentDate(new java.util.Date());
+            m.setText(cuerpo, "UTF-8", "html");
+            Transport.send(m);
+        } catch (MessagingException ex) {
+            Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

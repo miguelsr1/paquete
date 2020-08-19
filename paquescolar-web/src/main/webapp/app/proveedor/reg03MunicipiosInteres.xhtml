@@ -1,0 +1,50 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" ajax="true" process="@this" disabled="true"/>
+            <p:menuitem value="Modificar" update="frmPrincipal" icon="fa fa-edit" ajax="true"  onclick="onClick('btnModificar');"/>
+            <p:menuitem value="Guardar" icon="fa fa-save"  disabled="#{menuController.usuarioSoloLectura || proveedorController.deshabiliar}" action="#{proveedorController.guardarMunicipioInteres}"/>
+            <p:menuitem value="Imprimir" ajax="false" icon="fa fa-print" action="#{proveedorController.impOfertaGlobal}" />
+            <p:menuitem value="Principal" icon="fa fa-home" action="#{parametrosMB.limpiarVariables}" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+        <p:panel visible="false">
+            <p:commandButton id="btnModificar" value="ok" actionListener="#{proveedorController.filtroProveedores}">
+                <p:ajax event="dialogReturn" listener="#{proveedorController.empSelecMuniInteres}" update="frmPrincipal pnlFoto" />
+            </p:commandButton>
+        </p:panel>
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <ui:include src="/app/comunes/datosGenProveedor.xhtml"/>
+                </div>
+
+                <div class="card clearfix">
+
+                    <p:outputPanel>
+                        <h1>
+                            <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                            <p:spacer width="10"/>
+                            <h:outputText value="Municipios de Interes :: Departamento: #{proveedorController.departamentoCalif.codigoDepartamento.nombreDepartamento}"/>
+                        </h1>
+                        <p:outputLabel value="Seleccione los municipios en los que tiene interes de participar"/><br/>
+                        <h:panelGrid columns="2">
+                            <p:pickList id="pickList" value="#{proveedorController.lstMunicipiosInteres}" converter="muniConverter" var="municipio" 
+                                        showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains"
+                                        itemLabel=" #{municipio.nombreMunicipio}" itemValue="#{municipio}"/>
+                        </h:panelGrid>
+                    </p:outputPanel>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -30,6 +30,8 @@ public class LoginController implements Serializable {
 
     private String usuario;
     private String clave;
+    private String usuarioEmp;
+    private String claveEmp;
     @EJB
     private LoginEJB loginEJBLocal;
 
@@ -61,6 +63,22 @@ public class LoginController implements Serializable {
         this.clave = clave;
     }
 
+    public String getUsuarioEmp() {
+        return usuarioEmp;
+    }
+
+    public void setUsuarioEmp(String usuarioEmp) {
+        this.usuarioEmp = usuarioEmp;
+    }
+
+    public String getClaveEmp() {
+        return claveEmp;
+    }
+
+    public void setClaveEmp(String claveEmp) {
+        this.claveEmp = claveEmp;
+    }
+
     public void dialogReasignarClave() {
         Map<String, Object> options = new HashMap();
         options.put("modal", true);
@@ -78,11 +96,10 @@ public class LoginController implements Serializable {
         if (usu == null) {
             JsfUtil.mensajeError("Se estan presentando problemas de comunicación con la base de datos. NOTIFICAR AL ADMINISTRADOR.");
             return "";
-        } else if(usu.getIdUsuario() == null){
+        } else if (usu.getIdUsuario() == null) {
             JsfUtil.mensajeAlerta("Clave y/o Usuario incorrectos.");
             return "";
-        }
-        else {
+        } else {
             if (usu.getActivo().intValue() == 1) {
                 if (usu.getRangoFechaLogin().intValue() == 0) {
                     return usuarioOkRedireccionar(usu);

@@ -11,12 +11,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
 import javax.persistence.EntityManager;
@@ -58,6 +60,7 @@ import sv.gob.mined.paquescolar.model.pojos.contratacion.PrecioReferenciaEmpresa
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ProveedorDisponibleDto;
 import sv.gob.mined.paquescolar.model.view.DatosPreliminarRequerimiento;
 import sv.gob.mined.paquescolar.util.Constantes;
+import sv.gob.mined.paquescolar.util.RC4Crypter;
 
 /**
  *
@@ -66,6 +69,9 @@ import sv.gob.mined.paquescolar.util.Constantes;
 @Stateless
 @LocalBean
 public class ProveedorEJB {
+
+    @EJB
+    private EMailEJB eMailEJB;
 
     @PersistenceContext(unitName = "paquescolarUP")
     private EntityManager em;
@@ -1740,20 +1746,50 @@ public class ProveedorEJB {
         return emp;
     }
 
+    private void updateCodigoValidacionProveedor(BigDecimal idEmpresa, String codigoGenerado) {
+        Query q = em.createNativeQuery("UPDATE EMPRESA_CODIGO_SEG SET USUARIO_ACTIVADO = 1, TOKEN_ACTIVACION='" + codigoGenerado + "' WHERE ID_EMPRESA=" + idEmpresa);
+        q.executeUpdate();
+    }
+
     /**
      *
      * @param codigoSeg
      * @param nit
      * @param dui
+     * @param tituloEmail
+     * @param cuerpoEmail
      * @return
      */
-    public Boolean validarCodigoSegEmpresa(String codigoSeg, String nit, String dui) {
+    public Boolean validarCodigoSegEmpresa(String codigoSeg, String nit, String dui, String tituloEmail, String cuerpoEmail) {
         Boolean codigoOperacion;
         Empresa emp = findEmpresaByCodSeg(codigoSeg);
 
-        codigoOperacion = emp.getIdPersona().getNumeroNit().equals(nit)
-                && emp.getIdPersona().getNumeroDui().equals(dui);
+        if (emp == null) {
+            codigoOperacion = false;
+        } else {
+            codigoOperacion = emp.getIdPersona().getNumeroNit().equals(nit)
+                    && emp.getIdPersona().getNumeroDui().equals(dui);
+        }
 
+        if (codigoOperacion) {
+            String codigoGenerado = (new RC4Crypter()).encrypt("ha", emp.getIdEmpresa().toString().concat(":").concat(codigoSeg));
+
+            String cuerpo = MessageFormat.format(cuerpoEmail, codigoGenerado);
+
+            eMailEJB.enviarMail(emp.getIdPersona().getEmail(), tituloEmail, cuerpo);
+
+            updateCodigoValidacionProveedor(emp.getIdEmpresa(), codigoGenerado);
+        }
         return codigoOperacion;
+    }
+
+    public void guardarPasswordProv(BigDecimal idEmpresa, String password) {
+        Empresa emp = findEmpresaByPk(idEmpresa);
+        Persona per = emp.getIdPersona();
+
+        per.setClaveAcceso(password);
+        per.setUsuario(emp.getNumeroNit());
+
+        em.merge(per);
     }
 }

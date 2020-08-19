@@ -548,7 +548,7 @@ public class PagoProveedoresEJB {
     }
 
     public ResolucionesModificativas getUltimaModificativa(BigDecimal idContrato) {
-        Query q = em.createQuery("SELECT r FROM ResolucionesModificativas r WHERE r.idContrato.idContrato=:idCon and r.idEstadoReserva=2", ResolucionesModificativas.class);
+        Query q = em.createQuery("SELECT r FROM ResolucionesModificativas r WHERE r.idContrato.idContrato=:idCon and r.idEstadoReserva=2 and r.estadoEliminacion = 0", ResolucionesModificativas.class);
         q.setParameter("idCon", idContrato);
         if (q.getResultList().isEmpty()) {
             return null;

@@ -30,7 +30,6 @@ import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.ResolucionesModificativas;
 import sv.gob.mined.paquescolar.model.TechoRubroEntEdu;
 import sv.gob.mined.paquescolar.model.TipoModifContrato;
-import sv.gob.mined.paquescolar.model.TipoUsuario;
 import sv.gob.mined.paquescolar.model.pojos.VwDepartamentoModificativas;
 import sv.gob.mined.paquescolar.model.pojos.VwDetalleModificativas;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ContratoDto;

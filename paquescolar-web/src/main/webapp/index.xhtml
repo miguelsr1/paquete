@@ -73,12 +73,12 @@
                                         <br/>
                                         <div class="ui-g-12">
                                             <p:outputLabel for="nit" value="N.I.T." style="font-size: 18px; font-family: 'Bembo Std' !important"/>
-                                            <p:inputMask id="nit" mask="9999-999999-999-9" onkeyup="return cUpper(this);" placeholder="0000-000000-000-0" value="#{loginController.usuario}"/>
+                                            <p:inputMask id="nit" mask="9999-999999-999-9" onkeyup="return cUpper(this);" placeholder="0000-000000-000-0" value="#{loginController.usuarioEmp}"/>
                                         </div>
                                         <div class="ui-g-12">
                                             <p:outputLabel for="passwordEmp" value="Clave de acceso" style="font-size: 18px; font-family: Bembo Std !important" />
                                             <div class="input-wrapper">
-                                                <p:password id="passwordEmp" placeholder="CLAVE DE ACCESO" feedback="false" value="#{loginController.clave}" />
+                                                <p:password id="passwordEmp" placeholder="CLAVE DE ACCESO" feedback="false" value="#{loginController.claveEmp}" />
                                                 <i class="fa fa-lock" />
                                             </div>
                                         </div>

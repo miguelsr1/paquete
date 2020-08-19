@@ -20,6 +20,20 @@ public class Constantes {
     public static final String ERROR = "error";
     public static final String WARNING = "alerta";
 
+    public static final String QUERY_CONTRATACION_ESTADO_RESERVA = "select res.id_estado_reserva \n"
+            + "                from \n"
+            + "                    contratos_ordenes_compras con\n"
+            + "                    inner join resoluciones_adjudicativas res on res.id_resolucion_adj = con.id_resolucion_adj\n"
+            + "                    inner join participantes par on res.id_participante = par.id_participante\n"
+            + "                    inner join oferta_bienes_servicios ofe on par.id_oferta = ofe.id_oferta\n"
+            + "                where\n"
+            + "                    con.estado_eliminacion = 0 and\n"
+            + "                    res.estado_eliminacion = 0 and\n"
+            + "                    par.estado_eliminacion = 0 and\n"
+            + "                    ofe.estado_eliminacion = 0 and\n"
+            + "                    ofe.codigo_entidad = ?1 and\n"
+            + "                    ofe.id_det_proceso_adq = ?2";
+
     public static final String QUERY_CONTRATACION_RESUMEN_CONTRATACIONES = "SELECT \n"
             + "                rownum                  as idRow,\n"
             + "                CODIGO_ENTIDAD          as codigoEntidad,\n"
@@ -38,11 +52,11 @@ public class Constantes {
             + "                CANTIDAD_CONTRATO       as cantidadContrato,\n"
             + "                MONTO_CONTRATO          as montoContrato,\n"
             + "                ID_CONTRATO             as idContrato,\n"
-            + "                miembro_firma       as miembroFirma,\n" 
-            + "                tel_director        as telDirector,\n" 
-            + "                tel_director2       as telDirector2,\n" 
-            + "                numero_telefono     as numeroTelefono,\n" 
-            + "                num_telefono2       as telefonoEmp2,\n" 
+            + "                miembro_firma       as miembroFirma,\n"
+            + "                tel_director        as telDirector,\n"
+            + "                tel_director2       as telDirector2,\n"
+            + "                numero_telefono     as numeroTelefono,\n"
+            + "                num_telefono2       as telefonoEmp2,\n"
             + "                num_telefono3       as telefonoEmp3"
             + "            FROM \n"
             + "                VW_RPT_RESUMEN_CONTRATACION \n"

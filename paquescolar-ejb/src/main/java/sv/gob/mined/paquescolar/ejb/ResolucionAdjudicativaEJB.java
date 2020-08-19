@@ -23,11 +23,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
+import sv.gob.mined.paquescolar.model.DetalleModificativa;
+import sv.gob.mined.paquescolar.model.DetalleOfertas;
 import sv.gob.mined.paquescolar.model.EstadoReserva;
 import sv.gob.mined.paquescolar.model.HistorialCamEstResAdj;
 import sv.gob.mined.paquescolar.model.InfoGeneralContratacion;
 import sv.gob.mined.paquescolar.model.Participantes;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
+import sv.gob.mined.paquescolar.model.ResolucionesModificativas;
 import sv.gob.mined.paquescolar.model.RptDocumentos;
 import sv.gob.mined.paquescolar.model.TechoRubroEntEdu;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.SaldoProveedorDto;
@@ -428,13 +431,37 @@ public class ResolucionAdjudicativaEJB {
         lst.forEach((object) -> {
             Object[] datos1 = (Object[]) object;
             ResolucionesAdjudicativas res = em.find(ResolucionesAdjudicativas.class, datos1[0]);
-            HashMap<String, Object> param  = aplicarReservaDeFondos(res, new BigDecimal(3), datos1[2].toString(), "error capacidad CONAMYPE", "RAFAARIAS");
-            if(param.containsKey("error")){
+            HashMap<String, Object> param = aplicarReservaDeFondos(res, new BigDecimal(3), datos1[2].toString(), "error capacidad CONAMYPE", "RAFAARIAS");
+            if (param.containsKey("error")) {
                 Logger.getLogger(ResolucionAdjudicativaEJB.class.getName()).log(Level.SEVERE, param.get("error").toString());
-            }else{
-                
+            } else {
+
             }
         });
 
+    }
+
+    public List<DetalleOfertas> findDetalleOfertas(Participantes participante) {
+        return proveedorEJB.findDetalleOfertas(participante, false);
+    }
+
+    public List<DetalleModificativa> findDetalleModificativa(BigDecimal idResModif) {
+        Query q = em.createQuery("SELECT d FROM DetalleModificativa d WHERE d.idResolucionModif.idResolucionModif = :idRes ORDER BY FUNC('TO_NUMBER', d.noItem)", DetalleModificativa.class);
+        q.setParameter("idRes", idResModif);
+
+        return q.getResultList();
+    }
+
+    public ContratosOrdenesCompras findContratoByCodEntAndIdDetProceso(String codigoEntidad, BigDecimal idDetProcesoAdq) {
+        Query q = em.createQuery("SELECT c FROM ContratosOrdenesCompras c WHERE c.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoEntidad=:codEnt AND c.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq.idDetProcesoAdq=:idDetProcesoAdq AND c.idResolucionAdj.idParticipante.idOferta.estadoEliminacion=0", ContratosOrdenesCompras.class);
+        q.setParameter("codEnt", codigoEntidad);
+        q.setParameter("idDetProcesoAdq", idDetProcesoAdq);
+        return q.getResultList().isEmpty() ? null : (ContratosOrdenesCompras) q.getResultList().get(0);
+    }
+
+    public ResolucionesModificativas findModificativaByIdContrato(BigDecimal idContrato) {
+        Query q = em.createQuery("SELECT r FROM ResolucionesModificativas r WHERE r.idContrato.idContrato=idContrato and r.idEstadoReserva.idEstadoReserva=2", ResolucionesModificativas.class);
+        q.setParameter("idContrato", idContrato);
+        return q.getResultList().isEmpty() ? null : (ResolucionesModificativas) q.getResultList().get(0);
     }
 }

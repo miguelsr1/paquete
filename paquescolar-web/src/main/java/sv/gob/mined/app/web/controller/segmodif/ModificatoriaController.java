@@ -298,7 +298,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
             case 13:
                 deshabilitarAgregar = true;
                 deshabilitarEliminar = true;
-                
+
                 lstDetalleModificativas.forEach((detalle) -> {
                     detalle.setCantidadNew(detalle.getCantidadOld());
                     if (idTipoModif.intValue() == 13) {
@@ -757,9 +757,9 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
             }
         }
     }
-    
-    public void redirigirAModEntregas(){
-        JsfUtil.redireccionar("reg06Seguimiento.mined?faces-redirect=true&idContrato="+resolucionesModificativas.getIdContrato().getIdContrato().intValue());
+
+    public void redirigirAModEntregas() {
+        JsfUtil.redireccionar("reg06Seguimiento.mined?faces-redirect=true&idContrato=" + resolucionesModificativas.getIdContrato().getIdContrato().intValue());
     }
 
     public void eliminarDetalle() {
@@ -831,7 +831,8 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                 detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
 
                 if (vwContratoModificatoria.getIdResolucionAdj() == null) {//modificación de una modificatoria
-                    for (DetalleModificativa detalle : utilEJB.find(ResolucionesModificativas.class, vwContratoModificatoria.getIdResolucionModif()).getDetalleModificativaList()) {
+                    //for (DetalleModificativa detalle : utilEJB.find(ResolucionesModificativas.class, vwContratoModificatoria.getIdResolucionModif()).getDetalleModificativaList()) {
+                    for (DetalleModificativa detalle : resolucionAdjudicativaEJB.findDetalleModificativa(vwContratoModificatoria.getIdResolucionModif())) {
                         if (detalle.getEstadoEliminacion() == 0) {
                             DetalleModificativa detalleModificativa = new DetalleModificativa();
                             detalleModificativa.setIdProducto(detalle.getIdProducto());
@@ -853,7 +854,8 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                         }
                     }
                 } else {//modificación de un contrato
-                    for (DetalleOfertas detalle : contratoOriginal.getIdResolucionAdj().getIdParticipante().getDetalleOfertasList()) {
+                    //for (DetalleOfertas detalle : contratoOriginal.getIdResolucionAdj().getIdParticipante().getDetalleOfertasList()) {
+                    for (DetalleOfertas detalle : resolucionAdjudicativaEJB.findDetalleOfertas(contratoOriginal.getIdResolucionAdj().getIdParticipante())) {
                         if (!detalle.getEliminar()) {
                             DetalleModificativa detalleModificativa = new DetalleModificativa();
                             detalleModificativa.setIdProducto(detalle.getIdProducto().getIdProducto());
@@ -925,7 +927,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
             JsfUtil.mensajeInformacion("Ha seleccionado el contrato original, y no una modificativa ya creada.");
         } else {
             idTipoModif = resolucionesModificativas.getIdModifContrato().getIdModifContrato();
-            lstDetalleModificativas = resolucionesModificativas.getDetalleModificativaList();
+            lstDetalleModificativas = resolucionAdjudicativaEJB.findDetalleModificativa(resolucionesModificativas.getIdResolucionModif());
             techoCE = resolucionAdjudicativaEJB.findTechoRubroEntEdu(resolucionesModificativas.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getCodigoEntidad().getCodigoEntidad(),
                     resolucionesModificativas.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq());
             idEstadoReserva = resolucionesModificativas.getIdEstadoReserva();
