@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
@@ -49,7 +49,6 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
-import sv.gob.mined.envio.facade.EMailFacade;
 import sv.gob.mined.envio.facade.RegistrosFacade;
 import sv.gob.mined.envio.model.DetalleEnvio;
 import sv.gob.mined.utils.jsf.JsfUtil;
@@ -59,7 +58,7 @@ import sv.gob.mined.utils.jsf.JsfUtil;
  * @author MISanchez
  */
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class EnvioView {
 
     private BigDecimal idEnvio = BigDecimal.ZERO;
@@ -99,7 +98,7 @@ public class EnvioView {
 
     @PreDestroy
     public void destroy() {
-        if (transport.isConnected()) {
+        if (!transport.isConnected()) {
             try {
                 transport.close();
             } catch (MessagingException ex) {
@@ -219,7 +218,7 @@ public class EnvioView {
         return remitente;
     }
 
-    public void validarFormulario(){
+    public void validarFormulario() {
         String error = "";
 
         if (correoRemitente == null || correoRemitente.trim().isEmpty()) {
@@ -243,8 +242,7 @@ public class EnvioView {
             error += "Debe de seleccionar un archivo con la lista de correos a enviar.<br/>";
         }
         if (error.isEmpty()) {
-            enviarCorreos();
-            PrimeFaces.current().executeScript("PF('pbAjax').start();PF('dlgBar').show();");
+            PrimeFaces.current().executeScript("onClick('btnSend');");
         } else {
             JsfUtil.mensajeError("<br/>" + error);
         }
@@ -255,9 +253,9 @@ public class EnvioView {
             List<DetalleEnvio> lstDetalle = registrosFacade.findDetalleEnvio(idEnvio);
             totalRegistros = lstDetalle.size();
 
-            //transport = mailSession.getTransport("smtp");
-            //transport.connect(server, remitente, password);
             if (transport.isConnected()) {
+
+            } else {
                 transport.connect();
             }
 
@@ -298,6 +296,14 @@ public class EnvioView {
                     }
 
                 });
+                
+                titulo = "";
+                mensaje = "";
+                
+                showUploadFile = true;
+                file = null;
+                
+                JsfUtil.mensajeInformacion("Ha finalizado el proceso de envio de correos.");
             } catch (Exception e) {
                 e.printStackTrace();
                 JsfUtil.mensajeError("Ah ocurrido un error en el envio de correos.");
@@ -400,7 +406,8 @@ public class EnvioView {
         }
     }
 
-    public void validarCrendecialesDelCorreo() {
+    public String validarCrendecialesDelCorreo() {
+        String url = "";
         try {
             if (correoRemitente != null && password != null) {
                 if (idDominioCorreo.equals("1")) {
@@ -419,6 +426,8 @@ public class EnvioView {
                 transport.connect("smtp.office365.com", Integer.parseInt(port), remitente, password);
 
                 correoValido = true;
+
+                url = "prueba?faces-redirect=true";
             }
         } catch (NoSuchProviderException ex) {
             JsfUtil.mensajeError("Error en el usuario o  clave de acceso.");
@@ -427,6 +436,8 @@ public class EnvioView {
             JsfUtil.mensajeError("Error en el usuario o  clave de acceso.");
             correoValido = false;
         }
+
+        return url;
     }
 
     private void guardarRegistros() throws FileNotFoundException, IOException {
