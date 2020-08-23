@@ -16,10 +16,13 @@
 
         <ui:insert name="head"/>
 
+        <script type="text/javascript">
+        </script>
+
         <h:outputScript name="funciones.js" library="js" />
     </h:head>
 
-    <h:body styleClass="landing-body">
+    <h:body styleClass="landing-body" >
 
         <div class="landing-wrapper">
             <div id="header">
@@ -30,98 +33,140 @@
                     </h:panelGrid>
 
                     <div id="pricing" class="header-top">
-                        <div jsf:id="divDatos" class="ui-g ui-fluid">
-                            <h:form prependId="false" enctype="multipart/form-data">
+                        <div class="ui-g ui-fluid">
+                            <h:form prependId="false">
                                 <p:messages id="growl" closable="true" escape="false" showDetail="true">
                                     <p:autoUpdate />
                                 </p:messages>
 
-                                <p:outputPanel id="pnlDatos" style="width: 900px;">
-                                    <p:panelGrid columns="2" columnClasses="ui-g-12 ui-md-4 col4_left, ui-g-12 ui-md-8 col8_left"
-                                                 style="margin: 0 auto; "
-                                                 styleClass="form-group ui-panelgrid-blank" layout="grid">
-                                        <p:outputLabel value="Tipo de cuenta a utilizar"/>
-                                        <p:selectOneRadio id="rdTipo" unselectable="false" value="#{envioView.idDominioCorreo}" >
-                                            <f:selectItem itemLabel="Office 365" itemValue="2"/>
-                                            <f:selectItem itemLabel="Correo Institucional" itemValue="1"/>
-                                            <p:ajax update="pngDatos" event="change" />
-                                        </p:selectOneRadio>
-                                    </p:panelGrid>
+                                <p:outputPanel id="outPrincipal" style="width: 900px;">
+                                    <p:outputPanel style="width: 900px;" rendered="#{not envioView.correoValido}">
+                                        <p:panelGrid columns="1" columnClasses="ui-g-12"
+                                                     style="margin: 0 auto; width: 360px; text-align: center;"
+                                                     styleClass="form-group ui-panelgrid-blank" layout="grid">
+                                            <p:outputLabel value="Tipo de cuenta a utilizar"/>
+                                            <p:selectOneRadio id="rdTipo" unselectable="false" value="#{envioView.idDominioCorreo}" style="font-size: 16px; margin: auto;">
+                                                <f:selectItem itemLabel="Office 365" itemValue="2"/>
+                                                <f:selectItem itemLabel="Correo Institucional" itemValue="1"/>
+                                                <p:ajax update="pngCredenciales" event="change" />
+                                            </p:selectOneRadio>
+                                        </p:panelGrid>
+                                        <br/>
 
-                                    <p:panelGrid id="pngDatos" columns="2" columnClasses="ui-g-12 ui-md-4 col4_left, ui-g-12 ui-md-8 col8_left"
-                                                 style="margin: 0 auto;"
-                                                 styleClass="form-group ui-panelgrid-blank" layout="grid">
-                                        <p:outputLabel value="Correo remitente "/>
-                                        <p:outputPanel>
-                                            <p:inputText id="txtCorreo" value="#{envioView.correoRemitente}" style="width: 252px"/>
-                                            <p:spacer width="15"/>
-                                            <p:outputLabel value="#{envioView.idDominioCorreo eq '1' ? '@mined.gob.sv':'@admin.mined.edu.sv'}"/>
-                                        </p:outputPanel>
+                                        <p:panelGrid id="pngCredenciales" columns="1" columnClasses="ui-g-12"
+                                                     style="margin: 0 auto; width: 360px;" styleClass="form-group ui-panelgrid-blank" layout="grid">
+                                            <p:outputLabel for="txtCorreoRemitente" value="Correo remitente "/>
+                                            <p:outputPanel>
+                                                <p:inputText id="txtCorreoRemitente" widgetVar="txtCorreoRemitente" value="#{envioView.correoRemitente}" style="width: 200px" required="true"/>
+                                                <p:spacer width="15"/>
+                                                <p:outputLabel value="#{envioView.idDominioCorreo eq '1' ? '@mined.gob.sv':'@admin.mined.edu.sv'}"/>
+                                            </p:outputPanel>
 
+                                            <p:outputLabel value="Dominio" rendered="#{envioView.idDominioCorreo eq '1'}"/>
+                                            <p:inputText id="txtDominio" widgetVar="txtDominio" value="#{envioView.dominio}" rendered="#{envioView.idDominioCorreo eq '1'}"/>
 
-                                        <p:outputLabel value="Dominio" rendered="#{envioView.idDominioCorreo eq '1'}"/>
-                                        <p:inputText id="txtUsuario" value="#{envioView.usuario}" rendered="#{envioView.idDominioCorreo eq '1'}"/>
+                                            <p:outputLabel for="txtClaveRemitente" value="Contraseña"/>
+                                            <p:password id="txtClaveRemitente" widgetVar="txtClaveRemitente" value="#{envioView.password}" placeholder="Password" required="true"/>
+                                        </p:panelGrid>
 
+                                        <p:panelGrid id="pngValidar" columns="1" columnClasses="ui-g-12"
+                                                     style="margin: 0 auto; text-align: center; width: 360px;" styleClass="form-group ui-panelgrid-blank" layout="grid">
+                                            <p:commandButton id="btnValidar" widgetVar="btnValidar" value="Validar" style="width: 110px;" action="#{envioView.validarCrendecialesDelCorreo()}" 
+                                                             onclick="PF('btnValidar').disable();" 
+                                                             oncomplete="PF('btnValidar').enable();" update="outPrincipal"/> 
 
-                                        <p:outputLabel value="Contraseña"/>
-                                        <p:password id="txtClave" value="#{envioView.password}" />
+                                            <p:ajaxStatus>
+                                                <f:facet name="default">
+                                                </f:facet>
 
-                                        <p:outputLabel value="Título del mensaje"/>
-                                        <p:inputText id="txtTitulo" value="#{envioView.titulo}"/>
-                                    </p:panelGrid>
+                                                <f:facet name="start">
+                                                    <h:outputText value="Espere por favor" style="font-size: 14px; font-family: 'Bembo Std'" />
+                                                    <i class="fa fa-spinner fa-spin" style="font-size: 20px;"></i>
+                                                </f:facet>
 
-                                    <p:panelGrid columns="1" columnClasses="ui-g-12 "
-                                                 style="margin: 0 auto; "
-                                                 styleClass="form-group ui-panelgrid-blank" layout="grid">
-                                        <p:outputPanel>
-                                            <h:outputText value="Mensaje ( No olvide agregar la palabra comodin " style="float: left;"/>
-                                            <p:spacer width="15" style="float: left;"/>
-                                            <p:outputLabel value=":DOCENTE:" style="font-weight: bold;float: left;"/> 
-                                            <p:spacer width="15" style="float: left;"/>
-                                            <h:outputText value=") " style="float: left;"/>
-                                        </p:outputPanel>
-                                        <p:textEditor id="txtMensaje" value="#{envioView.mensaje}" allowLinks="true" 
-                                                      height="300" style="width: 100%; margin-bottom:10px"
-                                                      placeholder="Ingrese el mensaje a enviar">
-                                            <f:facet name="toolbar">
-                                                <span class="ql-formats">
-                                                    <button class="ql-bold"></button>
-                                                    <button class="ql-italic"></button>
-                                                    <button class="ql-underline"></button>
-                                                    <button class="ql-strike"></button>
-                                                    <button class="ql-link"></button>
-                                                </span>
-                                                <span class="ql-formats">
-                                                    <select class="ql-font"></select>
-                                                    <select class="ql-size"></select>
-                                                </span>
-                                            </f:facet>
-                                        </p:textEditor>
-                                    </p:panelGrid>
-
-                                    <p:panelGrid columns="2" columnClasses="ui-g-12 ui-md-4 col4_left, ui-g-12 ui-md-8 col8_left"
-                                                 style="margin: 0 auto;"
-                                                 styleClass="form-group ui-panelgrid-blank" layout="grid">
-                                        <p:outputLabel value="Archivo con listado de destinatarios"/>
-                                        <p:fileUpload id="updFile" widgetVar="updFile" value="#{envioView.file}" 
-                                                      allowTypes="/(\.|\/)(xlsx)$/" invalidFileMessage="Unicamente archivos Excel (xlsx)" 
-                                                      mode="simple" skinSimple="false"/>
-                                    </p:panelGrid>
-                                    <br/>
-
-                                    <p:commandButton id="btnEnviar" value="Enviar" action="#{envioView.subirUnArchivo()}"
-                                                     style="width: 200px; margin: auto;" ajax="false"/>
+                                                <f:facet name="complete">
+                                                    <h:outputText value="" />
+                                                </f:facet>
+                                            </p:ajaxStatus>
+                                        </p:panelGrid>
+                                    </p:outputPanel>
 
 
-                                    <p:progressBar widgetVar="pbAjaxLong" ajax="true" value="#{progressBarView.progress2}" labelTemplate="{value}%" styleClass="animated" global="false" interval="500">
-                                        <p:ajax event="complete" listener="#{progressBarView.onComplete}" update="growl" oncomplete="PF('startButton3').enable()"/>
-                                    </p:progressBar>
+                                    <p:outputPanel style="width: 900px"> 
+                                        <br/>
+                                        <p:panelGrid columns="2" columnClasses="ui-g-12 ui-md-2 col2_left, ui-g-12 ui-md-10 col10_left"
+                                                     style="margin: 0 auto; "
+                                                     styleClass="form-group ui-panelgrid-blank" layout="grid">
+                                            <p:outputLabel value="De:"/>
+                                            <p:outputLabel value="#{envioView.remitente}" style="font-weight: bold;"/>
+                                            <p:outputLabel value="Título del mensaje"/>
+                                            <p:inputText id="txtTitulo" value="#{envioView.titulo}"/>
+                                        </p:panelGrid>
+
+                                        <p:panelGrid columns="1" columnClasses="ui-g-12 "
+                                                     style="margin: 0 auto; "
+                                                     styleClass="form-group ui-panelgrid-blank" layout="grid">
+                                            <p:outputPanel>
+                                                <h:outputText value="Mensaje ( No olvide agregar la palabra comodin " style="float: left;"/>
+                                                <p:spacer width="15" style="float: left;"/>
+                                                <p:outputLabel value=":DOCENTE:" style="font-weight: bold;float: left;"/> 
+                                                <p:spacer width="15" style="float: left;"/>
+                                                <h:outputText value=") " style="float: left;"/>
+                                            </p:outputPanel>
+                                            <p:textEditor id="txtMensaje" value="#{envioView.mensaje}" allowLinks="true" 
+                                                          height="200" style="width: 100%; margin-bottom:10px"
+                                                          placeholder="Ingrese el mensaje a enviar" secure="false">
+                                                <f:facet name="toolbar">
+                                                    <span class="ql-formats">
+                                                        <button class="ql-bold"></button>
+                                                        <button class="ql-italic"></button>
+                                                        <button class="ql-underline"></button>
+                                                        <button class="ql-strike"></button>
+                                                        <button class="ql-link"></button>
+                                                    </span>
+                                                    <span class="ql-formats">
+                                                        <select class="ql-font"></select>
+                                                        <select class="ql-size"></select>
+                                                    </span>
+                                                </f:facet>
+                                            </p:textEditor>
+                                        </p:panelGrid>
+
+                                        <p:panelGrid id="pngUpload" columns="2" columnClasses="ui-g-12 ui-md-4 col4_left, ui-g-12 ui-md-8 col8_left"
+                                                     style="margin: 0 auto;" 
+                                                     styleClass="form-group ui-panelgrid-blank" layout="grid">
+                                            <p:outputLabel value="Archivo con listado de destinatarios"/>
+                                            <p:outputLabel value="#{envioView.file.fileName}" rendered="#{not envioView.showUploadFile}"/>
+                                            <p:fileUpload id="updFile" listener="#{envioView.handleFileUpload}" auto="true" widgetVar="updFile" fileLimit="1" rendered="#{envioView.showUploadFile}"
+                                                          label="Seleccionar" allowTypes="/(\.|\/)(xlsx)$/" invalidFileMessage="Unicamente archivos Excel (xlsx)" 
+                                                          mode="advanced" update="pngUpload" disabled="#{not envioView.correoValido}" 
+                                                          onstart="PF('dlgEspera').show();" oncomplete="PF('dlgEspera').hide();PF('btnEnviar').enable();"/>
+                                        </p:panelGrid>
+                                        <br/>
+                                        <p:panelGrid columns="1" columnClasses="ui-g-12" style="margin: 0 auto; text-align: center; width: 360px;"  styleClass="form-group ui-panelgrid-blank" layout="grid">
+                                            <p:commandButton id="btnEnviar" widgetVar="btnEnviar" value="Enviar" 
+                                                             action="#{envioView.validarFormulario()}" style="width: 200px;" />
+                                        </p:panelGrid>
+                                    </p:outputPanel>
                                 </p:outputPanel>
 
-                                <p:panel visible="false">
-                                    <p:commandButton value="Enviar" action="#{envioView.validacion()}"
-                                                     style="width: 200px; margin: auto;" />
-                                </p:panel>
+                                <p:dialog id="dlgBar" widgetVar="dlgBar" modal="true" width="700" height="100" closable="true">
+                                    <h3>Se estan enviando los correos, por favor espere mientras el proceso finaliza.</h3>
+                                    <p:spacer height="10"/>
+                                    <p:progressBar widgetVar="pbAjax" ajax="true" value="#{envioView.progreso}" labelTemplate="{value}%" styleClass="animated" global="false">
+                                        <p:ajax event="complete" listener="#{envioView.ocultarBarProgress()}" oncomplete="PF('dlgBar').hide();" />
+                                    </p:progressBar>
+                                </p:dialog>
+
+
+                                <p:dialog header="Información" id="dlgEspera" widgetVar="dlgEspera" closable="false" width="200" height="90" modal="true">
+                                    <h:panelGrid columns="1" style="width: 100%; text-align: center;">
+                                        <p:outputLabel value="Por favor espere mientras se carga el archivo" style="font-size: 14px;"/>
+                                        <br/>   
+                                        <i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size: 16px"></i>
+                                    </h:panelGrid>
+                                </p:dialog>
+
                             </h:form>
                         </div>
                     </div>
