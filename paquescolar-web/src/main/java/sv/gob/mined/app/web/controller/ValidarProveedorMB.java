@@ -16,6 +16,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
+import sv.gob.mined.paquescolar.util.RC4Crypter;
 
 /**
  *
@@ -41,7 +42,9 @@ public class ValidarProveedorMB implements Serializable {
     public void init() {
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         if (params.containsKey("codigo")) {
-            idEmpresa = new BigDecimal(params.get("codigo").split(":")[0]);
+            String idEmpresaStr = (new RC4Crypter()).decrypt("ha", params.get("codigo")).split(":")[0];
+            
+            idEmpresa = new BigDecimal(idEmpresaStr);
         }
     }
 
@@ -99,7 +102,9 @@ public class ValidarProveedorMB implements Serializable {
         showPanel = validar;
     }
 
-    public void guardarPasswordProv() {
+    public String guardarPasswordProv() {
         proveedorEJB.guardarPasswordProv(idEmpresa, pass1);
+        
+        return "index.mined";
     }
 }

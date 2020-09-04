@@ -260,6 +260,7 @@ body .ui-growl {
 .col8{width: 66.67%;}
 .col7{width: 58.33%;}
 .col6{width: 50%;}
+.col6_left{width: 50%; text-align: left !important;}
 .col6_label{width: 50%;text-align: right;}
 .col5{width: 41.67%;}
 .col5_label{width: 41.67%;text-align: right;}

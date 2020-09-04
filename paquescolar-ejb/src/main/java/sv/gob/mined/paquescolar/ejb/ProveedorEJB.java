@@ -51,6 +51,8 @@ import sv.gob.mined.paquescolar.model.PreciosRefRubroEmp;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.RequerimientoFondos;
 import sv.gob.mined.paquescolar.model.TipoPersoneria;
+import sv.gob.mined.paquescolar.model.TipoUsuario;
+import sv.gob.mined.paquescolar.model.Usuario;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.DetalleAdjudicacionEmpDto;
 import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
@@ -1787,9 +1789,39 @@ public class ProveedorEJB {
         Empresa emp = findEmpresaByPk(idEmpresa);
         Persona per = emp.getIdPersona();
 
-        per.setClaveAcceso(password);
-        per.setUsuario(emp.getNumeroNit());
+        per.setClaveAcceso((new RC4Crypter()).encrypt("ha", password));
+        per.setUsuario(per.getNumeroNit());
 
         em.merge(per);
+
+        Query q = em.createQuery("SELECT u FROM Usuario u where u.idPersona.idPersona=:idPersona", Usuario.class);
+        q.setParameter("idPersona", per.getIdPersona());
+        Usuario usu;
+
+        if (q.getResultList().isEmpty()) {
+            usu = new Usuario();
+            usu.setActivo((short) 1);
+            usu.setCodigoDepartamento("00");
+            usu.setEstadoEliminacion(BigInteger.ZERO);
+            usu.setFechaInsercion(new Date());
+            usu.setRangoFechaLogin((short) 0);
+            usu.setIdPersona(per);
+            usu.setIdTipoUsuario(em.find(TipoUsuario.class, new BigDecimal(9)));
+            usu.setUsuarioInsercion("AUTOMATICO");
+
+            em.persist(usu);
+        } else {
+            usu = (Usuario) q.getResultList().get(0);
+            usu.setIdTipoUsuario(em.find(TipoUsuario.class, new BigDecimal(9)));
+            em.merge(usu);
+        }
+    }
+
+    public void datosConfirmados(BigDecimal idDetRubro) {
+        DetRubroMuestraInteres det = em.find(DetRubroMuestraInteres.class, idDetRubro);
+
+        det.setDatosVerificados((short) 1);
+        
+        em.merge(det);
     }
 }

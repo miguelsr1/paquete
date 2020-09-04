@@ -335,30 +335,6 @@ public class EntidadEducativaEJB {
         return q.getResultList().isEmpty() ? BigDecimal.ZERO : (BigDecimal) q.getSingleResult();
     }
 
-    /*public String getNivelesDeEntidadEducativa(String codigoEntidad, Integer idProcesoAdq) {
-        String idNiveles = "";
-        Query q = em.createNativeQuery("select id_nivel\n"
-                + "from\n"
-                + "    (select codigo_entidad, case when id_nivel_educativo in (1) then 1 when id_nivel_educativo in (3,4,5) then 2 when id_nivel_educativo in (16,17,18) then 6 end id_nivel, masculino, femenimo\n"
-                + "    from estadistica_censo\n"
-                + "    where (masculino <> 0 or femenimo <> 0) and codigo_entidad = ?1 and id_proceso_adq = ?2 and estado_eliminacion = 0 and id_nivel_Educativo not in (2,6,7,8,9,10,11,12,13,14,15))\n"
-                + "group by codigo_entidad,id_nivel\n"
-                + "order by codigo_entidad,id_nivel");
-        q.setParameter(1, codigoEntidad);
-        q.setParameter(2, idProcesoAdq);
-
-        List lst = q.getResultList();
-
-        for (Object object : lst) {
-            Object[] datos = (Object[]) object;
-            if (idNiveles.isEmpty()) {
-                idNiveles = datos[0].toString();
-            } else {
-                idNiveles = "," + datos[0].toString();
-            }
-        }
-        return idNiveles;
-    }*/
     public HashMap<String, String> getNoItemsByCodigoEntidadAndIdProcesoAdq(String codigoEntidad, DetalleProcesoAdq detProcesoAdq, boolean isUniforme) {
         String noItemSeparados = "";
         String noItems = "";

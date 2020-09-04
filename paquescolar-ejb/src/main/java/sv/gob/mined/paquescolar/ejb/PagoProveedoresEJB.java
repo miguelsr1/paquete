@@ -21,11 +21,13 @@ import javax.persistence.Query;
 import sv.gob.mined.paquescolar.model.DetalleDocPago;
 import sv.gob.mined.paquescolar.model.DetallePlanilla;
 import sv.gob.mined.paquescolar.model.DetallePreCarga;
+import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.DetalleRequerimiento;
 import sv.gob.mined.paquescolar.model.ListaNotificacionPago;
 import sv.gob.mined.paquescolar.model.PlanillaPago;
 import sv.gob.mined.paquescolar.model.PlanillaPagoCheque;
 import sv.gob.mined.paquescolar.model.PreCarga;
+import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.ReintegroRequerimiento;
 import sv.gob.mined.paquescolar.model.ResolucionesModificativas;
 import sv.gob.mined.paquescolar.model.TipoDocPago;
@@ -525,7 +527,7 @@ public class PagoProveedoresEJB {
         q.executeUpdate();
     }
 
-    public List<DatosBusquedaPlanillaDto> buscarPlanillas(BigDecimal idPlanilla, BigDecimal monto, String numeroNit, 
+    public List<DatosBusquedaPlanillaDto> buscarPlanillas(BigDecimal idPlanilla, BigDecimal monto, String numeroNit,
             String nombreEntFinan, Integer idProcesoAdq, String numeroCheque, Date fechaCheque, String codigoDepartamento, Integer idDetProcesoAdq) {
         String strWhere = Constantes.addCampoToWhere("", "ID_PLANILLA", idPlanilla);
         strWhere = Constantes.addCampoToWhere(strWhere, "MONTO_ACTUAL", monto);
@@ -534,8 +536,17 @@ public class PagoProveedoresEJB {
         strWhere = Constantes.addCampoToWhere(strWhere, "id_proceso_adq", idProcesoAdq);
         strWhere = Constantes.addCampoToWhere(strWhere, "numero_cheque", numeroCheque);
         strWhere = Constantes.addCampoToWhere(strWhere, "fecha_cheque", fechaCheque);
-        strWhere = Constantes.addCampoToWhere(strWhere, "codigo_departamento", codigoDepartamento);
-        strWhere = Constantes.addCampoToWhere(strWhere, "id_det_proceso_adq", idDetProcesoAdq);
+        if (codigoDepartamento.equals("00")) {
+            strWhere = (strWhere.isEmpty() ? "" : strWhere.concat(" AND ")).concat(" codigo_departamento in ('01','02','03','04','05','06','07','08','09','10','11','12','13','14') ");
+        } else {
+            strWhere = (strWhere.isEmpty() ? "" : strWhere.concat(" AND ")).concat(" codigo_departamento in ('" + codigoDepartamento + "') ");
+        }
+        if (idDetProcesoAdq == 6) {
+
+        } else {
+            strWhere = Constantes.addCampoToWhere(strWhere, "id_det_proceso_adq", idDetProcesoAdq);
+        }
+
         //System.out.println("QUERY\n=========================" + Constantes.QUERY_PAGOS_BUSQUEDA_PLANILLA + strWhere + " ORDER BY ID_PLANILLA\n================");
         Query q = em.createNativeQuery(Constantes.QUERY_PAGOS_BUSQUEDA_PLANILLA + strWhere + " ORDER BY ID_PLANILLA", DatosBusquedaPlanillaDto.class);
         return q.getResultList();
@@ -607,5 +618,11 @@ public class PagoProveedoresEJB {
         Query q = em.createQuery("SELECT l FROM ListaNotificacionPago l WHERE l.codigoDepartamento=:codDepa ORDER BY l.idLista", ListaNotificacionPago.class);
         q.setParameter("codDepa", codigoDepartamento);
         return q.getResultList();
+    }
+
+    public void planillaNotificada(BigDecimal idPlanilla) {
+        PlanillaPago pp = em.find(PlanillaPago.class, idPlanilla);
+        pp.setNotificacion((short) 1);
+        em.merge(pp);
     }
 }

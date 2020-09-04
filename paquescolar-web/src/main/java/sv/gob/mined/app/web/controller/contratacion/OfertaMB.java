@@ -592,10 +592,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                                     if (ofertaBienesServiciosEJB.isOfertaRubro(codigoEntidad, detalleProceso)) {
                                         JsfUtil.mensajeError("Ya existe un proceso de contratación para este centro escolar.");
                                     } else {
-                                        deshabilitar = false;
-                                        abrirDialogCe = true;
-                                        mapItems = entidadEducativaEJB.getNoItemsByCodigoEntidadAndIdProcesoAdq(codigoEntidad, detalleProceso,
-                                                detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
+                                        cargaItemsPorCe();
                                     }
                                 } else if (VarSession.getVariableSessionED() == 2) {
                                     current = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(codigoEntidad, detalleProceso);
@@ -603,10 +600,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                                     if (current == null) {
                                         JsfUtil.mensajeError("No existe un proceso de contratación para este centro escolar.");
                                     } else {
-                                        deshabilitar = false;
-                                        abrirDialogCe = true;
-                                        mapItems = entidadEducativaEJB.getNoItemsByCodigoEntidadAndIdProcesoAdq(codigoEntidad, detalleProceso,
-                                                detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
+                                        cargaItemsPorCe();
                                     }
                                 }
                             } else {
@@ -624,6 +618,17 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                 current.getParticipantesList().clear();
             }
             entidadEducativa = null;
+        }
+    }
+
+    private void cargaItemsPorCe() {
+        deshabilitar = !current.getIdDetProcesoAdq().getHabilitarRegistro();
+        abrirDialogCe = true;
+        if (!current.getIdDetProcesoAdq().getHabilitarRegistro()) {
+            JsfUtil.mensajeInformacion("El registro de contratos ha sido deshabilitado por el Administrador.");
+        } else {
+            mapItems = entidadEducativaEJB.getNoItemsByCodigoEntidadAndIdProcesoAdq(codigoEntidad, detalleProceso,
+                    detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
         }
     }
 

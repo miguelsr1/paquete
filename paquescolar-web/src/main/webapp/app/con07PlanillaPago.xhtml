@@ -75,6 +75,7 @@
                             <p:selectOneMenu id="cboRubro" value="#{pagoProveedoresController.idRubro}">
                                 <f:selectItem itemLabel="Seleccione un rubro" itemValue="0" />
                                 <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                <f:selectItem itemLabel="TODOS LOS RUBROS" itemValue="6"/>
                             </p:selectOneMenu>
                         </div>
                     </div>

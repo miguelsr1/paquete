@@ -51,7 +51,7 @@ public class PreciosReferenciaEJB {
     }
     
     public List<PreciosRefRubro> getLstPreciosRefRubroByRubro(DetalleProcesoAdq rubro) {
-        Query q = em.createQuery("SELECT p FROM PreciosRefRubro p WHERE p.idDetProcesoAdq.idProcesoAdq.idAnho.anho=:anho and p.idDetProcesoAdq.idRubroAdq.idRubroInteres=:idRubro", PreciosRefRubro.class);
+        Query q = em.createQuery("SELECT p FROM PreciosRefRubro p WHERE p.idDetProcesoAdq.idProcesoAdq.idAnho.anho=:anho and p.idDetProcesoAdq.idRubroAdq.idRubroInteres=:idRubro ORDER BY p.idNivelEducativo.idNivelEducativo", PreciosRefRubro.class);
         q.setParameter("anho", rubro.getIdProcesoAdq().getIdAnho().getAnho());
         q.setParameter("idRubro", rubro.getIdRubroAdq().getIdRubroInteres());
 

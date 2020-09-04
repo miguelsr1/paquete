@@ -46,6 +46,8 @@ public class CapaInstPorRubro implements Serializable {
     private BigInteger capacidadAcreditada;
     @Column(name = "CAPACIDAD_ADJUDICADA")
     private BigInteger capacidadAdjudicada;
+    @Column(name = "CAPACIDAD_PROPUESTA")
+    private Integer capacidadPropuesta;
     @Basic(optional = false)
     @Column(name = "USUARIO_INSERCION")
     private String usuarioInsercion;
@@ -104,6 +106,14 @@ public class CapaInstPorRubro implements Serializable {
 
     public void setCapacidadAdjudicada(BigInteger capacidadAdjudicada) {
         this.capacidadAdjudicada = capacidadAdjudicada;
+    }
+
+    public Integer getCapacidadPropuesta() {
+        return capacidadPropuesta;
+    }
+
+    public void setCapacidadPropuesta(Integer capacidadPropuesta) {
+        this.capacidadPropuesta = capacidadPropuesta;
     }
 
     public String getUsuarioInsercion() {

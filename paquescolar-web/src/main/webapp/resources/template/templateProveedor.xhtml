@@ -127,21 +127,6 @@
             </p:idleMonitor>
         </h:form>
 
-        <!--p:dialog header="Sesión caducada" id="sessionTimeOutDialog" widgetVar="sessionTimeOutDialog" resizable="false" draggable="false"
-                  modal="true" closable="false" width="400" visible="false">
-            <h:panelGrid columns="1" style="text-align: center;">
-                <h:panelGrid columns="3">
-                    <h:outputText value="La sesión a caducado por inactividad, por favor, pulse sobre el siguiente botón para volver a acceder a la aplicación" />
-                    <p:spacer width="10" height="8"/>
-                    <i class="fa fa-chain-broken" style="color: blue; font-size: 25px;" aria-hidden="true"></i>
-                </h:panelGrid>
-            </h:panelGrid>
-            <f:facet name="footer">
-                <p:commandButton id="confirmBackToLogin" type="button" value="Iniciar sesión" onclick="window.location = '{request.contextPath}/index.mined';" />
-            </f:facet>
-        </p:dialog-->
-
-
         <div class="layout-wrapper #{guestPreferences.slimMenu ? 'layout-menu-slim' : (guestPreferences.overlayMenu ? 'layout-menu-overlay' : 'layout-menu-static')}">
             <p:growl id="growl" showDetail="true" escape="false" sticky="true" >
                 <p:autoUpdate />
@@ -165,13 +150,11 @@
             </p:ajaxStatus>
 
             <h:form id="frmTopBar">
-                <ui:include src="./topbar.xhtml" />
-
-                <!--p:remoteCommand name="rc" update="frmTopBar:pngErrores" actionListener="{controlDeExcecionesMB.agregarErrorAPanel(pfExceptionHandler.type, pfExceptionHandler.formattedStackTrace)}" /-->
+                <ui:include src="./topbarProveedor.xhtml" />
             </h:form>
 
             <div class="layout-main">
-                <ui:include src="./menu.xhtml" />
+                <ui:include src="./menuProveedor.xhtml" />
 
                 <div class="layout-content" style="position: relative">
                     <h:form id="frmPrincipal" prependId="false" >

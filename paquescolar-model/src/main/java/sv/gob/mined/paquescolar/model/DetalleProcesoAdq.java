@@ -64,8 +64,12 @@ public class DetalleProcesoAdq implements Serializable {
     private ProcesoAdquisicion idProcesoAdq;
     @Column(name = "CREDITO")
     private Short credito;
+    @Column(name = "HABILITAR")
+    private Short habilitar;
     @Transient
     private Boolean habilitarCredito;
+    @Transient
+    private Boolean habilitarRegistro;
 
     public DetalleProcesoAdq() {
     }
@@ -121,6 +125,23 @@ public class DetalleProcesoAdq implements Serializable {
     public void setHabilitarCredito(Boolean habilitarCredito) {
         this.habilitarCredito = habilitarCredito;
         this.credito = this.habilitarCredito ? (short) 1 : 0;
+    }
+    
+    public Boolean getHabilitarRegistro() {
+        return (this.habilitar == 1);
+    }
+
+    public void setHabilitarRegistro(Boolean habilitarRegistro) {
+        this.habilitarRegistro = habilitarRegistro;
+        this.habilitar = this.habilitarRegistro ? (short) 1 : 0;
+    }
+
+    public Short getHabilitar() {
+        return habilitar;
+    }
+
+    public void setHabilitar(Short habilitar) {
+        this.habilitar = habilitar;
     }
 
     @Override

@@ -2093,6 +2093,8 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
                             }
                         }
                     }
+                    
+                    pagoProveedoresEJB.planillaNotificada(planillaPago.getIdPlanilla());
                     break;
                 default:
                     break;
@@ -2349,11 +2351,17 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
             idPlanilla = BigDecimal.ZERO;
         }
 
-        if (idRubro.intValue() == 0) {
-            idDet = null;
-        } else {
-            idDet = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
-        }
+        switch(idRubro.intValue()){
+            case 0:
+                idDet = null;
+                break;
+            case 6:
+                idDet = idRubro.intValue();
+                break;
+            default:
+                idDet = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+                break;
+        } 
 
         lstBusquedaPlanillas = pagoProveedoresEJB.buscarPlanillas(idPlanilla, montoTotal, numeroNit,
                 nombreEntFinanciera, getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq(),

@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -62,7 +61,6 @@ import sv.gob.mined.paquescolar.model.CatalogoProducto;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.Departamento;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
-import sv.gob.mined.paquescolar.model.DisMunicipioInteres;
 import sv.gob.mined.paquescolar.model.Empresa;
 import sv.gob.mined.paquescolar.model.EntidadFinanciera;
 import sv.gob.mined.paquescolar.model.Municipio;
@@ -72,6 +70,7 @@ import sv.gob.mined.paquescolar.model.PreciosRefRubroEmp;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.RubrosAmostrarInteres;
 import sv.gob.mined.paquescolar.model.pojos.OfertaGlobal;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.DetalleAdjudicacionEmpDto;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.MunicipioDto;
 
@@ -81,10 +80,11 @@ import sv.gob.mined.paquescolar.model.pojos.proveedor.MunicipioDto;
  */
 @ManagedBean
 @ViewScoped
-public class ProveedorController extends RecuperarProcesoUtil implements Serializable {
+public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable {
 
     private int idRow;
-    private Boolean deshabiliar = true;
+    
+    //private Boolean deshabiliar = true;
     private Boolean showFoto = true;
     private Boolean showCapacidadAdjudicada = false;
     private Boolean showUpdateEmpresa = false;
@@ -141,6 +141,8 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     private List<DetalleAdjudicacionEmpDto> lstResumenAdj = new ArrayList();
     private List<DetalleAdjudicacionEmpDto> lstDetalleAdj = new ArrayList();
     private DualListModel<MunicipioDto> lstMunicipiosInteres = new DualListModel();
+
+    private List<DetalleItemDto> lstPreciosMaximos = new ArrayList();
     @EJB
     private ProveedorEJB proveedorEJB;
     @EJB
@@ -153,12 +155,6 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     private CreditosEJB creditosEJB;
     @EJB
     private PreciosReferenciaEJB preciosReferenciaEJB;
-
-    /**
-     * Creates a new instance of ProveedorController
-     */
-    public ProveedorController() {
-    }
 
     @PostConstruct
     public void ini() {
@@ -186,6 +182,12 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+
+    
+    public List<DetalleItemDto> getLstPreciosMaximos() {
+        return lstPreciosMaximos;
+    }
+
     public BigDecimal getRubro() {
         return rubro;
     }
@@ -206,12 +208,12 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         this.departamentoCalif = departamentoCalif;
     }
 
-    public String getCodigoDepartamentoCalificado() {
-        return codigoDepartamentoCalificado;
+    public Empresa getEmpresa() {
+        return empresa;
     }
 
-    public void setCodigoDepartamentoCalificado(String codigoDepartamentoCalificado) {
-        this.codigoDepartamentoCalificado = codigoDepartamentoCalificado;
+    public void setEmpresa(Empresa empresa) {
+        this.empresa = empresa;
     }
 
     public String getCodEntFinanciera() {
@@ -274,49 +276,13 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         this.showFoto = showFoto;
     }
 
-    public String getCodigoDepartamento() {
-        return codigoDepartamento;
-    }
+    
 
-    public void setCodigoDepartamento(String codigoDepartamento) {
-        this.codigoDepartamento = codigoDepartamento;
-    }
+    
 
-    public BigDecimal getIdMunicipio() {
-        return idMunicipio;
-    }
+    
 
-    public void setIdMunicipio(BigDecimal idMunicipio) {
-        this.idMunicipio = idMunicipio;
-    }
-
-    public Empresa getEmpresa() {
-        return empresa;
-    }
-
-    public void setEmpresa(Empresa empresa) {
-        this.empresa = empresa;
-    }
-
-    public Boolean getDeshabiliar() {
-        return deshabiliar;
-    }
-
-    public void setDeshabiliar(Boolean deshabiliar) {
-        this.deshabiliar = deshabiliar;
-    }
-
-    public CapaInstPorRubro getCapacidadInst() {
-        if (capacidadInst == null) {
-            capacidadInst = new CapaInstPorRubro();
-        }
-        return capacidadInst;
-    }
-
-    public void setCapacidadInst(CapaInstPorRubro capacidadInst) {
-        this.capacidadInst = capacidadInst;
-    }
-
+    
     public List<Departamento> getLstDepartamentos() {
         return datosGeograficosEJB.getLstDepartamentos();
     }
@@ -415,32 +381,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         this.municipio = municipio;
     }
 
-    public String getTapEmpresa() {
-        if (empresa == null) {
-            tapEmpresa = "";
-        } else if (empresa.getIdPersoneria().getIdPersoneria() == null) {
-            tapEmpresa = "";
-        } else if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 2) {
-            tapEmpresa = "Empresa";
-        } else {
-            tapEmpresa = "";
-        }
-        return tapEmpresa;
-    }
-
-    public String getTapPersona() {
-        if (empresa == null) {
-            tapPersona = "";
-        } else if (empresa.getIdPersoneria().getIdPersoneria() == null) {
-            tapPersona = "";
-        } else if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 2) {
-            tapPersona = "Representante Legal";
-        } else {
-            tapPersona = "Proveedor";
-        }
-        return tapPersona;
-    }
-
+    
     public String getNumeroNit() {
         return numeroNit;
     }
@@ -470,60 +411,6 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         }
     }
 
-    public void filtroProveedores() {
-        empresa = new Empresa();
-        capacidadInst = new CapaInstPorRubro();
-        lstPreciosReferencia.clear();
-        lstMunSource.clear();
-        lstMunTarget.clear();
-        fileName = "fotoProveedores/profile.png";
-        showFoto = true;
-        deshabiliar = true;
-        images.clear();
-        Map<String, Object> options = new HashMap();
-        options.put("modal", true);
-        options.put("draggable", true);
-        options.put("resizable", false);
-        options.put("contentHeight", 500);
-        options.put("contentWidth", 750);
-
-        PrimeFaces.current().dialog().openDynamic("/app/comunes/dialogos/proveedor/filtroProveedor", options, null);
-    }
-
-    public void dlgFotografia() {
-        if (empresa == null || empresa.getIdEmpresa() == null) {
-            JsfUtil.mensajeAlerta("Debe de seleccionar un empresa");
-        } else {
-            deshabiliar = true;
-            Map<String, Object> options = new HashMap();
-            options.put("modal", true);
-            options.put("draggable", false);
-            options.put("resizable", false);
-            options.put("contentHeight", 400);
-            options.put("contentWidth", 554);
-            VarSession.setVariableSession("nitEmpresa", empresa.getNumeroNit());
-            PrimeFaces.current().dialog().openDynamic("/app/comunes/filtroFotoProveedor", options, null);
-        }
-    }
-
-    public void dlgFotografiaZapato() {
-        if (empresa == null || empresa.getIdEmpresa() == null) {
-            JsfUtil.mensajeAlerta("Debe de seleccionar un empresa");
-        } else {
-            deshabiliar = true;
-            Map<String, Object> options = new HashMap();
-            options.put("modal", true);
-            options.put("draggable", true);
-            options.put("position", "center center");
-            options.put("resizable", false);
-            options.put("contentHeight", 600);
-            options.put("contentWidth", 660);
-            VarSession.setVariableSession("nitEmpresa", empresa.getNumeroNit());
-            VarSession.setVariableSession("carpetaFoto", carpetaNfs.getAbsolutePath());
-            PrimeFaces.current().dialog().openDynamic("/app/control/oferentes/fotografia", options, null);
-        }
-    }
-
     private void cargarDetalleCalificacion(Boolean inicio) {
         ProcesoAdquisicion proceso = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getProceso();
@@ -539,17 +426,14 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
             } else {
                 detalleProcesoAdq = capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq();
                 departamentoCalif = proveedorEJB.findDetProveedor(proceso, empresa, CapaDistribucionAcre.class);
-                /**
-                 * Fecha: 30/08/2018 Comentario: Adición de validación de
-                 * departamento calificado para proveedor
-                 */
 
                 if (departamentoCalif == null || departamentoCalif.getCodigoDepartamento() == null) {
                     JsfUtil.mensajeAlerta("Este proveedor no posee departamento de calificación " + proceso.getIdAnho().getAnho());
-                } else {                            
+                } else {
+                    cargarPreciosMaximos();
+                            
                     codigoDepartamentoCalificado = departamentoCalif.getCodigoDepartamento().getCodigoDepartamento();
 
-                    deshabiliar = false;
                     if (empresa.getIdPersona().getUrlImagen() == null) {
                         fileName = "fotoProveedores/profile.png";
                     } else {
@@ -560,32 +444,191 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         }
     }
 
-    public void empresaSeleccionada(SelectEvent event) {
-        if (event.getObject() != null) {
-            if (event.getObject() instanceof Empresa) {
-                empresa = (Empresa) event.getObject();
+    public void cargarPreciosMaximos() {
+        List<PreciosRefRubro> lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detalleProcesoAdq);
+        DetalleItemDto det = new DetalleItemDto();
 
-                if (url.contains("DatosGenerales")) {
-                    idMunicipio = empresa.getIdPersona().getIdMunicipio().getIdMunicipio();
-                    codigoDepartamento = empresa.getIdPersona().getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
-                }
+        if (detalleProcesoAdq.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
 
-                if (empresa.getIdMunicipio() == null) {
-                    empresa.setIdMunicipio(utilEJB.find(Municipio.class,
-                            BigDecimal.ONE));
+            det.setNoItem("1");
+            det.setConsolidadoEspTec("Blusas, PARVULARIA");
+            det.setPrecioUnitario(new BigDecimal("4.25"));
+            lstPreciosMaximos.add(det);
 
-                    if (empresa.getIdPersona().getIdMunicipio() == null) {
-                        empresa.getIdPersona().setIdMunicipio(utilEJB.find(Municipio.class,
-                                BigDecimal.ONE));
+            det = new DetalleItemDto();
+            det.setNoItem("2");
+            det.setConsolidadoEspTec("Falda, PARVULARIA");
+            det.setPrecioUnitario(new BigDecimal("4.25"));
+            lstPreciosMaximos.add(det);
+
+            det = new DetalleItemDto();
+            det.setNoItem("3");
+            det.setConsolidadoEspTec("Camisas, PARVULARIA");
+            det.setPrecioUnitario(new BigDecimal("4.25"));
+            lstPreciosMaximos.add(det);
+
+            det = new DetalleItemDto();
+            det.setNoItem("4");
+            det.setConsolidadoEspTec("Pantalon Corto, PARVULARIA");
+            det.setPrecioUnitario(new BigDecimal("4.00"));
+            lstPreciosMaximos.add(det);
+
+            det = new DetalleItemDto();
+            det.setNoItem("5");
+            det.setConsolidadoEspTec("Pantalon, PARVULARIA");
+            det.setPrecioUnitario(new BigDecimal("6.00"));
+            lstPreciosMaximos.add(det);
+            
+            det = new DetalleItemDto();
+            det.setNoItem("6");
+            det.setConsolidadoEspTec("Blusas, BASICA(I, II Y III)");
+            det.setPrecioUnitario(new BigDecimal("4.50"));
+            lstPreciosMaximos.add(det);
+
+            det = new DetalleItemDto();
+            det.setNoItem("7");
+            det.setConsolidadoEspTec("Falda, BASICA(I, II Y III)");
+            det.setPrecioUnitario(new BigDecimal("4.50"));
+            lstPreciosMaximos.add(det);
+
+            det = new DetalleItemDto();
+            det.setNoItem("8");
+            det.setConsolidadoEspTec("Camisas, BASICA(I, II Y III)");
+            det.setPrecioUnitario(new BigDecimal("4.50"));
+            lstPreciosMaximos.add(det);
+
+            det = new DetalleItemDto();
+            det.setNoItem("9");
+            det.setConsolidadoEspTec("Pantalon, BASICA(I, II Y III)");
+            det.setPrecioUnitario(new BigDecimal("6.00"));
+            lstPreciosMaximos.add(det);
+            
+            det = new DetalleItemDto();
+            det.setNoItem("10");
+            det.setConsolidadoEspTec("Blusas, BACHILLERATO");
+            det.setPrecioUnitario(new BigDecimal("4.50"));
+            lstPreciosMaximos.add(det);
+
+            det = new DetalleItemDto();
+            det.setNoItem("11");
+            det.setConsolidadoEspTec("Falda, BACHILLERATO");
+            det.setPrecioUnitario(new BigDecimal("4.50"));
+            lstPreciosMaximos.add(det);
+
+            det = new DetalleItemDto();
+            det.setNoItem("12");
+            det.setConsolidadoEspTec("Camisas, BACHILLERATO");
+            det.setPrecioUnitario(new BigDecimal("4.50"));
+            lstPreciosMaximos.add(det);
+
+            det = new DetalleItemDto();
+            det.setNoItem("13");
+            det.setConsolidadoEspTec("Pantalon, BACHILLERATO");
+            det.setPrecioUnitario(new BigDecimal("6.00"));
+            lstPreciosMaximos.add(det);
+        }
+
+        for (PreciosRefRubro precio : lstPrecios) {
+            det = new DetalleItemDto();
+            switch (detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
+                case 2:
+                    switch (precio.getIdNivelEducativo().getIdNivelEducativo().intValue()) {
+                        case 1:
+                            det.setNoItem("1");
+                            det.setConsolidadoEspTec("Utiles Escolares, PARVULARIA");
+                            break;
+                        case 3:
+                            det.setNoItem("2");
+                            det.setConsolidadoEspTec("Utiles Escolares, PRIMER CICLO");
+                            break;
+                        case 4:
+                            det.setNoItem("3");
+                            det.setConsolidadoEspTec("Utiles Escolares, SEGUNDO CICLO");
+                            break;
+                        case 5:
+                            det.setNoItem("4");
+                            det.setConsolidadoEspTec("Utiles Escolares, TERCER CICLO");
+                            break;
+                        case 6:
+                            det.setNoItem("5");
+                            det.setConsolidadoEspTec("Utiles Escolares, BACHILLERATO");
+                            break;
+                        case 7:
+                            det.setNoItem("6");
+                            det.setConsolidadoEspTec("Utiles Escolares, INICIAL");
+                            break;
+                        case 8:
+                            det.setNoItem("7");
+                            det.setConsolidadoEspTec("Utiles Escolares, MODALIDAD FLEXIBLE");
+                            break;
                     }
-                }
-                VarSession.setVariableSession("idEmpresa", empresa.getIdEmpresa());
-                cargarDetalleCalificacion(false);
-                showUpdateEmpresa = ((Integer) VarSession.getVariableSession("idTipoUsuario") == 1);
+                    det.setPrecioUnitario(precio.getPrecioMaxFem());
+                    break;
+                case 3:
+                    switch (precio.getIdNivelEducativo().getIdNivelEducativo().intValue()) {
+                        case 1:
+                            det.setNoItem("1");
+                            det.setConsolidadoEspTec("Zapato de niña, PARVULARIA");
+                            det.setPrecioUnitario(precio.getPrecioMaxFem());
+                            lstPreciosMaximos.add(det);
+
+                            det = new DetalleItemDto();
+                            det.setNoItem("2");
+                            det.setConsolidadoEspTec("Zapato de niño, PARVULARIA");
+                            det.setPrecioUnitario(precio.getPrecioMaxMas());
+                            lstPreciosMaximos.add(det);
+                            break;
+                        case 3:
+                            det.setNoItem("3");
+                            det.setConsolidadoEspTec("Zapato de niña, PRIMER CICLO");
+                            det.setPrecioUnitario(precio.getPrecioMaxFem());
+                            lstPreciosMaximos.add(det);
+
+                            det = new DetalleItemDto();
+                            det.setNoItem("4");
+                            det.setConsolidadoEspTec("Zapato de niño, PRIMER CICLO");
+                            det.setPrecioUnitario(precio.getPrecioMaxMas());
+                            lstPreciosMaximos.add(det);
+                            break;
+                        case 4:
+                            det.setNoItem("5");
+                            det.setConsolidadoEspTec("Zapato de niña, SEGUNDO CICLO");
+                            det.setPrecioUnitario(precio.getPrecioMaxFem());
+                            lstPreciosMaximos.add(det);
+
+                            det = new DetalleItemDto();
+                            det.setNoItem("6");
+                            det.setConsolidadoEspTec("Zapato de niño, SEGUNDO CICLO");
+                            det.setPrecioUnitario(precio.getPrecioMaxMas());
+                            lstPreciosMaximos.add(det);
+                            break;
+                        case 5:
+                            det.setNoItem("7");
+                            det.setConsolidadoEspTec("Zapato de niña, TERCER CICLO");
+                            det.setPrecioUnitario(precio.getPrecioMaxFem());
+                            lstPreciosMaximos.add(det);
+
+                            det = new DetalleItemDto();
+                            det.setNoItem("8");
+                            det.setConsolidadoEspTec("Zapato de niño, TERCER CICLO");
+                            det.setPrecioUnitario(precio.getPrecioMaxMas());
+                            lstPreciosMaximos.add(det);
+                            break;
+                        case 6:
+                            det.setNoItem("9");
+                            det.setConsolidadoEspTec("Zapato de niña, BACHILLERATO");
+                            det.setPrecioUnitario(precio.getPrecioMaxFem());
+                            lstPreciosMaximos.add(det);
+
+                            det = new DetalleItemDto();
+                            det.setNoItem("10");
+                            det.setConsolidadoEspTec("Zapato de niño, BACHILLERATO");
+                            det.setPrecioUnitario(precio.getPrecioMaxMas());
+                            lstPreciosMaximos.add(det);
+                            break;
+                    }
+                    break;
             }
-        } else {
-            deshabiliar = false;
-            JsfUtil.mensajeAlerta("Debe de seleccionar una empresa");
         }
     }
 
@@ -601,7 +644,6 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                         .getName()).log(Level.INFO, "No se pudo convertir el objeto a la clase Empresa{0}", event.getObject());
             }
         } else {
-            deshabiliar = false;
             JsfUtil.mensajeAlerta("Debe de seleccionar una empresa");
         }
     }
@@ -664,76 +706,9 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         PrimeFaces.current().ajax().update("frmPrincipal");
     }
 
-    public void guardarDatosGenerales() {
-        if (showUpdateEmpresa) {
-            if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
-                empresa.setRazonSocial(empresa.getIdPersona().getNombreCompletoProveedor());
-                empresa.setIdMunicipio(empresa.getIdPersona().getIdMunicipio());
-                empresa.setDireccionCompleta(empresa.getIdPersona().getDomicilio());
-                empresa.setTelefonos(empresa.getIdPersona().getNumeroTelefono());
-                empresa.setNumeroCelular(empresa.getIdPersona().getNumeroCelular());
-                empresa.setNumeroNit(empresa.getIdPersona().getNumeroNit());
-            }
-            if (empresa.getIdPersona().getIdMunicipio().getIdMunicipio().intValue() != idMunicipio.intValue()) {
-                empresa.getIdPersona().setIdMunicipio(new Municipio(idMunicipio));
-            }
+    
 
-            proveedorEJB.guardar(empresa);
-
-        }
-
-        departamentoCalif.setCodigoDepartamento(utilEJB.find(Departamento.class,
-                codigoDepartamentoCalificado));
-
-        if (proveedorEJB.guardarCapaInst(departamentoCalif, capacidadInst)) {
-            JsfUtil.mensajeUpdate();
-        }
-    }
-
-    public void guardarMunicipioInteres() {
-        List<DisMunicipioInteres> lstMunicipioIntereses = proveedorEJB.findMunicipiosInteres(departamentoCalif);
-
-        lstMunicipioIntereses.forEach((disMunicipioInteres) -> {
-            disMunicipioInteres.setEstadoEliminacion(BigInteger.ONE);
-        });
-
-        if (!(lstMunicipiosInteres.getSource().isEmpty() && lstMunicipiosInteres.getTarget().isEmpty())) {
-            for (MunicipioDto mun : getLstMunicipiosInteres().getTarget()) {
-                Boolean existe = false;
-                for (DisMunicipioInteres disMunicipioInteres : lstMunicipioIntereses) {
-                    if (disMunicipioInteres.getIdMunicipio().getIdMunicipio().compareTo(mun.getIdMunicipio()) == 0) {
-                        disMunicipioInteres.setEstadoEliminacion(BigInteger.ZERO);
-                        existe = true;
-                        break;
-                    }
-                }
-
-                if (!existe) {
-                    DisMunicipioInteres disMunicipio = new DisMunicipioInteres();
-                    disMunicipio.setEstadoEliminacion(BigInteger.ZERO);
-                    disMunicipio.setFechaInsercion(new Date());
-                    disMunicipio.setIdCapaDistribucion(departamentoCalif);
-                    disMunicipio.setIdMunicipio(new Municipio(mun.getIdMunicipio()));
-                    disMunicipio.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-                    lstMunicipioIntereses.add(disMunicipio);
-                }
-            }
-
-            Boolean val = false;
-            for (DisMunicipioInteres disMunicipioInteres : lstMunicipioIntereses) {
-                val = proveedorEJB.guardar(disMunicipioInteres);
-                if (val == false) {
-                    break;
-                }
-            }
-
-            if (val) {
-                JsfUtil.mensajeUpdate();
-            } else {
-                JsfUtil.mensajeError("Ha ocurrido un error en el registro de los datos.<br/>Reportar por favor al adminsitrador del sistema");
-            }
-        }
-    }
+    
 
     public void guardarPreciosRef() {
         if (detalleProcesoAdq.getIdDetProcesoAdq() == null) {
@@ -1371,16 +1346,10 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
             if (event.getObject() instanceof Empresa) {
                 empresa = (Empresa) event.getObject();
                 cargarDetalleCalificacion(true);
-                /**
-                 * Fecha: 05/09/2018 Comentario: Validación para la capacidad
-                 * instalada del proveedor seleccionado
-                 */
+
                 if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
                     detalleProcesoAdq = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres());
 
-                    /*for (DetalleProcesoAdq det : getRecuperarProceso().getProcesoAdquisicion().getDetalleProcesoAdqList()) {
-                        if(det.getIdRubroAdq().)
-                    }*/
                     lstResumenAdj = proveedorEJB.resumenAdjProveedor(empresa.getNumeroNit(), detalleProcesoAdq.getIdDetProcesoAdq());
                     if (lstResumenAdj.isEmpty()) {
                         JsfUtil.mensajeInformacion("No se encontrarón adjudicaciones para este proveedor.");
@@ -1396,9 +1365,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                 }
             }
         } else {
-            deshabiliar = false;
             JsfUtil.mensajeAlerta("Debe de seleccionar una empresa");
-
         }
     }
 
@@ -1410,8 +1377,8 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
             if (value == null || value.length() == 0) {
                 return null;
             }
-            ProveedorController controller = (ProveedorController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "proveedorController");
+            ProveedorModMB controller = (ProveedorModMB) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "proveedorModMB");
             MunicipioDto mun = new MunicipioDto();
             try {
                 BeanUtils.copyProperties(mun, controller.utilEJB.find(Municipio.class, getKey(value)));
@@ -1502,6 +1469,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         } catch (IOException | JRException ex) {
             Logger.getLogger(ProveedorController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
+    
+    
 }

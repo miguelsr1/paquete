@@ -94,7 +94,7 @@ public class ParametrosMB implements Serializable {
                 ubicacion = JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento) + ", " + municipio.getNombreMunicipio();*/
             }
             usuarioDepartamental = !codigoDepartamento.equals("00");
-            
+
         } else if (VarSession.isCookie("departamento")) {
             codigoDepartamento = VarSession.getCookieValue("departamento");
         }
@@ -343,5 +343,9 @@ public class ParametrosMB implements Serializable {
     public String limpiarVariables() {
         VarSession.removeVariableSession("idEmpresa");
         return "inicial";
+    }
+
+    public ProcesoAdquisicion getProcesoAdquisicionByAnho(String idAnho) {
+        return anhoProcesoEJB.getProcesoAdquisicionByIdAnho(idAnho);
     }
 }

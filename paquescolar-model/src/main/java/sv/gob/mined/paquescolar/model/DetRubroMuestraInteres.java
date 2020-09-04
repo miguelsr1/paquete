@@ -78,6 +78,8 @@ public class DetRubroMuestraInteres implements Serializable {
     @JoinColumn(name = "ID_DET_PROCESO_ADQ", referencedColumnName = "ID_DET_PROCESO_ADQ")
     @ManyToOne(fetch = FetchType.EAGER)
     private DetalleProcesoAdq idDetProcesoAdq;
+    @Column(name = "DATOS_VERIFICADOS")
+    private Short datosVerificados;
 
     public DetRubroMuestraInteres() {
     }
@@ -220,5 +222,13 @@ public class DetRubroMuestraInteres implements Serializable {
 
     public void setProveedorEmpresaList(List<ProveedorEmpresa> proveedorEmpresaList) {
         this.proveedorEmpresaList = proveedorEmpresaList;
+    }
+
+    public Short getDatosVerificados() {
+        return datosVerificados;
+    }
+
+    public void setDatosVerificados(Short datosVerificados) {
+        this.datosVerificados = datosVerificados;
     }
 }

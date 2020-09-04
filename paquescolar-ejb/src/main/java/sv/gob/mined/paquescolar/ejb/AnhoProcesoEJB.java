@@ -35,6 +35,11 @@ public class AnhoProcesoEJB {
         return q.getResultList();
     }
 
+    public List<Anho> getLstAnhosDesde(String idAnho) {
+        Query q = em.createQuery("SELECT a FROM Anho a WHERE a.idAnho > " + idAnho + " ORDER BY a.idAnho DESC", Anho.class);
+        return q.getResultList();
+    }
+
     public List<ProcesoAdquisicion> getLstProcesoAdquisicionByAnho(BigDecimal idAnho) {
         Query q = em.createQuery("SELECT p FROM ProcesoAdquisicion p WHERE p.idAnho.idAnho=:idAnho ORDER BY p.idProcesoAdq", ProcesoAdquisicion.class);
         q.setParameter("idAnho", idAnho);
@@ -45,7 +50,7 @@ public class AnhoProcesoEJB {
         Query q = em.createQuery("SELECT r FROM RubrosAmostrarInteres r ORDER BY r.idRubroInteres", RubrosAmostrarInteres.class);
         return q.getResultList();
     }
-    
+
     public List<RubrosAmostrarInteres> getLstRubrosByAnho(String anho) {
         Query q = em.createQuery("SELECT DISTINCT d.idRubroAdq FROM DetalleProcesoAdq d WHERE d.idProcesoAdq.idAnho.anho=:anho ORDER BY d.idRubroAdq.idRubroInteres", RubrosAmostrarInteres.class);
         q.setParameter("anho", anho);
@@ -57,7 +62,7 @@ public class AnhoProcesoEJB {
         q.setParameter("proceso", proceso);
         return q.getResultList();
     }
-    
+
     public List<RubrosAmostrarInteres> getLstRubrosResguardo(ProcesoAdquisicion proceso) {
         Query q = em.createQuery("SELECT d.idRubroAdq FROM DetalleProcesoAdq d WHERE d.idProcesoAdq=:proceso and d.idRubroAdq.idRubroInteres not in (5) ORDER BY d.idRubroAdq.idRubroInteres", RubrosAmostrarInteres.class);
         q.setParameter("proceso", proceso);
@@ -94,5 +99,11 @@ public class AnhoProcesoEJB {
         } else {
             return (DetalleProcesoAdq) q.getSingleResult();
         }
+    }
+
+    public ProcesoAdquisicion getProcesoAdquisicionByIdAnho(String idAnho) {
+        Query q = em.createQuery("SELECT p FROM ProcesoAdquisicion p WHERE p.idAnho.idAnho=:idAnho and p.padreIdProcesoAdq is null", ProcesoAdquisicion.class);
+        q.setParameter("idAnho", new BigDecimal(idAnho));
+        return (ProcesoAdquisicion) q.getResultList().get(0);
     }
 }

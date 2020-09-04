@@ -75,6 +75,8 @@ public class PlanillaPago implements Serializable {
     private Short idTipoPlanilla;
     @Column(name = "ID_ESTADO_PLANILLA")
     private Short idEstadoPlanilla;
+    @Column(name = "NOTIFICACION")
+    private Short notificacion;
 
     @Transient
     private BigDecimal montoTotal;
@@ -94,6 +96,14 @@ public class PlanillaPago implements Serializable {
             }
         }
         return montoTotal;
+    }
+
+    public Short getNotificacion() {
+        return notificacion;
+    }
+
+    public void setNotificacion(Short notificacion) {
+        this.notificacion = notificacion;
     }
 
     public PlanillaPago(BigDecimal idPlanilla) {

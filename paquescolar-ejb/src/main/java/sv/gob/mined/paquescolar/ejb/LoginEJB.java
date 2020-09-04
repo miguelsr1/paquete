@@ -47,6 +47,25 @@ public class LoginEJB {
             return usu;
         }
     }
+    
+    public Usuario isUsuarioProveedorValido(String usuario, String clave) {
+        Usuario usu = null;
+        try {
+            Query q = em.createQuery("SELECT u FROM Usuario u WHERE u.idPersona.usuario=:usuario and u.idPersona.claveAcceso=:clave and u.estadoEliminacion=0", Usuario.class);
+            q.setParameter("usuario", usuario);
+            q.setParameter("clave", (new RC4Crypter()).encrypt("ha", clave));
+
+            if (!q.getResultList().isEmpty()) {
+                usu = (Usuario) q.getResultList().get(0);
+            }else{
+                usu = new Usuario();
+            }
+        } catch (Exception ex) {
+            //ex.printStackTrace();
+        } finally {
+            return usu;
+        }
+    }
 
     public Persona findPersona(BigDecimal id) {
         return em.find(Persona.class, id);

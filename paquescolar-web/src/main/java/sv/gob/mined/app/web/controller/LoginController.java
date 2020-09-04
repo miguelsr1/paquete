@@ -91,8 +91,16 @@ public class LoginController implements Serializable {
     }
 
     public String isUsuarioValido() {
-        Usuario usu = loginEJBLocal.isUsuarioValido(usuario, clave);
+        return validar(usuario, clave);
+    }
 
+    public String isUsuarioProveedorValido() {
+        return validar(usuarioEmp, claveEmp);
+    }
+
+    private String validar(String usuString, String cla) {
+        Usuario usu = loginEJBLocal.isUsuarioValido(usuString, cla);
+        
         if (usu == null) {
             JsfUtil.mensajeError("Se estan presentando problemas de comunicación con la base de datos. NOTIFICAR AL ADMINISTRADOR.");
             return "";
@@ -122,6 +130,12 @@ public class LoginController implements Serializable {
         VarSession.setVariableSession("Usuario", usu.getIdPersona().getUsuario());
         MenuController mc = ((MenuController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "menuController"));
-        return "/app/inicial?faces-redirect=true";
+
+        if (usu.getIdTipoUsuario().getIdTipoUsuario().intValue() == 9) {
+            VarSession.setVariableSession("idEmpresa", usu.getIdPersona().getEmpresaList().get(0).getIdEmpresa());
+            return "/app/proveedor/regDatosGenerales?faces-redirect=true";
+        } else {
+            return "/app/inicial?faces-redirect=true";
+        }
     }
 }

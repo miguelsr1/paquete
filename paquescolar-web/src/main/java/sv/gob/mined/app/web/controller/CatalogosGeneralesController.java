@@ -87,6 +87,10 @@ public class CatalogosGeneralesController implements Serializable {
     public List<Anho> getLstAnho() {
         return anhoProcesoEJB.getLstAnhos();
     }
+    
+    public List<Anho> getLstAnhoDesde() {
+        return anhoProcesoEJB.getLstAnhosDesde("7");
+    }
 
     public List<Departamento> getLstDepartamentos() {
         return datosGeograficosEJB.getLstDepartamentos();
