@@ -7,7 +7,7 @@
     template="#{pageContext.servletContext.contextPath}/resources/template/templateProveedor.xhtml">
     <ui:define name="content">
         <p:menubar id="menuBar" styleClass="divSticky"> 
-            <p:menuitem value="Guardar" icon="fa fa-save"
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="#{preciosReferenciaMB.datosVerificados}"
                         action="#{preciosReferenciaMB.guardarPreciosRef}" update="tblDetallePrecio"/>
             <p:menuitem value="Imprimir" disabled="true" />
 

@@ -37,6 +37,7 @@ import sv.gob.mined.paquescolar.model.pojos.proveedor.MunicipioDto;
 @ViewScoped
 public class MunicipioInteresMB implements Serializable {
 
+    private Boolean datosVerificados = false;
     private Empresa empresa = new Empresa();
     private CapaInstPorRubro capacidadInst = new CapaInstPorRubro();
     private CapaDistribucionAcre departamentoCalif = new CapaDistribucionAcre();
@@ -53,18 +54,7 @@ public class MunicipioInteresMB implements Serializable {
     @PostConstruct
     public void ini() {
         if (VarSession.isVariableSession("idEmpresa")) {
-            cargarMunInteres();
-        }
-    }
-
-    private void cargarMunInteres() {
-        cargarDetalleCalificacion();
-        if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
-            if (departamentoCalif != null && departamentoCalif.getCodigoDepartamento() != null) {
-                lstMunSource = datosGeograficosEJB.getLstMunicipiosDisponiblesDeInteres(departamentoCalif.getIdCapaDistribucion(), departamentoCalif.getCodigoDepartamento().getCodigoDepartamento());
-                lstMunTarget = datosGeograficosEJB.getLstMunicipiosDeInteres(departamentoCalif.getIdCapaDistribucion());
-                lstMunicipiosInteres = new DualListModel(lstMunSource, lstMunTarget);
-            }
+            cargarDetalleCalificacion();
         }
     }
 
@@ -85,10 +75,23 @@ public class MunicipioInteresMB implements Serializable {
             if (capacidadInst == null) {
                 JsfUtil.mensajeAlerta("No se han cargado los datos de este proveedor para el proceso de contratación del año " + anho.getAnho());
             } else {
+                if (capacidadInst.getIdMuestraInteres().getDatosVerificados() != null
+                        && capacidadInst.getIdMuestraInteres().getDatosVerificados() == 1) {
+                    datosVerificados = true;
+                }
                 departamentoCalif = proveedorEJB.findDetProveedor(proceso, empresa, CapaDistribucionAcre.class);
-                //detalleProcesoAdq = capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq();
+
+                if (departamentoCalif != null && departamentoCalif.getCodigoDepartamento() != null) {
+                    lstMunSource = datosGeograficosEJB.getLstMunicipiosDisponiblesDeInteres(departamentoCalif.getIdCapaDistribucion(), departamentoCalif.getCodigoDepartamento().getCodigoDepartamento());
+                    lstMunTarget = datosGeograficosEJB.getLstMunicipiosDeInteres(departamentoCalif.getIdCapaDistribucion());
+                    lstMunicipiosInteres = new DualListModel(lstMunSource, lstMunTarget);
+                }
             }
         }
+    }
+
+    public Boolean getDatosVerificados() {
+        return datosVerificados;
     }
 
     public Empresa getEmpresa() {

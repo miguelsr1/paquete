@@ -34,6 +34,7 @@ import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 @ViewScoped
 public class DatosGeneralesMB implements Serializable {
 
+    private Boolean datosVerificados = false;
     private String tapEmpresa;
     private String tapPersona;
     private String fileName = "fotoProveedores/profile.png";
@@ -46,7 +47,7 @@ public class DatosGeneralesMB implements Serializable {
     private Empresa empresa = new Empresa();
     private CapaInstPorRubro capacidadInst = new CapaInstPorRubro();
     private CapaDistribucionAcre departamentoCalif = new CapaDistribucionAcre();
-    
+
     private ProveedorMB proveedorMB;
 
     @EJB
@@ -55,27 +56,27 @@ public class DatosGeneralesMB implements Serializable {
     private UtilEJB utilEJB;
     @EJB
     private DatosGeograficosEJB datosGeograficosEJB;
-    
 
     @PostConstruct
     public void ini() {
         if (VarSession.isVariableSession("idEmpresa")) {
             proveedorMB = ((ProveedorMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "proveedorMB"));
+                    getValue(FacesContext.getCurrentInstance().getELContext(), null, "proveedorMB"));
 
             empresa = proveedorMB.getEmpresa();
-            
-            cargarDetalleCalificacion();
 
-            idMunicipio = empresa.getIdPersona().getIdMunicipio().getIdMunicipio();
-            codigoDepartamento = empresa.getIdPersona().getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
+            cargarDetalleCalificacion();
         }
+    }
+
+    public Boolean getDatosVerificados() {
+        return datosVerificados;
     }
 
     private void cargarDetalleCalificacion() {
         Anho anho = proveedorMB.getAnho();
         ProcesoAdquisicion proceso = anho.getProcesoAdquisicionList().get(0);
-        
+
         if (proceso == null || proceso.getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe seleccionar un proceso de contratación");
         } else {
@@ -86,7 +87,11 @@ public class DatosGeneralesMB implements Serializable {
             if (capacidadInst == null) {
                 JsfUtil.mensajeAlerta("No se han cargado los datos de este proveedor para el proceso de contratación del año " + proceso.getIdAnho().getAnho());
             } else {
-                //detalleProcesoAdq = capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq();
+                if (capacidadInst.getIdMuestraInteres().getDatosVerificados() != null
+                        && capacidadInst.getIdMuestraInteres().getDatosVerificados() == 1) {
+                    datosVerificados = true;
+                }
+
                 departamentoCalif = proveedorEJB.findDetProveedor(proceso, empresa, CapaDistribucionAcre.class);
 
                 if (departamentoCalif == null || departamentoCalif.getCodigoDepartamento() == null) {
@@ -99,6 +104,9 @@ public class DatosGeneralesMB implements Serializable {
                     } else {
                         fileName = "fotoProveedores/" + empresa.getIdPersona().getUrlImagen();
                     }
+
+                    idMunicipio = empresa.getIdPersona().getIdMunicipio().getIdMunicipio();
+                    codigoDepartamento = empresa.getIdPersona().getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
                 }
             }
         }
@@ -195,7 +203,7 @@ public class DatosGeneralesMB implements Serializable {
             JsfUtil.mensajeUpdate();
         }
     }
-    
+
     public List<Municipio> getLstMunicipios() {
         return datosGeograficosEJB.getLstMunicipiosByDepartamento(codigoDepartamento);
     }

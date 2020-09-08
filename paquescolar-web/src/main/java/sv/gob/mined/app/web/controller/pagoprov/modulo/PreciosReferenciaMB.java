@@ -39,6 +39,7 @@ import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto;
 @ViewScoped
 public class PreciosReferenciaMB implements Serializable {
 
+    private Boolean datosVerificados = false;
     private String msjError = "";
     private String rowEdit;
 
@@ -78,9 +79,11 @@ public class PreciosReferenciaMB implements Serializable {
     public void ini() {
         if (VarSession.isVariableSession("idEmpresa")) {
             cargarDetalleCalificacion();
-            cargarPrecioRef();
-            cargarPreciosMaximos();
         }
+    }
+
+    public Boolean getDatosVerificados() {
+        return datosVerificados;
     }
 
     public Empresa getEmpresa() {
@@ -150,7 +153,7 @@ public class PreciosReferenciaMB implements Serializable {
         empresa = proveedorMB.getEmpresa();
         Anho anho = proveedorMB.getAnho();
         ProcesoAdquisicion proceso = anho.getProcesoAdquisicionList().get(0);
-        
+
         if (proceso == null || proceso.getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe seleccionar un proceso de contratación");
         } else {
@@ -161,7 +164,14 @@ public class PreciosReferenciaMB implements Serializable {
             if (capacidadInst == null) {
                 JsfUtil.mensajeAlerta("No se han cargado los datos de este proveedor para el proceso de contratación del año " + proceso.getIdAnho().getAnho());
             } else {
+                if (capacidadInst.getIdMuestraInteres().getDatosVerificados() != null
+                        && capacidadInst.getIdMuestraInteres().getDatosVerificados() == 1) {
+                    datosVerificados = true;
+                }
                 detalleProcesoAdq = capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq();
+
+                cargarPrecioRef();
+                cargarPreciosMaximos();
             }
         }
     }

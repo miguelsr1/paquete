@@ -9,7 +9,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -80,7 +79,7 @@ public class DeclaracionMB implements Serializable {
                     proceso = proceso.getPadreIdProcesoAdq();
                 }
                 capacidadInst = proveedorEJB.findDetProveedor(proceso, empresa, CapaInstPorRubro.class);
-
+                detalleProcesoAdq = capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq();
                 aceptarCondiciones = (capacidadInst.getIdMuestraInteres().getDatosVerificados() == 1);
             }
         }
@@ -116,6 +115,8 @@ public class DeclaracionMB implements Serializable {
             param.put("pLugar", lugar + ", " + sdf.format(new Date()));
             param.put("pRubro", JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
             param.put("pIdRubro", capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue());
+            param.put("pCorreoPersona", capacidadInst.getIdMuestraInteres().getIdEmpresa().getIdPersona().getEmail());
+            param.put("pIdGestion", proveedorEJB.getIdGestionByProceso(capacidadInst.getIdMuestraInteres().getIdEmpresa().getIdEmpresa(), capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdDetProcesoAdq()));
 
             List<OfertaGlobal> lstDatos = reportesEJB.getLstOfertaGlobal(empresa.getNumeroNit(), detalleProcesoAdq.getIdDetProcesoAdq(), detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue());
             lstDatos.get(0).setRubro(JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
@@ -154,7 +155,8 @@ public class DeclaracionMB implements Serializable {
                             .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerProvJur" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
 
                 }
-            } /*else if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
+            }
+            /*else if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
                 jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class
                         .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurCumplimientoPerNat.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
                 jasperPrintList
