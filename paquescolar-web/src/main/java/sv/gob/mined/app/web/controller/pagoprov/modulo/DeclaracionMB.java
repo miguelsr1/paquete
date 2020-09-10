@@ -9,11 +9,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -35,6 +37,7 @@ import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.UtilFile;
 import sv.gob.mined.app.web.util.VarSession;
+import sv.gob.mined.apps.utilitario.Herramientas;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
 import sv.gob.mined.paquescolar.model.Anho;
@@ -53,7 +56,7 @@ import sv.gob.mined.paquescolar.model.pojos.OfertaGlobal;
 public class DeclaracionMB implements Serializable {
 
     private Boolean aceptarCondiciones = false;
-
+    private String idGestion = "";
     private Empresa empresa = new Empresa();
     private DetalleProcesoAdq detalleProcesoAdq = new DetalleProcesoAdq();
     private CapaInstPorRubro capacidadInst = new CapaInstPorRubro();
@@ -62,6 +65,8 @@ public class DeclaracionMB implements Serializable {
     private ProveedorEJB proveedorEJB;
     @EJB
     private ReportesEJB reportesEJB;
+
+    private static final ResourceBundle UTIL_CORREO = ResourceBundle.getBundle("Bundle");
 
     @PostConstruct
     public void ini() {
@@ -98,13 +103,13 @@ public class DeclaracionMB implements Serializable {
     }
 
     public void guardarAceptarCondiciones() {
-        proveedorEJB.datosConfirmados(capacidadInst.getIdMuestraInteres().getIdMuestraInteres());
+        idGestion = proveedorEJB.datosConfirmados(capacidadInst.getIdMuestraInteres().getIdMuestraInteres(), empresa.getIdEmpresa());
+        enviarNotificacionModProv();
     }
 
     public void impOfertaGlobal() {
         try {
-            String lugar = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                    getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getUbicacion();
+            String lugar = empresa.getIdMunicipio().getCodigoDepartamento().getNombreDepartamento();
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
             ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
@@ -116,7 +121,7 @@ public class DeclaracionMB implements Serializable {
             param.put("pRubro", JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
             param.put("pIdRubro", capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue());
             param.put("pCorreoPersona", capacidadInst.getIdMuestraInteres().getIdEmpresa().getIdPersona().getEmail());
-            param.put("pIdGestion", proveedorEJB.getIdGestionByProceso(capacidadInst.getIdMuestraInteres().getIdEmpresa().getIdEmpresa(), capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdDetProcesoAdq()));
+            param.put("pIdGestion", idGestion);
 
             List<OfertaGlobal> lstDatos = reportesEJB.getLstOfertaGlobal(empresa.getNumeroNit(), detalleProcesoAdq.getIdDetProcesoAdq(), detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue());
             lstDatos.get(0).setRubro(JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
@@ -156,20 +161,6 @@ public class DeclaracionMB implements Serializable {
 
                 }
             }
-            /*else if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
-                jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class
-                        .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurCumplimientoPerNat.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
-                jasperPrintList
-                        .add(JasperFillManager.fillReport(ProveedorController.class
-                                .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerNat2.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
-
-            } else {
-                jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class
-                        .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurCumplimientoPerJur.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
-                jasperPrintList
-                        .add(JasperFillManager.fillReport(ProveedorController.class
-                                .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerJur2.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
-            }*/
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             JRPdfExporter exporter = new JRPdfExporter();
@@ -184,5 +175,32 @@ public class DeclaracionMB implements Serializable {
             Logger.getLogger(DeclaracionMB.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void enviarNotificacionModProv() {
+        String titulo;
+        String mensaje;
+        Date fecha = new Date();
+        List<String> to = new ArrayList();
+        List<String> cc = new ArrayList();
+        List<String> bcc = new ArrayList();
+        
+        SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm");
+        
+        cc.add("carlos.villegas@mined.gob.sv");
+        cc.add("rene.brizuela@mined.gob.sv");
+        
+        bcc.add("rafael.arias@mined.gob.sv");
+        to.add(empresa.getIdPersona().getEmail());
+
+        titulo = MessageFormat.format(UTIL_CORREO.getString("prov_notif_inscripcion.email.titulo"), capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho());
+        mensaje = MessageFormat.format(UTIL_CORREO.getString("prov_notif_inscripcion.email.mensaje"),
+                sdfHora.format(fecha).split(":")[0], sdfHora.format(fecha).split(":")[1],
+                Herramientas.getNumDia(fecha), Herramientas.getNomMes(fecha), Herramientas.getNumAnyo(fecha),
+                empresa.getIdPersona().getEmail(), empresa.getIdPersona().getNombreCompleto(), empresa.getIdPersona().getNumeroDui(), idGestion,
+                sdfHora.format(fecha).split(":")[0], sdfHora.format(fecha).split(":")[1],
+                Herramientas.getNumDia(fecha), Herramientas.getNomMes(fecha), Herramientas.getNumAnyo(fecha));
+        
+        proveedorEJB.enviarNotificacionModProv("carlos.villegas@mined.gob.sv", titulo, mensaje, to, cc, bcc);
     }
 }

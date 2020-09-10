@@ -49,11 +49,18 @@ public class PreciosReferenciaEJB {
             return (PreciosRefRubro) q.getSingleResult();
         }
     }
-    
+
     public List<PreciosRefRubro> getLstPreciosRefRubroByRubro(DetalleProcesoAdq rubro) {
-        Query q = em.createQuery("SELECT p FROM PreciosRefRubro p WHERE p.idDetProcesoAdq.idProcesoAdq.idAnho.anho=:anho and p.idDetProcesoAdq.idRubroAdq.idRubroInteres=:idRubro ORDER BY p.idNivelEducativo.idNivelEducativo", PreciosRefRubro.class);
-        q.setParameter("anho", rubro.getIdProcesoAdq().getIdAnho().getAnho());
-        q.setParameter("idRubro", rubro.getIdRubroAdq().getIdRubroInteres());
+        Query q = em.createNativeQuery("select prr.* \n"
+                + "from PRECIOS_REF_RUBRO prr \n"
+                + "    inner join NIVEL_EDUCATIVO niv on niv.ID_NIVEL_EDUCATIVO = prr.ID_NIVEL_EDUCATIVO \n"
+                + "    inner join detalle_proceso_adq dpa on dpa.id_det_proceso_adq = prr.id_det_proceso_adq\n"
+                + "    inner join proceso_adquisicion pa on dpa.id_proceso_adq = pa.id_proceso_adq\n"
+                + "    inner join anho on pa.id_anho = anho.id_anho\n"
+                + "where anho.id_anho = ?1 and dpa.id_rubro_adq = ?2\n"
+                + "order by niv.ORDEN2", PreciosRefRubro.class);
+        q.setParameter(1, rubro.getIdProcesoAdq().getIdAnho().getIdAnho());
+        q.setParameter(2, rubro.getIdRubroAdq().getIdRubroInteres());
 
         return q.getResultList();
     }

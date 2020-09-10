@@ -17,6 +17,6 @@ public class ClaveAcceso {
         //System.out.println(String.format("%010", "4"));
 
         //System.out.println((new RC4Crypter()).encrypt("ha", "rarias14"));
-        System.out.println((new RC4Crypter()).decrypt("ha", "363F342F77"));
+        System.out.println((new RC4Crypter()).decrypt("ha", "0B040F0F5114"));
     }
 }

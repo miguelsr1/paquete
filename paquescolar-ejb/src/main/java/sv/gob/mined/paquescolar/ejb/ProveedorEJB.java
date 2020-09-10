@@ -24,6 +24,7 @@ import javax.ejb.LocalBean;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.StoredProcedureQuery;
 import sv.gob.mined.paquescolar.model.Bancos;
 import sv.gob.mined.paquescolar.model.CapaDistribucionAcre;
 import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
@@ -1748,8 +1749,14 @@ public class ProveedorEJB {
         return emp;
     }
 
-    private void updateCodigoValidacionProveedor(BigDecimal idEmpresa, String codigoGenerado) {
-        Query q = em.createNativeQuery("UPDATE EMPRESA_CODIGO_SEG SET USUARIO_ACTIVADO = 1, TOKEN_ACTIVACION='" + codigoGenerado + "' WHERE ID_EMPRESA=" + idEmpresa);
+    private void updateCodigoValidacionProveedor(BigDecimal idEmpresa, String codigoGenerado, Boolean fechaActivacion) {
+        String sql = "";
+        if (fechaActivacion) {
+            sql = "UPDATE EMPRESA_CODIGO_SEG SET fecha_activacion = sysdate WHERE ID_EMPRESA=" + idEmpresa;
+        } else {
+            sql = "UPDATE EMPRESA_CODIGO_SEG SET USUARIO_ACTIVADO = 1, TOKEN_ACTIVACION='" + codigoGenerado + "' WHERE ID_EMPRESA=" + idEmpresa;
+        }
+        Query q = em.createNativeQuery(sql);
         q.executeUpdate();
     }
 
@@ -1780,7 +1787,7 @@ public class ProveedorEJB {
 
             eMailEJB.enviarMail(emp.getIdPersona().getEmail(), tituloEmail, cuerpo);
 
-            updateCodigoValidacionProveedor(emp.getIdEmpresa(), codigoGenerado);
+            updateCodigoValidacionProveedor(emp.getIdEmpresa(), codigoGenerado, false);
         }
         return codigoOperacion;
     }
@@ -1815,13 +1822,29 @@ public class ProveedorEJB {
             usu.setIdTipoUsuario(em.find(TipoUsuario.class, new BigDecimal(9)));
             em.merge(usu);
         }
+        updateCodigoValidacionProveedor(idEmpresa, null, true);
     }
 
-    public void datosConfirmados(BigDecimal idDetRubro) {
+    public String datosConfirmados(BigDecimal idDetRubro, BigDecimal idEmpresa) {
         DetRubroMuestraInteres det = em.find(DetRubroMuestraInteres.class, idDetRubro);
 
+        det.setFechaModificacion(new Date());
         det.setDatosVerificados((short) 1);
-        
+
         em.merge(det);
+
+        return getIdGestionByProceso(idEmpresa, det.getIdDetProcesoAdq().getIdDetProcesoAdq());
+    }
+
+    public String getIdGestionByProceso(BigDecimal idEmrpesa, Integer idDetProcesoAdq) {
+        StoredProcedureQuery q = em.createNamedStoredProcedureQuery("SP_GET_ID_GESTION");
+        q.setParameter("P_ID_EMPRESA", idEmrpesa);
+        q.setParameter("P_ID_DET_PROCESO_ADQ", idDetProcesoAdq);
+        q.execute();
+        return (String) q.getOutputParameterValue(3);
+    }
+
+    public void enviarNotificacionModProv(String remitente, String titulo, String mensaje, List<String> to, List<String> cc, List<String> bcc) {
+        eMailEJB.enviarMail(remitente, titulo, mensaje, to, cc, bcc);
     }
 }

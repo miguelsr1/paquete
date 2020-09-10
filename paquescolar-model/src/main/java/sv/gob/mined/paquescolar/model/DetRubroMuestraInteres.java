@@ -23,10 +23,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.ParameterMode;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.eclipse.persistence.annotations.Direction;
+import org.eclipse.persistence.annotations.NamedStoredProcedureQuery;
+import org.eclipse.persistence.annotations.StoredProcedureParameter;
 
 /**
  *
@@ -36,6 +40,16 @@ import javax.persistence.TemporalType;
 @Table(name = "DET_RUBRO_MUESTRA_INTERES")
 @NamedQueries({
     @NamedQuery(name = "DetRubroMuestraInteres.findAll", query = "SELECT d FROM DetRubroMuestraInteres d")})
+@NamedStoredProcedureQuery(
+        name = "SP_GET_ID_GESTION",
+        procedureName = "SP_GET_ID_GESTION",
+        returnsResultSet = false,
+        parameters = {
+            @StoredProcedureParameter(mode =  ParameterMode.IN, type = BigDecimal.class, name = "P_ID_EMPRESA", queryParameter = "P_ID_EMPRESA"),
+            @StoredProcedureParameter(mode =  ParameterMode.IN, type = Integer.class, name = "P_ID_DET_PROCESO_ADQ", queryParameter = "P_ID_DET_PROCESO_ADQ"),
+            @StoredProcedureParameter(mode =  ParameterMode.OUT, type = String.class, name = "P_ID_GESTION", queryParameter = "P_ID_GESTION")
+        }
+)
 public class DetRubroMuestraInteres implements Serializable {
 
     @OneToMany(mappedBy = "idMuestraInteres", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -80,6 +94,8 @@ public class DetRubroMuestraInteres implements Serializable {
     private DetalleProcesoAdq idDetProcesoAdq;
     @Column(name = "DATOS_VERIFICADOS")
     private Short datosVerificados;
+    @Column(name = "ID_GESTION")
+    private String idGestion;
 
     public DetRubroMuestraInteres() {
     }
@@ -93,6 +109,14 @@ public class DetRubroMuestraInteres implements Serializable {
         this.usuarioInsercion = usuarioInsercion;
         this.fechaInsercion = fechaInsercion;
         this.estadoEliminacion = estadoEliminacion;
+    }
+
+    public String getIdGestion() {
+        return idGestion;
+    }
+
+    public void setIdGestion(String idGestion) {
+        this.idGestion = idGestion;
     }
 
     public BigDecimal getIdMuestraInteres() {

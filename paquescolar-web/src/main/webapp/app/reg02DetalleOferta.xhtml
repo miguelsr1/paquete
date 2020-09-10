@@ -94,7 +94,7 @@
                                         <h:outputText value="#{detalle.noItem}"/>
                                     </f:facet>
                                     <f:facet name="input">
-                                        <p:inputNumber inputStyle="text-align: right;" minValue="0" maxValue="13" decimalPlaces="0" value="#{detalle.noItem}" disabled="#{detalle.estadoEliminacion eq 1}" readonly="#{participantesController.modifDesac}" />
+                                        <p:inputNumber inputStyle="text-align: right;" minValue="0" maxValue="13" decimalPlaces="1" value="#{detalle.noItem}" disabled="#{detalle.estadoEliminacion eq 1}" readonly="#{participantesController.modifDesac}" />
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>

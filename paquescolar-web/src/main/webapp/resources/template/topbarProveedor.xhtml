@@ -31,7 +31,7 @@
                             <p:outputLabel value="   #{menuController.usuario.idPersona.usuario} :: #{menuController.usuario.idTipoUsuario.descripcion}" />
                             <h:panelGrid columns="2">
                                 <p:outputLabel value="Año:" />
-                                <p:selectOneMenu id="cboAnho" value="#{proveedorMB.idAnho}">
+                                <p:selectOneMenu id="cboAnho" value="#{proveedorMB.idAnho}" disabled="true">
                                     <f:selectItems value="#{catalogosGeneralesController.lstAnhoDesde}" var="anho" itemValue="#{anho.idAnho}" itemLabel="#{anho.anho}"/>
                                     <p:ajax listener="#{proveedorMB.actualizarVista()}"/>
                                 </p:selectOneMenu>

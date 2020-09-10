@@ -35,6 +35,7 @@ import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 public class DatosGeneralesMB implements Serializable {
 
     private Boolean datosVerificados = false;
+    private Boolean personaNatural = false;
     private String tapEmpresa;
     private String tapPersona;
     private String fileName = "fotoProveedores/profile.png";
@@ -67,6 +68,10 @@ public class DatosGeneralesMB implements Serializable {
 
             cargarDetalleCalificacion();
         }
+    }
+
+    public Boolean getPersonaNatural() {
+        return personaNatural;
     }
 
     public Boolean getDatosVerificados() {
@@ -105,6 +110,7 @@ public class DatosGeneralesMB implements Serializable {
                         fileName = "fotoProveedores/" + empresa.getIdPersona().getUrlImagen();
                     }
 
+                    personaNatural = (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1);
                     idMunicipio = empresa.getIdPersona().getIdMunicipio().getIdMunicipio();
                     codigoDepartamento = empresa.getIdPersona().getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
                 }

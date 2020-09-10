@@ -7,6 +7,7 @@ package sv.gob.mined.app.web.controller.pagoprov.modulo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -39,6 +40,8 @@ import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto;
 @ViewScoped
 public class PreciosReferenciaMB implements Serializable {
 
+    private int idRow;
+
     private Boolean datosVerificados = false;
     private String msjError = "";
     private String rowEdit;
@@ -57,18 +60,9 @@ public class PreciosReferenciaMB implements Serializable {
     private PreciosRefRubro preMaxRefCi = new PreciosRefRubro();
     private PreciosRefRubro preMaxRefCii = new PreciosRefRubro();
     private PreciosRefRubro preMaxRefCiii = new PreciosRefRubro();
+    private PreciosRefRubro preMaxRefCiiiMf = new PreciosRefRubro();
     private PreciosRefRubro preMaxRefBac = new PreciosRefRubro();
-    private PreciosRefRubro preMaxRefG1 = new PreciosRefRubro();
-    private PreciosRefRubro preMaxRefG2 = new PreciosRefRubro();
-    private PreciosRefRubro preMaxRefG3 = new PreciosRefRubro();
-    private PreciosRefRubro preMaxRefG4 = new PreciosRefRubro();
-    private PreciosRefRubro preMaxRefG5 = new PreciosRefRubro();
-    private PreciosRefRubro preMaxRefG6 = new PreciosRefRubro();
-    private PreciosRefRubro preMaxRefG7 = new PreciosRefRubro();
-    private PreciosRefRubro preMaxRefG8 = new PreciosRefRubro();
-    private PreciosRefRubro preMaxRefG9 = new PreciosRefRubro();
-    private PreciosRefRubro preMaxRefB1 = new PreciosRefRubro();
-    private PreciosRefRubro preMaxRefB2 = new PreciosRefRubro();
+    private PreciosRefRubro preMaxRefBacMf = new PreciosRefRubro();
 
     @EJB
     private ProveedorEJB proveedorEJB;
@@ -80,6 +74,14 @@ public class PreciosReferenciaMB implements Serializable {
         if (VarSession.isVariableSession("idEmpresa")) {
             cargarDetalleCalificacion();
         }
+    }
+
+    public int getIdRow() {
+        return idRow;
+    }
+
+    public void setIdRow(int idRow) {
+        this.idRow = idRow;
     }
 
     public Boolean getDatosVerificados() {
@@ -199,25 +201,36 @@ public class PreciosReferenciaMB implements Serializable {
         if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
             lstItem = proveedorEJB.findItemProveedor(empresa, detalleProcesoAdq);
             lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), getDetalleProcesoAdq());
-            preMaxRefPar = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(BigDecimal.ONE, detalleProcesoAdq);
-            preMaxRefCi = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(3), detalleProcesoAdq);
-            preMaxRefCii = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(4), detalleProcesoAdq);
-            preMaxRefCiii = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(5), detalleProcesoAdq);
-            preMaxRefBac = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(6), detalleProcesoAdq);
-            if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 6
-                    && detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue() == 2) {
-                //procesos de contratación mayores a 2018 y rubro de utiles
-                preMaxRefG1 = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(10), detalleProcesoAdq);
-                preMaxRefG2 = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(11), detalleProcesoAdq);
-                preMaxRefG3 = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(12), detalleProcesoAdq);
-                preMaxRefG4 = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(13), detalleProcesoAdq);
-                preMaxRefG5 = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(14), detalleProcesoAdq);
-                preMaxRefG6 = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(15), detalleProcesoAdq);
-                preMaxRefG7 = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(7), detalleProcesoAdq);
-                preMaxRefG8 = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(8), detalleProcesoAdq);
-                preMaxRefG9 = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(9), detalleProcesoAdq);
-                preMaxRefB1 = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(16), detalleProcesoAdq);
-                preMaxRefB2 = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(17), detalleProcesoAdq);
+
+            switch (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue()) {
+                case 9:
+                    preMaxRefPar = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(22), detalleProcesoAdq);
+                    preMaxRefCi = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(3), detalleProcesoAdq);
+                    preMaxRefCii = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(4), detalleProcesoAdq);
+                    preMaxRefCiii = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(5), detalleProcesoAdq);
+                    preMaxRefBac = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(6), detalleProcesoAdq);
+
+                    switch (detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
+                        case 1:
+                        case 4:
+                        case 5:
+                            break;
+                        case 2:
+                            preMaxRefCiiiMf = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(23), detalleProcesoAdq);
+                            preMaxRefBacMf = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(24), detalleProcesoAdq);
+                            break;
+                        case 3:
+                            break;
+                    }
+
+                    break;
+                default:
+                    preMaxRefPar = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(BigDecimal.ONE, detalleProcesoAdq);
+                    preMaxRefCi = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(3), detalleProcesoAdq);
+                    preMaxRefCii = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(4), detalleProcesoAdq);
+                    preMaxRefCiii = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(5), detalleProcesoAdq);
+                    preMaxRefBac = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(6), detalleProcesoAdq);
+                    break;
             }
         }
         PrimeFaces.current().ajax().update("frmPrincipal");
@@ -257,12 +270,44 @@ public class PreciosReferenciaMB implements Serializable {
                                 + "2)<strong> Básica y Bachillerato</strong>: - Blusa, Falda y Camisa: $ 4.50 y Pantalon Corto y Pantalon: $ 6.00<br/>";
                         break;
                     case 2:
-                        msjError = "Precio Máximo de Referencia para: <br/>"
-                                + "1)<strong> Parvularia</strong>: $ " + preMaxRefPar.getPrecioMaxMas() + "<br/>"
-                                + "2)<strong> Primer Ciclo</strong>: $ " + preMaxRefCi.getPrecioMaxMas() + "<br/>"
-                                + "3)<strong> Segundo Ciclo</strong>: $ " + preMaxRefCii.getPrecioMaxMas() + "<br/>"
-                                + "4)<strong> Tercer Ciclo</strong>: $ " + preMaxRefCiii.getPrecioMaxMas() + "<br/>"
-                                + "5)<strong> Bachillerato: $ " + preMaxRefBac.getPrecioMaxMas() + "</strong>";
+                        if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() == 9) {
+                            switch (detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
+                                case 4:
+                                case 5:
+                                    msjError = "Precio Máximo de Referencia para: <br/>"
+                                            + "1)<strong> Parvularia</strong>: $ " + preMaxRefPar.getPrecioMaxMas() + "<br/>"
+                                            + "2)<strong> Primer Ciclo</strong>: $ " + preMaxRefCi.getPrecioMaxMas() + "<br/>"
+                                            + "3)<strong> Segundo Ciclo</strong>: $ " + preMaxRefCii.getPrecioMaxMas() + "<br/>"
+                                            + "4)<strong> Tercer Ciclo</strong>: $ " + preMaxRefCiii.getPrecioMaxMas() + "<br/>"
+                                            + "5)<strong> Bachillerato: $ " + preMaxRefBac.getPrecioMaxMas() + "</strong>";
+                                    break;
+                                case 2:
+                                    msjError = "Precio Máximo de Referencia para: <br/>"
+                                            + "1)<strong> Inicial y Parvularia</strong>: $ " + preMaxRefPar.getPrecioMaxMas() + "<br/>"
+                                            + "2)<strong> Primer Ciclo</strong>: $ " + preMaxRefCi.getPrecioMaxMas() + "<br/>"
+                                            + "3)<strong> Segundo Ciclo</strong>: $ " + preMaxRefCii.getPrecioMaxMas() + "<br/>"
+                                            + "4)<strong> Tercer Ciclo</strong>: $ " + preMaxRefCiii.getPrecioMaxMas() + "<br/>"
+                                            + "4)<strong> Tercer Ciclo - Mod.Flexible</strong>: $ " + preMaxRefCiiiMf.getPrecioMaxMas() + "<br/>"
+                                            + "5)<strong> Bachillerato: </strong>$ " + preMaxRefBac.getPrecioMaxMas() + "<br/>"
+                                            + "5)<strong> Bachillerato - Mod.Flexible: </strong>$ " + preMaxRefBacMf.getPrecioMaxMas();
+                                    break;
+                                case 3:
+                                    msjError = "Precio Máximo de Referencia para: <br/>"
+                                            + "1)<strong> Inicial y Parvularia</strong>: $ " + preMaxRefPar.getPrecioMaxMas() + "<br/>"
+                                            + "2)<strong> Primer Ciclo</strong>: $ " + preMaxRefCi.getPrecioMaxMas() + "<br/>"
+                                            + "3)<strong> Segundo Ciclo</strong>: $ " + preMaxRefCii.getPrecioMaxMas() + "<br/>"
+                                            + "4)<strong> Tercer Ciclo</strong>: $ " + preMaxRefCiii.getPrecioMaxMas() + "<br/>"
+                                            + "5)<strong> Bachillerato: </strong>$ " + preMaxRefBac.getPrecioMaxMas();
+                                    break;
+                            }
+                        } else {
+                            msjError = "Precio Máximo de Referencia para: <br/>"
+                                    + "1)<strong> Parvularia</strong>: $ " + preMaxRefPar.getPrecioMaxMas() + "<br/>"
+                                    + "2)<strong> Primer Ciclo</strong>: $ " + preMaxRefCi.getPrecioMaxMas() + "<br/>"
+                                    + "3)<strong> Segundo Ciclo</strong>: $ " + preMaxRefCii.getPrecioMaxMas() + "<br/>"
+                                    + "4)<strong> Tercer Ciclo</strong>: $ " + preMaxRefCiii.getPrecioMaxMas() + "<br/>"
+                                    + "5)<strong> Bachillerato: $ " + preMaxRefBac.getPrecioMaxMas() + "</strong>";
+                        }
                         break;
                     case 3:
                         msjError = "Precio Máximo de Referencia para Zapatos escolares de:<br/> "
@@ -321,6 +366,9 @@ public class PreciosReferenciaMB implements Serializable {
             case 1: //parvularia
                 preRef = preMaxRefPar.getPrecioMaxMas();
                 break;
+            case 22: //incial y parvularia
+                preRef = preMaxRefPar.getPrecioMaxMas();
+                break;
             case 3: //ciclo I
                 preRef = preMaxRefCi.getPrecioMaxMas();
                 break;
@@ -330,41 +378,14 @@ public class PreciosReferenciaMB implements Serializable {
             case 5://ciclo III
                 preRef = preMaxRefCiii.getPrecioMaxMas();
                 break;
+            case 23://modalidad flexible y ciclo III
+                preRef = preMaxRefCiii.getPrecioMaxMas();
+                break;
             case 6: //Bachillerato
                 preRef = preMaxRefBac.getPrecioMaxMas();
                 break;
-            case 7: //grado 7
-                preRef = preMaxRefG7.getPrecioMaxMas();
-                break;
-            case 8: //grado 8
-                preRef = preMaxRefG8.getPrecioMaxMas();
-                break;
-            case 9: //grado 9
-                preRef = preMaxRefG9.getPrecioMaxMas();
-                break;
-            case 10: //grado 1
-                preRef = preMaxRefG1.getPrecioMaxMas();
-                break;
-            case 11: //grado 2
-                preRef = preMaxRefG2.getPrecioMaxMas();
-                break;
-            case 12: //grado 3
-                preRef = preMaxRefG3.getPrecioMaxMas();
-                break;
-            case 13: //grado 4
-                preRef = preMaxRefG4.getPrecioMaxMas();
-                break;
-            case 14: //grado 5
-                preRef = preMaxRefG5.getPrecioMaxMas();
-                break;
-            case 15: //grado 6
-                preRef = preMaxRefG6.getPrecioMaxMas();
-                break;
-            case 16: //1 bachillerato
-                preRef = preMaxRefB1.getPrecioMaxMas();
-                break;
-            case 17: //2 bachillerato
-                preRef = preMaxRefB2.getPrecioMaxMas();
+            case 24: //modalidad flexible y Bachillerato
+                preRef = preMaxRefBac.getPrecioMaxMas();
                 break;
         }
 
@@ -464,6 +485,10 @@ public class PreciosReferenciaMB implements Serializable {
                             det.setNoItem("1");
                             det.setConsolidadoEspTec("Utiles Escolares, PARVULARIA");
                             break;
+                        case 22:
+                            det.setNoItem("1");
+                            det.setConsolidadoEspTec("Utiles Escolares, INICIAL Y PARVULARIA");
+                            break;
                         case 3:
                             det.setNoItem("2");
                             det.setConsolidadoEspTec("Utiles Escolares, PRIMER CICLO");
@@ -476,20 +501,21 @@ public class PreciosReferenciaMB implements Serializable {
                             det.setNoItem("4");
                             det.setConsolidadoEspTec("Utiles Escolares, TERCER CICLO");
                             break;
+                        case 23:
+                            det.setNoItem("4.4");
+                            det.setConsolidadoEspTec("Utiles Escolares, MOD.FLEXIBLE - III CICLO");
+                            break;
                         case 6:
                             det.setNoItem("5");
                             det.setConsolidadoEspTec("Utiles Escolares, BACHILLERATO");
                             break;
-                        case 7:
-                            det.setNoItem("6");
-                            det.setConsolidadoEspTec("Utiles Escolares, INICIAL");
-                            break;
-                        case 8:
-                            det.setNoItem("7");
-                            det.setConsolidadoEspTec("Utiles Escolares, MODALIDAD FLEXIBLE");
+                        case 24:
+                            det.setNoItem("5.1");
+                            det.setConsolidadoEspTec("Utiles Escolares, MOD.FLEXIBLE - BACHILLERATO");
                             break;
                     }
                     det.setPrecioUnitario(precio.getPrecioMaxFem());
+                    lstPreciosMaximos.add(det);
                     break;
                 case 3:
                     switch (precio.getIdNivelEducativo().getIdNivelEducativo().intValue()) {
@@ -502,6 +528,18 @@ public class PreciosReferenciaMB implements Serializable {
                             det = new DetalleItemDto();
                             det.setNoItem("2");
                             det.setConsolidadoEspTec("Zapato de niño, PARVULARIA");
+                            det.setPrecioUnitario(precio.getPrecioMaxMas());
+                            lstPreciosMaximos.add(det);
+                            break;
+                        case 22:
+                            det.setNoItem("1");
+                            det.setConsolidadoEspTec("Zapato de niña, INICIAL y PARVULARIA");
+                            det.setPrecioUnitario(precio.getPrecioMaxFem());
+                            lstPreciosMaximos.add(det);
+
+                            det = new DetalleItemDto();
+                            det.setNoItem("2");
+                            det.setConsolidadoEspTec("Zapato de niño, INICIAL y PARVULARIA");
                             det.setPrecioUnitario(precio.getPrecioMaxMas());
                             lstPreciosMaximos.add(det);
                             break;
@@ -661,167 +699,269 @@ public class PreciosReferenciaMB implements Serializable {
                         }
                         break;
                     case 2: //UTILES
-                        if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() < 7) {
-                            //procesos antes de la contratacion de 2019
-                            switch (Integer.parseInt(numItem)) {
-                                case 1:
-                                    item = proveedorEJB.findProducto("54");
-                                    nivel = proveedorEJB.findNivelEducativo("1");
-                                    break;
-                                case 2:
-                                    item = proveedorEJB.findProducto("54");
-                                    nivel = proveedorEJB.findNivelEducativo("3");
-                                    break;
-                                case 3:
-                                    item = proveedorEJB.findProducto("54");
-                                    nivel = proveedorEJB.findNivelEducativo("4");
-                                    break;
-                                case 4:
-                                    item = proveedorEJB.findProducto("54");
-                                    nivel = proveedorEJB.findNivelEducativo("5");
-                                    break;
-                                case 5:
-                                    item = proveedorEJB.findProducto("54");
-                                    nivel = proveedorEJB.findNivelEducativo("6");
-                                    break;
-                                default:
-                                    item = null;
-                                    nivel = null;
-                                    msjError = "El item ingresado no es válido.";
-                                    break;
-                            }
-                        } else {
-                            //procesos mayor o igual a la contratacion de 2019
-                            switch (numItem) {
-                                case "1":
-                                    item = proveedorEJB.findProducto("54");
-                                    nivel = proveedorEJB.findNivelEducativo("1");
-                                    break;
-                                case "2":
-                                    item = proveedorEJB.findProducto("54");
-                                    nivel = proveedorEJB.findNivelEducativo("3");
-                                    break;
-                                case "3":
-                                    item = proveedorEJB.findProducto("54");
-                                    nivel = proveedorEJB.findNivelEducativo("4");
-                                    break;
-                                case "4":
-                                    item = proveedorEJB.findProducto("54");
-                                    nivel = proveedorEJB.findNivelEducativo("5");
-                                    break;
-                                case "5":
-                                    item = proveedorEJB.findProducto("54");
-                                    nivel = proveedorEJB.findNivelEducativo("6");
-                                    break;
-                                case "2.1": //grado 1
-                                    item = proveedorEJB.findProducto("1");
-                                    nivel = proveedorEJB.findNivelEducativo("10");
-                                    precioLibro = new BigDecimal("4.10");
-                                    break;
-                                case "2.2": //grado 2
-                                    item = proveedorEJB.findProducto("1");
-                                    nivel = proveedorEJB.findNivelEducativo("11");
-                                    precioLibro = new BigDecimal("4.10");
-                                    break;
-                                case "2.3": //grado 3
-                                    item = proveedorEJB.findProducto("1");
-                                    nivel = proveedorEJB.findNivelEducativo("12");
-                                    precioLibro = new BigDecimal("3.62");
-                                    break;
-                                case "3.1": //grado 4
-                                    item = proveedorEJB.findProducto("1");
-                                    nivel = proveedorEJB.findNivelEducativo("13");
-                                    precioLibro = new BigDecimal("3.62");
-                                    break;
-                                case "3.2": //grado 5
-                                    item = proveedorEJB.findProducto("1");
-                                    nivel = proveedorEJB.findNivelEducativo("14");
-                                    precioLibro = new BigDecimal("3.62");
-                                    break;
-                                case "3.3": //grado 6
-                                    item = proveedorEJB.findProducto("1");
-                                    nivel = proveedorEJB.findNivelEducativo("15");
-                                    precioLibro = new BigDecimal("3.62");
-                                    break;
-                                case "4.1": //grado 7
-                                    item = proveedorEJB.findProducto("1");
-                                    nivel = proveedorEJB.findNivelEducativo("7");
-                                    precioLibro = new BigDecimal("3.62");
-                                    break;
-                                case "4.2": //grado 8
-                                    item = proveedorEJB.findProducto("1");
-                                    nivel = proveedorEJB.findNivelEducativo("8");
-                                    precioLibro = new BigDecimal("3.62");
-                                    break;
-                                case "4.3": //grado 9
-                                    item = proveedorEJB.findProducto("1");
-                                    nivel = proveedorEJB.findNivelEducativo("9");
-                                    precioLibro = new BigDecimal("3.62");
-                                    break;
-                                case "5.1": //1er año bachillerato
-                                    item = proveedorEJB.findProducto("1");
-                                    nivel = proveedorEJB.findNivelEducativo("16");
-                                    precioLibro = new BigDecimal("2.05");
-                                    break;
-                                case "5.2": //2do año bachillerato
-                                    item = proveedorEJB.findProducto("1");
-                                    nivel = proveedorEJB.findNivelEducativo("17");
-                                    precioLibro = new BigDecimal("2.05");
-                                    break;
-                                default:
-                                    item = null;
-                                    nivel = null;
-                                    msjError = "El item ingresado no es válido.";
-                                    break;
-                            }
+                        switch (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue()) {
+                            case 1:
+                            case 2:
+                            case 3:
+                            case 4:
+                            case 5:
+                            case 6:
+                                //procesos antes de la contratacion de 2019
+                                switch (Integer.parseInt(numItem)) {
+                                    case 1:
+                                        item = proveedorEJB.findProducto("54");
+                                        nivel = proveedorEJB.findNivelEducativo("1");
+                                        break;
+                                    case 2:
+                                        item = proveedorEJB.findProducto("54");
+                                        nivel = proveedorEJB.findNivelEducativo("3");
+                                        break;
+                                    case 3:
+                                        item = proveedorEJB.findProducto("54");
+                                        nivel = proveedorEJB.findNivelEducativo("4");
+                                        break;
+                                    case 4:
+                                        item = proveedorEJB.findProducto("54");
+                                        nivel = proveedorEJB.findNivelEducativo("5");
+                                        break;
+                                    case 5:
+                                        item = proveedorEJB.findProducto("54");
+                                        nivel = proveedorEJB.findNivelEducativo("6");
+                                        break;
+                                    default:
+                                        item = null;
+                                        nivel = null;
+                                        msjError = "El item ingresado no es válido.";
+                                        break;
+                                }
+                                break;
+                            case 7:
+                            case 8:
+                                //procesos mayor o igual a la contratacion de 2019
+                                switch (numItem) {
+                                    case "1":
+                                        item = proveedorEJB.findProducto("54");
+                                        nivel = proveedorEJB.findNivelEducativo("1");
+                                        break;
+                                    case "2":
+                                        item = proveedorEJB.findProducto("54");
+                                        nivel = proveedorEJB.findNivelEducativo("3");
+                                        break;
+                                    case "3":
+                                        item = proveedorEJB.findProducto("54");
+                                        nivel = proveedorEJB.findNivelEducativo("4");
+                                        break;
+                                    case "4":
+                                        item = proveedorEJB.findProducto("54");
+                                        nivel = proveedorEJB.findNivelEducativo("5");
+                                        break;
+                                    case "5":
+                                        item = proveedorEJB.findProducto("54");
+                                        nivel = proveedorEJB.findNivelEducativo("6");
+                                        break;
+                                    case "2.1": //grado 1
+                                        item = proveedorEJB.findProducto("1");
+                                        nivel = proveedorEJB.findNivelEducativo("10");
+                                        precioLibro = new BigDecimal("4.10");
+                                        break;
+                                    case "2.2": //grado 2
+                                        item = proveedorEJB.findProducto("1");
+                                        nivel = proveedorEJB.findNivelEducativo("11");
+                                        precioLibro = new BigDecimal("4.10");
+                                        break;
+                                    case "2.3": //grado 3
+                                        item = proveedorEJB.findProducto("1");
+                                        nivel = proveedorEJB.findNivelEducativo("12");
+                                        precioLibro = new BigDecimal("3.62");
+                                        break;
+                                    case "3.1": //grado 4
+                                        item = proveedorEJB.findProducto("1");
+                                        nivel = proveedorEJB.findNivelEducativo("13");
+                                        precioLibro = new BigDecimal("3.62");
+                                        break;
+                                    case "3.2": //grado 5
+                                        item = proveedorEJB.findProducto("1");
+                                        nivel = proveedorEJB.findNivelEducativo("14");
+                                        precioLibro = new BigDecimal("3.62");
+                                        break;
+                                    case "3.3": //grado 6
+                                        item = proveedorEJB.findProducto("1");
+                                        nivel = proveedorEJB.findNivelEducativo("15");
+                                        precioLibro = new BigDecimal("3.62");
+                                        break;
+                                    case "4.1": //grado 7
+                                        item = proveedorEJB.findProducto("1");
+                                        nivel = proveedorEJB.findNivelEducativo("7");
+                                        precioLibro = new BigDecimal("3.62");
+                                        break;
+                                    case "4.2": //grado 8
+                                        item = proveedorEJB.findProducto("1");
+                                        nivel = proveedorEJB.findNivelEducativo("8");
+                                        precioLibro = new BigDecimal("3.62");
+                                        break;
+                                    case "4.3": //grado 9
+                                        item = proveedorEJB.findProducto("1");
+                                        nivel = proveedorEJB.findNivelEducativo("9");
+                                        precioLibro = new BigDecimal("3.62");
+                                        break;
+                                    case "5.1": //1er año bachillerato
+                                        item = proveedorEJB.findProducto("1");
+                                        nivel = proveedorEJB.findNivelEducativo("16");
+                                        precioLibro = new BigDecimal("2.05");
+                                        break;
+                                    case "5.2": //2do año bachillerato
+                                        item = proveedorEJB.findProducto("1");
+                                        nivel = proveedorEJB.findNivelEducativo("17");
+                                        precioLibro = new BigDecimal("2.05");
+                                        break;
+                                    default:
+                                        item = null;
+                                        nivel = null;
+                                        msjError = "El item ingresado no es válido.";
+                                        break;
+                                }
+                                break;
+                            case 9:
+                                //procesos mayor o igual a la contratacion de 2021
+                                switch (numItem) {
+                                    case "1":
+                                        item = proveedorEJB.findProducto("54");
+                                        nivel = proveedorEJB.findNivelEducativo("22");
+                                        break;
+                                    case "2":
+                                        item = proveedorEJB.findProducto("54");
+                                        nivel = proveedorEJB.findNivelEducativo("3");
+                                        break;
+                                    case "3":
+                                        item = proveedorEJB.findProducto("54");
+                                        nivel = proveedorEJB.findNivelEducativo("4");
+                                        break;
+                                    case "4":
+                                        item = proveedorEJB.findProducto("54");
+                                        nivel = proveedorEJB.findNivelEducativo("5");
+                                        break;
+                                    case "4.4":
+                                        item = proveedorEJB.findProducto("54");
+                                        nivel = proveedorEJB.findNivelEducativo("23");
+                                        break;
+                                    case "5":
+                                        item = proveedorEJB.findProducto("54");
+                                        nivel = proveedorEJB.findNivelEducativo("6");
+                                        break;
+                                    case "5.1":
+                                        item = proveedorEJB.findProducto("54");
+                                        nivel = proveedorEJB.findNivelEducativo("24");
+                                        break;
+
+                                    default:
+                                        item = null;
+                                        nivel = null;
+                                        msjError = "El item ingresado no es válido.";
+                                        break;
+                                }
+                                break;
                         }
                         break;
                     case 3: //ZAPATOS
-                        switch (Integer.parseInt(numItem)) {
-                            case 1:
-                                item = proveedorEJB.findProducto("21");
-                                nivel = proveedorEJB.findNivelEducativo("1");
-                                break;
-                            case 2:
-                                item = proveedorEJB.findProducto("43");
-                                nivel = proveedorEJB.findNivelEducativo("1");
-                                break;
-                            case 3:
-                                item = proveedorEJB.findProducto("21");
-                                nivel = proveedorEJB.findNivelEducativo("3");
-                                break;
-                            case 4:
-                                item = proveedorEJB.findProducto("43");
-                                nivel = proveedorEJB.findNivelEducativo("3");
-                                break;
-                            case 5:
-                                item = proveedorEJB.findProducto("21");
-                                nivel = proveedorEJB.findNivelEducativo("4");
-                                break;
-                            case 6:
-                                item = proveedorEJB.findProducto("43");
-                                nivel = proveedorEJB.findNivelEducativo("4");
-                                break;
-                            case 7:
-                                item = proveedorEJB.findProducto("21");
-                                nivel = proveedorEJB.findNivelEducativo("5");
-                                break;
-                            case 8:
-                                item = proveedorEJB.findProducto("43");
-                                nivel = proveedorEJB.findNivelEducativo("5");
-                                break;
-                            case 9:
-                                item = proveedorEJB.findProducto("21");
-                                nivel = proveedorEJB.findNivelEducativo("6");
-                                break;
-                            case 10:
-                                item = proveedorEJB.findProducto("43");
-                                nivel = proveedorEJB.findNivelEducativo("6");
+                        switch (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue()) {
+                            case 9: //año 2021
+                                switch (Integer.parseInt(numItem)) {
+                                    case 1:
+                                        item = proveedorEJB.findProducto("21");
+                                        nivel = proveedorEJB.findNivelEducativo("22");
+                                        break;
+                                    case 2:
+                                        item = proveedorEJB.findProducto("43");
+                                        nivel = proveedorEJB.findNivelEducativo("22");
+                                        break;
+                                    case 3:
+                                        item = proveedorEJB.findProducto("21");
+                                        nivel = proveedorEJB.findNivelEducativo("3");
+                                        break;
+                                    case 4:
+                                        item = proveedorEJB.findProducto("43");
+                                        nivel = proveedorEJB.findNivelEducativo("3");
+                                        break;
+                                    case 5:
+                                        item = proveedorEJB.findProducto("21");
+                                        nivel = proveedorEJB.findNivelEducativo("4");
+                                        break;
+                                    case 6:
+                                        item = proveedorEJB.findProducto("43");
+                                        nivel = proveedorEJB.findNivelEducativo("4");
+                                        break;
+                                    case 7:
+                                        item = proveedorEJB.findProducto("21");
+                                        nivel = proveedorEJB.findNivelEducativo("5");
+                                        break;
+                                    case 8:
+                                        item = proveedorEJB.findProducto("43");
+                                        nivel = proveedorEJB.findNivelEducativo("5");
+                                        break;
+                                    case 9:
+                                        item = proveedorEJB.findProducto("21");
+                                        nivel = proveedorEJB.findNivelEducativo("6");
+                                        break;
+                                    case 10:
+                                        item = proveedorEJB.findProducto("43");
+                                        nivel = proveedorEJB.findNivelEducativo("6");
+                                        break;
+                                    default:
+                                        item = null;
+                                        nivel = null;
+                                        msjError = "El item ingresado no es válido.";
+                                        break;
+                                }
                                 break;
                             default:
-                                item = null;
-                                nivel = null;
-                                msjError = "El item ingresado no es válido.";
+                                switch (Integer.parseInt(numItem)) {
+                                    case 1:
+                                        item = proveedorEJB.findProducto("21");
+                                        nivel = proveedorEJB.findNivelEducativo("1");
+                                        break;
+                                    case 2:
+                                        item = proveedorEJB.findProducto("43");
+                                        nivel = proveedorEJB.findNivelEducativo("1");
+                                        break;
+                                    case 3:
+                                        item = proveedorEJB.findProducto("21");
+                                        nivel = proveedorEJB.findNivelEducativo("3");
+                                        break;
+                                    case 4:
+                                        item = proveedorEJB.findProducto("43");
+                                        nivel = proveedorEJB.findNivelEducativo("3");
+                                        break;
+                                    case 5:
+                                        item = proveedorEJB.findProducto("21");
+                                        nivel = proveedorEJB.findNivelEducativo("4");
+                                        break;
+                                    case 6:
+                                        item = proveedorEJB.findProducto("43");
+                                        nivel = proveedorEJB.findNivelEducativo("4");
+                                        break;
+                                    case 7:
+                                        item = proveedorEJB.findProducto("21");
+                                        nivel = proveedorEJB.findNivelEducativo("5");
+                                        break;
+                                    case 8:
+                                        item = proveedorEJB.findProducto("43");
+                                        nivel = proveedorEJB.findNivelEducativo("5");
+                                        break;
+                                    case 9:
+                                        item = proveedorEJB.findProducto("21");
+                                        nivel = proveedorEJB.findNivelEducativo("6");
+                                        break;
+                                    case 10:
+                                        item = proveedorEJB.findProducto("43");
+                                        nivel = proveedorEJB.findNivelEducativo("6");
+                                        break;
+                                    default:
+                                        item = null;
+                                        nivel = null;
+                                        msjError = "El item ingresado no es válido.";
+                                        break;
+                                }
+                                break;
                         }
                         break;
                 }
@@ -862,5 +1002,24 @@ public class PreciosReferenciaMB implements Serializable {
         if (!msjError.isEmpty()) {
             JsfUtil.mensajeAlerta(msjError);
         }
+    }
+
+    public void eliminarDetalle() {
+        if (precioRef != null) {
+            if (precioRef.getEstadoEliminacion().compareTo(BigInteger.ZERO) == 0) {
+                if (precioRef.getIdPrecioRefEmp() != null) {
+                    precioRef.setEstadoEliminacion(BigInteger.ONE);
+                } else {
+                    lstPreciosReferencia.remove(idRow);
+                }
+            } else {
+                precioRef.setEstadoEliminacion(BigInteger.ZERO);
+            }
+
+            precioRef = null;
+        } else {
+            JsfUtil.mensajeAlerta("Debe seleccionar un precio para poder eliminarlo.");
+        }
+        idRow = -1;
     }
 }
