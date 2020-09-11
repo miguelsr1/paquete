@@ -95,7 +95,7 @@
                                     <p:inputText value="#{datosGeneralesMB.empresa.idPersona.numeroNit}"/>
 
                                     <p:outputLabel value="Departamento: "/>
-                                    <p:selectOneMenu id="cboDepartamento" value="#{datosGeneralesMB.codigoDepartamento}" disabled="#{datosGeneralesMB.personaNatural}">
+                                    <p:selectOneMenu id="cboDepartamento" value="#{datosGeneralesMB.codigoDepartamento}" disabled="true">
                                         <f:selectItem noSelectionOption="true" itemLabel="Seleccione un departamento" />
                                         <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depaP" itemValue="#{depaP.codigoDepartamento}" itemLabel="#{depaP.codigoDepartamento} - #{depaP.nombreDepartamento}" />
                                         <p:ajax update="cboMunicipio"/>
