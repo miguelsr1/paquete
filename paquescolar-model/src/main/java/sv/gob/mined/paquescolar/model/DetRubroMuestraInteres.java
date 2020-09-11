@@ -94,6 +94,8 @@ public class DetRubroMuestraInteres implements Serializable {
     private DetalleProcesoAdq idDetProcesoAdq;
     @Column(name = "DATOS_VERIFICADOS")
     private Short datosVerificados;
+    @Column(name = "ACEPTACION_TERMINOS")
+    private Short aceptacionTerminos;
     @Column(name = "ID_GESTION")
     private String idGestion;
 
@@ -109,6 +111,14 @@ public class DetRubroMuestraInteres implements Serializable {
         this.usuarioInsercion = usuarioInsercion;
         this.fechaInsercion = fechaInsercion;
         this.estadoEliminacion = estadoEliminacion;
+    }
+
+    public Short getAceptacionTerminos() {
+        return aceptacionTerminos;
+    }
+
+    public void setAceptacionTerminos(Short aceptacionTerminos) {
+        this.aceptacionTerminos = aceptacionTerminos;
     }
 
     public String getIdGestion() {

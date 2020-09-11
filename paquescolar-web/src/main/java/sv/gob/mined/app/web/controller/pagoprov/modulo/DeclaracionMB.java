@@ -31,7 +31,6 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
-import sv.gob.mined.app.web.controller.ParametrosMB;
 import sv.gob.mined.app.web.controller.pagoprov.ProveedorController;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.Reportes;
@@ -56,7 +55,10 @@ import sv.gob.mined.paquescolar.model.pojos.OfertaGlobal;
 public class DeclaracionMB implements Serializable {
 
     private Boolean aceptarCondiciones = false;
+    private Boolean aceptarDeclaracion = false;
     private String idGestion = "";
+    private String cabecera;
+    private String detalle;
     private Empresa empresa = new Empresa();
     private DetalleProcesoAdq detalleProcesoAdq = new DetalleProcesoAdq();
     private CapaInstPorRubro capacidadInst = new CapaInstPorRubro();
@@ -86,8 +88,34 @@ public class DeclaracionMB implements Serializable {
                 capacidadInst = proveedorEJB.findDetProveedor(proceso, empresa, CapaInstPorRubro.class);
                 detalleProcesoAdq = capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq();
                 aceptarCondiciones = (capacidadInst.getIdMuestraInteres().getDatosVerificados() == 1);
+                aceptarDeclaracion = (capacidadInst.getIdMuestraInteres().getAceptacionTerminos() == 1);
+
+                cabecera = MessageFormat.format(UTIL_CORREO.getString("prov.declaracion.cabecera"),
+                        capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getDescripcionRubro(),
+                        anho.getAnho());
+                detalle = MessageFormat.format(UTIL_CORREO.getString("prov.declaracion.detalle"),
+                        capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getDescripcionRubro(),
+                        empresa.getIdPersona().getEmail(),
+                        empresa.getDireccionCompleta().concat(", ").concat(empresa.getIdMunicipio().getNombreMunicipio()).concat(", ").concat(empresa.getIdMunicipio().getCodigoDepartamento().getNombreDepartamento()),
+                        capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho());
             }
         }
+    }
+
+    public String getCabecera() {
+        return cabecera;
+    }
+
+    public String getDetalle() {
+        return detalle;
+    }
+
+    public Boolean getAceptarDeclaracion() {
+        return aceptarDeclaracion;
+    }
+
+    public void setAceptarDeclaracion(Boolean aceptarDeclaracion) {
+        this.aceptarDeclaracion = aceptarDeclaracion;
     }
 
     public Empresa getEmpresa() {
@@ -103,13 +131,17 @@ public class DeclaracionMB implements Serializable {
     }
 
     public void guardarAceptarCondiciones() {
-        idGestion = proveedorEJB.datosConfirmados(capacidadInst.getIdMuestraInteres().getIdMuestraInteres(), empresa.getIdEmpresa());
-        enviarNotificacionModProv();
+        if (aceptarCondiciones && aceptarDeclaracion) {
+            idGestion = proveedorEJB.datosConfirmados(capacidadInst.getIdMuestraInteres().getIdMuestraInteres(), empresa.getIdEmpresa());
+            enviarNotificacionModProv();
+        }else{
+            JsfUtil.mensajeAlerta("Debe de aceptar la Declaració Jurada y Aceptación de Presentación de Oferta.");
+        }
     }
 
     public void impOfertaGlobal() {
         try {
-            String lugar = empresa.getIdMunicipio().getCodigoDepartamento().getNombreDepartamento();
+            String lugar = empresa.getIdMunicipio().getNombreMunicipio().concat(", ").concat(empresa.getIdMunicipio().getCodigoDepartamento().getNombreDepartamento());
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
             ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
@@ -131,35 +163,23 @@ public class DeclaracionMB implements Serializable {
                 param.put("productor", Boolean.FALSE);
             }
 
-            String tmp = "";
             List<JasperPrint> jasperPrintList = new ArrayList();
-            if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 6
-                    && detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue() == 2) {
-                tmp = "2019";
 
-            }
-
-            if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() >= 8) {
-                jasperPrintList.add(JasperFillManager.fillReport(Reportes.class
-                        .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobalProv" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(lstDatos)));
-
-            } else {
-                jasperPrintList.add(JasperFillManager.fillReport(Reportes.class
-                        .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobal" + tmp + ".jasper"), param, new JRBeanCollectionDataSource(lstDatos)));
-            }
+            jasperPrintList.add(JasperFillManager.fillReport(Reportes.class
+                    .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobalProv" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(lstDatos)));
 
             String muni = VarSession.getNombreMunicipioSession();
 
-            if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() >= 8) {
-                if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
-                    jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class
-                            .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerProvNat" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
+            param.put("pLugar", empresa.getIdMunicipio().getCodigoDepartamento().getNombreDepartamento());
 
-                } else {
-                    jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class
-                            .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerProvJur" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
+            if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
+                jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class
+                        .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerProvNat" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
 
-                }
+            } else {
+                jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class
+                        .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerProvJur" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
+
             }
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -184,12 +204,12 @@ public class DeclaracionMB implements Serializable {
         List<String> to = new ArrayList();
         List<String> cc = new ArrayList();
         List<String> bcc = new ArrayList();
-        
+
         SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm");
-        
+
         cc.add("carlos.villegas@mined.gob.sv");
         cc.add("rene.brizuela@mined.gob.sv");
-        
+
         bcc.add("rafael.arias@mined.gob.sv");
         to.add(empresa.getIdPersona().getEmail());
 
@@ -200,7 +220,7 @@ public class DeclaracionMB implements Serializable {
                 empresa.getIdPersona().getEmail(), empresa.getIdPersona().getNombreCompleto(), empresa.getIdPersona().getNumeroDui(), idGestion,
                 sdfHora.format(fecha).split(":")[0], sdfHora.format(fecha).split(":")[1],
                 Herramientas.getNumDia(fecha), Herramientas.getNomMes(fecha), Herramientas.getNumAnyo(fecha));
-        
+
         proveedorEJB.enviarNotificacionModProv("carlos.villegas@mined.gob.sv", titulo, mensaje, to, cc, bcc);
     }
 }

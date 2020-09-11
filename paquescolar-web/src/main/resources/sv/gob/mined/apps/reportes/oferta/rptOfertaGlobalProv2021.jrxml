@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="0bd311a0-41c1-46a5-aa9a-a7ec3ef35721">
 	<property name="ireport.zoom" value="1.9487171000000028"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="813"/>
+	<property name="ireport.y" value="232"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -345,29 +345,19 @@
 	</columnFooter>
 	<pageFooter>
 		<band height="112" splitType="Stretch">
-			<staticText>
-				<reportElement x="294" y="36" width="15" height="18" uuid="30130241-26b2-4a48-9249-b2264ed7729e"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<text><![CDATA[F.]]></text>
-			</staticText>
-			<line>
-				<reportElement x="311" y="53" width="250" height="1" uuid="8c59c8ab-c946-4aa4-b327-bbcbb70c6bdc"/>
-			</line>
 			<textField>
-				<reportElement x="75" y="19" width="489" height="18" uuid="19da908d-3200-4752-91da-73acd0e9e280"/>
+				<reportElement x="75" y="8" width="489" height="18" uuid="19da908d-3200-4752-91da-73acd0e9e280"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Lugar y fecha de la presentación de Oferta: "+$P{pLugar}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="40" y="56" width="521" height="56" uuid="16c6cc98-10a9-4059-914b-9c0dba3b2fac"/>
+				<reportElement x="40" y="26" width="521" height="86" uuid="16c6cc98-10a9-4059-914b-9c0dba3b2fac"/>
 				<textElement textAlignment="Right">
 					<font fontName="Arial" size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Oferta presentada por: "+$F{nombreRepresentante}+"\n"+
+				<textFieldExpression><![CDATA["Oferta presentada vía electrónica por medio del sistema en línea del MINEDUCYT y enviada a correo electrónico institucional del mismo, por: "+$F{nombreRepresentante}+"\n"+
 "Proveedor o Representante Legal\n"+
 "No DUI de la Persona Proveedora o Representante Legal: "+ $F{duiRepresentante}+"\n"+
 "Correo Electrónico: "+$P{pCorreoPersona}+"\n"+

@@ -24,19 +24,33 @@
                         <p:outputLabel id="lblNombreEmpresa" value="Datos de #{declaracionMB.empresa.razonSocial}"/>
                     </h1>
                     <div class="ui-message ui-staticmessage ui-message-info ui-widget ui-corner-all" style="font-size: 14px !important;">
-                        <p:outputLabel value="He leído e ingresado la información exacta acerca de mi Oferta Global para participar en los procesos de compra de los bienes y servicios del Programa Dotación de Uniformes Zapatos y Útiles Escolares #{parametrosMB.anho.anho}, que consta de:"/>
+                        <p:outputLabel value="#{declaracionMB.cabecera}" style="font-size: 12px !important; text-align:justify"/>
                         <br/>
-                        <ul>
-                            <li><p:outputLabel value="Precios"/><br/></li>
-                            <li><p:outputLabel value="Municipios de interés"/><br/></li>
-                            <li><p:outputLabel value="Declaración jurada global sobre la aceptación de las adjudicaciones y el cumplimiento de las especificaciones técnicas y plazo y lugar de entrega requerida"/><br/></li>
-                        </ul>
                         <br/>
-                        <p:outputLabel value="La entiendo y estoy de acuerdo con todo lo expresado en ella, para los procesos de las adjudicaciones correspondientes al rubro en el cual participo, para los procesos correspondientes del año 2021."/>
+                        <p:outputLabel value="#{declaracionMB.detalle}" style="font-size: 12px !important; text-align:justify !important; text-justify: inter-word"/>
                         <br/>
                         <br/>
                         <h:panelGrid columns="3" style="text-align: center;">
-                            <p:outputLabel value="De estar de acuerdo con lo expresado, coloque un cheque aquí: " style="font-weight: bold;"/>
+                            <p:outputLabel value="ACEPTO expresamente lo contenido, seleccionando con un cheque la casilla indicada y guardando " style="font-weight: bold; font-size: 12px !important"/>
+                            <p:spacer width="5"/>
+                            <p:selectBooleanCheckbox value="#{declaracionMB.aceptarDeclaracion}"/>
+                        </h:panelGrid>
+                    </div>
+                    <br/>
+                    <div class="ui-message ui-staticmessage ui-message-info ui-widget ui-corner-all" style="font-size: 14px !important;">
+                        <p:outputLabel value="He leído e ingresado la información exacta acerca de mi Oferta Global para participar en los procesos de compra de los bienes y servicios del Programa Dotación de Uniformes Zapatos y Útiles Escolares #{parametrosMB.anho.anho}, que consta de:" style="font-size: 12px !important"/>
+                        <br/>
+                        <ul>
+                            <li><p:outputLabel value="Precios" style="font-size: 12px !important"/><br/></li>
+                            <li><p:outputLabel value="Municipios de interés" style="font-size: 12px !important"/><br/></li>
+                            <li><p:outputLabel value="Declaración jurada global sobre la aceptación de las adjudicaciones y el cumplimiento de las especificaciones técnicas y plazo y lugar de entrega requerida" style="font-size: 12px !important"/><br/></li>
+                        </ul>
+                        <br/>
+                        <p:outputLabel value="La entiendo y estoy de acuerdo con todo lo expresado en ella, para los procesos de las adjudicaciones correspondientes al rubro en el cual participo, para los procesos correspondientes del año 2021." style="font-size: 12px !important"/>
+                        <br/>
+                        <br/>
+                        <h:panelGrid columns="3" style="text-align: center;">
+                            <p:outputLabel value="De estar de acuerdo con lo expresado, coloque un cheque aquí: " style="font-weight: bold; font-size: 12px !important"/>
                             <p:spacer width="5"/>
                             <p:selectBooleanCheckbox value="#{declaracionMB.aceptarCondiciones}"/>
                         </h:panelGrid>
