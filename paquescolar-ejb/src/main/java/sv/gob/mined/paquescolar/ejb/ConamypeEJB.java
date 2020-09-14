@@ -30,6 +30,7 @@ import sv.gob.mined.paquescolar.model.DetCapaSegunRubro;
 import sv.gob.mined.paquescolar.model.DetRubroMuestraInteres;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.Empresa;
+import sv.gob.mined.paquescolar.model.EmpresaCodigoSeg;
 import sv.gob.mined.paquescolar.model.EstadoRegistro;
 import sv.gob.mined.paquescolar.model.Genero;
 import sv.gob.mined.paquescolar.model.Municipio;
@@ -39,6 +40,7 @@ import sv.gob.mined.paquescolar.model.Productor;
 import sv.gob.mined.paquescolar.model.ProveedorEmpresa;
 import sv.gob.mined.paquescolar.model.TipoEmpresa;
 import sv.gob.mined.paquescolar.model.TipoPersoneria;
+import sv.gob.mined.paquescolar.util.RC4Crypter;
 
 /**
  *
@@ -71,7 +73,8 @@ public class ConamypeEJB {
                     activar = true;
                 } else {
                     Logger.getLogger(ConamypeEJB.class.getName()).log(Level.INFO, "WS NO ACTIVO");
-                }   break;
+                }
+                break;
             case "PRUEBAS_MINED":
                 activar = true;
                 break;
@@ -467,6 +470,42 @@ public class ConamypeEJB {
             em.merge(capa);
 
         }
+    }
+
+    @WebMethod(operationName = "updCorreoElectronicoByNit")
+    public void updCorreoElectronicoByNit(String numeroNit, String correoElectronico) {
+        Query q = em.createQuery("SELECT p FROM Persona p WHERE p.numeroNit=:nit", Persona.class);
+        q.setParameter("nit", numeroNit);
+        if (q.getResultList().isEmpty()) {
+            System.out.println("Proveedor no encontrado: " + numeroNit);
+        }else{
+            Persona per = (Persona)q.getResultList().get(0);
+            per.setEmail(correoElectronico);
+            per.setFechaModificacion(new Date());
+            
+            em.persist(per);
+        }
+
+    }
+    
+    @WebMethod(operationName = "generarCodigoSeguridad")
+    public void updCorreoElectronicoByNit(Integer idDetProcesoAdq) {
+        Query q = em.createQuery("SELECT d.idEmpresa FROM DetRubroMuestraInteres d WHERE d.idDetProcesoAdq.idDetProcesoAdq=:id", Empresa.class);
+        q.setParameter("id", idDetProcesoAdq);
+        List<Empresa> lst = q.getResultList();
+        
+        RC4Crypter encript = new RC4Crypter();
+        
+        for (Empresa empresa : lst) {
+            EmpresaCodigoSeg ecs = new EmpresaCodigoSeg();
+            
+            ecs.setIdEmpresa(empresa.getIdEmpresa());
+            ecs.setCodigoSeguridad(encript.encrypt("ha", empresa.getIdEmpresa().toString().concat(empresa.getNumeroNit())).substring(0, 10));
+            ecs.setUsuarioActivado((short)0);
+            
+            em.persist(ecs);
+        }
+
     }
 
     @WebMethod

@@ -722,13 +722,13 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                 resolucionAdj = null;
 
                             } else {
-                                if (resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().compareTo(new BigDecimal("2")) == 0) {
+                                //if (resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().compareTo(new BigDecimal("2")) == 0) {
                                     current = contratoOrd;
                                     continuar = false;
                                     if (current.getPlazoPrevistoEntrega() == null) {
                                         setPlazoPrevistoEntrega();
                                     }
-                                } else {
+                                /*} else {
                                     buscarHistorialCambios();
                                     PrimeFaces.current().ajax().update("dlgHistorialCambiosReserva");
                                     JsfUtil.mensajeAlerta("Esta reserva de fondo se encuentra en estado de " + resolucionAdj.getIdEstadoReserva().getDescripcionReserva()
@@ -736,7 +736,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                     current = contratoOrd;
                                     continuar = true;
                                     deshabilitado = true;
-                                }
+                                }*/
                             }
                             break;
                     }

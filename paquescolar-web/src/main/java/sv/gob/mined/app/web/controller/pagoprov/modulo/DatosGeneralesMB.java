@@ -7,6 +7,7 @@ package sv.gob.mined.app.web.controller.pagoprov.modulo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -33,7 +34,7 @@ import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 @ManagedBean
 @ViewScoped
 public class DatosGeneralesMB implements Serializable {
-
+    
     private Boolean datosVerificados = false;
     private Boolean personaNatural = false;
     private String tapEmpresa;
@@ -41,47 +42,47 @@ public class DatosGeneralesMB implements Serializable {
     private String fileName = "fotoProveedores/profile.png";
     private String codigoDepartamentoCalificado;
     private String codigoDepartamento = "";
-
+    
     private BigDecimal idMunicipio = BigDecimal.ZERO;
 
     //private DetalleProcesoAdq detalleProcesoAdq = new DetalleProcesoAdq();
     private Empresa empresa = new Empresa();
     private CapaInstPorRubro capacidadInst = new CapaInstPorRubro();
     private CapaDistribucionAcre departamentoCalif = new CapaDistribucionAcre();
-
+    
     private ProveedorMB proveedorMB;
-
+    
     @EJB
     private ProveedorEJB proveedorEJB;
     @EJB
     private UtilEJB utilEJB;
     @EJB
     private DatosGeograficosEJB datosGeograficosEJB;
-
+    
     @PostConstruct
     public void ini() {
         if (VarSession.isVariableSession("idEmpresa")) {
             proveedorMB = ((ProveedorMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
                     getValue(FacesContext.getCurrentInstance().getELContext(), null, "proveedorMB"));
-
+            
             empresa = proveedorMB.getEmpresa();
-
+            
             cargarDetalleCalificacion();
         }
     }
-
+    
     public Boolean getPersonaNatural() {
         return personaNatural;
     }
-
+    
     public Boolean getDatosVerificados() {
         return datosVerificados;
     }
-
+    
     private void cargarDetalleCalificacion() {
         Anho anho = proveedorMB.getAnho();
         ProcesoAdquisicion proceso = anho.getProcesoAdquisicionList().get(0);
-
+        
         if (proceso == null || proceso.getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe seleccionar un proceso de contratación");
         } else {
@@ -96,20 +97,20 @@ public class DatosGeneralesMB implements Serializable {
                         && capacidadInst.getIdMuestraInteres().getDatosVerificados() == 1) {
                     datosVerificados = true;
                 }
-
+                
                 departamentoCalif = proveedorEJB.findDetProveedor(proceso, empresa, CapaDistribucionAcre.class);
-
+                
                 if (departamentoCalif == null || departamentoCalif.getCodigoDepartamento() == null) {
                     JsfUtil.mensajeAlerta("Este proveedor no posee departamento de calificación " + proceso.getIdAnho().getAnho());
                 } else {
                     codigoDepartamentoCalificado = departamentoCalif.getCodigoDepartamento().getCodigoDepartamento();
-
+                    
                     if (empresa.getIdPersona().getUrlImagen() == null) {
                         fileName = "fotoProveedores/profile.png";
                     } else {
                         fileName = "fotoProveedores/" + empresa.getIdPersona().getUrlImagen();
                     }
-
+                    
                     personaNatural = (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1);
                     idMunicipio = empresa.getIdPersona().getIdMunicipio().getIdMunicipio();
                     codigoDepartamento = empresa.getIdPersona().getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
@@ -117,50 +118,50 @@ public class DatosGeneralesMB implements Serializable {
             }
         }
     }
-
+    
     public Empresa getEmpresa() {
         return empresa;
     }
-
+    
     public void setEmpresa(Empresa empresa) {
         this.empresa = empresa;
     }
-
+    
     public String getCodigoDepartamento() {
         return codigoDepartamento;
     }
-
+    
     public void setCodigoDepartamento(String codigoDepartamento) {
         this.codigoDepartamento = codigoDepartamento;
     }
-
+    
     public BigDecimal getIdMunicipio() {
         return idMunicipio;
     }
-
+    
     public void setIdMunicipio(BigDecimal idMunicipio) {
         this.idMunicipio = idMunicipio;
     }
-
+    
     public String getCodigoDepartamentoCalificado() {
         return codigoDepartamentoCalificado;
     }
-
+    
     public void setCodigoDepartamentoCalificado(String codigoDepartamentoCalificado) {
         this.codigoDepartamentoCalificado = codigoDepartamentoCalificado;
     }
-
+    
     public CapaInstPorRubro getCapacidadInst() {
         if (capacidadInst == null) {
             capacidadInst = new CapaInstPorRubro();
         }
         return capacidadInst;
     }
-
+    
     public void setCapacidadInst(CapaInstPorRubro capacidadInst) {
         this.capacidadInst = capacidadInst;
     }
-
+    
     public String getTapEmpresa() {
         if (empresa == null) {
             tapEmpresa = "";
@@ -173,7 +174,7 @@ public class DatosGeneralesMB implements Serializable {
         }
         return tapEmpresa;
     }
-
+    
     public String getTapPersona() {
         if (empresa == null) {
             tapPersona = "";
@@ -186,7 +187,7 @@ public class DatosGeneralesMB implements Serializable {
         }
         return tapPersona;
     }
-
+    
     public void guardarDatosGenerales() {
         if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
             empresa.setRazonSocial(empresa.getIdPersona().getNombreCompletoProveedor());
@@ -199,17 +200,19 @@ public class DatosGeneralesMB implements Serializable {
         if (empresa.getIdPersona().getIdMunicipio().getIdMunicipio().intValue() != idMunicipio.intValue()) {
             empresa.getIdPersona().setIdMunicipio(new Municipio(idMunicipio));
         }
-
+        empresa.setFechaModificacion(new Date());
+        empresa.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
+        
         proveedorEJB.guardar(empresa);
-
+        
         departamentoCalif.setCodigoDepartamento(utilEJB.find(Departamento.class,
                 codigoDepartamentoCalificado));
-
+        
         if (proveedorEJB.guardarCapaInst(departamentoCalif, capacidadInst)) {
             JsfUtil.mensajeUpdate();
         }
     }
-
+    
     public List<Municipio> getLstMunicipios() {
         return datosGeograficosEJB.getLstMunicipiosByDepartamento(codigoDepartamento);
     }

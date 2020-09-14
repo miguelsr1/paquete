@@ -132,7 +132,9 @@ public class DeclaracionMB implements Serializable {
 
     public void guardarAceptarCondiciones() {
         if (aceptarCondiciones && aceptarDeclaracion) {
-            idGestion = proveedorEJB.datosConfirmados(capacidadInst.getIdMuestraInteres().getIdMuestraInteres(), empresa.getIdEmpresa());
+            idGestion = proveedorEJB.datosConfirmados(capacidadInst.getIdMuestraInteres().getIdMuestraInteres(), 
+                    empresa.getIdEmpresa(),
+                    VarSession.getVariableSessionUsuario());
             enviarNotificacionModProv();
         }else{
             JsfUtil.mensajeAlerta("Debe de aceptar la Declaració Jurada y Aceptación de Presentación de Oferta.");

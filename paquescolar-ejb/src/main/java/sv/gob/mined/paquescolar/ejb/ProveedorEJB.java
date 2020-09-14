@@ -1825,11 +1825,12 @@ public class ProveedorEJB {
         updateCodigoValidacionProveedor(idEmpresa, null, true);
     }
 
-    public String datosConfirmados(BigDecimal idDetRubro, BigDecimal idEmpresa) {
+    public String datosConfirmados(BigDecimal idDetRubro, BigDecimal idEmpresa, String usuario) {
         DetRubroMuestraInteres det = em.find(DetRubroMuestraInteres.class, idDetRubro);
 
         det.setFechaModificacion(new Date());
         det.setDatosVerificados((short) 1);
+        det.setUsuarioModificacion(usuario);
 
         em.merge(det);
 

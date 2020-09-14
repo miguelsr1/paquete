@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -139,6 +140,8 @@ public class PreciosReferenciaMB implements Serializable {
 
             if (preciosValidos) {
                 for (PreciosRefRubroEmp precio : lstPreciosReferencia) {
+                    precio.setFechaModificacion(new Date());
+                    precio.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
                     proveedorEJB.guardar(precio);
                 }
                 lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), getDetalleProcesoAdq());
