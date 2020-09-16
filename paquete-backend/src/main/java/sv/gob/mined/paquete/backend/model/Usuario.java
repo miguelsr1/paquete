@@ -29,11 +29,14 @@ public class Usuario {
     private Date fechaFinLogin;
     private Short rangoFechaLogin;
     private Short activo;
+    
+    private String usuario;
+    private String password;
 
     public Usuario() {
     }
 
-    public Usuario(BigDecimal idUsuario, BigDecimal idPersona, BigDecimal idTipoUsuario, String usuarioInsercion, Date fechaInsercion, String usuario_modificacion, Date fechaModificacion, Date fechaEliminacion, BigDecimal estadoEliminacion, String codigoDepartamento, Date fechaVencimientoClave, Date fechaInicioLogin, Date fechaFinLogin, Short rangoFechaLogin, Short activo) {
+    public Usuario(BigDecimal idUsuario, BigDecimal idPersona, BigDecimal idTipoUsuario, String usuarioInsercion, Date fechaInsercion, String usuario_modificacion, Date fechaModificacion, Date fechaEliminacion, BigDecimal estadoEliminacion, String codigoDepartamento, Date fechaVencimientoClave, Date fechaInicioLogin, Date fechaFinLogin, Short rangoFechaLogin, Short activo, String usuario, String password) {
         this.idUsuario = idUsuario;
         this.idPersona = idPersona;
         this.idTipoUsuario = idTipoUsuario;
@@ -49,7 +52,27 @@ public class Usuario {
         this.fechaFinLogin = fechaFinLogin;
         this.rangoFechaLogin = rangoFechaLogin;
         this.activo = activo;
+        this.usuario = usuario;
+        this.password = password;
     }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    
 
     public BigDecimal getIdUsuario() {
         return idUsuario;

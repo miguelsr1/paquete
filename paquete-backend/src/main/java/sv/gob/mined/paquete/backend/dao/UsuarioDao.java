@@ -5,6 +5,8 @@
  */
 package sv.gob.mined.paquete.backend.dao;
 
+import java.util.List;
+import sv.gob.mined.paquete.backend.model.Roles;
 import sv.gob.mined.paquete.backend.model.Usuario;
 
 /**
@@ -16,4 +18,6 @@ public interface UsuarioDao {
     public Usuario isUsuarioValido(String usuario, String clave);
 
     public Usuario getUsuario(String usuario);
+    
+    public List<Roles> getRolesByUsuario(String usuario);
 }

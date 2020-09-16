@@ -28,15 +28,15 @@ public class LoginRestController {
 
     @Autowired
     private LoginService loginService;
-    
-    @GetMapping("/opciones")
-    public List<OpcionMenu> index(){
+
+    @GetMapping(value = {"/opciones", "/"})
+    public List<OpcionMenu> index() {
         return loginService.findAll();
     }
-    
+
     @GetMapping("/usuario")
     @ResponseBody
-    public Usuario index(@RequestParam(name = "usuario") String usuario, @RequestParam(name = "clave") String clave){
+    public Usuario index(@RequestParam(name = "usuario") String usuario, @RequestParam(name = "clave") String clave) {
         return loginService.isUsuarioValida(usuario, clave);
     }
 }
