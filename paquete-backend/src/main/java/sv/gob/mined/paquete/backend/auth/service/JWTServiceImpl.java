@@ -18,7 +18,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import sv.gob.mined.paquete.backend.auth.SimpleGrantedAuthorityMixin;
+import sv.gob.mined.paquete.backend.app.auth.SimpleGrantedAuthorityMixin;
 
 @Component
 public class JWTServiceImpl implements JWTService {

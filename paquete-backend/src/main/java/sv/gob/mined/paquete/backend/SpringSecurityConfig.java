@@ -14,8 +14,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import sv.gob.mined.paquete.backend.app.filter.JWTAuthenticationFilter;
-import sv.gob.mined.paquete.backend.app.filter.JWTAuthorizationFilter;
+import sv.gob.mined.paquete.backend.app.auth.filter.JWTAuthenticationFilter;
+import sv.gob.mined.paquete.backend.app.auth.filter.JWTAuthorizationFilter;
 import sv.gob.mined.paquete.backend.auth.service.JWTService;
 import sv.gob.mined.paquete.backend.service.JdbcUserDetailsService;
 import sv.gob.mined.paquete.backend.util.PasswordEncodeRC4;
@@ -53,8 +53,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling().accessDeniedPage("/error_403")*/
                 .and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtService))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtService))
+                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
+                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }

@@ -1,4 +1,4 @@
-package sv.gob.mined.paquete.backend.auth;
+package sv.gob.mined.paquete.backend.app.auth;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
