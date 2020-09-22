@@ -66,6 +66,10 @@
                             <i class="fa fa-home acua" style="font-size: 16px;"></i>
                             <p:spacer width="10" height="8"/>
                             <p:outputLabel value="Datos relativos al contrato"/>
+                            
+                            <p:outputPanel style="float: right;" rendered="false" >
+                                <p:commandButton value="Ver historial" onclick="PF('dlgHistorialCambiosReserva').show();"/>
+                            </p:outputPanel>
                         </h3>
 
                         <p:panelGrid columns="1" style="margin-bottom:10px" layout="grid" styleClass="form-group ui-panelgrid-blank">

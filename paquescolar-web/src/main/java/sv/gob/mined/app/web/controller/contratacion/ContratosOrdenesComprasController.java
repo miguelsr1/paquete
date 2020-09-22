@@ -427,7 +427,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
             razonSocial = resolucionAdj.getIdParticipante().getIdEmpresa().getRazonSocial();
             representanteLegal = proveedorEJB.getRespresentanteLegalEmp(resolucionAdj.getIdParticipante().getIdEmpresa().getIdPersona().getIdPersona());
             representanteCe = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
-            
+
             soloLectura = (resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 2);
 
             if (contratoOrd == null) { //CREAR NUEVA INSTACIA DE UN CONTRATO
@@ -733,6 +733,9 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                         if (current.getPlazoPrevistoEntrega() == null) {
                                             setPlazoPrevistoEntrega();
                                         }
+                                        break;
+                                    default:
+                                        JsfUtil.mensajeAlerta("La reserva de fondos NO ESTA APLICADA.");
                                         break;
                                 }
 

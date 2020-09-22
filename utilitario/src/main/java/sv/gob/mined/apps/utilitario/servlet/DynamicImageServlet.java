@@ -36,7 +36,7 @@ public class DynamicImageServlet extends HttpServlet {
             // Write image contents to response.
             response.getOutputStream().write(bytes);
         } catch (IOException e) {
-            Logger.getLogger(DynamicImageServlet.class.getName()).log(Level.WARNING, "No se ha podido cargar la imagen {0}", request.getParameter("file"));
+            //Logger.getLogger(DynamicImageServlet.class.getName()).log(Level.WARNING, "No se ha podido cargar la imagen {0}", request.getParameter("file"));
         }
     }
 }
