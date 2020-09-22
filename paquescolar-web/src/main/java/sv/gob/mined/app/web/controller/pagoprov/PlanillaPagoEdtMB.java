@@ -686,7 +686,7 @@ public class PlanillaPagoEdtMB extends RecuperarProcesoUtil implements Serializa
             case 1:
                 showChequeEntProv = true;
 
-                empresa = proveedorEJB.findEmpresaByNit(planillaPago.getDetallePlanillaList().get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit());
+                empresa = proveedorEJB.findEmpresaByNit(planillaPago.getDetallePlanillaList().get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit(), true);
                 recuperarContratosByProveedor(planillaPago.getIdRequerimiento().getIdRequerimiento(), planillaPago.getDetallePlanillaList().get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit());
                 chequeFinanProve = cheque(3); //recuperar cheque para proveedor
 

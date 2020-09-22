@@ -102,7 +102,7 @@ public class ValidarProveedorMB implements Serializable {
                 JsfUtil.mensajeError("Los valores ingresados no coinciden con ningún proveedor");
                 break;
             case 3:
-                Empresa emp = proveedorEJB.findEmpresaByPk(idEmpresa);
+                Empresa emp = proveedorEJB.findEmpresaByNit(nit, false);
                 JsfUtil.mensajeInformacion("El correo registrado [<b>"+emp.getIdPersona().getEmail()+"</b>] no es un correo válido, por favor escribir a <a href='mailto:carlos.villegas@mined.edu.sv'>Carlos Villegas</a> para corregir su correo.");
                 break;
         }

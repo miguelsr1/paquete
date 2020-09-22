@@ -318,8 +318,8 @@ public class ProveedorEJB {
         return (cantidad.intValue() == 1);
     }
 
-    public Empresa findEmpresaByNit(String nit) {
-        Query q = em.createQuery("SELECT e FROM Empresa e WHERE e.numeroNit=:nit and e.estadoEliminacion=0", Empresa.class);
+    public Empresa findEmpresaByNit(String nit, Boolean empresa) {
+        Query q = em.createQuery("SELECT e FROM Empresa e WHERE e" + (empresa ? "" : ".idPersona") + ".numeroNit=:nit and e.estadoEliminacion=0", Empresa.class);
         q.setParameter("nit", nit);
 
         if (q.getResultList().isEmpty()) {
@@ -1788,7 +1788,7 @@ public class ProveedorEJB {
             String cuerpo = MessageFormat.format(cuerpoEmail, codigoGenerado);
 
             if (eMailEJB.enviarMail(emp.getIdPersona().getEmail(), tituloEmail, cuerpo)) {
-                updateCodigoValidacionProveedor(emp.getIdEmpresa(), codigoGenerado, false);
+                //updateCodigoValidacionProveedor(emp.getIdEmpresa(), codigoGenerado, false);
             } else {
                 codigoOperacion = 3;
             }

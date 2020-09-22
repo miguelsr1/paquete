@@ -96,7 +96,7 @@ public class ConamypeEJB {
                         for (Object obj : json2) {
                             JSONObject jsonObj = (JSONObject) obj;
 
-                            Empresa empresa = proveedorEJB.findEmpresaByNit(jsonObj.get("nit").toString());
+                            Empresa empresa = proveedorEJB.findEmpresaByNit(jsonObj.get("nit").toString(), true);
                             Persona persona;
                             usuario = "CONAMYPE_" + jsonObj.get("usuario").toString();
 

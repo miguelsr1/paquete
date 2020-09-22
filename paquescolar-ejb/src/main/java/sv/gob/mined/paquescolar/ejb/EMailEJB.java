@@ -144,7 +144,7 @@ public class EMailEJB {
             m.setSentDate(new java.util.Date());
             m.setText(cuerpo, "UTF-8", "html");
             Transport.send(m);
-
+            Logger.getLogger(EMailEJB.class.getName()).log(Level.INFO, "Modulo Proveedores: Se envio el correo a.{0}", remitente);
             return true;
         } catch (MessagingException ex) {
             Logger.getLogger(EMailEJB.class.getName()).log(Level.WARNING, "El correo registrado para el proveedor no existe.", ex);

@@ -463,7 +463,7 @@ public class CreditoBancarioController implements Serializable {
         if (recuperarProceso.getProcesoAdquisicion().getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de contratación");
         } else if (validacionFiltro()) {
-            empresa = proveedorEJB.findEmpresaByNit(numeroNit);
+            empresa = proveedorEJB.findEmpresaByNit(numeroNit, true);
             if (empresa != null) {
                 List lst = proveedorEJB.findDetRubroMuestraInteresEntitiesByRubroAndEmpresa(detalleProceso, empresa);
 

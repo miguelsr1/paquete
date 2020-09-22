@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="84103add-b080-41e4-b8b4-4a3ead4a059d">
 	<property name="ireport.zoom" value="2.5937424601000023"/>
-	<property name="ireport.x" value="99"/>
-	<property name="ireport.y" value="524"/>
+	<property name="ireport.x" value="19"/>
+	<property name="ireport.y" value="480"/>
 	<parameter name="pRubro" class="java.lang.String"/>
 	<parameter name="ubicacionImagenes" class="java.lang.String">
 		<defaultValueExpression><![CDATA["/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/"]]></defaultValueExpression>
@@ -78,19 +78,20 @@
 	<pageHeader>
 		<band height="48" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement x="21" y="5" width="531" height="42" uuid="19876f79-7df9-4794-a033-eb3746e7c7dd"/>
+				<reportElement x="21" y="0" width="531" height="42" uuid="19876f79-7df9-4794-a033-eb3746e7c7dd"/>
 				<textFieldExpression><![CDATA["DECLARACIÓN JURADA GLOBAL SOBRE LA INCORPORACIÓN DE LA OFERTA GLOBAL A LA BASE DE COMPRASAL, LA ACEPTACIÓN DE LAS ADJUDICACIONES Y EL CUMPLIMIENTO DE LAS ESPECIFICACIONES TÉCNICAS PLAZO Y LUGAR DE ENTREGA, DE: "+$P{pRubro}+" (AÑO "+$F{anho}+ ")"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="6" splitType="Stretch"/>
+		<band height="4" splitType="Stretch"/>
 	</columnHeader>
 	<detail>
 		<band height="47" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
 				<reportElement x="21" y="0" width="531" height="47" uuid="bdafee93-0adf-43a4-b29b-4052dc81284b"/>
 				<textElement textAlignment="Justified">
+					<font size="8"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA["En la ciudad de " + $P{pLugar} + ", a las " + Herramientas.getHora($F{fecha})+ " horas del día "+Herramientas.getNumDia($F{fecha}) + " del mes " + Herramientas.getNomMes($F{fecha}) + " del año " + 
@@ -103,38 +104,56 @@ $F{direccionRepre} + ", actuando en mi calidad de Representante Legal de la soci
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="9" splitType="Stretch"/>
+		<band height="4" splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="144" splitType="Stretch">
+		<band height="108" splitType="Stretch">
 			<textField>
-				<reportElement x="20" y="14" width="512" height="15" uuid="a9c162c9-9b30-496d-b0e1-b810afdd01c8"/>
+				<reportElement x="20" y="11" width="512" height="12" uuid="a9c162c9-9b30-496d-b0e1-b810afdd01c8"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
 				<textFieldExpression><![CDATA["Nombre del Representante Legal: " + $F{representanteLegal}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="20" y="56" width="437" height="15" uuid="c99b2154-eed0-4c3a-a9bf-c0bde0363cc9"/>
+				<reportElement x="20" y="44" width="437" height="12" uuid="c99b2154-eed0-4c3a-a9bf-c0bde0363cc9"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
 				<textFieldExpression><![CDATA["No NIT de la Sociedad: "+$F{nitEmpresa}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="20" y="28" width="437" height="15" uuid="d3cf0a89-512a-498b-9f55-5b3b1582ab63"/>
+				<reportElement x="20" y="22" width="437" height="12" uuid="d3cf0a89-512a-498b-9f55-5b3b1582ab63"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
 				<textFieldExpression><![CDATA["No DUI del Representante Legal: "+$F{duiRepre}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="20" y="42" width="437" height="15" uuid="c99b2154-eed0-4c3a-a9bf-c0bde0363cc9"/>
+				<reportElement x="20" y="33" width="437" height="12" uuid="c99b2154-eed0-4c3a-a9bf-c0bde0363cc9"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
 				<textFieldExpression><![CDATA["No NIT del Representante Legal: "+$F{nitRepre}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="20" y="0" width="512" height="15" uuid="a9c162c9-9b30-496d-b0e1-b810afdd01c8"/>
+				<reportElement x="20" y="0" width="512" height="12" uuid="a9c162c9-9b30-496d-b0e1-b810afdd01c8"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
 				<textFieldExpression><![CDATA["Nombre de la Sociedad o Empresa: " + $F{razonSocial}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="20" y="70" width="437" height="15" uuid="aedf7540-c06b-426a-83b4-f58ac3be72f4"/>
+				<reportElement x="20" y="55" width="437" height="12" uuid="aedf7540-c06b-426a-83b4-f58ac3be72f4"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
 				<textFieldExpression><![CDATA["Correo Electrónico: "+$P{pCorreoPersona}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="108" width="564" height="36" uuid="da7945ea-077d-4e20-9934-0f9a68dc07f3"/>
+				<reportElement x="8" y="72" width="564" height="36" uuid="da7945ea-077d-4e20-9934-0f9a68dc07f3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
-					<font fontName="Arial" size="9"/>
+					<font fontName="Arial" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Lugar y fecha de la presentación de Oferta: "+$P{pLugar}+", "+(new SimpleDateFormat("hh:mm aa dd/MM/yyyy")).format($F{fechaModificacion})+"\n"+
 "Fecha de descarga: "+$P{pLugar}+", "+(new SimpleDateFormat("hh:mm aa dd/MM/yyyy")).format(new Date())]]></textFieldExpression>

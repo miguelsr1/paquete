@@ -1451,7 +1451,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
         if (proveedor == null || proveedor.getNumeroNit() == null || proveedor.getNumeroNit().isEmpty()) {
             JsfUtil.mensajeAlerta("Debe de seleccionar un proveedor");
         } else {
-            empresa = proveedorEJB.findEmpresaByNit(proveedor.getNumeroNit());
+            empresa = proveedorEJB.findEmpresaByNit(proveedor.getNumeroNit(), true);
             recuperarContratosByProveedor(idReq, proveedor.getNumeroNit());
             mostrarEditDePlanilla();
         }
@@ -1502,7 +1502,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
                     showDlgSeleccionProveedor();
                     PrimeFaces.current().ajax().update("dlgSeleccionProveedor");
                 } else {
-                    empresa = proveedorEJB.findEmpresaByNit(lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit());
+                    empresa = proveedorEJB.findEmpresaByNit(lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit(), true);
                     recuperarContratosByProveedor(requerimientoFondos.getIdRequerimiento(), lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit());
                 }
                 chequeFinanProve = cheque(3); //recuperar cheque para proveedor
@@ -2246,7 +2246,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
 
     public void buscarLstRentaProve() {
         if (!numeroNit.isEmpty()) {
-            empresa = proveedorEJB.findEmpresaByNit(numeroNit);
+            empresa = proveedorEJB.findEmpresaByNit(numeroNit, true);
             lstProveedores = pagoProveedoresEJB.getLstDatosProveDto(anho, numeroNit, null, VarSession.getVariableSessionUsuario());
         } else {
             JsfUtil.mensajeInformacion("Debe de ingresar un NIT o un requerimiento de fondos");
