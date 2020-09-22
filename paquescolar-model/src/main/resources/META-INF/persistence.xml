@@ -123,6 +123,7 @@
     <class>sv.gob.mined.paquescolar.model.pojos.recepcion.RptEntregasGeneralPorDepartamentoDto</class>
     <class>sv.gob.mined.paquescolar.model.Liquidacion</class>
     <class>sv.gob.mined.paquescolar.model.EmpresaCodigoSeg</class>
+    <class>sv.gob.mined.paquescolar.model.pojos.DeclaracionJurada</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>

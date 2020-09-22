@@ -1767,27 +1767,31 @@ public class ProveedorEJB {
      * @param dui
      * @param tituloEmail
      * @param cuerpoEmail
-     * @return
+     * @return 1. Todo bien, 2. Datos no encontrados, 3. Error en el correo
      */
-    public Boolean validarCodigoSegEmpresa(String codigoSeg, String nit, String dui, String tituloEmail, String cuerpoEmail) {
-        Boolean codigoOperacion;
+    public int validarCodigoSegEmpresa(String codigoSeg, String nit, String dui, String tituloEmail, String cuerpoEmail) {
+        int codigoOperacion = 1;
         Empresa emp = findEmpresaByCodSeg(codigoSeg);
 
         if (emp == null) {
-            codigoOperacion = false;
+            codigoOperacion = 2;
+        } else if (emp.getIdPersona().getNumeroNit().equals(nit)
+                && emp.getIdPersona().getNumeroDui().equals(dui)) {
+
         } else {
-            codigoOperacion = emp.getIdPersona().getNumeroNit().equals(nit)
-                    && emp.getIdPersona().getNumeroDui().equals(dui);
+            codigoOperacion = 2;
         }
 
-        if (codigoOperacion) {
+        if (codigoOperacion == 1) {
             String codigoGenerado = (new RC4Crypter()).encrypt("ha", emp.getIdEmpresa().toString().concat(":").concat(codigoSeg));
 
             String cuerpo = MessageFormat.format(cuerpoEmail, codigoGenerado);
 
-            eMailEJB.enviarMail(emp.getIdPersona().getEmail(), tituloEmail, cuerpo);
-
-            updateCodigoValidacionProveedor(emp.getIdEmpresa(), codigoGenerado, false);
+            if (eMailEJB.enviarMail(emp.getIdPersona().getEmail(), tituloEmail, cuerpo)) {
+                updateCodigoValidacionProveedor(emp.getIdEmpresa(), codigoGenerado, false);
+            } else {
+                codigoOperacion = 3;
+            }
         }
         return codigoOperacion;
     }
@@ -1828,11 +1832,13 @@ public class ProveedorEJB {
     public String datosConfirmados(BigDecimal idDetRubro, BigDecimal idEmpresa, String usuario) {
         DetRubroMuestraInteres det = em.find(DetRubroMuestraInteres.class, idDetRubro);
 
-        det.setFechaModificacion(new Date());
-        det.setDatosVerificados((short) 1);
-        det.setUsuarioModificacion(usuario);
+        if (det.getAceptacionTerminos() == 1) {
+            det.setFechaModificacion(new Date());
+            det.setDatosVerificados((short) 1);
+            det.setUsuarioModificacion(usuario);
 
-        em.merge(det);
+            em.merge(det);
+        }
 
         return getIdGestionByProceso(idEmpresa, det.getIdDetProcesoAdq().getIdDetProcesoAdq());
     }

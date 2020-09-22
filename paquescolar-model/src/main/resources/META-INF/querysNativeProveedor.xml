@@ -77,4 +77,27 @@
             ]]>
         </query>
     </named-native-query>
+    
+    <named-native-query name="Proveedor.DeclaracionJurada" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.DeclaracionJurada">
+        <query>
+            <![CDATA[
+            select 
+                rownum              as idRow,
+                descripcion_rubro   as rubro,
+                anho                as anho,
+                razon_social        as razonSocial,
+                nombre_presentante  as representanteLegal,
+                nit_empresa         as nitEmpresa,
+                direccion_completa  as direccionEmpresa,
+                numero_nit          as nitRepre,
+                numero_dui          as duiRepre,
+                domicilio           as direccionRepre,
+                fecha_modificacion  as fechaModificacion
+            from VW_RPT_DECLARACION_JURADA2 
+            where 
+                nit_empresa=?1 and id_det_proceso_adq=?2
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>

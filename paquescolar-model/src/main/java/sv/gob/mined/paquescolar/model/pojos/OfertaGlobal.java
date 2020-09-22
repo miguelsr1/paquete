@@ -7,11 +7,14 @@ package sv.gob.mined.paquescolar.model.pojos;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EntityResult;
 import javax.persistence.Id;
 import javax.persistence.SqlResultSetMapping;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -46,6 +49,8 @@ public class OfertaGlobal implements Serializable {
     private List<DetItemOfertaGlobal> lstDetItemOfertaGlobalLibros = new ArrayList();
     @Transient
     private List<DetMunIntOfertaGlobal> lstMunIntOfertaGlobal = new ArrayList();
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaModificacion;
 
     public OfertaGlobal() {
     }
@@ -160,5 +165,13 @@ public class OfertaGlobal implements Serializable {
 
     public void setNitSociedad(String nitSociedad) {
         this.nitSociedad = nitSociedad;
+    }
+
+    public Date getFechaModificacion() {
+        return fechaModificacion;
+    }
+
+    public void setFechaModificacion(Date fechaModificacion) {
+        this.fechaModificacion = fechaModificacion;
     }
 }

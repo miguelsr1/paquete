@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="84103add-b080-41e4-b8b4-4a3ead4a059d">
 	<property name="ireport.zoom" value="2.5937424601000023"/>
 	<property name="ireport.x" value="99"/>
-	<property name="ireport.y" value="528"/>
+	<property name="ireport.y" value="524"/>
 	<parameter name="pRubro" class="java.lang.String"/>
 	<parameter name="ubicacionImagenes" class="java.lang.String">
 		<defaultValueExpression><![CDATA["/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/"]]></defaultValueExpression>
@@ -44,6 +44,9 @@
 	</field>
 	<field name="rubro" class="java.lang.String">
 		<fieldDescription><![CDATA[rubro]]></fieldDescription>
+	</field>
+	<field name="fechaModificacion" class="java.util.Date">
+		<fieldDescription><![CDATA[fechaModificacion]]></fieldDescription>
 	</field>
 	<background>
 		<band splitType="Stretch"/>
@@ -103,7 +106,7 @@ $F{direccionRepre} + ", actuando en mi calidad de Representante Legal de la soci
 		<band height="9" splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="90" splitType="Stretch">
+		<band height="144" splitType="Stretch">
 			<textField>
 				<reportElement x="20" y="14" width="512" height="15" uuid="a9c162c9-9b30-496d-b0e1-b810afdd01c8"/>
 				<textFieldExpression><![CDATA["Nombre del Representante Legal: " + $F{representanteLegal}]]></textFieldExpression>
@@ -127,6 +130,14 @@ $F{direccionRepre} + ", actuando en mi calidad de Representante Legal de la soci
 			<textField>
 				<reportElement x="20" y="70" width="437" height="15" uuid="aedf7540-c06b-426a-83b4-f58ac3be72f4"/>
 				<textFieldExpression><![CDATA["Correo Electrónico: "+$P{pCorreoPersona}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="108" width="564" height="36" uuid="da7945ea-077d-4e20-9934-0f9a68dc07f3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Lugar y fecha de la presentación de Oferta: "+$P{pLugar}+", "+(new SimpleDateFormat("hh:mm aa dd/MM/yyyy")).format($F{fechaModificacion})+"\n"+
+"Fecha de descarga: "+$P{pLugar}+", "+(new SimpleDateFormat("hh:mm aa dd/MM/yyyy")).format(new Date())]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

@@ -16,6 +16,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
+import sv.gob.mined.paquescolar.model.Empresa;
 import sv.gob.mined.paquescolar.util.RC4Crypter;
 
 /**
@@ -43,7 +44,7 @@ public class ValidarProveedorMB implements Serializable {
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         if (params.containsKey("codigo")) {
             String idEmpresaStr = (new RC4Crypter()).decrypt("ha", params.get("codigo")).split(":")[0];
-            
+
             idEmpresa = new BigDecimal(idEmpresaStr);
         }
     }
@@ -92,19 +93,26 @@ public class ValidarProveedorMB implements Serializable {
         String tituloEmail = UTIL_CORREO.getString("prov.email.titulo");
         String cuerpoEmail = UTIL_CORREO.getString("prov.email.mensaje");
 
-        Boolean validar = proveedorEJB.validarCodigoSegEmpresa(codigo, nit, dui, tituloEmail, cuerpoEmail);
-        if (validar) {
-            JsfUtil.mensajeInformacion("Se le ha enviado un correo para activar su usuario de acceso. Esta es la única vez que podrá realizar este paso.");
-        } else {
-            JsfUtil.mensajeError("Los valores ingresados no coinciden con ningún proveedor");
+        int validar = proveedorEJB.validarCodigoSegEmpresa(codigo, nit, dui, tituloEmail, cuerpoEmail);
+        switch (validar) {
+            case 1:
+                JsfUtil.mensajeInformacion("Se le ha enviado un correo para activar su usuario de acceso. Esta es la única vez que podrá realizar este paso.");
+                break;
+            case 2:
+                JsfUtil.mensajeError("Los valores ingresados no coinciden con ningún proveedor");
+                break;
+            case 3:
+                Empresa emp = proveedorEJB.findEmpresaByPk(idEmpresa);
+                JsfUtil.mensajeInformacion("El correo registrado [<b>"+emp.getIdPersona().getEmail()+"</b>] no es un correo válido, por favor escribir a <a href='mailto:carlos.villegas@mined.edu.sv'>Carlos Villegas</a> para corregir su correo.");
+                break;
         }
 
-        showPanel = validar;
+        showPanel = (validar == 1);
     }
 
     public String guardarPasswordProv() {
         proveedorEJB.guardarPasswordProv(idEmpresa, pass1);
-        
+
         return "index.mined";
     }
 }

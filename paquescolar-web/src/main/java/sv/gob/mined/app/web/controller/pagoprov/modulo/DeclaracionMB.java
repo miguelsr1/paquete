@@ -132,11 +132,11 @@ public class DeclaracionMB implements Serializable {
 
     public void guardarAceptarCondiciones() {
         if (aceptarCondiciones && aceptarDeclaracion) {
-            idGestion = proveedorEJB.datosConfirmados(capacidadInst.getIdMuestraInteres().getIdMuestraInteres(), 
+            idGestion = proveedorEJB.datosConfirmados(capacidadInst.getIdMuestraInteres().getIdMuestraInteres(),
                     empresa.getIdEmpresa(),
                     VarSession.getVariableSessionUsuario());
             enviarNotificacionModProv();
-        }else{
+        } else {
             JsfUtil.mensajeAlerta("Debe de aceptar la Declaració Jurada y Aceptación de Presentación de Oferta.");
         }
     }
@@ -144,14 +144,18 @@ public class DeclaracionMB implements Serializable {
     public void impOfertaGlobal() {
         try {
             String lugar = empresa.getIdMunicipio().getNombreMunicipio().concat(", ").concat(empresa.getIdMunicipio().getCodigoDepartamento().getNombreDepartamento());
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            if (idGestion.isEmpty()) {
+                idGestion = proveedorEJB.datosConfirmados(capacidadInst.getIdMuestraInteres().getIdMuestraInteres(),
+                        empresa.getIdEmpresa(),
+                        VarSession.getVariableSessionUsuario());
+            }
 
             ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
             HashMap param = new HashMap();
             param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
             param.put("pEscudo", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
             param.put("usuarioInsercion", VarSession.getVariableSessionUsuario());
-            param.put("pLugar", lugar + ", " + sdf.format(new Date()));
+            param.put("pLugar", lugar);
             param.put("pRubro", JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
             param.put("pIdRubro", capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue());
             param.put("pCorreoPersona", capacidadInst.getIdMuestraInteres().getIdEmpresa().getIdPersona().getEmail());

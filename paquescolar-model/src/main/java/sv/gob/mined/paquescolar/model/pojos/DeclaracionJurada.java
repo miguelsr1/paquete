@@ -4,16 +4,37 @@
  */
 package sv.gob.mined.paquescolar.model.pojos;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.EntityResult;
+import javax.persistence.Id;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author misanchez
  */
-public class DeclaracionJurada {
+@Entity
+@XmlRootElement
+@SqlResultSetMapping(name = "defaultDeclaracionJurada",
+        entities = @EntityResult(entityClass = DeclaracionJurada.class))
+public class DeclaracionJurada implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    private BigDecimal idRow;
     private String rubro;
     private String anho;
+    @Transient
     private String ciudad;
+    @Transient
     private Date fecha;
     private String razonSocial;
     private String direccionEmpresa;
@@ -22,8 +43,18 @@ public class DeclaracionJurada {
     private String direccionRepre;
     private String nitRepre;
     private String duiRepre;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaModificacion;
 
     public DeclaracionJurada() {
+    }
+
+    public BigDecimal getIdRow() {
+        return idRow;
+    }
+
+    public void setIdRow(BigDecimal idRow) {
+        this.idRow = idRow;
     }
 
     public String getRubro() {
@@ -112,5 +143,13 @@ public class DeclaracionJurada {
 
     public void setDuiRepre(String duiRepre) {
         this.duiRepre = duiRepre;
+    }
+
+    public Date getFechaModificacion() {
+        return fechaModificacion;
+    }
+
+    public void setFechaModificacion(Date fechaModificacion) {
+        this.fechaModificacion = fechaModificacion;
     }
 }

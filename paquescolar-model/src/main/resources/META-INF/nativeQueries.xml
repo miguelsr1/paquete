@@ -381,7 +381,8 @@
                 ID_DET_PROCESO_ADQ      as idDetProcesoAdq,
                 CAPACIDAD_ACREDITADA    as capacidadCalificada,
                 NUMERO_DUI              as duiRepresentante,
-                NIT_EMPRESA             as nitSociedad
+                NIT_EMPRESA             as nitSociedad,
+                fecha_modificacion      as fechaModificacion
             FROM 
                 VW_RPT_CABECERA_OFERTA_GLOBAL 
             WHERE 

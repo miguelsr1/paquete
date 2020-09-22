@@ -133,7 +133,7 @@ public class EMailEJB {
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void enviarMail(String remitente, String titulo, String cuerpo) {
+    public Boolean enviarMail(String remitente, String titulo, String cuerpo) {
         try {
             MimeMessage m = new MimeMessage(mailSession);
             Address from = new InternetAddress(utilEJB.getValorDeParametro("PAGO_CORREO_NOTIFICACION"));
@@ -144,14 +144,17 @@ public class EMailEJB {
             m.setSentDate(new java.util.Date());
             m.setText(cuerpo, "UTF-8", "html");
             Transport.send(m);
+
+            return true;
         } catch (MessagingException ex) {
-            Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EMailEJB.class.getName()).log(Level.WARNING, "El correo registrado para el proveedor no existe.", ex);
+            return false;
         }
     }
-    
+
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Boolean enviarMail(String remitente,
-            String titulo, String mensaje, List<String> to, List<String> cc, List<String> bcc){
+            String titulo, String mensaje, List<String> to, List<String> cc, List<String> bcc) {
         try {
             MimeMessage m = new MimeMessage(mailSessionProv);
             Address from = new InternetAddress(remitente);
@@ -159,7 +162,7 @@ public class EMailEJB {
             Address[] destinatarios = new Address[to.size()];
             Address[] copia = new Address[cc.size()];
             Address[] copiaOcultos = new Address[bcc.size()];
-            
+
             for (int i = 0; i < to.size(); i++) {
                 destinatarios[i] = new InternetAddress(to.get(i));
             }
@@ -169,7 +172,7 @@ public class EMailEJB {
             for (int i = 0; i < bcc.size(); i++) {
                 copiaOcultos[i] = new InternetAddress(bcc.get(i));
             }
-            
+
             m.setFrom(from);
             m.setRecipients(Message.RecipientType.TO, destinatarios);
             m.setRecipients(Message.RecipientType.CC, copia);
@@ -184,7 +187,7 @@ public class EMailEJB {
 
             m.setContent(multipart);
             m.setSubject(titulo, "UTF-8");
-            
+
             Transport.send(m);
             return true;
         } catch (MessagingException ex) {
