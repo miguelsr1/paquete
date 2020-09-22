@@ -427,6 +427,8 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
             razonSocial = resolucionAdj.getIdParticipante().getIdEmpresa().getRazonSocial();
             representanteLegal = proveedorEJB.getRespresentanteLegalEmp(resolucionAdj.getIdParticipante().getIdEmpresa().getIdPersona().getIdPersona());
             representanteCe = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
+            
+            soloLectura = (resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 2);
 
             if (contratoOrd == null) { //CREAR NUEVA INSTACIA DE UN CONTRATO
                 current = new ContratosOrdenesCompras();
@@ -723,11 +725,17 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
 
                             } else {
                                 //if (resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().compareTo(new BigDecimal("2")) == 0) {
-                                    current = contratoOrd;
-                                    continuar = false;
-                                    if (current.getPlazoPrevistoEntrega() == null) {
-                                        setPlazoPrevistoEntrega();
-                                    }
+                                switch (resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().intValue()) {
+                                    case 2:
+                                    case 5:
+                                        current = contratoOrd;
+                                        continuar = false;
+                                        if (current.getPlazoPrevistoEntrega() == null) {
+                                            setPlazoPrevistoEntrega();
+                                        }
+                                        break;
+                                }
+
                                 /*} else {
                                     buscarHistorialCambios();
                                     PrimeFaces.current().ajax().update("dlgHistorialCambiosReserva");

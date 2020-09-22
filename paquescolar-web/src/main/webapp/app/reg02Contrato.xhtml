@@ -12,7 +12,7 @@
                         action="#{contratosOrdenesComprasController.prepareCreate}" process="@this"/>
             <p:menuitem value="Modificar" icon="fa fa-edit" update="dvFiltro pnlContrato dvOrganismo dvDocumentos"
                         action="#{contratosOrdenesComprasController.prepareEdit}" ajax="true" process="@this"/>
-            <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" actionListener="#{contratosOrdenesComprasController.guardar}" disabled="#{menuController.usuarioSoloLectura}"  update="pnlContrato pnlCentroEscolar"/>
+            <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" actionListener="#{contratosOrdenesComprasController.guardar}" disabled="#{menuController.usuarioSoloLectura or contratosOrdenesComprasController.soloLectura} "  update="pnlContrato pnlCentroEscolar"/>
             <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{contratosOrdenesComprasController.impDocumentos}" />
             <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
