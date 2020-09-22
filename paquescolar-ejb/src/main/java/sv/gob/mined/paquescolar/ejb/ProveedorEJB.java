@@ -1832,11 +1832,10 @@ public class ProveedorEJB {
     public String datosConfirmados(BigDecimal idDetRubro, BigDecimal idEmpresa, String usuario) {
         DetRubroMuestraInteres det = em.find(DetRubroMuestraInteres.class, idDetRubro);
 
-        if (det.getAceptacionTerminos() == 1) {
+        if (det.getAceptacionTerminos() == 0) {
             det.setFechaModificacion(new Date());
             det.setDatosVerificados((short) 1);
             det.setUsuarioModificacion(usuario);
-
             em.merge(det);
         }
 
