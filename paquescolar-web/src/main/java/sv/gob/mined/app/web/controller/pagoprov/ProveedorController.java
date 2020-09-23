@@ -1337,7 +1337,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
 
             if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() >= 8) {
                 jasperPrintList.add(JasperFillManager.fillReport(Reportes.class
-                        .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobal" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(lstDatos)));
+                        .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobalProv" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(lstDatos)));
 
             } else {
                 jasperPrintList.add(JasperFillManager.fillReport(Reportes.class
