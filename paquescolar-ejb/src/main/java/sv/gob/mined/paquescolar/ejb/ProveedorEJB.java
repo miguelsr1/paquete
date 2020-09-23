@@ -1788,7 +1788,7 @@ public class ProveedorEJB {
             String cuerpo = MessageFormat.format(cuerpoEmail, codigoGenerado);
 
             if (eMailEJB.enviarMail(emp.getIdPersona().getEmail(), tituloEmail, cuerpo)) {
-                //updateCodigoValidacionProveedor(emp.getIdEmpresa(), codigoGenerado, false);
+                updateCodigoValidacionProveedor(emp.getIdEmpresa(), codigoGenerado, false);
             } else {
                 codigoOperacion = 3;
             }
