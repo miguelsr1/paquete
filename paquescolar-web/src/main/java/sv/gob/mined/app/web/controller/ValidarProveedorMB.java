@@ -94,15 +94,17 @@ public class ValidarProveedorMB implements Serializable {
         String cuerpoEmail = UTIL_CORREO.getString("prov.email.mensaje");
 
         int validar = proveedorEJB.validarCodigoSegEmpresa(codigo, nit, dui, tituloEmail, cuerpoEmail);
+        Empresa emp;
         switch (validar) {
             case 1:
-                JsfUtil.mensajeInformacion("Se le ha enviado un correo para activar su usuario de acceso. Esta es la única vez que podrá realizar este paso.");
+                emp = proveedorEJB.findEmpresaByNit(nit, false);
+                JsfUtil.mensajeInformacion("Se ha enviado un correo a <b>"+emp.getIdPersona().getEmail()+"</b> para activar su usuario de acceso. <b>Esta es la única vez que podrá realizar este paso</b>.");
                 break;
             case 2:
                 JsfUtil.mensajeError("Los valores ingresados no coinciden con ningún proveedor");
                 break;
             case 3:
-                Empresa emp = proveedorEJB.findEmpresaByNit(nit, false);
+                emp = proveedorEJB.findEmpresaByNit(nit, false);
                 JsfUtil.mensajeInformacion("El correo registrado [<b>"+emp.getIdPersona().getEmail()+"</b>] no es un correo válido, por favor escribir a <a href='mailto:carlos.villegas@mined.edu.sv'>Carlos Villegas</a> para corregir su correo.");
                 break;
         }
