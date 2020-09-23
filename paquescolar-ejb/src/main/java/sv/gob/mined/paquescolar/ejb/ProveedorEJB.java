@@ -1835,6 +1835,7 @@ public class ProveedorEJB {
         if (det.getAceptacionTerminos() == 0) {
             det.setFechaModificacion(new Date());
             det.setDatosVerificados((short) 1);
+            det.setAceptacionTerminos((short) 1);
             det.setUsuarioModificacion(usuario);
             em.merge(det);
         }
