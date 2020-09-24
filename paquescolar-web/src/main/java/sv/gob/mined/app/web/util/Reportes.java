@@ -7,13 +7,16 @@ package sv.gob.mined.app.web.util;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
+import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -145,12 +148,15 @@ public class Reportes {
         }
     }
 
+    
     /**
-     *
+     * buscar las exceciones de este metodo y controlar los errores.
+     * 
      * @param jasperPrintList
      * @param nombreRpt
+     * @throws IOException
+     * @throws JRException 
      */
-    //buscar las exceciones de este metodo y controlar los errores.
     public static void generarReporte(List<JasperPrint> jasperPrintList, String nombreRpt) throws IOException, JRException {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -162,5 +168,9 @@ public class Reportes {
         exporter.exportReport();
 
         UtilFile.downloadFileBytes(baos.toByteArray(), nombreRpt, UtilFile.CONTENIDO_PDF, UtilFile.EXTENSION_PDF);
+    }
+
+    public static JasperPrint getReporteAImprimir(String path, Map<String, Object> param, JRDataSource ds) throws JRException {
+        return JasperFillManager.fillReport(Reportes.class.getClassLoader().getResourceAsStream(path + ".jasper"), param, ds);
     }
 }
