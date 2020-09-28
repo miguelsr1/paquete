@@ -83,6 +83,8 @@ public class OrganizacionEducativa implements Serializable {
     private Date fechaEliminacion;
     @Column(name = "ESTADO_ELIMINACION")
     private BigInteger estadoEliminacion;
+    @Column(name = "CORREO_ELECTRONICO")
+    private String correoElectronico;
 
     public OrganizacionEducativa() {
     }
@@ -223,5 +225,13 @@ public class OrganizacionEducativa implements Serializable {
 
     public void setNumeroDui(String numeroDui) {
         this.numeroDui = numeroDui;
+    }
+
+    public String getCorreoElectronico() {
+        return correoElectronico;
+    }
+
+    public void setCorreoElectronico(String correoElectronico) {
+        this.correoElectronico = correoElectronico;
     }
 }

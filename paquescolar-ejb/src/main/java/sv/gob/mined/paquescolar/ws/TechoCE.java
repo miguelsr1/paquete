@@ -118,11 +118,11 @@ public class TechoCE {
         estB3 = entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("18"), procesoAdquisicion);
 
         if (estPar.getIdEstadistica() == null) {
-            try {
+            //try {
                 estPar.setCodigoEntidad(codigoEntidad);
                 estPar.setFemenimo(new BigInteger(String.valueOf(parFem)));
                 estPar.setMasculino(new BigInteger(String.valueOf(parMas)));
-                estPar.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("1")));
+                estPar.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("22")));
                 estPar.setIdProcesoAdq(procesoAdquisicion);
 
                 estCiclo1.setCodigoEntidad(codigoEntidad);
@@ -239,7 +239,7 @@ public class TechoCE {
                 entidadEducativaEJB.asignarTechoCe(estB2, idProceso);
                 entidadEducativaEJB.asignarTechoCe(estB3, idProceso);
 
-                techoUni = entidadEducativaEJB.findTechoByProceso(detProAdqUni, codigoEntidad, "ADMIN");
+                /*techoUni = entidadEducativaEJB.findTechoByProceso(detProAdqUni, codigoEntidad, "ADMIN");
                 techoUti = entidadEducativaEJB.findTechoByProceso(detProAdqUti, codigoEntidad, "ADMIN");
                 techoZap = entidadEducativaEJB.findTechoByProceso(detProAdqZap, codigoEntidad, "ADMIN");
 
@@ -265,12 +265,10 @@ public class TechoCE {
 
                 BeanUtils.copyProperties(techoUni2, techoUni);
 
-                techoUni2.setIdDetProcesoAdq(detProAdqUni2);
+                techoUni2.setIdDetProcesoAdq(detProAdqUni2);*/
 
-                Logger.getLogger(TechoCE.class.getName()).log(Level.INFO, "codigo: {0} - {1}", new Object[]{codigoEntidad, entidadEducativaEJB.guardarPresupuesto("ADMIN", techoUni, techoUni2, techoUti, techoZap)});
-            } catch (IllegalAccessException | InvocationTargetException ex) {
-                Logger.getLogger(TechoCE.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                //Logger.getLogger(TechoCE.class.getName()).log(Level.INFO, "codigo: {0} - {1}", new Object[]{codigoEntidad, entidadEducativaEJB.guardarPresupuesto("ADMIN", techoUni, techoUni2, techoUti, techoZap)});
+           
         }
         return "ok";
     }

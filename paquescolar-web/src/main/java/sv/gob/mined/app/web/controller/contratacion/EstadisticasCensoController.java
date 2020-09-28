@@ -923,7 +923,12 @@ public class EstadisticasCensoController implements Serializable {
                 if (lstPrecios.isEmpty()) {
                     JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
                 } else {
-                    preParMascarilla = getPrecioMax(lstPrecios, 1);
+                    if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() == 9) {
+                        preParMascarilla = getPrecioMax(lstPrecios, 22);
+                    } else {
+                        preParMascarilla = getPrecioMax(lstPrecios, 1);
+                    }
+
                     preCicloIMascarilla = getPrecioMax(lstPrecios, 3);
                     preCicloIIMascarilla = getPrecioMax(lstPrecios, 4);
                     preCicloIIIMascarilla = getPrecioMax(lstPrecios, 5);
@@ -1199,7 +1204,7 @@ public class EstadisticasCensoController implements Serializable {
                     organizacionEducativa.setTelDirector(telefono1);
                     organizacionEducativa.setTelDirector2(telefono2);
                     organizacionEducativa.setNumeroDui(numeroDui);
-                    
+
                     entidadEducativaEJB.edit(organizacionEducativa);
                     entidadEducativaEJB.updateNombreDirectorContratoYPago(codigoEntidad, procesoAdquisicion.getIdAnho().getIdAnho().intValue(), nombre);
                 }

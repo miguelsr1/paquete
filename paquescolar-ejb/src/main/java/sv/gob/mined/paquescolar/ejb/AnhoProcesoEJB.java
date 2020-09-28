@@ -80,7 +80,7 @@ public class AnhoProcesoEJB {
     }
 
     public DetalleProcesoAdq getDetProcesoAdq(Integer idProcesoAdquisicion, BigDecimal rubrosAmostrarInteres) {
-        Query q = em.createQuery("SELECT d FROM DetalleProcesoAdq d WHERE d.idProcesoAdq=:idProceso and d.idRubroAdq.idRubroInteres =:idRubro ORDER BY d.idDetProcesoAdq", DetalleProcesoAdq.class);
+        Query q = em.createQuery("SELECT d FROM DetalleProcesoAdq d WHERE d.idProcesoAdq.idProcesoAdq =:idProceso and d.idRubroAdq.idRubroInteres =:idRubro ORDER BY d.idDetProcesoAdq", DetalleProcesoAdq.class);
         q.setParameter("idProceso", idProcesoAdquisicion);
         q.setParameter("idRubro", rubrosAmostrarInteres);
         if (q.getResultList().isEmpty()) {
