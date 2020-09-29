@@ -1411,13 +1411,20 @@ public class EstadisticasCensoController implements Serializable {
         List<String> to = new ArrayList();
         List<String> cc = new ArrayList();
         
-//        lst.forEach((org) -> {
-//            to.add(org.getCorreoElectronico());
-//        });
+        to.add("miguel.sanchez@mined.gob.sv");
+        
+        lst.forEach((org) -> {
+            to.add(org.getCorreoElectronico());
+        });
         
         to.add("rafael.arias@mined.gob.sv");
-        to.add("miguel.sanchez@mined.gob.sv");
 
-        eMailEJB.enviarMail("rafael.arias@mined.gob.sv", titulo, mensaje, to, cc, new ArrayList(), archivos);
+        to.forEach((string) -> {
+            List<String> lista = new ArrayList();
+            lista.add(string);
+            
+            eMailEJB.enviarMail("rafael.arias@mined.gob.sv", titulo, mensaje, lista, cc, new ArrayList(), archivos);
+        });
+        
     }
 }

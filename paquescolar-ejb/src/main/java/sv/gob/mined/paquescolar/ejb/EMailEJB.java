@@ -1,13 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sv.gob.mined.paquescolar.ejb;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -32,9 +24,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.mail.util.ByteArrayDataSource;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.pdfbox.pdmodel.PDDocument;
 
 /**
  *
@@ -227,11 +217,6 @@ public class EMailEJB {
             archivos.forEach((key, value) -> {
                 
                 addAttachment(value, multipart);
-//                try {
-//                    multipart.addBodyPart(addFilesAttachment(key, value, new MimeBodyPart()));
-//                } catch (MessagingException ex) {
-//                    Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
-//                }
             });
 
             m.setContent(multipart);
@@ -256,43 +241,5 @@ public class EMailEJB {
         } catch (MessagingException ex) {
             Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    private MimeBodyPart addFilesAttachment(String key, String value, MimeBodyPart messageBodyPart) {
-        try {
-
-            switch (key) {
-                case "PDF":
-                    try (PDDocument document = PDDocument.load(new File("C:\\Users\\MISanchez\\Documents\\MINED\\paquete\\Paquete 2021\\" + value))) {
-                        ByteArrayOutputStream out = new ByteArrayOutputStream();
-                        document.save(out);
-                        byte[] bytes = out.toByteArray();
-
-                        ByteArrayDataSource ds = new ByteArrayDataSource(bytes, "application/pdf");
-                        messageBodyPart.setDataHandler(new DataHandler(ds));
-                        messageBodyPart.setFileName(value);
-                        out.close();
-                    } catch (MessagingException ex) {
-                        Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    break;
-                case "XLS":
-                case "XLXS":
-                    try {
-                        File f = new File("C:\\Users\\MISanchez\\Documents\\MINED\\paquete\\Paquete 2021\\" + value);
-                        DataSource source = new FileDataSource(f);
-                        messageBodyPart.setDataHandler(new DataHandler(source));
-                        messageBodyPart.setFileName(value);
-                    } catch (MessagingException ex) {
-                        Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    break;
-            }
-
-        } catch (IOException ex) {
-            Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return messageBodyPart;
     }
 }
