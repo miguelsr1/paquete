@@ -160,7 +160,7 @@ public class EMailEJB {
             return false;
         }
     }
-    
+
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Boolean enviarMail(String remitente,
             String titulo, String mensaje, List<String> to, List<String> cc, List<String> bcc) {
@@ -241,7 +241,7 @@ public class EMailEJB {
             multipart.addBodyPart(messageBodyPart1);
 
             multipart.addBodyPart(addFilesAttachment(archivos, new MimeBodyPart()));
-            
+
             m.setContent(multipart);
             m.setSubject(titulo, "UTF-8");
 
@@ -257,30 +257,33 @@ public class EMailEJB {
     private MimeBodyPart addFilesAttachment(Map<String, String> archivos, MimeBodyPart messageBodyPart) {
         archivos.forEach((key, value) -> {
             try {
-                ByteArrayOutputStream out = null;
-                try (PDDocument document = PDDocument.load(new File("//opt//soporte//paquete//archivos//" + value))) {
-                    out = new ByteArrayOutputStream();
-                    document.save(out);
-                    byte[] bytes = out.toByteArray();
-                    
-                    ByteArrayDataSource ds;
-                    switch (key) {
-                        case "PDF":
+                ByteArrayDataSource ds;
+                switch (key) {
+                    case "PDF":
+                        try (PDDocument document = PDDocument.load(new File("//opt//soporte//paquete//archivos//" + value))) {
+                            ByteArrayOutputStream out = new ByteArrayOutputStream();
+                            document.save(out);
+                            byte[] bytes = out.toByteArray();
+
                             ds = new ByteArrayDataSource(bytes, "application/pdf");
                             messageBodyPart.setDataHandler(new DataHandler(ds));
                             messageBodyPart.setFileName(value + ".pdf");
-                            break;
-                        case "XLS":
-                        case "XLSX":
-                            ds = new ByteArrayDataSource(bytes, "application/vnd.ms-excel");
-                            messageBodyPart.setDataHandler(new DataHandler(ds));
-                            messageBodyPart.setFileName(value + ".xlsx");
-                            break;
-                    }
-                } catch (MessagingException ex) {
-                    Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
+                            out.close();
+                        } catch (MessagingException ex) {
+                            Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        break;
+                    case "XLS":
+                    case "XLSX":
+                        try {
+                            File f = new File("//opt//soporte//paquete//archivos//" + value);
+                            messageBodyPart.attachFile(f);
+                        } catch (IOException | MessagingException ex) {
+                            Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        break;
                 }
-                out.close();
+
             } catch (IOException ex) {
                 Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
             }
