@@ -248,7 +248,7 @@ public class EMailEJB {
 
     private void addAttachment(String value, Multipart multipart) {
         try {
-            DataSource source = new FileDataSource("C:\\Users\\MISanchez\\Documents\\MINED\\paquete\\Paquete 2021\\" + value);
+            DataSource source = new FileDataSource("//opt//soporte//paquete//archivos//" + value);
             BodyPart messageBodyPart = new MimeBodyPart();
             messageBodyPart.setDataHandler(new DataHandler(source));
             messageBodyPart.setFileName(value);
