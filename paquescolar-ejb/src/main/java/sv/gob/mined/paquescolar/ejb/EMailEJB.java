@@ -57,25 +57,6 @@ public class EMailEJB {
     private Session mailSessionRa;
     @Resource(mappedName = "java:/MailPaqueteProv")
     private Session mailSessionProv;
-
-    /*private Properties config = new Properties();
-
-    private void configuracionesDeSession() {
-        config.put("mail.transport.protocol", "smtp");
-        config.put("mail.smtp.host", "svr2k13mail01.mined.gob.sv");
-        config.put("mail.smtp.auth", "true");
-        config.put("mail.smtp.starttls.enable", "false");
-        config.put("mail.smtp.port", "587");
-
-        mailSession = Session.getInstance(config, new Authenticator() {
-
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("MISanchez", "miguelsr15.");
-            }
-
-        });
-    }*/
     /**
      * Este método envía un mail
      *
