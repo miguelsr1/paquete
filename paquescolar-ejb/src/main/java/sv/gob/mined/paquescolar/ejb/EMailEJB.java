@@ -257,12 +257,16 @@ public class EMailEJB {
     }
 
     private MimeBodyPart addFilesAttachment(Map<String, String> archivos, MimeBodyPart messageBodyPart) {
+        for (Map.Entry<String, String> entry : archivos.entrySet()) {
+            
+        }
+        
         archivos.forEach((key, value) -> {
             try {
                 ByteArrayDataSource ds;
                 switch (key) {
                     case "PDF":
-                        try (PDDocument document = PDDocument.load(new File("//opt//soporte//paquete//archivos//" + value))) {
+                        try (PDDocument document = PDDocument.load(new File("C:\\Users\\MISanchez\\Documents\\MINED\\paquete\\Paquete 2021\\" + value))) {
                             ByteArrayOutputStream out = new ByteArrayOutputStream();
                             document.save(out);
                             byte[] bytes = out.toByteArray();
@@ -276,9 +280,9 @@ public class EMailEJB {
                         }
                         break;
                     case "XLS":
-                    case "XLSX":
+                    case "XLXS":
                         try {
-                            File f = new File("//opt//soporte//paquete//archivos//" + value);
+                            File f = new File("C:\\Users\\MISanchez\\Documents\\MINED\\paquete\\Paquete 2021\\" + value);
                             DataSource source = new FileDataSource(f);
                             messageBodyPart.setDataHandler(new DataHandler(source));
                             messageBodyPart.setFileName(value);
