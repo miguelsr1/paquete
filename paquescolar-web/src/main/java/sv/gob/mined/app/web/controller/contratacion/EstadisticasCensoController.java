@@ -1407,24 +1407,25 @@ public class EstadisticasCensoController implements Serializable {
         HashMap<String, String> archivos = new HashMap<>();
         archivos.put("PDF", "DeclaraciónJuradaDirectores.pdf");
         archivos.put("XLXS", "FormatoValidación.xlsx");
-        
+
         List<String> to = new ArrayList();
         List<String> cc = new ArrayList();
-        
+
         to.add("miguel.sanchez@mined.gob.sv");
-        
+
         lst.forEach((org) -> {
             to.add(org.getCorreoElectronico());
         });
-        
+
         to.add("rafael.arias@mined.gob.sv");
 
         to.forEach((string) -> {
             List<String> lista = new ArrayList();
             lista.add(string);
-            
+
             eMailEJB.enviarMail("rafael.arias@mined.gob.sv", titulo, mensaje, lista, cc, new ArrayList(), archivos);
+            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, "Correo enviado a: {0}", string);
         });
-        
+
     }
 }
