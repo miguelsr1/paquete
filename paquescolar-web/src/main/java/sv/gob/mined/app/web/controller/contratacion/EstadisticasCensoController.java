@@ -157,7 +157,7 @@ public class EstadisticasCensoController implements Serializable {
     private ReportesEJB reportesEJB;
     @EJB
     private EMailEJB eMailEJB;
-    
+
     private static final ResourceBundle UTIL_CORREO = ResourceBundle.getBundle("Bundle");
 
     /**
@@ -1398,23 +1398,26 @@ public class EstadisticasCensoController implements Serializable {
             numeroDui = organizacionEducativa.getNumeroDui();
         }
     }
-    
-    public void enviarCorreos(){
+
+    public void enviarCorreos() {
         String titulo = "Validacion de matricula y resguardo de bienes";
         String mensaje = UTIL_CORREO.getString("contratacion.estadistica.correo.cuerpo");
-        
+
         List<OrganizacionEducativa> lst = entidadEducativaEJB.lstCorreosDirectores();
         HashMap<String, String> archivos = new HashMap<>();
         archivos.put("PDF", "DeclaraciónJuradaDirectores.pdf");
         archivos.put("XLXS", "FormatoValidación.xlsx");
         
-         List<String> to = new ArrayList();
-         List<String> cc = new ArrayList();
+        List<String> to = new ArrayList();
+        List<String> cc = new ArrayList();
+        
+//        lst.forEach((org) -> {
+//            to.add(org.getCorreoElectronico());
+//        });
+        
+        to.add("rafael.arias@mined.gob.sv");
+        to.add("miguel.sanchez@mined.gob.sv");
 
-         to.add("miguel.sanchez@admin.mined.edu.sv");
-         to.add("miguel.sanchez@admin.mined.edu.sv");
-         to.add("miguel.sanchez@admin.mined.edu.sv");
-         to.add("miguel.sanchez@admin.mined.edu.sv");
         eMailEJB.enviarMail("rafael.arias@mined.gob.sv", titulo, mensaje, to, cc, new ArrayList(), archivos);
     }
 }

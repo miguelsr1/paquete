@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -267,7 +269,7 @@ public class EMailEJB {
 
                             ds = new ByteArrayDataSource(bytes, "application/pdf");
                             messageBodyPart.setDataHandler(new DataHandler(ds));
-                            messageBodyPart.setFileName(value + ".pdf");
+                            messageBodyPart.setFileName(value);
                             out.close();
                         } catch (MessagingException ex) {
                             Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
@@ -277,8 +279,10 @@ public class EMailEJB {
                     case "XLSX":
                         try {
                             File f = new File("//opt//soporte//paquete//archivos//" + value);
-                            messageBodyPart.attachFile(f);
-                        } catch (IOException | MessagingException ex) {
+                            DataSource source = new FileDataSource(f);
+                            messageBodyPart.setDataHandler(new DataHandler(source));
+                            messageBodyPart.setFileName(value);
+                        } catch (MessagingException ex) {
                             Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
                         }
                         break;
