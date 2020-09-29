@@ -677,7 +677,7 @@
             ]]>
         </query>
     </named-native-query>
-    
+   
     <named-native-query name="Contratacion.EstadoReserva" 
                         result-class="sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas">
         <query>

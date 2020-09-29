@@ -44,6 +44,7 @@ import sv.gob.mined.paquescolar.model.EmpresaNoItem;
 import sv.gob.mined.paquescolar.model.EmpresaPreciosRef;
 import sv.gob.mined.paquescolar.model.EntidadFinanciera;
 import sv.gob.mined.paquescolar.model.NivelEducativo;
+import sv.gob.mined.paquescolar.model.OrganizacionEducativa;
 import sv.gob.mined.paquescolar.model.Participantes;
 import sv.gob.mined.paquescolar.model.Persona;
 import sv.gob.mined.paquescolar.model.PlanillaPago;

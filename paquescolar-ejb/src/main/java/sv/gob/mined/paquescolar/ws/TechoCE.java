@@ -76,7 +76,7 @@ public class TechoCE {
 
         FileInputStream file = null;
         try {
-            file = new FileInputStream(new File("//opt//soporte//matricula.xls"));
+            file = new FileInputStream(new File("C:\\Users\\MISanchez\\Documents\\MINED\\paquete\\Paquete 2021\\matricula.xls"));
             HSSFWorkbook workbook = new HSSFWorkbook(file);
             /*
             * Obtenemos la primera pestaña a la que se quiera procesar indicando el indice.

@@ -35,8 +35,6 @@ public class EntidadEducativaEJB {
 
     @PersistenceContext(unitName = "paquescolarUP")
     private EntityManager em;
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
 
     public VwCatalogoEntidadEducativa getEntidadEducativa(String codigoEntidad) {
         Query q = em.createQuery("SELECT v FROM VwCatalogoEntidadEducativa v WHERE v.codigoEntidad=:codigoEntidad", VwCatalogoEntidadEducativa.class);
@@ -80,23 +78,23 @@ public class EntidadEducativaEJB {
     }
 
     public EstadisticaCenso getEstadisticaByCodEntAndNivelAndProceso(String codEntidad, BigDecimal nivel, ProcesoAdquisicion procesoAdq) {
-        Query q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codEnt and e.idNivelEducativo.idNivelEducativo=:nivel and e.idProcesoAdq=:procesoAdq", EstadisticaCenso.class);
-        q.setParameter("codEnt", codEntidad);
-        q.setParameter("nivel", nivel);
-        q.setParameter("procesoAdq", procesoAdq);
-
-        if (q.getResultList().isEmpty()) {
-            EstadisticaCenso est = new EstadisticaCenso();
-            est.setEstadoEliminacion(Short.parseShort("0"));
-            est.setIdNivelEducativo(em.find(NivelEducativo.class, nivel));
-            est.setIdProcesoAdq(procesoAdq);
-            est.setCodigoEntidad(codEntidad);
-            est.setMasculino(BigInteger.ZERO);
-            est.setFemenimo(BigInteger.ZERO);
-            return est;
-        } else {
-            return (EstadisticaCenso) q.getSingleResult();
-        }
+//        Query q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codEnt and e.idNivelEducativo.idNivelEducativo=:nivel and e.idProcesoAdq=:procesoAdq", EstadisticaCenso.class);
+//        q.setParameter("codEnt", codEntidad);
+//        q.setParameter("nivel", nivel);
+//        q.setParameter("procesoAdq", procesoAdq);
+//
+//        if (q.getResultList().isEmpty()) {
+        EstadisticaCenso est = new EstadisticaCenso();
+        est.setEstadoEliminacion(Short.parseShort("0"));
+        est.setIdNivelEducativo(em.find(NivelEducativo.class, nivel));
+        est.setIdProcesoAdq(procesoAdq);
+        est.setCodigoEntidad(codEntidad);
+        est.setMasculino(BigInteger.ZERO);
+        est.setFemenimo(BigInteger.ZERO);
+        return est;
+//        } else {
+//            return (EstadisticaCenso) q.getSingleResult();
+//        }
     }
 
     public Boolean guardarEstadistica(EstadisticaCenso estadistica, String usuario) {
@@ -538,5 +536,10 @@ public class EntidadEducativaEJB {
         q.setParameter("P_NOMBRE", nombreDirector);
 
         q.getResultList();
+    }
+
+    public List<OrganizacionEducativa> lstCorreosDirectores() {
+        Query q = em.createQuery("SELECT o FROM OrganizacionEducativa o WHERE o.firmaContrato=1 and o.correoElectronico is not null", OrganizacionEducativa.class);
+        return q.getResultList();
     }
 }

@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -26,6 +27,7 @@ import sv.gob.mined.app.web.controller.ParametrosMB;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.VarSession;
+import sv.gob.mined.paquescolar.ejb.EMailEJB;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.PreciosReferenciaEJB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
@@ -153,6 +155,10 @@ public class EstadisticasCensoController implements Serializable {
     private PreciosReferenciaEJB preciosReferenciaEJB;
     @EJB
     private ReportesEJB reportesEJB;
+    @EJB
+    private EMailEJB eMailEJB;
+    
+    private static final ResourceBundle UTIL_CORREO = ResourceBundle.getBundle("Bundle");
 
     /**
      * Creates a new instance of EstadisticaCensoController
@@ -840,7 +846,11 @@ public class EstadisticasCensoController implements Serializable {
         List<EstadisticaCenso> lstEstadistica = entidadEducativaEJB.getLstEstadisticaByCodEntAndProceso(codigoEntidad, procesoAdquisicion.getIdProcesoAdq());
 
         if (lstEstadistica.isEmpty()) {
-            estaditicaPar = crearEstadistica(BigDecimal.ONE);
+            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() == 9) {
+                estaditicaPar = crearEstadistica(new BigDecimal(22));
+            } else {
+                estaditicaPar = crearEstadistica(BigDecimal.ONE);
+            }
             estaditicaCiclo1 = crearEstadistica(new BigDecimal(3));
             estaditicaCiclo2 = crearEstadistica(new BigDecimal(4));
             estaditicaCiclo3 = crearEstadistica(new BigDecimal(5));
@@ -858,7 +868,11 @@ public class EstadisticasCensoController implements Serializable {
             est2media = crearEstadistica(new BigDecimal(17));
             est3media = crearEstadistica(new BigDecimal(18));
         } else {
-            estaditicaPar = getEstadisticaCenso(lstEstadistica, 1);
+            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() == 9) {
+                estaditicaPar = getEstadisticaCenso(lstEstadistica, 22);
+            } else {
+                estaditicaPar = getEstadisticaCenso(lstEstadistica, 1);
+            }
             estaditicaCiclo1 = getEstadisticaCenso(lstEstadistica, 3);
             estaditicaCiclo2 = getEstadisticaCenso(lstEstadistica, 4);
             estaditicaCiclo3 = getEstadisticaCenso(lstEstadistica, 5);
@@ -1383,5 +1397,24 @@ public class EstadisticasCensoController implements Serializable {
             telefono2 = organizacionEducativa.getTelDirector2();
             numeroDui = organizacionEducativa.getNumeroDui();
         }
+    }
+    
+    public void enviarCorreos(){
+        String titulo = "Validacion de matricula y resguardo de bienes";
+        String mensaje = UTIL_CORREO.getString("contratacion.estadistica.correo.cuerpo");
+        
+        List<OrganizacionEducativa> lst = entidadEducativaEJB.lstCorreosDirectores();
+        HashMap<String, String> archivos = new HashMap<>();
+        archivos.put("PDF", "DeclaraciónJuradaDirectores.pdf");
+        archivos.put("XLXS", "FormatoValidación.xlsx");
+        
+         List<String> to = new ArrayList();
+         List<String> cc = new ArrayList();
+
+         to.add("miguel.sanchez@admin.mined.edu.sv");
+         to.add("miguel.sanchez@admin.mined.edu.sv");
+         to.add("miguel.sanchez@admin.mined.edu.sv");
+         to.add("miguel.sanchez@admin.mined.edu.sv");
+        eMailEJB.enviarMail("rafael.arias@mined.gob.sv", titulo, mensaje, to, cc, new ArrayList(), archivos);
     }
 }
