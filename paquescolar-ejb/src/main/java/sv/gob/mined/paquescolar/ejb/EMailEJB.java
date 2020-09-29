@@ -57,6 +57,7 @@ public class EMailEJB {
     private Session mailSessionRa;
     @Resource(mappedName = "java:/MailPaqueteProv")
     private Session mailSessionProv;
+
     /**
      * Este método envía un mail
      *
@@ -223,7 +224,13 @@ public class EMailEJB {
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(messageBodyPart1);
 
-            multipart.addBodyPart(addFilesAttachment(archivos, new MimeBodyPart()));
+            archivos.forEach((key, value) -> {
+                try {
+                    multipart.addBodyPart(addFilesAttachment(key, value, new MimeBodyPart()));
+                } catch (MessagingException ex) {
+                    Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
 
             m.setContent(multipart);
             m.setSubject(titulo, "UTF-8");
@@ -237,46 +244,40 @@ public class EMailEJB {
         }
     }
 
-    private MimeBodyPart addFilesAttachment(Map<String, String> archivos, MimeBodyPart messageBodyPart) {
-        for (Map.Entry<String, String> entry : archivos.entrySet()) {
-            
-        }
-        
-        archivos.forEach((key, value) -> {
-            try {
-                ByteArrayDataSource ds;
-                switch (key) {
-                    case "PDF":
-                        try (PDDocument document = PDDocument.load(new File("//opt//soporte//paquete//archivos//" + value))) {
-                            ByteArrayOutputStream out = new ByteArrayOutputStream();
-                            document.save(out);
-                            byte[] bytes = out.toByteArray();
+    private MimeBodyPart addFilesAttachment(String key, String value, MimeBodyPart messageBodyPart) {
+        try {
+            ByteArrayDataSource ds;
+            switch (key) {
+                case "PDF":
+                    try (PDDocument document = PDDocument.load(new File("//opt//soporte//paquete//archivos//" + value))) {
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        document.save(out);
+                        byte[] bytes = out.toByteArray();
 
-                            ds = new ByteArrayDataSource(bytes, "application/pdf");
-                            messageBodyPart.setDataHandler(new DataHandler(ds));
-                            messageBodyPart.setFileName(value);
-                            out.close();
-                        } catch (MessagingException ex) {
-                            Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        break;
-                    case "XLS":
-                    case "XLXS":
-                        try {
-                            File f = new File("//opt//soporte//paquete//archivos//" + value);
-                            DataSource source = new FileDataSource(f);
-                            messageBodyPart.setDataHandler(new DataHandler(source));
-                            messageBodyPart.setFileName(value);
-                        } catch (MessagingException ex) {
-                            Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        break;
-                }
-
-            } catch (IOException ex) {
-                Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
+                        ds = new ByteArrayDataSource(bytes, "application/pdf");
+                        messageBodyPart.setDataHandler(new DataHandler(ds));
+                        messageBodyPart.setFileName(value);
+                        out.close();
+                    } catch (MessagingException ex) {
+                        Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    break;
+                case "XLS":
+                case "XLXS":
+                    try {
+                        File f = new File("//opt//soporte//paquete//archivos//" + value);
+                        DataSource source = new FileDataSource(f);
+                        messageBodyPart.setDataHandler(new DataHandler(source));
+                        messageBodyPart.setFileName(value);
+                    } catch (MessagingException ex) {
+                        Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    break;
             }
-        });
+
+        } catch (IOException ex) {
+            Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         return messageBodyPart;
     }
