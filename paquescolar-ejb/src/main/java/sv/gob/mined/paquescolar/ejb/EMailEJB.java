@@ -225,11 +225,13 @@ public class EMailEJB {
             multipart.addBodyPart(messageBodyPart1);
 
             archivos.forEach((key, value) -> {
-                try {
-                    multipart.addBodyPart(addFilesAttachment(key, value, new MimeBodyPart()));
-                } catch (MessagingException ex) {
-                    Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                
+                addAttachment(value, multipart);
+//                try {
+//                    multipart.addBodyPart(addFilesAttachment(key, value, new MimeBodyPart()));
+//                } catch (MessagingException ex) {
+//                    Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
+//                }
             });
 
             m.setContent(multipart);
@@ -244,17 +246,29 @@ public class EMailEJB {
         }
     }
 
+    private void addAttachment(String value, Multipart multipart) {
+        try {
+            DataSource source = new FileDataSource("C:\\Users\\MISanchez\\Documents\\MINED\\paquete\\Paquete 2021\\" + value);
+            BodyPart messageBodyPart = new MimeBodyPart();
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName(value);
+            multipart.addBodyPart(messageBodyPart);
+        } catch (MessagingException ex) {
+            Logger.getLogger(EMailEJB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     private MimeBodyPart addFilesAttachment(String key, String value, MimeBodyPart messageBodyPart) {
         try {
-            ByteArrayDataSource ds;
+
             switch (key) {
                 case "PDF":
-                    try (PDDocument document = PDDocument.load(new File("//opt//soporte//paquete//archivos//" + value))) {
+                    try (PDDocument document = PDDocument.load(new File("C:\\Users\\MISanchez\\Documents\\MINED\\paquete\\Paquete 2021\\" + value))) {
                         ByteArrayOutputStream out = new ByteArrayOutputStream();
                         document.save(out);
                         byte[] bytes = out.toByteArray();
 
-                        ds = new ByteArrayDataSource(bytes, "application/pdf");
+                        ByteArrayDataSource ds = new ByteArrayDataSource(bytes, "application/pdf");
                         messageBodyPart.setDataHandler(new DataHandler(ds));
                         messageBodyPart.setFileName(value);
                         out.close();
@@ -265,7 +279,7 @@ public class EMailEJB {
                 case "XLS":
                 case "XLXS":
                     try {
-                        File f = new File("//opt//soporte//paquete//archivos//" + value);
+                        File f = new File("C:\\Users\\MISanchez\\Documents\\MINED\\paquete\\Paquete 2021\\" + value);
                         DataSource source = new FileDataSource(f);
                         messageBodyPart.setDataHandler(new DataHandler(source));
                         messageBodyPart.setFileName(value);
