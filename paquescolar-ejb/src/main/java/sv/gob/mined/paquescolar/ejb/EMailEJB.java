@@ -51,6 +51,8 @@ public class EMailEJB {
     // "Insert Code > Add Business Method")
     @Resource(mappedName = "java:/MailService365")
     private Session mailSession;
+    @Resource(mappedName = "java:/MailPaqueteRA")
+    private Session mailSessionRa;
     @Resource(mappedName = "java:/MailPaqueteProv")
     private Session mailSessionProv;
 
@@ -209,7 +211,7 @@ public class EMailEJB {
             List<String> to, List<String> cc, List<String> bcc,
             Map<String, String> archivos) {
         try {
-            MimeMessage m = new MimeMessage(mailSessionProv);
+            MimeMessage m = new MimeMessage(mailSessionRa);
             Address from = new InternetAddress(remitente);
 
             Address[] destinatarios = new Address[to.size()];
