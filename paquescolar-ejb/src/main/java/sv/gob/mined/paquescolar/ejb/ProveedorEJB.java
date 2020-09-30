@@ -44,7 +44,6 @@ import sv.gob.mined.paquescolar.model.EmpresaNoItem;
 import sv.gob.mined.paquescolar.model.EmpresaPreciosRef;
 import sv.gob.mined.paquescolar.model.EntidadFinanciera;
 import sv.gob.mined.paquescolar.model.NivelEducativo;
-import sv.gob.mined.paquescolar.model.OrganizacionEducativa;
 import sv.gob.mined.paquescolar.model.Participantes;
 import sv.gob.mined.paquescolar.model.Persona;
 import sv.gob.mined.paquescolar.model.PlanillaPago;
@@ -531,10 +530,9 @@ public class ProveedorEJB {
                 q.setParameter("idProceso", idDetProceso.getIdProcesoAdq().getPadreIdProcesoAdq());
             }
         } else {
-            q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p  WHERE p.idEmpresa=:idEmpresa and (p.idDetProcesoAdq=:idDetProceso or p.idDetProcesoAdq.idProcesoAdq =:idDetProceso1) and p.estadoEliminacion=0 ORDER BY FUNC('TO_NUMBER', p.noItem)", PreciosRefRubroEmp.class);
+            q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.idEmpresa=:idEmpresa and p.idDetProcesoAdq.idProcesoAdq.idAnho.idAnho=:anho and p.estadoEliminacion=0 ORDER BY FUNC('TO_NUMBER', p.noItem)", PreciosRefRubroEmp.class);
             q.setParameter("idEmpresa", idEmpresa);
-            q.setParameter("idDetProceso", idDetProceso);
-            q.setParameter("idDetProceso1", idDetProceso.getIdProcesoAdq().getPadreIdProcesoAdq());
+            q.setParameter("anho", idDetProceso.getIdProcesoAdq().getIdAnho().getIdAnho());
         }
         return q.getResultList();
     }

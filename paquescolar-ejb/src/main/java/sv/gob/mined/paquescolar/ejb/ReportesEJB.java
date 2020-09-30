@@ -305,35 +305,14 @@ public class ReportesEJB {
     }
 
     public List<DeclaracionJurada> getDeclaracionJurada(Empresa empresa, DetalleProcesoAdq idDetProcesoAdq, String ciudad) {
-        List<DeclaracionJurada> lstDeclaracion;
-        //  Query q = em.createNativeQuery("SELECT * FROM VW_RPT_DECLARACION_JURADA2 WHERE nit_empresa=?1 and id_det_proceso_adq=?2");
         Query q = em.createNamedQuery("Proveedor.DeclaracionJurada", DeclaracionJurada.class);
         q.setParameter(1, empresa.getNumeroNit());
         q.setParameter(2, idDetProcesoAdq.getIdDetProcesoAdq());
 
-        lstDeclaracion = q.getResultList();
+        List<DeclaracionJurada> lstDeclaracion = q.getResultList();
         if (!lstDeclaracion.isEmpty()) {
             lstDeclaracion.get(0).setCiudad(ciudad);
             lstDeclaracion.get(0).setFecha(new Date());
-//        for (Object object : lst) {
-//            Object[] datos = (Object[]) object;
-//
-//            DeclaracionJurada decla = new DeclaracionJurada();
-//            decla.setCiudad(ciudad);
-//            decla.setFecha(new Date());
-//            decla.setRubro(datos[0].toString());
-//            decla.setAnho(datos[1].toString());
-//            decla.setRazonSocial(datos[2].toString());
-//            decla.setRepresentanteLegal(datos[3].toString());
-//            decla.setNitEmpresa(datos[4].toString());
-//            decla.setDireccionEmpresa(datos[5].toString());
-//            decla.setNitRepre(datos[6].toString());
-//            decla.setDuiRepre(datos[7].toString());
-//            decla.setDireccionRepre(datos[8].toString());
-//            decla.setFechaModificacion((Date) datos[9]);
-//
-//            lstDeclaracion.add(decla);
-//        }
         }
         return lstDeclaracion.isEmpty() ? new ArrayList() : lstDeclaracion;
     }
