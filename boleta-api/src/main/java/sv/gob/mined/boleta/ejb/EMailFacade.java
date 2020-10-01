@@ -5,14 +5,17 @@
  */
 package sv.gob.mined.boleta.ejb;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -24,8 +27,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.mail.util.ByteArrayDataSource;
-import org.apache.pdfbox.pdmodel.PDDocument;
 
 /**
  *
@@ -35,16 +36,26 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 @LocalBean
 public class EMailFacade {
 
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Boolean enviarMail(String destinatario, String remitente,
             String titulo, String mensaje,
-            String nombreMesAnho, File path, Session mailSession) {
+            String nombreMesAnho, File path, Session mailSession, Transport transport) {
         try {
-            MimeMessage m = new MimeMessage(mailSession);
+
+            if (transport.isConnected()) {
+
+            } else {
+                transport.connect();
+            }
+
+            MimeMessage menssage = new MimeMessage(mailSession);
             Address from = new InternetAddress(remitente);
 
-            m.setFrom(from);
-            m.setRecipients(Message.RecipientType.TO, destinatario);
-            m.setRecipients(Message.RecipientType.BCC, "miguel.sanchez@admin.mined.edu.sv");
+            InternetAddress[] destinatarioAddress = {new InternetAddress(destinatario)};
+
+            menssage.setFrom(from);
+            menssage.setRecipients(Message.RecipientType.TO, destinatarioAddress);
+            menssage.setRecipients(Message.RecipientType.BCC, "miguel.sanchez@admin.mined.edu.sv");
 
             BodyPart messageBodyPart1 = new MimeBodyPart();
 
@@ -53,8 +64,10 @@ public class EMailFacade {
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(messageBodyPart1);
 
-            ByteArrayOutputStream out;
-            try ( PDDocument document = PDDocument.load(path)) {
+            addAttachment(path, multipart);
+            
+            /*ByteArrayOutputStream out;
+            try (PDDocument document = PDDocument.load(path)) {
                 out = new ByteArrayOutputStream();
                 document.save(out);
                 byte[] bytes = out.toByteArray();
@@ -64,40 +77,59 @@ public class EMailFacade {
                 messageBodyPart2.setFileName("boleta_pago.pdf");
                 multipart.addBodyPart(messageBodyPart2);
             }
-            out.close();
+            out.close();*/
 
-            m.setContent(multipart);
-            m.setSubject(titulo, "UTF-8");
-            //m.setSubject("Boleta de Pago de " + nombreMesAnho, "UTF-8");
-            Transport.send(m);
+            menssage.setContent(multipart);
+            menssage.setSubject(titulo, "UTF-8");
+            menssage.saveChanges();
+
+            transport.sendMessage(menssage, menssage.getAllRecipients());
+
             return true;
-        } catch (MessagingException | IOException ex) {
+        } catch (MessagingException ex) {
             Logger.getLogger(EMailFacade.class.getName()).log(Level.WARNING, "Error en el envio de correo a: {0} - código: {1}", new Object[]{destinatario, path.getName()});
             Logger.getLogger(EMailFacade.class.getName()).log(Level.WARNING, "Error", ex);
 
-            enviarMailDeError("eMail Boleta - Error", "Error en el envio de correo a: " + destinatario + " - código: " + path.getName(), remitente, mailSession);
+            enviarMailDeError("eMail Boleta - Error", "Error en el envio de correo a: " + destinatario + " - código: " + path.getName(), remitente, mailSession, transport);
             return false;
         }
     }
 
-    public void enviarMailDeError(String subject, String message, String usuario, Session mailSession) {
+    public void enviarMailDeError(String subject, String message, String usuario, Session mailSession, Transport transport) {
         try {
+            if (transport.isConnected()) {
+
+            } else {
+                transport.connect();
+            }
+
+            InternetAddress[] destinatarioAddress = {new InternetAddress("miguel.sanchez@mined.gob.sv")};
+
             MimeMessage m = new MimeMessage(mailSession);
             Address from = new InternetAddress(usuario);
             m.setSubject(subject, "UTF-8");
 
             m.setFrom(from);
-            m.setRecipients(Message.RecipientType.TO, "miguel.sanchez@mined.gob.sv");
+            m.setRecipients(Message.RecipientType.TO, destinatarioAddress);
             m.setSentDate(new java.util.Date());
             m.setText(message, "UTF-8", "html");
-            Transport.send(m);
+
+            m.saveChanges();
+
+            transport.sendMessage(m, destinatarioAddress);
         } catch (MessagingException ex) {
             Logger.getLogger(EMailFacade.class.getName()).log(Level.SEVERE, "Error en el envio de correo");
         }
     }
 
-    public void enviarMailDeConfirmacion(String subject, String message, String remitente, Session mailSession) {
+    public void enviarMailDeConfirmacion(String subject, String message, String remitente, Session mailSession, Transport transport) {
         try {
+            if (transport.isConnected()) {
+
+            } else {
+                transport.connect();
+            }
+
             MimeMessage m = new MimeMessage(mailSession);
             Address from = new InternetAddress(remitente);
             m.setSubject(subject, "UTF-8");
@@ -111,9 +143,25 @@ public class EMailFacade {
 
             m.setSentDate(new java.util.Date());
             m.setText(message, "UTF-8", "html");
-            Transport.send(m);
+
+            m.saveChanges();
+
+            transport.sendMessage(m, m.getAllRecipients());
+
         } catch (MessagingException ex) {
             Logger.getLogger(EMailFacade.class.getName()).log(Level.SEVERE, "Error en el envio de correo");
+        }
+    }
+
+    private void addAttachment(File value, Multipart multipart) {
+        try {
+            DataSource source = new FileDataSource(value);
+            BodyPart messageBodyPart = new MimeBodyPart();
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName(value.getName());
+            multipart.addBodyPart(messageBodyPart);
+        } catch (MessagingException ex) {
+            Logger.getLogger(EMailFacade.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

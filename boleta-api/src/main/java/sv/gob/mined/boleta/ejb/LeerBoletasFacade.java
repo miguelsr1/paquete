@@ -22,7 +22,9 @@ import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.mail.MessagingException;
 import javax.mail.Session;
+import javax.mail.Transport;
 import sv.gob.mined.boleta.api.model.CodigoGenerado;
 import sv.gob.mined.boleta.api.model.CorreoDocente;
 import sv.gob.mined.utils.jsf.JsfUtil;
@@ -45,75 +47,102 @@ public class LeerBoletasFacade {
     public void enviarUnSoloCorreo(String codDepa, String mesAnho,
             Session mailSession, String usuario,
             String mensajeCorreo, String tituloCorreo) {
+        enviarCorreo(codDepa, mesAnho, mailSession, usuario, mensajeCorreo, tituloCorreo);
+    }
+   
+    private void enviarCorreo(String codDepa, String mesAnho,
+            Session mailSession, String usuario,
+            String mensajeCorreo, String tituloCorreo) {
+        Transport transport = null;
+        try {
+            String nombreMesAnho = getNombreMes(mesAnho.split("_")[0]).concat(" de ").concat(mesAnho.split("_")[1]);
+            String pathRoot = RESOURCE_BUNDLE.getString("path_archivo");
+            File carpeta = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator);
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
+            Boolean errorEnvioEmail;
+            String email;
 
-        String nombreMesAnho = getNombreMes(mesAnho.split("_")[0]).concat(" de ").concat(mesAnho.split("_")[1]);
-        String pathRoot = RESOURCE_BUNDLE.getString("path_archivo");
-        File carpeta = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
-        Boolean errorEnvioEmail;
-        String email;
+            if (mensajeCorreo != null && !mensajeCorreo.isEmpty()) {
 
-        if (mensajeCorreo != null && !mensajeCorreo.isEmpty()) {
-            
-        }else{
-            mensajeCorreo = MessageFormat.format(RESOURCE_BUNDLE.getString("mail.message"), nombreMesAnho);
-            tituloCorreo = "Boleta de Pago de " + nombreMesAnho;
-        }
+            } else {
+                mensajeCorreo = MessageFormat.format(RESOURCE_BUNDLE.getString("mail.message"), nombreMesAnho);
+                tituloCorreo = "Boleta de Pago de " + nombreMesAnho;
+            }
 
-        List<CorreoDocente> lstCorreo = persistenciaFacade.getLstCorreoDocentes();
+            List<CorreoDocente> lstCorreo = persistenciaFacade.getLstCorreoDocentes();
 
-        File folderError = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator + "errores" + File.separator);
-        if (!folderError.exists()) {
-            folderError.mkdir();
-        }
-        File folderProcesado = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator + "procesado" + File.separator);
-        if (!folderProcesado.exists()) {
-            folderProcesado.mkdir();
-        }
-        File folderNoEncontrado = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator + "no_encontrado" + File.separator);
-        if (!folderNoEncontrado.exists()) {
-            folderNoEncontrado.mkdir();
-        }
+            File folderError = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator + "errores" + File.separator);
+            if (!folderError.exists()) {
+                folderError.mkdir();
+            }
+            File folderProcesado = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator + "procesado" + File.separator);
+            if (!folderProcesado.exists()) {
+                folderProcesado.mkdir();
+            }
+            File folderNoEncontrado = new File(pathRoot + File.separator + codDepa + File.separator + mesAnho + File.separator + "no_encontrado" + File.separator);
+            if (!folderNoEncontrado.exists()) {
+                folderNoEncontrado.mkdir();
+            }
 
-        persistenciaFacade.getPkCodigoGeneradoByCodDepaAndMesAnho(codDepa, mesAnho);
+            persistenciaFacade.getPkCodigoGeneradoByCodDepaAndMesAnho(codDepa, mesAnho);
 
-        for (File boleta : carpeta.listFiles()) {
-            if (boleta.isFile() && boleta.getName().toUpperCase().contains("PDF")) {
-                email = getCorreoByNip(boleta.getName().toUpperCase().replace(".PDF", ""), lstCorreo);
+            transport = mailSession.getTransport();
 
-                if (email != null) {
-                    errorEnvioEmail = eMailFacade.enviarMail(email, usuario, tituloCorreo, mensajeCorreo, nombreMesAnho, boleta, mailSession);
+            try {
+                for (File boleta : carpeta.listFiles()) {
+                    if (boleta.isFile() && boleta.getName().toUpperCase().contains("PDF")) {
+                        email = getCorreoByNip(boleta.getName().toUpperCase().replace(".PDF", ""), lstCorreo);
 
-                    Logger.getLogger(LeerBoletasFacade.class.getName()).log(Level.INFO, "{0} - {1}", new Object[]{email, boleta.getName().toUpperCase().replace(".PDF", "")});
-                    if (!errorEnvioEmail) {
-                        //bitacoraDeProcesoEJB.correoNoEnviadoPorErrorGenerado(codDepa, mesAnho, pathRoot, boleta.getName().toUpperCase().replace(".PDF", ""));
-                        moverBoletaAOtraUbicacion(boleta, folderError);
-                    } else {
-                        //mover archivo procesado
-                        moverBoletaAOtraUbicacion(boleta, folderProcesado);
+                        if (email != null) {
+                            errorEnvioEmail = eMailFacade.enviarMail(email, usuario, tituloCorreo, mensajeCorreo, nombreMesAnho, boleta, mailSession, transport);
+
+                            Logger.getLogger(LeerBoletasFacade.class.getName()).log(Level.INFO, "{0} - {1}", new Object[]{email, boleta.getName().toUpperCase().replace(".PDF", "")});
+                            if (!errorEnvioEmail) {
+                                //bitacoraDeProcesoEJB.correoNoEnviadoPorErrorGenerado(codDepa, mesAnho, pathRoot, boleta.getName().toUpperCase().replace(".PDF", ""));
+                                moverBoletaAOtraUbicacion(boleta, folderError);
+                            } else {
+                                //mover archivo procesado
+                                moverBoletaAOtraUbicacion(boleta, folderProcesado);
+                            }
+                        } else {
+                            //bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, pathRoot, boleta.getName().toUpperCase().replace(".PDF", ""));
+                            moverBoletaAOtraUbicacion(boleta, folderNoEncontrado);
+                            Logger.getLogger(LeerBoletasFacade.class.getName()).log(Level.WARNING, "No existe este empleado: {0}", boleta.getName().toUpperCase().replace(".PDF", ""));
+                        }
                     }
-                } else {
-                    //bitacoraDeProcesoEJB.escribirEmpleadoNoEncontrado(codDepa, mesAnho, pathRoot, boleta.getName().toUpperCase().replace(".PDF", ""));
-                    moverBoletaAOtraUbicacion(boleta, folderNoEncontrado);
-                    Logger.getLogger(LeerBoletasFacade.class.getName()).log(Level.WARNING, "No existe este empleado: {0}", boleta.getName().toUpperCase().replace(".PDF", ""));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error desconocido");
+            }
+
+            CodigoGenerado codigoGenerado = persistenciaFacade.registrarFinDeProcesoDeEnvio(pathRoot, codDepa, mesAnho);
+
+            StringBuilder sb = new StringBuilder();
+            sb = sb.append("Se han enviado boletas de pago del departamento ").append(JsfUtil.getNombreDepartamentoByCodigo(codDepa)).append(".").append("<br/>")
+                    .append("Hora de inicio: ").append(sdf.format(codigoGenerado.getFechaInicio())).append("<br/>");
+
+            sb = sb.append("Hora de fin: ").append(sdf.format(codigoGenerado.getFechaFin())).append("<br/>");
+            sb = sb.append("Número de boletas enviadas: ").append(codigoGenerado.getEnviado()).append("<br/>");
+            sb = sb.append("Número de docente no encontrados: ").append(codigoGenerado.getSinCorreo()).append("<br/>");
+            sb = sb.append("Número de correos no enviados debido a un error: ").append(codigoGenerado.getError()).append("<br/>");
+
+            eMailFacade.enviarMailDeConfirmacion("Envio de boletas de pago", sb.toString(), usuario, mailSession, transport);
+            
+            transport.close();
+        } catch (MessagingException ex) {
+            Logger.getLogger(LeerBoletasFacade.class.getName()).log(Level.SEVERE, null, ex);
+            if (transport != null && transport.isConnected()) {
+                try {
+                    transport.close();
+                } catch (MessagingException ex1) {
+                    Logger.getLogger(LeerBoletasFacade.class.getName()).log(Level.SEVERE, null, ex1);
                 }
             }
         }
-
-        CodigoGenerado codigoGenerado = persistenciaFacade.registrarFinDeProcesoDeEnvio(pathRoot, codDepa, mesAnho);
-
-        StringBuilder sb = new StringBuilder();
-        sb = sb.append("Se han enviado boletas de pago del departamento ").append(JsfUtil.getNombreDepartamentoByCodigo(codDepa)).append(".").append("<br/>")
-                .append("Hora de inicio: ").append(sdf.format(codigoGenerado.getFechaInicio())).append("<br/>");
-
-        sb = sb.append("Hora de fin: ").append(sdf.format(codigoGenerado.getFechaFin())).append("<br/>");
-        sb = sb.append("Número de boletas enviadas: ").append(codigoGenerado.getEnviado()).append("<br/>");
-        sb = sb.append("Número de docente no encontrados: ").append(codigoGenerado.getSinCorreo()).append("<br/>");
-        sb = sb.append("Número de correos no enviados debido a un error: ").append(codigoGenerado.getError()).append("<br/>");
-
-        eMailFacade.enviarMailDeConfirmacion("Envio de boletas de pago", sb.toString(), usuario, mailSession);
     }
     
+
     private String getCorreoByNip(String nip, List<CorreoDocente> lstCorreo) {
         Optional<CorreoDocente> correoDoc = lstCorreo.stream().parallel().
                 filter(cDoc -> cDoc.getNip().equals(nip)).findAny();
@@ -123,7 +152,7 @@ public class LeerBoletasFacade {
             return null;
         }
     }
-    
+
     private void moverBoletaAOtraUbicacion(File boleta, File folder) {
         try {
             Path temp = Files.move(Paths.get(boleta.getAbsolutePath()),
@@ -132,7 +161,7 @@ public class LeerBoletasFacade {
             Logger.getLogger(LeerBoletasFacade.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private String getNombreMes(String mes) {
         switch (mes) {
             case "01":
@@ -160,6 +189,5 @@ public class LeerBoletasFacade {
             default:
                 return "Diciembre";
         }
-
     }
 }
