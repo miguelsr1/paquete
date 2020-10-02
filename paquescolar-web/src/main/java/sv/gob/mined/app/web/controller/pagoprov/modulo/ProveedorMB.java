@@ -46,13 +46,16 @@ public class ProveedorMB implements Serializable {
     @PostConstruct
     public void ini() {
         if (VarSession.isVariableSession("idEmpresa")) {
-            empresa = proveedorEJB.findEmpresaByPk((BigDecimal) VarSession.getVariableSession("idEmpresa"));
+            //empresa = proveedorEJB.findEmpresaByPk((BigDecimal) VarSession.getVariableSession("idEmpresa"));
             anho = anhoProcesoEJB.getLstAnhos().get(0);
             idAnho = anho.getIdAnho();
         }
     }
 
     public Empresa getEmpresa() {
+        if (VarSession.isVariableSession("idEmpresa")) {
+            empresa = proveedorEJB.findEmpresaByPk((BigDecimal) VarSession.getVariableSession("idEmpresa"));
+        }
         return empresa;
     }
 
@@ -70,11 +73,11 @@ public class ProveedorMB implements Serializable {
 
     public void actualizarVista() throws IOException {
         anho = utilEJB.find(Anho.class, idAnho);
-        
+
         HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String url = req.getRequestURL().toString();
-        
-        FacesContext.getCurrentInstance().getExternalContext().redirect(url.split("/")[(url.split("/").length-1)]);
+
+        FacesContext.getCurrentInstance().getExternalContext().redirect(url.split("/")[(url.split("/").length - 1)]);
     }
 
 }

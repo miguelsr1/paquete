@@ -26,21 +26,21 @@
                     </h1>
                     <p:outputPanel id="pnlModif">
                         <p:tabView>
-                            <p:tab title="#{datosGeneralesMB.tapEmpresa}" rendered="#{datosGeneralesMB.tapEmpresa ne ''}">
+                            <p:tab title="#{datosGeneralesMB.tapEmpresa}" rendered="#{!datosGeneralesMB.personaNatural}">
                                 <p:panelGrid columns="2" columnClasses="col2_label,col10" styleClass="ui-panelgrid-blank form-group form-elements" >
                                     <p:outputLabel value="Razon Social:"/>
                                     <p:inputText value="#{datosGeneralesMB.empresa.razonSocial}" size="85" readonly="true"/>
                                     <p:outputLabel value="Departamento: "/>
                                     <h:panelGroup>
                                         <h:panelGrid columns="4">
-                                            <p:selectOneMenu id="cboDepaEmp" value="#{datosGeneralesMB.empresa.idMunicipio.codigoDepartamento.codigoDepartamento}" disabled="true">
+                                            <p:selectOneMenu id="cboDepaEmp" value="#{datosGeneralesMB.codigoDepartamentoLocal}" disabled="true">
                                                 <f:selectItem noSelectionOption="true" itemLabel="Seleccione un departamento" />
                                                 <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
                                                 <p:ajax update="cboMuniEmp"/>
                                             </p:selectOneMenu>
                                             <p:spacer width="10"/>
                                             <p:outputLabel value="Municipio:" />
-                                            <p:selectOneMenu id="cboMuniEmp" value="#{datosGeneralesMB.empresa.idMunicipio.idMunicipio}" >
+                                            <p:selectOneMenu id="cboMuniEmp" value="#{datosGeneralesMB.idMunicipioLocal}" >
                                                 <f:selectItem noSelectionOption="true" itemLabel="Seleccione un municipio" />
                                                 <f:selectItems value="#{datosGeneralesMB.lstMunicipios}" var="mun" itemValue="#{mun.idMunicipio}" itemLabel="#{mun.codigoMunicipio} - #{mun.nombreMunicipio}" />
                                             </p:selectOneMenu>
@@ -62,9 +62,9 @@
                                 </p:panelGrid>
                             </p:tab>
 
-                            <p:tab title="#{datosGeneralesMB.tapPersona}" rendered="#{datosGeneralesMB.tapPersona ne ''}">
+                            <p:tab title="#{datosGeneralesMB.tapPersona}" rendered="#{datosGeneralesMB.personaNatural}">
                                 <p:panelGrid columns="4" columnClasses="col2_label,col3,col2_label,col5" 
-                                             styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+                                             styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;width: 100%;">
                                     <p:outputLabel value="Primer Nombre:"/>
                                     <p:inputText value="#{datosGeneralesMB.empresa.idPersona.primerNombre}" placeholder="1er Nombre"/>
                                     <p:outputLabel value="Segundo Nombre:"/>
@@ -93,7 +93,11 @@
                                     <p:inputText value="#{datosGeneralesMB.empresa.idPersona.numeroDui}"/>
                                     <p:outputLabel value="NIT:"/>
                                     <p:inputText value="#{datosGeneralesMB.empresa.idPersona.numeroNit}"/>
-
+                                    <p:outputLabel value="eMail:"/>
+                                    <p:inputText value="#{datosGeneralesMB.empresa.idPersona.email}" style="width: 200px;"/>
+                                </p:panelGrid>
+                                <p:panelGrid columns="4" columnClasses="col2_label,col3,col2_label,col5" 
+                                             styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;width: 100%;">
                                     <p:outputLabel value="Departamento: "/>
                                     <p:selectOneMenu id="cboDepartamento" value="#{datosGeneralesMB.codigoDepartamento}" disabled="true">
                                         <f:selectItem noSelectionOption="true" itemLabel="Seleccione un departamento" />
@@ -106,13 +110,41 @@
                                         <f:selectItems value="#{datosGeneralesMB.lstMunicipios}" var="munP" itemValue="#{munP.idMunicipio}" itemLabel="#{munP.codigoMunicipio} - #{munP.nombreMunicipio}"/>
                                     </p:selectOneMenu>
                                 </p:panelGrid>
-                                <p:panelGrid columns="2" columnClasses="col2_label,col10" layout="grid"
-                                             styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
-                                    <p:outputLabel value="eMail:"/>
-                                    <p:inputText value="#{datosGeneralesMB.empresa.idPersona.email}" style="width: 200px;"/>
+                                <p:panelGrid columns="2" columnClasses="col2_label,col10"  layout="grid"
+                                             styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;width: 100%;">
+
                                     <p:outputLabel value="Dirección:" />
                                     <p:inputTextarea value="#{datosGeneralesMB.empresa.idPersona.domicilio}" cols="100"/>
+                                    <p:spacer />
+                                    <p:outputPanel>
+                                        <p:selectBooleanCheckbox value="#{datosGeneralesMB.mismaDireccion}" itemLabel="¿Su local tiene la misma dirección de su domicilio?"
+                                                                 rendered="#{datosGeneralesMB.personaNatural}" style="width: 100%;">
+                                            <p:ajax update="pnlDireccionLocal" />
+                                        </p:selectBooleanCheckbox>
+                                    </p:outputPanel>
                                 </p:panelGrid>
+
+                                <p:panel id="pnlDireccionLocal" header="Ubicación del Local" visible="#{!datosGeneralesMB.mismaDireccion}">
+                                    <p:panelGrid columns="4" columnClasses="col2_label,col3,col2_label,col5" 
+                                                 styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;width: 100%;">
+                                        <p:outputLabel value="Departamento: "/>
+                                        <p:selectOneMenu id="cboDepartamentoLocal" value="#{datosGeneralesMB.codigoDepartamentoLocal}" disabled="true">
+                                            <f:selectItem noSelectionOption="true" itemLabel="Seleccione un departamento" />
+                                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depaP" itemValue="#{depaP.codigoDepartamento}" itemLabel="#{depaP.codigoDepartamento} - #{depaP.nombreDepartamento}" />
+                                            <p:ajax update="cboMunicipio"/>
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Municipio:" />
+                                        <p:selectOneMenu id="cboMunicipioLocal" value="#{datosGeneralesMB.idMunicipioLocal}">
+                                            <f:selectItem noSelectionOption="true" itemLabel="Seleccione un municipio" />
+                                            <f:selectItems value="#{datosGeneralesMB.lstMunicipiosLocal}" var="munP" itemValue="#{munP.idMunicipio}" itemLabel="#{munP.codigoMunicipio} - #{munP.nombreMunicipio}"/>
+                                        </p:selectOneMenu>
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="2" columnClasses="col2_label,col10" rendered="#{datosGeneralesMB.personaNatural}"
+                                                 styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;width: 100%;">
+                                        <p:outputLabel value="Dirección:" />
+                                        <p:inputTextarea value="#{datosGeneralesMB.empresa.direccionCompleta}" cols="100"/>
+                                    </p:panelGrid>
+                                </p:panel>
                             </p:tab>
                             <p:tab title="Datos de Calificación" rendered="#{datosGeneralesMB.capacidadInst.idMuestraInteres.idDetProcesoAdq.idRubroAdq.idRubroInteres ne 2}">
                                 <p:panelGrid columns="2" columnClasses="col3_label,col9" 
@@ -139,12 +171,12 @@
                                     <p:outputLabel value="Habiendo leído y tomado en cuenta los literales que antecenden considero que mi Capacidad de Producción es:"/>
                                     <p:spacer width="10"/>
                                     <p:inputNumber id="txtCapacidadPro" value="#{datosGeneralesMB.capacidadInst.capacidadPropuesta}" decimalPlaces="0" size="10"
-                                                   inputStyle="text-align: right;" minValue="1"/>
+                                                   inputStyle="text-align: right;" minValue="0"/>
                                 </div>
                                 <p:panelGrid columns="2" columnClasses="col3_label,col9" 
                                              styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
                                     <p:outputLabel value="Capacidad Adjudicada: " />
-                                    <p:inputText id="txtCapacidadAdj" value="#{datosGeneralesMB.capacidadInst.capacidadAdjudicada}" styleClass="solo-numeros numero" size="10" readonly="true"/>
+                                    <p:inputNumber id="txtCapacidadAdj" value="#{datosGeneralesMB.capacidadInst.capacidadAdjudicada}" decimalPlaces="0" size="10" readonly="true"/>
                                 </p:panelGrid>
                             </p:tab>
                             <p:tab title="Cuenta Bancaria">
