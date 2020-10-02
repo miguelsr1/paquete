@@ -1531,6 +1531,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
                     recuperarContratosByEntidadFinanciera(requerimientoFondos.getIdRequerimiento(), nombreEntFinanciera);
                 }
                 chequeFinanProve = cheque(0); //recuperar cheque para financiera
+                tipoPagoEntFinanciera = (chequeFinanProve.getTransferencia() == 1);
                 break;
         }
 
