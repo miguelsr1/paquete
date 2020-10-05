@@ -190,7 +190,7 @@ public class EntidadEducativaEJB {
             cabecera.setModalidadDeAdministracion(datos[4].toString());
         }
         try {
-            q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=1 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+            q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=" + (proceso.getIdAnho().getIdAnho().intValue() > 8 ? "22" : "1") + " and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
             q.setParameter("codigoEntidad", codigoEntidad);
             q.setParameter("proceso", proceso);
             cabecera.setParvularia((EstadisticaCenso) q.getSingleResult());
@@ -205,12 +205,12 @@ public class EntidadEducativaEJB {
             q.setParameter("proceso", proceso);
             cabecera.setCiclo2((EstadisticaCenso) q.getSingleResult());
 
-            q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=5 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+            q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo in (5) and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
             q.setParameter("codigoEntidad", codigoEntidad);
             q.setParameter("proceso", proceso);
             cabecera.setCiclo3((EstadisticaCenso) q.getSingleResult());
 
-            q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=6 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+            q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo in (6) and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
             q.setParameter("codigoEntidad", codigoEntidad);
             q.setParameter("proceso", proceso);
             cabecera.setBachillerato((EstadisticaCenso) q.getSingleResult());

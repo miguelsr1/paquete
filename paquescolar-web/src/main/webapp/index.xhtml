@@ -60,10 +60,16 @@
                                         <div class="ui-g-12 button-container">
                                             <p:commandButton id="btnIngresar" value="Ingresar" styleClass="blue-btn raised-btn" action="#{loginController.isUsuarioValido}"/>
                                             <p:blockUI block="btnIngresar" trigger="btnIngresar"  />
-                                            <h:outputText value="."/>
+                                        </div>
+                                        <div class="ui-g-12 button-container">
+                                            <div class="ui-g-6">
+                                                <p:spacer />
+                                            </div>
+                                            <div class="ui-g-6">
+                                                <p:spacer />
+                                            </div>
                                         </div>
                                         <p:spacer width="5"/>
-                                        
                                     </p:tab>
                                     <p:tab title="Proveedor">
                                         <f:facet name="title">
@@ -86,10 +92,18 @@
                                             <p:commandButton id="btnIngresarEmp" value="Ingresar" styleClass="blue-btn raised-btn" action="#{loginController.isUsuarioProveedorValido()}"/>
                                             <p:blockUI block="btnIngresarEmp" trigger="btnIngresarEmp"  />
 
-
-                                            <p:commandLink value="Activar usuario" action="validarProveedor" >
-                                                <i class="fa fa-hand-o-right" aria-hidden="true"></i>
-                                            </p:commandLink>
+                                        </div>
+                                        <div class="ui-g-12 button-container">
+                                            <div class="ui-g-6 ">
+                                                <p:commandLink value="Activar usuario" action="validarProveedor" >
+                                                    <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+                                                </p:commandLink>
+                                            </div>
+                                            <div class="ui-g-6">
+                                                <p:commandLink value="Olvidé contraseña" action="validarProveedor">
+                                                    <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+                                                </p:commandLink>
+                                            </div>
                                         </div>
                                         <p:spacer width="5"/>
                                     </p:tab>
@@ -118,6 +132,17 @@
                             </div>
                         </div>
                     </div>
+
+                    <p:dialog header="Olvidé mi clave de acceso" modal="true" id="dlgClave">
+                        <p:panel>
+                            <p:outputLabel value="Se enviará un correo con un enlace para poder cambiar la contraseña, su usuario esta inactivo hasta que asigne una nueva contraseña" style="font-size: 14px; font-weight: bold;" escape="false"/>
+                        </p:panel>
+                        <f:facet name="footer">
+                            <p:commandButton value="Aceptar" onclick="PF('dlgClave').hide();" action="#{estadisticasCensoController.imprimir}"/>
+                            <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgClave').hide();"/>
+                        </f:facet>
+
+                    </p:dialog>
 
 
                     <h:outputStylesheet name="css/layout-blue.css" library="paradise-layout" />

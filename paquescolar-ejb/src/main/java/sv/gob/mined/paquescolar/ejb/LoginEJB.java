@@ -82,4 +82,8 @@ public class LoginEJB {
         Object obj = q.getSingleResult();
         return new BigInteger(obj.toString());
     }
+    
+    public void solicitarEnlaceNuevaClave(String numeroNit){
+        
+    }
 }

@@ -5,9 +5,12 @@
 package sv.gob.mined.app.web.controller;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
@@ -18,6 +21,7 @@ import org.primefaces.PrimeFaces;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.LoginEJB;
+import sv.gob.mined.paquescolar.model.OrganizacionEducativa;
 import sv.gob.mined.paquescolar.model.Usuario;
 
 /**
@@ -34,6 +38,8 @@ public class LoginController implements Serializable {
     private String claveEmp;
     @EJB
     private LoginEJB loginEJBLocal;
+
+    private static final ResourceBundle UTIL_CORREO = ResourceBundle.getBundle("Bundle");
 
     /**
      * Creates a new instance of LoginController
@@ -100,7 +106,7 @@ public class LoginController implements Serializable {
 
     private String validar(String usuString, String cla) {
         Usuario usu = loginEJBLocal.isUsuarioValido(usuString, cla);
-        
+
         if (usu == null) {
             JsfUtil.mensajeError("Se estan presentando problemas de comunicación con la base de datos. NOTIFICAR AL ADMINISTRADOR.");
             return "";
@@ -108,20 +114,24 @@ public class LoginController implements Serializable {
             JsfUtil.mensajeAlerta("Clave y/o Usuario incorrectos.");
             return "";
         } else {
-            if (usu.getActivo().intValue() == 1) {
-                if (usu.getRangoFechaLogin().intValue() == 0) {
-                    return usuarioOkRedireccionar(usu);
-                } else {
-                    if (!((new Date()).after(usu.getFechaInicioLogin()) && (new Date()).before(usu.getFechaFinLogin()))) {
-                        JsfUtil.mensajeError("Ha concluido su periodo de actividad en el sistema. No posee derechos de acceso");
-                        return "";
-                    } else {
+            switch (usu.getActivo().intValue()) {
+                case 1:
+                    if (usu.getRangoFechaLogin().intValue() == 0) {
                         return usuarioOkRedireccionar(usu);
+                    } else {
+                        if (!((new Date()).after(usu.getFechaInicioLogin()) && (new Date()).before(usu.getFechaFinLogin()))) {
+                            JsfUtil.mensajeError("Ha concluido su periodo de actividad en el sistema. No posee derechos de acceso");
+                            return "";
+                        } else {
+                            return usuarioOkRedireccionar(usu);
+                        }
                     }
-                }
-            } else {
-                JsfUtil.mensajeError("Usuario INACTIVO. No posee derechos de acceso");
-                return "";
+                case 2:
+                    JsfUtil.mensajeError("Se envió un correo con un link para reestablecer su clave de acceso, por favor realizar este paso antes de iniciar sesión");
+                    return "";
+                default:
+                    JsfUtil.mensajeError("Usuario INACTIVO. No posee derechos de acceso");
+                    return "";
             }
         }
     }
@@ -137,5 +147,13 @@ public class LoginController implements Serializable {
         } else {
             return "/app/inicial?faces-redirect=true";
         }
+    }
+    
+    public void asignarNuevaClave(){
+        String titulo = "Paquete Escolar On Line - Cambiar Clave de Acceso";
+        String mensaje = UTIL_CORREO.getString("contratacion.estadistica.correo.cuerpo");
+
+        List<String> to = new ArrayList();
+        List<String> cc = new ArrayList();
     }
 }

@@ -27,6 +27,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 /**
  *
@@ -37,6 +38,7 @@ import javax.persistence.TemporalType;
 @NamedQueries({
     @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u")})
 public class Usuario implements Serializable {
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUsuario", fetch = FetchType.LAZY)
     private List<UsuarioEntidadFinanciera> usuarioEntidadFinancieraList;
     private static final long serialVersionUID = 1L;
@@ -89,7 +91,18 @@ public class Usuario implements Serializable {
     @Column(name = "ACTIVO")
     private Short activo;
 
+    @Transient
+    private String msj;
+
     public Usuario() {
+    }
+
+    public String getMsj() {
+        return msj;
+    }
+
+    public void setMsj(String msj) {
+        this.msj = msj;
     }
 
     public Usuario(BigDecimal idUsuario) {

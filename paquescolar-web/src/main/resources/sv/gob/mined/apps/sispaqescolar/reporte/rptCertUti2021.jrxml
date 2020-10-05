@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f660fe2e-ed54-4e06-919b-6c8626687f7a">
+	<property name="ireport.zoom" value="2.143588810000002"/>
+	<property name="ireport.x" value="196"/>
+	<property name="ireport.y" value="345"/>
+	<subDataset name="dsPaquete" uuid="ca6d0f34-3bf9-4df3-8041-8fd83fea2032">
+		<parameter name="pCodigoEntidad" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pIdProceso" class="java.math.BigDecimal">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select 
+    niv.descripcion_nivel
+    masculino, 
+    femenimo 
+from estadistica_censo est 
+    inner join nivel_educativo niv on niv.id_nivel_educativo = est.id_nivel_educativo
+WHERE
+     est.id_nivel_educativo IN (22,3,4,5,6) and 
+     id_proceso_adq = $P{pIdProceso} and 
+     codigo_entidad = $P{pCodigoEntidad}
+ORDER BY
+     niv.orden2]]>
+		</queryString>
+		<field name="MASCULINO" class="java.lang.String"/>
+		<field name="FEMENIMO" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="ubicacionImagenes" class="java.lang.String">
+		<defaultValueExpression><![CDATA["/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="descripcionRubro" class="java.lang.String"/>
+	<parameter name="pCodigoEntidad" class="java.lang.String">
+		<defaultValueExpression><![CDATA[10001]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pIdProceso" class="java.math.BigDecimal"/>
+	<queryString>
+		<![CDATA[SELECT * FROM vw_cabecera_certificacion_pre WHERE codigo_entidad=$P{pCodigoEntidad}]]>
+	</queryString>
+	<field name="NOMBRE_DEPARTAMENTO" class="java.lang.String"/>
+	<field name="NOMBRE_MUNICIPIO" class="java.lang.String"/>
+	<field name="CODIGO_ENTIDAD" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="INICIALES_MODALIDAD" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="18" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="239" splitType="Stretch">
+			<image hAlign="Center">
+				<reportElement uuid="4d55bf1b-3c16-4622-81e3-8510745cac5c" x="10" y="10" width="60" height="60"/>
+				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo_rpt.png"]]></imageExpression>
+			</image>
+			<image hAlign="Right">
+				<reportElement uuid="6daed4ef-e329-46ed-a878-4e0f1c51545f" x="395" y="10" width="149" height="63"/>
+				<imageExpression><![CDATA[$P{ubicacionImagenes} +File.separator+ "logo_mined_rpt.png"]]></imageExpression>
+			</image>
+			<rectangle>
+				<reportElement uuid="f27e2de2-24af-4eea-aba8-aa6a91e2b837" x="10" y="82" width="534" height="41"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="8d10403b-f848-4760-86d7-f9bd92df93dd" x="27" y="85" width="497" height="18"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<text><![CDATA[CERTIFICACION DE DISPONIBILIDAD PRESUPUESTARIA]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="be0f2356-face-467a-a426-e03c75eee4d7" x="27" y="102" width="497" height="18"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RUBRO: "+$P{descripcionRubro}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="2a3791b3-a553-4566-9d64-ee0ae809cc90" x="23" y="132" width="521" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["1. DEPARTAMENTO: "+$F{NOMBRE_DEPARTAMENTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="15b2a55f-f68d-43c0-9655-a21f7489917f" x="23" y="151" width="521" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["2. MUNICIPIO: "+$F{NOMBRE_MUNICIPIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="654c8a35-7bc9-472a-ad38-57ab6b3a9524" x="23" y="170" width="311" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["3. CÓDIGO DEL CENTRO EDUCATIVO: "+$F{CODIGO_ENTIDAD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="316ddf9d-687b-4900-a3f9-3d0712114b65" x="23" y="189" width="521" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["4. NOMBRE: "+$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0efa8a71-232d-414c-8b1c-9dd5dac615c9" x="23" y="208" width="348" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["5. ORGANISMO DE ADMINISTRACIÓN ESCOLAR: "+$F{INICIALES_MODALIDAD}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="53" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
