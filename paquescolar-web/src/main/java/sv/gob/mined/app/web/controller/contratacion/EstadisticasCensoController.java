@@ -57,6 +57,8 @@ public class EstadisticasCensoController implements Serializable {
 
     private Boolean deshabilitado = true;
     private Boolean isProcesoAdq = true;
+    private Boolean mostrarInicial = false;
+    private Boolean mostrarModFlex = false;
     private Boolean uniformes = true;
     private Boolean utiles = true;
     private Boolean zapatos = true;
@@ -174,10 +176,21 @@ public class EstadisticasCensoController implements Serializable {
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getProceso();
         if (procesoAdquisicion == null || procesoAdquisicion.getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de adquisición.");
+        } else {
+            mostrarInicial = (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 8);
+            mostrarModFlex = (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 8);
         }
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public Boolean getMostrarInicial() {
+        return mostrarInicial;
+    }
+
+    public Boolean getMostrarModFlex() {
+        return mostrarModFlex;
+    }
+
     public String getNombre() {
         return nombre;
     }

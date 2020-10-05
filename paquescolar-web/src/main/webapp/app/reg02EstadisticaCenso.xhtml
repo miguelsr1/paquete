@@ -183,6 +183,50 @@
                                     </p:column>
                                 </p:row>
                             </f:facet>
+                            <p:row rendered="#{estadisticasCensoController.mostrarInicial}">
+                                <p:column>Inicial 2</p:column>
+                                <p:column><p:inputNumber id="txtIni2F" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaPar.femenimo}"  onkeyup="calcularSubTotalMatricula('txtParF', 'txtParM', 'lblMatPar'); calcularMontoPorNivel('txtParF', 'txtParM', 'Par');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                <p:column><p:inputNumber id="txtIni2M" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaPar.masculino}" onkeyup="calcularSubTotalMatricula('txtParF', 'txtParM', 'lblMatPar'); calcularMontoPorNivel('txtParF', 'txtParM', 'Par');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                <p:column styleClass="numero"><p:outputLabel id="lblMatIni2"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
+
+                                <p:column styleClass="numero">
+                                    <p:inputText id="lblIni2Uni" size="5" readonly="true" styleClass="numero"/>
+                                    <p:inputText id="txtIni2UniFem" style="display: none;" size="4" value="#{estadisticasCensoController.preParUni.precioMaxFem}"/>
+                                    <p:inputText id="txtIni2UniMas" style="display: none;" size="4" value="#{estadisticasCensoController.preParUni.precioMaxMas}"/>
+                                </p:column>
+                                <p:column styleClass="numero">
+                                    <p:inputText id="lblIni2Uti" size="5" readonly="true" styleClass="numero"/>
+                                    <p:inputText id="txtIni2UtiFem" style="display: none;" size="4" value="#{estadisticasCensoController.preParUti.precioMaxFem}"/>
+                                    <p:inputText id="txtIni2UtiMas" style="display: none;" size="4" value="#{estadisticasCensoController.preParUti.precioMaxMas}"/>
+                                </p:column>
+                                <p:column styleClass="numero">
+                                    <p:inputText id="lblIni2Zap" size="5" readonly="true" styleClass="numero"/>
+                                    <p:inputText id="txtIni2ZapFem" style="display: none;" size="4" value="#{estadisticasCensoController.preParZap.precioMaxFem}"/>
+                                    <p:inputText id="txtIni2ZapMas" style="display: none;" size="4" value="#{estadisticasCensoController.preParZap.precioMaxMas}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row rendered="#{estadisticasCensoController.mostrarInicial}">
+                                <p:column>Inicial 3</p:column>
+                                <p:column><p:inputNumber id="txtIni3F" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaPar.femenimo}"  onkeyup="calcularSubTotalMatricula('txtParF', 'txtParM', 'lblMatPar'); calcularMontoPorNivel('txtParF', 'txtParM', 'Par');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                <p:column><p:inputNumber id="txtIni3M" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaPar.masculino}" onkeyup="calcularSubTotalMatricula('txtParF', 'txtParM', 'lblMatPar'); calcularMontoPorNivel('txtParF', 'txtParM', 'Par');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                <p:column styleClass="numero"><p:outputLabel id="lblMatIni3"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
+
+                                <p:column styleClass="numero">
+                                    <p:inputText id="lblIni3Uni" size="5" readonly="true" styleClass="numero"/>
+                                    <p:inputText id="txtIni3UniFem" style="display: none;" size="4" value="#{estadisticasCensoController.preParUni.precioMaxFem}"/>
+                                    <p:inputText id="txtIni3UniMas" style="display: none;" size="4" value="#{estadisticasCensoController.preParUni.precioMaxMas}"/>
+                                </p:column>
+                                <p:column styleClass="numero">
+                                    <p:inputText id="lblIni3Uti" size="5" readonly="true" styleClass="numero"/>
+                                    <p:inputText id="txtIni3UtiFem" style="display: none;" size="4" value="#{estadisticasCensoController.preParUti.precioMaxFem}"/>
+                                    <p:inputText id="txtIni3UtiMas" style="display: none;" size="4" value="#{estadisticasCensoController.preParUti.precioMaxMas}"/>
+                                </p:column>
+                                <p:column styleClass="numero">
+                                    <p:inputText id="lblIni3Zap" size="5" readonly="true" styleClass="numero"/>
+                                    <p:inputText id="txtIni3ZapFem" style="display: none;" size="4" value="#{estadisticasCensoController.preParZap.precioMaxFem}"/>
+                                    <p:inputText id="txtIni3ZapMas" style="display: none;" size="4" value="#{estadisticasCensoController.preParZap.precioMaxMas}"/>
+                                </p:column>
+                            </p:row>
                             <p:row>
                                 <p:column>Parvularia</p:column>
                                 <p:column><p:inputNumber id="txtParF" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaPar.femenimo}"  onkeyup="calcularSubTotalMatricula('txtParF', 'txtParM', 'lblMatPar'); calcularMontoPorNivel('txtParF', 'txtParM', 'Par');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
