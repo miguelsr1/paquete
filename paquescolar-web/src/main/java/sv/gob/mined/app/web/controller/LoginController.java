@@ -97,15 +97,21 @@ public class LoginController implements Serializable {
     }
 
     public String isUsuarioValido() {
-        return validar(usuario, clave);
+        return validar(usuario, clave, false);
     }
 
     public String isUsuarioProveedorValido() {
-        return validar(usuarioEmp, claveEmp);
+        return validar(usuarioEmp, claveEmp, true);
     }
 
-    private String validar(String usuString, String cla) {
-        Usuario usu = loginEJBLocal.isUsuarioValido(usuString, cla);
+    private String validar(String usuString, String cla, Boolean proveedor) {
+        Usuario usu;
+
+        if (proveedor) {
+            usu = loginEJBLocal.isUsuarioProveedorValido(usuString, cla);
+        } else {
+            usu = loginEJBLocal.isUsuarioValido(usuString, cla);
+        }
 
         if (usu == null) {
             JsfUtil.mensajeError("Se estan presentando problemas de comunicación con la base de datos. NOTIFICAR AL ADMINISTRADOR.");
@@ -113,6 +119,8 @@ public class LoginController implements Serializable {
         } else if (usu.getIdUsuario() == null) {
             JsfUtil.mensajeAlerta("Clave y/o Usuario incorrectos.");
             return "";
+        } else if (usu.getIdTipoUsuario().getIdTipoUsuario().intValue() == 9) {
+            return usuarioOkRedireccionar(usu);
         } else {
             switch (usu.getActivo().intValue()) {
                 case 1:
@@ -148,8 +156,8 @@ public class LoginController implements Serializable {
             return "/app/inicial?faces-redirect=true";
         }
     }
-    
-    public void asignarNuevaClave(){
+
+    public void asignarNuevaClave() {
         String titulo = "Paquete Escolar On Line - Cambiar Clave de Acceso";
         String mensaje = UTIL_CORREO.getString("contratacion.estadistica.correo.cuerpo");
 
