@@ -220,19 +220,16 @@ public class DatosGeneralesMB implements Serializable {
             empresa.setTelefonos(empresa.getIdPersona().getNumeroTelefono());
             empresa.setNumeroCelular(empresa.getIdPersona().getNumeroCelular());
             empresa.setNumeroNit(empresa.getIdPersona().getNumeroNit());
-            
-            if(mismaDireccion){
+
+            if (mismaDireccion) {
                 idMunicipioLocal = idMunicipio;
                 empresa.setDireccionCompleta(empresa.getIdPersona().getDomicilio());
             }
         }
 
-        if (empresa.getIdPersona().getIdMunicipio().getIdMunicipio().intValue() != idMunicipio.intValue()) {
-            empresa.getIdPersona().setIdMunicipio(new Municipio(idMunicipio));
-        }
-        if (empresa.getIdMunicipio().getIdMunicipio().intValue() != idMunicipioLocal.intValue()) {
-            empresa.setIdMunicipio(new Municipio(idMunicipioLocal));
-        }
+        empresa.getIdPersona().setIdMunicipio(new Municipio(idMunicipio));
+        empresa.setIdMunicipio(new Municipio(idMunicipioLocal));
+        
         empresa.setFechaModificacion(new Date());
         empresa.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
 
@@ -251,6 +248,6 @@ public class DatosGeneralesMB implements Serializable {
     }
 
     public List<Municipio> getLstMunicipiosLocal() {
-        return datosGeograficosEJB.getLstMunicipiosByDepartamento(empresa.getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento());
+        return datosGeograficosEJB.getLstMunicipiosByDepartamento(codigoDepartamentoLocal);
     }
 }

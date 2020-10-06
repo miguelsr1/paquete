@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bd36e8b4-9a05-443a-91c3-b848b3d35659">
-	<property name="ireport.zoom" value="0.8264462809917443"/>
+	<property name="ireport.zoom" value="1.3310000000000146"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="17"/>
+	<property name="ireport.y" value="144"/>
 	<parameter name="ubicacionImagenes" class="java.lang.String">
 		<defaultValueExpression><![CDATA["/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="descripcionRubro" class="java.lang.String"/>
+	<parameter name="pInicial" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -298,13 +301,13 @@
 				</textElement>
 				<text><![CDATA[II CICLO]]></text>
 			</staticText>
-			<staticText>
-				<reportElement uuid="d35c9b83-b442-4263-91dc-44620c5e921d" x="85" y="164" width="90" height="13"/>
-				<textElement>
+			<textField>
+				<reportElement uuid="1181a5b0-b7b1-4aaf-b4bd-1fc55dd9d6d8" x="85" y="160" width="90" height="22"/>
+				<textElement verticalAlignment="Middle" markup="none">
 					<font fontName="Arial"/>
 				</textElement>
-				<text><![CDATA[PARVULARIA]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[($P{pInicial}?"EDUCACIÓN INICIAL Y ":"")+"PARVULARIA"]]></textFieldExpression>
+			</textField>
 			<staticText>
 				<reportElement uuid="78a551e3-6697-4052-927f-41b56ca16141" x="86" y="274" width="90" height="13"/>
 				<textElement>
@@ -685,13 +688,13 @@ add(new BigDecimal($F{bachillerato}.getFemenimo()).multiply(new BigDecimal("9.00
 				</textElement>
 				<text><![CDATA[NIÑA]]></text>
 			</staticText>
-			<staticText>
-				<reportElement uuid="235e945c-8e59-4b18-a8f2-650354460dc8" x="129" y="44" width="100" height="15"/>
+			<textField>
+				<reportElement uuid="97a95743-73ac-4bae-9c7f-078629fa88fc" x="129" y="44" width="100" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial"/>
 				</textElement>
-				<text><![CDATA[Parvularia]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[($P{pInicial}?"Inicial y ":"")+"Parvularia"]]></textFieldExpression>
+			</textField>
 			<staticText>
 				<reportElement uuid="f89f05f3-6248-4473-bc16-7d2b24c34fe6" x="343" y="29" width="100" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">

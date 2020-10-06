@@ -712,6 +712,7 @@ public class ParticipantesController implements Serializable {
                 for (BigDecimal idNivel : lstNiveles) {
                     switch (idNivel.intValue()) {
                         case 1:
+                        case 22:
                             tmpIdNivel = 1;
                             break;
                         case 2:
@@ -737,6 +738,7 @@ public class ParticipantesController implements Serializable {
                         case 16:
                         case 17:
                         case 18:
+                        case 24:
                             tmpIdNivel = 6;
                             break;
                     }

@@ -1616,8 +1616,13 @@ public class ProveedorEJB {
                 case "13":
                     emp.setItem13("13");
                     break;
+                case "22":
+                    emp.setItem22("22");
+                    break;
             }
         }
+        
+        em.persist(emp);
     }
 
     public void calcularPreRef(Integer idDet) {
@@ -1842,12 +1847,24 @@ public class ProveedorEJB {
         return getIdGestionByProceso(idEmpresa, det.getIdDetProcesoAdq().getIdDetProcesoAdq());
     }
 
-    public String getIdGestionByProceso(BigDecimal idEmrpesa, Integer idDetProcesoAdq) {
+    public String getIdGestionByProceso(BigDecimal idEmpresa, Integer idDetProcesoAdq) {
         StoredProcedureQuery q = em.createNamedStoredProcedureQuery("SP_GET_ID_GESTION");
-        q.setParameter("P_ID_EMPRESA", idEmrpesa);
+        q.setParameter("P_ID_EMPRESA", idEmpresa);
         q.setParameter("P_ID_DET_PROCESO_ADQ", idDetProcesoAdq);
         q.execute();
         return (String) q.getOutputParameterValue(3);
+    }
+    
+    public void resetAceptacion(String numeroNit, Integer idDetProcesoAdq) {
+        StoredProcedureQuery q = em.createNamedStoredProcedureQuery("SP_RESET_ACEPTACION");
+        q.setParameter("P_NUMERO_NIT", numeroNit);
+        q.setParameter("P_ID_DET_PROCESO_ADQ", idDetProcesoAdq);
+        q.execute();
+    }
+    public void resetActivacion(String numeroNit) {
+        StoredProcedureQuery q = em.createNamedStoredProcedureQuery("SP_RESET_ACTIVACION_USER");
+        q.setParameter("P_NUMERO_NIT", numeroNit);
+        q.execute();
     }
 
     public void enviarNotificacionModProv(String remitente, String titulo, String mensaje, List<String> to, List<String> cc, List<String> bcc) {

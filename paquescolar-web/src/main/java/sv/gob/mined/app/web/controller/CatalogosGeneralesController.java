@@ -149,4 +149,7 @@ public class CatalogosGeneralesController implements Serializable {
     public Boolean isUsuarioRoot() {
         return VarSession.getVariableSessionUsuario().equals("MSANCHEZ");
     }
+    public Boolean isUsuarioRafa() {
+        return VarSession.getVariableSessionUsuario().equals("RAFAARIAS");
+    }
 }

@@ -63,6 +63,8 @@ public class EmpresaNoItem implements Serializable {
     private String item12;
     @Column(name = "ITEM_13")
     private String item13;
+    @Column(name = "ITEM_22")
+    private String item22;
     @Column(name = "ID_DET_PROCEO_ADQ")
     private Integer idDetProceoAdq;
 
@@ -193,6 +195,14 @@ public class EmpresaNoItem implements Serializable {
         this.item13 = item13;
     }
 
+    public String getItem22() {
+        return item22;
+    }
+
+    public void setItem22(String item22) {
+        this.item22 = item22;
+    }
+
     public Integer getIdDetProceoAdq() {
         return idDetProceoAdq;
     }
@@ -215,15 +225,12 @@ public class EmpresaNoItem implements Serializable {
             return false;
         }
         EmpresaNoItem other = (EmpresaNoItem) object;
-        if ((this.idEmpNo == null && other.idEmpNo != null) || (this.idEmpNo != null && !this.idEmpNo.equals(other.idEmpNo))) {
-            return false;
-        }
-        return true;
+        return !((this.idEmpNo == null && other.idEmpNo != null) || (this.idEmpNo != null && !this.idEmpNo.equals(other.idEmpNo)));
     }
 
     @Override
     public String toString() {
         return "sv.gob.mined.paquescolar.model.EmpresaNoItem[ idEmpNo=" + idEmpNo + " ]";
     }
-    
+   
 }

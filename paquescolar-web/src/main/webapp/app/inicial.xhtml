@@ -36,7 +36,7 @@
                                 <f:selectItem noSelectionOption="true" itemLabel="Seleccione un rubro" />
                                 <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                             </p:selectOneMenu>
-                            
+
                             <p:outputLabel value="Numero nit:" />
                             <p:inputText value="#{proveedorController.numeroNit}"/>
 
@@ -47,10 +47,40 @@
                                 <p:commandButton value="Reversion masiva de contratos" icon="fa fa-print" disabled="false" action="#{resolucionesAdjudicativasController.reversionMasiva()}" />
                             </f:facet>
                         </p:panelGrid>
-                        
-                       <br/>
-                       <br/>
-                       <p:commandButton value="Enviar" action="#{estadisticasCensoController.enviarCorreos()}" /> 
+
+                        <br/>
+                        <br/>
+                        <p:commandButton value="Enviar" action="#{estadisticasCensoController.enviarCorreos()}" /> 
+                    </p:outputPanel>
+
+                    <p:outputPanel rendered="#{catalogosGeneralesController.isUsuarioRafa()}">
+                        <h1>
+                            <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                            <p:spacer width="10" height="8"/>
+                            <p:outputLabel value="Filtro de busqueda"/>
+                        </h1>
+
+                        <p:panelGrid id="pnlFiltro2" columns="2" columnClasses="col2_label,col10" 
+                                     style="width: 100%; border:0px none; background-color:transparent;"
+                                     styleClass="form-group ui-panelgrid-blank">
+                            <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
+                            <p:selectOneMenu id="cboRubro2" value="#{proveedorController.rubro}" >
+                                <f:selectItem noSelectionOption="true" itemLabel="Seleccione un rubro" />
+                                <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="Numero nit:" />
+                            <p:inputText value="#{proveedorController.numeroNit}"/>
+
+                            <p:spacer/>
+                            <p:selectBooleanCheckbox value="#{proveedorController.resetUsuario}" itemLabel="Reset Activación Usuario"/>
+                            <p:spacer/>
+                            <p:selectBooleanCheckbox value="#{proveedorController.resetAceptacion}" itemLabel="Reset Aceptación de Terminos"/>
+                        </p:panelGrid>
+
+                        <br/>
+                        <br/>
+                        <p:commandButton value="Aceptar" action="#{estadisticasCensoController.enviarCorreos()}" /> 
                     </p:outputPanel>
                 </div>
             </div>

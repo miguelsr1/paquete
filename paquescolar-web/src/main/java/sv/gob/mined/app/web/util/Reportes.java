@@ -87,6 +87,12 @@ public class Reportes {
         }
     }
 
+    public static JasperPrint getRptSQLConnection(ReportesEJB reportesEJB, HashMap param, String paqueteRpt, String nombreRpt) {
+        ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        param.put("ubicacionImagenes", ctx.getRealPath(PATH_IMAGENES));
+        return reportesEJB.getRpt(param, Reportes.class.getClassLoader().getResourceAsStream((paqueteRpt + File.separator + nombreRpt)));
+    }
+
     /**
      *
      * @param jp
@@ -125,6 +131,8 @@ public class Reportes {
 
                 if (rpt.contains("rptCertUti_2017")) {
                     jasperPrintList.add(reportesEJB.getRpt(param, Reportes.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/sispaqescolar/reporte" + File.separator + rpt)));
+                } else if (rpt.contains("rptCertUti2021")) {
+                     jasperPrintList.add(getRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/sispaqescolar/reporte/", rpt));
                 } else {
                     if (rpt.contains("rptCertUni")) {
                         if (Integer.parseInt(anho) > 2017) {
@@ -148,14 +156,13 @@ public class Reportes {
         }
     }
 
-    
     /**
      * buscar las exceciones de este metodo y controlar los errores.
-     * 
+     *
      * @param jasperPrintList
      * @param nombreRpt
      * @throws IOException
-     * @throws JRException 
+     * @throws JRException
      */
     public static void generarReporte(List<JasperPrint> jasperPrintList, String nombreRpt) throws IOException, JRException {
 

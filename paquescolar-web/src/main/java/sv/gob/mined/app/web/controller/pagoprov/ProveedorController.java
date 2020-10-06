@@ -78,6 +78,9 @@ import sv.gob.mined.paquescolar.model.pojos.proveedor.MunicipioDto;
 public class ProveedorController extends RecuperarProcesoUtil implements Serializable {
 
     private int idRow;
+    
+    private Boolean resetUsuario = false;
+    private Boolean resetAceptacion = false;
     private Boolean deshabiliar = true;
     private Boolean showFoto = true;
     private Boolean showCapacidadAdjudicada = false;
@@ -96,6 +99,9 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     private String url;
     private String msjError = "";
     private String codigoDepartamento = "";
+    private String codigoDepartamentoLocal = "";
+    private BigDecimal idMunicipioLocal = BigDecimal.ZERO;
+
     private BigDecimal rubro = BigDecimal.ZERO;
     private BigDecimal idMunicipio = BigDecimal.ZERO;
     private BigDecimal totalItems = BigDecimal.ZERO;
@@ -164,12 +170,12 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         if (VarSession.isVariableSession("idEmpresa")) {
             empresa = proveedorEJB.findEmpresaByPk((BigDecimal) VarSession.getVariableSession("idEmpresa"));
             showUpdateEmpresa = ((Integer) VarSession.getVariableSession("idTipoUsuario") == 1);
-            cargarDetalleCalificacion(true);
+            cargarDetalleCalificacion();
             if (url.contains("DatosGenerales")) {
                 idMunicipio = empresa.getIdPersona().getIdMunicipio().getIdMunicipio();
                 codigoDepartamento = empresa.getIdPersona().getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
             } else if (url.contains("MunicipiosInteres")) {
-                cargarMunInteres(true);
+                cargarMunInteres();
             } else if (url.contains("PreciosReferencia") && getRecuperarProceso().getProcesoAdquisicion() != null && getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq() != null) {
                 cargarPrecioRef();
             } else if (url.contains("FotografiaMuestras") && getRecuperarProceso().getProcesoAdquisicion() != null && getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq() != null) {
@@ -182,6 +188,39 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    
+    public Boolean getResetUsuario() {
+        return resetUsuario;
+    }
+
+    public void setResetUsuario(Boolean resetUsuario) {
+        this.resetUsuario = resetUsuario;
+    }
+
+    public Boolean getResetAceptacion() {
+        return resetAceptacion;
+    }
+
+    public void setResetAceptacion(Boolean resetAceptacion) {
+        this.resetAceptacion = resetAceptacion;
+    }
+    
+    public String getCodigoDepartamentoLocal() {
+        return codigoDepartamentoLocal;
+    }
+
+    public void setCodigoDepartamentoLocal(String codigoDepartamentoLocal) {
+        this.codigoDepartamentoLocal = codigoDepartamentoLocal;
+    }
+
+    public BigDecimal getIdMunicipioLocal() {
+        return idMunicipioLocal;
+    }
+
+    public void setIdMunicipioLocal(BigDecimal idMunicipioLocal) {
+        this.idMunicipioLocal = idMunicipioLocal;
+    }
+
     public BigDecimal getRubro() {
         return rubro;
     }
@@ -399,6 +438,10 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         return datosGeograficosEJB.getLstMunicipiosByDepartamento(codigoDepartamento);
     }
 
+    public List<Municipio> getLstMunicipiosLocal() {
+        return datosGeograficosEJB.getLstMunicipiosByDepartamento(codigoDepartamentoLocal);
+    }
+
     public Boolean getShowUpdateEmpresa() {
         return showUpdateEmpresa;
     }
@@ -520,7 +563,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         }
     }
 
-    private void cargarDetalleCalificacion(Boolean inicio) {
+    private void cargarDetalleCalificacion() {
         ProcesoAdquisicion proceso = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getProceso();
         if (proceso == null || proceso.getIdProcesoAdq() == null) {
@@ -544,6 +587,9 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                     JsfUtil.mensajeAlerta("Este proveedor no posee departamento de calificación " + proceso.getIdAnho().getAnho());
                 } else {
                     codigoDepartamentoCalificado = departamentoCalif.getCodigoDepartamento().getCodigoDepartamento();
+
+                    idMunicipioLocal = empresa.getIdMunicipio().getIdMunicipio();
+                    codigoDepartamentoLocal = empresa.getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
 
                     deshabiliar = false;
                     if (empresa.getIdPersona().getUrlImagen() == null) {
@@ -576,7 +622,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                     }
                 }
                 VarSession.setVariableSession("idEmpresa", empresa.getIdEmpresa());
-                cargarDetalleCalificacion(false);
+                cargarDetalleCalificacion();
                 showUpdateEmpresa = ((Integer) VarSession.getVariableSession("idTipoUsuario") == 1);
             }
         } else {
@@ -590,8 +636,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
             if (event.getObject() instanceof Empresa) {
                 empresa = (Empresa) event.getObject();
                 VarSession.setVariableSession("idEmpresa", empresa.getIdEmpresa());
-                cargarMunInteres(false);
-
+                cargarMunInteres();
             } else {
                 Logger.getLogger(ProveedorController.class
                         .getName()).log(Level.INFO, "No se pudo convertir el objeto a la clase Empresa{0}", event.getObject());
@@ -602,8 +647,8 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         }
     }
 
-    private void cargarMunInteres(Boolean inicio) {
-        cargarDetalleCalificacion(inicio);
+    private void cargarMunInteres() {
+        cargarDetalleCalificacion();
         if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
             if (departamentoCalif != null && departamentoCalif.getCodigoDepartamento() != null) {
                 lstMunSource = datosGeograficosEJB.getLstMunicipiosDisponiblesDeInteres(departamentoCalif.getIdCapaDistribucion(), departamentoCalif.getCodigoDepartamento().getCodigoDepartamento());
@@ -619,7 +664,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                 empresa = (Empresa) event.getObject();
                 fileName = "fotoProveedores/" + empresa.getIdPersona().getFoto();
                 VarSession.setVariableSession("idEmpresa", empresa.getIdEmpresa());
-                cargarDetalleCalificacion(false);
+                cargarDetalleCalificacion();
                 if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
                     cargarPrecioRef();
                 }
@@ -682,7 +727,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         if (showUpdateEmpresa) {
             if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
                 empresa.setRazonSocial(empresa.getIdPersona().getNombreCompletoProveedor());
-                empresa.setIdMunicipio(empresa.getIdPersona().getIdMunicipio());
+                empresa.setIdMunicipio(utilEJB.find(Municipio.class, idMunicipioLocal));
                 empresa.setDireccionCompleta(empresa.getIdPersona().getDomicilio());
                 empresa.setTelefonos(empresa.getIdPersona().getNumeroTelefono());
                 empresa.setNumeroCelular(empresa.getIdPersona().getNumeroCelular());
@@ -1382,7 +1427,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         if (event.getObject() != null) {
             if (event.getObject() instanceof Empresa) {
                 empresa = (Empresa) event.getObject();
-                cargarDetalleCalificacion(true);
+                cargarDetalleCalificacion();
                 /**
                  * Fecha: 05/09/2018 Comentario: Validación para la capacidad
                  * instalada del proveedor seleccionado
@@ -1510,6 +1555,15 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         } catch (IOException | JRException ex) {
             Logger.getLogger(ProveedorController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+    }
+    
+    public void resetDatosProveedor(){
+        if(resetAceptacion){
+            proveedorEJB.resetAceptacion(numeroNit, JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq());
+        }
+        
+        if(resetUsuario){
+            proveedorEJB.resetActivacion(numeroNit);
+        }
     }
 }

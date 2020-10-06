@@ -351,7 +351,9 @@ public class EntidadEducativaEJB {
                     + "    where id_proceso_adq = ?1 and id_nivel_educativo in (1,3,4,5,6) and codigo_entidad = ?2 and (masculino <> 0 or femenimo <> 0))\n"
                     + "group by id_nivel";
         } else {
-            sql = "select id_nivel_educativo, masculino, femenimo from estadistica_censo \n"
+            sql = "select "
+                    + (detProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 8 ? " case id_nivel_educativo when 1 then 22 else id_nivel_educativo end id_nivel_educativo," : "id_nivel_educativo, ")
+                    + "masculino, femenimo from estadistica_censo \n"
                     + "where id_proceso_adq = ?1 and \n"
                     + "    id_nivel_educativo in (1,3,4,5,6) and \n"
                     + "    codigo_entidad = ?2 and \n"
@@ -373,15 +375,16 @@ public class EntidadEducativaEJB {
             fem = (BigDecimal) datos[2];
 
             switch (((BigDecimal) datos[0]).intValue()) {
+                case 22:
                 case 1: //PARVULARIA
-                    idNivelesCe += idNivelesCe.isEmpty() ? "1" : ",1";
+                    idNivelesCe += idNivelesCe.isEmpty() ? "" + ((BigDecimal) datos[0]).intValue() : "," + ((BigDecimal) datos[0]).intValue() + "";
                     switch (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
                         case 1:
                         case 4:
                         case 5://uniformes
                             if (fem.intValue() > 0) {
-                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_1 = '1' and item_2 = '2'";
-                                noItems += (noItems.isEmpty() ? "" : " , ") + "'1','2'";
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_" + ((BigDecimal) datos[0]).intValue() + " = '" + ((BigDecimal) datos[0]).intValue() + "' and item_2 = '2'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'" + ((BigDecimal) datos[0]).intValue() + "','2'";
                             }
                             if (mas.intValue() > 0) {
                                 noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_3 = '3' and item_4 = '4'";
@@ -389,16 +392,16 @@ public class EntidadEducativaEJB {
                             }
                             break;
                         case 2://utiles
-                        case 6://mascarillas
+                            //case 6://mascarillas
                             if (fem.intValue() > 0 || mas.intValue() > 0) {
-                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_1 = '1'";
-                                noItems += (noItems.isEmpty() ? "" : " , ") + "'1'";
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_" + ((BigDecimal) datos[0]).intValue() + " = '" + ((BigDecimal) datos[0]).intValue() + "'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'" + ((BigDecimal) datos[0]).intValue() + "'";
                             }
                             break;
                         case 3://zapatos
                             if (fem.intValue() > 0) {
-                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_1 = '1'";
-                                noItems += (noItems.isEmpty() ? "" : " , ") + "'1'";
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_" + ((BigDecimal) datos[0]).intValue() + " = '" + ((BigDecimal) datos[0]).intValue() + "'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'" + ((BigDecimal) datos[0]).intValue() + "'";
                             }
                             if (mas.intValue() > 0) {
                                 noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_2 = '2'";

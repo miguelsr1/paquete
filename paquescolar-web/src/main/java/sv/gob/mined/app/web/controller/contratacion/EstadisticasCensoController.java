@@ -30,6 +30,7 @@ import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.EMailEJB;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.PreciosReferenciaEJB;
+import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.EstadisticaCenso;
@@ -165,6 +166,8 @@ public class EstadisticasCensoController implements Serializable {
     private ReportesEJB reportesEJB;
     @EJB
     private EMailEJB eMailEJB;
+    @EJB
+    private ProveedorEJB proveedorEJB;
 
     private static final ResourceBundle UTIL_CORREO = ResourceBundle.getBundle("Bundle");
 
@@ -188,6 +191,8 @@ public class EstadisticasCensoController implements Serializable {
         }
     }
 
+    
+    
     public EstadisticaCenso getEstaditicaIniPar() {
         return estaditicaIniPar;
     }
@@ -1495,10 +1500,8 @@ public class EstadisticasCensoController implements Serializable {
                     reportes = "rptCertUni.jasper";
                 }
                 if (utiles) {
-                    if (detProAdqUti.getIdDetProcesoAdq() >= 32 && detProAdqUti.getIdDetProcesoAdq() <= 36) {
-                        reportes += (reportes.isEmpty() ? "" : ",") + "rptCertUti2018.jasper";
-                    } else if (detProAdqUti.getIdDetProcesoAdq() >= 42) {
-                        reportes += (reportes.isEmpty() ? "" : ",") + "rptCertUti2019.jasper";
+                    if (detProAdqUti.getIdDetProcesoAdq() >= 32) {
+                        reportes += (reportes.isEmpty() ? "" : ",") + "rptCertUti" + procesoAdquisicion.getIdAnho().getAnho() + ".jasper";
                     } else {
                         reportes += (reportes.isEmpty() ? "" : ",") + "rptCertUti2017.jasper";
                     }
@@ -1509,9 +1512,12 @@ public class EstadisticasCensoController implements Serializable {
                 if (declaracion && procesoAdquisicion.getIdAnho().getIdAnho().intValue() >= 7) {
                     param.put("descripcionProcesoAdq", detProAdqUni.getIdProcesoAdq().getDescripcionProcesoAdq());
                     param.put("pAnho", detProAdqUni.getIdProcesoAdq().getIdAnho().getAnho());
-                    param.put("codigoEntidad", entidadEducativa.getCodigoEntidad());
                     reportes += (reportes.isEmpty() ? "" : ",") + "rptDeclaracionJuradaMatricula" + procesoAdquisicion.getIdAnho().getAnho() + ".jasper";
                 }
+                param.put("codigoEntidad", entidadEducativa.getCodigoEntidad());
+                param.put("pIdProceso", procesoAdquisicion.getIdProcesoAdq());
+                param.put("pInicial", (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 8));
+                param.put("pUsuarioInsercion", VarSession.getVariableSessionUsuario());
                 Reportes.generarRptsContractuales(lst, param, codigoEntidad, procesoAdquisicion.getDescripcionProcesoAdq().contains("SOBREDEMANDA"), reportesEJB, procesoAdquisicion.getIdAnho().getAnho(), reportes.split(","));
             }
         } catch (Exception e) {
@@ -1568,4 +1574,6 @@ public class EstadisticasCensoController implements Serializable {
             Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, "Correo enviado a: {0}", string);
         });
     }
+    
+    
 }

@@ -2,11 +2,14 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3a6af5d8-c927-4905-8572-38b551a46ed4">
 	<property name="ireport.zoom" value="1.2100000000000128"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="30"/>
 	<parameter name="ubicacionImagenes" class="java.lang.String">
 		<defaultValueExpression><![CDATA["/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="descripcionRubro" class="java.lang.String"/>
+	<parameter name="pInicial" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -315,13 +318,13 @@
 				</textElement>
 				<text><![CDATA[II CICLO]]></text>
 			</staticText>
-			<staticText>
-				<reportElement uuid="3fba1a33-615a-4302-8444-e80e19615ce1" x="41" y="164" width="90" height="13"/>
-				<textElement>
+			<textField>
+				<reportElement uuid="9103fe4a-eb55-47bb-aefa-74a83d6b8b6d" x="31" y="160" width="100" height="22"/>
+				<textElement verticalAlignment="Middle" markup="none">
 					<font fontName="Arial"/>
 				</textElement>
-				<text><![CDATA[PARVULARIA]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[($P{pInicial}?"EDUCACIÓN INICIAL Y ":"")+"PARVULARIA"]]></textFieldExpression>
+			</textField>
 			<staticText>
 				<reportElement uuid="5ec893db-e373-44aa-abf7-a7063a278313" x="42" y="274" width="90" height="13"/>
 				<textElement>

@@ -1,42 +1,125 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f660fe2e-ed54-4e06-919b-6c8626687f7a">
-	<property name="ireport.zoom" value="2.143588810000002"/>
-	<property name="ireport.x" value="196"/>
-	<property name="ireport.y" value="345"/>
+	<property name="ireport.zoom" value="1.6105100000000026"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="566"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
 	<subDataset name="dsPaquete" uuid="ca6d0f34-3bf9-4df3-8041-8fd83fea2032">
 		<parameter name="pCodigoEntidad" class="java.lang.String">
 			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 		</parameter>
-		<parameter name="pIdProceso" class="java.math.BigDecimal">
+		<parameter name="pIdProceso" class="java.lang.Integer">
 			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 		</parameter>
 		<queryString>
 			<![CDATA[select 
-    niv.descripcion_nivel
-    masculino, 
-    femenimo 
-from estadistica_censo est 
-    inner join nivel_educativo niv on niv.id_nivel_educativo = est.id_nivel_educativo
-WHERE
-     est.id_nivel_educativo IN (22,3,4,5,6) and 
-     id_proceso_adq = $P{pIdProceso} and 
-     codigo_entidad = $P{pCodigoEntidad}
-ORDER BY
-     niv.orden2]]>
+    tb.no_item,descripcion_nivel,sub_total, pre.precio_maximo, pre.precio_maximo*sub_total sub_monto
+from (select 
+        to_char(rownum) no_item,descripcion_nivel,sub_total,id_proceso_adq
+    from (select 
+                niv.descripcion_nivel, masculino, femenimo, masculino + femenimo sub_total, est.id_proceso_adq
+            from estadistica_censo est 
+                inner join nivel_educativo niv on niv.id_nivel_educativo = est.id_nivel_educativo
+            where est.id_nivel_educativo in (22,3,4,5,6) 
+		and id_proceso_adq = $P{pIdProceso}
+		and codigo_entidad = $P{pCodigoEntidad}
+            order by niv.orden2)) tb
+    inner join precio_maximo_referencia pre on tb.no_item = pre.no_item and pre.id_proceso_adq = tb.id_proceso_adq and pre.id_rubro_interes = 2]]>
 		</queryString>
-		<field name="MASCULINO" class="java.lang.String"/>
-		<field name="FEMENIMO" class="java.math.BigDecimal"/>
+		<field name="NO_ITEM" class="java.lang.String"/>
+		<field name="DESCRIPCION_NIVEL" class="java.lang.String"/>
+		<field name="SUB_TOTAL" class="java.math.BigDecimal"/>
+		<field name="PRECIO_MAXIMO" class="java.math.BigDecimal"/>
+		<field name="SUB_MONTO" class="java.math.BigDecimal"/>
+		<variable name="vTotalMatricula" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{SUB_TOTAL}]]></variableExpression>
+		</variable>
+		<variable name="vMontoTotal" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{SUB_MONTO}]]></variableExpression>
+		</variable>
+	</subDataset>
+	<subDataset name="dsModalidadFlex" uuid="14487250-2933-4122-afcc-873fe037f775">
+		<parameter name="pCodigoEntidad" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pIdProceso" class="java.lang.Integer">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select 
+    tb.no_item,descripcion_nivel,precio_maximo,sub_total, pre.precio_maximo*sub_total sub_monto
+from (select 
+        to_char(rownum+3) no_item,descripcion_nivel,sub_total,id_proceso_adq
+    from (select 
+                niv.descripcion_nivel, masculino, femenimo, masculino + femenimo sub_total, est.id_proceso_adq
+            from estadistica_censo est 
+                inner join nivel_educativo niv on niv.id_nivel_educativo = est.id_nivel_educativo
+            where est.id_nivel_educativo in (23,24) and id_proceso_adq = $P{pIdProceso} and codigo_entidad = $P{pCodigoEntidad}
+            order by niv.orden2)) tb
+    inner join precio_maximo_referencia pre on tb.no_item = pre.no_item and pre.id_proceso_adq = tb.id_proceso_adq and pre.id_rubro_interes = 2]]>
+		</queryString>
+		<field name="NO_ITEM" class="java.lang.String"/>
+		<field name="DESCRIPCION_NIVEL" class="java.lang.String"/>
+		<field name="PRECIO_MAXIMO" class="java.math.BigDecimal"/>
+		<field name="SUB_TOTAL" class="java.math.BigDecimal"/>
+		<field name="SUB_MONTO" class="java.math.BigDecimal"/>
+		<variable name="vTotalMatricula" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{SUB_TOTAL}]]></variableExpression>
+		</variable>
+		<variable name="vMontoTotal" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{SUB_MONTO}]]></variableExpression>
+		</variable>
 	</subDataset>
 	<parameter name="ubicacionImagenes" class="java.lang.String">
 		<defaultValueExpression><![CDATA["/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="descripcionRubro" class="java.lang.String"/>
-	<parameter name="pCodigoEntidad" class="java.lang.String">
+	<parameter name="codigoEntidad" class="java.lang.String">
 		<defaultValueExpression><![CDATA[10001]]></defaultValueExpression>
 	</parameter>
-	<parameter name="pIdProceso" class="java.math.BigDecimal"/>
+	<parameter name="pIdProceso" class="java.lang.Integer"/>
+	<parameter name="pUsuarioInsercion" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[SELECT * FROM vw_cabecera_certificacion_pre WHERE codigo_entidad=$P{pCodigoEntidad}]]>
+		<![CDATA[SELECT * FROM vw_cabecera_certificacion_pre WHERE codigo_entidad=$P{codigoEntidad}]]>
 	</queryString>
 	<field name="NOMBRE_DEPARTAMENTO" class="java.lang.String"/>
 	<field name="NOMBRE_MUNICIPIO" class="java.lang.String"/>
@@ -50,7 +133,7 @@ ORDER BY
 		<band height="18" splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band height="239" splitType="Stretch">
+		<band height="263" splitType="Stretch">
 			<image hAlign="Center">
 				<reportElement uuid="4d55bf1b-3c16-4622-81e3-8510745cac5c" x="10" y="10" width="60" height="60"/>
 				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo_rpt.png"]]></imageExpression>
@@ -101,19 +184,253 @@ ORDER BY
 				<textElement/>
 				<textFieldExpression><![CDATA["5. ORGANISMO DE ADMINISTRACIÓN ESCOLAR: "+$F{INICIALES_MODALIDAD}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement uuid="c652f1e8-004c-4518-9efb-145ca1b5aefc" x="23" y="249" width="232" height="12"/>
+				<textElement/>
+				<text><![CDATA[A) DETALLE PAQUETE DE ÚTILES]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="53" splitType="Stretch"/>
+		<band height="50" splitType="Stretch">
+			<componentElement>
+				<reportElement uuid="c216cdaf-1140-4646-83e8-44e543f2416a" key="table" style="table" x="81" y="0" width="414" height="50"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="dsPaquete" uuid="481ff67d-42e7-474f-8e67-136585120bb4">
+						<datasetParameter name="pCodigoEntidad">
+							<datasetParameterExpression><![CDATA[$P{codigoEntidad}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="pIdProceso">
+							<datasetParameterExpression><![CDATA[$P{pIdProceso}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="128" uuid="1e6e8d79-8f97-4105-a265-406b8c2bbb2a">
+						<jr:columnHeader style="table_TD" height="24" rowSpan="1">
+							<staticText>
+								<reportElement uuid="55b79a2f-a107-49f9-a403-7b9e7b1551b7" x="0" y="0" width="128" height="24"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[NIVEL Y CICLO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table_TD" height="14" rowSpan="1">
+							<staticText>
+								<reportElement uuid="55b79a2f-a107-49f9-a403-7b9e7b1551b7" x="0" y="0" width="128" height="14"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[TOTAL]]></text>
+							</staticText>
+						</jr:columnFooter>
+						<jr:detailCell style="table_TD" height="12" rowSpan="1">
+							<textField>
+								<reportElement uuid="f06c8fcc-81fe-4eb7-b61a-d6b2c20a2711" x="2" y="0" width="126" height="12"/>
+								<textElement verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{DESCRIPCION_NIVEL}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="7cdbe8f4-6c24-4983-8714-bf89b6505fca">
+						<jr:columnHeader style="table_TD" height="24" rowSpan="1">
+							<staticText>
+								<reportElement uuid="55b79a2f-a107-49f9-a403-7b9e7b1551b7" x="0" y="0" width="90" height="24"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[No DE ALUMNOS]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table_TD" height="14" rowSpan="1">
+							<textField pattern="#,##0">
+								<reportElement uuid="bc78da3b-3de7-40b3-836c-6a30537ea4f2" x="0" y="0" width="88" height="14"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$V{vTotalMatricula}]]></textFieldExpression>
+							</textField>
+						</jr:columnFooter>
+						<jr:detailCell style="table_TD" height="12" rowSpan="1">
+							<textField pattern="#,##0">
+								<reportElement uuid="788481f8-b7d5-4ed4-9e0d-d301f6530eba" x="0" y="0" width="88" height="12"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{SUB_TOTAL}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="84" uuid="d871590a-1213-43e8-af95-e2608e7af11e">
+						<jr:columnHeader style="table_TD" height="24" rowSpan="1">
+							<staticText>
+								<reportElement uuid="ef280a21-f491-4f12-b1ff-03391c943d9b" x="0" y="0" width="84" height="24"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[PRECIO DE REFERENCIA]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table_TD" height="14" rowSpan="1"/>
+						<jr:detailCell style="table_TD" height="12" rowSpan="1">
+							<textField>
+								<reportElement uuid="0c245af9-8d26-42f8-91d4-361ebf4076d2" x="0" y="0" width="82" height="12"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{PRECIO_MAXIMO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="66" uuid="f97794e0-563b-4665-afae-bf408500250c">
+						<jr:columnHeader style="table_TD" height="24" rowSpan="1">
+							<staticText>
+								<reportElement uuid="ef280a21-f491-4f12-b1ff-03391c943d9b" x="0" y="0" width="66" height="24"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[MONTO ($)]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table_TD" height="14" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement uuid="21a8731d-ae35-4972-85c8-62cc9d1552ba" x="0" y="0" width="64" height="14"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$V{vMontoTotal}]]></textFieldExpression>
+							</textField>
+						</jr:columnFooter>
+						<jr:detailCell style="table_TD" height="12" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement uuid="b03553b0-4192-4d2a-bfd4-051a28d63892" x="0" y="0" width="64" height="12"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{SUB_MONTO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
 	</columnHeader>
 	<detail>
-		<band height="125" splitType="Stretch"/>
+		<band height="77" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="c652f1e8-004c-4518-9efb-145ca1b5aefc" x="23" y="14" width="232" height="12"/>
+				<textElement/>
+				<text><![CDATA[B) DETALLE MODALIDADES FLEXIBLES]]></text>
+			</staticText>
+			<elementGroup>
+				<componentElement>
+					<reportElement uuid="c216cdaf-1140-4646-83e8-44e543f2416a" key="table" style="table" x="54" y="27" width="457" height="50"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="dsModalidadFlex" uuid="481ff67d-42e7-474f-8e67-136585120bb4">
+							<datasetParameter name="pCodigoEntidad">
+								<datasetParameterExpression><![CDATA[$P{codigoEntidad}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="pIdProceso">
+								<datasetParameterExpression><![CDATA[$P{pIdProceso}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:column width="186" uuid="1e6e8d79-8f97-4105-a265-406b8c2bbb2a">
+							<jr:columnHeader style="table_TD" height="24" rowSpan="1">
+								<staticText>
+									<reportElement uuid="55b79a2f-a107-49f9-a403-7b9e7b1551b7" x="0" y="0" width="186" height="24"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[NIVEL Y CICLO]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter style="table_TD" height="14" rowSpan="1">
+								<staticText>
+									<reportElement uuid="55b79a2f-a107-49f9-a403-7b9e7b1551b7" x="0" y="0" width="186" height="14"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[TOTAL]]></text>
+								</staticText>
+							</jr:columnFooter>
+							<jr:detailCell style="table_TD" height="12" rowSpan="1">
+								<textField>
+									<reportElement uuid="f06c8fcc-81fe-4eb7-b61a-d6b2c20a2711" x="2" y="0" width="184" height="12"/>
+									<textElement verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{DESCRIPCION_NIVEL}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="90" uuid="7cdbe8f4-6c24-4983-8714-bf89b6505fca">
+							<jr:columnHeader style="table_TD" height="24" rowSpan="1">
+								<staticText>
+									<reportElement uuid="55b79a2f-a107-49f9-a403-7b9e7b1551b7" x="0" y="0" width="90" height="24"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[No DE ALUMNOS]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter style="table_TD" height="14" rowSpan="1">
+								<textField pattern="#,##0">
+									<reportElement uuid="bc78da3b-3de7-40b3-836c-6a30537ea4f2" x="0" y="0" width="88" height="14"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$V{vTotalMatricula}]]></textFieldExpression>
+								</textField>
+							</jr:columnFooter>
+							<jr:detailCell style="table_TD" height="12" rowSpan="1">
+								<textField pattern="#,##0">
+									<reportElement uuid="788481f8-b7d5-4ed4-9e0d-d301f6530eba" x="0" y="0" width="88" height="12"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{SUB_TOTAL}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="84" uuid="d871590a-1213-43e8-af95-e2608e7af11e">
+							<jr:columnHeader style="table_TD" height="24" rowSpan="1">
+								<staticText>
+									<reportElement uuid="ef280a21-f491-4f12-b1ff-03391c943d9b" x="0" y="0" width="84" height="24"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[PRECIO DE REFERENCIA]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter style="table_TD" height="14" rowSpan="1"/>
+							<jr:detailCell style="table_TD" height="12" rowSpan="1">
+								<textField>
+									<reportElement uuid="0c245af9-8d26-42f8-91d4-361ebf4076d2" x="0" y="0" width="82" height="12"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{PRECIO_MAXIMO}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="66" uuid="f97794e0-563b-4665-afae-bf408500250c">
+							<jr:columnHeader style="table_TD" height="24" rowSpan="1">
+								<staticText>
+									<reportElement uuid="ef280a21-f491-4f12-b1ff-03391c943d9b" x="0" y="0" width="66" height="24"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[MONTO ($)]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter style="table_TD" height="14" rowSpan="1">
+								<textField pattern="#,##0.00">
+									<reportElement uuid="21a8731d-ae35-4972-85c8-62cc9d1552ba" x="0" y="0" width="64" height="14"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$V{vMontoTotal}]]></textFieldExpression>
+								</textField>
+							</jr:columnFooter>
+							<jr:detailCell style="table_TD" height="12" rowSpan="1">
+								<textField pattern="#,##0.00">
+									<reportElement uuid="b03553b0-4192-4d2a-bfd4-051a28d63892" x="0" y="0" width="64" height="12"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{SUB_MONTO}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</elementGroup>
+		</band>
 	</detail>
 	<columnFooter>
-		<band height="45" splitType="Stretch"/>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="c652f1e8-004c-4518-9efb-145ca1b5aefc" x="0" y="18" width="555" height="27"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Se verifica asignación presupuestaria en cumplimiento al Artículo 10, Literal "E" de la Ley de Adquisiciones y Contrataciones de la Administración Pública (LACAP).]]></text>
+			</staticText>
+		</band>
 	</columnFooter>
 	<pageFooter>
-		<band height="54" splitType="Stretch"/>
+		<band height="11" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="d973eede-e814-4932-8944-25633fbe933a" key="textField-10" x="0" y="0" width="176" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pUsuarioInsercion}+" - "+(new SimpleDateFormat("HH:mm dd/MM/yyyy")).format(new Date())]]></textFieldExpression>
+			</textField>
+		</band>
 	</pageFooter>
 	<summary>
 		<band height="42" splitType="Stretch"/>

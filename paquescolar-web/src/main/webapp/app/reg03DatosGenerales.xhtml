@@ -43,16 +43,16 @@
                                     <p:outputLabel value="Departamento: "/>
                                     <h:panelGroup>
                                         <h:panelGrid columns="4">
-                                            <p:selectOneMenu id="cboDepaEmp" value="#{proveedorController.empresa.idMunicipio.codigoDepartamento.codigoDepartamento}" disabled="#{parametrosMB.usuarioDepartamental}">
+                                            <p:selectOneMenu id="cboDepaEmp" value="#{proveedorController.codigoDepartamentoLocal}" disabled="#{parametrosMB.usuarioDepartamental}">
                                                 <f:selectItem noSelectionOption="true" itemLabel="Seleccione un departamento" />
                                                 <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
                                                 <p:ajax update="cboMuniEmp"/>
                                             </p:selectOneMenu>
                                             <p:spacer width="10"/>
                                             <p:outputLabel value="Municipio:" />
-                                            <p:selectOneMenu id="cboMuniEmp" value="#{proveedorController.empresa.idMunicipio.idMunicipio}" >
+                                            <p:selectOneMenu id="cboMuniEmp" value="#{proveedorController.idMunicipioLocal}" >
                                                 <f:selectItem noSelectionOption="true" itemLabel="Seleccione un municipio" />
-                                                <f:selectItems value="#{proveedorController.lstMunicipios}" var="mun" itemValue="#{mun.idMunicipio}" itemLabel="#{mun.codigoMunicipio} - #{mun.nombreMunicipio}" />
+                                                <f:selectItems value="#{proveedorController.lstMunicipiosLocal}" var="mun" itemValue="#{mun.idMunicipio}" itemLabel="#{mun.codigoMunicipio} - #{mun.nombreMunicipio}" />
                                             </p:selectOneMenu>
                                         </h:panelGrid>
                                     </h:panelGroup>

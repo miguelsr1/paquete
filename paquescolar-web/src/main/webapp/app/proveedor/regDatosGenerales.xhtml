@@ -42,7 +42,7 @@
                                             <p:outputLabel value="Municipio:" />
                                             <p:selectOneMenu id="cboMuniEmp" value="#{datosGeneralesMB.idMunicipioLocal}" >
                                                 <f:selectItem noSelectionOption="true" itemLabel="Seleccione un municipio" />
-                                                <f:selectItems value="#{datosGeneralesMB.lstMunicipios}" var="mun" itemValue="#{mun.idMunicipio}" itemLabel="#{mun.codigoMunicipio} - #{mun.nombreMunicipio}" />
+                                                <f:selectItems value="#{datosGeneralesMB.lstMunicipiosLocal}" var="mun" itemValue="#{mun.idMunicipio}" itemLabel="#{mun.codigoMunicipio} - #{mun.nombreMunicipio}" />
                                             </p:selectOneMenu>
                                         </h:panelGrid>
                                     </h:panelGroup>
