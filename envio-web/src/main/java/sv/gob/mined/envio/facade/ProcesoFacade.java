@@ -31,7 +31,6 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import org.jboss.ejb3.annotation.TransactionTimeout;
 import sv.gob.mined.envio.model.DetalleEnvio;
-import sv.gob.mined.utils.jsf.JsfUtil;
 
 /**
  *

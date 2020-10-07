@@ -48,7 +48,7 @@ public class EnvioView {
 
     private Boolean correoValido = false;
     private Boolean showUploadFile = true;
-    
+
     private BigDecimal idEnvio;
     private String correoRemitente;
     private String remitente;
@@ -70,7 +70,6 @@ public class EnvioView {
     private Transport transport;
     private Session mailSession;
 
-    
     @Inject
     private ProcesoFacade procesoFacade;
 
@@ -211,7 +210,7 @@ public class EnvioView {
         if (correoRemitente == null || correoRemitente.trim().isEmpty()) {
             error += "Debe de ingresar un correo remitente.<br/>";
         }
-        if (idDominioCorreo.equals("1")) {
+        if (idDominioCorreo == null) {
             error += "Debe de ingresar el dominio de la cuenta de correo a utilizar.<br/>";
         }
         if (password == null || password.trim().isEmpty()) {
@@ -237,15 +236,10 @@ public class EnvioView {
 
     public void enviarCorreos() {
         procesoFacade.enviarCorreos(pathArchivo, titulo, mensaje, mailSession, transport, remitente, password);
-//        idEnvio = leerArchivoFacade.guardarRegistros(pathArchivo, correoRemitente, idDominioCorreo, titulo, mensaje);
-//        
-//        envioFacade.enviarCorreos(pathArchivo, correoRemitente, idDominioCorreo, titulo, mensaje, mailSession, transport, remitente, password, idEnvio);
-        
         JsfUtil.mensajeInformacion("El proceso de envio de correos se realizara en background.");
     }
-    
-    public void enviarProcesoPendiente(){
-        //procesoFacade.enviarCorreosPendientes(idEnvio, mailSession, transport, password);
+
+    public void enviarProcesoPendiente() {
         JsfUtil.mensajeInformacion("El proceso de envio de correos se realizara en background.");
     }
 
@@ -294,16 +288,17 @@ public class EnvioView {
     }
 
     private Session getMailSessionMined() {
+        mailSession = null;
         if (mailSession == null) {
             Properties configEmail = new Properties();
 
             configEmail.put("mail.smtp.auth", "true");
-            configEmail.put("mail.smtp.starttls.enable", "true");
+            configEmail.put("mail.smtp.starttls.enable", "false");
 
             configEmail.put("mail.smtp.host", "svr2k13mail01.mined.gob.sv");
             configEmail.put("mail.smtp.port", "2525");
 
-            configEmail.put("mail.user", remitente);
+            configEmail.put("mail.user", "MINED\\" + dominio);
             configEmail.put("mail.user.pass", password);
             configEmail.put("mail.from", remitente);
 
@@ -311,7 +306,7 @@ public class EnvioView {
 
                 @Override
                 protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(remitente, password);
+                    return new PasswordAuthentication("MINED\\" + dominio, password);
                 }
             });
         }
@@ -327,19 +322,19 @@ public class EnvioView {
                     remitente = correoRemitente.concat("@").concat("mined.gob.sv");
                     port = "2525";
                     server = "svr2k13mail01.mined.gob.sv";
+                    mailSession = getMailSessionMined();
                 } else {
                     remitente = correoRemitente.concat("@").concat("admin.mined.edu.sv");
                     port = "587";
                     server = "smtp.office365.com";
+                    mailSession = getMailSessionOffice();
                 }
-
-                mailSession = getMailSessionOffice();
 
                 transport = mailSession.getTransport("smtp");
                 transport.connect(server, Integer.parseInt(port), remitente, password);
 
                 correoValido = true;
-                
+
                 transport.close();
 
                 url = "mensaje?faces-redirect=true";
