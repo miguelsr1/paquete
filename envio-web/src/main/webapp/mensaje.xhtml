@@ -82,33 +82,34 @@
                                                      style="margin: 0 auto;" 
                                                      styleClass="form-group ui-panelgrid-blank" layout="grid">
                                             <p:outputLabel value="Archivo con listado de destinatarios"/>
-                                            <p:outputLabel value="#{envioView.file.fileName}" rendered="#{not envioView.showUploadFile}"/>
+                                            <p:outputPanel rendered="#{not envioView.showUploadFile}">
+                                                <p:outputLabel value="#{envioView.file.fileName}" />
+                                                <p:spacer width="10"/>
+                                                <p:commandButton value="¿Reemplazar archivo?" action="#{envioView.reemplazarArchivo()}" update="pngUpload" style="width: 150px;"/>
+                                            </p:outputPanel>
                                             <p:fileUpload id="updFile" listener="#{envioView.handleFileUpload}" auto="true" widgetVar="updFile" fileLimit="1" rendered="#{envioView.showUploadFile}"
                                                           label="Seleccionar" allowTypes="/(\.|\/)(xlsx)$/" invalidFileMessage="Unicamente archivos Excel (xlsx)" 
-                                                          mode="advanced" update="pngUpload" disabled="#{not envioView.correoValido}" 
-                                                          onstart="PF('dlgEspera').show();" oncomplete="PF('dlgEspera').hide();PF('btnEnviar').enable();"/>
+                                                          mode="advanced" update="pngUpload btnEnviar" disabled="#{not envioView.correoValido}" 
+                                                          onstart="PF('dlgEspera').show();" oncomplete="PF('dlgEspera').hide();"/>
+
                                         </p:panelGrid>
                                         <br/>
                                         <p:panelGrid columns="1" columnClasses="ui-g-12" style="margin: 0 auto; text-align: center; width: 360px;"  styleClass="form-group ui-panelgrid-blank" layout="grid">
-                                            <p:commandButton id="btnEnviar" widgetVar="btnEnviar" value="Enviar" 
+                                            <p:commandButton id="btnEnviar" widgetVar="btnEnviar" value="Enviar" disabled="#{envioView.showUploadFile}"
                                                              action="#{envioView.validarFormulario()}" style="width: 200px;" />
                                         </p:panelGrid>
 
                                         <p:panel visible="false">
                                             <p:commandButton id="btnSend" widgetVar="btnSend" value="enviar" action="#{envioView.enviarCorreos()}"
-                                                             update="outPrincipal" onclick="PF('dlgBar').show();PF('pbAjax').start();"/>
+                                                             update="outPrincipal"/>
+                                        </p:panel>
+                                        <p:panel visible="false">
+                                            <p:inputText value="#{envioView.idEnvio}" />
+                                            <p:commandButton id="btnSendProceso" widgetVar="btnSend" value="enviar" action="#{envioView.enviarProcesoPendiente()}"
+                                                             update="outPrincipal"/>
                                         </p:panel>
                                     </p:outputPanel>
                                 </p:outputPanel>
-
-                                <p:dialog id="dlgBar" widgetVar="dlgBar" modal="true" width="700" height="100" closable="true">
-                                    <h3>Se estan enviando los correos, por favor espere mientras el proceso finaliza.</h3>
-                                    <p:spacer height="10"/>
-                                    <p:progressBar widgetVar="pbAjax" ajax="true" value="#{envioView.progreso}" labelTemplate="{value}%" styleClass="animated" global="false">
-                                        <p:ajax event="complete" listener="#{envioView.ocultarBarProgress()}" oncomplete="PF('dlgBar').hide();" />
-                                    </p:progressBar>
-                                </p:dialog>
-
 
                                 <p:dialog header="Información" id="dlgEspera" widgetVar="dlgEspera" closable="false" width="200" height="90" modal="true">
                                     <h:panelGrid columns="1" style="width: 100%; text-align: center;">
@@ -116,6 +117,17 @@
                                         <br/>   
                                         <i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size: 16px"></i>
                                     </h:panelGrid>
+                                </p:dialog>
+
+                                <p:dialog header="Información" id="dlgFinal" widgetVar="dlgFinal" closable="false" width="200" height="90" modal="true">
+                                    <h:panelGrid columns="1" style="width: 100%; text-align: center;">
+                                        <p:outputLabel value="Finalizo el proceso de envio de correos." style="font-size: 14px;"/>
+                                        <br/>   
+                                        <i class="fa fa-check-circle" style="font-size: 16px"></i>
+                                    </h:panelGrid>
+                                    <f:facet name="footer">
+                                        <p:commandButton value="Aceptar" action="#{envioView.regresar()}"/>
+                                    </f:facet>
                                 </p:dialog>
 
                             </h:form>

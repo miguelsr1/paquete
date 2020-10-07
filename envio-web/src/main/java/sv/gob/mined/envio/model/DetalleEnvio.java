@@ -10,9 +10,12 @@ import java.math.BigDecimal;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
@@ -42,8 +45,9 @@ public class DetalleEnvio implements Serializable {
     private String nombreDestinatario;
     @Column(name = "CORREO_DESTINATARIO")
     private String correoDestinatario;
-    @Column(name = "ID_ENVIO")
-    private BigDecimal idEnvio;
+    @JoinColumn(name = "ID_ENVIO", referencedColumnName = "ID_ENVIO")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private EnvioMasivo idEnvio;
     @Column(name = "ENVIADO")
     private Short enviado;
 
@@ -86,11 +90,11 @@ public class DetalleEnvio implements Serializable {
         this.correoDestinatario = correDestinatario;
     }
 
-    public BigDecimal getIdEnvio() {
+    public EnvioMasivo getIdEnvio() {
         return idEnvio;
     }
 
-    public void setIdEnvio(BigDecimal idEnvio) {
+    public void setIdEnvio(EnvioMasivo idEnvio) {
         this.idEnvio = idEnvio;
     }
 

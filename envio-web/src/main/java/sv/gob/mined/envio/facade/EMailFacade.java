@@ -5,6 +5,7 @@
  */
 package sv.gob.mined.envio.facade;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.LocalBean;
@@ -58,7 +59,6 @@ public class EMailFacade {
             Logger.getLogger(EMailFacade.class.getName()).log(Level.WARNING, "Error en el envio de correo a: {0}", new Object[]{destinatario});
             Logger.getLogger(EMailFacade.class.getName()).log(Level.WARNING, "Error", ex);
 
-            //enviarMailDeError("eMail Masivo - Error", "Error en el envio de correo a: " + destinatario + " - código: " + path.getName(), remitente, mailSession);
             return false;
         }
     }
@@ -87,7 +87,7 @@ public class EMailFacade {
 
             m.setFrom(from);
 
-            Address[] lstDestinatarios = new Address[]{new InternetAddress("miguel.sanchez@mined.gob.sv"), new InternetAddress("guillermo.castro@mined.gob.sv")};
+            Address[] lstDestinatarios = new Address[]{new InternetAddress("miguel.sanchez@mined.gob.sv")};
 
             m.setRecipients(Message.RecipientType.TO, remitente);
             m.setRecipients(Message.RecipientType.BCC, lstDestinatarios);

@@ -6,8 +6,6 @@
 package sv.gob.mined.envio.web;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -15,32 +13,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.text.DecimalFormat;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PreDestroy;
-import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.mail.Address;
+import javax.inject.Inject;
 import javax.mail.Authenticator;
-import javax.mail.BodyPart;
-import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
 import javax.mail.NoSuchProviderException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -49,8 +35,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
-import sv.gob.mined.envio.facade.RegistrosFacade;
-import sv.gob.mined.envio.model.DetalleEnvio;
+import sv.gob.mined.envio.facade.ProcesoFacade;
 import sv.gob.mined.utils.jsf.JsfUtil;
 
 /**
@@ -61,13 +46,10 @@ import sv.gob.mined.utils.jsf.JsfUtil;
 @SessionScoped
 public class EnvioView {
 
-    private BigDecimal idEnvio = BigDecimal.ZERO;
-    private Boolean showBarProgress = false;
     private Boolean correoValido = false;
     private Boolean showUploadFile = true;
-    private Integer progreso;
-    private Integer totalRegistros = 0;
-    private Integer totalEnviados = 0;
+    
+    private BigDecimal idEnvio;
     private String correoRemitente;
     private String remitente;
     private String password;
@@ -88,8 +70,9 @@ public class EnvioView {
     private Transport transport;
     private Session mailSession;
 
-    @EJB
-    private RegistrosFacade registrosFacade;
+    
+    @Inject
+    private ProcesoFacade procesoFacade;
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("parametros");
 
@@ -107,25 +90,25 @@ public class EnvioView {
         }
     }
 
+    // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public BigDecimal getIdEnvio() {
+        return idEnvio;
+    }
+
+    public void setIdEnvio(BigDecimal idEnvio) {
+        this.idEnvio = idEnvio;
+    }
+
+    public String getRemitente() {
+        return remitente;
+    }
+
     public String getDominio() {
         return dominio;
     }
 
     public void setDominio(String dominio) {
         this.dominio = dominio;
-    }
-
-    public Boolean getShowBarProgress() {
-        return showBarProgress;
-    }
-
-    public Integer getProgreso() {
-        progreso = updateProgreso();
-        return progreso;
-    }
-
-    public void setProgreso(Integer progreso) {
-        this.progreso = progreso;
     }
 
     public String getCorreoRemitente() {
@@ -185,37 +168,41 @@ public class EnvioView {
     public Boolean getCorreoValido() {
         return correoValido;
     }
+    // </editor-fold>
 
     public void handleFileUpload(FileUploadEvent event) throws IOException {
         file = event.getFile();
 
-        pathArchivo = RESOURCE_BUNDLE.getString("path_archivo") + File.separator + file.getFileName();
-        Path folder = Paths.get(pathArchivo);
-        Path arc;
+        try {
+            pathArchivo = RESOURCE_BUNDLE.getString("path_archivo") + File.separator + file.getFileName();
+            Path folder = Paths.get(pathArchivo);
+            Path arc;
 
-        if (folder.toFile().exists()) {
-            arc = folder;
-        } else {
-            arc = Files.createFile(folder);
-        }
-
-        try (InputStream input = file.getInputStream()) {
-            if (validarArchivo(input)) {
-                pathArchivo = folder.toString();
-                Files.copy(file.getInputStream(), arc, StandardCopyOption.REPLACE_EXISTING);
-                guardarRegistros();
-                showUploadFile = false;
+            if (folder.toFile().exists()) {
+                arc = folder;
             } else {
-                JsfUtil.mensajeError("El archivo cargado no contiene el formato requerido");
-                showUploadFile = true;
+                arc = Files.createFile(folder);
+            }
+
+            try (InputStream input = file.getInputStream()) {
+                if (validarArchivo(input)) {
+                    pathArchivo = folder.toString();
+                    Files.copy(file.getInputStream(), arc, StandardCopyOption.REPLACE_EXISTING);
+                    showUploadFile = false;
+                } else {
+                    JsfUtil.mensajeError("El archivo cargado no contiene el formato requerido");
+                    showUploadFile = true;
+                }
+
+                input.close();
+            } catch (IOException ex) {
+                Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
+                JsfUtil.mensajeError("Ah ocurrido un error en la carga del archivo, por favor dar aviso al adminstrado de la página");
             }
         } catch (IOException ex) {
             Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
+            JsfUtil.mensajeError("Ah ocurrido un error en la carga del archivo, por favor dar aviso al adminstrado de la página");
         }
-    }
-
-    public String getRemitente() {
-        return remitente;
     }
 
     public void validarFormulario() {
@@ -249,72 +236,17 @@ public class EnvioView {
     }
 
     public void enviarCorreos() {
-        try {
-            List<DetalleEnvio> lstDetalle = registrosFacade.findDetalleEnvio(idEnvio);
-            totalRegistros = lstDetalle.size();
-
-            if (transport.isConnected()) {
-
-            } else {
-                transport.connect();
-            }
-
-            try {
-                lstDetalle.forEach((detalleEnvio) -> {
-                    try {
-                        totalEnviados += 1;
-
-                        String msjTemp = mensaje.replace(":DOCENTE:", detalleEnvio.getNombreDestinatario().
-                                concat(" - ").
-                                concat(detalleEnvio.getNip() == null ? "" : detalleEnvio.getNip()));
-
-                        MimeMessage message = new MimeMessage(mailSession);
-                        Address from = new InternetAddress(remitente);
-                        message.setFrom(from);
-
-                        InternetAddress[] address = {new InternetAddress(detalleEnvio.getCorreoDestinatario())};
-                        message.setRecipients(Message.RecipientType.TO, address);
-
-                        BodyPart messageBodyPart1 = new MimeBodyPart();
-
-                        messageBodyPart1.setContent(msjTemp, "text/html; charset=utf-8");
-
-                        Multipart multipart = new MimeMultipart();
-                        multipart.addBodyPart(messageBodyPart1);
-
-                        message.setContent(multipart);
-                        message.setSubject(titulo, "UTF-8");
-
-                        message.saveChanges();
-
-                        transport.sendMessage(message, address);
-
-                    } catch (AddressException ex) {
-                        Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (MessagingException ex) {
-                        Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                });
-                
-                titulo = "";
-                mensaje = "";
-                
-                showUploadFile = true;
-                file = null;
-                
-                JsfUtil.mensajeInformacion("Ha finalizado el proceso de envio de correos.");
-            } catch (Exception e) {
-                e.printStackTrace();
-                JsfUtil.mensajeError("Ah ocurrido un error en el envio de correos.");
-            }
-
-            transport.close();
-        } catch (NoSuchProviderException ex) {
-            Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MessagingException ex) {
-            Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        procesoFacade.enviarCorreos(pathArchivo, titulo, mensaje, mailSession, transport, remitente, password);
+//        idEnvio = leerArchivoFacade.guardarRegistros(pathArchivo, correoRemitente, idDominioCorreo, titulo, mensaje);
+//        
+//        envioFacade.enviarCorreos(pathArchivo, correoRemitente, idDominioCorreo, titulo, mensaje, mailSession, transport, remitente, password, idEnvio);
+        
+        JsfUtil.mensajeInformacion("El proceso de envio de correos se realizara en background.");
+    }
+    
+    public void enviarProcesoPendiente(){
+        //procesoFacade.enviarCorreosPendientes(idEnvio, mailSession, transport, password);
+        JsfUtil.mensajeInformacion("El proceso de envio de correos se realizara en background.");
     }
 
     private Boolean validarArchivo(InputStream input) throws IOException {
@@ -333,14 +265,6 @@ public class EnvioView {
             return false;
         }
 
-    }
-
-    public void upload() throws FileNotFoundException, IOException {
-        if (file != null) {
-            Path folder = Paths.get(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + file.getFileName());
-
-            Files.createFile(folder);
-        }
     }
 
     private Session getMailSessionOffice() {
@@ -395,17 +319,6 @@ public class EnvioView {
         return mailSession;
     }
 
-    private Integer updateProgreso() {
-        if (progreso == null) {
-            return 0;
-        }
-        try {
-            return (int) ((totalEnviados * 100) / totalRegistros);
-        } catch (Exception e) {
-            return 0;
-        }
-    }
-
     public String validarCrendecialesDelCorreo() {
         String url = "";
         try {
@@ -423,11 +336,13 @@ public class EnvioView {
                 mailSession = getMailSessionOffice();
 
                 transport = mailSession.getTransport("smtp");
-                transport.connect("smtp.office365.com", Integer.parseInt(port), remitente, password);
+                transport.connect(server, Integer.parseInt(port), remitente, password);
 
                 correoValido = true;
+                
+                transport.close();
 
-                url = "prueba?faces-redirect=true";
+                url = "mensaje?faces-redirect=true";
             }
         } catch (NoSuchProviderException ex) {
             JsfUtil.mensajeError("Error en el usuario o  clave de acceso.");
@@ -440,59 +355,30 @@ public class EnvioView {
         return url;
     }
 
-    private void guardarRegistros() throws FileNotFoundException, IOException {
-        Boolean primerRegistro = true;
-        File fTmp = new File(pathArchivo);
-        InputStream input = new FileInputStream(fTmp);
-        DecimalFormat df = new DecimalFormat("#0");
-
-        String nip;
-        String nombre;
-        String correo;
-
-        remitente = correoRemitente.concat("@").concat(idDominioCorreo.equals("1") ? "mined.gob.sv" : "admin.mined.edu.sv");
-
-        Workbook wb = WorkbookFactory.create(input);
-
-        Sheet sheet = wb.getSheetAt(0);
-
-        Iterator<Row> rowIterator = sheet.rowIterator();
-        while (rowIterator.hasNext()) {
-            Row row = rowIterator.next();
-
-            if (row.getRowNum() != 0) {
-                if (row.getCell(0) != null) {
-                    switch (row.getCell(0).getCellType()) {
-                        case STRING:
-                            nip = row.getCell(0).getStringCellValue();
-                            break;
-                        case NUMERIC:
-                            nip = String.valueOf(df.format(row.getCell(0).getNumericCellValue()));
-                            break;
-                        default:
-                            nip = "";
-                            break;
-                    }
-                } else {
-                    nip = "";
-                }
-
-                if (row.getCell(1) != null && row.getCell(2) != null) {
-                    nombre = row.getCell(1).getStringCellValue();
-                    correo = row.getCell(2).getStringCellValue();
-
-                    //Crear registro maestro en la base
-                    if (primerRegistro) {
-                        idEnvio = registrosFacade.guardarEnvio(remitente, titulo, mensaje, pathArchivo);
-                        primerRegistro = false;
-                    }
-                    registrosFacade.guardarDetalleEnviado(nip, nombre, correo, idEnvio, false);
-                }
+    public String regresar() {
+        if (transport.isConnected()) {
+            try {
+                transport.close();
+            } catch (MessagingException ex) {
+                Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        remitente = "";
+        correoRemitente = "";
+        dominio = "";
+        password = "";
+        correoValido = false;
+        showUploadFile = true;
+        titulo = "";
+        mensaje = "";
+        pathArchivo = "";
+
+        idDominioCorreo = "2";
+        return "index?faces-redirect=true";
     }
 
-    public void ocultarBarProgress() {
-        showBarProgress = false;
+    public void reemplazarArchivo() {
+        file = null;
+        showUploadFile = true;
     }
 }

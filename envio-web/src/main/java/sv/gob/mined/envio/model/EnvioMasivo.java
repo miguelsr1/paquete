@@ -7,15 +7,21 @@ package sv.gob.mined.envio.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -29,7 +35,7 @@ import javax.persistence.TemporalType;
 @Table(name = "ENVIO_MASIVO")
 @NamedQueries({
     @NamedQuery(name = "EnvioMasivo.findAll", query = "SELECT e FROM EnvioMasivo e")})
-public class EnvioMasivo implements Serializable { 
+public class EnvioMasivo implements Serializable {
 
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -50,6 +56,9 @@ public class EnvioMasivo implements Serializable {
     private String mensaje;
     @Column(name = "ARCHIVO")
     private String archivo;
+    
+    @OneToMany(mappedBy = "idEnvio", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    public List<DetalleEnvio> detalleEnvioList;
 
     public EnvioMasivo() {
     }
@@ -106,6 +115,17 @@ public class EnvioMasivo implements Serializable {
         this.archivo = archivo;
     }
 
+    public List<DetalleEnvio> getDetalleEnvioList() {
+        if (detalleEnvioList == null) {
+            detalleEnvioList = new ArrayList<>();
+        }
+        return detalleEnvioList;
+    }
+
+    public void setDetalleEnvioList(List<DetalleEnvio> detalleEnvioList) {
+        this.detalleEnvioList = detalleEnvioList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -127,5 +147,5 @@ public class EnvioMasivo implements Serializable {
     public String toString() {
         return "sv.gob.mined.envio.model.EnvioMasivo[ idEnvio=" + idEnvio + " ]";
     }
-    
+
 }
