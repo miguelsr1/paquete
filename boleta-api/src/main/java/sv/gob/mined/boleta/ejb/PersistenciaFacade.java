@@ -12,6 +12,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -35,6 +37,7 @@ public class PersistenciaFacade {
         return q.getResultList();
     }
     
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public CodigoGenerado registrarFinDeProcesoDeEnvio(String pathRoot, String codigoDepartamento, String mesAnho) {
         CodigoGenerado codigoGenerado = getCodigoGenerado(codigoDepartamento, mesAnho);
 
@@ -88,6 +91,7 @@ public class PersistenciaFacade {
         return q.getResultList().isEmpty() ? new CodigoGenerado() : (CodigoGenerado) q.getResultList().get(0);
     }
     
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Integer getPkCodigoGeneradoByCodDepaAndMesAnho(String codDepa, String mesAnho) {
         CodigoGenerado codigoGenerado;
 

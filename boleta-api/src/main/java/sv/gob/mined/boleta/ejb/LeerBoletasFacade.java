@@ -22,6 +22,8 @@ import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -50,6 +52,7 @@ public class LeerBoletasFacade {
         enviarCorreo(codDepa, mesAnho, mailSession, usuario, mensajeCorreo, tituloCorreo);
     }
    
+    @TransactionAttribute(value = TransactionAttributeType.NOT_SUPPORTED)
     private void enviarCorreo(String codDepa, String mesAnho,
             Session mailSession, String usuario,
             String mensajeCorreo, String tituloCorreo) {

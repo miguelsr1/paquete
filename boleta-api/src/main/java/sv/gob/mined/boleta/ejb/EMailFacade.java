@@ -6,7 +6,6 @@
 package sv.gob.mined.boleta.ejb;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.activation.DataHandler;
@@ -122,6 +121,7 @@ public class EMailFacade {
         }
     }
 
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void enviarMailDeConfirmacion(String subject, String message, String remitente, Session mailSession, Transport transport) {
         try {
             if (transport.isConnected()) {
