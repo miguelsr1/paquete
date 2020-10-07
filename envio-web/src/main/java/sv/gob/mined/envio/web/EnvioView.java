@@ -20,6 +20,8 @@ import java.util.logging.Logger;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.mail.Authenticator;
 import javax.mail.MessagingException;
@@ -27,6 +29,7 @@ import javax.mail.NoSuchProviderException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.servlet.ServletContext;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -224,6 +227,10 @@ public class EnvioView {
         } else if (!mensaje.contains(":DOCENTE:")) {
             error += "El mensaje no contiene la palabra comodin <b>:DOCENTE:</b><br/>";
         }
+
+        if (mensaje.length() > 4000 && mensaje.contains("data:image")) {
+            error += "La imagen es muy grande por favor, reduzca el peso de la imagen.<br/>";
+        }
         if (file == null) {
             error += "Debe de seleccionar un archivo con la lista de correos a enviar.<br/>";
         }
@@ -237,6 +244,15 @@ public class EnvioView {
     public void enviarCorreos() {
         procesoFacade.enviarCorreos(pathArchivo, titulo, mensaje, mailSession, transport, remitente, password);
         JsfUtil.mensajeInformacion("El proceso de envio de correos se realizara en background.");
+        limpiarFormato();
+    }
+
+    private void limpiarFormato() {
+        titulo = "";
+        mensaje = "";
+        mensaje = "";
+        pathArchivo = "";
+        reemplazarArchivo();
     }
 
     public void enviarProcesoPendiente() {
@@ -375,5 +391,17 @@ public class EnvioView {
     public void reemplazarArchivo() {
         file = null;
         showUploadFile = true;
+    }
+
+    public void logout() {
+        try {
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.getExternalContext().getSessionMap().clear();
+            ExternalContext externalContext = context.getExternalContext();
+            externalContext.redirect(((ServletContext) externalContext.getContext()).getContextPath() + "/index.mined");
+            System.gc();
+        } catch (IOException ex) {
+            Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

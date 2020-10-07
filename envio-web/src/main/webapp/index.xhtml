@@ -62,8 +62,12 @@
                                                 <p:outputLabel value="#{envioView.idDominioCorreo eq '1' ? '@mined.gob.sv':'@admin.mined.edu.sv'}"/>
                                             </p:outputPanel>
 
-                                            <p:outputLabel value="Dominio" rendered="#{envioView.idDominioCorreo eq '1'}"/>
-                                            <p:inputText id="txtDominio" widgetVar="txtDominio" value="#{envioView.dominio}" rendered="#{envioView.idDominioCorreo eq '1'}"/>
+                                            <p:outputLabel value="Usuario Windows" rendered="#{envioView.idDominioCorreo eq '1'}"/>
+                                            <p:outputPanel>
+                                                <p:outputLabel value="MINED\\" rendered="#{envioView.idDominioCorreo eq '1'}"/>
+                                                <p:spacer width="15"/>
+                                                <p:inputText id="txtDominio" widgetVar="txtDominio" value="#{envioView.dominio}" rendered="#{envioView.idDominioCorreo eq '1'}" style="width: 285px;"/>
+                                            </p:outputPanel>
 
                                             <p:outputLabel for="txtClaveRemitente" value="Contraseña"/>
                                             <p:password id="txtClaveRemitente" widgetVar="txtClaveRemitente" value="#{envioView.password}" placeholder="Password" required="true"/>
