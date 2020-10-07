@@ -5,6 +5,7 @@
 package sv.gob.mined.app.web.controller;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.primefaces.PrimeFaces;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.VarSession;
+import sv.gob.mined.paquescolar.ejb.EMailEJB;
 import sv.gob.mined.paquescolar.ejb.LoginEJB;
 import sv.gob.mined.paquescolar.model.Usuario;
 
@@ -36,7 +38,9 @@ public class LoginController implements Serializable {
     private String usuarioEmp;
     private String claveEmp;
     @EJB
-    private LoginEJB loginEJBLocal;
+    private LoginEJB loginEJB;
+    @EJB
+    private EMailEJB eMailEJB;
 
     private static final ResourceBundle UTIL_CORREO = ResourceBundle.getBundle("Bundle");
 
@@ -107,9 +111,9 @@ public class LoginController implements Serializable {
         Usuario usu;
 
         if (proveedor) {
-            usu = loginEJBLocal.isUsuarioProveedorValido(usuString, cla);
+            usu = loginEJB.isUsuarioProveedorValido(usuString, cla);
         } else {
-            usu = loginEJBLocal.isUsuarioValido(usuString, cla);
+            usu = loginEJB.isUsuarioValido(usuString, cla);
         }
 
         if (usu == null) {
@@ -162,15 +166,22 @@ public class LoginController implements Serializable {
     }
 
     public void asignarNuevaClave() {
-        HashMap<String, String> valor = loginEJBLocal.solicitarEnlaceNuevaClave(usuarioEmp);
+        HashMap<String, String> valor = loginEJB.solicitarEnlaceNuevaClave(usuario);
 
         if (valor.isEmpty()) {
+            JsfUtil.mensajeAlerta("Este NIT no existe en la base de proveedores. Recuerde que si es un proveedor con personeria juridica el NIT es del Representante Legal");
         } else {
             String titulo = "Paquete Escolar On Line - Cambiar Clave de Acceso";
-            String mensaje = UTIL_CORREO.getString("contratacion.estadistica.correo.cuerpo");
+            String mensaje = UTIL_CORREO.getString("prov.recordarcontrasenha");
+
+            mensaje = MessageFormat.format(mensaje, valor.get("nombreCompleto"), valor.get("token"));
 
             List<String> to = new ArrayList();
             List<String> cc = new ArrayList();
+
+            to.add(valor.get("correo"));
+
+            eMailEJB.enviarMail("rafael.arias@mined.gob.sv", titulo, mensaje, to, cc, new ArrayList(), new HashMap<>());
         }
     }
 }

@@ -88,9 +88,9 @@ public class LoginEJB {
     }
 
     public HashMap<String, String> solicitarEnlaceNuevaClave(String numeroNit) {
-        
+
         HashMap<String, String> mapa = new HashMap<>();
-        
+
         Query q = em.createQuery("SELECT u FROM Usuario u WHERE u.idPersona.numeroNit=:nit", Usuario.class);
         q.setParameter("nit", numeroNit);
 
@@ -99,7 +99,7 @@ public class LoginEJB {
         if (usu != null) {
             SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
             usu.setActivo((short) 0);
-            usu.setTokenCambioClave(new RC4Crypter().encrypt("ha", numeroNit.concat(sdf.format(new Date()))));
+            usu.setTokenCambioClave(new RC4Crypter().encrypt("ha", numeroNit.concat(":").concat(sdf.format(new Date()))));
 
             em.merge(usu);
             mapa.put("correo", usu.getIdPersona().getEmail());

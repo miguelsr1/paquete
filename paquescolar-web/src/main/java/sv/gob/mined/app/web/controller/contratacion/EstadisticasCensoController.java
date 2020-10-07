@@ -166,8 +166,6 @@ public class EstadisticasCensoController implements Serializable {
     private ReportesEJB reportesEJB;
     @EJB
     private EMailEJB eMailEJB;
-    @EJB
-    private ProveedorEJB proveedorEJB;
 
     private static final ResourceBundle UTIL_CORREO = ResourceBundle.getBundle("Bundle");
 

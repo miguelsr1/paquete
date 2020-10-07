@@ -33,6 +33,7 @@ public class ValidarProveedorMB implements Serializable {
     private BigDecimal idEmpresa;
     private Boolean showPanel = false;
     private String pass1;
+    private String op = "";
 
     private static final ResourceBundle UTIL_CORREO = ResourceBundle.getBundle("Bundle");
 
@@ -42,7 +43,12 @@ public class ValidarProveedorMB implements Serializable {
     @PostConstruct
     public void init() {
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-        if (params.containsKey("codigo")) {
+        if (params.containsKey("op")) {
+            if (params.get("op").equals("1")) {
+                op = "1";
+                String numeroNit = (new RC4Crypter()).decrypt("ha", params.get("codigo")).split(":")[0];
+            }
+        } else if (params.containsKey("codigo")) {
             String idEmpresaStr = (new RC4Crypter()).decrypt("ha", params.get("codigo")).split(":")[0];
 
             idEmpresa = new BigDecimal(idEmpresaStr);
@@ -98,14 +104,14 @@ public class ValidarProveedorMB implements Serializable {
         switch (validar) {
             case 1:
                 emp = proveedorEJB.findEmpresaByNit(nit, false);
-                JsfUtil.mensajeInformacion("Se ha enviado un correo a <b>"+emp.getIdPersona().getEmail()+"</b> para activar su usuario de acceso. <b>Esta es la única vez que podrá realizar este paso</b>.");
+                JsfUtil.mensajeInformacion("Se ha enviado un correo a <b>" + emp.getIdPersona().getEmail() + "</b> para activar su usuario de acceso. <b>Esta es la única vez que podrá realizar este paso</b>.");
                 break;
             case 2:
                 JsfUtil.mensajeError("Los valores ingresados no coinciden con ningún proveedor");
                 break;
             case 3:
                 emp = proveedorEJB.findEmpresaByNit(nit, false);
-                JsfUtil.mensajeInformacion("El correo registrado [<b>"+emp.getIdPersona().getEmail()+"</b>] no es un correo válido, por favor escribir a <a href='mailto:carlos.villegas@mined.edu.sv'>Carlos Villegas</a> para corregir su correo.");
+                JsfUtil.mensajeInformacion("El correo registrado [<b>" + emp.getIdPersona().getEmail() + "</b>] no es un correo válido, por favor escribir a <a href='mailto:carlos.villegas@mined.edu.sv'>Carlos Villegas</a> para corregir su correo.");
                 break;
         }
 
@@ -113,7 +119,11 @@ public class ValidarProveedorMB implements Serializable {
     }
 
     public String guardarPasswordProv() {
-        proveedorEJB.guardarPasswordProv(idEmpresa, pass1);
+        if (op.equals("1")) {
+            
+        } else {
+            proveedorEJB.guardarPasswordProv(idEmpresa, pass1);
+        }
 
         return "index.mined";
     }
