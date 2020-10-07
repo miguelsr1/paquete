@@ -22,7 +22,7 @@
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:outputPanel rendered="#{catalogosGeneralesController.isUsuarioRafa()}">
+                    <p:outputPanel rendered="#{catalogosGeneralesController.isUsuarioRoot()}">
                         <h1>
                             <i class="fa fa-filter blue" style="font-size: 16px;"></i>
                             <p:spacer width="10" height="8"/>
@@ -53,7 +53,7 @@
                         <p:commandButton value="Enviar" /> 
                     </p:outputPanel>
 
-                    <p:outputPanel rendered="#{catalogosGeneralesController.isUsuarioRoot()}">
+                    <p:outputPanel rendered="#{catalogosGeneralesController.isUsuarioRafa()}">
                         <h1>
                             <i class="fa fa-filter blue" style="font-size: 16px;"></i>
                             <p:spacer width="10" height="8"/>

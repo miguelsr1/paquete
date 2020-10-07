@@ -62,11 +62,6 @@ public class VarSession {
         context.getExternalContext().getSessionMap().remove(key);
     }
 
-    public static void limpiarVariableSession() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        context.getExternalContext().getSessionMap().clear();
-    }
-
     public static void crearCookie(String nombre, String valor) {
         FacesContext context = FacesContext.getCurrentInstance();
         Cookie cookie = new Cookie(nombre, valor);

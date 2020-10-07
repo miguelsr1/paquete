@@ -100,9 +100,7 @@
                                                 </p:commandLink>
                                             </div>
                                             <div class="ui-g-6">
-                                                <p:commandLink value="Olvidé contraseña" action="validarProveedor">
-                                                    <i class="fa fa-hand-o-right" aria-hidden="true"></i>
-                                                </p:commandLink>
+                                                <p:commandLink value="Olvidé contraseña" action="validarProveedor"/>
                                             </div>
                                         </div>
                                         <p:spacer width="5"/>
@@ -135,7 +133,7 @@
 
                     <p:dialog header="Olvidé mi clave de acceso" modal="true" id="dlgClave">
                         <p:panel>
-                            <p:outputLabel value="Se enviará un correo con un enlace para poder cambiar la contraseña, su usuario esta inactivo hasta que asigne una nueva contraseña" style="font-size: 14px; font-weight: bold;" escape="false"/>
+                            <p:outputLabel value="Se enviará un correo con un enlace para poder cambiar la contraseña, su usuario estará inactivo hasta que asigne una nueva contraseña" style="font-size: 14px; font-weight: bold;" escape="false"/>
                         </p:panel>
                         <f:facet name="footer">
                             <p:commandButton value="Aceptar" onclick="PF('dlgClave').hide();" action="#{estadisticasCensoController.imprimir}"/>

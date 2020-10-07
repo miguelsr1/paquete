@@ -21,7 +21,6 @@ import org.primefaces.PrimeFaces;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.LoginEJB;
-import sv.gob.mined.paquescolar.model.OrganizacionEducativa;
 import sv.gob.mined.paquescolar.model.Usuario;
 
 /**
@@ -120,7 +119,12 @@ public class LoginController implements Serializable {
             JsfUtil.mensajeAlerta("Clave y/o Usuario incorrectos.");
             return "";
         } else if (usu.getIdTipoUsuario().getIdTipoUsuario().intValue() == 9) {
-            return usuarioOkRedireccionar(usu);
+            if (usu.getActivo() == 0) {
+                JsfUtil.mensajeError("Usuario INACTIVO. No posee derechos de acceso");
+                return "";
+            } else {
+                return usuarioOkRedireccionar(usu);
+            }
         } else {
             switch (usu.getActivo().intValue()) {
                 case 1:
@@ -158,10 +162,15 @@ public class LoginController implements Serializable {
     }
 
     public void asignarNuevaClave() {
-        String titulo = "Paquete Escolar On Line - Cambiar Clave de Acceso";
-        String mensaje = UTIL_CORREO.getString("contratacion.estadistica.correo.cuerpo");
+        HashMap<String, String> valor = loginEJBLocal.solicitarEnlaceNuevaClave(usuarioEmp);
 
-        List<String> to = new ArrayList();
-        List<String> cc = new ArrayList();
+        if (valor.isEmpty()) {
+        } else {
+            String titulo = "Paquete Escolar On Line - Cambiar Clave de Acceso";
+            String mensaje = UTIL_CORREO.getString("contratacion.estadistica.correo.cuerpo");
+
+            List<String> to = new ArrayList();
+            List<String> cc = new ArrayList();
+        }
     }
 }

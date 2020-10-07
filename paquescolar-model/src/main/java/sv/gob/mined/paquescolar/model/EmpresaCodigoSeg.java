@@ -20,6 +20,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.eclipse.persistence.annotations.Direction;
+import org.eclipse.persistence.annotations.NamedStoredProcedureQueries;
+import org.eclipse.persistence.annotations.NamedStoredProcedureQuery;
+import org.eclipse.persistence.annotations.StoredProcedureParameter;
 
 /**
  *
@@ -29,6 +33,26 @@ import javax.persistence.TemporalType;
 @Table(name = "EMPRESA_CODIGO_SEG")
 @NamedQueries({
     @NamedQuery(name = "EmpresaCodigoSeg.findAll", query = "SELECT e FROM EmpresaCodigoSeg e")})
+
+@NamedStoredProcedureQueries({
+    @NamedStoredProcedureQuery(
+            name = "SP_RESET_ACEPTACION",
+            procedureName = "SP_RESET_ACEPTACION",
+            returnsResultSet = false,
+            parameters = {
+                @StoredProcedureParameter(queryParameter = "P_NUMERO_NIT", name = "P_NUMERO_NIT", direction = Direction.IN, type = String.class),
+                @StoredProcedureParameter(queryParameter = "P_ID_DET_PROCESO_ADQ", name = "P_ID_DET_PROCESO_ADQ", direction = Direction.IN, type = Integer.class)
+            }
+    ),
+    @NamedStoredProcedureQuery(
+            name = "SP_RESET_ACTIVACION_USER",
+            procedureName = "SP_RESET_ACTIVACION_USER",
+            returnsResultSet = false,
+            parameters = {
+                @StoredProcedureParameter(queryParameter = "P_NUMERO_NIT", name = "P_NUMERO_NIT", direction = Direction.IN, type = String.class)
+            }
+    )
+})
 public class EmpresaCodigoSeg implements Serializable {
 
     private static final long serialVersionUID = 1L;

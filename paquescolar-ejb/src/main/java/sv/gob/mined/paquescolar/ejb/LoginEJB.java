@@ -6,7 +6,11 @@ package sv.gob.mined.paquescolar.ejb;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
 import javax.persistence.EntityManager;
@@ -38,7 +42,7 @@ public class LoginEJB {
 
             if (!q.getResultList().isEmpty()) {
                 usu = (Usuario) q.getResultList().get(0);
-            }else{
+            } else {
                 usu = new Usuario();
             }
         } catch (Exception ex) {
@@ -47,7 +51,7 @@ public class LoginEJB {
             return usu;
         }
     }
-    
+
     public Usuario isUsuarioProveedorValido(String usuario, String clave) {
         Usuario usu = null;
         try {
@@ -57,7 +61,7 @@ public class LoginEJB {
 
             if (!q.getResultList().isEmpty()) {
                 usu = (Usuario) q.getResultList().get(0);
-            }else{
+            } else {
                 usu = new Usuario();
             }
         } catch (Exception ex) {
@@ -82,8 +86,28 @@ public class LoginEJB {
         Object obj = q.getSingleResult();
         return new BigInteger(obj.toString());
     }
-    
-    public void solicitarEnlaceNuevaClave(String numeroNit){
+
+    public HashMap<String, String> solicitarEnlaceNuevaClave(String numeroNit) {
         
+        HashMap<String, String> mapa = new HashMap<>();
+        
+        Query q = em.createQuery("SELECT u FROM Usuario u WHERE u.idPersona.numeroNit=:nit", Usuario.class);
+        q.setParameter("nit", numeroNit);
+
+        Usuario usu = q.getResultList().isEmpty() ? null : (Usuario) q.getResultList().get(0);
+
+        if (usu != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+            usu.setActivo((short) 0);
+            usu.setTokenCambioClave(new RC4Crypter().encrypt("ha", numeroNit.concat(sdf.format(new Date()))));
+
+            em.merge(usu);
+            mapa.put("correo", usu.getIdPersona().getEmail());
+            mapa.put("nombreCompleto", usu.getIdPersona().getNombreCompleto());
+            mapa.put("token", usu.getTokenCambioClave());
+            usu.getTokenCambioClave();
+        }
+
+        return mapa;
     }
 }

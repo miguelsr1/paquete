@@ -6,6 +6,7 @@ package sv.gob.mined.paquescolar.ejb;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -489,21 +490,27 @@ public class ConamypeEJB {
     }
     
     @WebMethod(operationName = "generarCodigoSeguridad")
-    public void updCorreoElectronicoByNit(Integer idDetProcesoAdq) {
-        Query q = em.createQuery("SELECT d.idEmpresa FROM DetRubroMuestraInteres d WHERE d.idDetProcesoAdq.idDetProcesoAdq=:id", Empresa.class);
-        q.setParameter("id", idDetProcesoAdq);
-        List<Empresa> lst = q.getResultList();
-        
-        RC4Crypter encript = new RC4Crypter();
-        
-        for (Empresa empresa : lst) {
-            EmpresaCodigoSeg ecs = new EmpresaCodigoSeg();
+    public void generarCodigoSeguridad(Integer idDetProcesoAdq, String fecha) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            Query q = em.createQuery("SELECT d.idEmpresa FROM DetRubroMuestraInteres d WHERE d.idDetProcesoAdq.idDetProcesoAdq=:id and d.fechaInsercion>:date", Empresa.class);
+            q.setParameter("id", idDetProcesoAdq);
+            q.setParameter("date", sdf.parse(fecha));
+            List<Empresa> lst = q.getResultList();
             
-            ecs.setIdEmpresa(empresa.getIdEmpresa());
-            ecs.setCodigoSeguridad(encript.encrypt("ha", empresa.getIdEmpresa().toString().concat(empresa.getNumeroNit())).substring(0, 10));
-            ecs.setUsuarioActivado((short)0);
+            RC4Crypter encript = new RC4Crypter();
             
-            em.persist(ecs);
+            for (Empresa empresa : lst) {
+                EmpresaCodigoSeg ecs = new EmpresaCodigoSeg();
+                
+                ecs.setIdEmpresa(empresa.getIdEmpresa());
+                ecs.setCodigoSeguridad(encript.encrypt("ha", empresa.getIdEmpresa().toString().concat(empresa.getNumeroNit())).substring(0, 10));
+                ecs.setUsuarioActivado((short)0);
+                
+                em.persist(ecs);
+            }
+        } catch (java.text.ParseException ex) {
+            Logger.getLogger(ConamypeEJB.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }

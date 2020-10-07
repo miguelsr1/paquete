@@ -88,7 +88,6 @@ public class GuestPreferences implements Serializable {
     
     public void logout() {
         try {
-            VarSession.limpiarVariableSession();
             FacesContext context = FacesContext.getCurrentInstance();
             context.getExternalContext().getSessionMap().clear();
             ExternalContext externalContext = context.getExternalContext();
@@ -96,6 +95,6 @@ public class GuestPreferences implements Serializable {
             System.gc();
         } catch (IOException ex) {
             Logger.getLogger(PersonaController.class.getName()).log(Level.SEVERE, null, ex);
-}
+        }
     }
 }

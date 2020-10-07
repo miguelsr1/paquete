@@ -67,6 +67,8 @@ public class Usuario implements Serializable {
     @Basic(optional = false)
     @Column(name = "CODIGO_DEPARTAMENTO")
     private String codigoDepartamento;
+    @Column(name = "TOKEN_CAMBIO_CLAVE")
+    private String tokenCambioClave;
     @ManyToMany(mappedBy = "usuarioList")
     private List<OpcionMenu> opcionMenuList;
     @JoinColumn(name = "ID_TIPO_USUARIO", referencedColumnName = "ID_TIPO_USUARIO")
@@ -95,6 +97,14 @@ public class Usuario implements Serializable {
     private String msj;
 
     public Usuario() {
+    }
+
+    public String getTokenCambioClave() {
+        return tokenCambioClave;
+    }
+
+    public void setTokenCambioClave(String tokenCambioClave) {
+        this.tokenCambioClave = tokenCambioClave;
     }
 
     public String getMsj() {
