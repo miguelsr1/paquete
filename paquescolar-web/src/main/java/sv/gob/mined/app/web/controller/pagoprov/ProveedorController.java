@@ -78,7 +78,7 @@ import sv.gob.mined.paquescolar.model.pojos.proveedor.MunicipioDto;
 public class ProveedorController extends RecuperarProcesoUtil implements Serializable {
 
     private int idRow;
-    
+
     private Boolean resetUsuario = false;
     private Boolean resetAceptacion = false;
     private Boolean deshabiliar = true;
@@ -188,7 +188,6 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
-    
     public Boolean getResetUsuario() {
         return resetUsuario;
     }
@@ -204,7 +203,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     public void setResetAceptacion(Boolean resetAceptacion) {
         this.resetAceptacion = resetAceptacion;
     }
-    
+
     public String getCodigoDepartamentoLocal() {
         return codigoDepartamentoLocal;
     }
@@ -1556,13 +1555,29 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
             Logger.getLogger(ProveedorController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void resetDatosProveedor(){
-        if(resetAceptacion){
-            proveedorEJB.resetAceptacion(numeroNit, JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq());
+
+    public void resetDatosProveedor() {
+        Boolean continuar = false;
+        if (numeroNit == null || numeroNit.isEmpty()) {
+            JsfUtil.mensajeAlerta("Por favor digite un NIT");
+        } else {
+            Empresa emp = proveedorEJB.findEmpresaByNit(numeroNit, false);
+            if (emp == null) {
+                JsfUtil.mensajeAlerta("No existe ningún Proveedor o Representante Legal con el NIT ingresado");
+            } else {
+                continuar = true;
+            }
         }
-        
-        if(resetUsuario){
+
+        if (resetAceptacion && continuar) {
+            if (rubro != null) {
+                proveedorEJB.resetAceptacion(numeroNit, JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq());
+            } else {
+                JsfUtil.mensajeAlerta("Debe de seleccionar un Rubro de Adquisición");
+            }
+        }
+
+        if (resetUsuario && continuar) {
             proveedorEJB.resetActivacion(numeroNit);
         }
     }
