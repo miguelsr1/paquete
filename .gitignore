@@ -50,3 +50,8 @@ hs_err_pid*
 /boleta-ejb/target/
 /envioCorreo/target/
 /boleta-api/target/
+/paquescolar-ws/nbproject/private/
+/utils/target/
+/envio-web/target/
+/paquescolar-ws/target/
+/paqueUpdateTecho/target/
