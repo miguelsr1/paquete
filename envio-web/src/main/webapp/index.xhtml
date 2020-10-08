@@ -2,8 +2,7 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:jsf="http://xmlns.jcp.org/jsf">
+      xmlns:p="http://primefaces.org/ui">
 
     <h:head>
         <f:facet name="first">
@@ -40,12 +39,12 @@
                                 </p:messages>
 
                                 <p:outputPanel id="outPrincipal" style="width: 900px;">
-                                    <p:outputPanel style="width: 900px;" rendered="#{not envioView.correoValido}">
+                                    <p:outputPanel style="width: 900px;" rendered="#{not loginView.correoValido}">
                                         <p:panelGrid columns="1" columnClasses="ui-g-12"
                                                      style="margin: 0 auto; width: 360px; text-align: center;"
                                                      styleClass="form-group ui-panelgrid-blank" layout="grid">
                                             <p:outputLabel value="Tipo de cuenta a utilizar"/>
-                                            <p:selectOneRadio id="rdTipo" unselectable="false" value="#{envioView.idDominioCorreo}" style="font-size: 16px; margin: auto;">
+                                            <p:selectOneRadio id="rdTipo" unselectable="false" value="#{loginView.idDominioCorreo}" style="font-size: 16px; margin: auto;">
                                                 <f:selectItem itemLabel="Office 365" itemValue="2"/>
                                                 <f:selectItem itemLabel="Correo Institucional" itemValue="1"/>
                                                 <p:ajax update="pngCredenciales" event="change" />
@@ -57,25 +56,25 @@
                                                      style="margin: 0 auto; width: 360px;" styleClass="form-group ui-panelgrid-blank" layout="grid">
                                             <p:outputLabel for="txtCorreoRemitente" value="Correo remitente "/>
                                             <p:outputPanel>
-                                                <p:inputText id="txtCorreoRemitente" widgetVar="txtCorreoRemitente" value="#{envioView.correoRemitente}" style="width: 200px" required="true"/>
+                                                <p:inputText id="txtCorreoRemitente" widgetVar="txtCorreoRemitente" value="#{loginView.correoRemitente}" style="width: 200px" required="true"/>
                                                 <p:spacer width="15"/>
-                                                <p:outputLabel value="#{envioView.idDominioCorreo eq '1' ? '@mined.gob.sv':'@admin.mined.edu.sv'}"/>
+                                                <p:outputLabel value="#{loginView.idDominioCorreo eq '1' ? '@mined.gob.sv':'@admin.mined.edu.sv'}"/>
                                             </p:outputPanel>
 
-                                            <p:outputLabel value="Usuario Windows" rendered="#{envioView.idDominioCorreo eq '1'}"/>
+                                            <p:outputLabel value="Usuario Windows" rendered="#{loginView.idDominioCorreo eq '1'}"/>
                                             <p:outputPanel>
-                                                <p:outputLabel value="MINED\\" rendered="#{envioView.idDominioCorreo eq '1'}"/>
+                                                <p:outputLabel value="MINED\\" rendered="#{loginView.idDominioCorreo eq '1'}"/>
                                                 <p:spacer width="15"/>
-                                                <p:inputText id="txtDominio" widgetVar="txtDominio" value="#{envioView.dominio}" rendered="#{envioView.idDominioCorreo eq '1'}" style="width: 285px;"/>
+                                                <p:inputText id="txtDominio" widgetVar="txtDominio" value="#{loginView.dominio}" rendered="#{loginView.idDominioCorreo eq '1'}" style="width: 285px;"/>
                                             </p:outputPanel>
 
                                             <p:outputLabel for="txtClaveRemitente" value="Contraseña"/>
-                                            <p:password id="txtClaveRemitente" widgetVar="txtClaveRemitente" value="#{envioView.password}" placeholder="Password" required="true"/>
+                                            <p:password id="txtClaveRemitente" widgetVar="txtClaveRemitente" value="#{loginView.password}" placeholder="Password" required="true"/>
                                         </p:panelGrid>
 
                                         <p:panelGrid id="pngValidar" columns="1" columnClasses="ui-g-12"
                                                      style="margin: 0 auto; text-align: center; width: 360px;" styleClass="form-group ui-panelgrid-blank" layout="grid">
-                                            <p:commandButton id="btnValidar" widgetVar="btnValidar" value="Validar" style="width: 110px;" action="#{envioView.validarCrendecialesDelCorreo()}" 
+                                            <p:commandButton id="btnValidar" widgetVar="btnValidar" value="Validar" style="width: 110px;" action="#{loginView.validarCrendecialesDelCorreo()}" 
                                                              onclick="PF('btnValidar').disable();" 
                                                              oncomplete="PF('btnValidar').enable();" update="outPrincipal"/> 
 

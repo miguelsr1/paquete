@@ -13,20 +13,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import javax.mail.Authenticator;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.servlet.ServletContext;
@@ -49,24 +47,18 @@ import sv.gob.mined.utils.jsf.JsfUtil;
 @SessionScoped
 public class EnvioView {
 
-    private Boolean correoValido = false;
     private Boolean showUploadFile = true;
 
     private BigDecimal idEnvio;
-    private String correoRemitente;
-    private String remitente;
-    private String password;
 
-    private String dominio;
+    private String remitente;
 
     private String titulo;
     private String mensaje;
     private String pathArchivo;
-
-    private String idDominioCorreo = "2";
-
     private String port;
     private String server;
+    private String password;
 
     private UploadedFile file;
 
@@ -79,6 +71,28 @@ public class EnvioView {
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("parametros");
 
     public EnvioView() {
+    }
+
+    @PostConstruct
+    public void init() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (context.getExternalContext().getSessionMap().containsKey("sessionMail")) {
+            try {
+                mailSession = (Session) context.getExternalContext().getSessionMap().get("sessionMail");
+                server = (String) context.getExternalContext().getSessionMap().get("server");
+                port = (String) context.getExternalContext().getSessionMap().get("port");
+                remitente = (String) context.getExternalContext().getSessionMap().get("remitente");
+                password = (String) context.getExternalContext().getSessionMap().get("password");
+
+                transport = mailSession.getTransport("smtp");
+                transport.connect(server, Integer.parseInt(port), remitente, password);
+                
+            } catch (NoSuchProviderException ex) {
+                Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (MessagingException ex) {
+                Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     @PreDestroy
@@ -105,30 +119,6 @@ public class EnvioView {
         return remitente;
     }
 
-    public String getDominio() {
-        return dominio;
-    }
-
-    public void setDominio(String dominio) {
-        this.dominio = dominio;
-    }
-
-    public String getCorreoRemitente() {
-        return correoRemitente;
-    }
-
-    public void setCorreoRemitente(String correoRemitente) {
-        this.correoRemitente = correoRemitente;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getTitulo() {
         return titulo;
     }
@@ -153,22 +143,8 @@ public class EnvioView {
         this.file = file;
     }
 
-    public String getIdDominioCorreo() {
-        return idDominioCorreo;
-    }
-
-    public void setIdDominioCorreo(String idDominioCorreo) {
-        if (idDominioCorreo != null) {
-            this.idDominioCorreo = idDominioCorreo;
-        }
-    }
-
     public Boolean getShowUploadFile() {
         return showUploadFile;
-    }
-
-    public Boolean getCorreoValido() {
-        return correoValido;
     }
     // </editor-fold>
 
@@ -210,15 +186,6 @@ public class EnvioView {
     public void validarFormulario() {
         String error = "";
 
-        if (correoRemitente == null || correoRemitente.trim().isEmpty()) {
-            error += "Debe de ingresar un correo remitente.<br/>";
-        }
-        if (idDominioCorreo == null) {
-            error += "Debe de ingresar el dominio de la cuenta de correo a utilizar.<br/>";
-        }
-        if (password == null || password.trim().isEmpty()) {
-            error += "Debe de ingresar una clave de acceso de la cuenta de correo a utilizar.<br/>";
-        }
         if (titulo == null || titulo.trim().isEmpty()) {
             error += "Debe de ingresar un Titulo del Mensaje.<br/>";
         }
@@ -275,117 +242,6 @@ public class EnvioView {
             return false;
         }
 
-    }
-
-    private Session getMailSessionOffice() {
-        if (mailSession == null) {
-            Properties configEmail = new Properties();
-
-            configEmail.put("mail.smtp.auth", "true");
-            configEmail.put("mail.smtp.starttls.enable", "true");
-
-            configEmail.put("mail.smtp.host", "smtp.office365.com");
-            configEmail.put("mail.smtp.port", "587");
-
-            configEmail.put("mail.user", remitente);
-            configEmail.put("mail.user.pass", password);
-            configEmail.put("mail.from", remitente);
-
-            mailSession = Session.getInstance(configEmail, new Authenticator() {
-
-                @Override
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(remitente, password);
-                }
-            });
-        }
-
-        return mailSession;
-    }
-
-    private Session getMailSessionMined() {
-        mailSession = null;
-        if (mailSession == null) {
-            Properties configEmail = new Properties();
-
-            configEmail.put("mail.smtp.auth", "true");
-            configEmail.put("mail.smtp.starttls.enable", "false");
-
-            configEmail.put("mail.smtp.host", "svr2k13mail01.mined.gob.sv");
-            configEmail.put("mail.smtp.port", "2525");
-
-            configEmail.put("mail.user", "MINED\\" + dominio);
-            configEmail.put("mail.user.pass", password);
-            configEmail.put("mail.from", remitente);
-
-            mailSession = Session.getInstance(configEmail, new Authenticator() {
-
-                @Override
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication("MINED\\" + dominio, password);
-                }
-            });
-        }
-
-        return mailSession;
-    }
-
-    public String validarCrendecialesDelCorreo() {
-        String url = "";
-        try {
-            if (correoRemitente != null && password != null) {
-                if (idDominioCorreo.equals("1")) {
-                    remitente = correoRemitente.concat("@").concat("mined.gob.sv");
-                    port = "2525";
-                    server = "svr2k13mail01.mined.gob.sv";
-                    mailSession = getMailSessionMined();
-                } else {
-                    remitente = correoRemitente.concat("@").concat("admin.mined.edu.sv");
-                    port = "587";
-                    server = "smtp.office365.com";
-                    mailSession = getMailSessionOffice();
-                }
-
-                transport = mailSession.getTransport("smtp");
-                transport.connect(server, Integer.parseInt(port), remitente, password);
-
-                correoValido = true;
-
-                transport.close();
-
-                url = "mensaje?faces-redirect=true";
-            }
-        } catch (NoSuchProviderException ex) {
-            JsfUtil.mensajeError("Error en el usuario o  clave de acceso.");
-            correoValido = false;
-        } catch (MessagingException ex) {
-            JsfUtil.mensajeError("Error en el usuario o  clave de acceso.");
-            correoValido = false;
-        }
-
-        return url;
-    }
-
-    public String regresar() {
-        if (transport.isConnected()) {
-            try {
-                transport.close();
-            } catch (MessagingException ex) {
-                Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        remitente = "";
-        correoRemitente = "";
-        dominio = "";
-        password = "";
-        correoValido = false;
-        showUploadFile = true;
-        titulo = "";
-        mensaje = "";
-        pathArchivo = "";
-
-        idDominioCorreo = "2";
-        return "index?faces-redirect=true";
     }
 
     public void reemplazarArchivo() {

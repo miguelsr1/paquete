@@ -5,7 +5,7 @@
  */
 package sv.gob.mined.envio.facade;
 
-import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.LocalBean;
@@ -13,10 +13,12 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.mail.Address;
+import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -98,5 +100,58 @@ public class EMailFacade {
         } catch (MessagingException ex) {
             Logger.getLogger(EMailFacade.class.getName()).log(Level.SEVERE, "Error en el envio de correo");
         }
+    }
+    
+    
+    public Session getMailSessionOffice(Session mailSession, String remitente, String password) {
+        if (mailSession == null) {
+            Properties configEmail = new Properties();
+
+            configEmail.put("mail.smtp.auth", "true");
+            configEmail.put("mail.smtp.starttls.enable", "true");
+
+            configEmail.put("mail.smtp.host", "smtp.office365.com");
+            configEmail.put("mail.smtp.port", "587");
+
+            configEmail.put("mail.user", remitente);
+            configEmail.put("mail.user.pass", password);
+            configEmail.put("mail.from", remitente);
+
+            mailSession = Session.getInstance(configEmail, new Authenticator() {
+
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(remitente, password);
+                }
+            });
+        }
+
+        return mailSession;
+    }
+
+    public Session getMailSessionMined(Session mailSession, String dominio, String password, String remitente) {
+        if (mailSession == null) {
+            Properties configEmail = new Properties();
+
+            configEmail.put("mail.smtp.auth", "true");
+            configEmail.put("mail.smtp.starttls.enable", "false");
+
+            configEmail.put("mail.smtp.host", "svr2k13mail01.mined.gob.sv");
+            configEmail.put("mail.smtp.port", "2525");
+
+            configEmail.put("mail.user", "MINED\\" + dominio);
+            configEmail.put("mail.user.pass", password);
+            configEmail.put("mail.from", remitente);
+
+            mailSession = Session.getInstance(configEmail, new Authenticator() {
+
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication("MINED\\" + dominio, password);
+                }
+            });
+        }
+
+        return mailSession;
     }
 }
