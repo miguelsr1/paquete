@@ -96,7 +96,7 @@ public class LoginEJB {
         Usuario usu = q.getResultList().isEmpty() ? null : (Usuario) q.getResultList().get(0);
 
         if (usu != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyyhhmmss");
             usu.setActivo((short) 0);
             usu.setTokenCambioClave(new RC4Crypter().encrypt("ha", numeroNit.concat(":").concat(sdf.format(new Date()))));
 

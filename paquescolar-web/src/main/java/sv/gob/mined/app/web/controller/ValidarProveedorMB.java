@@ -32,6 +32,7 @@ public class ValidarProveedorMB implements Serializable {
     private String dui;
     private BigDecimal idEmpresa;
     private Boolean showPanel = false;
+    private Boolean tokenValido = false;
     private String pass1;
     private String op = "";
 
@@ -47,12 +48,22 @@ public class ValidarProveedorMB implements Serializable {
             if (params.get("op").equals("1")) {
                 op = "1";
                 nit = (new RC4Crypter()).decrypt("ha", params.get("codigo")).split(":")[0];
+                
+                tokenValido = proveedorEJB.tokenUsuarioValido(params.get("codigo"));
             }
         } else if (params.containsKey("codigo")) {
             String idEmpresaStr = (new RC4Crypter()).decrypt("ha", params.get("codigo")).split(":")[0];
 
             idEmpresa = new BigDecimal(idEmpresaStr);
         }
+    }
+
+    public Boolean getTokenValido() {
+        return tokenValido;
+    }
+
+    public void setTokenValido(Boolean tokenValido) {
+        this.tokenValido = tokenValido;
     }
 
     public String getPass1() {

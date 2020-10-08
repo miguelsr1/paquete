@@ -1886,4 +1886,10 @@ public class ProveedorEJB {
     public void enviarNotificacionModProv(String remitente, String titulo, String mensaje, List<String> to, List<String> cc, List<String> bcc) {
         eMailEJB.enviarMail(remitente, titulo, mensaje, to, cc, bcc);
     }
+    
+    public Boolean tokenUsuarioValido(String token){
+        Query q = em.createQuery("SELECT u FROM Usuario u WHERE u.tokenCambioClave=:token", Usuario.class);
+        q.setParameter("token", token);
+        return !q.getResultList().isEmpty();
+    }
 }
