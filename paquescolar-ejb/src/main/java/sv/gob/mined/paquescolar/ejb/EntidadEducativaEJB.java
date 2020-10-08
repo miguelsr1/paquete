@@ -352,7 +352,7 @@ public class EntidadEducativaEJB {
                     + "group by id_nivel";
         } else {
             sql = "select "
-                    + (detProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 8 ? " case id_nivel_educativo when 1 then 22 else id_nivel_educativo end id_nivel_educativo," : "id_nivel_educativo, ")
+                    + "id_nivel_educativo, "
                     + "masculino, femenimo from estadistica_censo \n"
                     + "where id_proceso_adq = ?1 and \n"
                     + "    id_nivel_educativo in (1,3,4,5,6) and \n"

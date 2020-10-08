@@ -422,7 +422,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
 
                                 current.getParticipantesList().add(participante);
 
-                                JsfUtil.mensajeAlerta("Se agrego el proveedor seleccionado");
+                                JsfUtil.mensajeInformacion("Se agrego el proveedor seleccionado");
                             }
                         } else {
                             JsfUtil.mensajeAlerta("Este proveedor no esta calificado para este departamento.");

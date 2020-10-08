@@ -46,15 +46,21 @@ public class ValidarProveedorMB implements Serializable {
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         if (params.containsKey("op")) {
             if (params.get("op").equals("1")) {
-                op = "1";
-                nit = (new RC4Crypter()).decrypt("ha", params.get("codigo")).split(":")[0];
-                
-                tokenValido = proveedorEJB.tokenUsuarioValido(params.get("codigo"));
+                try {
+                    op = "1";
+                    nit = (new RC4Crypter()).decrypt("ha", params.get("codigo")).split(":")[0];
+                    tokenValido = proveedorEJB.tokenUsuarioValido(params.get("codigo"));
+                } catch (Exception e) {
+                }
             }
         } else if (params.containsKey("codigo")) {
-            String idEmpresaStr = (new RC4Crypter()).decrypt("ha", params.get("codigo")).split(":")[0];
-
-            idEmpresa = new BigDecimal(idEmpresaStr);
+            try {
+                String idEmpresaStr = (new RC4Crypter()).decrypt("ha", params.get("codigo")).split(":")[0];
+                idEmpresa = new BigDecimal(idEmpresaStr);
+                tokenValido = true;
+            } catch (Exception e) {
+                idEmpresa = null;
+            }
         }
     }
 

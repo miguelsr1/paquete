@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="494ffdf3-e02c-4282-b47c-bedbea3a135e">
-	<property name="ireport.zoom" value="2.853116706110003"/>
-	<property name="ireport.x" value="290"/>
-	<property name="ireport.y" value="210"/>
+	<property name="ireport.zoom" value="1.9487171000000019"/>
+	<property name="ireport.x" value="79"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="pRubro" class="java.lang.String"/>
 	<parameter name="ubicacionImagenes" class="java.lang.String">
 		<defaultValueExpression><![CDATA["/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/"]]></defaultValueExpression>
@@ -54,7 +54,7 @@
 	<title>
 		<band height="63" splitType="Stretch">
 			<image>
-				<reportElement key="image-1" x="0" y="0" width="60" height="60" uuid="484ea1c2-7c9a-49dd-ac57-1da8aeaa6934"/>
+				<reportElement uuid="484ea1c2-7c9a-49dd-ac57-1da8aeaa6934" key="image-1" x="0" y="0" width="60" height="60"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -64,7 +64,7 @@
 				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo_rpt.png"]]></imageExpression>
 			</image>
 			<image hAlign="Right">
-				<reportElement key="image-2" x="423" y="0" width="149" height="63" uuid="e8fec606-a3d8-4009-9f61-58fcdbde6d0d"/>
+				<reportElement uuid="e8fec606-a3d8-4009-9f61-58fcdbde6d0d" key="image-2" x="423" y="0" width="149" height="63"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -76,9 +76,10 @@
 		</band>
 	</title>
 	<pageHeader>
-		<band height="45" splitType="Stretch">
+		<band height="58" splitType="Stretch">
 			<textField>
-				<reportElement x="22" y="0" width="533" height="42" uuid="19876f79-7df9-4794-a033-eb3746e7c7dd"/>
+				<reportElement uuid="19876f79-7df9-4794-a033-eb3746e7c7dd" x="22" y="0" width="533" height="58"/>
+				<textElement/>
 				<textFieldExpression><![CDATA["DECLARACIÓN JURADA GLOBAL SOBRE LA INCORPORACIÓN DE LA OFERTA GOLBAL A LA BASE DE COMPRASAL, LA ACEPTACIÓN DE LAS ADJUDICACIONES Y EL CUMPLIMIENTO DE LAS ESPECIFICACIONES TÉCNICAS, PLAZO Y LUGAR DE ENTREGA, DE: " + $P{pRubro} + "(AÑO "+$F{anho}+ ")"]]></textFieldExpression>
 			</textField>
 		</band>
@@ -89,7 +90,7 @@
 	<detail>
 		<band height="47" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement x="22" y="0" width="533" height="47" uuid="bdafee93-0adf-43a4-b29b-4052dc81284b"/>
+				<reportElement uuid="bdafee93-0adf-43a4-b29b-4052dc81284b" x="22" y="0" width="533" height="47"/>
 				<textElement textAlignment="Justified">
 					<font size="8"/>
 					<paragraph lineSpacing="Single"/>
@@ -108,35 +109,35 @@ $F{direccionRepre} + ", POR ESTE MEDIO Y DE MANERA EXPRESA, BAJO JURAMENTO HAGO 
 	<pageFooter>
 		<band height="91" splitType="Stretch">
 			<textField>
-				<reportElement x="22" y="0" width="512" height="12" uuid="a9c162c9-9b30-496d-b0e1-b810afdd01c8"/>
+				<reportElement uuid="a9c162c9-9b30-496d-b0e1-b810afdd01c8" x="22" y="0" width="512" height="12"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Nombre del Proveedora: " + $F{representanteLegal}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="22" y="11" width="437" height="12" uuid="d3cf0a89-512a-498b-9f55-5b3b1582ab63"/>
+				<reportElement uuid="d3cf0a89-512a-498b-9f55-5b3b1582ab63" x="22" y="11" width="437" height="12"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA["No DUI: "+$F{duiRepre}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="22" y="22" width="437" height="12" uuid="c99b2154-eed0-4c3a-a9bf-c0bde0363cc9"/>
+				<reportElement uuid="c99b2154-eed0-4c3a-a9bf-c0bde0363cc9" x="22" y="22" width="437" height="12"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA["No NIT: "+$F{nitRepre}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="22" y="33" width="437" height="12" uuid="3910a7ee-8c35-42e7-b855-8ef2e9cd33aa"/>
+				<reportElement uuid="3910a7ee-8c35-42e7-b855-8ef2e9cd33aa" x="22" y="33" width="437" height="12"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Correo Electrónico: "+$P{pCorreoPersona}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="8" y="55" width="564" height="36" uuid="8e6ac96b-4539-421e-80f2-9d68d3bab987"/>
+				<reportElement uuid="8e6ac96b-4539-421e-80f2-9d68d3bab987" x="8" y="55" width="564" height="36"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" size="8"/>
 				</textElement>

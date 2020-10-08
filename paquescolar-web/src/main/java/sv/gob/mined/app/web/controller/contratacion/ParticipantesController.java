@@ -688,8 +688,8 @@ public class ParticipantesController implements Serializable {
             PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":descripcionItem");
             PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":precioUnitario");
             PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":subTotal");
-            PrimeFaces.current().ajax().update(nombreTabla + ":" + numRow + ":totalCantidad");
-            PrimeFaces.current().ajax().update(nombreTabla + ":" + numRow + ":total");
+            PrimeFaces.current().ajax().update(nombreTabla + ":" + (numRow - 1) + ":totalCantidad");
+            PrimeFaces.current().ajax().update(nombreTabla + ":" + (numRow - 1) + ":total");
             if (!msjError.isEmpty()) {
                 JsfUtil.mensajeAlerta(msjError);
             }
@@ -713,7 +713,11 @@ public class ParticipantesController implements Serializable {
                     switch (idNivel.intValue()) {
                         case 1:
                         case 22:
-                            tmpIdNivel = 1;
+                            if (detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 8) {
+                                tmpIdNivel = 22;
+                            } else {
+                                tmpIdNivel = 1;
+                            }
                             break;
                         case 2:
                         case 3:

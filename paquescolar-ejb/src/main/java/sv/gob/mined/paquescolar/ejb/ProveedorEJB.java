@@ -1546,6 +1546,8 @@ public class ProveedorEJB {
                     break;
             }
         }
+
+        em.persist(emp);
     }
 
     public void calcularNoItems(Integer idDet, String numeroNit) {
@@ -1615,9 +1617,6 @@ public class ProveedorEJB {
                     break;
                 case "13":
                     emp.setItem13("13");
-                    break;
-                case "22":
-                    emp.setItem22("22");
                     break;
             }
         }
@@ -1714,7 +1713,7 @@ public class ProveedorEJB {
                 + "                pemp.id_empresa = " + idEmpresa + " and \n"
                 + "                pemp.id_proceso_adq = " + idProcesoAdq + " and\n"
                 + "                pemp.estado_eliminacion = 0 and\n"
-                + "                pemp.id_nivel_educativo in (" + idNivelesCe + ")\n"
+                + "                pemp.id_nivel_educativo in (" + (idNivelesCe.equals("1") ? "22" : idNivelesCe) + ")\n"
                 + "            order by to_number(pemp.no_item)", PrecioReferenciaEmpresaDto.class);
         return q.getResultList();
     }
@@ -1839,12 +1838,12 @@ public class ProveedorEJB {
         Usuario usr = (Usuario) q.getResultList().get(0);
         usr.setActivo((short) 1);
         usr.setTokenCambioClave(null);
-        
+
         em.merge(usr);
-        
+
         Persona per = usr.getIdPersona();
         per.setClaveAcceso((new RC4Crypter()).encrypt("ha", password));
-        
+
         em.merge(per);
     }
 
@@ -1886,8 +1885,8 @@ public class ProveedorEJB {
     public void enviarNotificacionModProv(String remitente, String titulo, String mensaje, List<String> to, List<String> cc, List<String> bcc) {
         eMailEJB.enviarMail(remitente, titulo, mensaje, to, cc, bcc);
     }
-    
-    public Boolean tokenUsuarioValido(String token){
+
+    public Boolean tokenUsuarioValido(String token) {
         Query q = em.createQuery("SELECT u FROM Usuario u WHERE u.tokenCambioClave=:token", Usuario.class);
         q.setParameter("token", token);
         return !q.getResultList().isEmpty();

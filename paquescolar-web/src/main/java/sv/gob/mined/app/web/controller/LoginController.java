@@ -181,7 +181,10 @@ public class LoginController implements Serializable {
 
             to.add(valor.get("correo"));
 
-            eMailEJB.enviarMail("rafael.arias@mined.gob.sv", titulo, mensaje, to, cc, new ArrayList(), new HashMap<>());
+            if(eMailEJB.enviarMail("rafael.arias@mined.gob.sv", titulo, mensaje, to, cc, new ArrayList(), new HashMap<>())){
+                JsfUtil.mensajeInformacion("Por favor revisar su correo para poder cambiar la clave de acceso");
+            }
+            
         }
     }
 }
