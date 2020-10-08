@@ -1621,7 +1621,7 @@ public class ProveedorEJB {
                     break;
             }
         }
-        
+
         em.persist(emp);
     }
 
@@ -1833,6 +1833,21 @@ public class ProveedorEJB {
         updateCodigoValidacionProveedor(idEmpresa, null, true);
     }
 
+    public void guardarPasswordPer(String numeroNit, String password) {
+        Query q = em.createQuery("SELECT u FROM Usuario u WHERE u.idPersona.numeroNit = :nit", Usuario.class);
+        q.setParameter("nit", numeroNit);
+        Usuario usr = (Usuario) q.getResultList().get(0);
+        usr.setActivo((short) 1);
+        usr.setTokenCambioClave(null);
+        
+        em.merge(usr);
+        
+        Persona per = usr.getIdPersona();
+        per.setClaveAcceso((new RC4Crypter()).encrypt("ha", password));
+        
+        em.merge(per);
+    }
+
     public String datosConfirmados(BigDecimal idDetRubro, BigDecimal idEmpresa, String usuario) {
         DetRubroMuestraInteres det = em.find(DetRubroMuestraInteres.class, idDetRubro);
 
@@ -1854,13 +1869,14 @@ public class ProveedorEJB {
         q.execute();
         return (String) q.getOutputParameterValue(3);
     }
-    
+
     public void resetAceptacion(String numeroNit, Integer idDetProcesoAdq) {
         StoredProcedureQuery q = em.createNamedStoredProcedureQuery("SP_RESET_ACEPTACION");
         q.setParameter("P_NUMERO_NIT", numeroNit);
         q.setParameter("P_ID_DET_PROCESO_ADQ", idDetProcesoAdq);
         q.execute();
     }
+
     public void resetActivacion(String numeroNit) {
         StoredProcedureQuery q = em.createNamedStoredProcedureQuery("SP_RESET_ACTIVACION_USER");
         q.setParameter("P_NUMERO_NIT", numeroNit);

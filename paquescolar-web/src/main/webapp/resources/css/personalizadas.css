@@ -1,14 +1,3 @@
-/*
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
-*/
-/* 
-    Created on : 4/08/2017, 11:49:29 AM
-    Author     : DesarrolloPc
-*/
-
-
 .fa-cogss::before {
     content: "\f085";
     font-size: 20px;
@@ -162,7 +151,7 @@ a.secciones.active,a.secciones:focus,a.secciones:hover{
     margin: auto;
     width:60px;
     height: 60px;
-    z-index:1000; text-align: center; background: white;
+    z-index:999; text-align: center; background: white;
 }
 
 body .ui-widget-overlay {

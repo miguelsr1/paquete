@@ -46,7 +46,7 @@ public class ValidarProveedorMB implements Serializable {
         if (params.containsKey("op")) {
             if (params.get("op").equals("1")) {
                 op = "1";
-                String numeroNit = (new RC4Crypter()).decrypt("ha", params.get("codigo")).split(":")[0];
+                nit = (new RC4Crypter()).decrypt("ha", params.get("codigo")).split(":")[0];
             }
         } else if (params.containsKey("codigo")) {
             String idEmpresaStr = (new RC4Crypter()).decrypt("ha", params.get("codigo")).split(":")[0];
@@ -120,7 +120,7 @@ public class ValidarProveedorMB implements Serializable {
 
     public String guardarPasswordProv() {
         if (op.equals("1")) {
-            
+            proveedorEJB.guardarPasswordPer(nit, pass1);
         } else {
             proveedorEJB.guardarPasswordProv(idEmpresa, pass1);
         }

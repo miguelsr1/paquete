@@ -14,16 +14,29 @@
         </f:facet>
         <title>Sistema de Paquetes Escolares</title>
         <h:outputScript name="funciones-1.js" library="js"/>
+        <h:outputStylesheet name="css/layout-blue.css" library="paradise-layout" />
+        <h:outputStylesheet name="personalizadas.css" library="css" />
 
         <style>
             body .ui-tabs .ui-tabs-panel {
                 padding: 6px 0px !important;
             }
         </style>
+
+        <script type="text/javascript">
+            function showDlgCambiarClaveFuncionario() {
+                PF('dlgClave').show();
+                $('#lblUsuarioRecuperar').text('Usuario');
+            }
+            function showDlgCambiarClaveProveedor() {
+                PF('dlgClave').show();
+                $('#lblUsuarioRecuperar').text('N.I.T. (Con guiones)');
+            }
+        </script>
     </h:head>
 
-    <h:body styleClass="login-body">
-        <h:form>
+    <h:body styleClass="login-body" >
+        <h:form prependId="false">
             <p:growl id="growl" showDetail="true" escape="false">
                 <p:autoUpdate />
             </p:growl>
@@ -62,14 +75,12 @@
                                             <p:blockUI block="btnIngresar" trigger="btnIngresar"  />
                                         </div>
                                         <div class="ui-g-12 button-container">
-                                            <div class="ui-g-6">
-                                                <p:spacer />
-                                            </div>
-                                            <div class="ui-g-6">
-                                                <p:spacer />
-                                            </div>
+                                            <h:panelGrid columns="2" style="width: 100%">
+                                                <p:spacer/>
+                                                <p:commandLink value="Olvidé contraseña" onclick="showDlgCambiarClaveFuncionario();" style="float: right; margin-right: 10px"/>
+                                            </h:panelGrid>
                                         </div>
-                                        <p:spacer width="5"/>
+                                        <p:spacer/>
                                     </p:tab>
                                     <p:tab title="Proveedor">
                                         <f:facet name="title">
@@ -91,19 +102,16 @@
                                         <div class="ui-g-12 button-container">
                                             <p:commandButton id="btnIngresarEmp" value="Ingresar" styleClass="blue-btn raised-btn" action="#{loginController.isUsuarioProveedorValido()}"/>
                                             <p:blockUI block="btnIngresarEmp" trigger="btnIngresarEmp"  />
-
                                         </div>
                                         <div class="ui-g-12 button-container">
-                                            <div class="ui-g-6 ">
+                                            <h:panelGrid columns="2" style="width: 100%">
                                                 <p:commandLink value="Activar usuario" action="validarProveedor" >
                                                     <i class="fa fa-hand-o-right" aria-hidden="true"></i>
                                                 </p:commandLink>
-                                            </div>
-                                            <div class="ui-g-6">
-                                                <p:commandLink value="Olvidé contraseña" onclick="PF('dlgClave').show()"/>
-                                            </div>
+                                                <p:commandLink value="Olvidé contraseña" onclick="showDlgCambiarClaveProveedor();" style="float: right; margin-right: 10px"/>
+                                            </h:panelGrid>
                                         </div>
-                                        <p:spacer width="5"/>
+                                        <p:spacer />
                                     </p:tab>
                                 </p:tabView>
                             </div>
@@ -130,27 +138,27 @@
                             </div>
                         </div>
                     </div>
-
-                    <p:dialog header="Olvidé mi clave de acceso" id="dlgClave" widgetVar="dlgClave" width="400" >
-                        <p:panel>
-                            <p:outputLabel value="Se enviará un correo con un enlace para poder cambiar la contraseña, su usuario estará inactivo hasta que asigne una nueva contraseña" style="font-size: 14px; font-weight: bold;" escape="false"/>
-                            <h:panelGrid columns="">
-                                <p:outputLabel value="Usuario:"/>
-                                <p:inputText value="#{loginController.usuario}"/>
-                            </h:panelGrid>
-                        </p:panel>
-                        <f:facet name="footer">
-                            <p:commandButton value="Aceptar" onclick="PF('dlgClave').hide();" action="#{loginController.asignarNuevaClave()}"/>
-                            <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgClave').hide();"/>
-                        </f:facet>
-
-                    </p:dialog>
-
-
-                    <h:outputStylesheet name="css/layout-blue.css" library="paradise-layout" />
-                    <h:outputStylesheet name="css/personalizadas.css" library="paradise-layout" />
                 </div>
             </div>
+
+            <p:dialog header="Olvidé mi clave de acceso" id="dlgClave" widgetVar="dlgClave" width="400" draggable="false" minimizable="false" modal="true">
+                <p:panel>
+                    <p:outputLabel value="Se enviará un correo con un enlace para poder cambiar la contraseña, su usuario estará inactivo hasta que asigne una nueva contraseña"  escape="false"/>
+
+                    <h:panelGrid columns="2">
+                        <p:spacer/>
+                        <p:spacer/>
+                        <p:outputLabel id="lblUsuarioRecuperar" value="Usuario:"/>
+                        <p:inputText value="#{loginController.usuario}"/>
+                    </h:panelGrid>
+                </p:panel>
+                <f:facet name="footer">
+                    <h:panelGrid columns="2">
+                        <p:commandButton value="Aceptar" onclick="PF('dlgClave').hide();" action="#{loginController.asignarNuevaClave()}"/>
+                        <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgClave').hide();"/>
+                    </h:panelGrid>
+                </f:facet>
+            </p:dialog>
         </h:form>
     </h:body>
 
