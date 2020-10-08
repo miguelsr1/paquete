@@ -26,7 +26,7 @@
         <script type="text/javascript">
             function showDlgCambiarClaveFuncionario() {
                 PF('dlgClave').show();
-                $('#lblUsuarioRecuperar').text('Usuario');
+                $('#lblUsuarioRecuperar').text('N.I.T. (Con guiones)');
             }
             function showDlgCambiarClaveProveedor() {
                 PF('dlgClave').show();
@@ -71,7 +71,7 @@
                                             </div>
                                         </div>
                                         <div class="ui-g-12 button-container">
-                                            <p:commandButton id="btnIngresar" value="Ingresar" styleClass="blue-btn raised-btn" action="#{loginController.isUsuarioValido}"/>
+                                            <p:commandButton id="btnIngresar" process="@this,username,password" value="Ingresar" styleClass="blue-btn raised-btn" action="#{loginController.isUsuarioValido}"/>
                                             <p:blockUI block="btnIngresar" trigger="btnIngresar"  />
                                         </div>
                                         <div class="ui-g-12 button-container">
@@ -100,7 +100,7 @@
                                             </div>
                                         </div>
                                         <div class="ui-g-12 button-container">
-                                            <p:commandButton id="btnIngresarEmp" value="Ingresar" styleClass="blue-btn raised-btn" action="#{loginController.isUsuarioProveedorValido()}"/>
+                                            <p:commandButton id="btnIngresarEmp" process="@this,nit,passwordEmp" value="Ingresar" styleClass="blue-btn raised-btn" action="#{loginController.isUsuarioProveedorValido()}"/>
                                             <p:blockUI block="btnIngresarEmp" trigger="btnIngresarEmp"  />
                                         </div>
                                         <div class="ui-g-12 button-container">
