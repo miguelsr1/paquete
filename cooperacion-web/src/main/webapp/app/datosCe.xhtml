@@ -1,0 +1,219 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <h:outputScript name="js/nanoscroller.js" library="paradise-layout" />
+        <h:outputScript name="js/layout.js" library="paradise-layout" />
+    </h:head>
+    <h:body style="max-width: 1024px; margin: auto; background-color: #303945;">
+
+        <div class="p-col-12">
+            <div class="card ui-fluid">
+                <h5>Datos Generales del Centro Educativos</h5>
+                <div class="p-field p-grid">
+                    <p:outputLabel value="Código del C.E.:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                    <div class="p-col-12 p-md-10">
+                        <p:inputText />
+                    </div>
+                </div>
+                <div class="p-field p-grid">
+                    <p:outputLabel value="Nombre del C.E.:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                    <div class="p-col-12 p-md-10">
+                        <p:inputText />
+                    </div>
+                </div>
+                <div class="p-field p-grid">
+                    <p:outputLabel value="Dirección del C.E.:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                    <div class="p-col-12 p-md-10">
+                        <p:inputText />
+                    </div>
+                </div>
+                <div class="p-field p-grid">
+                    <p:outputLabel value="Departamento del C.E.:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                    <div class="p-col-12 p-md-4">
+                        <p:selectOneMenu>
+                            <f:selectItem itemValue="null" itemLabel="Seleccione un valor"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <p:outputLabel value="Municipio del C.E.:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                    <div class="p-col-12 p-md-4">
+                        <p:selectOneMenu >
+                            <f:selectItem itemValue="null" itemLabel="Seleccione un valor"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                <div class="p-field p-grid">
+                    <p:outputLabel value="Nombre del Director:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                    <div class="p-col-12 p-md-10">
+                        <p:inputText />
+                    </div>
+                </div>
+                <div class="p-field p-grid">
+                    <p:outputLabel value="E-mail del Director:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                    <div class="p-col-12 p-md-10">
+                        <p:inputText />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br/>
+        <br/>
+
+        <div class="p-col-12">
+            <div class="card ui-fluid">
+                <h5>Datos del Proyecto de Cooperación</h5>
+                <div class="p-field p-grid">
+                    <p:outputLabel value="Nombre:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                    <div class="p-col-12 p-md-10">
+                        <p:inputText />
+                    </div>
+                </div>
+                <div class="p-field p-grid">
+                    <p:outputLabel value="Cooperante:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                    <div class="p-col-12 p-md-10">
+                        <p:selectOneMenu>
+                            <f:selectItem itemValue="null" itemLabel="Seleccione un valor"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                <div class="p-field p-grid">
+                    <p:outputLabel value="Tipo Cooperante:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                    <div class="p-col-12 p-md-4">
+                        <p:selectOneMenu>
+                            <f:selectItem itemValue="null" itemLabel="Seleccione un valor"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <p:outputLabel value="Modalidad de Ejec.:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                    <div class="p-col-12 p-md-4">
+                        <p:selectOneMenu>
+                            <f:selectItem itemValue="null" itemLabel="Seleccione un valor"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+
+                <div class="p-field p-grid">
+                    <p:outputLabel value="Instrumento de fomalización:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
+                    <div class="p-col-12 p-md-9">
+                        <p:selectOneMenu>
+                            <f:selectItem itemValue="null" itemLabel="Seleccione un valor"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                <div class="p-field p-grid">
+                    <p:outputLabel value="Nombre del Director:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                    <div class="p-col-12 p-md-10">
+                        <p:inputText />
+                    </div>
+                </div>
+                <div class="p-field p-grid">
+                    <p:outputLabel value="E-mail del Director:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                    <div class="p-col-12 p-md-10">
+                        <p:inputText />
+                    </div>
+                </div>
+
+
+                <div class="p-field p-grid">
+                    <div class="p-field p-col">
+                        <p:outputLabel value="Objetivo de la Cooperación:" />
+                        <p:inputTextarea id="address" rows="4" />
+                    </div>
+                    <div class="p-field p-col">
+                        <p:outputLabel value="Fecha" style="font-weight: bold"/>
+                        <div class="p-field p-grid">
+                            <p:outputLabel value="Estimada de inicio:" styleClass="p-col-12 p-mb-6 p-md-6 p-mb-md-0"/>
+                            <div class="p-col-12 p-md-6">
+                                <p:calendar pattern="dd/MM/yyyy" />
+                            </div>
+                        </div>
+                        <div class="p-field p-grid">
+                            <p:outputLabel value="Estimada de Fin:" styleClass="p-col-12 p-mb-6 p-md-6 p-mb-md-0"/>
+                            <div class="p-col-12 p-md-6">
+                                <p:calendar pattern="dd/MM/yyyy" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-field p-grid">
+                    <p:outputLabel value="Tipo de Cooperación:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
+                    <div class="p-col-12 p-md-9">
+                        <p:selectOneMenu>
+                            <f:selectItem itemValue="null" itemLabel="Seleccione un valor"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+
+                <div class="p-grid dashboard" style="co">
+                    <div class="p-col-4 p-md-4 p-xl-3">
+                        <div class="card overview-box blue" >
+                            <h6>Descripción de la Cooperación</h6>
+                            <p:inputText/>
+                        </div>
+                    </div>
+                    <div class="p-col-4 p-md-4 p-xl-3">
+                        <div class="card overview-box blue">
+                            <h6>Cantidad a Cubrir</h6>
+                            <p:inputText/>
+                        </div>
+                    </div>
+                    <div class="p-col-4 p-md-4 p-xl-3">
+                        <div class="card overview-box blue">
+                            <h6>Monto a Invertir</h6>
+                            <p:inputText/>
+                        </div>
+                    </div>
+                    <div class="p-col-4 p-md-4 p-xl-3">
+                        <div class="card overview-box blue">
+                            <h6>Cantidad Beneficiarios</h6>
+                            <p:inputText/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-field p-grid">
+                    <div class="p-col-12 p-md-3">
+                        <p:outputLabel value="Tipos Beneficiarios" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                    </div>
+                    <div class="p-col-12 p-md-9">
+
+                        <p:selectManyCheckbox layout="responsive" columns="3">
+                            <f:selectItem itemLabel="Inicial" itemValue="1"/>
+                            <f:selectItem itemLabel="Parvularia" itemValue="2"/>
+                        </p:selectManyCheckbox>
+
+                        <p:selectManyCheckbox layout="responsive" columns="3">
+                            <f:selectItem itemLabel="Básica-Ciclo I" itemValue="3"/>
+                            <f:selectItem itemLabel="Básica-Ciclo II" itemValue="4"/>
+                            <f:selectItem itemLabel="Básica-Ciclo III" itemValue="5"/>
+                        </p:selectManyCheckbox>
+
+                        <p:selectManyCheckbox layout="responsive" columns="3">
+                            <f:selectItem itemLabel="Media" itemValue="6"/>
+                            <f:selectItem itemLabel="Docente" itemValue="7"/>
+                            <f:selectItem itemLabel="Otros" itemValue="8"/>
+                        </p:selectManyCheckbox>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h:outputStylesheet name="css/primeicons.css" library="paradise-layout" />
+        <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout" />
+        <h:outputStylesheet name="css/demo.css" library="demo" />
+
+        <h:outputStylesheet name="css/nanoscroller.css" library="paradise-layout" />
+        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout" />
+    </h:body>
+</html>
+
