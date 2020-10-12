@@ -194,7 +194,7 @@ public class BoletaMB implements Serializable {
 
                         Path pathFile = filePdf.toPath();
                         FileTime fTime = (FileTime) Files.getAttribute(pathFile, "creationTime");
-                        try ( PDDocument pdc = PDDocument.load(filePdf)) {
+                        try (PDDocument pdc = PDDocument.load(filePdf)) {
                             dato.setFechaCreado(new Date(fTime.toMillis()));
                             dato.setNombreArchivo(filePdf.getName());
                             dato.setNumeroPaginas(pdc.getNumberOfPages());
@@ -237,24 +237,31 @@ public class BoletaMB implements Serializable {
         if (!mesAnho.equals("")) {
             this.file = file.getFile();
 
-            File carpeta = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator);
-            if (!carpeta.exists()) {
-                carpeta.mkdir();
-            }
+            if (file.getFile().getFileName().contains("BOLETAS" + codDepa)
+                    || file.getFile().getFileName().contains("CONSTANCIA" + codDepa)
+                    || file.getFile().getFileName().contains("RENTA" + codDepa)) {
 
-            Path folder = Paths.get(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator + file.getFile().getFileName());
-            Path arc;
-            if (folder.toFile().exists()) {
-                arc = folder;
+                File carpeta = new File(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator);
+                if (!carpeta.exists()) {
+                    carpeta.mkdir();
+                }
+
+                Path folder = Paths.get(RESOURCE_BUNDLE.getString("path_archivo") + File.separator + codDepa + File.separator + mesAnho + File.separator + file.getFile().getFileName());
+                Path arc;
+                if (folder.toFile().exists()) {
+                    arc = folder;
+                } else {
+                    arc = Files.createFile(folder);
+                }
+
+                try (InputStream input = file.getFile().getInputstream()) {
+                    Files.copy(input, arc, StandardCopyOption.REPLACE_EXISTING);
+                }
+
+                cargarArchivos();
             } else {
-                arc = Files.createFile(folder);
+                JsfUtil.mensajeAlerta("Error en el nombrado del archivo");
             }
-
-            try ( InputStream input = file.getFile().getInputstream()) {
-                Files.copy(input, arc, StandardCopyOption.REPLACE_EXISTING);
-            }
-
-            cargarArchivos();
         } else {
             JsfUtil.mensajeAlerta("Debe de seleccionar un mes y un año de PAGO");
         }
