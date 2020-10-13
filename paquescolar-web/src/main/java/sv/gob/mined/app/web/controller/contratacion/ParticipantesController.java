@@ -742,8 +742,13 @@ public class ParticipantesController implements Serializable {
                         case 16:
                         case 17:
                         case 18:
-                        case 24:
                             tmpIdNivel = 6;
+                            break;
+                        case 24:
+                            tmpIdNivel = 24;
+                            break;
+                        case 23:
+                            tmpIdNivel = 23;
                             break;
                     }
 

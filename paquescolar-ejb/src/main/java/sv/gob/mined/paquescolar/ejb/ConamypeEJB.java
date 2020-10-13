@@ -479,16 +479,16 @@ public class ConamypeEJB {
         q.setParameter("nit", numeroNit);
         if (q.getResultList().isEmpty()) {
             System.out.println("Proveedor no encontrado: " + numeroNit);
-        }else{
-            Persona per = (Persona)q.getResultList().get(0);
+        } else {
+            Persona per = (Persona) q.getResultList().get(0);
             per.setEmail(correoElectronico);
             per.setFechaModificacion(new Date());
-            
+
             em.persist(per);
         }
 
     }
-    
+
     @WebMethod(operationName = "generarCodigoSeguridad")
     public void generarCodigoSeguridad(Integer idDetProcesoAdq, String fecha) {
         try {
@@ -497,20 +497,40 @@ public class ConamypeEJB {
             q.setParameter("id", idDetProcesoAdq);
             q.setParameter("date", sdf.parse(fecha));
             List<Empresa> lst = q.getResultList();
-            
+
             RC4Crypter encript = new RC4Crypter();
-            
+
             for (Empresa empresa : lst) {
                 EmpresaCodigoSeg ecs = new EmpresaCodigoSeg();
-                
+
                 ecs.setIdEmpresa(empresa.getIdEmpresa());
                 ecs.setCodigoSeguridad(encript.encrypt("ha", empresa.getIdEmpresa().toString().concat(empresa.getNumeroNit())).substring(0, 10));
-                ecs.setUsuarioActivado((short)0);
-                
+                ecs.setUsuarioActivado((short) 0);
+
                 em.persist(ecs);
             }
         } catch (java.text.ParseException ex) {
             Logger.getLogger(ConamypeEJB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @WebMethod(operationName = "generarCodigoSeguridadByNit")
+    public void generarCodigoSeguridadByNit(Integer idDetProcesoAdq, String nit) {
+        Query q = em.createQuery("SELECT d.idEmpresa FROM DetRubroMuestraInteres d WHERE d.idDetProcesoAdq.idDetProcesoAdq=:id and d.idEmpresa.idPersona.numeroNit=:nit", Empresa.class);
+        q.setParameter("id", idDetProcesoAdq);
+        q.setParameter("nit", nit);
+        List<Empresa> lst = q.getResultList();
+
+        RC4Crypter encript = new RC4Crypter();
+
+        for (Empresa empresa : lst) {
+            EmpresaCodigoSeg ecs = new EmpresaCodigoSeg();
+
+            ecs.setIdEmpresa(empresa.getIdEmpresa());
+            ecs.setCodigoSeguridad(encript.encrypt("ha", empresa.getIdEmpresa().toString().concat(empresa.getNumeroNit())).substring(0, 10));
+            ecs.setUsuarioActivado((short) 0);
+
+            em.persist(ecs);
         }
 
     }

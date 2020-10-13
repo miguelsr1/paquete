@@ -48,6 +48,7 @@ import sv.gob.mined.paquescolar.model.Participantes;
 import sv.gob.mined.paquescolar.model.Persona;
 import sv.gob.mined.paquescolar.model.PlanillaPago;
 import sv.gob.mined.paquescolar.model.PlanillaPagoCheque;
+import sv.gob.mined.paquescolar.model.PorcentajeEvaluacion;
 import sv.gob.mined.paquescolar.model.PreciosRefRubroEmp;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.RequerimientoFondos;
@@ -640,11 +641,18 @@ public class ProveedorEJB {
         }
 
         Query q = em.createNativeQuery(findLstIdEmpresa(codDepartamento, codMunicipio, codCanton, idMunicipio, idMunicipios, detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue(), idDetT1, idDetTemp,
-                municipioIgual, cantidad.intValue(), mapItems.get("noItemSeparados"), mapItems.get("noItems")), ProveedorDisponibleDto.class);
+                municipioIgual, cantidad.intValue(), mapItems.get("noItemSeparados"), mapItems.get("noItems"), detProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho()), ProveedorDisponibleDto.class);
 
         lstCapa.addAll(q.getResultList());
 
         return lstCapa;
+    }
+
+    private List<PorcentajeEvaluacion> getPorcentajesEvaluacionByAnho(BigDecimal idAnho, BigInteger idRubro) {
+        Query q = em.createQuery("SELECT p FROM PorcentajeEvaluacion p WHERE p.idAnho=:idAnho AND p.idRubroInteres=:idRubro", PorcentajeEvaluacion.class);
+        q.setParameter("idAnho", idAnho.longValue());
+        q.setParameter("idRubro", idRubro);
+        return q.getResultList();
     }
 
     /**
@@ -704,19 +712,6 @@ public class ProveedorEJB {
         }
     }
 
-    private Integer getIdDetProceso(DetalleProcesoAdq detProcesoAdq, ProcesoAdquisicion procesoAdquisicion) {
-        for (DetalleProcesoAdq object : procesoAdquisicion.getDetalleProcesoAdqList()) {
-            if (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().compareTo(object.getIdRubroAdq().getIdRubroInteres()) == 0 && detProcesoAdq.getIdRubroAdq().getIdRubroUniforme().intValue() != 1) {
-                return object.getIdDetProcesoAdq();
-            } else if (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().compareTo(object.getIdRubroAdq().getIdRubroInteres()) == 0 && detProcesoAdq.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
-                if (object.getIdRubroAdq().getIdRubroInteres().intValue() == 4) {
-                    return object.getIdDetProcesoAdq();
-                }
-            }
-        }
-        return null;
-    }
-
     private Integer getIdDetProcesoPadre(DetalleProcesoAdq detalleProcesoAdq) {
         if (detalleProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq() != null) {
             for (DetalleProcesoAdq det : detalleProcesoAdq.getIdProcesoAdq().getPadreIdProcesoAdq().getDetalleProcesoAdqList()) {
@@ -746,7 +741,59 @@ public class ProveedorEJB {
      * @return
      */
     private String findLstIdEmpresa(String codDep, String codMun, String codCanton, Integer idMunicipio, String idMunicipios, Integer idRubro, Integer idDetProcesoAdq, Integer idDetProcesoAdqPrecio,
-            Boolean municipioIgual, Integer cantidad, String noItemSeparados, String noItems) {
+            Boolean municipioIgual, Integer cantidad, String noItemSeparados, String noItems, BigDecimal idAnho) {
+
+        List<PorcentajeEvaluacion> lstPorcentajes = getPorcentajesEvaluacionByAnho(idAnho, new BigInteger(idRubro.toString()));
+        BigDecimal porUbicacionLocal = BigDecimal.ZERO;
+        BigDecimal porMunAledanhos = BigDecimal.ZERO;
+        BigDecimal porUbicacionOtros = BigDecimal.ZERO;
+
+        BigDecimal porCapacidadCompleta = BigDecimal.ZERO;
+        BigDecimal porCapacidadParcial = BigDecimal.ZERO;
+
+        for (PorcentajeEvaluacion lstPorcentaje : lstPorcentajes) {
+            switch (idRubro) {
+                case 4:
+                case 5:
+                    break;
+                case 2:
+                    switch (lstPorcentaje.getIdCriterio().intValue()) {
+                        case 3:
+                            porUbicacionLocal = lstPorcentaje.getPorcentaje();
+                            break;
+                        case 4:
+                            porMunAledanhos = lstPorcentaje.getPorcentaje();
+                            break;
+                        case 5:
+                            porUbicacionOtros = lstPorcentaje.getPorcentaje();
+                            break;
+                        case 7:
+                            porCapacidadCompleta = lstPorcentaje.getPorcentaje();
+                            break;
+                        case 8:
+                            porCapacidadParcial = lstPorcentaje.getPorcentaje();
+                            break;
+                    }
+                    break;
+                case 3:
+                    switch (lstPorcentaje.getIdCriterio().intValue()) {
+                        case 3:
+                            porUbicacionLocal = lstPorcentaje.getPorcentaje();
+                            break;
+                        case 4:
+                            porUbicacionOtros = lstPorcentaje.getPorcentaje();
+                            break;
+                        case 6:
+                            porCapacidadCompleta = lstPorcentaje.getPorcentaje();
+                            break;
+                        case 7:
+                            porCapacidadParcial = lstPorcentaje.getPorcentaje();
+                            break;
+                    }
+                    break;
+            }
+        }
+
         String sql = "select \n"
                 + "    rownum                  as idRow,\n"
                 + "    tb1.id_empresa          as idEmpresa,\n"
@@ -774,8 +821,8 @@ public class ProveedorEJB {
                 + "        mun_e.id_municipio,\n"
                 + "        mun_e.codigo_departamento,\n"
                 + "        emp.codigo_canton,\n"
-                + "        tbl.porcentaje_capacidad as porcentaje_capacidad_i,\n"
-                + "        " + getParteSelectUbicacion(idRubro, codCanton, idMunicipio, codDep, idMunicipios) + "\n"
+                + "        " + (idAnho.intValue() > 8 ? "0" : "tbl.porcentaje_capacidad") + " as porcentaje_capacidad_i,\n"
+                + "        " + getParteSelectUbicacion(idRubro, codCanton, idMunicipio, codDep, idMunicipios, porUbicacionLocal, porMunAledanhos, porUbicacionOtros) + "\n"
                 + "    from det_rubro_muestra_interes det\n"
                 + "        inner join empresa emp                  on emp.id_empresa = det.id_empresa\n"
                 + "        inner join municipio mun_e              on mun_e.id_municipio = emp.id_municipio\n"
@@ -794,8 +841,8 @@ public class ProveedorEJB {
                 + "                    det.id_empresa,\n"
                 + "                    cip.capacidad_acreditada,\n"
                 + "                    cip.capacidad_adjudicada,\n"
-                + "                    case when (cip.capacidad_acreditada-cip.capacidad_adjudicada) >= " + cantidad + " then " + (idRubro == 4 ? "12.50" : (idRubro == 5 ? "12.50" : "17.50")) + " \n"
-                + "                    else (((cip.capacidad_acreditada-cip.capacidad_adjudicada)*100)/" + cantidad + ") * " + (idRubro == 4 ? "0.1250" : (idRubro == 5 ? "0.1250" : "0.1750")) + " \n"
+                + "                    case when (cip.capacidad_acreditada-cip.capacidad_adjudicada) >= " + cantidad + " then " + (idRubro == 4 ? "12.50" : (idRubro == 5 ? "12.50" : porCapacidadCompleta.toString())) + " \n"
+                + "                    else (((cip.capacidad_acreditada-cip.capacidad_adjudicada)*100)/" + cantidad + ") * " + (idRubro == 4 ? "0.1250" : (idRubro == 5 ? "0.1250" : porCapacidadParcial.divide(BigDecimal.valueOf(100l)).toString())) + " \n"
                 + "                    end porcentaje_capacidad\n"
                 + "                from det_rubro_muestra_interes det\n"
                 + "                    inner join capa_inst_por_rubro cip      on det.id_muestra_interes = cip.id_muestra_interes\n"
@@ -900,7 +947,8 @@ public class ProveedorEJB {
         }
     }
 
-    private String getParteSelectUbicacion(int idRubro, String codigoCanton, int idMunicipio, String codigosDepartamento, String idMunicipios) {
+    private String getParteSelectUbicacion(int idRubro, String codigoCanton, int idMunicipio, String codigosDepartamento, String idMunicipios,
+            BigDecimal porUbicacionLocal, BigDecimal porMunAledanhos, BigDecimal porUbicacionOtros) {
         switch (idRubro) {
             case 1:
             case 4:
@@ -911,9 +959,9 @@ public class ProveedorEJB {
                     return " case when mun_e.id_municipio = " + idMunicipio + " then 35.00 when mun_e.id_municipio in (" + idMunicipios + ") then 23.00 else 12.00 end porcentaje_geo ";
                 }
             case 2:
-                return " case when mun_e.id_municipio = " + idMunicipio + " then 25.00 when mun_e.id_municipio in (" + idMunicipios + ") then 16.67 else 8.33 end porcentaje_geo";
+                return " case when mun_e.id_municipio = " + idMunicipio + " then " + porUbicacionLocal.toString() + " when mun_e.id_municipio in (" + idMunicipios + ") then " + porMunAledanhos.toString() + " else " + porUbicacionOtros.toString() + " end porcentaje_geo";
             default:
-                return " case when mun_e.codigo_departamento in (" + codigosDepartamento + ") then 25.00 else 12.50 end porcentaje_geo";
+                return " case when mun_e.codigo_departamento in (" + codigosDepartamento + ") then " + porUbicacionLocal.toString() + " else " + porUbicacionOtros.toString() + " end porcentaje_geo";
         }
     }
 
@@ -1713,7 +1761,7 @@ public class ProveedorEJB {
                 + "                pemp.id_empresa = " + idEmpresa + " and \n"
                 + "                pemp.id_proceso_adq = " + idProcesoAdq + " and\n"
                 + "                pemp.estado_eliminacion = 0 and\n"
-                + "                pemp.id_nivel_educativo in (" + (idNivelesCe.equals("1") ? "22" : idNivelesCe) + ")\n"
+                + "                pemp.id_nivel_educativo in (" + (idNivelesCe.replace("1", "22").replace("5", "5,23").replace("6", "6,24")) + ")\n"
                 + "            order by to_number(pemp.no_item)", PrecioReferenciaEmpresaDto.class);
         return q.getResultList();
     }

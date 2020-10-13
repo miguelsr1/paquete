@@ -796,6 +796,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
 
         param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
         param.put("pMiembro", current.getMiembroFirma());
+        param.put("pEmail", current.getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdPersona().getEmail());
         sobredemanda = detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("SOBREDEMANDA");
 
         for (RptDocumentos rptDoc : lstRptDocumentos) {

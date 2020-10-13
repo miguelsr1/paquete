@@ -29,6 +29,8 @@
                 $("#lbl" + lblNivel + "Uni").val(intlRound((matFem * preUniF) + (matMas * preUniM)));
                 $("#lbl" + lblNivel + "Uti").val(intlRound((matFem * preUtiF) + (matMas * preUtiM)));
                 $("#lbl" + lblNivel + "Zap").val(intlRound((matFem * preZapF) + (matMas * preZapM)));
+                
+                calcularTotales();
             }
             function calcularSubTotalMatricula(fem, mas, lbl) {
                 var femM = $("#" + fem + "_input").val();
@@ -57,8 +59,6 @@
                 $("#lbl" + lblNivel + "Uni").val(intlRound((femM * preUniF) + (masM * preUniM)));
                 $("#lbl" + lblNivel + "Uti").val(intlRound((femM * preUtiF) + (masM * preUtiM)));
                 $("#lbl" + lblNivel + "Zap").val(intlRound((femM * preZapF) + (masM * preZapM)));
-
-                calcularTotales();
             }
 
             function intlRound(numero) {

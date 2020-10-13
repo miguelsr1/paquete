@@ -18,7 +18,7 @@
                     <h:outputText value="#{capaEmpresa.capacidadAcreditada - capaEmpresa.capacidadAdjudicada}">
                         <f:convertNumber pattern="#,###"/>
                     </h:outputText>
-                    
+
                     <h:outputText value="Porcentaje adjudicación "/>
                     <h:outputText value="#{capaEmpresa.porcentajeAdjudicacion}" >
                         <f:convertNumber pattern="#,###.00"/>
@@ -31,7 +31,7 @@
                     <h:outputText value="#{capaEmpresa.porcentajeEvaluacion}" style="font-weight: bold;">
                         <f:convertNumber pattern="#,##0.00"/>
                     </h:outputText>
-                    
+
                     <h:outputText value="Porcetaje de cumpliento por Precio:"/>
                     <h:outputText value="#{capaEmpresa.porcentajePrecio}">
                         <f:convertNumber pattern="#,##0.000"/>
@@ -41,12 +41,12 @@
                     <h:outputText value="#{capaEmpresa.porcentajeGeo}">
                         <f:convertNumber pattern="#,##0.000"/>
                     </h:outputText>
-                    
-                    <h:outputText value="Porcetaje de cumpliento de capacidad-items:"/>
-                    <h:outputText value="#{capaEmpresa.porcentajeCapacidadItem}">
+
+                    <h:outputText value="Porcetaje de cumpliento de capacidad-items:" rendered="#{!ofertaMB.detalleProceso.idProcesoAdq.idAnho.anho eq '2021'}"/>
+                    <h:outputText value="#{capaEmpresa.porcentajeCapacidadItem}" rendered="#{!ofertaMB.detalleProceso.idProcesoAdq.idAnho.anho eq '2021'}">
                         <f:convertNumber pattern="#,##0.000"/>
                     </h:outputText>
-                    
+
                     <h:outputText value="Porcetaje de cumpliento de capacidad:"/>
                     <h:outputText value="#{capaEmpresa.porcentajeCapacidad}">
                         <f:convertNumber pattern="#,##0.000"/>
@@ -65,7 +65,7 @@
 
                     <p:commandLink oncomplete="PF('dlgDetalleProveedor').show()" update="dlgDetalleProveedor" style="height: 30px"
                                    class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
-                                     action="#{ofertaMB.cargarDetalleProveedor(capaEmpresa.idEmpresa)}">
+                                   action="#{ofertaMB.cargarDetalleProveedor(capaEmpresa.idEmpresa)}">
                         <i class="fa fa-eye"></i>
                     </p:commandLink>
                 </h:panelGrid>
