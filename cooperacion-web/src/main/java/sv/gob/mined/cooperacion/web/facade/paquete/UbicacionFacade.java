@@ -6,23 +6,22 @@
 package sv.gob.mined.cooperacion.web.facade.paquete;
 
 import java.util.List;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import sv.gob.mined.cooperacion.web.model.paquete.Departamento;
 import sv.gob.mined.cooperacion.web.model.paquete.Municipio;
+import sv.gob.mined.cooperacion.web.model.paquete.VwCatalogoEntidadEducativa;
 
 /**
  *
  * @author misanchez
  */
-@EJB
 @Stateless
 public class UbicacionFacade {
 
-    @PersistenceContext(name = "paqueteUP")
+    @PersistenceContext(unitName = "paquetePU")
     private EntityManager emPaquete;
 
     public List<Departamento> getLstDepartamentos() {
@@ -35,4 +34,11 @@ public class UbicacionFacade {
         q.setParameter("codDepa", codigoDepa);
         return q.getResultList();
     }
+
+    public VwCatalogoEntidadEducativa findEntidadEducativaByCodigo(String codigoEntidad) {
+        Query q = emPaquete.createQuery("SELECT v FROM VwCatalogoEntidadEducativa v WHERE v.codigoEntidad = :codigoEntidad", VwCatalogoEntidadEducativa.class);
+        q.setParameter("codigoEntidad", codigoEntidad);
+        return q.getResultList().isEmpty() ? null : (VwCatalogoEntidadEducativa) q.getSingleResult();
+    }
+
 }
