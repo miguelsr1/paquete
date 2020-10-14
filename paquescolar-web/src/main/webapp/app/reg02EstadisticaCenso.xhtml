@@ -613,6 +613,10 @@
                             <p:inputMask mask="99999999-9" size="10" maxlength="11" value="#{estadisticasCensoController.numeroDui}" disabled="#{!estadisticasCensoController.editDirector}"/>
                             <h:outputText value="Modalidad del C.E. : "/>
                             <p:inputText size="5" readonly="true" value="#{estadisticasCensoController.entidadEducativa.inicialesModalidad}" disabled="true}"/>
+                            <p:spacer width="10"/>
+                            <p:spacer width="10"/>
+                            <h:outputText value="Encargado de Compras: "/>
+                            <p:inputText style="width: 100%;" value="#{estadisticasCensoController.nombreEncargadoCompras}" />
                         </p:panelGrid>
                     </p:panel>
                 </div>

@@ -292,6 +292,17 @@ public class EntidadEducativaEJB {
             return (OrganizacionEducativa) query.getResultList().get(0);
         }
     }
+    
+    public OrganizacionEducativa getEncargadoDeCompras(String codigoEntidad) {
+        Query query = em.createNativeQuery("SELECT * FROM organizacion_educativa  WHERE codigo_entidad=?1 and firma_contrato=0 and cargo='ENCARGADO_COMPRA'", OrganizacionEducativa.class);
+        query.setParameter(1, codigoEntidad);
+        List<OrganizacionEducativa> lst = query.getResultList();
+        if (lst.isEmpty()) {
+            return new OrganizacionEducativa();
+        } else {
+            return (OrganizacionEducativa) query.getResultList().get(0);
+        }
+    }
 
     public void create(OrganizacionEducativa organizacionEducativa) {
         em.persist(organizacionEducativa);

@@ -30,7 +30,6 @@ import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.EMailEJB;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.PreciosReferenciaEJB;
-import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.EstadisticaCenso;
@@ -50,6 +49,7 @@ import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 @ViewScoped
 public class EstadisticasCensoController implements Serializable {
 
+    private String nombreEncargadoCompras;
     private String codigoEntidad;
     private String nombre;
     private String telefono1;
@@ -89,6 +89,7 @@ public class EstadisticasCensoController implements Serializable {
     private VwCatalogoEntidadEducativa entidadEducativa;
     private ProcesoAdquisicion procesoAdquisicion = new ProcesoAdquisicion();
     private OrganizacionEducativa organizacionEducativa;
+    private OrganizacionEducativa organizacionEducativaEncargadoCompra;
     private DetalleProcesoAdq detProAdqUni;
     private DetalleProcesoAdq detProAdqUni2;
     private DetalleProcesoAdq detProAdqUti;
@@ -189,7 +190,13 @@ public class EstadisticasCensoController implements Serializable {
         }
     }
 
-    
+    public String getNombreEncargadoCompras() {
+        return nombreEncargadoCompras;
+    }
+
+    public void setNombreEncargadoCompras(String nombreEncargadoCompras) {
+        this.nombreEncargadoCompras = nombreEncargadoCompras;
+    }
     
     public EstadisticaCenso getEstaditicaIniPar() {
         return estaditicaIniPar;
@@ -856,6 +863,7 @@ public class EstadisticasCensoController implements Serializable {
 
             if (procesoAdquisicion != null) {
                 organizacionEducativa = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
+                organizacionEducativaEncargadoCompra = entidadEducativaEJB.getEncargadoDeCompras(codigoEntidad);
 
                 if (organizacionEducativa.getIdOrganizacionEducativa() == null) {
                     organizacionEducativa.setCargo("Presidente Propietario, Director");
@@ -870,6 +878,18 @@ public class EstadisticasCensoController implements Serializable {
                     telefono2 = organizacionEducativa.getTelDirector2();
                     numeroDui = organizacionEducativa.getNumeroDui();
                 }
+                
+                if(organizacionEducativaEncargadoCompra.getIdOrganizacionEducativa() == null){
+                    organizacionEducativaEncargadoCompra.setCargo("ENCARGADO_COMPRA");
+                    organizacionEducativaEncargadoCompra.setCodigoEntidad(codigoEntidad);
+                    organizacionEducativaEncargadoCompra.setEstadoEliminacion(BigInteger.ZERO);
+                    organizacionEducativaEncargadoCompra.setFechaInsercion(new Date());
+                    organizacionEducativaEncargadoCompra.setFirmaContrato(BigInteger.ZERO);
+                    organizacionEducativaEncargadoCompra.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+                }else{
+                    nombreEncargadoCompras = organizacionEducativaEncargadoCompra.getNombreMiembro();
+                }
+                
                 isProcesoAdq = false;
                 entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
 
@@ -1312,14 +1332,6 @@ public class EstadisticasCensoController implements Serializable {
                     techoZap.setMontoDisponible(techoZap.getMontoPresupuestado().add(techoZap.getMontoAdjudicado().negate()));
                 }
             }
-            /*if (techoMascarilla != null) {
-                techoMascarilla.setMontoPresupuestado(calcularPresupuesto(6));
-                if (techoMascarilla.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
-                    techoMascarilla.setMontoDisponible(techoMascarilla.getMontoPresupuestado());
-                } else {
-                    techoMascarilla.setMontoDisponible(techoMascarilla.getMontoPresupuestado().add(techoMascarilla.getMontoAdjudicado().negate()));
-                }
-            }*/
 
             if (!msjInfo.replace("Se guardaron los niveles: ", "").isEmpty()) {
                 JsfUtil.mensajeInformacion(msjInfo);
@@ -1357,6 +1369,13 @@ public class EstadisticasCensoController implements Serializable {
                     entidadEducativaEJB.edit(organizacionEducativa);
                     entidadEducativaEJB.updateNombreDirectorContratoYPago(codigoEntidad, procesoAdquisicion.getIdAnho().getIdAnho().intValue(), nombre);
                 }
+            }
+            
+            organizacionEducativaEncargadoCompra.setNombreMiembro(nombreEncargadoCompras);
+            if (organizacionEducativaEncargadoCompra.getIdOrganizacionEducativa() == null) {
+                entidadEducativaEJB.create(organizacionEducativaEncargadoCompra);
+            } else {
+                entidadEducativaEJB.edit(organizacionEducativaEncargadoCompra);
             }
         }
     }
