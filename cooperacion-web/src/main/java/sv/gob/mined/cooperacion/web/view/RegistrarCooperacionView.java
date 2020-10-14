@@ -18,6 +18,7 @@ import sv.gob.mined.cooperacion.web.model.Cooperante;
 import sv.gob.mined.cooperacion.web.model.Director;
 import sv.gob.mined.cooperacion.web.model.GeoEntidadEducativa;
 import sv.gob.mined.cooperacion.web.model.ModalidadEjecucion;
+import sv.gob.mined.cooperacion.web.model.ProyectoCooperacion;
 import sv.gob.mined.cooperacion.web.model.TipoCooperacion;
 import sv.gob.mined.cooperacion.web.model.TipoCooperante;
 import sv.gob.mined.cooperacion.web.model.TipoInstrumento;
@@ -34,13 +35,17 @@ import sv.gob.mined.utils.jsf.JsfUtil;
 @ViewScoped
 public class RegistrarCooperacionView implements Serializable {
 
-    private boolean skip;
-    
     private String posicionInicial = "13.749655, -88.822362";
     private String codigoEntidad;
     private String codigoDepartamento;
+    
+    
+    private String[] nivelI;
+    private String[] nivelII;
+    private String[] nivelIII;
 
     private Director directorCe;
+    private ProyectoCooperacion proyectoCooperacion = new ProyectoCooperacion();
     private VwCatalogoEntidadEducativa entidadEducativa = new VwCatalogoEntidadEducativa();
     private GeoEntidadEducativa geoEntidadEducativa = new GeoEntidadEducativa();
     private List<Municipio> lstMunicipio = new ArrayList();
@@ -120,16 +125,40 @@ public class RegistrarCooperacionView implements Serializable {
         return directorCe;
     }
 
-    public boolean isSkip() {
-        return skip;
+    public ProyectoCooperacion getProyectoCooperacion() {
+        return proyectoCooperacion;
     }
 
-    public void setSkip(boolean skip) {
-        this.skip = skip;
+    public void setProyectoCooperacion(ProyectoCooperacion proyectoCooperacion) {
+        this.proyectoCooperacion = proyectoCooperacion;
     }
 
     public void recuperarMunicipios() {
         lstMunicipio = ubicacionFacade.getLstMunicipio(codigoDepartamento);
+    }
+
+    public String[] getNivelI() {
+        return nivelI;
+    }
+
+    public void setNivelI(String[] nivelI) {
+        this.nivelI = nivelI;
+    }
+
+    public String[] getNivelII() {
+        return nivelII;
+    }
+
+    public void setNivelII(String[] nivelII) {
+        this.nivelII = nivelII;
+    }
+
+    public String[] getNivelIII() {
+        return nivelIII;
+    }
+
+    public void setNivelIII(String[] nivelIII) {
+        this.nivelIII = nivelIII;
     }
 
     public void buscarEntidadEducativa() {
@@ -157,15 +186,6 @@ public class RegistrarCooperacionView implements Serializable {
                 && geoEntidadEducativa.getGeoreferenciaY() != null && geoEntidadEducativa.getGeoreferenciaY().intValue() != 0) {
             LatLng coor = new LatLng(geoEntidadEducativa.getGeoreferenciaY().doubleValue(), geoEntidadEducativa.getGeoreferenciaX().doubleValue());
             simpleModel.addOverlay(new Marker(coor, "CE: " + geoEntidadEducativa.getCodigoEntidad()));
-        }
-    }
-
-    public String onFlowProcess(FlowEvent event) {
-        if (skip) {
-            skip = false;   //reset in case user goes back
-            return "confirm";
-        } else {
-            return event.getNewStep();
         }
     }
 }

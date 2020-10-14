@@ -35,8 +35,8 @@ public class ProyectoCooperacion implements Serializable {
     private Long idProyecto;
     @Column(name = "NOMBRE_PROYECTO")
     private String nombreProyecto;
-    @Column(name = "COLUMN1")
-    private Long column1;
+    @Column(name = "ID_COOPERANTE")
+    private Long idCooperante;
     @Column(name = "ID_MODALIDAD")
     private Long idModalidad;
     @Column(name = "ID_TIPO_INSTRUMENTO")
@@ -66,12 +66,12 @@ public class ProyectoCooperacion implements Serializable {
     private Short parvularia;
     @Column(name = "BASICA_CI")
     private Short basicaCi;
-    @Column(name = "COLUMN5")
-    private Short column5;
-    @Column(name = "COLUMN6")
-    private Short column6;
-    @Column(name = "COLUMN7")
-    private Short column7;
+    @Column(name = "BASICA_CII")
+    private Short basicaCii;
+    @Column(name = "BASICA_CIII")
+    private Short basicaCiii;
+    @Column(name = "MEDIA")
+    private Short media;
     @Column(name = "DOCENTE")
     private Short docente;
     @Column(name = "OTROS")
@@ -87,6 +87,10 @@ public class ProyectoCooperacion implements Serializable {
     private short usuarioInsercion;
     @Column(name = "ESTADO_ELIMINACION")
     private Short estadoEliminacion;
+    @Column(name = "CODIGO_ENTIDAD")
+    private String codigoEntidad;
+    @Column(name = "ANHO")
+    private String anho;
 
     public ProyectoCooperacion() {
     }
@@ -117,12 +121,12 @@ public class ProyectoCooperacion implements Serializable {
         this.nombreProyecto = nombreProyecto;
     }
 
-    public Long getColumn1() {
-        return column1;
+    public Long getIdCooperante() {
+        return idCooperante;
     }
 
-    public void setColumn1(Long column1) {
-        this.column1 = column1;
+    public void setIdCooperante(Long idCooperante) {
+        this.idCooperante = idCooperante;
     }
 
     public Long getIdModalidad() {
@@ -229,28 +233,28 @@ public class ProyectoCooperacion implements Serializable {
         this.basicaCi = basicaCi;
     }
 
-    public Short getColumn5() {
-        return column5;
+    public Short getBasicaCii() {
+        return basicaCii;
     }
 
-    public void setColumn5(Short column5) {
-        this.column5 = column5;
+    public void setBasicaCii(Short basicaCii) {
+        this.basicaCii = basicaCii;
     }
 
-    public Short getColumn6() {
-        return column6;
+    public Short getBasicaCiii() {
+        return basicaCiii;
     }
 
-    public void setColumn6(Short column6) {
-        this.column6 = column6;
+    public void setBasicaCiii(Short basicaCiii) {
+        this.basicaCiii = basicaCiii;
     }
 
-    public Short getColumn7() {
-        return column7;
+    public Short getMedia() {
+        return media;
     }
 
-    public void setColumn7(Short column7) {
-        this.column7 = column7;
+    public void setMedia(Short media) {
+        this.media = media;
     }
 
     public Short getDocente() {
@@ -299,6 +303,22 @@ public class ProyectoCooperacion implements Serializable {
 
     public void setEstadoEliminacion(Short estadoEliminacion) {
         this.estadoEliminacion = estadoEliminacion;
+    }
+
+    public String getCodigoEntidad() {
+        return codigoEntidad;
+    }
+
+    public void setCodigoEntidad(String codigoEntidad) {
+        this.codigoEntidad = codigoEntidad;
+    }
+
+    public String getAnho() {
+        return anho;
+    }
+
+    public void setAnho(String anho) {
+        this.anho = anho;
     }
 
     @Override
