@@ -10,11 +10,14 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -31,9 +34,19 @@ public class Cooperante implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "ID_COOPERANTE")
+    @GeneratedValue(generator = "seqCooperante", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(sequenceName = "SEQ_COOPERANTE", name = "seqCooperante", initialValue = 1, allocationSize = 1)
     private Long idCooperante;
     @Column(name = "NOMBRE_COOPERANTE")
     private String nombreCooperante;
+    @Column(name = "NOMBRE_CONTANTO")
+    private String nombreContanto;
+    @Column(name = "TELEFONO")
+    private String telefono;
+    @Column(name = "CELULAR")
+    private String celular;
+    @Column(name = "CORREO")
+    private String correo;
     @JoinColumn(name = "ID_TIPO_COOPERANTE", referencedColumnName = "ID_TIPO_COOPERANTE")
     @ManyToOne(fetch = FetchType.LAZY)
     private TipoCooperante idTipoCooperante;
@@ -92,6 +105,38 @@ public class Cooperante implements Serializable {
     @Override
     public String toString() {
         return "sv.gob.mined.cooperacion.web.model.Cooperante[ idCooperante=" + idCooperante + " ]";
+    }
+
+    public String getNombreContanto() {
+        return nombreContanto;
+    }
+
+    public void setNombreContanto(String nombreContanto) {
+        this.nombreContanto = nombreContanto;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getCelular() {
+        return celular;
+    }
+
+    public void setCelular(String celular) {
+        this.celular = celular;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
     
 }

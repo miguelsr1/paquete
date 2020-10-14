@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sv.gob.mined.cooperacion.web.facade;
 
 import java.util.List;
@@ -10,6 +5,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import sv.gob.mined.cooperacion.web.model.Cooperante;
 import sv.gob.mined.cooperacion.web.model.Director;
 import sv.gob.mined.cooperacion.web.model.EeGeoDepartamento;
 import sv.gob.mined.cooperacion.web.model.EeGeoMunicipio;
@@ -19,16 +15,17 @@ import sv.gob.mined.cooperacion.web.model.TipoCooperacion;
 import sv.gob.mined.cooperacion.web.model.TipoCooperante;
 import sv.gob.mined.cooperacion.web.model.TipoInstrumento;
 
-/**
- *
- * @author misanchez
- */
 @Stateless
 public class CatalogoFacade {
 
     @PersistenceContext(unitName = "cooperacionPU")
     private EntityManager emCooperacion;
 
+    public List<Cooperante> findCooperante() {
+        Query q = emCooperacion.createQuery("SELECT c FROM Cooperante c", Cooperante.class);
+        return q.getResultList();
+    }
+    
     public List<TipoCooperante> findTipoCooperante() {
         Query q = emCooperacion.createQuery("SELECT t FROM TipoCooperante t", TipoCooperante.class);
         return q.getResultList();

@@ -7,12 +7,14 @@ import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.event.FlowEvent;
 import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.LatLng;
 import org.primefaces.model.map.MapModel;
 import org.primefaces.model.map.Marker;
 import sv.gob.mined.cooperacion.web.facade.CatalogoFacade;
 import sv.gob.mined.cooperacion.web.facade.paquete.UbicacionFacade;
+import sv.gob.mined.cooperacion.web.model.Cooperante;
 import sv.gob.mined.cooperacion.web.model.Director;
 import sv.gob.mined.cooperacion.web.model.GeoEntidadEducativa;
 import sv.gob.mined.cooperacion.web.model.ModalidadEjecucion;
@@ -32,6 +34,8 @@ import sv.gob.mined.utils.jsf.JsfUtil;
 @ViewScoped
 public class RegistrarCooperacionView implements Serializable {
 
+    private boolean skip;
+    
     private String posicionInicial = "13.749655, -88.822362";
     private String codigoEntidad;
     private String codigoDepartamento;
@@ -39,13 +43,7 @@ public class RegistrarCooperacionView implements Serializable {
     private Director directorCe;
     private VwCatalogoEntidadEducativa entidadEducativa = new VwCatalogoEntidadEducativa();
     private GeoEntidadEducativa geoEntidadEducativa = new GeoEntidadEducativa();
-    private List<Departamento> lstDepartamentos = new ArrayList();
     private List<Municipio> lstMunicipio = new ArrayList();
-
-    private List<TipoCooperante> lstTipoCooperante = new ArrayList();
-    private List<TipoCooperacion> lstTipoCooperacion = new ArrayList();
-    private List<ModalidadEjecucion> lstModalidadEjecucion = new ArrayList();
-    private List<TipoInstrumento> lstTipoInstrumento = new ArrayList();
 
     private MapModel simpleModel;
 
@@ -56,11 +54,6 @@ public class RegistrarCooperacionView implements Serializable {
 
     @PostConstruct
     public void init() {
-        lstDepartamentos = ubicacionFacade.getLstDepartamentos();
-        lstModalidadEjecucion = catalogoFacade.findModalidadEjecucion();
-        lstTipoCooperacion = catalogoFacade.findTipoCooperacion();
-        lstTipoCooperante = catalogoFacade.findTipoCooperante();
-        lstTipoInstrumento = catalogoFacade.findTipoInstrumento();
     }
 
     public String getCodigoEntidad() {
@@ -80,27 +73,31 @@ public class RegistrarCooperacionView implements Serializable {
     }
 
     public List<Departamento> getLstDepartamentos() {
-        return lstDepartamentos;
+        return ubicacionFacade.getLstDepartamentos();
     }
 
     public List<Municipio> getLstMunicipio() {
         return lstMunicipio;
     }
 
+    public List<Cooperante> getLstCooperantes() {
+        return catalogoFacade.findCooperante();
+    }
+
     public List<TipoCooperante> getLstTipoCooperante() {
-        return lstTipoCooperante;
+        return catalogoFacade.findTipoCooperante();
     }
 
     public List<TipoCooperacion> getLstTipoCooperacion() {
-        return lstTipoCooperacion;
+        return catalogoFacade.findTipoCooperacion();
     }
 
     public List<ModalidadEjecucion> getLstModalidadEjecucion() {
-        return lstModalidadEjecucion;
+        return catalogoFacade.findModalidadEjecucion();
     }
 
     public List<TipoInstrumento> getLstTipoInstrumento() {
-        return lstTipoInstrumento;
+        return catalogoFacade.findTipoInstrumento();
     }
 
     public String getCodigoDepartamento() {
@@ -121,6 +118,14 @@ public class RegistrarCooperacionView implements Serializable {
 
     public Director getDirectorCe() {
         return directorCe;
+    }
+
+    public boolean isSkip() {
+        return skip;
+    }
+
+    public void setSkip(boolean skip) {
+        this.skip = skip;
     }
 
     public void recuperarMunicipios() {
@@ -152,6 +157,15 @@ public class RegistrarCooperacionView implements Serializable {
                 && geoEntidadEducativa.getGeoreferenciaY() != null && geoEntidadEducativa.getGeoreferenciaY().intValue() != 0) {
             LatLng coor = new LatLng(geoEntidadEducativa.getGeoreferenciaY().doubleValue(), geoEntidadEducativa.getGeoreferenciaX().doubleValue());
             simpleModel.addOverlay(new Marker(coor, "CE: " + geoEntidadEducativa.getCodigoEntidad()));
+        }
+    }
+
+    public String onFlowProcess(FlowEvent event) {
+        if (skip) {
+            skip = false;   //reset in case user goes back
+            return "confirm";
+        } else {
+            return event.getNewStep();
         }
     }
 }
