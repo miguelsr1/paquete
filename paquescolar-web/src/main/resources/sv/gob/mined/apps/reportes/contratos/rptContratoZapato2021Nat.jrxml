@@ -115,7 +115,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 								<staticText>
 									<reportElement uuid="cf30e42d-58e5-41b6-b584-aaa45371b26e" x="13" y="0" width="217" height="14"/>
 									<textElement verticalAlignment="Middle">
-										<font fontName="Arial" size="10" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<text><![CDATA[SUB TOTAL CONTRATADO (IVA INCLUIDO)]]></text>
 								</staticText>
@@ -125,7 +125,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 									<staticText>
 										<reportElement uuid="ad6f5bfc-cae5-4822-8ec3-901e068da4bb" x="0" y="0" width="40" height="25"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
-											<font fontName="Arial" size="9" isBold="true"/>
+											<font fontName="Arial" size="8" isBold="true"/>
 										</textElement>
 										<text><![CDATA[No Ítem]]></text>
 									</staticText>
@@ -134,7 +134,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 									<textField>
 										<reportElement uuid="e13f35fa-da87-4cb4-9aef-5d3731cbc9a9" x="0" y="0" width="40" height="13"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
-											<font fontName="Arial" size="8"/>
+											<font fontName="Arial" size="7"/>
 										</textElement>
 										<textFieldExpression><![CDATA[$F{NO_ITEM}]]></textFieldExpression>
 									</textField>
@@ -145,7 +145,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 									<staticText>
 										<reportElement uuid="2a07a1b0-1e9d-4426-9643-b7a27c8bb4ca" x="0" y="0" width="190" height="25"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
-											<font fontName="Arial" size="9" isBold="true"/>
+											<font fontName="Arial" size="8" isBold="true"/>
 										</textElement>
 										<text><![CDATA[Descripción del Item]]></text>
 									</staticText>
@@ -154,7 +154,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 									<textField>
 										<reportElement uuid="2478cffa-7d61-4cf3-a0ad-fe315d4f69d8" x="1" y="0" width="188" height="13"/>
 										<textElement textAlignment="Left" verticalAlignment="Middle">
-											<font fontName="Arial" size="8"/>
+											<font fontName="Arial" size="7"/>
 										</textElement>
 										<textFieldExpression><![CDATA[$F{CONSOLIDADO_ESP_TEC}]]></textFieldExpression>
 									</textField>
@@ -166,7 +166,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 								<staticText>
 									<reportElement uuid="287aff7f-266b-4686-8552-02cd9184d642" x="0" y="0" width="48" height="25"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Cantidad]]></text>
 								</staticText>
@@ -175,7 +175,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 								<textField pattern="#,##0">
 									<reportElement uuid="7699c2be-aa59-4465-a0f9-d7baa77b99e8" x="0" y="0" width="48" height="14"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$V{vCantidad}]]></textFieldExpression>
 								</textField>
@@ -184,7 +184,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 								<textField pattern="#,##0">
 									<reportElement uuid="3806579c-4751-4d84-bca7-efdd6270faf2" x="0" y="0" width="48" height="13"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8"/>
+										<font fontName="Arial" size="7"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{CANTIDAD}]]></textFieldExpression>
 								</textField>
@@ -195,7 +195,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 								<staticText>
 									<reportElement uuid="d4c72b04-fecd-455f-b2dd-383c5625ee7d" x="0" y="0" width="61" height="25"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Precio Unit.]]></text>
 								</staticText>
@@ -205,14 +205,14 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 								<textField pattern="#,##0.00">
 									<reportElement uuid="47114f42-b205-422f-b0cf-54ae9e99e263" x="11" y="0" width="48" height="13"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
-										<font fontName="Arial" size="8"/>
+										<font fontName="Arial" size="7"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{PRECIO_UNITARIO}]]></textFieldExpression>
 								</textField>
 								<staticText>
 									<reportElement uuid="287aff7f-266b-4686-8552-02cd9184d642" x="0" y="0" width="11" height="13"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8" isBold="false"/>
+										<font fontName="Arial" size="7" isBold="false"/>
 									</textElement>
 									<text><![CDATA[$]]></text>
 								</staticText>
@@ -223,7 +223,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 								<staticText>
 									<reportElement uuid="6c248f9f-4c8b-4d25-9d32-efdf785131f2" x="7" y="0" width="70" height="25"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Monto Total (Incluye IVA)]]></text>
 								</staticText>
@@ -232,14 +232,14 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 								<textField pattern="#,##0.00">
 									<reportElement uuid="12b2ce52-86bf-4acb-852f-afc407d11782" x="10" y="0" width="72" height="14"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="true"/>
+										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$V{vMonto}]]></textFieldExpression>
 								</textField>
 								<staticText>
 									<reportElement uuid="287aff7f-266b-4686-8552-02cd9184d642" x="0" y="0" width="10" height="14"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9" isBold="false"/>
+										<font fontName="Arial" size="8" isBold="false"/>
 									</textElement>
 									<text><![CDATA[$]]></text>
 								</staticText>
@@ -248,14 +248,14 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 								<staticText>
 									<reportElement uuid="287aff7f-266b-4686-8552-02cd9184d642" x="0" y="0" width="10" height="13"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8" isBold="false"/>
+										<font fontName="Arial" size="7" isBold="false"/>
 									</textElement>
 									<text><![CDATA[$]]></text>
 								</staticText>
 								<textField pattern="#,##0.00">
 									<reportElement uuid="5e680f15-8279-43bb-ba6a-e6a6ca129217" x="10" y="0" width="72" height="13"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="8"/>
+										<font fontName="Arial" size="7"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{SUB_TOTAL}]]></textFieldExpression>
 								</textField>

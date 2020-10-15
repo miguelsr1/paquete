@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptActaAdjudicacion" pageWidth="612" pageHeight="792" columnWidth="528" leftMargin="42" rightMargin="42" topMargin="39" bottomMargin="39" uuid="244b56df-7b1c-4fca-9e9d-dde2f9b172eb">
 	<property name="ireport.zoom" value="1.3636363636363658"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="145"/>
+	<property name="ireport.y" value="0"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -130,7 +130,7 @@
 		<groupHeader>
 			<band height="200" splitType="Stretch">
 				<image hAlign="Right">
-					<reportElement key="image-2" x="379" y="0" width="149" height="60" uuid="a3a21642-5656-4bc8-9f47-63ca6738e700"/>
+					<reportElement uuid="a3a21642-5656-4bc8-9f47-63ca6738e700" key="image-2" x="379" y="0" width="149" height="60"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -140,7 +140,7 @@
 					<imageExpression><![CDATA[$P{ubicacionImagenes} +File.separator+ "logo_mined_rpt.png"]]></imageExpression>
 				</image>
 				<textField isBlankWhenNull="false">
-					<reportElement key="textField-1" x="0" y="66" width="528" height="87" uuid="c89610dd-e8b5-4071-a79e-c44be59352dc"/>
+					<reportElement uuid="c89610dd-e8b5-4071-a79e-c44be59352dc" key="textField-1" x="0" y="66" width="528" height="87"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -159,7 +159,7 @@ concat("\n\nETAPAS DEL PROCESO:\n\n").
 concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{fechaApertura}+" a:")]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement key="staticText-5" x="81" y="0" width="298" height="66" uuid="5843cd26-1ae0-4edd-ac6d-bac74c0c756d"/>
+					<reportElement uuid="5843cd26-1ae0-4edd-ac6d-bac74c0c756d" key="staticText-5" x="81" y="0" width="298" height="66"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial" size="10"/>
 					</textElement>
@@ -169,7 +169,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 "\""+$F{descripcionRubro}+"\""]]></textFieldExpression>
 				</textField>
 				<image>
-					<reportElement key="image-1" x="0" y="0" width="60" height="60" uuid="d662ed9c-377b-4d74-87d4-2293e65456b4"/>
+					<reportElement uuid="d662ed9c-377b-4d74-87d4-2293e65456b4" key="image-1" x="0" y="0" width="60" height="60"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -179,7 +179,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo_rpt.png"]]></imageExpression>
 				</image>
 				<subreport isUsingCache="true">
-					<reportElement key="subreport-3" x="0" y="153" width="528" height="45" uuid="263910dc-3ced-4c00-8594-5c09f8bce4e9"/>
+					<reportElement uuid="263910dc-3ced-4c00-8594-5c09f8bce4e9" key="subreport-3" x="0" y="153" width="528" height="45"/>
 					<subreportParameter name="pPorcentajeCapa">
 						<subreportParameterExpression><![CDATA[$P{pPorcentajeCapa}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -194,7 +194,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 		<groupFooter>
 			<band height="185" splitType="Stretch">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-					<reportElement key="textField-9" x="0" y="109" width="528" height="14" uuid="919a6134-db0d-4f42-b5bb-18e8d50d805f"/>
+					<reportElement uuid="919a6134-db0d-4f42-b5bb-18e8d50d805f" key="textField-9" x="0" y="109" width="528" height="14"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -207,13 +207,13 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 					<textFieldExpression><![CDATA["Firmamos:"]]></textFieldExpression>
 				</textField>
 				<rectangle>
-					<reportElement x="0" y="26" width="528" height="83" uuid="4f69154b-b380-42fb-9f14-5bd21f5c64c7"/>
+					<reportElement uuid="4f69154b-b380-42fb-9f14-5bd21f5c64c7" x="0" y="26" width="528" height="83"/>
 					<graphicElement>
 						<pen lineWidth="0.25"/>
 					</graphicElement>
 				</rectangle>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-					<reportElement key="textField-9" x="0" y="0" width="528" height="26" uuid="919a6134-db0d-4f42-b5bb-18e8d50d805f"/>
+					<reportElement uuid="919a6134-db0d-4f42-b5bb-18e8d50d805f" key="textField-9" x="0" y="0" width="528" height="26"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -226,7 +226,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 					<textFieldExpression><![CDATA["Se recomienda adjudicar al proveedor con el porcentaje más alto, por cumplir con las especificaciones requeridas por el Organismo para esta compra y de acuerdo a la justificación siguiente"]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement key="staticText-1" x="1" y="132" width="162" height="14" uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552"/>
+					<reportElement uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552" key="staticText-1" x="1" y="132" width="162" height="14"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -239,21 +239,21 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 					<text><![CDATA[F:__________________________________]]></text>
 				</staticText>
 				<textField>
-					<reportElement key="staticText-1" x="1" y="158" width="162" height="11" uuid="2ec940a2-5609-41d1-9860-cf48aebac5ba"/>
+					<reportElement uuid="2ec940a2-5609-41d1-9860-cf48aebac5ba" key="staticText-1" x="1" y="158" width="162" height="11"/>
 					<textElement markup="none">
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{pEncargadoDeCompras}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="1" y="169" width="162" height="10" uuid="8e37bd84-3b2d-4f23-8a63-b84c3d8d4fcb"/>
+					<reportElement uuid="8e37bd84-3b2d-4f23-8a63-b84c3d8d4fcb" x="1" y="169" width="162" height="10"/>
 					<textElement textAlignment="Center">
 						<font fontName="Arial" size="7"/>
 					</textElement>
 					<text><![CDATA[Encargado(a) de Compra del organismo]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-1" x="184" y="132" width="162" height="14" uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552"/>
+					<reportElement uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552" key="staticText-1" x="184" y="132" width="162" height="14"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -266,7 +266,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 					<text><![CDATA[F:__________________________________]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-1" x="184" y="158" width="162" height="11" uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552"/>
+					<reportElement uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552" key="staticText-1" x="184" y="158" width="162" height="11"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -279,14 +279,14 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 					<text><![CDATA[___________________________________]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="184" y="169" width="162" height="10" uuid="8e37bd84-3b2d-4f23-8a63-b84c3d8d4fcb"/>
+					<reportElement uuid="8e37bd84-3b2d-4f23-8a63-b84c3d8d4fcb" x="184" y="169" width="162" height="10"/>
 					<textElement textAlignment="Center">
 						<font fontName="Arial" size="7"/>
 					</textElement>
 					<text><![CDATA[Técnico MINED Nivel Central]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-1" x="366" y="132" width="162" height="14" uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552"/>
+					<reportElement uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552" key="staticText-1" x="366" y="132" width="162" height="14"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -299,7 +299,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 					<text><![CDATA[F:__________________________________]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-1" x="366" y="158" width="162" height="11" uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552"/>
+					<reportElement uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552" key="staticText-1" x="366" y="158" width="162" height="11"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -312,7 +312,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 					<text><![CDATA[___________________________________]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="366" y="169" width="162" height="10" uuid="8e37bd84-3b2d-4f23-8a63-b84c3d8d4fcb"/>
+					<reportElement uuid="8e37bd84-3b2d-4f23-8a63-b84c3d8d4fcb" x="366" y="169" width="162" height="10"/>
 					<textElement textAlignment="Center">
 						<font fontName="Arial" size="7"/>
 					</textElement>
@@ -326,7 +326,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 		<groupHeader>
 			<band height="46">
 				<componentElement>
-					<reportElement key="table 2" style="table_TD" x="10" y="0" width="507" height="42" isRemoveLineWhenBlank="true" uuid="00146551-f7a9-443a-b751-cf2b76b7a1c9"/>
+					<reportElement uuid="00146551-f7a9-443a-b751-cf2b76b7a1c9" key="table 2" style="table_TD" x="10" y="0" width="507" height="42" isRemoveLineWhenBlank="true"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 						<datasetRun subDataset="dsDetalleProve" uuid="0ea60642-20d6-422f-9d7a-25f6b2505146">
 							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstPorcentajeEval})]]></dataSourceExpression>
@@ -334,7 +334,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 						<jr:column width="221" uuid="b88a7db0-4cf6-497e-bf7b-6385260837e0">
 							<jr:columnHeader style="table_TD" height="14" rowSpan="1">
 								<staticText>
-									<reportElement x="0" y="0" width="221" height="14" uuid="8b885572-323c-4d3e-9de2-5716ca86acf6"/>
+									<reportElement uuid="8b885572-323c-4d3e-9de2-5716ca86acf6" x="0" y="0" width="221" height="14"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
@@ -343,9 +343,9 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="12" rowSpan="1">
 								<textField isStretchWithOverflow="true">
-									<reportElement x="2" y="0" width="217" height="12" uuid="f8269411-1d4b-473c-a41c-fc159328b9aa"/>
+									<reportElement uuid="f8269411-1d4b-473c-a41c-fc159328b9aa" x="2" y="0" width="217" height="12"/>
 									<textElement verticalAlignment="Middle">
-										<font fontName="Arial" size="8"/>
+										<font fontName="Arial" size="7"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{razonSocial}]]></textFieldExpression>
 								</textField>
@@ -354,7 +354,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 						<jr:column width="65" uuid="bbf30fd3-dce1-467a-b786-d0d78cd00f95">
 							<jr:columnHeader style="table_TD" height="14" rowSpan="1">
 								<staticText>
-									<reportElement x="0" y="0" width="65" height="14" uuid="74f4bacf-8432-4132-bd01-b4d4a527cd46"/>
+									<reportElement uuid="74f4bacf-8432-4132-bd01-b4d4a527cd46" x="0" y="0" width="65" height="14"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
@@ -363,9 +363,9 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="12" rowSpan="1">
 								<textField>
-									<reportElement x="0" y="0" width="65" height="12" uuid="f16d5b8d-4cc0-44e4-abe3-b8d14fca6eb9"/>
+									<reportElement uuid="f16d5b8d-4cc0-44e4-abe3-b8d14fca6eb9" x="0" y="0" width="65" height="12"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8"/>
+										<font fontName="Arial" size="7"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{porcentajePrecio}]]></textFieldExpression>
 								</textField>
@@ -374,7 +374,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 						<jr:column width="80" uuid="d363b250-28dd-4d4a-b4df-39792b0ce562">
 							<jr:columnHeader style="table_TD" height="14" rowSpan="1">
 								<staticText>
-									<reportElement x="0" y="0" width="80" height="14" uuid="f74edbb3-7396-4777-854a-ea8ed93bb06f"/>
+									<reportElement uuid="f74edbb3-7396-4777-854a-ea8ed93bb06f" x="0" y="0" width="80" height="14"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
@@ -383,9 +383,9 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="12" rowSpan="1">
 								<textField>
-									<reportElement x="0" y="0" width="80" height="12" uuid="a9d3d00a-6b8f-4fdb-aafc-f5fbe344fa8b"/>
+									<reportElement uuid="a9d3d00a-6b8f-4fdb-aafc-f5fbe344fa8b" x="0" y="0" width="80" height="12"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8"/>
+										<font fontName="Arial" size="7"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{porcentajeGeo}]]></textFieldExpression>
 								</textField>
@@ -394,7 +394,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 						<jr:column width="80" uuid="c6832352-9ab1-4114-bade-ae9e4cf7233d">
 							<jr:columnHeader style="table_TD" height="14" rowSpan="1">
 								<staticText>
-									<reportElement x="0" y="0" width="80" height="14" uuid="04b062f5-25ce-4361-bb1a-3abd81c88d88"/>
+									<reportElement uuid="04b062f5-25ce-4361-bb1a-3abd81c88d88" x="0" y="0" width="80" height="14"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
@@ -403,9 +403,9 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="12" rowSpan="1">
 								<textField>
-									<reportElement x="0" y="0" width="80" height="12" uuid="fd09ef3c-c8ad-4898-ab33-3e0cfae7d438"/>
+									<reportElement uuid="fd09ef3c-c8ad-4898-ab33-3e0cfae7d438" x="0" y="0" width="80" height="12"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8"/>
+										<font fontName="Arial" size="7"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{porcentajeCapacidad}]]></textFieldExpression>
 								</textField>
@@ -414,7 +414,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 						<jr:column width="60" uuid="76a15d42-2d03-42e9-90a6-a0bfa6ce3681">
 							<jr:columnHeader style="table_TD" height="14" rowSpan="1">
 								<staticText>
-									<reportElement x="0" y="0" width="60" height="14" uuid="1be6a63f-a230-4039-9d96-436ce756538d"/>
+									<reportElement uuid="1be6a63f-a230-4039-9d96-436ce756538d" x="0" y="0" width="60" height="14"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
@@ -423,9 +423,9 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="12" rowSpan="1">
 								<textField>
-									<reportElement x="0" y="0" width="60" height="12" uuid="c59ca1a0-535d-41ce-979b-ff3549653832"/>
+									<reportElement uuid="c59ca1a0-535d-41ce-979b-ff3549653832" x="0" y="0" width="60" height="12"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8"/>
+										<font fontName="Arial" size="7"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{porcentajeEvaluacion}]]></textFieldExpression>
 								</textField>
@@ -451,17 +451,17 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 	<detail>
 		<band height="48" splitType="Stretch">
 			<componentElement>
-				<reportElement key="table" style="table_TD" x="10" y="14" width="507" height="34" uuid="679c5164-eb9a-4347-9b1f-d4c2db9b354c"/>
+				<reportElement uuid="679c5164-eb9a-4347-9b1f-d4c2db9b354c" key="table" style="table_TD" x="10" y="14" width="507" height="34"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="dsDetalleItem" uuid="1ec46f45-7cdf-4477-abc8-51e7367eba23">
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleItem})]]></dataSourceExpression>
 					</datasetRun>
-					<jr:columnGroup width="468" uuid="1e80f5fd-5f46-4e05-b85b-0e23596a7a19">
+					<jr:columnGroup width="487" uuid="1e80f5fd-5f46-4e05-b85b-0e23596a7a19">
 						<jr:columnFooter style="table_TD" height="14" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="441" height="14" uuid="f6a8fa4c-1f22-43af-ad07-611557408d4a"/>
+								<reportElement uuid="f6a8fa4c-1f22-43af-ad07-611557408d4a" x="0" y="0" width="441" height="14"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial" size="8" isBold="true"/>
+									<font fontName="Arial" size="7" isBold="true"/>
 								</textElement>
 								<text><![CDATA[Total Contratado]]></text>
 							</staticText>
@@ -469,16 +469,16 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 						<jr:column width="30" uuid="25bcc1ef-6cba-49de-834a-91e3f9e30c7e">
 							<jr:columnHeader style="table_TD" height="25" rowSpan="1">
 								<staticText>
-									<reportElement style="table_TD" x="0" y="0" width="30" height="25" uuid="d9bd5363-949d-464a-9e3c-ce813ed4cada"/>
+									<reportElement uuid="d9bd5363-949d-464a-9e3c-ce813ed4cada" style="table_TD" x="0" y="0" width="30" height="25"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8" isBold="true"/>
+										<font fontName="Arial" size="7" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Items]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="12" rowSpan="1">
 								<textField>
-									<reportElement x="0" y="0" width="30" height="12" uuid="4a652520-d699-47fa-924b-1fb631dfbf9d"/>
+									<reportElement uuid="4a652520-d699-47fa-924b-1fb631dfbf9d" x="0" y="0" width="30" height="12"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
 									</textElement>
@@ -486,19 +486,19 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="152" uuid="b36082f8-b1df-4e37-af98-b9f6976cce0a">
+						<jr:column width="171" uuid="b36082f8-b1df-4e37-af98-b9f6976cce0a">
 							<jr:columnHeader style="table_TD" height="25" rowSpan="1">
 								<staticText>
-									<reportElement style="table_TD" x="0" y="0" width="152" height="25" uuid="0ecb4e19-3c21-4894-a5e5-d4aa060d491b"/>
+									<reportElement uuid="0ecb4e19-3c21-4894-a5e5-d4aa060d491b" style="table_TD" x="0" y="0" width="171" height="25"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8" isBold="true"/>
+										<font fontName="Arial" size="7" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Descripción del Item]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="12" rowSpan="1">
 								<textField isStretchWithOverflow="true">
-									<reportElement x="1" y="0" width="150" height="12" uuid="768f2f9e-465e-4e48-88b4-3fd152343936"/>
+									<reportElement uuid="768f2f9e-465e-4e48-88b4-3fd152343936" x="1" y="0" width="168" height="12"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
 									</textElement>
@@ -509,16 +509,16 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 						<jr:column width="221" uuid="91856bd7-1e45-4b44-9437-2f305bb989e9">
 							<jr:columnHeader style="table_TD" height="25" rowSpan="1">
 								<staticText>
-									<reportElement style="table_TD" x="0" y="0" width="221" height="25" uuid="bf4be4ce-3f8e-4ecd-868a-6f449b815190"/>
+									<reportElement uuid="bf4be4ce-3f8e-4ecd-868a-6f449b815190" style="table_TD" x="0" y="0" width="221" height="25"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8" isBold="true"/>
+										<font fontName="Arial" size="7" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Proveedor]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="12" rowSpan="1">
 								<textField isStretchWithOverflow="true">
-									<reportElement x="1" y="0" width="219" height="12" isPrintWhenDetailOverflows="true" uuid="5c66973d-9700-4ed5-a186-2850ef9375ed"/>
+									<reportElement uuid="5c66973d-9700-4ed5-a186-2850ef9375ed" x="1" y="0" width="219" height="12" isPrintWhenDetailOverflows="true"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
 									</textElement>
@@ -529,16 +529,16 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 						<jr:column width="28" uuid="a795ffdc-9644-4f76-a451-6e30f6fb44a8">
 							<jr:columnHeader style="table_TD" height="25" rowSpan="1">
 								<staticText>
-									<reportElement style="table_TD" x="0" y="0" width="28" height="25" uuid="e9800902-5961-42af-a26f-5ac9d2f80442"/>
+									<reportElement uuid="e9800902-5961-42af-a26f-5ac9d2f80442" style="table_TD" x="0" y="0" width="28" height="25"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8" isBold="true"/>
+										<font fontName="Arial" size="7" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Cant.]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="12" rowSpan="1">
 								<textField>
-									<reportElement x="0" y="0" width="26" height="12" uuid="4702aba6-0b62-47d6-a1ba-706e289e1994"/>
+									<reportElement uuid="4702aba6-0b62-47d6-a1ba-706e289e1994" x="0" y="0" width="26" height="12"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
 									</textElement>
@@ -549,16 +549,16 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 						<jr:column width="37" uuid="a7c2680c-8cc6-412e-96c5-2d64149035c1">
 							<jr:columnHeader style="table_TD" height="25" rowSpan="1">
 								<staticText>
-									<reportElement style="table_TD" x="0" y="0" width="37" height="25" uuid="0099d48b-0136-4b4a-978c-1f926c05fe6a"/>
+									<reportElement uuid="0099d48b-0136-4b4a-978c-1f926c05fe6a" style="table_TD" x="0" y="0" width="37" height="25"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8" isBold="true"/>
+										<font fontName="Arial" size="7" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Pre. Unit. ($)]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="12" rowSpan="1">
 								<textField pattern="#,##0.00">
-									<reportElement x="0" y="0" width="35" height="12" uuid="09fe14bc-cc2c-412e-9637-441e289e5d7c"/>
+									<reportElement uuid="09fe14bc-cc2c-412e-9637-441e289e5d7c" x="0" y="0" width="35" height="12"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
 									</textElement>
@@ -570,25 +570,25 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 					<jr:column width="60" uuid="6962a703-9a78-48b3-bb03-352130c77de3">
 						<jr:columnHeader style="table_TD" height="25" rowSpan="1">
 							<staticText>
-								<reportElement style="table_TD" x="0" y="0" width="60" height="25" uuid="b422a6a8-17fb-40f6-8933-319bc21b18e8"/>
+								<reportElement uuid="b422a6a8-17fb-40f6-8933-319bc21b18e8" style="table_TD" x="0" y="0" width="60" height="25"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="8" isBold="true"/>
+									<font fontName="Arial" size="7" isBold="true"/>
 								</textElement>
 								<text><![CDATA[Pre. Total]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:columnFooter style="table_TD" height="14" rowSpan="1">
 							<textField pattern="#,##0.00">
-								<reportElement x="0" y="0" width="58" height="14" uuid="9866248b-6871-4d0c-9b0b-5cfcad74f202"/>
+								<reportElement uuid="9866248b-6871-4d0c-9b0b-5cfcad74f202" x="0" y="0" width="58" height="14"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial" size="8"/>
+									<font fontName="Arial" size="7"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$V{V_TOTAL}]]></textFieldExpression>
 							</textField>
 						</jr:columnFooter>
 						<jr:detailCell style="table_TD" height="12" rowSpan="1">
 							<textField pattern="#,##0.00">
-								<reportElement x="0" y="0" width="58" height="12" uuid="075785e9-fe0e-44e7-9338-810b85f9560e"/>
+								<reportElement uuid="075785e9-fe0e-44e7-9338-810b85f9560e" x="0" y="0" width="58" height="12"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="Arial" size="7"/>
 								</textElement>
@@ -599,7 +599,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 				</jr:table>
 			</componentElement>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-1" x="0" y="0" width="528" height="14" uuid="c89610dd-e8b5-4071-a79e-c44be59352dc"/>
+				<reportElement uuid="c89610dd-e8b5-4071-a79e-c44be59352dc" key="textField-1" x="0" y="0" width="528" height="14"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -619,7 +619,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 	<pageFooter>
 		<band height="12" splitType="Stretch">
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-10" x="0" y="0" width="328" height="12" uuid="894642a5-1048-41ab-b2b3-950c51cb091a"/>
+				<reportElement uuid="894642a5-1048-41ab-b2b3-950c51cb091a" key="textField-10" x="0" y="0" width="328" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

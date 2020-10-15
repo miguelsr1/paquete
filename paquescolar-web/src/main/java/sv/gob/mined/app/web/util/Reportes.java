@@ -7,8 +7,9 @@ package sv.gob.mined.app.web.util;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,13 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
+import sv.gob.mined.app.web.controller.ParametrosMB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
+import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
+import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
+import sv.gob.mined.paquescolar.model.Empresa;
+import sv.gob.mined.paquescolar.model.pojos.DeclaracionJurada;
+import sv.gob.mined.paquescolar.model.pojos.OfertaGlobal;
 
 /**
  *
@@ -132,7 +139,7 @@ public class Reportes {
                 if (rpt.contains("rptCertUti_2017")) {
                     jasperPrintList.add(reportesEJB.getRpt(param, Reportes.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/sispaqescolar/reporte" + File.separator + rpt)));
                 } else if (rpt.contains("rptCertUti2021")) {
-                     jasperPrintList.add(getRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/sispaqescolar/reporte/", rpt));
+                    jasperPrintList.add(getRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/sispaqescolar/reporte/", rpt));
                 } else {
                     if (rpt.contains("rptCertUni")) {
                         if (Integer.parseInt(anho) > 2017) {
@@ -179,5 +186,88 @@ public class Reportes {
 
     public static JasperPrint getReporteAImprimir(String path, Map<String, Object> param, JRDataSource ds) throws JRException {
         return JasperFillManager.fillReport(Reportes.class.getClassLoader().getResourceAsStream(path + ".jasper"), param, ds);
+    }
+
+    public static List<JasperPrint> getReporteOfertaDeProveedor(CapaInstPorRubro capacidadInst, Empresa empresa,
+            DetalleProcesoAdq detalleProcesoAdq, List<OfertaGlobal> lstDatos, List<DeclaracionJurada> lstDeclaracion) {
+
+        Boolean imprimirRpt = false;
+        List<JasperPrint> jasperPrintList = new ArrayList();
+        try {
+            String lugar = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                    getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getUbicacion();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+            ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+            HashMap param = new HashMap();
+            param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
+            param.put("pEscudo", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
+            param.put("usuarioInsercion", VarSession.getVariableSessionUsuario());
+            param.put("pLugar", lugar + ", " + sdf.format(new Date()));
+            param.put("pRubro", JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
+            param.put("pIdRubro", capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue());
+
+            lstDatos.get(0).setRubro(JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
+            if (lstDatos.get(0).getDepartamento().contains("TODO EL PAIS")) {
+                param.put("productor", Boolean.TRUE);
+            } else {
+                param.put("productor", Boolean.FALSE);
+            }
+
+            String tmp = "";
+            if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 6 && detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue() == 2) {
+                tmp = "2019";
+            }
+
+            String muni = VarSession.getNombreMunicipioSession();
+            String nombreRpt;
+
+            switch (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue()) {
+                case 8:
+                case 9:
+                    imprimirRpt = ((capacidadInst.getIdMuestraInteres().getAceptacionTerminos() == 1) && (capacidadInst.getIdMuestraInteres().getDatosVerificados() == 1));
+
+                    if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 8) {
+                        if (imprimirRpt) {
+                            String idGestion = capacidadInst.getIdMuestraInteres().getIdGestion();
+                            lugar = empresa.getIdMunicipio().getNombreMunicipio().concat(", ").concat(empresa.getIdMunicipio().getCodigoDepartamento().getNombreDepartamento());
+                            param.put("pCorreoPersona", capacidadInst.getIdMuestraInteres().getIdEmpresa().getIdPersona().getEmail());
+                            param.put("pIdGestion", idGestion);
+                            param.put("pLugar", lugar);
+
+                            jasperPrintList.add(Reportes.getReporteAImprimir("sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobalProv" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho(), param, new JRBeanCollectionDataSource(lstDatos)));
+                            nombreRpt = "rptDeclaracionJurAceptacionPerProv" + ((empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) ? "Nat" : "Jur");
+                            jasperPrintList.add(Reportes.getReporteAImprimir("sv/gob/mined/apps/reportes/declaracion" + File.separator + nombreRpt + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho(), param, new JRBeanCollectionDataSource(lstDeclaracion)));
+                        } else {
+                            JsfUtil.mensajeAlerta("Este proveedor no ha actualizado la oferta para el año " + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho());
+                        }
+                    } else {
+                        imprimirRpt = true;
+                        jasperPrintList.add(Reportes.getReporteAImprimir("sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobal" + tmp, param, new JRBeanCollectionDataSource(lstDatos)));
+                        nombreRpt = "rptDeclaracionJurAceptacionPer" + ((empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) ? "Nat" : "Jur");
+                        jasperPrintList.add(Reportes.getReporteAImprimir("sv/gob/mined/apps/reportes/declaracion" + File.separator + nombreRpt + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho(), param, new JRBeanCollectionDataSource(lstDeclaracion)));
+                    }
+
+                    break;
+                default:
+                    imprimirRpt = true;
+                    if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
+                        jasperPrintList.add(Reportes.getReporteAImprimir("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurCumplimientoPerNat", param, new JRBeanCollectionDataSource(lstDeclaracion)));
+                        jasperPrintList.add(Reportes.getReporteAImprimir("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerNat2", param, new JRBeanCollectionDataSource(lstDeclaracion)));
+                    } else {
+                        jasperPrintList.add(Reportes.getReporteAImprimir("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurCumplimientoPerJur", param, new JRBeanCollectionDataSource(lstDeclaracion)));
+                        jasperPrintList.add(Reportes.getReporteAImprimir("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerJur2", param, new JRBeanCollectionDataSource(lstDeclaracion)));
+                    }
+                    break;
+            }
+        } catch (JRException ex) {
+            Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        if (imprimirRpt) {
+            return jasperPrintList;
+        } else {
+            return new ArrayList();
+        }
     }
 }

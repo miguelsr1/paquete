@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="48ba8c8b-7a8a-4894-ab10-a088ef24a595">
+	<property name="ireport.zoom" value="1.6105100000000012"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="144"/>
+	<parameter name="pIdContrato" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ubicacionImagenes" class="java.lang.String">
+		<defaultValueExpression><![CDATA["/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select 
+    'ME-'||con.numero_contrato||'/'||anho.anho numero_contrato,
+    rub.descripcion_rubro,
+    vw.nombre,
+    ofe.codigo_entidad,
+    con.plazo_previsto_entrega,
+    anho.anho,
+    con.miembro_firma,
+    per.PRIMER_NOMBRE || ' ' || NVL(per.SEGUNDO_NOMBRE, '') || ' ' || NVL(per.PRIMER_APELLIDO, '') || ' ' || NVL(per.SEGUNDO_APELLIDO, '') || ' ' || NVL(per.ACASADA, '') AS NOMBRE_REPRESENTANTE
+from contratos_ordenes_compras con
+    inner join resoluciones_adjudicativas res on res.id_resolucion_adj = con.id_resolucion_adj
+    inner join participantes par on res.id_participante = par.id_participante
+    inner join oferta_bienes_servicios ofe on par.id_oferta = ofe.id_oferta
+    inner join detalle_proceso_adq det on ofe.id_det_proceso_adq = det.id_det_proceso_adq
+    inner join rubros_amostrar_interes rub on rub.id_rubro_interes = det.id_rubro_adq
+    inner join proceso_adquisicion pro on det.id_proceso_adq = pro.id_proceso_adq
+    inner join anho on  anho.id_anho = pro.id_anho
+    inner join vw_catalogo_entidad_educativa vw on vw.codigo_entidad = ofe.codigo_Entidad
+    inner join empresa emp on emp.id_empresa = par.id_empresa
+    inner join persona per on per.id_persona = emp.id_persona
+where con.id_contrato = $P{pIdContrato}]]>
+	</queryString>
+	<field name="NUMERO_CONTRATO" class="java.lang.String"/>
+	<field name="DESCRIPCION_RUBRO" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="CODIGO_ENTIDAD" class="java.lang.String"/>
+	<field name="PLAZO_PREVISTO_ENTREGA" class="java.math.BigDecimal"/>
+	<field name="ANHO" class="java.lang.String"/>
+	<field name="MIEMBRO_FIRMA" class="java.lang.String"/>
+	<field name="NOMBRE_REPRESENTANTE" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<image hAlign="Right">
+				<reportElement uuid="a3a21642-5656-4bc8-9f47-63ca6738e700" key="image-2" x="389" y="10" width="149" height="60"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{ubicacionImagenes} +File.separator+ "logo_mined_rpt.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement uuid="d662ed9c-377b-4d74-87d4-2293e65456b4" key="image-1" x="10" y="10" width="60" height="60"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo_rpt.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement uuid="5843cd26-1ae0-4edd-ac6d-bac74c0c756d" key="staticText-5" x="93" y="10" width="298" height="66"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ORDEN DE INICIO\n"+$F{DESCRIPCION_RUBRO}+" "+$F{ANHO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="6ae493c4-d3f3-483d-ad19-54ca567ef0a7" x="236" y="4" width="319" height="14"/>
+				<textElement/>
+				<text><![CDATA[Lugar y fecha: _________________________ de ___________ 20__]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="5" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="89" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="004f63a0-9b2a-443d-8bb3-af68cf23ab5f" x="10" y="0" width="528" height="89" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["Señor(a) proveedor/a: "+$F{NOMBRE_REPRESENTANTE}+"\nPresente.-\n\n"
+.concat("Hago referencia al contrato No. "+$F{NUMERO_CONTRATO}+" de "+$F{DESCRIPCION_RUBRO}+" AÑO "+$F{ANHO}+" suscrito entre: a) el Representante legal del Organismo de Administración Escolar del Centro Educativo: "+$F{NOMBRE}+" código  "+$F{CODIGO_ENTIDAD}+"; y b) su persona como contratista.\n\n")
+.concat("Al respecto le comunico que, a partir del día _____ de ____________ del dos mil veintiuno, se da inicio al plazo de "+$F{PLAZO_PREVISTO_ENTREGA}+" - DÍAS CALENDARIO para la ejecución del referido contrato, teniendo como fecha de finalización el día _______ de _____________ del dos mil veintiuno.\n\n")
+.concat("No omito manifestarle que, en su calidad de contratista, deberá estrictamente hacer entrega de las cantidades de bienes según el contrato o modificaciones si las hubiere. Si hubiere necesidad de algún cambio en el mismo, éste será ordenado formal y oficialmente por el Organismo de Administración Escolar de manera escrita.\n\n")
+.concat("Si realiza entregas de bienes por cantidades diferentes sin esa orden previa, el Organismo de Administración Escolar no asume ninguna responsabilidad sobre el pago adicional que esto conlleve, es decir será bajo su responsabilidad y riesgo.")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="7" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="129" splitType="Stretch">
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="e9f1de7c-ed35-405b-8724-dccf383f8a4d" key="textField-4" x="22" y="70" width="233" height="42"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MIEMBRO_FIRMA}+
+"\nFirma representante legal del\nOrganismo de Admón. Escolar"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement uuid="ba878810-84e8-480c-8004-d115a19cedbf" key="textField-5" x="305" y="70" width="233" height="52"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_REPRESENTANTE}+
+"\nFirma del contratista\nSello(si aplica)"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="18af7cef-8595-4f59-ab66-a70c2575ae1c" key="staticText-5" x="293" y="54" width="14" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[F.:]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="0e260beb-3753-4139-bcb7-00780f5ed128" key="line-1" x="24" y="66" width="168" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="6d0e9280-7bd1-49d0-8bd7-f4c97448a439" key="line-2" x="307" y="66" width="168" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="a364ab06-2bfd-4dd0-9dcf-6d51a56a9682" key="staticText-1" x="10" y="54" width="14" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[F.:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a364ab06-2bfd-4dd0-9dcf-6d51a56a9682" key="staticText-1" x="10" y="0" width="60" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[ENTREGA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a364ab06-2bfd-4dd0-9dcf-6d51a56a9682" key="staticText-1" x="293" y="0" width="60" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[RECIBE:]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

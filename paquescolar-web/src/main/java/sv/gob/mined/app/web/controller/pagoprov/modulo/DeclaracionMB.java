@@ -80,18 +80,20 @@ public class DeclaracionMB implements Serializable {
                     proceso = proceso.getPadreIdProcesoAdq();
                 }
                 capacidadInst = proveedorEJB.findDetProveedor(proceso, empresa, CapaInstPorRubro.class);
-                detalleProcesoAdq = capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq();
-                aceptarCondiciones = (capacidadInst.getIdMuestraInteres().getDatosVerificados() == 1);
-                aceptarDeclaracion = (capacidadInst.getIdMuestraInteres().getAceptacionTerminos() == 1);
+                if (capacidadInst != null) {
+                    detalleProcesoAdq = capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq();
+                    aceptarCondiciones = (capacidadInst.getIdMuestraInteres().getDatosVerificados() == 1);
+                    aceptarDeclaracion = (capacidadInst.getIdMuestraInteres().getAceptacionTerminos() == 1);
 
-                cabecera = MessageFormat.format(UTIL_CORREO.getString("prov.declaracion.cabecera"),
-                        capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getDescripcionRubro(),
-                        anho.getAnho());
-                detalle = MessageFormat.format(UTIL_CORREO.getString("prov.declaracion.detalle"),
-                        capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getDescripcionRubro(),
-                        empresa.getIdPersona().getEmail(),
-                        empresa.getDireccionCompleta().concat(", ").concat(empresa.getIdMunicipio().getNombreMunicipio()).concat(", ").concat(empresa.getIdMunicipio().getCodigoDepartamento().getNombreDepartamento()),
-                        capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho());
+                    cabecera = MessageFormat.format(UTIL_CORREO.getString("prov.declaracion.cabecera"),
+                            capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getDescripcionRubro(),
+                            anho.getAnho());
+                    detalle = MessageFormat.format(UTIL_CORREO.getString("prov.declaracion.detalle"),
+                            capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getDescripcionRubro(),
+                            empresa.getIdPersona().getEmail(),
+                            empresa.getDireccionCompleta().concat(", ").concat(empresa.getIdMunicipio().getNombreMunicipio()).concat(", ").concat(empresa.getIdMunicipio().getCodigoDepartamento().getNombreDepartamento()),
+                            capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho());
+                }
             }
         }
     }

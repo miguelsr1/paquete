@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package sv.gob.mined.paquescolar.ejb;
 
 import java.math.BigInteger;
@@ -16,10 +12,6 @@ import javax.persistence.Query;
 import sv.gob.mined.paquescolar.model.Canton;
 import sv.gob.mined.paquescolar.model.Municipio;
 
-/**
- *
- * @author misanchez
- */
 @Stateless
 @LocalBean
 public class UtilEJB {
@@ -69,13 +61,16 @@ public class UtilEJB {
     public List<SelectItem> getLstDocumentosImp(Boolean uniforme) {
         if (lstDocumentosImp.isEmpty()) {
             //Id son los mismos que estan el la tabla TIPO_RPT
-            lstDocumentosImp.add(new SelectItem(3, "Acta Adjudicación"));
-            lstDocumentosImp.add(new SelectItem(4, "Nota Adjudicación"));
-            lstDocumentosImp.add(new SelectItem(9, "Acta de Recomendación"));
-            lstDocumentosImp.add(new SelectItem(10, "Declaración Adjudicatorio"));
-            lstDocumentosImp.add(new SelectItem(8, "Cotización"));
+            lstDocumentosImp.add(new SelectItem(12, "Orden de Inicio"));
             lstDocumentosImp.add(new SelectItem(7, "Contrato"));
             lstDocumentosImp.add(new SelectItem(5, "Garantía Contrato"));
+            lstDocumentosImp.add(new SelectItem(4, "Nota Adjudicación"));
+            lstDocumentosImp.add(new SelectItem(3, "Acta Adjudicación"));
+            lstDocumentosImp.add(new SelectItem(10, "Declaración Adjudicatorio"));
+            lstDocumentosImp.add(new SelectItem(13, "Acta de Recomendación"));
+            lstDocumentosImp.add(new SelectItem(2, "Cotización"));
+            lstDocumentosImp.add(new SelectItem(11, "Oferta Global del Proveedor"));
+
         }
         if (uniforme) {
             if (!lstDocumentosImp.contains(garantiaUsoTela)) {
@@ -118,8 +113,8 @@ public class UtilEJB {
             return 0;
         }
     }
-    
-    public List<String> getLstCcPagoByCodDepa(String codigoDepartamento){
+
+    public List<String> getLstCcPagoByCodDepa(String codigoDepartamento) {
         Query q = em.createQuery("SELECT l.cuentaCorreo FROM ListaNotificacionPago l wHERE l.codigoDepartamento=:codDepa and l.activo=1");
         q.setParameter("codDepa", codigoDepartamento);
         return q.getResultList();

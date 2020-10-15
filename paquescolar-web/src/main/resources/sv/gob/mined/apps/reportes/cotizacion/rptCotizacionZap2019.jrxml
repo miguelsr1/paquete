@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptActaAdjudicacion" pageWidth="612" pageHeight="792" columnWidth="544" leftMargin="34" rightMargin="34" topMargin="34" bottomMargin="34" uuid="103cf057-2364-40f0-b590-3a80879be545">
 	<property name="ireport.zoom" value="1.2100000000000013"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="19"/>
+	<property name="ireport.y" value="190"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -226,111 +226,111 @@
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleOferta})]]></dataSourceExpression>
 					</datasetRun>
 					<jr:columnGroup width="440" uuid="de8520f7-e902-4a0d-86b2-ae9d8cc613c9">
-						<jr:columnFooter style="table 2_TD" height="30" rowSpan="1">
+						<jr:columnFooter style="table 2_TD" height="24" rowSpan="1">
 							<staticText>
-								<reportElement uuid="ff581dd2-9650-4fae-8ba9-0a5fb40c332d" x="0" y="0" width="440" height="30"/>
+								<reportElement uuid="ff581dd2-9650-4fae-8ba9-0a5fb40c332d" x="0" y="0" width="440" height="21"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font fontName="Arial" size="8"/>
 								</textElement>
 								<text><![CDATA[TOTAL US$]]></text>
 							</staticText>
 						</jr:columnFooter>
 						<jr:column width="31" uuid="37d0bd42-4fff-41e5-9bf7-4c708c7b45ac">
-							<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
+							<jr:columnHeader style="table 2_TD" height="25" rowSpan="1">
 								<staticText>
-									<reportElement uuid="c74820ee-bfdd-470f-bae8-b666ada7badf" x="0" y="0" width="31" height="30"/>
+									<reportElement uuid="c74820ee-bfdd-470f-bae8-b666ada7badf" x="0" y="0" width="31" height="25"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<text><![CDATA[ITEM]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<jr:detailCell style="table 2_TD" height="14" rowSpan="1">
 								<textField>
-									<reportElement uuid="91f07764-1851-4467-82c2-4d76342d57a3" x="0" y="0" width="31" height="20"/>
+									<reportElement uuid="91f07764-1851-4467-82c2-4d76342d57a3" x="0" y="0" width="31" height="14"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="7"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{noItemInt}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="166" uuid="a4b96dc3-b557-44df-bb41-baceb277478d">
-							<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
+							<jr:columnHeader style="table 2_TD" height="25" rowSpan="1">
 								<staticText>
-									<reportElement uuid="35277531-c467-49c3-a52f-5d63f7c40f6b" x="0" y="0" width="166" height="30"/>
+									<reportElement uuid="35277531-c467-49c3-a52f-5d63f7c40f6b" x="0" y="0" width="166" height="25"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<text><![CDATA[DESCRIPCION]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<jr:detailCell style="table 2_TD" height="14" rowSpan="1">
 								<textField>
-									<reportElement uuid="9e839bc6-d930-4dbb-ae81-ba9f63a8f998" x="2" y="0" width="164" height="20"/>
+									<reportElement uuid="9e839bc6-d930-4dbb-ae81-ba9f63a8f998" x="2" y="0" width="164" height="14"/>
 									<textElement verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="7"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{nombreProducto}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="81" uuid="94082a07-d983-44e9-81b5-7acfc9f27b00">
-							<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
+							<jr:columnHeader style="table 2_TD" height="25" rowSpan="1">
 								<staticText>
-									<reportElement uuid="84068779-e922-4f09-9547-598d1e87cb60" x="0" y="0" width="80" height="30"/>
+									<reportElement uuid="84068779-e922-4f09-9547-598d1e87cb60" x="0" y="0" width="80" height="25"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<text><![CDATA[CANTIDAD SOLICITADA]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<jr:detailCell style="table 2_TD" height="14" rowSpan="1">
 								<textField pattern="#,##0;(-#,##0)">
-									<reportElement uuid="bc6ea4ff-28e0-411c-a1f6-a2eee29b0a04" x="0" y="0" width="78" height="20"/>
+									<reportElement uuid="bc6ea4ff-28e0-411c-a1f6-a2eee29b0a04" x="0" y="0" width="78" height="14"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="7"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="82" uuid="af69baba-5d69-4158-9908-c13db17a5b08">
-							<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
+							<jr:columnHeader style="table 2_TD" height="25" rowSpan="1">
 								<staticText>
-									<reportElement uuid="6a59e292-7149-4f56-ac0e-ce1d371f22f2" x="1" y="0" width="80" height="30"/>
+									<reportElement uuid="6a59e292-7149-4f56-ac0e-ce1d371f22f2" x="1" y="0" width="80" height="25"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<text><![CDATA[CANTIDAD OFERTADA]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<jr:detailCell style="table 2_TD" height="14" rowSpan="1">
 								<textField pattern="#,##0;(-#,##0)">
-									<reportElement uuid="c5f24336-e630-4744-932f-bd5f4c2b2a57" x="1" y="0" width="78" height="20"/>
+									<reportElement uuid="c5f24336-e630-4744-932f-bd5f4c2b2a57" x="1" y="0" width="78" height="14"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="7"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="80" uuid="7066975a-7d1d-450e-9a05-e93d800ed83d">
-							<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
+							<jr:columnHeader style="table 2_TD" height="25" rowSpan="1">
 								<staticText>
-									<reportElement uuid="3c57fd32-19e6-4005-a1fe-6f8d1b2f846e" x="0" y="0" width="80" height="30"/>
+									<reportElement uuid="3c57fd32-19e6-4005-a1fe-6f8d1b2f846e" x="0" y="0" width="80" height="25"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="8"/>
 									</textElement>
 									<text><![CDATA[PRECIO
 UNITARIO]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<jr:detailCell style="table 2_TD" height="14" rowSpan="1">
 								<textField pattern="#,##0.00;(#,##0.00)">
-									<reportElement uuid="5f604983-e75c-41b8-9847-48380e3d0af2" x="0" y="0" width="78" height="20"/>
+									<reportElement uuid="5f604983-e75c-41b8-9847-48380e3d0af2" x="0" y="0" width="78" height="14"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="9"/>
+										<font fontName="Arial" size="7"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{precioUnitario}]]></textFieldExpression>
 								</textField>
@@ -338,29 +338,29 @@ UNITARIO]]></text>
 						</jr:column>
 					</jr:columnGroup>
 					<jr:column width="80" uuid="d67cb170-2ee7-4b0a-a60a-636b698f3ce6">
-						<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
+						<jr:columnHeader style="table 2_TD" height="25" rowSpan="1">
 							<staticText>
-								<reportElement uuid="1df311f5-ffc6-43a5-84ce-b5d234bdf273" x="0" y="0" width="80" height="30"/>
+								<reportElement uuid="1df311f5-ffc6-43a5-84ce-b5d234bdf273" x="0" y="0" width="80" height="25"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font fontName="Arial" size="8"/>
 								</textElement>
 								<text><![CDATA[PRECIO TOTAL]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:columnFooter style="table 2_TD" height="30" rowSpan="1">
+						<jr:columnFooter style="table 2_TD" height="24" rowSpan="1">
 							<textField pattern="#,##0.00;#,##0.00-">
-								<reportElement uuid="e36d9665-9c17-4627-aeaf-2acea5a0a8d7" x="0" y="0" width="78" height="30"/>
+								<reportElement uuid="e36d9665-9c17-4627-aeaf-2acea5a0a8d7" x="0" y="0" width="78" height="21"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font fontName="Arial" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$V{TOTAL}]]></textFieldExpression>
 							</textField>
 						</jr:columnFooter>
-						<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+						<jr:detailCell style="table 2_TD" height="14" rowSpan="1">
 							<textField pattern="#,##0.00;(#,##0.00)">
-								<reportElement uuid="916b2d29-6e52-4eef-a165-eb5407c7daa0" x="0" y="0" width="78" height="20"/>
+								<reportElement uuid="916b2d29-6e52-4eef-a165-eb5407c7daa0" x="0" y="0" width="78" height="14"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font fontName="Arial" size="7"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{precioUnitario}.multiply(new java.math.BigDecimal($F{cantidad}))]]></textFieldExpression>
 							</textField>

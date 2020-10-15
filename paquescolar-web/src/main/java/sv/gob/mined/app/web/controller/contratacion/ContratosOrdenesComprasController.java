@@ -27,7 +27,6 @@ import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
-import org.primefaces.PrimeFaces;
 import sv.gob.mined.app.web.controller.ParametrosMB;
 import sv.gob.mined.app.web.util.Bean2Excel;
 import sv.gob.mined.app.web.util.JsfUtil;
@@ -41,9 +40,11 @@ import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
 import sv.gob.mined.paquescolar.ejb.ResolucionAdjudicativaEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
+import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.DetalleOfertas;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
+import sv.gob.mined.paquescolar.model.Empresa;
 import sv.gob.mined.paquescolar.model.HistorialCamEstResAdj;
 import sv.gob.mined.paquescolar.model.OfertaBienesServicios;
 import sv.gob.mined.paquescolar.model.OrganizacionEducativa;
@@ -456,17 +457,6 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                 }
             }
         }
-
-        lstSelectDocumentosImp.add(3);
-        lstSelectDocumentosImp.add(4);
-        lstSelectDocumentosImp.add(9);
-        lstSelectDocumentosImp.add(8);
-        lstSelectDocumentosImp.add(7);
-        lstSelectDocumentosImp.add(5);
-
-        if (showGarantiaUsoTela) {
-            lstSelectDocumentosImp.add(6);
-        }
     }
 
     public boolean getEENuevo() {
@@ -706,6 +696,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                             setPlazoPrevistoEntrega();
 
                                             current.setMiembroFirma(representanteCe.getNombreMiembro());
+                                            seleccionarDocumentosAImprimir();
                                         }
                                     }
                                 } else {
@@ -733,6 +724,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                         if (current.getPlazoPrevistoEntrega() == null) {
                                             setPlazoPrevistoEntrega();
                                         }
+                                        seleccionarDocumentosAImprimir();
                                         break;
                                     default:
                                         JsfUtil.mensajeAlerta("La reserva de fondos NO ESTA APLICADA.");
@@ -753,6 +745,26 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                     }
                 }
             }
+        }
+    }
+
+    private void seleccionarDocumentosAImprimir() {
+        if (detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 8) {
+            lstSelectDocumentosImp.add(12);
+        }
+        lstSelectDocumentosImp.add(7);
+        lstSelectDocumentosImp.add(5);
+        lstSelectDocumentosImp.add(4);
+        lstSelectDocumentosImp.add(3);
+        lstSelectDocumentosImp.add(10);
+        lstSelectDocumentosImp.add(13);
+        lstSelectDocumentosImp.add(2);
+        if (detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 8) {
+            lstSelectDocumentosImp.add(11);
+        }
+
+        if (showGarantiaUsoTela) {
+            lstSelectDocumentosImp.add(6);
         }
     }
 
@@ -795,8 +807,10 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
         ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
 
         param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
-        param.put("pEncargadoDeCompras",entidadEducativaEJB.getEncargadoDeCompras(codigoEntidad).getNombreMiembro());
+        param.put("pEncargadoDeCompras", entidadEducativaEJB.getEncargadoDeCompras(codigoEntidad).getNombreMiembro());
+        param.put("pMiembro", entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad).getNombreMiembro());
         param.put("pEmail", current.getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdPersona().getEmail());
+        param.put("pNumContrato", "ME-" + current.getNumeroContrato() + "/" + detalleProceso.getIdProcesoAdq().getIdAnho().getAnho() + "/COD:" + codigoEntidad);
         sobredemanda = detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("SOBREDEMANDA");
 
         for (RptDocumentos rptDoc : lstRptDocumentos) {
@@ -806,6 +820,20 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
             switch (rptDoc.getDs()) {
                 case 0://JRBeanColletions
                     switch (rptDoc.getIdTipoRpt().getIdTipoRpt()) {
+                        case 2://Solicitud de Cotizacion
+                            String anho = "";
+                            List<VwCotizacion> lst = ofertaBienesServiciosEJB.getLstCotizacion(VarSession.getNombreMunicipioSession(), codigoEntidad, detalleProceso, participante);
+
+                            //Para contratos antes de 2016, se tomara los formatos de rpt que no incluyen el año en el nombre del archivo jasper
+                            if (Integer.parseInt(detalleProceso.getIdProcesoAdq().getIdAnho().getAnho()) > 2016) {
+                                anho = detalleProceso.getIdProcesoAdq().getIdAnho().getAnho();
+                            }
+
+                            param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda);
+                            rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + anho + ".jasper"), lst);
+                            lstRptAImprimir.add(rptTemp);
+
+                            break;
                         case 3://Acta Adjudicacion
                             if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
                                 param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
@@ -857,6 +885,23 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                             nombreRpt = rptDoc.getNombreRpt().concat(perNatural ? "Nat" : "Jur");
                             rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(nombreRpt + ".jasper"), resolucionAdjudicativaEJB.generarContrato(current, current.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
                             lstRptAImprimir.add(rptTemp);
+                            lstRptAImprimir.add(rptTemp);
+                            break;
+                        case 11: //oferta Global
+                            Empresa emp = resolucionAdj.getIdParticipante().getIdEmpresa();
+                            CapaInstPorRubro capacidadInst = proveedorEJB.findDetProveedor(detalleProceso.getIdProcesoAdq(), emp, CapaInstPorRubro.class);
+
+                            lstRptAImprimir.addAll(Reportes.getReporteOfertaDeProveedor(capacidadInst, resolucionAdj.getIdParticipante().getIdEmpresa(), detalleProceso,
+                                    reportesEJB.getLstOfertaGlobal(resolucionAdj.getIdParticipante().getIdEmpresa().getNumeroNit(), detalleProceso.getIdDetProcesoAdq(), detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue()),
+                                    reportesEJB.getDeclaracionJurada(resolucionAdj.getIdParticipante().getIdEmpresa(), detalleProceso, VarSession.getNombreMunicipioSession())));
+                            break;
+                        case 13://Acta de recomendacion
+                            param.put("pPorcentajeCapa", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "25" : "35");
+                            param.put("pPorcentajeGeo", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "35" : "25");
+                            param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES + "notasactas") + File.separator);
+
+                            rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptActaRecomendacion(current.getIdResolucionAdj().getIdResolucionAdj()));
+
                             lstRptAImprimir.add(rptTemp);
                             break;
                     }
@@ -928,33 +973,25 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                             lstRptAImprimir.add(rptTemp);
                             lstRptAImprimir.add(rptTemp);
                             break;
+                        case 12:
+                            param.put("pIdContrato", current.getIdContrato());
+                            rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + ".jasper"));
+
+                            lstRptAImprimir.add(rptTemp);
+                            break;
                     }
                     break;
             }
         }
 
         //verificar selección de cotización
-        for (Object valor : lstSelectDocumentosImp) {
+        /*for (Object valor : lstSelectDocumentosImp) {
             if (valor instanceof String && valor.equals("8")) {
                 current.getIdResolucionAdj().getIdParticipante().getIdOferta().getParticipantesList().forEach((par) -> {
                     lstRptAImprimir.add(rptCotizacion(par));
                 });
             }
-            if (valor instanceof String && valor.equals("9")) {
-
-                param.put("pPorcentajeCapa", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "25" : "35");
-                param.put("pPorcentajeGeo", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "35" : "25");
-                param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES + "notasactas") + File.separator);
-
-                rptTemp = reportesEJB.getRpt(param,
-                        ContratosOrdenesComprasController.class.getClassLoader().
-                                getResourceAsStream("sv/gob/mined/apps/reportes/notasactas/rptProveedoresPorcentajeEval.jasper"),
-                        resolucionAdjudicativaEJB.generarRptActaRecomendacion(current.getIdResolucionAdj().getIdResolucionAdj()));
-
-                lstRptAImprimir.add(rptTemp);
-            }
-        }
-
+        }*/
         return lstRptAImprimir;
     }
 
