@@ -401,8 +401,9 @@ public class ProveedorEJB {
 
     public Boolean guardarCapaInst(CapaDistribucionAcre capaDistribucionAcre, CapaInstPorRubro capaInstPorRubro) {
         try {
-            Query query = em.createQuery("UPDATE CapaInstPorRubro c SET c.capacidadAcreditada = :capaCalificada WHERE c.idMuestraInteres.idEmpresa.idEmpresa = :idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idAnho.idAnho = :idAnho ");
+            Query query = em.createQuery("UPDATE CapaInstPorRubro c SET c.capacidadAcreditada = :capaCalificada, c.capacidadPropuesta=:capaPropuesta WHERE c.idMuestraInteres.idEmpresa.idEmpresa = :idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idAnho.idAnho = :idAnho ");
             query.setParameter("capaCalificada", capaInstPorRubro.getCapacidadAcreditada());
+            query.setParameter("capaPropuesta", capaInstPorRubro.getCapacidadPropuesta());
             query.setParameter("idEmpresa", capaInstPorRubro.getIdMuestraInteres().getIdEmpresa().getIdEmpresa());
             query.setParameter("idAnho", capaInstPorRubro.getIdMuestraInteres().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
 
