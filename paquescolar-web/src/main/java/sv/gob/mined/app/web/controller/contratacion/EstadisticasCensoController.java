@@ -892,6 +892,8 @@ public class EstadisticasCensoController implements Serializable {
                 
                 isProcesoAdq = false;
                 entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
+                
+                
 
                 if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() < 6) {//menor a 2018
                     detProAdqUni = JsfUtil.findDetalle(procesoAdquisicion, BigDecimal.ONE);

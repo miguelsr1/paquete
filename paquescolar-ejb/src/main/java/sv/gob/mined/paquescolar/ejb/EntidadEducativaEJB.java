@@ -16,6 +16,7 @@ import javax.ejb.LocalBean;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.StoredProcedureQuery;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.EstadisticaCenso;
 import sv.gob.mined.paquescolar.model.NivelEducativo;
@@ -37,6 +38,20 @@ public class EntidadEducativaEJB {
     private EntityManager em;
 
     public VwCatalogoEntidadEducativa getEntidadEducativa(String codigoEntidad) {
+        Query q = em.createQuery("SELECT v FROM VwCatalogoEntidadEducativa v WHERE v.codigoEntidad=:codigoEntidad", VwCatalogoEntidadEducativa.class);
+        q.setParameter("codigoEntidad", codigoEntidad);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (VwCatalogoEntidadEducativa) q.getSingleResult();
+        }
+    }
+    
+    public VwCatalogoEntidadEducativa getEntidadEducativaEstadistica(String codigoEntidad) {
+        StoredProcedureQuery sp = em.createNamedStoredProcedureQuery("SP_ACTUALIZAR_EST2021");
+        sp.setParameter("V_CODIGO_ENTIDAD", codigoEntidad);
+        sp.execute();
+        
         Query q = em.createQuery("SELECT v FROM VwCatalogoEntidadEducativa v WHERE v.codigoEntidad=:codigoEntidad", VwCatalogoEntidadEducativa.class);
         q.setParameter("codigoEntidad", codigoEntidad);
         if (q.getResultList().isEmpty()) {
