@@ -43,7 +43,7 @@ import org.eclipse.persistence.annotations.StoredProcedureParameter;
         procedureName = "SP_ACTUALIZAR_EST2021",
         returnsResultSet = false,
         parameters = {
-            @StoredProcedureParameter(mode =  ParameterMode.IN, type = BigDecimal.class, name = "V_CODIGO_ENTIDAD", queryParameter = "V_CODIGO_ENTIDAD")
+            @StoredProcedureParameter(mode =  ParameterMode.IN, type = String.class, name = "V_CODIGO_ENTIDAD", queryParameter = "V_CODIGO_ENTIDAD")
         }
 )
 public class EstadisticaCenso implements Serializable {
