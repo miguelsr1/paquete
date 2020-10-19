@@ -822,18 +822,20 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                 case 0://JRBeanColletions
                     switch (rptDoc.getIdTipoRpt().getIdTipoRpt()) {
                         case 2://Solicitud de Cotizacion
+
                             String anho = "";
-                            List<VwCotizacion> lst = ofertaBienesServiciosEJB.getLstCotizacion(VarSession.getNombreMunicipioSession(), codigoEntidad, detalleProceso, current.getIdResolucionAdj().getIdParticipante());
+                            for (Participantes par : current.getIdResolucionAdj().getIdParticipante().getIdOferta().getParticipantesList()) {
+                                List<VwCotizacion> lst = ofertaBienesServiciosEJB.getLstCotizacion(VarSession.getNombreMunicipioSession(), codigoEntidad, detalleProceso, par);
 
-                            //Para contratos antes de 2016, se tomara los formatos de rpt que no incluyen el año en el nombre del archivo jasper
-                            if (Integer.parseInt(detalleProceso.getIdProcesoAdq().getIdAnho().getAnho()) > 2016) {
-                                anho = detalleProceso.getIdProcesoAdq().getIdAnho().getAnho();
+                                //Para contratos antes de 2016, se tomara los formatos de rpt que no incluyen el año en el nombre del archivo jasper
+                                if (Integer.parseInt(detalleProceso.getIdProcesoAdq().getIdAnho().getAnho()) > 2016) {
+                                    anho = detalleProceso.getIdProcesoAdq().getIdAnho().getAnho();
+                                }
+
+                                param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda);
+                                rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + anho + ".jasper"), lst);
+                                lstRptAImprimir.add(rptTemp);
                             }
-
-                            param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda);
-                            rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + anho + ".jasper"), lst);
-                            lstRptAImprimir.add(rptTemp);
-
                             break;
                         case 3://Acta Adjudicacion
                             if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
