@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptActaAdjudicacion" pageWidth="612" pageHeight="792" columnWidth="528" leftMargin="42" rightMargin="42" topMargin="39" bottomMargin="39" uuid="244b56df-7b1c-4fca-9e9d-dde2f9b172eb">
 	<property name="ireport.zoom" value="1.3636363636363658"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="49"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -336,7 +336,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<staticText>
 									<reportElement x="0" y="0" width="221" height="14" uuid="8b885572-323c-4d3e-9de2-5716ca86acf6"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8" isBold="true"/>
+										<font fontName="Arial" size="6" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Proveedor]]></text>
 								</staticText>
@@ -345,7 +345,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<textField isStretchWithOverflow="true">
 									<reportElement x="2" y="0" width="217" height="12" uuid="f8269411-1d4b-473c-a41c-fc159328b9aa"/>
 									<textElement verticalAlignment="Middle">
-										<font fontName="Arial" size="7"/>
+										<font fontName="Arial" size="6"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{razonSocial}]]></textFieldExpression>
 								</textField>
@@ -356,7 +356,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<staticText>
 									<reportElement x="0" y="0" width="65" height="14" uuid="74f4bacf-8432-4132-bd01-b4d4a527cd46"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8" isBold="true"/>
+										<font fontName="Arial" size="6" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Precio (%)]]></text>
 								</staticText>
@@ -365,7 +365,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<textField>
 									<reportElement x="0" y="0" width="65" height="12" uuid="f16d5b8d-4cc0-44e4-abe3-b8d14fca6eb9"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="7"/>
+										<font fontName="Arial" size="6"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{porcentajePrecio}]]></textFieldExpression>
 								</textField>
@@ -376,7 +376,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<staticText>
 									<reportElement x="0" y="0" width="80" height="14" uuid="f74edbb3-7396-4777-854a-ea8ed93bb06f"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8" isBold="true"/>
+										<font fontName="Arial" size="6" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Ubicación (%)]]></text>
 								</staticText>
@@ -385,7 +385,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<textField>
 									<reportElement x="0" y="0" width="80" height="12" uuid="a9d3d00a-6b8f-4fdb-aafc-f5fbe344fa8b"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="7"/>
+										<font fontName="Arial" size="6"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{porcentajeGeo}]]></textFieldExpression>
 								</textField>
@@ -396,7 +396,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<staticText>
 									<reportElement x="0" y="0" width="80" height="14" uuid="04b062f5-25ce-4361-bb1a-3abd81c88d88"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8" isBold="true"/>
+										<font fontName="Arial" size="6" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Capacidad (%)]]></text>
 								</staticText>
@@ -405,7 +405,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<textField>
 									<reportElement x="0" y="0" width="80" height="12" uuid="fd09ef3c-c8ad-4898-ab33-3e0cfae7d438"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="7"/>
+										<font fontName="Arial" size="6"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{porcentajeCapacidad}]]></textFieldExpression>
 								</textField>
@@ -416,7 +416,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<staticText>
 									<reportElement x="0" y="0" width="60" height="14" uuid="1be6a63f-a230-4039-9d96-436ce756538d"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="8" isBold="true"/>
+										<font fontName="Arial" size="6" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Total (%)]]></text>
 								</staticText>
@@ -425,7 +425,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<textField>
 									<reportElement x="0" y="0" width="60" height="12" uuid="c59ca1a0-535d-41ce-979b-ff3549653832"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="7"/>
+										<font fontName="Arial" size="6"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{porcentajeEvaluacion}]]></textFieldExpression>
 								</textField>
@@ -461,7 +461,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 							<staticText>
 								<reportElement x="0" y="0" width="441" height="14" uuid="f6a8fa4c-1f22-43af-ad07-611557408d4a"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial" size="7" isBold="true"/>
+									<font fontName="Arial" size="6" isBold="true"/>
 								</textElement>
 								<text><![CDATA[Total Contratado]]></text>
 							</staticText>
@@ -471,7 +471,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<staticText>
 									<reportElement style="table_TD" x="0" y="0" width="30" height="25" uuid="d9bd5363-949d-464a-9e3c-ce813ed4cada"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="7" isBold="true"/>
+										<font fontName="Arial" size="6" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Items]]></text>
 								</staticText>
@@ -480,7 +480,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<textField>
 									<reportElement x="0" y="0" width="30" height="12" uuid="4a652520-d699-47fa-924b-1fb631dfbf9d"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="7"/>
+										<font fontName="Arial" size="6"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{noItem}]]></textFieldExpression>
 								</textField>
@@ -491,7 +491,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<staticText>
 									<reportElement style="table_TD" x="0" y="0" width="171" height="25" uuid="0ecb4e19-3c21-4894-a5e5-d4aa060d491b"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="7" isBold="true"/>
+										<font fontName="Arial" size="6" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Descripción del Item]]></text>
 								</staticText>
@@ -500,7 +500,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<textField isStretchWithOverflow="true">
 									<reportElement x="1" y="0" width="168" height="12" uuid="768f2f9e-465e-4e48-88b4-3fd152343936"/>
 									<textElement verticalAlignment="Middle">
-										<font fontName="Arial" size="7"/>
+										<font fontName="Arial" size="6"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{consolidadoEspTec}]]></textFieldExpression>
 								</textField>
@@ -511,7 +511,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<staticText>
 									<reportElement style="table_TD" x="0" y="0" width="221" height="25" uuid="bf4be4ce-3f8e-4ecd-868a-6f449b815190"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="7" isBold="true"/>
+										<font fontName="Arial" size="6" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Proveedor]]></text>
 								</staticText>
@@ -520,7 +520,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<textField isStretchWithOverflow="true">
 									<reportElement x="1" y="0" width="219" height="12" isPrintWhenDetailOverflows="true" uuid="5c66973d-9700-4ed5-a186-2850ef9375ed"/>
 									<textElement verticalAlignment="Middle">
-										<font fontName="Arial" size="7"/>
+										<font fontName="Arial" size="6"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{razonSocial}]]></textFieldExpression>
 								</textField>
@@ -531,7 +531,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<staticText>
 									<reportElement style="table_TD" x="0" y="0" width="28" height="25" uuid="e9800902-5961-42af-a26f-5ac9d2f80442"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="7" isBold="true"/>
+										<font fontName="Arial" size="6" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Cant.]]></text>
 								</staticText>
@@ -540,7 +540,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<textField>
 									<reportElement x="0" y="0" width="26" height="12" uuid="4702aba6-0b62-47d6-a1ba-706e289e1994"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="7"/>
+										<font fontName="Arial" size="6"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
 								</textField>
@@ -551,7 +551,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<staticText>
 									<reportElement style="table_TD" x="0" y="0" width="37" height="25" uuid="0099d48b-0136-4b4a-978c-1f926c05fe6a"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Arial" size="7" isBold="true"/>
+										<font fontName="Arial" size="6" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Pre. Unit. ($)]]></text>
 								</staticText>
@@ -560,7 +560,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 								<textField pattern="#,##0.00">
 									<reportElement x="0" y="0" width="35" height="12" uuid="09fe14bc-cc2c-412e-9637-441e289e5d7c"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Arial" size="7"/>
+										<font fontName="Arial" size="6"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{precioUnitario}]]></textFieldExpression>
 								</textField>
@@ -572,7 +572,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 							<staticText>
 								<reportElement style="table_TD" x="0" y="0" width="60" height="25" uuid="b422a6a8-17fb-40f6-8933-319bc21b18e8"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="7" isBold="true"/>
+									<font fontName="Arial" size="6" isBold="true"/>
 								</textElement>
 								<text><![CDATA[Pre. Total]]></text>
 							</staticText>
@@ -581,7 +581,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 							<textField pattern="#,##0.00">
 								<reportElement x="0" y="0" width="58" height="14" uuid="9866248b-6871-4d0c-9b0b-5cfcad74f202"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial" size="7"/>
+									<font fontName="Arial" size="6"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$V{V_TOTAL}]]></textFieldExpression>
 							</textField>
@@ -590,7 +590,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 							<textField pattern="#,##0.00">
 								<reportElement x="0" y="0" width="58" height="12" uuid="075785e9-fe0e-44e7-9338-810b85f9560e"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial" size="7"/>
+									<font fontName="Arial" size="6"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{subTotal}]]></textFieldExpression>
 							</textField>

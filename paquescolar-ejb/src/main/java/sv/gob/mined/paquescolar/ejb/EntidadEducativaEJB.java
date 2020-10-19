@@ -46,7 +46,7 @@ public class EntidadEducativaEJB {
             return (VwCatalogoEntidadEducativa) q.getSingleResult();
         }
     }
-    
+     
     public VwCatalogoEntidadEducativa getEntidadEducativaEstadistica(String codigoEntidad) {
         StoredProcedureQuery sp = em.createNamedStoredProcedureQuery("SP_ACTUALIZAR_EST2021");
         sp.setParameter("V_CODIGO_ENTIDAD", codigoEntidad);

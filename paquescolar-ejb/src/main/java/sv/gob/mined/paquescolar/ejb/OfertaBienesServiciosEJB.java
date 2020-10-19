@@ -206,13 +206,15 @@ public class OfertaBienesServiciosEJB {
     }
 
     public List<VwCotizacion> getLstCotizacion(String municipio, String codigoEntidad, DetalleProcesoAdq idProceso, Participantes participante) {
-        Query q = em.createNamedQuery("Contratacion.VwCotizacion", VwCotizacion.class);
-        q.setParameter(1, codigoEntidad);
-        q.setParameter(2, idProceso.getIdDetProcesoAdq());
-        q.setParameter(3, participante.getIdParticipante());
-
-        List<VwCotizacion> lstCotizacion = q.getResultList();
+        List<VwCotizacion> lstCotizacion= new ArrayList();
         try {
+            Query q = em.createNamedQuery("Contratacion.VwCotizacion", VwCotizacion.class);
+            q.setParameter(1, codigoEntidad);
+            q.setParameter(2, idProceso.getIdDetProcesoAdq());
+            q.setParameter(3, participante.getIdParticipante());
+
+            lstCotizacion = q.getResultList();
+
             VwCotizacion v = lstCotizacion.get(0);
 
             v.setLstDetalleOferta(new ArrayList());
@@ -258,7 +260,7 @@ public class OfertaBienesServiciosEJB {
                     v.getLstDetalleOferta().add(det);
                 }
             });
-        } catch (java.lang.ArrayIndexOutOfBoundsException e) {
+        } catch (Exception e) {
             Logger.getLogger(OfertaBienesServiciosEJB.class.getName()).log(Level.WARNING, "Error en la generacion de la cotizacion {0} {1} {2}", new Object[]{codigoEntidad, participante, idProceso});
         }
 

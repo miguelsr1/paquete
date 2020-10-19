@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="494ffdf3-e02c-4282-b47c-bedbea3a135e">
 	<property name="ireport.zoom" value="2.357947691000002"/>
 	<property name="ireport.x" value="71"/>
-	<property name="ireport.y" value="163"/>
+	<property name="ireport.y" value="147"/>
 	<parameter name="ubicacionImagenes" class="java.lang.String">
 		<defaultValueExpression><![CDATA["/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/"]]></defaultValueExpression>
 	</parameter>
@@ -59,7 +59,7 @@ where id_contrato = $P{idContrato}]]>
 	<title>
 		<band height="63" splitType="Stretch">
 			<image>
-				<reportElement uuid="484ea1c2-7c9a-49dd-ac57-1da8aeaa6934" key="image-1" x="0" y="0" width="60" height="60"/>
+				<reportElement key="image-1" x="0" y="0" width="60" height="60" uuid="484ea1c2-7c9a-49dd-ac57-1da8aeaa6934"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -69,7 +69,7 @@ where id_contrato = $P{idContrato}]]>
 				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo_rpt.png"]]></imageExpression>
 			</image>
 			<image hAlign="Right">
-				<reportElement uuid="e8fec606-a3d8-4009-9f61-58fcdbde6d0d" key="image-2" x="423" y="0" width="149" height="63"/>
+				<reportElement key="image-2" x="423" y="0" width="149" height="63" uuid="e8fec606-a3d8-4009-9f61-58fcdbde6d0d"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -83,7 +83,7 @@ where id_contrato = $P{idContrato}]]>
 	<pageHeader>
 		<band height="49" splitType="Stretch">
 			<textField>
-				<reportElement uuid="19876f79-7df9-4794-a033-eb3746e7c7dd" x="22" y="4" width="533" height="42"/>
+				<reportElement x="22" y="4" width="533" height="42" uuid="19876f79-7df9-4794-a033-eb3746e7c7dd"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA["DECLARACIÓN JURADA DE ADJUDICATARIO, DE NO INCURRIR EN LAS SITUACIONES DE INCAPACIDAD DEL ART. 25, NI INHABILIDADES DEL ART. 26, AMBOS DE LA LACAP"]]></textFieldExpression>
 			</textField>
@@ -95,12 +95,12 @@ where id_contrato = $P{idContrato}]]>
 	<detail>
 		<band height="47" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="bdafee93-0adf-43a4-b29b-4052dc81284b" x="22" y="0" width="533" height="47"/>
+				<reportElement x="22" y="0" width="533" height="47" uuid="bdafee93-0adf-43a4-b29b-4052dc81284b"/>
 				<textElement textAlignment="Justified" markup="styled">
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
 				<textFieldExpression><![CDATA["En el municipio de "+$F{CIUDAD_FIRMA}+" del Departamento de "+$F{NOMBRE_DEPARTAMENTO}+" a las "+$F{HORA}+" horas con "+$F{MINUTO}+" minutos del día "+$F{DIA}+
-", de "+$F{MES}+" de dos mil diecinueve, en las instalaciones del lugar destinado para la realización de las firma de documentos contractuales con número ME-"+$F{NUMERO_CONTRATO}+
+", de "+$F{MES}+" de dos mil veinte, en las instalaciones del lugar destinado para la realización de las firma de documentos contractuales con número ME-"+$F{NUMERO_CONTRATO}+
 " del rubro de "+$F{DESCRIPCION_RUBRO}+" "+$P{pAnho}+" del Programa de Dotación de Paquetes Escolares del Ministerio de Educación Ciencia y Tecnología; "+
 "yo "+$F{NOMBRE_PRESENTANTE}+" mayor de edad, con número de Documento Único de Identidad "+$F{NUMERO_DUI}+", actuando en mi calidad de adjudicatario(a) del"+
 " contrato antes referido para las entregas del año "+$P{pAnho}+" al Centro Educativo "+$F{NOMBRE}+" con código de infraestructura: "+$F{CODIGO_ENTIDAD}+
@@ -121,23 +121,19 @@ where id_contrato = $P{idContrato}]]>
 	<pageFooter>
 		<band height="60" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="160cc708-7a0c-43a3-9ace-ea49e159e4ac" x="22" y="0" width="512" height="15"/>
-				<textElement/>
+				<reportElement x="22" y="0" width="512" height="15" uuid="160cc708-7a0c-43a3-9ace-ea49e159e4ac"/>
 				<text><![CDATA[Firma de Persona Proveedora: _____________________________________________]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="a9c162c9-9b30-496d-b0e1-b810afdd01c8" x="22" y="15" width="512" height="15"/>
-				<textElement/>
+				<reportElement x="22" y="15" width="512" height="15" uuid="a9c162c9-9b30-496d-b0e1-b810afdd01c8"/>
 				<textFieldExpression><![CDATA["Nombre de la Persona Proveedora: " + $F{NOMBRE_PRESENTANTE}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="d3cf0a89-512a-498b-9f55-5b3b1582ab63" x="22" y="30" width="437" height="15"/>
-				<textElement/>
+				<reportElement x="22" y="30" width="437" height="15" uuid="d3cf0a89-512a-498b-9f55-5b3b1582ab63"/>
 				<textFieldExpression><![CDATA["No DUI: "+$F{NUMERO_DUI}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="c99b2154-eed0-4c3a-a9bf-c0bde0363cc9" x="22" y="45" width="437" height="15"/>
-				<textElement/>
+				<reportElement x="22" y="45" width="437" height="15" uuid="c99b2154-eed0-4c3a-a9bf-c0bde0363cc9"/>
 				<textFieldExpression><![CDATA["No NIT: "+$F{NUMERO_NIT}]]></textFieldExpression>
 			</textField>
 		</band>
