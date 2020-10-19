@@ -884,12 +884,44 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                                 + "2)<strong> Básica y Bachillerato</strong>: - Blusa, Falda y Camisa: $ 4.50 y Pantalon Corto y Pantalon: $ 6.00<br/>";
                         break;
                     case 2:
-                        msjError = "Precio Máximo de Referencia para: <br/>"
-                                + "1)<strong> Parvularia</strong>: $ " + preMaxRefPar.getPrecioMaxMas() + "<br/>"
-                                + "2)<strong> Primer Ciclo</strong>: $ " + preMaxRefCi.getPrecioMaxMas() + "<br/>"
-                                + "3)<strong> Segundo Ciclo</strong>: $ " + preMaxRefCii.getPrecioMaxMas() + "<br/>"
-                                + "4)<strong> Tercer Ciclo</strong>: $ " + preMaxRefCiii.getPrecioMaxMas() + "<br/>"
-                                + "5)<strong> Bachillerato: $ " + preMaxRefBac.getPrecioMaxMas() + "</strong>";
+                        if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() == 9) {
+                            switch (detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
+                                case 4:
+                                case 5:
+                                    msjError = "Precio Máximo de Referencia para: <br/>"
+                                            + "1)<strong> Parvularia</strong>: $ " + preMaxRefPar.getPrecioMaxMas() + "<br/>"
+                                            + "2)<strong> Primer Ciclo</strong>: $ " + preMaxRefCi.getPrecioMaxMas() + "<br/>"
+                                            + "3)<strong> Segundo Ciclo</strong>: $ " + preMaxRefCii.getPrecioMaxMas() + "<br/>"
+                                            + "4)<strong> Tercer Ciclo</strong>: $ " + preMaxRefCiii.getPrecioMaxMas() + "<br/>"
+                                            + "5)<strong> Bachillerato: $ " + preMaxRefBac.getPrecioMaxMas() + "</strong>";
+                                    break;
+                                case 2:
+                                    msjError = "Precio Máximo de Referencia para: <br/>"
+                                            + "1)<strong> Inicial y Parvularia</strong>: $ " + preMaxRefPar.getPrecioMaxMas() + "<br/>"
+                                            + "2)<strong> Primer Ciclo</strong>: $ " + preMaxRefCi.getPrecioMaxMas() + "<br/>"
+                                            + "3)<strong> Segundo Ciclo</strong>: $ " + preMaxRefCii.getPrecioMaxMas() + "<br/>"
+                                            + "4)<strong> Tercer Ciclo</strong>: $ " + preMaxRefCiii.getPrecioMaxMas() + "<br/>"
+                                            + "4)<strong> Tercer Ciclo - Mod.Flexible</strong>: $ " + preMaxRefCiiiMf.getPrecioMaxMas() + "<br/>"
+                                            + "5)<strong> Bachillerato: </strong>$ " + preMaxRefBac.getPrecioMaxMas() + "<br/>"
+                                            + "5)<strong> Bachillerato - Mod.Flexible: </strong>$ " + preMaxRefBacMf.getPrecioMaxMas();
+                                    break;
+                                case 3:
+                                    msjError = "Precio Máximo de Referencia para: <br/>"
+                                            + "1)<strong> Inicial y Parvularia</strong>: $ " + preMaxRefPar.getPrecioMaxMas() + "<br/>"
+                                            + "2)<strong> Primer Ciclo</strong>: $ " + preMaxRefCi.getPrecioMaxMas() + "<br/>"
+                                            + "3)<strong> Segundo Ciclo</strong>: $ " + preMaxRefCii.getPrecioMaxMas() + "<br/>"
+                                            + "4)<strong> Tercer Ciclo</strong>: $ " + preMaxRefCiii.getPrecioMaxMas() + "<br/>"
+                                            + "5)<strong> Bachillerato: </strong>$ " + preMaxRefBac.getPrecioMaxMas();
+                                    break;
+                            }
+                        } else {
+                            msjError = "Precio Máximo de Referencia para: <br/>"
+                                    + "1)<strong> Parvularia</strong>: $ " + preMaxRefPar.getPrecioMaxMas() + "<br/>"
+                                    + "2)<strong> Primer Ciclo</strong>: $ " + preMaxRefCi.getPrecioMaxMas() + "<br/>"
+                                    + "3)<strong> Segundo Ciclo</strong>: $ " + preMaxRefCii.getPrecioMaxMas() + "<br/>"
+                                    + "4)<strong> Tercer Ciclo</strong>: $ " + preMaxRefCiii.getPrecioMaxMas() + "<br/>"
+                                    + "5)<strong> Bachillerato: $ " + preMaxRefBac.getPrecioMaxMas() + "</strong>";
+                        }
                         break;
                     case 3:
                         msjError = "Precio Máximo de Referencia para Zapatos escolares de:<br/> "
@@ -898,7 +930,6 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                         break;
                 }
             }
-            idRow = -1;
         }
     }
 
@@ -949,6 +980,9 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
             case 1: //parvularia
                 preRef = preMaxRefPar.getPrecioMaxMas();
                 break;
+            case 22: //incial y parvularia
+                preRef = preMaxRefPar.getPrecioMaxMas();
+                break;
             case 3: //ciclo I
                 preRef = preMaxRefCi.getPrecioMaxMas();
                 break;
@@ -958,41 +992,14 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
             case 5://ciclo III
                 preRef = preMaxRefCiii.getPrecioMaxMas();
                 break;
+            case 23://modalidad flexible y ciclo III
+                preRef = preMaxRefCiii.getPrecioMaxMas();
+                break;
             case 6: //Bachillerato
                 preRef = preMaxRefBac.getPrecioMaxMas();
                 break;
-            case 7: //grado 7
-                preRef = preMaxRefG7.getPrecioMaxMas();
-                break;
-            case 8: //grado 8
-                preRef = preMaxRefG8.getPrecioMaxMas();
-                break;
-            case 9: //grado 9
-                preRef = preMaxRefG9.getPrecioMaxMas();
-                break;
-            case 10: //grado 1
-                preRef = preMaxRefG1.getPrecioMaxMas();
-                break;
-            case 11: //grado 2
-                preRef = preMaxRefG2.getPrecioMaxMas();
-                break;
-            case 12: //grado 3
-                preRef = preMaxRefG3.getPrecioMaxMas();
-                break;
-            case 13: //grado 4
-                preRef = preMaxRefG4.getPrecioMaxMas();
-                break;
-            case 14: //grado 5
-                preRef = preMaxRefG5.getPrecioMaxMas();
-                break;
-            case 15: //grado 6
-                preRef = preMaxRefG6.getPrecioMaxMas();
-                break;
-            case 16: //1 bachillerato
-                preRef = preMaxRefB1.getPrecioMaxMas();
-                break;
-            case 17: //2 bachillerato
-                preRef = preMaxRefB2.getPrecioMaxMas();
+            case 24: //modalidad flexible y Bachillerato
+                preRef = preMaxRefBac.getPrecioMaxMas();
                 break;
         }
 
