@@ -823,7 +823,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                     switch (rptDoc.getIdTipoRpt().getIdTipoRpt()) {
                         case 2://Solicitud de Cotizacion
                             String anho = "";
-                            List<VwCotizacion> lst = ofertaBienesServiciosEJB.getLstCotizacion(VarSession.getNombreMunicipioSession(), codigoEntidad, detalleProceso, participante);
+                            List<VwCotizacion> lst = ofertaBienesServiciosEJB.getLstCotizacion(VarSession.getNombreMunicipioSession(), codigoEntidad, detalleProceso, current.getIdResolucionAdj().getIdParticipante());
 
                             //Para contratos antes de 2016, se tomara los formatos de rpt que no incluyen el año en el nombre del archivo jasper
                             if (Integer.parseInt(detalleProceso.getIdProcesoAdq().getIdAnho().getAnho()) > 2016) {
