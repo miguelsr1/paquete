@@ -197,7 +197,7 @@ public class EstadisticasCensoController implements Serializable {
     public void setNombreEncargadoCompras(String nombreEncargadoCompras) {
         this.nombreEncargadoCompras = nombreEncargadoCompras;
     }
-    
+
     public EstadisticaCenso getEstaditicaIniPar() {
         return estaditicaIniPar;
     }
@@ -878,22 +878,20 @@ public class EstadisticasCensoController implements Serializable {
                     telefono2 = organizacionEducativa.getTelDirector2();
                     numeroDui = organizacionEducativa.getNumeroDui();
                 }
-                
-                if(organizacionEducativaEncargadoCompra.getIdOrganizacionEducativa() == null){
+
+                if (organizacionEducativaEncargadoCompra.getIdOrganizacionEducativa() == null) {
                     organizacionEducativaEncargadoCompra.setCargo("ENCARGADO_COMPRA");
                     organizacionEducativaEncargadoCompra.setCodigoEntidad(codigoEntidad);
                     organizacionEducativaEncargadoCompra.setEstadoEliminacion(BigInteger.ZERO);
                     organizacionEducativaEncargadoCompra.setFechaInsercion(new Date());
                     organizacionEducativaEncargadoCompra.setFirmaContrato(BigInteger.ZERO);
                     organizacionEducativaEncargadoCompra.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-                }else{
+                } else {
                     nombreEncargadoCompras = organizacionEducativaEncargadoCompra.getNombreMiembro();
                 }
-                
+
                 isProcesoAdq = false;
                 entidadEducativa = entidadEducativaEJB.getEntidadEducativaEstadistica(codigoEntidad);
-                
-                
 
                 if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() < 6) {//menor a 2018
                     detProAdqUni = JsfUtil.findDetalle(procesoAdquisicion, BigDecimal.ONE);
@@ -1372,7 +1370,7 @@ public class EstadisticasCensoController implements Serializable {
                     entidadEducativaEJB.updateNombreDirectorContratoYPago(codigoEntidad, procesoAdquisicion.getIdAnho().getIdAnho().intValue(), nombre);
                 }
             }
-            
+
             organizacionEducativaEncargadoCompra.setNombreMiembro(nombreEncargadoCompras);
             if (organizacionEducativaEncargadoCompra.getIdOrganizacionEducativa() == null) {
                 entidadEducativaEJB.create(organizacionEducativaEncargadoCompra);
@@ -1496,7 +1494,11 @@ public class EstadisticasCensoController implements Serializable {
                     presupuesto = presupuesto.add(new BigDecimal(estaditicaBacMF.getMasculino().add(estaditicaBacMF.getFemenimo())).multiply(preBacMFUti.getPrecioMaxMas()));
                     break;
             }
-
+        } else if (idRubro == 3 && procesoAdquisicion.getIdAnho().getIdAnho().intValue() >= 9) { //mayor o igual de anho 2018
+            presupuesto = presupuesto.add(new BigDecimal(estInicial1grado.getMasculino().add(estInicial1grado.getFemenimo())).multiply(preParZap.getPrecioMaxMas()));
+            presupuesto = presupuesto.add(new BigDecimal(estInicial2grado.getMasculino().add(estInicial2grado.getFemenimo())).multiply(preParZap.getPrecioMaxMas()));
+            //presupuesto = presupuesto.add(new BigDecimal(estaditicaCiclo3MF.getMasculino().add(estaditicaCiclo3MF.getFemenimo())).multiply(preCicloIIIMFUti.getPrecioMaxMas()));
+            //presupuesto = presupuesto.add(new BigDecimal(estaditicaBacMF.getMasculino().add(estaditicaBacMF.getFemenimo())).multiply(preBacMFUti.getPrecioMaxMas()));
         }
 
         return presupuesto;
@@ -1593,6 +1595,5 @@ public class EstadisticasCensoController implements Serializable {
             Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, "Correo enviado a: {0}", string);
         });
     }
-    
-    
+
 }
