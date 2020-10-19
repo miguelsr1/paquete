@@ -891,7 +891,7 @@ public class EstadisticasCensoController implements Serializable {
                 }
                 
                 isProcesoAdq = false;
-                entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
+                entidadEducativa = entidadEducativaEJB.getEntidadEducativaEstadistica(codigoEntidad);
                 
                 
 
