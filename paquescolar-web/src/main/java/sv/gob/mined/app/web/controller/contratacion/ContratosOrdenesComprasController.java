@@ -138,6 +138,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
             if (detalleProceso != null) {
                 cargaInicialDeDatos(params);
                 lstDocumentosImp = utilEJB.getLstDocumentosImp(rubro.intValueExact() == 1 || rubro.intValueExact() == 4 || rubro.intValueExact() == 5);
+                seleccionarDocumentosAImprimir();
             }
         } else {
             VarSession.setVariableSessionED("0");

@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptContratoPersonaNaturalUtiles" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="7dab6810-11a0-4fbc-b522-9ce09f52dce4">
 	<property name="ireport.zoom" value="2.1435888100000025"/>
 	<property name="ireport.x" value="132"/>
-	<property name="ireport.y" value="436"/>
+	<property name="ireport.y" value="532"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -146,7 +146,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 		<groupHeader>
 			<band height="208" splitType="Stretch">
 				<image onErrorType="Icon">
-					<reportElement uuid="bdcc03d9-40f2-4151-bda8-3cff619e826f" key="image-1" x="0" y="0" width="60" height="60"/>
+					<reportElement key="image-1" x="0" y="0" width="60" height="60" uuid="bdcc03d9-40f2-4151-bda8-3cff619e826f"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -156,7 +156,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo_rpt.png"]]></imageExpression>
 				</image>
 				<image hAlign="Right" onErrorType="Icon">
-					<reportElement uuid="2fe36ff2-9703-4797-841b-c9366121cc68" key="image-2" x="361" y="0" width="149" height="63"/>
+					<reportElement key="image-2" x="361" y="0" width="149" height="63" uuid="2fe36ff2-9703-4797-841b-c9366121cc68"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -166,7 +166,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 					<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"logo_mined_rpt.png"]]></imageExpression>
 				</image>
 				<textField isBlankWhenNull="false">
-					<reportElement uuid="b8e02fbd-dc6f-4f84-96ff-02f4d4e7a2d9" key="textField-7" x="100" y="8" width="308" height="40"/>
+					<reportElement key="textField-7" x="100" y="8" width="308" height="40" uuid="b8e02fbd-dc6f-4f84-96ff-02f4d4e7a2d9"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -179,7 +179,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 					<textFieldExpression><![CDATA["CONTRATO No. ME-"+$F{NUMERO_CONTRATO}+"/"+$F{ANHO_CONTRATO}+"/COD:"+$F{CODIGO_ENTIDAD}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement uuid="43510515-2681-4c34-b083-f211856ed595" key="textField-8" x="0" y="107" width="510" height="101"/>
+					<reportElement key="textField-8" x="0" y="107" width="510" height="101" uuid="43510515-2681-4c34-b083-f211856ed595"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -200,7 +200,7 @@ concat(Herramientas.aLetras($F{VALOR}).trim()).concat(" DOLARES DE LOS ESTADOS U
 concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado por la Pagaduría Auxiliar Departamental o Pagaduría Adjunta de acuerdo al siguiente detalle: ")]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="false">
-					<reportElement uuid="9a17cc49-8617-4653-b268-a692b3ca85c4" key="textField-7" x="1" y="67" width="509" height="35"/>
+					<reportElement key="textField-7" x="1" y="67" width="509" height="35" uuid="9a17cc49-8617-4653-b268-a692b3ca85c4"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -217,7 +217,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 		<groupFooter>
 			<band height="133" splitType="Stretch">
 				<staticText>
-					<reportElement uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552" key="staticText-1" x="0" y="15" width="14" height="13"/>
+					<reportElement key="staticText-1" x="0" y="15" width="14" height="13" uuid="2347e2ab-ea28-4cf5-b364-7b1029c59552"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -230,7 +230,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 					<text><![CDATA[F.:]]></text>
 				</staticText>
 				<textField isBlankWhenNull="false">
-					<reportElement uuid="6986f4b0-50f5-4834-b462-d60b8908e4aa" key="textField-4" x="12" y="28" width="233" height="63"/>
+					<reportElement key="textField-4" x="12" y="28" width="233" height="63" uuid="6986f4b0-50f5-4834-b462-d60b8908e4aa"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -246,10 +246,10 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 "\nCONTRATANTE"]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement uuid="b817a9dc-45c9-4bfc-9eb3-aa7b3f30959f" key="line-1" x="14" y="24" width="168" height="1"/>
+					<reportElement key="line-1" x="14" y="24" width="168" height="1" uuid="b817a9dc-45c9-4bfc-9eb3-aa7b3f30959f"/>
 				</line>
 				<staticText>
-					<reportElement uuid="57e38d0b-8e83-4ce9-90ff-76cca82a7698" key="staticText-5" x="261" y="15" width="14" height="13"/>
+					<reportElement key="staticText-5" x="261" y="15" width="14" height="13" uuid="57e38d0b-8e83-4ce9-90ff-76cca82a7698"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -262,7 +262,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 					<text><![CDATA[F.:]]></text>
 				</staticText>
 				<textField isBlankWhenNull="false">
-					<reportElement uuid="60580c6c-4d3e-43b2-8c1e-bad11e269a6c" key="textField-5" x="273" y="28" width="237" height="63"/>
+					<reportElement key="textField-5" x="273" y="28" width="237" height="63" uuid="60580c6c-4d3e-43b2-8c1e-bad11e269a6c"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -277,10 +277,10 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 "\nNo NIT: "+$F{NUMERO_NIT}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement uuid="a839d4a8-5863-40d6-8fce-689e47e036e8" key="line-2" x="275" y="24" width="168" height="1"/>
+					<reportElement key="line-2" x="275" y="24" width="168" height="1" uuid="a839d4a8-5863-40d6-8fce-689e47e036e8"/>
 				</line>
 				<textField>
-					<reportElement uuid="b4fd67de-87d5-4d1c-8dd3-300ae2d87732" x="1" y="90" width="510" height="43"/>
+					<reportElement x="1" y="90" width="510" height="43" uuid="b4fd67de-87d5-4d1c-8dd3-300ae2d87732"/>
 					<textElement textAlignment="Center">
 						<font fontName="Arial" size="9" isBold="true"/>
 					</textElement>
@@ -288,7 +288,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 ($F{MOSTRAR_LEYENDA}.toString().equals("1")?"Nota: Este proveedor es contribuyente del IVA, y debe presentar fotocopia de la tarjeta del IVA, solvencia original o copia certificada por un notario de la Solvencia Municipal y Solvencia Tributaria":"")]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="c88d29b3-de73-4d88-bc77-1e6bce7d9fbf" key="staticText-4" x="182" y="12" width="63" height="13"/>
+					<reportElement key="staticText-4" x="182" y="12" width="63" height="13" uuid="c88d29b3-de73-4d88-bc77-1e6bce7d9fbf"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -308,7 +308,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 		<groupHeader>
 			<band height="17" splitType="Stretch">
 				<componentElement>
-					<reportElement uuid="88f9284b-a88f-4c1e-a9e0-49e13e19d83b" key="table 1" style="table_TD" x="39" y="0" width="423" height="17"/>
+					<reportElement key="table 1" style="table_TD" x="39" y="0" width="423" height="17" uuid="88f9284b-a88f-4c1e-a9e0-49e13e19d83b"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 						<datasetRun subDataset="dsDetalle" uuid="ade2174e-9f54-4997-a896-35c9a9918f40">
 							<datasetParameter name="idResolucionAdj">
@@ -319,7 +319,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 						<jr:columnGroup width="230" uuid="40ba72c4-fd07-4827-a68e-95ba94b5fada">
 							<jr:columnFooter style="table_TD" height="14" rowSpan="1">
 								<staticText>
-									<reportElement uuid="cf30e42d-58e5-41b6-b584-aaa45371b26e" x="13" y="0" width="217" height="14"/>
+									<reportElement x="13" y="0" width="217" height="14" uuid="cf30e42d-58e5-41b6-b584-aaa45371b26e"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
@@ -329,7 +329,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 							<jr:column width="40" uuid="80510e31-8685-48c9-b51e-20680233d572">
 								<jr:columnHeader style="table_TD" height="25" rowSpan="1">
 									<staticText>
-										<reportElement uuid="ad6f5bfc-cae5-4822-8ec3-901e068da4bb" x="0" y="0" width="40" height="25"/>
+										<reportElement x="0" y="0" width="40" height="25" uuid="ad6f5bfc-cae5-4822-8ec3-901e068da4bb"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
 											<font fontName="Arial" size="8" isBold="true"/>
 										</textElement>
@@ -338,7 +338,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 								</jr:columnHeader>
 								<jr:detailCell style="table_TD" height="13" rowSpan="1">
 									<textField>
-										<reportElement uuid="e13f35fa-da87-4cb4-9aef-5d3731cbc9a9" x="0" y="0" width="40" height="13"/>
+										<reportElement x="0" y="0" width="40" height="13" uuid="e13f35fa-da87-4cb4-9aef-5d3731cbc9a9"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
 											<font fontName="Arial" size="7"/>
 										</textElement>
@@ -349,7 +349,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 							<jr:column width="190" uuid="a864ac78-1e6f-4940-86a2-a7452d49e045">
 								<jr:columnHeader style="table_TD" height="25" rowSpan="1">
 									<staticText>
-										<reportElement uuid="2a07a1b0-1e9d-4426-9643-b7a27c8bb4ca" x="0" y="0" width="190" height="25"/>
+										<reportElement x="0" y="0" width="190" height="25" uuid="2a07a1b0-1e9d-4426-9643-b7a27c8bb4ca"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
 											<font fontName="Arial" size="8" isBold="true"/>
 										</textElement>
@@ -358,7 +358,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 								</jr:columnHeader>
 								<jr:detailCell style="table_TD" height="13" rowSpan="1">
 									<textField>
-										<reportElement uuid="2478cffa-7d61-4cf3-a0ad-fe315d4f69d8" x="1" y="0" width="188" height="13"/>
+										<reportElement x="1" y="0" width="188" height="13" uuid="2478cffa-7d61-4cf3-a0ad-fe315d4f69d8"/>
 										<textElement textAlignment="Left" verticalAlignment="Middle">
 											<font fontName="Arial" size="7"/>
 										</textElement>
@@ -370,7 +370,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 						<jr:column width="48" uuid="105f2a39-cc02-457d-8f85-c621611c860a">
 							<jr:columnHeader style="table_TD" height="25" rowSpan="1">
 								<staticText>
-									<reportElement uuid="287aff7f-266b-4686-8552-02cd9184d642" x="0" y="0" width="48" height="25"/>
+									<reportElement x="0" y="0" width="48" height="25" uuid="287aff7f-266b-4686-8552-02cd9184d642"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
@@ -379,7 +379,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 							</jr:columnHeader>
 							<jr:columnFooter style="table_TD" height="14" rowSpan="1">
 								<textField pattern="#,##0">
-									<reportElement uuid="7699c2be-aa59-4465-a0f9-d7baa77b99e8" x="0" y="0" width="48" height="14"/>
+									<reportElement x="0" y="0" width="48" height="14" uuid="7699c2be-aa59-4465-a0f9-d7baa77b99e8"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
@@ -388,7 +388,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 							</jr:columnFooter>
 							<jr:detailCell style="table_TD" height="13" rowSpan="1">
 								<textField pattern="#,##0">
-									<reportElement uuid="3806579c-4751-4d84-bca7-efdd6270faf2" x="0" y="0" width="48" height="13"/>
+									<reportElement x="0" y="0" width="48" height="13" uuid="3806579c-4751-4d84-bca7-efdd6270faf2"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
 									</textElement>
@@ -399,7 +399,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 						<jr:column width="61" uuid="3938206d-3304-4307-b00c-a145ad0ce56a">
 							<jr:columnHeader style="table_TD" height="25" rowSpan="1">
 								<staticText>
-									<reportElement uuid="d4c72b04-fecd-455f-b2dd-383c5625ee7d" x="0" y="0" width="61" height="25"/>
+									<reportElement x="0" y="0" width="61" height="25" uuid="d4c72b04-fecd-455f-b2dd-383c5625ee7d"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
@@ -409,14 +409,14 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 							<jr:columnFooter style="table_TD" height="14" rowSpan="1"/>
 							<jr:detailCell style="table_TD" height="13" rowSpan="1">
 								<textField>
-									<reportElement uuid="47114f42-b205-422f-b0cf-54ae9e99e263" x="11" y="0" width="48" height="13"/>
+									<reportElement x="11" y="0" width="48" height="13" uuid="47114f42-b205-422f-b0cf-54ae9e99e263"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 										<font fontName="Arial" size="7"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{PRECIO_UNITARIO}]]></textFieldExpression>
 								</textField>
 								<staticText>
-									<reportElement uuid="287aff7f-266b-4686-8552-02cd9184d642" x="0" y="0" width="11" height="13"/>
+									<reportElement x="0" y="0" width="11" height="13" uuid="287aff7f-266b-4686-8552-02cd9184d642"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="7" isBold="false"/>
 									</textElement>
@@ -427,7 +427,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 						<jr:column width="84" uuid="b700db3b-a508-4c7d-ad8c-1788c1ea67a7">
 							<jr:columnHeader style="table_TD" height="25" rowSpan="1">
 								<staticText>
-									<reportElement uuid="6c248f9f-4c8b-4d25-9d32-efdf785131f2" x="7" y="0" width="70" height="25"/>
+									<reportElement x="7" y="0" width="70" height="25" uuid="6c248f9f-4c8b-4d25-9d32-efdf785131f2"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
@@ -436,14 +436,14 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 							</jr:columnHeader>
 							<jr:columnFooter style="table_TD" height="14" rowSpan="1">
 								<textField pattern="#,##0.00">
-									<reportElement uuid="12b2ce52-86bf-4acb-852f-afc407d11782" x="10" y="0" width="72" height="14"/>
+									<reportElement x="10" y="0" width="72" height="14" uuid="12b2ce52-86bf-4acb-852f-afc407d11782"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Arial" size="8" isBold="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$V{vMonto}]]></textFieldExpression>
 								</textField>
 								<staticText>
-									<reportElement uuid="287aff7f-266b-4686-8552-02cd9184d642" x="0" y="0" width="10" height="14"/>
+									<reportElement x="0" y="0" width="10" height="14" uuid="287aff7f-266b-4686-8552-02cd9184d642"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="8" isBold="false"/>
 									</textElement>
@@ -452,14 +452,14 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 							</jr:columnFooter>
 							<jr:detailCell style="table_TD" height="13" rowSpan="1">
 								<staticText>
-									<reportElement uuid="287aff7f-266b-4686-8552-02cd9184d642" x="0" y="0" width="10" height="13"/>
+									<reportElement x="0" y="0" width="10" height="13" uuid="287aff7f-266b-4686-8552-02cd9184d642"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="7" isBold="false"/>
 									</textElement>
 									<text><![CDATA[$]]></text>
 								</staticText>
 								<textField pattern="#,##0.00">
-									<reportElement uuid="5e680f15-8279-43bb-ba6a-e6a6ca129217" x="10" y="0" width="72" height="13"/>
+									<reportElement x="10" y="0" width="72" height="13" uuid="5e680f15-8279-43bb-ba6a-e6a6ca129217"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
 									</textElement>
@@ -474,7 +474,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 		<groupFooter>
 			<band height="12" splitType="Stretch">
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-					<reportElement uuid="6d93ec90-8472-4f89-845a-41c96de922b0" key="textField-3" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="0" width="510" height="12" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="textField-3" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="0" width="510" height="12" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="6d93ec90-8472-4f89-845a-41c96de922b0"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -486,7 +486,7 @@ concat(" ) IVA incluido a los bienes que se les aplica; monto que será pagado 
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA["La cantidad mencionada anteriormente será pagada en forma total o de conformidad a los bienes recibidos a satisfacción por parte del Centro Educativo a través del Administrador de este contrato (Presidente del ORGANISMO). Los documentos a presentar, para efectos de gestión de pago por parte del contratista son: I) Factura de Consumidor Final o Recibo, el cual debe ser emitido a nombre del Organismo, en el que se indique una descripción del bien suministrado, la cantidad, el precio unitario y el monto total; II) Acta de Recepción firmada y sellada por parte del Presidente del ORGANISMO, de haber recibido a satisfacción los bienes objeto de este contrato; III) Cualquier resolución que se celebre y modifique lo acordado en el presente instrumento como Resoluciones de Prórroga, Resoluciones Modificativas, Resoluciones de Multa, e incluso Resoluciones de Extinción.".
-concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA III: VIGENCIA Y PLAZO.</style> El presente contrato entrará en vigencia a partir de la fecha de suscripción, hasta quedar totalmente liquidado el mismo. El plazo máximo de entrega para los bienes objeto de este contrato, será de TREINTA DÍAS CALENDARIO, contados a partir del "+$P{P_FECHA_INICIO}+". ").
+concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA III: VIGENCIA Y PLAZO.</style> El presente contrato entrará en vigencia a partir de la fecha de suscripción, hasta quedar totalmente liquidado el mismo. El plazo máximo de entrega para los bienes objeto de este contrato, será de TREINTA DÍAS CALENDARIO, contados a partir de la orden de inicio. ").
 concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA IV: FORMA DE ENTREGA Y RECEPCIÓN.</style> De conformidad al artículo cuarenta y cuatro literal j), de la LACAP, el contratista garantiza que entregará los bienes objeto del presente CONTRATO, con las mismas condiciones y especificaciones ofertadas, de acuerdo a lo establecido en las especificaciones técnicas a satisfacción del Organismo, en el centro educativo y de acuerdo a lo relativo a entrega y recepción de la Cláusula V del presente contrato. La entrega de los mismos podrá ser total o parcial. ").
 concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA V: OBLIGACIONES DEL CONTRATISTA.</style> a) Deberá entregar los productos objeto de este contrato, con sujeción a las especificaciones técnicas requeridas, al Representante del Organismo de Administración Escolar del Centro Educativo contratante, proceso que se realizará en el Centro Educativo; b) Deberá mantener datos de dirección y teléfonos actualizados, así como dar por recibida cualquier notificación escrita y recibir información por cualquier medio de comunicación. c) Cumplir con los literales anteriores atendiendo las medidas de bio seguridad que el Ministerio de Salud y el Centro Educativo indiquen relacionadas a la prevención de contagios por la Pandemia COVID-19 y las condiciones particulares del Centro. ").
 concat("<style isBold='true' pdfFontName='Helvetica-Bold'>CLÁUSULA VI: INCUMPLIMIENTO.</style> En el caso de mora (atraso) en el cumplimiento por parte del contratista de las obligaciones emanadas del presente Contrato, se aplicarán las multas establecidas en el Artículo Ochenta y Cinco de la LACAP, o se dará por extinguido el mismo. El contratista expresamente se somete a las sanciones que emanan de la ley o del presente Contrato, cuando sean por razón imputable a él y serán impuestas por el ORGANISMO, a cuya competencia se somete a efectos de la imposición. ").
@@ -531,7 +531,7 @@ concat(Herramientas.getNomMes($F{FECHA_EMISION})+" del año "+Herramientas.getNu
 	<pageFooter>
 		<band height="11" splitType="Stretch">
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement uuid="46a28e3b-c47e-4641-8450-72223a395e8a" key="textField-9" x="0" y="0" width="215" height="11"/>
+				<reportElement key="textField-9" x="0" y="0" width="215" height="11" uuid="46a28e3b-c47e-4641-8450-72223a395e8a"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -548,7 +548,7 @@ concat(Herramientas.getNomMes($F{FECHA_EMISION})+" del año "+Herramientas.getNu
 	<lastPageFooter>
 		<band height="11">
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement uuid="46a28e3b-c47e-4641-8450-72223a395e8a" key="textField-9" x="0" y="0" width="215" height="11"/>
+				<reportElement key="textField-9" x="0" y="0" width="215" height="11" uuid="46a28e3b-c47e-4641-8450-72223a395e8a"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
