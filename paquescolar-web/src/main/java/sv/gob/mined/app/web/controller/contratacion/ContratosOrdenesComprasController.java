@@ -844,7 +844,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                 param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
                             }
 
-                            param.put("SUBREPORT_DIR", JsfUtil.getValorFromBundleByKey("path_reportes").concat(Reportes.PATH_REPORTES + "notasactas") + File.separator);
+                            param.put("SUBREPORT_DIR", JsfUtil.getPathReportes().concat(Reportes.PATH_REPORTES + "notasactas") + File.separator);
                             param.put("pPorcentajeCapa", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "25" : "35");
                             param.put("pPorcentajeGeo", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "35" : "25");
                             rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptActaAdjudicacion(current.getIdResolucionAdj().getIdResolucionAdj()));
@@ -856,7 +856,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                 param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
                             }
 
-                            param.put("SUBREPORT_DIR", JsfUtil.getValorFromBundleByKey("path_reportes").concat(Reportes.PATH_REPORTES + "notasactas") + File.separator);
+                            param.put("SUBREPORT_DIR", JsfUtil.getPathReportes().concat(Reportes.PATH_REPORTES + "notasactas") + File.separator);
                             rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptNotaAdjudicacion(current.getIdResolucionAdj().getIdResolucionAdj()));
 
                             lstRptAImprimir.add(rptTemp);
@@ -875,7 +875,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                 param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
                             }
 
-                            param.put("SUBREPORT_DIR", JsfUtil.getValorFromBundleByKey("path_reportes").concat(Reportes.PATH_REPORTES + "contratos") + File.separator);
+                            param.put("SUBREPORT_DIR", JsfUtil.getPathReportes().concat(Reportes.PATH_REPORTES + "contratos") + File.separator);
                             param.put("idContrato", current.getIdContrato());
                             param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
                             param.put("telDirector", (representanteCe.getTelDirector() == null ? "" : representanteCe.getTelDirector()));
@@ -903,7 +903,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                         case 13://Acta de recomendacion
                             param.put("pPorcentajeCapa", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "25" : "35");
                             param.put("pPorcentajeGeo", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "35" : "25");
-                            param.put("SUBREPORT_DIR", JsfUtil.getValorFromBundleByKey("path_reportes").concat(Reportes.PATH_REPORTES + "notasactas") + File.separator);
+                            param.put("SUBREPORT_DIR", JsfUtil.getPathReportes().concat(Reportes.PATH_REPORTES + "notasactas") + File.separator);
 
                             rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptActaRecomendacion(current.getIdResolucionAdj().getIdResolucionAdj()));
 
@@ -955,7 +955,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                 }
                             }
 
-                            param.put("SUBREPORT_DIR", JsfUtil.getValorFromBundleByKey("path_reportes").concat(Reportes.PATH_REPORTES + "contratos") + File.separator);
+                            param.put("SUBREPORT_DIR", JsfUtil.getPathReportes().concat(Reportes.PATH_REPORTES + "contratos") + File.separator);
                             param.put("idContrato", current.getIdContrato());
                             param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
                             param.put("telDirector", (representanteCe.getTelDirector() == null ? "" : representanteCe.getTelDirector()));

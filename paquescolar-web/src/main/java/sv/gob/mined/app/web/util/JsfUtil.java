@@ -38,11 +38,19 @@ public class JsfUtil {
     private static final DecimalFormat FORMAT_DECIMAL = new DecimalFormat("#,##0.00");
     private static final DecimalFormat FORMAT_ENTERO = new DecimalFormat("#,##0");
     public static final DateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
-    
+
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("Bundle");
-    
-    public static String getValorFromBundleByKey(String key){
+
+    public static String getValorFromBundleByKey(String key) {
         return RESOURCE_BUNDLE.getString(key);
+    }
+
+    public static String getPathReportes() {
+        if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
+            return JsfUtil.getValorFromBundleByKey("path_reportes_win");
+        } else {
+            return JsfUtil.getValorFromBundleByKey("path_reportes_linux");
+        }
     }
 
     public static SelectItem[] getSelectItems(List<?> entities, boolean selectOne) {
@@ -299,8 +307,8 @@ public class JsfUtil {
             return null;
         }
     }
-    
-    public static MunicipioAledanho findIdMunicipios(BigDecimal idMunicipio) {        
+
+    public static MunicipioAledanho findIdMunicipios(BigDecimal idMunicipio) {
         Optional<MunicipioAledanho> municipio = ((CatalogosGeneralesController) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "catalogosGeneralesController")).getLstMunicipiosAledanho().stream().parallel().
                 filter(munA -> munA.getIdMunicipio().compareTo(idMunicipio) == 0).findAny();
@@ -310,13 +318,13 @@ public class JsfUtil {
             return null;
         }
     }
-    
-    public static Object getControllerByName(String name){
-         return FacesContext.getCurrentInstance().getApplication().getELResolver().
+
+    public static Object getControllerByName(String name) {
+        return FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, name);
-         
+
     }
-    
+
     public static void redirectToIndex() {
         try {
             ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
