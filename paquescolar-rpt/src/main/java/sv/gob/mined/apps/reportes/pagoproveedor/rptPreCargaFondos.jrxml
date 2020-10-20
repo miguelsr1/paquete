@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="667ad911-1d32-4dc9-b4f6-f3676bdbab2f">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="260"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="pProcesoCompra" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["SAN MIGUEL"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pUniforme" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pIdRequerimiento" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT 
+  det.nombre_departamento,
+  DET.CODIGO_ENTIDAD,
+  DET.NOMBRE_CE NOMBRE,
+  CASE $P{pUniforme} 
+    WHEN 1 THEN sum(DET.CANTIDAD_TOTAL)/4
+    ELSE sum(DET.CANTIDAD_TOTAL)
+  END ALUMNOS,
+  CASE $P{pUniforme} 
+    WHEN 1 THEN sum(DET.MONTO_TOTAL)/2
+    ELSE SUM(DET.MONTO_TOTAL)
+  END TOTAL
+FROM REQUERIMIENTO_FONDOS REQ
+  INNER JOIN DETALLE_REQUERIMIENTO DET ON DET.ID_REQUERIMIENTO = REQ.ID_REQUERIMIENTO
+WHERE
+  REQ.ID_REQUERIMIENTO = $P{pIdRequerimiento}
+GROUP BY 
+  det.nombre_departamento,
+  DET.CODIGO_ENTIDAD,
+  DET.NOMBRE_CE
+ORDER BY DET.CODIGO_ENTIDAD]]>
+	</queryString>
+	<field name="NOMBRE_DEPARTAMENTO" class="java.lang.String"/>
+	<field name="CODIGO_ENTIDAD" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="ALUMNOS" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="26" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="13" splitType="Stretch">
+			<textField>
+				<reportElement uuid="38dbc865-7afc-4216-842a-d10bcb6cfc7b" x="0" y="0" width="193" height="13"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pProcesoCompra}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="60379484-0ba1-42d4-a5bb-7a147990c9a4" x="123" y="0" width="30" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Código]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2b01a170-7928-46dd-8edd-c7f2dfa2db9a" x="153" y="0" width="266" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Nombre de la Modalidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="84a10d41-bbe1-4d0f-9bf0-36aecbc1dd96" x="462" y="0" width="72" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Monto $]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="04c09863-0ee2-4f02-8b78-585902c949ec" x="419" y="0" width="43" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Estudiantes]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="60379484-0ba1-42d4-a5bb-7a147990c9a4" x="10" y="0" width="30" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[#]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="60379484-0ba1-42d4-a5bb-7a147990c9a4" x="40" y="0" width="83" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Departamento]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement uuid="7cfaf22d-a9c0-4de6-ad70-41b9c2187937" x="123" y="1" width="30" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CODIGO_ENTIDAD}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="c90fb3da-50bc-4b92-b709-7fc182cb1d88" x="153" y="1" width="266" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="e38f5117-0efe-4f67-82d8-7278d1786277" x="462" y="1" width="72" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a9d62ae6-2670-4dae-8748-fdcada3da97c" x="419" y="1" width="43" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ALUMNOS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ff7f33f2-415e-46ce-8c2a-36f0a9e494b4" x="10" y="1" width="30" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9d8c85b2-6867-4e16-957e-d5c50e7114eb" x="40" y="1" width="83" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_DEPARTAMENTO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="23" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="16" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="117" splitType="Stretch"/>
+	</summary>
+</jasperReport>

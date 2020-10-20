@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptActaAdjudicacion" pageWidth="612" pageHeight="792" columnWidth="544" leftMargin="34" rightMargin="34" topMargin="34" bottomMargin="34" uuid="b6918f44-57a4-481c-b243-e8cef99a74ec">
+	<property name="ireport.zoom" value="1.7715610000000022"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="672"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="dsDetCotizacion" uuid="bec85d27-bc63-4e6e-baa3-7cff9fd911b0">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="noItemInt" class="java.lang.Integer">
+			<fieldDescription><![CDATA[noItemInt]]></fieldDescription>
+		</field>
+		<field name="nombreProducto" class="java.lang.String">
+			<fieldDescription><![CDATA[consolidadoEspTec]]></fieldDescription>
+		</field>
+		<field name="cantidad" class="java.math.BigInteger">
+			<fieldDescription><![CDATA[cantidad]]></fieldDescription>
+		</field>
+		<field name="precioUnitario" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[precioUnitario]]></fieldDescription>
+		</field>
+		<field name="descripcionNivel" class="java.lang.String">
+			<fieldDescription><![CDATA[idNivelEducativo.descripcionNivel]]></fieldDescription>
+		</field>
+		<variable name="TOTAL" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{precioUnitario}.multiply(new java.math.BigDecimal($F{cantidad}))]]></variableExpression>
+		</variable>
+	</subDataset>
+	<parameter name="ubicacionImagenes" class="java.lang.String"/>
+	<parameter name="descripcionRubro" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="codigoEntidad" class="java.lang.String">
+		<fieldDescription><![CDATA[codigoEntidad]]></fieldDescription>
+	</field>
+	<field name="direccionCe" class="java.lang.String">
+		<fieldDescription><![CDATA[direccionCe]]></fieldDescription>
+	</field>
+	<field name="fechaApertura" class="java.lang.String">
+		<fieldDescription><![CDATA[fechaApertura]]></fieldDescription>
+	</field>
+	<field name="lstDetalleOferta" class="java.util.List">
+		<fieldDescription><![CDATA[lstDetalleOferta]]></fieldDescription>
+	</field>
+	<field name="lugarFecha" class="java.lang.String">
+		<fieldDescription><![CDATA[lugarFecha]]></fieldDescription>
+	</field>
+	<field name="modalidadAdministrativa" class="java.lang.String">
+		<fieldDescription><![CDATA[modalidadAdministrativa]]></fieldDescription>
+	</field>
+	<field name="nombreCe" class="java.lang.String">
+		<fieldDescription><![CDATA[nombreCe]]></fieldDescription>
+	</field>
+	<field name="nombreRepresentanteCe" class="java.lang.String">
+		<fieldDescription><![CDATA[nombreRepresentanteCe]]></fieldDescription>
+	</field>
+	<field name="nombreRespresenanteEmp" class="java.lang.String">
+		<fieldDescription><![CDATA[nombreRespresenanteEmp]]></fieldDescription>
+	</field>
+	<field name="razonSocial" class="java.lang.String">
+		<fieldDescription><![CDATA[razonSocial]]></fieldDescription>
+	</field>
+	<field name="usuarioInsercion" class="java.lang.String">
+		<fieldDescription><![CDATA[usuarioInsercion]]></fieldDescription>
+	</field>
+	<group name="reporte">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="256" splitType="Stretch">
+				<textField>
+					<reportElement uuid="8f600d6b-48a1-4622-9d33-23ff5aca3f28" x="10" y="16" width="524" height="41"/>
+					<textElement textAlignment="Center" markup="none">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["MODELO DE SOLICITUD DE COTIZACIÓN Y COTIZACIÓN\n"+
+ "(RUBRO: "+$P{descripcionRubro}+")"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+					<reportElement uuid="d40c8f6b-6aaf-4355-b19c-10a3bbef9d2d" key="textField-8" x="0" y="71" width="544" height="185"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font size="10"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["<style isBold='true' pdfFontName='Helvetica-Bold'><u>I. SOLICITUD DE COTIZACIÓN</u></style>\n\n"+
+"LUGAR Y FECHA: "+$F{lugarFecha}+"\nNOMBRE PROVEEDOR: "+$F{razonSocial}+"\nEl (la) Representante Legal (CDE, CECE, CIE) "+$F{modalidadAdministrativa}
++" del Centro Educativo "+ $F{nombreCe}+" código "+$F{codigoEntidad}+" ubicado en "+$F{direccionCe}
++", por este medio solicita cotización por escrito de los servicios o bienes detallados en el literal II Cotización, la cual deberá ser presentada el día "
++Herramientas.getNumDia($F{fechaApertura})+" del mes "+Herramientas.getNomMes($F{fechaApertura})+" del año "+Herramientas.getNumAnyo($F{fechaApertura})
++". La cotización deberá presentarse en original a nombre del (CDE, CECE, CIE) del centro educativo,  así como especificar las siguientes condiciones de compra: \n\n"
++"<style isBold='true' pdfFontName='Helvetica-Bold'>PLAZO  DE ENTREGA DE LOS BIENES O SERVICIOS</style>: <style isBold='true' pdfFontName='Helvetica-Bold'>Treinta días</style> contados a partir de la fecha indicada en el contrato.\n\n"
++"<style isBold='true' pdfFontName='Helvetica-Bold'>1. LUGAR DE ENTREGA: Centro Educativo</style>\n\n"
++"<style isBold='true' pdfFontName='Helvetica-Bold'>2. CONDICIONES ESPECIALES</style>: Para presentar la cotización solicitada, tomar en cuenta:\n"
++"a) Que los precios cotizados son los precios presentados al MINED y estos permanecerán firmes durante la ejecución del proceso de compra.\n"
++"b) La forma y lugar de entrega de los útiles escolares, será en el Centro Educativo, mediante un listado de recepción de bienes que contenga: el nombre del Centro Educativo, el grado, nombre del estudiante y quien firmara de recibido será el padre, madre de familia, estudiantes de tercer ciclo o bachillerato o responsable de los estudiantes. La recepción y embalaje lo coordinará directamente con el Centro Educativo.\n"
++"c) El Presidente del Organismo de Administración Escolar, extenderá  el acta de recepción, cuando se haya entregado la cantidad total o parcial de los paquetes de útiles escolares.\n"
++"d) Es entendido y convenido que la persona proveedora antes de presentar su oferta ha realizado un análisis, acerca del alcance, de la naturaleza de los bienes, de las características de los mismos, de los lugares de entrega y de cualquier detalle que afecte la ejecución del contrato que se firme. e) La forma de entrega de los útiles escolares, será en bolsa plástica transparente y resistente.\n\n"
++"<style isBold='true' pdfFontName='Helvetica-Bold'>3. ADJUDICACION.</style>\n\n"
++"El Representante Legal del Organismo de Administración Escolar (Director o Presidente del Organismo de Administración Escolar), al momento de la adjudicación, se reserva el derecho de aumentar o disminuir la cantidad de bienes o servicios especificados originalmente en la cotización, por razones de interés público o por cualquier motivo que estime conveniente, de acuerdo a la disponibilidad presupuestaria, sin ninguna variación del precio unitario o de otros términos y condiciones.\n\n"
++"<style isBold='true' pdfFontName='Helvetica-Bold'>4. CONTRATACION.</style>\n\n"
++"La persona proveedora cuando se presenten a firmar los documentos contractuales deberán presentar fotocopias legibles de los siguientes documentos:\n"
++"a) Documento Único de Identidad (DUI) de la Persona Proveedora.\n"
++"b) NIT de la Persona Proveedora.\n"
++"c) DUI del Representante Legal (aplica para Personas Jurídicas).\n"
++"d) original o copia certificada por notario de Solvencia Municipal y Tributaria (<style isBold='true' pdfFontName='Helvetica-Bold'>aplica para la persona proveedora  natural  ó jurídica que en el último año contratado, sus ventas fueron mayores de los $ 5,714.29</style>).\n\n"
++"El no cumplimento de la presentación de los documentos anteriores será motivo para dejar sin efecto la adjudicación.\n\n\n\n\n\n"]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="47">
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="1be624d2-57a2-405d-a296-b9f11f898299" x="10" y="0" width="255" height="38"/>
+					<textElement markup="styled"/>
+					<textFieldExpression><![CDATA["\n\n\n\n"
++"F. ________________________________"
++"\nNombre: "+$F{nombreRepresentanteCe}
++"\n\n\nSello CDE, CECE o CIE"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="f139ad02-808b-48ca-b6c7-0caf347ec348" x="265" y="0" width="255" height="38"/>
+					<textElement markup="styled"/>
+					<textFieldExpression><![CDATA["\n\n\n\n"
++"F. ________________________________"
++"\nNombre: "+$F{nombreRespresenanteEmp}
++"\n\n\nSello si aplica\nFecha y Hora"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="122" splitType="Stretch">
+				<staticText>
+					<reportElement uuid="1720e736-8a6f-4ec9-820a-a1c86c37cdce" x="10" y="3" width="534" height="43"/>
+					<textElement/>
+					<text><![CDATA[Nota:    1) Únicamente  los ítems que presenten precios son los cotizados por el proveedor.]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="d4621a54-e8ca-44cc-a7c5-0fac6f527fff" x="0" y="72" width="270" height="50"/>
+					<textElement/>
+					<textFieldExpression><![CDATA["Nombre: "+$F{nombreRespresenanteEmp}
++"\n\nF.____________________________"
++"\nNombre y firma del proveedor"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="8bd0b934-b503-4a37-9a5c-ab86882e481a" x="272" y="72" width="272" height="50"/>
+					<textElement/>
+					<textFieldExpression><![CDATA["Nombre: "+$F{nombreRepresentanteCe}
++"\n\nF.____________________________"
++"\nFecha y Hora\nSello CDE,CECE O CIE"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="92cc4c1b-8ed3-4754-97d4-d8168af17644" x="274" y="58" width="100" height="14"/>
+					<textElement/>
+					<text><![CDATA[Recibida por:]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="150" splitType="Stretch">
+			<componentElement>
+				<reportElement uuid="4e81f1b3-6636-4f1a-af81-9efdcd79ada2" key="table" style="table 2_TD" x="0" y="108" width="534" height="42"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="dsDetCotizacion" uuid="637c3866-d373-4957-a18c-571e016fb3d0">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleOferta})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:columnGroup width="459" uuid="7ca79cdb-7ff4-4651-8fc9-aebeffb07a51">
+						<jr:columnFooter style="table 2_TD" height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="635a2d1e-5db5-4325-a3cc-bf518a92a287" x="0" y="0" width="440" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[TOTAL US$]]></text>
+							</staticText>
+						</jr:columnFooter>
+						<jr:column width="31" uuid="bb1f8475-3d73-45eb-9587-f48b15a54def">
+							<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="d15e8c1b-166a-4f35-968a-ce2eb9c61f9a" x="0" y="0" width="31" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[ITEM]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="3d704aa4-c372-4eb7-b92d-d2cdb4a5ea87" x="0" y="0" width="31" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{noItemInt}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="185" uuid="c2e7b32d-d28e-4dcf-94ce-28585cbfaa71">
+							<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="d254cd3e-8c4d-4a05-9bc3-83992edf0b01" x="0" y="0" width="185" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[DESCRIPCION]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="0b4319cd-0fe6-43e5-a21d-76a1baad6e6e" x="2" y="0" width="183" height="20"/>
+									<textElement verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{nombreProducto}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="81" uuid="e0fa7b4a-870a-4b58-ba43-fa491f6acf5a">
+							<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="c56ee1a9-7a1e-47dd-bad2-e04caf32a940" x="0" y="0" width="80" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[CANTIDAD SOLICITADA]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+								<textField pattern="#,##0;(-#,##0)">
+									<reportElement uuid="39b38cfb-b6e2-43b5-a680-cc76bae0ce10" x="0" y="0" width="78" height="20"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="82" uuid="cbaa5a7c-89e4-42c5-b441-ead6d9584253">
+							<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="26a75d5e-1afa-48b8-b10e-69fdd298d15c" x="2" y="0" width="80" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[CANTIDAD OFERTADA]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+								<textField pattern="#,##0;(-#,##0)">
+									<reportElement uuid="d73f13ec-3f58-45b2-840d-0337d965c520" x="3" y="0" width="78" height="20"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="80" uuid="d0c5fd0b-c077-400a-bd96-ddffce7463f2">
+							<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="87252bbb-2282-4e50-a804-adf4cd662507" x="0" y="0" width="80" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[PRECIO
+UNITARIO]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+								<textField pattern="#,##0.00;(#,##0.00)">
+									<reportElement uuid="dea187b8-d97c-40bf-9797-b4869a768395" x="0" y="0" width="78" height="20"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{precioUnitario}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:columnGroup>
+					<jr:column width="80" uuid="8382cf86-3ee0-4a04-9f5f-f2994ad8b8bc">
+						<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="344d52ce-15d2-4a37-ae15-873f3034682e" x="0" y="0" width="80" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[PRECIO TOTAL]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table 2_TD" height="30" rowSpan="1">
+							<textField pattern="#,##0.00;#,##0.00-">
+								<reportElement uuid="0d613994-5323-4d60-9766-5d0e16e7f149" x="0" y="0" width="78" height="30"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$V{TOTAL}]]></textFieldExpression>
+							</textField>
+						</jr:columnFooter>
+						<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<textField pattern="#,##0.00;(#,##0.00)">
+								<reportElement uuid="a710289f-7ce2-4d8f-a46b-582dd395af52" x="0" y="0" width="78" height="20"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{precioUnitario}.multiply(new java.math.BigDecimal($F{cantidad}))]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<break>
+				<reportElement uuid="d975bad6-d610-427b-a0ec-b470505eac06" x="0" y="0" width="544" height="1"/>
+			</break>
+			<textField>
+				<reportElement uuid="69edd6a6-39e1-43a6-a63e-e9d49d9fbb56" x="0" y="12" width="265" height="18"/>
+				<textElement markup="styled"/>
+				<textFieldExpression><![CDATA["<style isBold='true' pdfFontName='Helvetica-Bold'><u>II. COTIZACIÓN</u></style>\n"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6cf75d2a-85b1-4c51-a795-600cd1eae7d6" x="0" y="30" width="544" height="20"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RUBRO "+$P{descripcionRubro}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="72639fe8-16e3-4133-a9d2-d6b4f5b782a9" x="0" y="59" width="544" height="49"/>
+				<textElement markup="styled">
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Lugar y Fecha: "+$F{lugarFecha}+"\nSeñores (CDE,  CECE, CIE): "+$F{modalidadAdministrativa}
++"\nDe conformidad a su solicitud presento a ustedes el detalle de mi cotización, aceptando el plazo y lugar de entrega."]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="15" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="65ad4c90-b8f5-44b7-ae34-21ae808ebce9" key="textField-10" x="0" y="0" width="176" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{usuarioInsercion}+" - "+(new SimpleDateFormat("HH:mm dd/MM/yyyy")).format(new Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

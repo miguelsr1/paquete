@@ -6,13 +6,17 @@ package sv.gob.mined.app.web.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
@@ -40,9 +44,22 @@ import sv.gob.mined.paquescolar.model.pojos.OfertaGlobal;
  */
 public class Reportes {
 
-    public static final String PATH_REPORTES = File.separator + "WEB-INF" + File.separator + "classes" + File.separator + "sv" + File.separator + "gob" + File.separator + "mined" + File.separator + "apps" + File.separator + "reportes" + File.separator;
-    public static final String PATH_REPORTES_PAGO_PROVEEDORES = File.separator + "WEB-INF" + File.separator + "classes" + File.separator + "sv" + File.separator + "gob" + File.separator + "mined" + File.separator + "apps" + File.separator + "reportes" + File.separator + "pagoproveedor" + File.separator;
+    public static final String PATH_REPORTES = File.separator + "sv" + File.separator + "gob" + File.separator + "mined" + File.separator + "apps" + File.separator + "reportes" + File.separator;
+    public static final String PATH_REPORTES_PAGO_PROVEEDORES = File.separator + "sv" + File.separator + "gob" + File.separator + "mined" + File.separator + "apps" + File.separator + "reportes" + File.separator + "pagoproveedor" + File.separator;
     public static final String PATH_IMAGENES = File.separator + "resources" + File.separator + "images" + File.separator;
+
+    public static InputStream getPathReporte(String pathReporte) {
+        try {
+            String tmpPath = JsfUtil.getValorFromBundleByKey("path_reportes");
+            if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
+                pathReporte = pathReporte.replaceAll("/", "\\\\");
+            }
+            return new FileInputStream(tmpPath.concat(pathReporte));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, "ERROR REPORTES: No se encontro el reporte en la ubicación " + pathReporte, ex);
+            return null;
+        }
+    }
 
     /**
      *
@@ -185,7 +202,7 @@ public class Reportes {
     }
 
     public static JasperPrint getReporteAImprimir(String path, Map<String, Object> param, JRDataSource ds) throws JRException {
-        return JasperFillManager.fillReport(Reportes.class.getClassLoader().getResourceAsStream(path + ".jasper"), param, ds);
+        return JasperFillManager.fillReport(Reportes.getPathReporte(path + ".jasper"), param, ds);
     }
 
     public static List<JasperPrint> getReporteOfertaDeProveedor(CapaInstPorRubro capacidadInst, Empresa empresa,

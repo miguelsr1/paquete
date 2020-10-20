@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5bd1e5a4-3eba-439a-9219-bc7c1d9d564f">
+	<property name="ireport.zoom" value="1.0000000000000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="22"/>
+	<parameter name="ubicacionImagenes" class="java.lang.String">
+		<defaultValueExpression><![CDATA["/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pRubro" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="rubro" class="java.lang.String">
+		<fieldDescription><![CDATA[rubro]]></fieldDescription>
+	</field>
+	<field name="representanteLegal" class="java.lang.String">
+		<fieldDescription><![CDATA[representanteLegal]]></fieldDescription>
+	</field>
+	<field name="direccionRepre" class="java.lang.String">
+		<fieldDescription><![CDATA[direccionRepre]]></fieldDescription>
+	</field>
+	<field name="nitEmpresa" class="java.lang.String">
+		<fieldDescription><![CDATA[nitEmpresa]]></fieldDescription>
+	</field>
+	<field name="direccionEmpresa" class="java.lang.String">
+		<fieldDescription><![CDATA[direccionEmpresa]]></fieldDescription>
+	</field>
+	<field name="anho" class="java.lang.String">
+		<fieldDescription><![CDATA[anho]]></fieldDescription>
+	</field>
+	<field name="fecha" class="java.util.Date">
+		<fieldDescription><![CDATA[fecha]]></fieldDescription>
+	</field>
+	<field name="razonSocial" class="java.lang.String">
+		<fieldDescription><![CDATA[razonSocial]]></fieldDescription>
+	</field>
+	<field name="nitRepre" class="java.lang.String">
+		<fieldDescription><![CDATA[nitRepre]]></fieldDescription>
+	</field>
+	<field name="ciudad" class="java.lang.String">
+		<fieldDescription><![CDATA[ciudad]]></fieldDescription>
+	</field>
+	<field name="duiRepre" class="java.lang.String">
+		<fieldDescription><![CDATA[duiRepre]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="63" splitType="Stretch">
+			<image hAlign="Right">
+				<reportElement uuid="7ebbf82e-f009-472f-a1f6-4848423b12ad" key="image-2" x="423" y="0" width="149" height="63"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"logo_mined_rpt.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement uuid="42e4cf28-4753-43a5-b27d-eaac76e03c4a" key="image-1" x="0" y="0" width="60" height="60"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo_rpt.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="48" splitType="Stretch">
+			<textField>
+				<reportElement uuid="19876f79-7df9-4794-a033-eb3746e7c7dd" x="21" y="6" width="528" height="42"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["DECLARACIÓN JURADA GLOBAL SOBRE EL CUMPLIMIENTO DE LAS ESPECIFICACIONES TÉCNICAS PLAZO Y LUGAR DE ENTREGA, DE: "+$P{pRubro}+"\n" +
+"(AÑO "+$F{anho}+ ")"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="bdafee93-0adf-43a4-b29b-4052dc81284b" x="21" y="14" width="528" height="47"/>
+				<textElement textAlignment="Justified">
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["En la ciudad de " + $F{ciudad} + ", a las " + Herramientas.getHora($F{fecha})+ " horas del día " + Herramientas.getNumDia($F{fecha}) + " del mes "+Herramientas.getNomMes($F{fecha})+" del año " + 
+Herramientas.getNumAnyo($F{fecha}) + ", Yo " + $F{razonSocial} + " con Documento Único de Identidad (DUI) número " + $F{duiRepre} + ", del domicilio de "+
+$F{direccionRepre} + ", BAJO JURAMENTO HAGO LAS SIGUIENTES DECLARACIONES:  A) Que la prestación del servicio o el suministro de " +$P{pRubro}+
+", me comprometo a realizarla de total e indiscutiblemente de acuerdo a las Especificaciones Técnicas establecidas por el Ministerio de Educación las cuales conozco "+
+"y estoy consciente de la obligatoriedad de cumplimiento, entregarlo en el plazo establecido y en el Centro Educativo acorde a la forma establecida en los lineamientos "+
+"y las consecuencias en contrario; B) En caso que se encontraran inconsistencias en las Especificaciones Técnicas de los bienes entregados por mi persona, que afecten la prestación "+
+"del servicio o el suministro de los bienes, me comprometo a aceptar las correcciones necesarias para ejecutar debidamente dicho contrato, asumiéndolo dentro del"+
+" mismo costo; C) Manifiesto que mi negocio está ubicado en "+ $F{direccionEmpresa} + " sabedor que dicha dirección será utilizada por los contratantes"+
+" para dirigir sus notificaciones; D) Asimismo acepto todos los lineamientos, requisitos y exigencias emitidos para la ejecución del Paquete Escolar del"+
+" año correspondiente; E) Me comprometo a someterme a las sanciones que el Organismo de Administración Escolar estime pertinentes; F) Acerca de mi Oferta"+
+" Máxima: Acepto suministrar al MINED y Centros Escolares adjudicados la capacidad establecida en la carta de calificación de CONAMYPE correspondiente a "+
+"las contrataciones para entrega del "+ $F{anho} +"; G)  Que para los efectos legales de esta declaración, señalo como domicilio "+
+"esta ciudad a cuyos tribunales me someto expresamente. Y firmo."]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="9" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="11" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="109" splitType="Stretch">
+			<textField>
+				<reportElement uuid="a9c162c9-9b30-496d-b0e1-b810afdd01c8" x="21" y="0" width="512" height="25"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["Nombre de la Persona Proveedora: " + $F{representanteLegal}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="160cc708-7a0c-43a3-9ace-ea49e159e4ac" x="21" y="25" width="512" height="25"/>
+				<textElement/>
+				<text><![CDATA[Firma de Persona Proveedora: _____________________________________________]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="d3cf0a89-512a-498b-9f55-5b3b1582ab63" x="21" y="50" width="437" height="25"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["No DUI: "+$F{duiRepre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c99b2154-eed0-4c3a-a9bf-c0bde0363cc9" x="21" y="75" width="437" height="25"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["No NIT: "+$F{nitRepre}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

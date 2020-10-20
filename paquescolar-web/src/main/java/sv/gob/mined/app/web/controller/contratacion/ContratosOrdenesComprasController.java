@@ -833,7 +833,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                 }
 
                                 param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda);
-                                rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + anho + ".jasper"), lst);
+                                rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + anho + ".jasper"), lst);
                                 lstRptAImprimir.add(rptTemp);
                             }
                             break;
@@ -842,10 +842,10 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                 param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
                             }
 
-                            param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES + "notasactas") + File.separator);
+                            param.put("SUBREPORT_DIR", JsfUtil.getValorFromBundleByKey("path_reportes").concat(Reportes.PATH_REPORTES + "notasactas") + File.separator);
                             param.put("pPorcentajeCapa", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "25" : "35");
                             param.put("pPorcentajeGeo", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "35" : "25");
-                            rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptActaAdjudicacion(current.getIdResolucionAdj().getIdResolucionAdj()));
+                            rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptActaAdjudicacion(current.getIdResolucionAdj().getIdResolucionAdj()));
 
                             lstRptAImprimir.add(rptTemp);
                             break;
@@ -854,8 +854,8 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                 param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
                             }
 
-                            param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES + "notasactas") + File.separator);
-                            rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptNotaAdjudicacion(current.getIdResolucionAdj().getIdResolucionAdj()));
+                            param.put("SUBREPORT_DIR", JsfUtil.getValorFromBundleByKey("path_reportes").concat(Reportes.PATH_REPORTES + "notasactas") + File.separator);
+                            rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptNotaAdjudicacion(current.getIdResolucionAdj().getIdResolucionAdj()));
 
                             lstRptAImprimir.add(rptTemp);
                             lstRptAImprimir.add(rptTemp);
@@ -866,14 +866,14 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                 param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
                             }
 
-                            lstRptAImprimir.add(reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptGarantia(current.getIdResolucionAdj().getIdResolucionAdj(), current.getIdContrato())));
+                            lstRptAImprimir.add(reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptGarantia(current.getIdResolucionAdj().getIdResolucionAdj(), current.getIdContrato())));
                             break;
                         case 7://Contrato
                             if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
                                 param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
                             }
 
-                            param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES + "contratos") + File.separator);
+                            param.put("SUBREPORT_DIR", JsfUtil.getValorFromBundleByKey("path_reportes").concat(Reportes.PATH_REPORTES + "contratos") + File.separator);
                             param.put("idContrato", current.getIdContrato());
                             param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
                             param.put("telDirector", (representanteCe.getTelDirector() == null ? "" : representanteCe.getTelDirector()));
@@ -886,7 +886,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                             }
 
                             nombreRpt = rptDoc.getNombreRpt().concat(perNatural ? "Nat" : "Jur");
-                            rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(nombreRpt + ".jasper"), resolucionAdjudicativaEJB.generarContrato(current, current.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
+                            rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(nombreRpt + ".jasper"), resolucionAdjudicativaEJB.generarContrato(current, current.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
                             lstRptAImprimir.add(rptTemp);
                             lstRptAImprimir.add(rptTemp);
                             break;
@@ -901,9 +901,9 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                         case 13://Acta de recomendacion
                             param.put("pPorcentajeCapa", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "25" : "35");
                             param.put("pPorcentajeGeo", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "35" : "25");
-                            param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES + "notasactas") + File.separator);
+                            param.put("SUBREPORT_DIR", JsfUtil.getValorFromBundleByKey("path_reportes").concat(Reportes.PATH_REPORTES + "notasactas") + File.separator);
 
-                            rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptActaRecomendacion(current.getIdResolucionAdj().getIdResolucionAdj()));
+                            rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptActaRecomendacion(current.getIdResolucionAdj().getIdResolucionAdj()));
 
                             lstRptAImprimir.add(rptTemp);
                             break;
@@ -917,7 +917,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                             param.put("pAnho", detalleProceso.getIdProcesoAdq().getIdAnho().getAnho());
 
                             nombreRpt = rptDoc.getNombreRpt().concat(perNatural ? "PerNat" : "PerJur").concat(param.get("pAnho").toString());
-                            rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(nombreRpt + ".jasper"));
+                            rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(nombreRpt + ".jasper"));
                             lstRptAImprimir.add(rptTemp);
                             break;
                         case 7://Contrato
@@ -953,7 +953,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                 }
                             }
 
-                            param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES + "contratos") + File.separator);
+                            param.put("SUBREPORT_DIR", JsfUtil.getValorFromBundleByKey("path_reportes").concat(Reportes.PATH_REPORTES + "contratos") + File.separator);
                             param.put("idContrato", current.getIdContrato());
                             param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
                             param.put("telDirector", (representanteCe.getTelDirector() == null ? "" : representanteCe.getTelDirector()));
@@ -971,14 +971,14 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                 param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
                             }
                             nombreRpt = rptDoc.getNombreRpt().concat(perNatural ? "Nat" : "Jur");
-                            rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(nombreRpt + ".jasper"));
+                            rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(nombreRpt + ".jasper"));
 
                             lstRptAImprimir.add(rptTemp);
                             lstRptAImprimir.add(rptTemp);
                             break;
                         case 12:
                             param.put("pIdContrato", current.getIdContrato());
-                            rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(rptDoc.getNombreRpt() + ".jasper"));
+                            rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + ".jasper"));
 
                             lstRptAImprimir.add(rptTemp);
                             break;

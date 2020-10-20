@@ -4,6 +4,7 @@
  */
 package sv.gob.mined.paquescolar.ejb;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -57,8 +58,10 @@ public class ReportesEJB {
             JasperPrint jp;
             Connection conn = em.unwrap(java.sql.Connection.class);
             jp = JasperFillManager.fillReport(input, map, conn);
+            
+            input.close();
             return jp;
-        } catch (JRException ex) {
+        } catch (JRException | IOException ex) {
             Logger.getLogger(ReportesEJB.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
@@ -79,12 +82,12 @@ public class ReportesEJB {
             JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(lst);
 
             jp = JasperFillManager.fillReport(input, map, ds);
+            input.close();
             return jp;
-        } catch (JRException ex) {
+        } catch (JRException | IOException ex) {
             Logger.getLogger(ReportesEJB.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-
     }
 
     public List<OfertaGlobal> getLstOfertaGlobal(String nit, Integer idDetProcesoAdq, int idRubro) {

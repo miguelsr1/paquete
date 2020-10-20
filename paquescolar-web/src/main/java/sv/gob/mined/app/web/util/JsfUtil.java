@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -37,6 +38,12 @@ public class JsfUtil {
     private static final DecimalFormat FORMAT_DECIMAL = new DecimalFormat("#,##0.00");
     private static final DecimalFormat FORMAT_ENTERO = new DecimalFormat("#,##0");
     public static final DateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
+    
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("Bundle");
+    
+    public static String getValorFromBundleByKey(String key){
+        return RESOURCE_BUNDLE.getString(key);
+    }
 
     public static SelectItem[] getSelectItems(List<?> entities, boolean selectOne) {
         int size = selectOne ? entities.size() + 1 : entities.size();

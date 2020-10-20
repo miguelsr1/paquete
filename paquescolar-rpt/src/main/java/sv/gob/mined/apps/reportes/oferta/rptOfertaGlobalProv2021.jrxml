@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="0bd311a0-41c1-46a5-aa9a-a7ec3ef35721">
+	<property name="ireport.zoom" value="1.9487171000000028"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="508"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="dsPrecios" uuid="eece1966-6e9f-425c-bac5-0cafa3bc43c3">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="descripcionItem" class="java.lang.String">
+			<fieldDescription><![CDATA[descripcionItem]]></fieldDescription>
+		</field>
+		<field name="precioMaxReferencia" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[precioMaxReferencia]]></fieldDescription>
+		</field>
+		<field name="precioUnitario" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[precioUnitario]]></fieldDescription>
+		</field>
+	</subDataset>
+	<subDataset name="dsMunInt" uuid="1b350826-b1fc-4f09-83e1-c85db61ca363">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="codigoDepartamento" class="java.lang.String">
+			<fieldDescription><![CDATA[codigoDepartamento]]></fieldDescription>
+		</field>
+		<field name="codigoMunicipio" class="java.lang.String">
+			<fieldDescription><![CDATA[codigoMunicipio]]></fieldDescription>
+		</field>
+		<field name="nombreDepartamento" class="java.lang.String">
+			<fieldDescription><![CDATA[nombreDepartamento]]></fieldDescription>
+		</field>
+		<field name="nombreMunicipio" class="java.lang.String">
+			<fieldDescription><![CDATA[nombreMunicipio]]></fieldDescription>
+		</field>
+	</subDataset>
+	<subDataset name="dsPreciosLibros" uuid="1e7ac178-d55a-42b4-a374-c63e10ed9e63">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="descripcionItem" class="java.lang.String">
+			<fieldDescription><![CDATA[descripcionItem]]></fieldDescription>
+		</field>
+		<field name="precioMaxReferencia" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[precioMaxReferencia]]></fieldDescription>
+		</field>
+		<field name="precioUnitario" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[precioUnitario]]></fieldDescription>
+		</field>
+	</subDataset>
+	<parameter name="productor" class="java.lang.Boolean"/>
+	<parameter name="usuarioInsercion" class="java.lang.String"/>
+	<parameter name="pLugar" class="java.lang.String"/>
+	<parameter name="pRubro" class="java.lang.String"/>
+	<parameter name="pEscudo" class="java.lang.String"/>
+	<parameter name="pIdRubro" class="java.lang.Integer"/>
+	<parameter name="pCorreoPersona" class="java.lang.String"/>
+	<parameter name="pIdGestion" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="rubro" class="java.lang.String">
+		<fieldDescription><![CDATA[rubro]]></fieldDescription>
+	</field>
+	<field name="departamento" class="java.lang.String">
+		<fieldDescription><![CDATA[departamento]]></fieldDescription>
+	</field>
+	<field name="razonSocial" class="java.lang.String">
+		<fieldDescription><![CDATA[razonSocial]]></fieldDescription>
+	</field>
+	<field name="nitSociedad" class="java.lang.String">
+		<fieldDescription><![CDATA[nitSociedad]]></fieldDescription>
+	</field>
+	<field name="capacidadCalificada" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[capacidadCalificada]]></fieldDescription>
+	</field>
+	<field name="nombreRepresentante" class="java.lang.String">
+		<fieldDescription><![CDATA[nombreRepresentante]]></fieldDescription>
+	</field>
+	<field name="lstMunIntOfertaGlobal" class="java.util.List">
+		<fieldDescription><![CDATA[lstMunIntOfertaGlobal]]></fieldDescription>
+	</field>
+	<field name="lstDetItemOfertaGlobal" class="java.util.List">
+		<fieldDescription><![CDATA[lstDetItemOfertaGlobal]]></fieldDescription>
+	</field>
+	<field name="nitRepresentante" class="java.lang.String">
+		<fieldDescription><![CDATA[nitRepresentante]]></fieldDescription>
+	</field>
+	<field name="anho" class="java.lang.String">
+		<fieldDescription><![CDATA[anho]]></fieldDescription>
+	</field>
+	<field name="duiRepresentante" class="java.lang.String">
+		<fieldDescription><![CDATA[duiRepresentante]]></fieldDescription>
+	</field>
+	<field name="lugarFecha" class="java.lang.String">
+		<fieldDescription><![CDATA[lugarFecha]]></fieldDescription>
+	</field>
+	<field name="lstDetItemOfertaGlobalLibros" class="java.util.List">
+		<fieldDescription><![CDATA[lstDetItemOfertaGlobalLibros]]></fieldDescription>
+	</field>
+	<group name="detalle">
+		<groupExpression><![CDATA[$F{departamento}]]></groupExpression>
+		<groupHeader>
+			<band height="5"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="61">
+				<textField>
+					<reportElement x="6" y="0" width="317" height="20" uuid="16c6cc98-10a9-4059-914b-9c0dba3b2fac"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA["c) Municipios de Interés en donde están ubicados los Centros Escolares del  departamento de "+$F{departamento}+
+" son:"]]></textFieldExpression>
+				</textField>
+				<componentElement>
+					<reportElement key="table 1" style="table 1" x="65" y="20" width="440" height="41" uuid="16ca16b2-3245-4f42-b39a-9b8d7101457b"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="dsMunInt" uuid="2eb2923d-6d3d-42a2-aaf7-fb722a43cc35">
+							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstMunIntOfertaGlobal})]]></dataSourceExpression>
+						</datasetRun>
+						<jr:column width="150" uuid="c2666e7c-9206-4ed4-ba44-76db175e37fc">
+							<jr:columnHeader style="table_TD" height="16" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="150" height="16" uuid="5d0aa765-05ad-4dbe-96a8-69738e6a6094"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<text><![CDATA[Departamento]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table 1_TD" height="12" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement isPrintRepeatedValues="false" x="3" y="0" width="147" height="12" isPrintWhenDetailOverflows="true" uuid="12539dbc-158a-4a83-83e0-f5493ebaff24"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{codigoDepartamento} + " - " + $F{nombreDepartamento}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:columnGroup width="273" uuid="3ccdc781-3b67-4d55-8700-b8d84ac5af68">
+							<jr:columnHeader height="16" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="273" height="16" uuid="57351da3-0c13-4d5c-920f-c53a3ce992b1"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<text><![CDATA[Ítems: Municipios]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:column width="273" uuid="7123efa7-f0ee-42f2-aacf-0c43707a9f52">
+								<jr:detailCell style="table 1_TD" height="12" rowSpan="1">
+									<textField isStretchWithOverflow="true">
+										<reportElement x="3" y="0" width="270" height="12" isPrintWhenDetailOverflows="true" uuid="fcbe26ef-92b6-44b7-a898-a9c81c6cbaba"/>
+										<textElement verticalAlignment="Middle">
+											<font fontName="Arial" size="7"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{codigoDepartamento}+"  "+$F{codigoMunicipio} +" "+$F{nombreMunicipio}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="0" uuid="c840a6cf-aa87-4445-9bbc-5408ae463e70">
+								<jr:detailCell style="table 1_TD" height="12" rowSpan="1"/>
+							</jr:column>
+						</jr:columnGroup>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="177" splitType="Stretch">
+			<staticText>
+				<reportElement x="233" y="29" width="100" height="20" uuid="54570f10-9883-46e5-b0c2-c161f0858a49"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[OFERTA GLOBAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="170" y="53" width="226" height="20" uuid="30872ab0-7e72-470e-90b9-4a6263559ea4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DEPARTAMENTO: "+$F{departamento}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="6" y="109" width="558" height="68" uuid="70c75c21-8c80-4df6-97b9-76f6f59e541e"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Yo, "+ $F{razonSocial} + " proveedor(a) registrado(a) por la Comisión Nacional para la Micro y Pequeña Empresa (CONAMYPE), para participar en los procesos de "+
+"compra de los bienes y servicios del Programa Paquete Escolar "+ $F{anho} + " que realizarán los centros educativos, por este medio presento mi oferta global "+
+"(precios e ítems), según la siguiente información:\n<style isBold='true' pdfFontName='Helvetica-Bold'>Rubro: "+$P{pRubro}+"</style>\n\n"+
+"a) La capacidad máxima ofertada será la expresada en la carta de calificación de CONAMYPE para el año "+ $F{anho} +
+"\n\nb) Los precios con los que participaré en el proceso de contratación son los siguientes:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="123" y="76" width="321" height="20" uuid="30872ab0-7e72-470e-90b9-4a6263559ea4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PROGRAMA \"PAQUETE ESCOLAR "+ $F{anho}+"\""]]></textFieldExpression>
+			</textField>
+			<image hAlign="Right">
+				<reportElement key="image-2" x="423" y="0" width="149" height="63" uuid="7b533e97-debd-4fc6-9ca5-d774a9ae2295"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{pEscudo}+File.separator+"logo_mined_rpt.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="0" y="0" width="47" height="47" uuid="636b5c65-5cad-4348-bc81-43d99c89e6cf"/>
+				<imageExpression><![CDATA[$P{pEscudo}+File.separator+"escudo_rpt.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="4" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="6" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="61" splitType="Stretch">
+			<componentElement>
+				<reportElement key="table" style="table" x="40" y="0" width="496" height="50" uuid="2e043f5e-df76-474b-956f-fda6a0692d47"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="dsPrecios" uuid="17adf11c-89cb-4186-b1e6-3d20b108ce0c">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetItemOfertaGlobal})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="285" uuid="0396c88a-a072-46c8-9884-6838a5014a02">
+						<jr:columnHeader style="table_TD" height="22" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="285" height="22" uuid="97e0c53e-d118-408b-b2a3-1f79d19ccf2d"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="7"/>
+								</textElement>
+								<text><![CDATA[Descripción]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="14" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement x="3" y="0" width="279" height="14" isPrintWhenDetailOverflows="true" uuid="777ca4c3-d7d2-46ea-9099-7f56ad535a60"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{descripcionItem}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="76" uuid="84dc2fd2-5413-4184-a957-2bad60f3dcbb">
+						<jr:columnHeader style="table_TD" height="22" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="75" height="22" uuid="b59c2d47-dda2-44cc-b9dc-3f8f83f99ce2"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="7"/>
+								</textElement>
+								<text><![CDATA[Precio Máximo de Referencia]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="14" rowSpan="1">
+							<textField pattern="###0.00;-###0.00">
+								<reportElement x="0" y="0" width="72" height="14" uuid="1d8bf5d0-899a-4f62-985a-992d5b87cbd5"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{precioMaxReferencia}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="78" uuid="8b9830c0-7808-44fd-ab78-aeec43a676e6">
+						<jr:columnHeader style="table_TD" height="22" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="78" height="22" uuid="609fbeab-2755-4965-9c0c-4930354e978f"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="7"/>
+								</textElement>
+								<text><![CDATA[Precio Unitario (INCLUYE IVA)]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="14" rowSpan="1">
+							<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
+								<reportElement x="0" y="0" width="75" height="14" uuid="95291b06-5729-49f3-8363-e5ea2016d910"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{precioUnitario}==null?java.math.BigDecimal.ZERO:$F{precioUnitario}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="13" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="112" splitType="Stretch">
+			<textField>
+				<reportElement x="75" y="8" width="489" height="18" uuid="19da908d-3200-4752-91da-73acd0e9e280"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Lugar y fecha de la presentación de Oferta: "+$P{pLugar}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="26" width="521" height="86" uuid="16c6cc98-10a9-4059-914b-9c0dba3b2fac"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Oferta presentada vía electrónica por medio del sistema en línea del MINEDUCYT y enviada a correo electrónico institucional del mismo, por: "+$F{nombreRepresentante}+"\n"+
+"Proveedor o Representante Legal\n"+
+"No DUI de la Persona Proveedora o Representante Legal: "+ $F{duiRepresentante}+"\n"+
+"Correo Electrónico: "+$P{pCorreoPersona}+"\n"+
+"No. de Gestión: "+$P{pIdGestion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="-1" y="101" width="100" height="11" uuid="c0fd3cfa-0584-4128-9722-d8ffc37a1644"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{usuarioInsercion}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="9" splitType="Stretch"/>
+	</summary>
+</jasperReport>

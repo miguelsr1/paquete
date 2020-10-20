@@ -1168,7 +1168,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
             JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(lst);
 
             HashMap param = new HashMap();
-            param.put("SUBREPORT_DIR", ctx.getRealPath(Reportes.PATH_REPORTES) + File.separator);
+            param.put("SUBREPORT_DIR", JsfUtil.getValorFromBundleByKey("path_reportes").concat(Reportes.PATH_REPORTES) + File.separator);
             param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
             param.put("pJustificacion", resolucionesModificativas.getJustificacionModificativa());
             param.put("pPlazoEntrega", resolucionesModificativas.getIdContrato().getPlazoPrevistoEntrega().intValue());
@@ -1177,8 +1177,8 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                 param.put("DIAS_PRORROGA", resolucionesModificativas.getDiasProrroga().toString());
             }
 
-            return JasperFillManager.fillReport(ModificatoriaController.class
-                    .getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/contratos/modificativas" + File.separator + nombreRpt)), param, ds);
+            return JasperFillManager.
+                    fillReport(Reportes.getPathReporte("sv/gob/mined/apps/reportes/contratos/modificativas" + File.separator + nombreRpt), param, ds);
         } catch (JRException ex) {
             Logger.getLogger(ModificatoriaController.class.getName()).log(Level.SEVERE, null, ex);
             return null;
