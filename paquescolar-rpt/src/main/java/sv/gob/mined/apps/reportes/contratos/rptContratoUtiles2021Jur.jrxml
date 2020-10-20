@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptContratoPersonaJuridicaZapatos" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="386daff4-b328-46a7-9dfa-0867cb41e9e1">
 	<property name="ireport.zoom" value="2.1435888100000025"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="336"/>
+	<property name="ireport.x" value="75"/>
+	<property name="ireport.y" value="408"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -141,7 +141,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
-						<font fontName="Arial" size="10"/>
+						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA["CONTRATO No. ME-".concat($F{NUMERO_CONTRATO}).concat("/").concat($F{ANHO_CONTRATO})+"/CE:"+$F{CODIGO_ENTIDAD}]]></textFieldExpression>
 				</textField>
@@ -154,7 +154,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Justified" markup="styled">
-						<font fontName="Arial" size="8"/>
+						<font fontName="Arial" size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA["<style isBold='true' pdfFontName='Helvetica-Bold'>NOSOTROS,</style> ".concat($F{NOMBRE_MIEMBRO}).concat(" actuando en nombre y representación del Organismo de Administración Escolar ").
 concat($F{INICIALES_MODALIDAD}).concat(" del ").concat($F{NOMBRE}).concat(" con código ").concat($F{CODIGO_ENTIDAD}).concat(", Municipio "+$F{NOMBRE_MUNICIPIO}).
@@ -176,7 +176,7 @@ concat((new DecimalFormat("#,###.00").format($F{VALOR}.doubleValue()))).concat("
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Arial" size="10"/>
+						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA["\""+$P{descripcionRubro}+" ".concat($F{ANHO_CONTRATO}).
 concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
@@ -184,7 +184,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="152" splitType="Stretch">
+			<band height="122" splitType="Stretch">
 				<staticText>
 					<reportElement key="staticText-1" x="1" y="24" width="14" height="13" uuid="6ee46c1b-0be5-4846-9355-9a2bbab304a2"/>
 					<box>
@@ -194,12 +194,12 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement>
-						<font fontName="Arial" size="9"/>
+						<font fontName="Arial" size="7"/>
 					</textElement>
 					<text><![CDATA[F.:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-					<reportElement key="textField-4" x="14" y="37" width="239" height="53" uuid="a67d0dcb-a4bb-4ca4-b012-da2b8d7d76ef"/>
+					<reportElement key="textField-4" x="14" y="37" width="239" height="36" uuid="a67d0dcb-a4bb-4ca4-b012-da2b8d7d76ef"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -207,7 +207,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement>
-						<font fontName="Arial" size="9"/>
+						<font fontName="Arial" size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{NOMBRE_MIEMBRO}+
 "\nPresidente(a) del Organismo de\nAdministración Escolar del Centro Educativo\nCONTRATANTE"]]></textFieldExpression>
@@ -224,12 +224,12 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement>
-						<font fontName="Arial" size="9"/>
+						<font fontName="Arial" size="7"/>
 					</textElement>
 					<text><![CDATA[F.:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-					<reportElement key="textField-5" x="275" y="37" width="235" height="53" uuid="ec110346-cce6-4a11-bf4d-23667db2defe"/>
+					<reportElement key="textField-5" x="275" y="37" width="235" height="36" uuid="ec110346-cce6-4a11-bf4d-23667db2defe"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -237,7 +237,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement>
-						<font fontName="Arial" size="9"/>
+						<font fontName="Arial" size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{NOMBRE_PRESENTANTE}+
 "\nNo DUI: "+$F{NUMERO_DUI}+
@@ -246,10 +246,10 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 				<line>
 					<reportElement key="line-2" x="277" y="33" width="168" height="1" uuid="aeeff457-f718-44a1-b8fd-0aa53bbc6345"/>
 				</line>
-				<textField>
-					<reportElement x="1" y="101" width="510" height="51" uuid="803e7e95-515a-4b8e-95fe-f963cc0fe054"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="1" y="84" width="510" height="38" uuid="803e7e95-515a-4b8e-95fe-f963cc0fe054"/>
 					<textElement textAlignment="Center">
-						<font fontName="Arial" size="9" isBold="true"/>
+						<font fontName="Arial" size="6" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($F{DISTRIBUIDOR}.equals("1"))?($F{MOSTRAR_LEYENDA}.toString().equals("1")?"Nota: Este proveedor es contribuyente del IVA, y debe presentar fotocopia de la tarjeta del IVA, solvencia original o copia certificada por un notario de la Solvencia Municipal y Solvencia Tributaria":"Nota: Este proveedor debe presentar Solvencia Original o Copia certificada por un notario de la Solvencia Municipal y Solvencia Tributaria."):
 ($F{MOSTRAR_LEYENDA}.toString().equals("1")?"Nota: Este proveedor es contribuyente del IVA, y debe presentar fotocopia de la tarjeta del IVA, solvencia original o copia certificada por un notario de la Solvencia Municipal y Solvencia Tributaria":"")]]></textFieldExpression>
@@ -263,7 +263,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Left">
-						<font fontName="Arial" size="9"/>
+						<font fontName="Arial" size="7"/>
 					</textElement>
 					<text><![CDATA[(sello OAE)]]></text>
 				</staticText>
@@ -449,7 +449,7 @@ concat("\"\nFUENTE DE FINANCIAMIENTO: GOES")]]></textFieldExpression>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Justified" verticalAlignment="Top" rotation="None" markup="styled">
-						<font fontName="Arial" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA["La cantidad mencionada anteriormente será pagada en forma total o de conformidad a los bienes recibidos a satisfacción por parte del Centro Educativo a través del Administrador de este contrato (Presidente del Organismo Escolar). Los documentos a presentar, para efectos de gestión de pago por parte del contratista son: I) Factura de Consumidor Final o Recibo, el cual debe ser emitido a nombre del Organismos del Centro Educativo, en el que se indique una descripción del bien suministrado, la cantidad, el precio unitario y el monto total; II) Acta de Recepción firmada y sellada por parte del Presidente del Organismo, de haber recibido a satisfacción los bienes objeto de este contrato; III) Cualquier resolución que se celebre y modifique lo acordado en el presente instrumento como Resoluciones de Prórroga, Resoluciones Modificativas, Resoluciones de Multa, e incluso Resoluciones de Extinción. ".
@@ -505,7 +505,7 @@ concat(", de igual forma se señala como Domicilio Especial, en el caso de que n
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement>
-					<font fontName="Arial" size="7"/>
+					<font fontName="Arial" size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{USUARIO_INSERCION}+" - "+(new SimpleDateFormat("HH:mm dd/MM/yyyy")).format(new Date())]]></textFieldExpression>
 			</textField>
@@ -522,7 +522,7 @@ concat(", de igual forma se señala como Domicilio Especial, en el caso de que n
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement>
-					<font fontName="Arial" size="7"/>
+					<font fontName="Arial" size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{USUARIO_INSERCION}+" - "+(new SimpleDateFormat("HH:mm dd/MM/yyyy")).format(new Date())]]></textFieldExpression>
 			</textField>

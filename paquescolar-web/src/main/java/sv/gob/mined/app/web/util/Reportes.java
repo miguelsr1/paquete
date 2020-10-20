@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
@@ -50,9 +49,12 @@ public class Reportes {
 
     public static InputStream getPathReporte(String pathReporte) {
         try {
-            String tmpPath = JsfUtil.getValorFromBundleByKey("path_reportes");
+            String tmpPath;
             if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
+                tmpPath = JsfUtil.getValorFromBundleByKey("path_reportes_win");
                 pathReporte = pathReporte.replaceAll("/", "\\\\");
+            } else {
+                tmpPath = JsfUtil.getValorFromBundleByKey("path_reportes_linux");
             }
             return new FileInputStream(tmpPath.concat(pathReporte));
         } catch (FileNotFoundException ex) {
@@ -104,7 +106,7 @@ public class Reportes {
         try {
             ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
             param.put("ubicacionImagenes", ctx.getRealPath(PATH_IMAGENES));
-            JasperPrint jasperPrint = reportesEJB.getRpt(param, Reportes.class.getClassLoader().getResourceAsStream((paqueteRpt + File.separator + nombreRpt + ".jasper")));
+            JasperPrint jasperPrint = reportesEJB.getRpt(param, Reportes.getPathReporte((paqueteRpt + File.separator + nombreRpt + ".jasper")));
             responseRptPdf(jasperPrint, nombrePdfGenerado);
         } catch (IOException | JRException ex) {
             Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, null, ex);
@@ -114,7 +116,7 @@ public class Reportes {
     public static JasperPrint getRptSQLConnection(ReportesEJB reportesEJB, HashMap param, String paqueteRpt, String nombreRpt) {
         ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
         param.put("ubicacionImagenes", ctx.getRealPath(PATH_IMAGENES));
-        return reportesEJB.getRpt(param, Reportes.class.getClassLoader().getResourceAsStream((paqueteRpt + File.separator + nombreRpt)));
+        return reportesEJB.getRpt(param, Reportes.getPathReporte((paqueteRpt + File.separator + nombreRpt)));
     }
 
     /**
@@ -154,18 +156,18 @@ public class Reportes {
                 }
 
                 if (rpt.contains("rptCertUti_2017")) {
-                    jasperPrintList.add(reportesEJB.getRpt(param, Reportes.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/sispaqescolar/reporte" + File.separator + rpt)));
+                    jasperPrintList.add(reportesEJB.getRpt(param, Reportes.getPathReporte("sv/gob/mined/apps/sispaqescolar/reporte" + File.separator + rpt)));
                 } else if (rpt.contains("rptCertUti2021")) {
                     jasperPrintList.add(getRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/sispaqescolar/reporte/", rpt));
                 } else {
                     if (rpt.contains("rptCertUni")) {
                         if (Integer.parseInt(anho) > 2017) {
                             param.put("descripcionRubro", "SERVICIOS DE CONFECCION DEL PRIMER UNIFORME");
-                            jasperPrintList.add(JasperFillManager.fillReport(Reportes.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/sispaqescolar/reporte" + File.separator + rpt), param, new JRBeanCollectionDataSource(lst)));
+                            jasperPrintList.add(JasperFillManager.fillReport(Reportes.getPathReporte("sv/gob/mined/apps/sispaqescolar/reporte" + File.separator + rpt), param, new JRBeanCollectionDataSource(lst)));
                             param.put("descripcionRubro", "SERVICIOS DE CONFECCION DEL SEGUNDO UNIFORME");
-                            jasperPrintList.add(JasperFillManager.fillReport(Reportes.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/sispaqescolar/reporte" + File.separator + rpt), param, new JRBeanCollectionDataSource(lst)));
+                            jasperPrintList.add(JasperFillManager.fillReport(Reportes.getPathReporte("sv/gob/mined/apps/sispaqescolar/reporte" + File.separator + rpt), param, new JRBeanCollectionDataSource(lst)));
                         } else {
-                            jasperPrintList.add(JasperFillManager.fillReport(Reportes.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/sispaqescolar/reporte" + File.separator + rpt), param, new JRBeanCollectionDataSource(lst)));
+                            jasperPrintList.add(JasperFillManager.fillReport(Reportes.getPathReporte("sv/gob/mined/apps/sispaqescolar/reporte" + File.separator + rpt), param, new JRBeanCollectionDataSource(lst)));
                         }
                     } else if (rpt.contains("rptDeclaracionJuradaMatricula")) {
                         jasperPrintList.add(reportesEJB.getRpt(param, Reportes.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/sispaqescolar/reporte" + File.separator + rpt)));

@@ -1951,9 +1951,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
         param.put("pIdPlanilla", planillaPago.getIdPlanilla().intValue());
         param.put("pAFavorDe", (short) (planillaPago.getIdTipoPlanilla() == 1 ? 3 : 0));
         param.put("pNombreCheque", pNombreCheque);
-        jp
-                = reportesEJB.getRpt(param, PagoProveedoresController.class
-                        .getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + rpt + ".jasper")));
+        jp = reportesEJB.getRpt(param, Reportes.getPathReporte("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + rpt + ".jasper"));
         return jp;
     }
 
@@ -1966,8 +1964,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
         param.put("pUniforme", detalleProcesoAdq.getIdDetProcesoAdq() == 25 ? 1 : 0);
         param.put("pIdRequerimiento", req.getIdRequerimiento().intValue());
         param.put("pAnho", "20" + anho);
-        jp = reportesEJB.getRpt(param, PagoProveedoresController.class
-                .getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + nombreRpt)));
+        jp = reportesEJB.getRpt(param, Reportes.getPathReporte("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + nombreRpt));
         return jp;
     }
 
@@ -1984,9 +1981,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
         datos.setLstDetalle(lstEmailProveeCredito);
         List<DatosProveDto> lst = new ArrayList();
         lst.add(datos);
-        jp
-                = reportesEJB.getRpt(param, PagoProveedoresController.class
-                        .getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoProvee.jasper")), lst);
+        jp = reportesEJB.getRpt(param, Reportes.getPathReporte("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoProvee.jasper"), lst);
         return jp;
     }
 
@@ -2011,9 +2006,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
         datos.setLstDetalle(lstProveedores);
         List<DatosProveDto> lst = new ArrayList();
         lst.add(datos);
-        jp
-                = reportesEJB.getRpt(param, PagoProveedoresController.class
-                        .getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoReintegro.jasper")), lst);
+        jp = reportesEJB.getRpt(param, Reportes.getPathReporte("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoReintegro.jasper"), lst);
         return jp;
     }
 
