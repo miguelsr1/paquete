@@ -84,6 +84,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
     private String codigoEntidad;
     private String razonSocial;
     private String representanteLegal;
+    private String nombreEncargadoCompra;
     private BigDecimal rubro = BigDecimal.ZERO;
     private BigDecimal idParticipante = BigDecimal.ZERO;
     private BigDecimal idMunicipio;
@@ -632,6 +633,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                     }
                                 }
 
+                                nombreEncargadoCompra = entidadEducativaEJB.getEncargadoDeCompras(codigoEntidad).getNombreMiembro();
                                 //BUSCAR REPRESENTANTE DEL ORGANISMO DE ADMINISTRACION ESCOLAR
                                 representanteCe = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
                                 if (representanteCe == null) {
@@ -808,8 +810,8 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
         ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
 
         param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
-        param.put("pEncargadoDeCompras", entidadEducativaEJB.getEncargadoDeCompras(codigoEntidad).getNombreMiembro());
-        param.put("pMiembro", entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad).getNombreMiembro());
+        param.put("pEncargadoDeCompras", nombreEncargadoCompra);
+        param.put("pMiembro", representanteCe.getNombreMiembro());
         param.put("pEmail", current.getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdPersona().getEmail());
         param.put("pNumContrato", "ME-" + current.getNumeroContrato() + "/" + detalleProceso.getIdProcesoAdq().getIdAnho().getAnho() + "/COD:" + codigoEntidad);
         sobredemanda = detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("SOBREDEMANDA");
@@ -1033,7 +1035,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                 SimpleDateFormat sd = new SimpleDateFormat("dd/MM/yyyy");
                 List lst = ofertaBienesServiciosEJB.getDatosRptAnalisisEconomico(ofe.getCodigoEntidad().getCodigoEntidad(), ofe.getIdDetProcesoAdq());
                 Bean2Excel oReport = new Bean2Excel(lst, detalleProceso.getIdRubroAdq().getDescripcionRubro(), entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(), "", sd.format(ofe.getFechaApertura()), getSelected().getUsuarioInsercion());
-                oReport.createFile(ofe.getCodigoEntidad().getCodigoEntidad());
+                oReport.createFile(ofe.getCodigoEntidad().getCodigoEntidad(), representanteCe.getNombreMiembro(), nombreEncargadoCompra);
             }
         } else {
             JsfUtil.mensajeAlerta("Primero debe de guardar la oferta!!!");

@@ -71,10 +71,10 @@ public class Bean2Excel {
         listado = listadoProv;
     }
 
-    public void createFile(String codigoEntidad) {
+    public void createFile(String codigoEntidad, String nombreDirector, String nombreEncargadoCompra) {
         try {
-            this.addSheetAnalisisEconomico(listado);
-            this.addSheetAnalisisTecnico();
+            this.addSheetAnalisisEconomico(listado, nombreDirector, nombreEncargadoCompra);
+            this.addSheetAnalisisTecnico(nombreDirector, nombreEncargadoCompra);
             ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
             workbook.write(outByteStream);
 
@@ -84,7 +84,7 @@ public class Bean2Excel {
         }
     }
 
-    private void addSheetAnalisisEconomico(List<?> listado) {
+    private void addSheetAnalisisEconomico(List<?> listado, String nombreDirector, String nombreEncargadoCompra) {
         ReportColumn[] columns = new ReportColumn[]{
             new ReportColumn("numItem", "ITEM", FormatType.TEXT),
             new ReportColumn("item", "DESCRIPCION DEL ITEM", FormatType.TEXT),
@@ -275,9 +275,20 @@ public class Bean2Excel {
         currentRow++;
         row = sheet.createRow(currentRow);
         HSSFCell cell = row.createCell(0);
-        cell.setCellValue("RAZONAMIENTO:");
-
+        cell.setCellValue("F._____________________________________");
         currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue(nombreDirector);
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue("Representante Legal (Presidente del Organismo de Administración Escolar(a)");
+        
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue("");
         currentRow++;
         row = sheet.createRow(currentRow);
         cell = row.createCell(0);
@@ -285,11 +296,11 @@ public class Bean2Excel {
         currentRow++;
         row = sheet.createRow(currentRow);
         cell = row.createCell(0);
-        cell.setCellValue("Representante Legal (Presidente del Organismo de Administración Escolar(a)");
+        cell.setCellValue(nombreEncargadoCompra);
         currentRow++;
         row = sheet.createRow(currentRow);
         cell = row.createCell(0);
-        cell.setCellValue("CDE, CECE o CDI");
+        cell.setCellValue("Encargado de Compra");
 
         row = sheet.getRow(3);
         cell = row.getCell(0);
@@ -332,7 +343,7 @@ public class Bean2Excel {
         row = sheet.createRow(2);
         cell1 = row.createCell(0);
         cell1.setCellStyle(myBoldStyle);
-        cell1.setCellValue("FUENTE DE FINANCIAMIENTO : " + fuenteFinanciamiento + " FECHA DE ELABORACIÓN : " + fechaElaboracion);
+        cell1.setCellValue("FECHA DE ELABORACIÓN : " + fechaElaboracion);
         currentRow++;
 
         String leyenda = HSSFHeader.font("Arial", "Bold") + HSSFHeader.fontSize((short) 8) + "ANALISIS TÉCNICO RUBRO : " + rubro + ", CENTRO EDUCATIVO : " + nombreCentroEducativo + " CODIGO : " + codigoCentroEducativo;
@@ -345,7 +356,7 @@ public class Bean2Excel {
         sheet.setColumnBreak(20);
     }
 
-    private void addSheetAnalisisTecnico() {
+    private void addSheetAnalisisTecnico(String nombreDirector, String nombreEncargadoCompra) {
         HSSFSheet sheet = workbook.createSheet("técnico");
         int currentRow = 0;
         HSSFRow row;
@@ -424,8 +435,7 @@ public class Bean2Excel {
         row = sheet.createRow(2);
         cell1 = row.createCell(0);
         cell1.setCellStyle(myBoldTitleStyle);
-        cell1.setCellValue("FUENTE DE FINANCIAMIENTO : "
-                + fuenteFinanciamiento + " FECHA DE ELABORACIÓN : " + fechaElaboracion);
+        cell1.setCellValue("FECHA DE ELABORACIÓN : " + fechaElaboracion);
 
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 1 + (proveedoresAMostrar.length * 2)));
         sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 1 + (proveedoresAMostrar.length * 2)));
@@ -498,13 +508,11 @@ public class Bean2Excel {
         currentRow++;
         row = sheet.createRow(currentRow);
         HSSFCell cell = row.createCell(0);
-        cell.setCellValue("RAZONAMIENTO:");
-
-        currentRow++;
+        cell.setCellValue("F._____________________________________");
         currentRow++;
         row = sheet.createRow(currentRow);
         cell = row.createCell(0);
-        cell.setCellValue("F._____________________________________");
+        cell.setCellValue(nombreDirector);
         currentRow++;
         row = sheet.createRow(currentRow);
         cell = row.createCell(0);
@@ -512,7 +520,23 @@ public class Bean2Excel {
         currentRow++;
         row = sheet.createRow(currentRow);
         cell = row.createCell(0);
-        cell.setCellValue("CDE, CECE o CDI");
+        cell.setCellValue("");
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue("");
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue("F._____________________________________");
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue(nombreEncargadoCompra);
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue("Encargado de Compra");
 
         String leyenda = HSSFHeader.font("Arial", "Bold")
                 + HSSFHeader.fontSize((short) 8) + "ANALISIS TÉCNICO RUBRO : " + rubro
