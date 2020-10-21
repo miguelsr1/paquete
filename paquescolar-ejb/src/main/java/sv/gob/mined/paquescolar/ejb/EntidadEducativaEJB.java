@@ -46,12 +46,12 @@ public class EntidadEducativaEJB {
             return (VwCatalogoEntidadEducativa) q.getSingleResult();
         }
     }
-     
+
     public VwCatalogoEntidadEducativa getEntidadEducativaEstadistica(String codigoEntidad) {
         StoredProcedureQuery sp = em.createNamedStoredProcedureQuery("SP_ACTUALIZAR_EST2021");
         sp.setParameter("V_CODIGO_ENTIDAD", codigoEntidad);
         sp.execute();
-        
+
         Query q = em.createQuery("SELECT v FROM VwCatalogoEntidadEducativa v WHERE v.codigoEntidad=:codigoEntidad", VwCatalogoEntidadEducativa.class);
         q.setParameter("codigoEntidad", codigoEntidad);
         if (q.getResultList().isEmpty()) {
@@ -307,7 +307,7 @@ public class EntidadEducativaEJB {
             return (OrganizacionEducativa) query.getResultList().get(0);
         }
     }
-    
+
     public OrganizacionEducativa getEncargadoDeCompras(String codigoEntidad) {
         Query query = em.createNativeQuery("SELECT * FROM organizacion_educativa  WHERE codigo_entidad=?1 and firma_contrato=0 and cargo='ENCARGADO_COMPRA'", OrganizacionEducativa.class);
         query.setParameter(1, codigoEntidad);
@@ -352,8 +352,18 @@ public class EntidadEducativaEJB {
     }
 
     public BigDecimal getCantidadTotalByCodEntAndIdProcesoAdq(String codigoEntidad, Integer idProcesoAdq) {
+        String niveles = "";
+        switch (idProcesoAdq) {
+            case 19:
+                niveles = "(1,3,4,5,6)";
+                break;
+            default:
+                niveles = "(22,3,4,5,6,23,24)";
+                break;
+        }
+
         Query q = em.createNativeQuery("select sum(nvl(masculino,0)+nvl(femenimo,0)) from estadistica_censo \n"
-                + "where codigo_entidad = ?1 and id_proceso_adq = ?2 and estado_eliminacion = 0 and id_nivel_educativo in (1,3,4,5,6)");
+                + "where codigo_entidad = ?1 and id_proceso_adq = ?2 and estado_eliminacion = 0 and id_nivel_educativo in " + niveles);
         q.setParameter(1, codigoEntidad);
         q.setParameter(2, idProcesoAdq);
         return q.getResultList().isEmpty() ? BigDecimal.ZERO : (BigDecimal) q.getSingleResult();
