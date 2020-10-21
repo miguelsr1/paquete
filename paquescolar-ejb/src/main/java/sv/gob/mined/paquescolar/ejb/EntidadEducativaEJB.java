@@ -355,10 +355,10 @@ public class EntidadEducativaEJB {
         String niveles = "";
         switch (idProcesoAdq) {
             case 19:
-                niveles = "(1,3,4,5,6)";
+                niveles = "(22,3,4,5,6,23,24)";
                 break;
             default:
-                niveles = "(22,3,4,5,6,23,24)";
+                niveles = "(1,3,4,5,6)";
                 break;
         }
 
