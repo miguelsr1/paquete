@@ -202,7 +202,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 							</jr:columnHeader>
 							<jr:columnFooter style="table_TD" height="14" rowSpan="1"/>
 							<jr:detailCell style="table_TD" height="13" rowSpan="1">
-								<textField pattern="¤ #,##0.00">
+								<textField pattern="$ #,##0.00">
 									<reportElement x="0" y="0" width="61" height="13" uuid="fbdb2eda-4446-47a1-a837-ae8f76c9cd49"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
@@ -222,7 +222,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 								</staticText>
 							</jr:columnHeader>
 							<jr:columnFooter style="table_TD" height="14" rowSpan="1">
-								<textField pattern="¤ #,##0.00">
+								<textField pattern="$ #,##0.00">
 									<reportElement x="0" y="0" width="82" height="14" uuid="e193a0ba-8f98-4ff5-ac45-fe725f0bf053"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Arial" size="8" isBold="true"/>
@@ -231,7 +231,7 @@ ORDER BY TO_NUMBER(NO_ITEM)]]>
 								</textField>
 							</jr:columnFooter>
 							<jr:detailCell style="table_TD" height="13" rowSpan="1">
-								<textField pattern="¤ #,##0.00">
+								<textField pattern="$ #,##0.00">
 									<reportElement x="0" y="0" width="82" height="13" uuid="907d90c2-851f-4056-ab7f-c4cad6122f78"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
