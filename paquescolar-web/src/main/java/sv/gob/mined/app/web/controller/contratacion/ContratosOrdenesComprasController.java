@@ -430,6 +430,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
             razonSocial = resolucionAdj.getIdParticipante().getIdEmpresa().getRazonSocial();
             representanteLegal = proveedorEJB.getRespresentanteLegalEmp(resolucionAdj.getIdParticipante().getIdEmpresa().getIdPersona().getIdPersona());
             representanteCe = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
+            nombreEncargadoCompra = entidadEducativaEJB.getEncargadoDeCompras(codigoEntidad).getNombreMiembro();
 
             soloLectura = (resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 2);
 
