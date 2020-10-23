@@ -80,13 +80,8 @@ public class ProcesoFacade {
                     }
 
                     try {
-                        String msjTemp;
-                        if ((detalleEnvio.getNombreDestinatario() == null || detalleEnvio.getNombreDestinatario().isEmpty())
-                                && (detalleEnvio.getNip() == null || detalleEnvio.getNip().isEmpty())) {
-                            msjTemp = mensaje;
-                        } else {
-                            msjTemp = mensaje.replace(":DOCENTE:", detalleEnvio.getNombreDestinatario().concat(" - ").concat(detalleEnvio.getNip() == null ? "" : detalleEnvio.getNip()));
-                        }
+                        String msjTemp = mensaje.replace(":DOCENTE:", detalleEnvio.getNombreDestinatario().concat(detalleEnvio.getNip() == null ? "" : (" - " + detalleEnvio.getNip())));
+
                         MimeMessage message = new MimeMessage(mailSession);
 
                         message.setFrom(from);
