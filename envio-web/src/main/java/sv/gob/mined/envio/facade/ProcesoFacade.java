@@ -48,7 +48,7 @@ public class ProcesoFacade {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     @TransactionTimeout(unit = TimeUnit.HOURS, value = 2)
-    public void enviarCorreos(String pathArchivo, String titulo, String mensaje, Session mailSession, Transport transport, 
+    public void enviarCorreos(String pathArchivo, String titulo, String mensaje, Session mailSession, Transport transport,
             String remitente, String password, String server, String port) {
         iniciar(pathArchivo, titulo, mensaje, mailSession, transport, remitente, password, server, port);
     }
@@ -80,8 +80,13 @@ public class ProcesoFacade {
                     }
 
                     try {
-                        String msjTemp = mensaje.replace(":DOCENTE:", detalleEnvio.getNombreDestinatario().concat(" - ").concat(detalleEnvio.getNip() == null ? "" : detalleEnvio.getNip()));
-
+                        String msjTemp;
+                        if ((detalleEnvio.getNombreDestinatario() == null || detalleEnvio.getNombreDestinatario().isEmpty())
+                                && (detalleEnvio.getNip() == null || detalleEnvio.getNip().isEmpty())) {
+                            msjTemp = mensaje;
+                        } else {
+                            msjTemp = mensaje.replace(":DOCENTE:", detalleEnvio.getNombreDestinatario().concat(" - ").concat(detalleEnvio.getNip() == null ? "" : detalleEnvio.getNip()));
+                        }
                         MimeMessage message = new MimeMessage(mailSession);
 
                         message.setFrom(from);
