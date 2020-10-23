@@ -48,18 +48,23 @@ public class ProcesoFacade {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     @TransactionTimeout(unit = TimeUnit.HOURS, value = 2)
-    public void enviarCorreos(String pathArchivo, String titulo, String mensaje, Session mailSession, Transport transport, String remitente, String password) {
-        iniciar(pathArchivo, titulo, mensaje, mailSession, transport, remitente, password);
+    public void enviarCorreos(String pathArchivo, String titulo, String mensaje, Session mailSession, Transport transport, 
+            String remitente, String password, String server, String port) {
+        iniciar(pathArchivo, titulo, mensaje, mailSession, transport, remitente, password, server, port);
     }
 
-    private void iniciar(String pathArchivo, String titulo, String mensaje, Session mailSession, Transport transport, String remitente, String password) {
+    private void iniciar(String pathArchivo, String titulo, String mensaje, Session mailSession, Transport transport,
+            String remitente, String password, String server, String port) {
         System.out.println("ok");
         BigDecimal idEnvio = leerArchivoFacade.guardarRegistros(pathArchivo, remitente, titulo, mensaje);
-        envio(remitente, password, titulo, mensaje, persistenciaFacade.findDetalleEnvio(idEnvio), transport, mailSession);
+        envio(remitente, password, titulo, mensaje, persistenciaFacade.findDetalleEnvio(idEnvio), transport, mailSession, server, port);
         System.out.println("fin");
     }
 
-    private void envio(String remitente, String password, String titulo, String mensaje, List<DetalleEnvio> lstDetalle, Transport transport, Session mailSession) {
+    private void envio(String remitente, String password, String titulo, String mensaje,
+            List<DetalleEnvio> lstDetalle,
+            Transport transport, Session mailSession,
+            String server, String port) {
         Integer cont = 1;
         Integer contReset = 1;
         List<BigDecimal> correosEnviados = new ArrayList<>();
@@ -69,7 +74,7 @@ public class ProcesoFacade {
 
                 for (DetalleEnvio detalleEnvio : lstDetalle) {
                     if (transport.isConnected()) {
-                        
+
                     } else {
                         transport.connect();
                     }
@@ -83,7 +88,7 @@ public class ProcesoFacade {
 
                         InternetAddress[] address = {new InternetAddress(detalleEnvio.getCorreoDestinatario())};
                         message.setRecipients(Message.RecipientType.TO, address);
-                        message.setRecipients(Message.RecipientType.BCC, "miguel.sanchez@admin.mined.edu.sv");
+                        //message.setRecipients(Message.RecipientType.BCC, "miguel.sanchez@admin.mined.edu.sv");
 
                         BodyPart messageBodyPart1 = new MimeBodyPart();
 
@@ -102,8 +107,8 @@ public class ProcesoFacade {
                         correosEnviados.add(detalleEnvio.getIdDetalle());
                         cont++;
                         contReset++;
-                        
-                        if(contReset == 401){
+
+                        if (contReset == 401) {
                             transport.close();
                             contReset = 1;
                         }
@@ -113,7 +118,7 @@ public class ProcesoFacade {
                             transport.close();
 
                             transport = mailSession.getTransport("smtp");
-                            transport.connect("smtp.office365.com", Integer.parseInt("587"), remitente, password);
+                            transport.connect(server, Integer.parseInt(port), remitente, password);
                         }
                         Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (MessagingException ex) {
@@ -122,10 +127,10 @@ public class ProcesoFacade {
                             transport.close();
 
                             transport = mailSession.getTransport("smtp");
-                            transport.connect("smtp.office365.com", Integer.parseInt("587"), remitente, password);
+                            transport.connect(server, Integer.parseInt(port), remitente, password);
                         } else {
                             transport = mailSession.getTransport("smtp");
-                            transport.connect("smtp.office365.com", Integer.parseInt("587"), remitente, password);
+                            transport.connect(server, Integer.parseInt(port), remitente, password);
                         }
                         Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
                     }

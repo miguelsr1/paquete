@@ -191,9 +191,9 @@ public class EnvioView {
         }
         if (mensaje == null || mensaje.trim().isEmpty()) {
             error += "Debe de ingresar el Mensaje a enviar.<br/>";
-        } else if (!mensaje.contains(":DOCENTE:")) {
+        } /*else if (!mensaje.contains(":DOCENTE:")) {
             error += "El mensaje no contiene la palabra comodin <b>:DOCENTE:</b><br/>";
-        }
+        }*/
 
         if (mensaje.length() > 4000 && mensaje.contains("data:image")) {
             error += "La imagen es muy grande por favor, reduzca el peso de la imagen.<br/>";
@@ -209,7 +209,7 @@ public class EnvioView {
     }
 
     public void enviarCorreos() {
-        procesoFacade.enviarCorreos(pathArchivo, titulo, mensaje, mailSession, transport, remitente, password);
+        procesoFacade.enviarCorreos(pathArchivo, titulo, mensaje, mailSession, transport, remitente, password, server, port);
         JsfUtil.mensajeInformacion("El proceso de envio de correos se realizara en background.");
         limpiarFormato();
     }

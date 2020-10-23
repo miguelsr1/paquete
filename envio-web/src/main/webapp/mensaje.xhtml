@@ -53,11 +53,7 @@
                                                      style="margin: 0 auto; "
                                                      styleClass="form-group ui-panelgrid-blank" layout="grid">
                                             <p:outputPanel>
-                                                <h:outputText value="Mensaje ( No olvide agregar la palabra comodin " style="float: left;"/>
-                                                <p:spacer width="15" style="float: left;"/>
-                                                <p:outputLabel value=":DOCENTE:" style="font-weight: bold;float: left;"/> 
-                                                <p:spacer width="15" style="float: left;"/>
-                                                <h:outputText value=") " style="float: left;"/>
+                                                <h:outputText value="Mensaje" style="float: left;"/>
                                             </p:outputPanel>
                                             <p:textEditor id="txtMensaje" value="#{envioView.mensaje}" allowLinks="true" 
                                                           height="200" style="width: 100%; margin-bottom:10px"
@@ -130,7 +126,7 @@
                                         <i class="fa fa-check-circle" style="font-size: 16px"></i>
                                     </h:panelGrid>
                                     <f:facet name="footer">
-                                        <p:commandButton value="Aceptar" action="#{envioView.regresar()}"/>
+                                        <p:commandButton value="Aceptar"/>
                                     </f:facet>
                                 </p:dialog>
 
