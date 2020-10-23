@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="494ffdf3-e02c-4282-b47c-bedbea3a135e">
 	<property name="ireport.zoom" value="2.357947691000002"/>
 	<property name="ireport.x" value="71"/>
-	<property name="ireport.y" value="147"/>
+	<property name="ireport.y" value="246"/>
 	<parameter name="ubicacionImagenes" class="java.lang.String">
 		<defaultValueExpression><![CDATA["/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/"]]></defaultValueExpression>
 	</parameter>
@@ -16,9 +16,7 @@
     nombre_departamento,
     TO_CHAR(FECHA_CON, 'HH') hora,
     TO_CHAR(FECHA_CON, 'mm') minuto,
-    TO_CHAR(FECHA_CON, 'dd') dia,
-    TO_CHAR(FECHA_CON, 'MM') mes,
-    TO_CHAR(FECHA_CON, 'yyyy') anho,
+    FECHA_CON,
     numero_contrato,
     descripcion_rubro,
     nombre_presentante,
@@ -38,9 +36,7 @@ where id_contrato = $P{idContrato}]]>
 	<field name="NOMBRE_DEPARTAMENTO" class="java.lang.String"/>
 	<field name="HORA" class="java.lang.String"/>
 	<field name="MINUTO" class="java.lang.String"/>
-	<field name="DIA" class="java.lang.String"/>
-	<field name="MES" class="java.lang.String"/>
-	<field name="ANHO" class="java.lang.String"/>
+	<field name="FECHA_CON" class="java.sql.Timestamp"/>
 	<field name="NUMERO_CONTRATO" class="java.lang.String"/>
 	<field name="DESCRIPCION_RUBRO" class="java.lang.String"/>
 	<field name="NOMBRE_PRESENTANTE" class="java.lang.String"/>
@@ -99,8 +95,7 @@ where id_contrato = $P{idContrato}]]>
 				<textElement textAlignment="Justified" markup="styled">
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["En el municipio de "+$F{CIUDAD_FIRMA}+" del Departamento de "+$F{NOMBRE_DEPARTAMENTO}+" a las "+$F{HORA}+" horas con "+$F{MINUTO}+" minutos del día "+$F{DIA}+
-", de "+$F{MES}+" de dos mil veinte, en las instalaciones del lugar destinado para la realización de las firma de documentos contractuales con número ME-"+$F{NUMERO_CONTRATO}+
+				<textFieldExpression><![CDATA["En el municipio de "+$F{CIUDAD_FIRMA}+" del Departamento de "+$F{NOMBRE_DEPARTAMENTO}+" a las "+$F{HORA}+" horas con "+$F{MINUTO}+" minutos del día "+Herramientas.addDiasAFecha($F{FECHA_CON},0)+" de dos mil veinte, en las instalaciones del lugar destinado para la realización de las firma de documentos contractuales con número ME-"+$F{NUMERO_CONTRATO}+
 " del rubro de "+$F{DESCRIPCION_RUBRO}+" "+$P{pAnho}+" del Programa de Dotación de Paquetes Escolares del Ministerio de Educación Ciencia y Tecnología; "+
 "yo "+$F{NOMBRE_PRESENTANTE}+" mayor de edad, con número de Documento Único de Identidad "+$F{NUMERO_DUI}+", actuando en mi calidad de adjudicatario(a) del"+
 " contrato antes referido para las entregas del año "+$P{pAnho}+" al Centro Educativo "+$F{NOMBRE}+" con código de infraestructura: "+$F{CODIGO_ENTIDAD}+
