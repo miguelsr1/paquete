@@ -33,7 +33,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
-import sv.gob.mined.app.web.controller.segmodif.GraficoController;
 import sv.gob.mined.paquescolar.model.pojos.credito.ResumenCreditosDto;
 import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
@@ -51,7 +50,7 @@ public class RptExcel {
     public static void generarRptProveedoresHacienda(List<VwRptProveedoresContratadosDto> lst) {
         HSSFCellStyle style;
         int row = 1;
-        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/excel/proveedoresHacienda.xls")) {
+        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/proveedoresHacienda.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             style = wb1.createCellStyle();
@@ -82,7 +81,7 @@ public class RptExcel {
     public static void generarRptRentaAnual(List<DatosProveDto> lstDatos, String anho) {
         HSSFCellStyle style;
         int row = 1;
-        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/excel/rptRentaAnual.xls")) {
+        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptRentaAnual.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             style = wb1.createCellStyle();
@@ -167,7 +166,7 @@ public class RptExcel {
     public static void generarRptRentaMensual(List<DatosProveDto> lst, String anho) {
         HSSFCellStyle style;
         int row = 2;
-        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/excel/rentaMensual.xls")) {
+        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rentaMensual.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             style = wb1.createCellStyle();
@@ -197,7 +196,7 @@ public class RptExcel {
     }
 
     public static void generarRptResumenGeneralCreditos(List<ResumenCreditosDto> listaResumenGen, String anho) {
-        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/excel/rptCreditoResumenGeneral.xls")) {
+        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptCreditoResumenGeneral.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             HSSFSheet hoja = wb1.getSheetAt(0);
@@ -316,7 +315,7 @@ public class RptExcel {
     }
 
     public static void generarRptResumenPorRubroYFinanciera(List<DatosProveedoresFinanDto> listaProvGral, String anho) {
-        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/excel/rptCreditoRubroEntidadFinanciera.xls")) {
+        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptCreditoRubroEntidadFinanciera.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             HSSFSheet hoja = wb1.getSheetAt(0);
