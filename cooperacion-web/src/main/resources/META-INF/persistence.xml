@@ -3,25 +3,27 @@
   <persistence-unit name="cooperacionPU" transaction-type="JTA">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <jta-data-source>java:/CooperacionDS</jta-data-source>
-    <class>sv.gob.mined.cooperacion.web.model.Cooperante</class>
-    <class>sv.gob.mined.cooperacion.web.model.ModalidadEjecucion</class>
-    <class>sv.gob.mined.cooperacion.web.model.ProyectoCooperacion</class>
-    <class>sv.gob.mined.cooperacion.web.model.TipoCooperacion</class>
-    <class>sv.gob.mined.cooperacion.web.model.TipoCooperante</class>
-    <class>sv.gob.mined.cooperacion.web.model.TipoInstrumento</class>
-    <class>sv.gob.mined.cooperacion.web.model.EeGeoDepartamento</class>
-    <class>sv.gob.mined.cooperacion.web.model.EeGeoMunicipio</class>
-    <class>sv.gob.mined.cooperacion.web.model.GeoEntidadEducativa</class>
-    <class>sv.gob.mined.cooperacion.web.model.Director</class>
+    <class>sv.gob.mined.cooperacion.model.Director</class>
+    <class>sv.gob.mined.cooperacion.model.Cooperante</class>
+    <class>sv.gob.mined.cooperacion.model.TipoCooperacion</class>
+    <class>sv.gob.mined.cooperacion.model.TipoInstrumento</class>
+    <class>sv.gob.mined.cooperacion.model.TipoCooperante</class>
+    <class>sv.gob.mined.cooperacion.model.ProyectoCooperacion</class>
+    <class>sv.gob.mined.cooperacion.model.EeGeoMunicipio</class>
+    <class>sv.gob.mined.cooperacion.model.ModalidadEjecucion</class>
+    <class>sv.gob.mined.cooperacion.model.GeoEntidadEducativa</class>
+    <class>sv.gob.mined.cooperacion.model.EeGeoDepartamento</class>
+    <class>sv.gob.mined.cooperacion.model.dto.ListadoProyectoDto</class>
+    <class>sv.gob.mined.cooperacion.model.HisCambioEstadoPro</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties/>
   </persistence-unit>
   <persistence-unit name="paquetePU" transaction-type="JTA">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <jta-data-source>java:/PaqueteDS</jta-data-source>
-    <class>sv.gob.mined.cooperacion.web.model.paquete.Departamento</class>
-    <class>sv.gob.mined.cooperacion.web.model.paquete.Municipio</class>
-    <class>sv.gob.mined.cooperacion.web.model.paquete.VwCatalogoEntidadEducativa</class>
+    <class>sv.gob.mined.cooperacion.model.paquete.Departamento</class>
+    <class>sv.gob.mined.cooperacion.model.paquete.Municipio</class>
+    <class>sv.gob.mined.cooperacion.model.paquete.VwCatalogoEntidadEducativa</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
   </persistence-unit>
 </persistence>

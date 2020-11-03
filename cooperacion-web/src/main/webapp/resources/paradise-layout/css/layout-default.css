@@ -923,16 +923,15 @@ p {
   .layout-wrapper .layout-footer {
     margin-left: 0; } }
 .login-body {
-  background: url("#{resource['paradise-layout:images/login/bg-login.jpg']}");
   background-size: cover;
   height: auto; }
   .login-body .login-panel {
-    width: 600px;
+    width: 700px;
     margin: 0 auto;
     background-color: #ffffff;
-    margin-top: 125px; }
+    margin-top: 70px; }
     .login-body .login-panel .p-col-12 {
-      padding: 15px 100px; }
+      padding: 5px 100px; }
       .login-body .login-panel .p-col-12.logo-container {
         padding: 50px 50px 25px 50px;
         border-bottom: 8px solid #dee4e9;
@@ -1739,7 +1738,7 @@ body {
   padding: 0;
   margin: 0;
   min-height: 100%;
-  background-color: #F2F8FA; }
+  background-color: #303945; }
 
 a {
   text-decoration: none; }

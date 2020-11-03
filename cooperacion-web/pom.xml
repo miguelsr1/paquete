@@ -15,6 +15,8 @@
         <owb.version>2.0.12</owb.version>
         <hibernate-validator.version>5.0.1.Final</hibernate-validator.version>
         <mojarra.version>2.3.13</mojarra.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
     
     

@@ -67,7 +67,7 @@
                                         <span class="ui-inputgroup-addon">
                                             <i class="pi pi-home"></i>
                                         </span>
-                                        <p:inputText id="txtCodEnt" onkeyup="return this.value.length >= 5" value="#{registrarCooperacionView.codigoEntidad}" required="true" label="Código del C.E.">
+                                        <p:inputText id="txtCodEnt" onkeyup="return this.value.length >= 5" value="#{registrarCooperacionView.codigoEntidad}" required="true" label="Código del C.E." >
                                             <p:ajax event="keyup" update="txtNombreCe txtDireccion cboDepartamento cboMunicipio txtNombreDirector txtCorreoDirector mapa" listener="#{registrarCooperacionView.buscarEntidadEducativa()}"/>
                                         </p:inputText>
                                     </div>
@@ -147,8 +147,8 @@
                     <p:panel id="pnlDatosProyecto" header="Datos del Proyecto de Cooperación">
                         <div class="ui-fluid ">
                             <div class="p-field p-grid">
-                                <p:outputLabel for="txtNombreProyecto" value="Nombre:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                                <div class="p-col-12 p-md-10">
+                                <p:outputLabel for="txtNombreProyecto" value="Nombre del Proyecto:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
+                                <div class="p-col-12 p-md-9">
                                     <p:inputText id="txtNombreProyecto" value="#{registrarCooperacionView.proyectoCooperacion.nombreProyecto}" maxlength="199" required="true" label="Nombre del Proyecto"/>
                                 </div>
                             </div>
@@ -169,7 +169,7 @@
                                         <f:selectItems value="#{registrarCooperacionView.lstModalidadEjecucion}" var="modalidad" itemValue="#{modalidad.idModEjecucion}" itemLabel="#{modalidad.descripcionModalidad}"/>
                                     </p:selectOneMenu>
                                 </div>
-                                <p:outputLabel value="Instrumento de fomalización:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
+                                <p:outputLabel value="Instrumento de formalización:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
                                 <div class="p-col-12 p-md-3">
                                     <p:selectOneMenu value="#{registrarCooperacionView.proyectoCooperacion.idTipoInstrumento}">
                                         <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
@@ -211,34 +211,26 @@
                         <br/>
                         <div class="p-grid dashboard">
                             <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
-                                <div class="card overview-box" >
-                                    <h6><p:outputLabel for="txtDescripcion">Descrip. de la Cooperación</p:outputLabel></h6>
-                                    <p:inputText id="txtDescripcion" value="#{registrarCooperacionView.proyectoCooperacion.descripcion}" type="text" required="true" label="Descripción de la Cooperación"/>
+                                <h6><p:outputLabel for="txtDescripcion">Descrip. de la Cooperación</p:outputLabel></h6>
+                                <p:inputText id="txtDescripcion" value="#{registrarCooperacionView.proyectoCooperacion.descripcion}" type="text" required="true" label="Descripción de la Cooperación"/>
 
-                                    <p:tooltip id="toolTipContent" for="txtDescripcion" position="bottom">
-                                        <p:outputLabel escape="false">
-                                            Acá deberá ingresar el elemento a intervenir en la cooperación,<br/>aulas, paredes, capacitaciones, techo, pupitre
-                                        </p:outputLabel>
-                                    </p:tooltip>
-                                </div>
+                                <p:tooltip id="toolTipContent" for="txtDescripcion" position="bottom">
+                                    <p:outputLabel escape="false">
+                                        Acá deberá ingresar el elemento a intervenir en la cooperación,<br/>aulas, paredes, capacitaciones, techo, pupitre
+                                    </p:outputLabel>
+                                </p:tooltip>
                             </div>
                             <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
-                                <div class="card overview-box">
-                                    <h6><p:outputLabel for="txtCantidad">Cantidad a Cubrir</p:outputLabel></h6>
-                                    <p:inputNumber id="txtCantidad" value="#{registrarCooperacionView.proyectoCooperacion.cantidad}" decimalPlaces="0" required="true" label="Cantidad a Cubrir" inputStyle="text-align: right; width: 100%;" />
-                                </div>
+                                <h6><p:outputLabel for="txtCantidad">Cantidad a Cubrir</p:outputLabel></h6>
+                                <p:inputNumber id="txtCantidad" value="#{registrarCooperacionView.proyectoCooperacion.cantidad}" decimalPlaces="0" required="true" label="Cantidad a Cubrir" inputStyle="text-align: right; width: 100%;" />
                             </div>
                             <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
-                                <div class="card overview-box">
-                                    <h6><p:outputLabel for="txtMonto">Monto a Invertir</p:outputLabel></h6>
-                                    <p:inputNumber id="txtMonto" value="#{registrarCooperacionView.proyectoCooperacion.montoInversion}" decimalPlaces="2" required="true" label="Monto a Invertir" inputStyle="text-align: right;width: 100%;"/>
-                                </div>
+                                <h6><p:outputLabel for="txtMonto">Monto a Invertir</p:outputLabel></h6>
+                                <p:inputNumber id="txtMonto" value="#{registrarCooperacionView.proyectoCooperacion.montoInversion}" decimalPlaces="2" required="true" label="Monto a Invertir" inputStyle="text-align: right;width: 100%;"/>
                             </div>
                             <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
-                                <div class="card overview-box">
-                                    <h6><p:outputLabel for="txtCantidaBen">Cantidad Beneficiarios</p:outputLabel></h6>
-                                    <p:inputNumber id="txtCantidaBen" value="#{registrarCooperacionView.proyectoCooperacion.montoInversion}" decimalPlaces="0" required="true" label="Cantidad de Beneficiarios" inputStyle="text-align: right;width: 100%;"/>
-                                </div>
+                                <h6><p:outputLabel for="txtCantidaBen">Cantidad Beneficiarios</p:outputLabel></h6>
+                                <p:inputNumber id="txtCantidaBen" value="#{registrarCooperacionView.proyectoCooperacion.montoInversion}" decimalPlaces="0" required="true" label="Cantidad de Beneficiarios" inputStyle="text-align: right;width: 100%;"/>
                             </div>
                         </div>
                         <br/>
@@ -266,9 +258,12 @@
                                 </p:selectManyCheckbox>
                             </div>
                         </div>
+                        <f:facet name="footer" class="ui-dialog-footer">
+                            <p:commandButton value="Guardar" icon="pi pi-check" update="pnlDatosCe pnlDatosProyecto" validateClient="true" action="#{registrarCooperacionView.guardar()}"/>
+                            <p:commandButton value="Cancelar" icon="pi pi-times" class="secondary-button" update="pnlDatosCe pnlDatosProyecto" validateClient="true" action="#{registrarCooperacionView.guardar()}"/>
+                        </f:facet>
+                        
                     </p:panel>
-
-                    <p:commandButton value="Guardar" update="pnlDatosCe pnlDatosProyecto" validateClient="true"/>
                 </div>
             </div>
 
