@@ -97,7 +97,7 @@ public class LoginView implements Serializable {
             if (correoRemitente != null && password != null) {
                 if (idDominioCorreo.equals("1")) {
                     remitente = correoRemitente.concat("@").concat("mined.gob.sv");
-                    port = "2525";
+                    port = "587";
                     server = "svr2k13mail01.mined.gob.sv";
                     mailSession = eMailFacade.getMailSessionMined(mailSession, dominio, password, remitente);
                 } else {

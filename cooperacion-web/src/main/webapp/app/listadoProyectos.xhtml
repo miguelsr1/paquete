@@ -62,87 +62,6 @@
             <div class="p-grid crud-demo">
                 <div class="p-col-12">
                     <div class="card">
-                        <p:panel id="pnlDatosCe" header="Datos Generales del Centro Educativos"  toggleable="true">
-                            <div class="ui-fluid">
-                                <div class="p-field p-grid">
-                                    <p:outputLabel for="txtCodEnt" value="Código del C.E.:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                                    <div class="p-col-12 p-md-10">
-                                        <div class="ui-inputgroup">
-                                            <span class="ui-inputgroup-addon">
-                                                <i class="pi pi-home"></i>
-                                            </span>
-                                            <p:inputText id="txtCodEnt" onkeyup="return this.value.length >= 5" value="#{registrarCooperacionView.codigoEntidad}" required="true" label="Código del C.E." readonly="false">
-                                                <p:ajax event="keyup" update="txtNombreCe txtDireccion cboDepartamento cboMunicipio txtNombreDirector txtCorreoDirector" listener="#{registrarCooperacionView.buscarEntidadEducativa()}"/>
-                                            </p:inputText>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="p-field p-grid">
-                                    <p:outputLabel value="Nombre del C.E.:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                                    <div class="p-col-12 p-md-10">
-                                        <div class="ui-inputgroup">
-                                            <span class="ui-inputgroup-addon">
-                                                <i class="pi pi-tag"></i>
-                                            </span>
-                                            <p:inputText id="txtNombreCe" value="#{registrarCooperacionView.entidadEducativa.nombre}" readonly="true"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="p-field p-grid">
-                                    <p:outputLabel value="Dirección del C.E.:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                                    <div class="p-col-12 p-md-10">
-                                        <div class="ui-inputgroup">
-                                            <span class="ui-inputgroup-addon">
-                                                <i class="pi pi-map-marker"></i>
-                                            </span>
-                                            <p:inputText id="txtDireccion" value="#{registrarCooperacionView.entidadEducativa.direccion}" readonly="true"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="p-field p-grid">
-                                    <p:outputLabel value="Departamento del C.E.:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                                    <div class="p-col-12 p-md-4">
-                                        <p:selectOneMenu id="cboDepartamento" value="#{registrarCooperacionView.entidadEducativa.codigoDepartamento}" disabled="true">
-                                            <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
-                                            <f:selectItems value="#{registrarCooperacionView.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
-                                            <p:ajax listener="#{registrarCooperacionView.recuperarMunicipios()}" update="cboMunicipio"/>
-                                        </p:selectOneMenu>
-                                    </div>
-                                    <p:outputLabel value="Municipio del C.E.:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                                    <div class="p-col-12 p-md-4">
-                                        <p:selectOneMenu id="cboMunicipio" value="#{registrarCooperacionView.entidadEducativa.codigoMunicipio}" disabled="true">
-                                            <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
-                                            <f:selectItems value="#{registrarCooperacionView.lstMunicipio}" var="mun" itemValue="#{mun.codigoMunicipio}" itemLabel="#{mun.codigoMunicipio} - #{mun.nombreMunicipio}"/>
-                                        </p:selectOneMenu>
-                                    </div>
-                                </div>
-                                <div class="p-field p-grid">
-                                    <p:outputLabel value="Nombre del Director:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                                    <div class="p-col-12 p-md-10">
-                                        <div class="ui-inputgroup">
-                                            <span class="ui-inputgroup-addon">
-                                                <i class="pi pi-user"></i>
-                                            </span>
-                                            <p:inputText id="txtNombreDirector" value="#{registrarCooperacionView.directorCe.nombreDirector}" readonly="true"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="p-field p-grid">
-                                    <p:outputLabel value="E-mail del Director:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                                    <div class="p-col-12 p-md-10">
-                                        <div class="ui-inputgroup">
-                                            <span class="ui-inputgroup-addon">
-                                                <i class="pi pi-envelope"></i>
-                                            </span>
-                                            <p:inputText id="txtCorreoDirector" value="#{registrarCooperacionView.directorCe.correoElectronico}" readonly="true"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </p:panel>
-                    </div>
-
-                    <div class="card">
                         <div class="products-buttonbar">
                             <div>
                                 <p:commandButton value="New" icon="pi pi-plus" styleClass="success-button" style="margin-right: .5rem" 
@@ -160,18 +79,15 @@
                             </div>
                         </div>
 
-                        <p:dataTable value="#{listadoView.lstProyectos}" var="proyecto" styleClass="products-table">
+                        <p:dataTable value="#{listadoView.lstProyectos}" var="proyecto" reflow="true" styleClass="fixed-size">
                             <p:column headerText="Código C.E." width="50">
                                 <h:outputText value="#{proyecto.codigoEntidad}"/>
                             </p:column>
                             <p:column headerText="Nombre C.E.">
                                 <h:outputText value="#{proyecto.nombreCe}"/>
                             </p:column>
-                            <p:column headerText="Departamento">
-                                <h:outputText value="#{proyecto.nombreDepartamento}"/>
-                            </p:column>
-                            <p:column headerText="Municipio">
-                                <h:outputText value="#{proyecto.nombreMunicipio}"/>
+                            <p:column headerText="Ubicación">
+                                <h:outputText value="#{proyecto.nombreMunicipio}, #{proyecto.nombreDepartamento}"/>
                             </p:column>
                             <p:column headerText="Nombre Director">
                                 <h:outputText value="#{proyecto.nombreDirector}"/>
@@ -193,7 +109,7 @@
                                 </h:outputText>
                             </p:column>
                             <p:column headerText="Respuesta a enviar">
-                                <p:commandButton value="#{listadoView.lblBottonEnviar}" />
+                                <p:commandButton value="Enviada" />
                             </p:column>
                         </p:dataTable>
                     </div>

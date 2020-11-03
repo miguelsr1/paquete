@@ -130,10 +130,8 @@ public class ProcesoFacade {
                         }
                     }
 
-                    Address from = new InternetAddress(remitente);
-
-                    envioDeCorreo(from, transport, detalleEnvio, mensaje, titulo, mailSession, server, port, remitente, password);
-
+                    //Address from = new InternetAddress(remitente);
+                    //envioDeCorreo(from, transport, detalleEnvio, mensaje, titulo, mailSession, server, port, remitente, password);
                     correosEnviandos++;
 
                     Logger.getLogger(ProcesoFacade.class.getName()).log(Level.INFO, "Numero {0}", cont);
@@ -153,6 +151,22 @@ public class ProcesoFacade {
 
                         remitente = remitentes.get("correo" + numBloque).split("::")[0];
                         password = remitentes.get("correo" + numBloque).split("::")[1];
+
+                        if (mailSession.getTransport().isConnected()) {
+                            mailSession.getTransport().close();
+                        }
+                        mailSession = null;
+
+                        if (mailSession == null) {
+                            switch (serverCorreo) {
+                                case 1:
+                                    mailSession = eMailFacade.getMailSessionOffice(mailSession, remitente, password);
+                                    break;
+                                case 2:
+                                    mailSession = eMailFacade.getMailSessionGmail(mailSession, remitente, password);
+                                    break;
+                            }
+                        }
                     }
                 }
 
@@ -195,9 +209,8 @@ public class ProcesoFacade {
 
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
-                if (row.getRowNum() != 0) {
-                    remitentes.put("correo" + cantidadRemitente, row.getCell(0).getStringCellValue().concat("::").concat(row.getCell(1).getStringCellValue()));
-                }
+                remitentes.put("correo" + cantidadRemitente, row.getCell(0).getStringCellValue().concat("::").concat(row.getCell(1).getStringCellValue()));
+                cantidadRemitente++;
             }
 
         } else {
