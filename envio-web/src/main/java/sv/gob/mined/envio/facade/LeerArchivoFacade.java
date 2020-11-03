@@ -90,7 +90,7 @@ public class LeerArchivoFacade {
                     String valorFinal = "";
                     for (int i = 0; i < titulos.split(",").length; i++) {
                         valorFinal = valorFinal.isEmpty() ? titulos.split(",")[i].concat("::").concat(valores.split(",")[i])
-                                : (valorFinal.concat("||").concat(titulos.split(",")[i].concat("::").concat(valores.split(",")[i])));
+                                : (valorFinal.concat("&&").concat(titulos.split(",")[i].concat("::").concat(valores.split(",")[i])));
                     }
 
                     DetalleEnvio de = new DetalleEnvio();
@@ -127,7 +127,11 @@ public class LeerArchivoFacade {
                 valor = cell.getStringCellValue();
                 break;
             case NUMERIC:
-                valor = String.valueOf(cell.getNumericCellValue());
+                if (cell.getNumericCellValue() % 1 == 0) {
+                    valor = String.format("%d", (long) cell.getNumericCellValue());
+                } else {
+                    valor = String.format("%.2f", cell.getNumericCellValue());
+                }
                 break;
             default:
                 valor = "";
