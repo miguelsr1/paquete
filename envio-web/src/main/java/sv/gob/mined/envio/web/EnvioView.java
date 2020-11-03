@@ -86,7 +86,7 @@ public class EnvioView {
 
                 transport = mailSession.getTransport("smtp");
                 transport.connect(server, Integer.parseInt(port), remitente, password);
-                
+
             } catch (NoSuchProviderException ex) {
                 Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
             } catch (MessagingException ex) {
@@ -152,7 +152,12 @@ public class EnvioView {
         file = event.getFile();
 
         try {
-            pathArchivo = RESOURCE_BUNDLE.getString("path_archivo") + File.separator + file.getFileName();
+
+            if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
+                pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_windows") + File.separator + file.getFileName();
+            } else {
+                pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_linux") + File.separator + file.getFileName();
+            }
             Path folder = Paths.get(pathArchivo);
             Path arc;
 
@@ -191,9 +196,7 @@ public class EnvioView {
         }
         if (mensaje == null || mensaje.trim().isEmpty()) {
             error += "Debe de ingresar el Mensaje a enviar.<br/>";
-        } /*else if (!mensaje.contains(":DOCENTE:")) {
-            error += "El mensaje no contiene la palabra comodin <b>:DOCENTE:</b><br/>";
-        }*/
+        }
 
         if (mensaje.length() > 4000 && mensaje.contains("data:image")) {
             error += "La imagen es muy grande por favor, reduzca el peso de la imagen.<br/>";
@@ -230,14 +233,12 @@ public class EnvioView {
         Workbook wb = WorkbookFactory.create(input);
         Sheet sheet = wb.getSheetAt(0);
         Row row = sheet.getRow(0);
-        Cell cellNip = row.getCell(0);
-        Cell cellNombre = row.getCell(1);
-        Cell cellCorreo = row.getCell(2);
+        /*Cell cellNip = row.getCell(0);
+        Cell cellNombre = row.getCell(1);*/
+        Cell cellCorreo = row.getCell(0);
 
         try {
-            return cellNip.getStringCellValue().toUpperCase().equals("NIP")
-                    && cellNombre.getStringCellValue().toUpperCase().equals("NOMBRE")
-                    && cellCorreo.getStringCellValue().toUpperCase().equals("CORREO");
+            return cellCorreo.getStringCellValue().toUpperCase().equals("CORREO");
         } catch (Exception e) {
             return false;
         }

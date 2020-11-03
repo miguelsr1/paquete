@@ -22,6 +22,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -51,11 +52,11 @@ public class LeerArchivoFacade {
         try {
             File fTmp = new File(pathArchivo);
             input = new FileInputStream(fTmp);
-            DecimalFormat df = new DecimalFormat("#0");
-            String nip;
-            String nombre;
-            String correo;
-            
+
+            String correo = "";
+            String valores = "";
+            String titulos = "";
+
             Workbook wb = WorkbookFactory.create(input);
             Sheet sheet = wb.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.rowIterator();
@@ -69,36 +70,36 @@ public class LeerArchivoFacade {
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
 
-                if (row.getRowNum() != 0) {
+                if (row.getRowNum() == 0) {
+                    for (int i = 1; i < row.getPhysicalNumberOfCells(); i++) {
+                        titulos = titulos.isEmpty() ? row.getCell(i).getStringCellValue() : (titulos.concat(",").concat(row.getCell(i).getStringCellValue()));
+                    }
+                } else {
                     if (row.getCell(0) != null) {
                         switch (row.getCell(0).getCellType()) {
                             case STRING:
-                                nip = row.getCell(0).getStringCellValue();
-                                break;
-                            case NUMERIC:
-                                nip = String.valueOf(df.format(row.getCell(0).getNumericCellValue()));
-                                break;
-                            default:
-                                nip = "";
+                                correo = row.getCell(0).getStringCellValue();
                                 break;
                         }
-                    } else {
-                        nip = "";
                     }
 
-                    if (row.getCell(1) != null && row.getCell(2) != null) {
-                        nombre = row.getCell(1).getStringCellValue();
-                        correo = row.getCell(2).getStringCellValue();
-
-                        DetalleEnvio de = new DetalleEnvio();
-                        de.setCorreoDestinatario(correo);
-                        de.setIdEnvio(eMasivo);
-                        de.setNip(nip);
-                        de.setNombreDestinatario(nombre);
-                        de.setEnviado((short) 0);
-
-                        eMasivo.getDetalleEnvioList().add(de);
+                    for (int i = 1; i <= titulos.split(",").length; i++) {
+                        valores = valores.isEmpty() ? getValueOfCell(row.getCell(i)) : (valores.concat(",").concat(getValueOfCell(row.getCell(i))));
                     }
+
+                    String valorFinal = "";
+                    for (int i = 0; i < titulos.split(",").length; i++) {
+                        valorFinal = valorFinal.isEmpty() ? titulos.split(",")[i].concat("::").concat(valores.split(",")[i])
+                                : (valorFinal.concat("||").concat(titulos.split(",")[i].concat("::").concat(valores.split(",")[i])));
+                    }
+
+                    DetalleEnvio de = new DetalleEnvio();
+                    de.setCorreoDestinatario(correo);
+                    de.setIdEnvio(eMasivo);
+                    de.setNip(valorFinal);
+                    de.setEnviado((short) 0);
+
+                    eMasivo.getDetalleEnvioList().add(de);
                 }
             }
 
@@ -117,5 +118,21 @@ public class LeerArchivoFacade {
         }
 
         return idEnvio;
+    }
+
+    private String getValueOfCell(Cell cell) {
+        String valor;
+        switch (cell.getCellType()) {
+            case STRING:
+                valor = cell.getStringCellValue();
+                break;
+            case NUMERIC:
+                valor = String.valueOf(cell.getNumericCellValue());
+                break;
+            default:
+                valor = "";
+                break;
+        }
+        return valor;
     }
 }

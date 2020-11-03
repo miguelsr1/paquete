@@ -80,7 +80,12 @@ public class ProcesoFacade {
                     }
 
                     try {
-                        String msjTemp = mensaje.replace(":DOCENTE:", detalleEnvio.getNombreDestinatario().concat(detalleEnvio.getNip() == null ? "" : (" - " + detalleEnvio.getNip())));
+                        String valores = detalleEnvio.getNip();
+                        String msjTemp = "";
+
+                        for (String valor : valores.split("||")) {
+                            msjTemp = mensaje.replace("::".concat(valor.split("::")[0]).concat("::"), valor.split("::")[1]);
+                        }
 
                         MimeMessage message = new MimeMessage(mailSession);
 
