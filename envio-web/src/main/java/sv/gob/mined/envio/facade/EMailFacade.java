@@ -128,6 +128,32 @@ public class EMailFacade {
 
         return mailSession;
     }
+    
+    public Session getMailSessionGmail(Session mailSession, String remitente, String password) {
+        if (mailSession == null) {
+            Properties configEmail = new Properties();
+
+            configEmail.put("mail.smtp.auth", "true");
+            configEmail.put("mail.smtp.starttls.enable", "true");
+
+            configEmail.put("mail.smtp.host", "smtp.gmail.com");
+            configEmail.put("mail.smtp.port", "587");
+
+            configEmail.put("mail.user", remitente);
+            configEmail.put("mail.user.pass", password);
+            configEmail.put("mail.from", remitente);
+
+            mailSession = Session.getInstance(configEmail, new Authenticator() {
+
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(remitente, password);
+                }
+            });
+        }
+
+        return mailSession;
+    }
 
     public Session getMailSessionMined(Session mailSession, String dominio, String password, String remitente) {
         if (mailSession == null) {

@@ -5,8 +5,15 @@
  */
 package sv.gob.mined.envio.facade;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -29,6 +36,10 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.jboss.ejb3.annotation.TransactionTimeout;
 import sv.gob.mined.envio.model.DetalleEnvio;
 
@@ -45,6 +56,9 @@ public class ProcesoFacade {
     @Inject
     private PersistenciaFacade persistenciaFacade;
 
+    @Inject
+    private EMailFacade eMailFacade;
+
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     @TransactionTimeout(unit = TimeUnit.HOURS, value = 2)
@@ -57,87 +71,88 @@ public class ProcesoFacade {
             String remitente, String password, String server, String port) {
         System.out.println("ok");
         BigDecimal idEnvio = leerArchivoFacade.guardarRegistros(pathArchivo, remitente, titulo, mensaje);
-        envio(remitente, password, titulo, mensaje, persistenciaFacade.findDetalleEnvio(idEnvio), transport, mailSession, server, port);
+        envio(remitente, password, titulo, mensaje, persistenciaFacade.findDetalleEnvio(idEnvio), transport, mailSession, server, port, pathArchivo);
         System.out.println("fin");
     }
 
     private void envio(String remitente, String password, String titulo, String mensaje,
             List<DetalleEnvio> lstDetalle,
             Transport transport, Session mailSession,
-            String server, String port) {
+            String server, String port, String pathArchivo) {
+        Boolean envioPorBloque = false;
         Integer cont = 1;
         Integer contReset = 1;
+        Integer maxCorreoEnviado = 0;
+        Integer numBloque = 1;
+        Integer correosEnviandos = 0;
+        Integer serverCorreo = 0;
         List<BigDecimal> correosEnviados = new ArrayList<>();
+        HashMap<String, String> remitentes = new HashMap();
+
         try {
             try {
-                Address from = new InternetAddress(remitente);
+                remitentes = getRemitentes(pathArchivo, remitente, password);
+
+                if (remitentes.size() > 1) {
+                    mailSession = null;
+
+                    envioPorBloque = true;
+                    if (remitentes.get("correo1").contains("admin.mined.edu.sv")) {
+                        //server office365
+                        port = "587";
+                        server = "smtp.office365.com";
+                        maxCorreoEnviado = 9999;
+                        serverCorreo = 1;
+                    } else {
+                        //server gmail
+                        port = "587";
+                        server = "smtp.gmail.com";
+                        maxCorreoEnviado = 1999;
+                        serverCorreo = 2;
+                    }
+                }
 
                 for (DetalleEnvio detalleEnvio : lstDetalle) {
-                    if (transport.isConnected()) {
 
-                    } else {
-                        transport.connect();
+                    if (envioPorBloque) {
+                        remitente = remitentes.get("correo" + numBloque).split("::")[0];
+                        password = remitentes.get("correo" + numBloque).split("::")[1];
+
+                        if (mailSession == null) {
+                            switch (serverCorreo) {
+                                case 1:
+                                    mailSession = eMailFacade.getMailSessionOffice(mailSession, remitente, password);
+                                    break;
+                                case 2:
+                                    mailSession = eMailFacade.getMailSessionGmail(mailSession, remitente, password);
+                                    break;
+                            }
+                        }
                     }
 
-                    try {
-                        String valores = detalleEnvio.getNip();
-                        String msjTemp = "";
+                    Address from = new InternetAddress(remitente);
 
-                        for (String valor : valores.split("||")) {
-                            msjTemp = mensaje.replace("::".concat(valor.split("::")[0]).concat("::"), valor.split("::")[1]);
-                        }
+                    envioDeCorreo(from, transport, detalleEnvio, mensaje, titulo, mailSession, server, port, remitente, password);
 
-                        MimeMessage message = new MimeMessage(mailSession);
+                    correosEnviandos++;
 
-                        message.setFrom(from);
+                    Logger.getLogger(ProcesoFacade.class.getName()).log(Level.INFO, "Numero {0}", cont);
 
-                        InternetAddress[] address = {new InternetAddress(detalleEnvio.getCorreoDestinatario())};
-                        message.setRecipients(Message.RecipientType.TO, address);
-                        //message.setRecipients(Message.RecipientType.BCC, "miguel.sanchez@admin.mined.edu.sv");
+                    correosEnviados.add(detalleEnvio.getIdDetalle());
+                    cont++;
+                    contReset++;
 
-                        BodyPart messageBodyPart1 = new MimeBodyPart();
+                    if (contReset == 401) {
+                        transport.close();
+                        contReset = 1;
+                    }
 
-                        messageBodyPart1.setContent(msjTemp, "text/html; charset=utf-8");
+                    if (correosEnviandos.equals(maxCorreoEnviado)) {
+                        correosEnviandos = 0;
+                        numBloque = 2;
 
-                        Multipart multipart = new MimeMultipart();
-                        multipart.addBodyPart(messageBodyPart1);
-
-                        message.setContent(multipart);
-                        message.setSubject(titulo, "UTF-8");
-
-                        transport.sendMessage(message, message.getAllRecipients());
-
-                        Logger.getLogger(ProcesoFacade.class.getName()).log(Level.INFO, "Numero {0}", cont);
-
-                        correosEnviados.add(detalleEnvio.getIdDetalle());
-                        cont++;
-                        contReset++;
-
-                        if (contReset == 401) {
-                            transport.close();
-                            contReset = 1;
-                        }
-                    } catch (AddressException ex) {
-                        System.out.println("Error 1");
-                        if (transport.isConnected()) {
-                            transport.close();
-
-                            transport = mailSession.getTransport("smtp");
-                            transport.connect(server, Integer.parseInt(port), remitente, password);
-                        }
-                        Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (MessagingException ex) {
-                        System.out.println("Error 2");
-                        if (transport.isConnected()) {
-                            transport.close();
-
-                            transport = mailSession.getTransport("smtp");
-                            transport.connect(server, Integer.parseInt(port), remitente, password);
-                        } else {
-                            transport = mailSession.getTransport("smtp");
-                            transport.connect(server, Integer.parseInt(port), remitente, password);
-                        }
-                        Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
+                        remitente = remitentes.get("correo" + numBloque).split("::")[0];
+                        password = remitentes.get("correo" + numBloque).split("::")[1];
                     }
                 }
 
@@ -153,8 +168,104 @@ public class ProcesoFacade {
             Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MessagingException ex) {
             Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
 
+        }
+    }
+
+    public void envioPendiente(String remitente, String password, String titulo, String mensaje,
+            List<DetalleEnvio> lstDetalle,
+            Transport transport, Session mailSession,
+            String server, String port) {
+        envio(remitente, password, titulo, mensaje, lstDetalle, transport, mailSession, server, port, "");
+    }
+
+    private HashMap<String, String> getRemitentes(String pathArchivo,
+            String remitenteLogeado, String passwordLogeado) throws FileNotFoundException, IOException {
+        HashMap<String, String> remitentes = new HashMap();
+        File fTmp = new File(pathArchivo);
+        InputStream input = new FileInputStream(fTmp);
+        Workbook wb = WorkbookFactory.create(input);
+        int cantidadRemitente = 1;
+        if (wb.getNumberOfSheets() > 1) {
+            Sheet sheet = wb.getSheetAt(1);
+            Iterator<Row> rowIterator = sheet.rowIterator();
+
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
+                if (row.getRowNum() != 0) {
+                    remitentes.put("correo" + cantidadRemitente, row.getCell(0).getStringCellValue().concat("::").concat(row.getCell(1).getStringCellValue()));
+                }
+            }
+
+        } else {
+            remitentes.put("correo" + cantidadRemitente, remitenteLogeado.concat("::").concat(passwordLogeado));
+        }
+
+        input.close();
+
+        return remitentes;
+    }
+
+    public void envioDeCorreo(Address from, Transport transport, DetalleEnvio detalleEnvio, String mensaje, String titulo,
+            Session mailSession, String server, String port, String remitente, String password) throws MessagingException {
+        if (transport.isConnected()) {
+
+        } else {
+            transport.connect();
+        }
+
+        try {
+            String valores = detalleEnvio.getNip();
+            String msjTemp = mensaje;
+
+            for (String valor : valores.split("&&")) {
+                msjTemp = msjTemp.replace(":".concat(valor.split("::")[0]).concat(":"), valor.split("::")[1]);
+            }
+
+            MimeMessage message = new MimeMessage(mailSession);
+
+            message.setFrom(from);
+
+            InternetAddress[] address = {new InternetAddress(detalleEnvio.getCorreoDestinatario())};
+            message.setRecipients(Message.RecipientType.TO, address);
+            //message.setRecipients(Message.RecipientType.BCC, "miguel.sanchez@admin.mined.edu.sv");
+
+            BodyPart messageBodyPart1 = new MimeBodyPart();
+
+            messageBodyPart1.setContent(msjTemp, "text/html; charset=utf-8");
+
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(messageBodyPart1);
+
+            message.setContent(multipart);
+            message.setSubject(titulo, "UTF-8");
+
+            transport.sendMessage(message, message.getAllRecipients());
+
+        } catch (AddressException ex) {
+            System.out.println("Error 1");
+            if (transport.isConnected()) {
+                transport.close();
+
+                transport = mailSession.getTransport("smtp");
+                transport.connect(server, Integer.parseInt(port), remitente, password);
+            }
+            Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MessagingException ex) {
+            System.out.println("Error 2");
+            if (transport.isConnected()) {
+                transport.close();
+
+                transport = mailSession.getTransport("smtp");
+                transport.connect(server, Integer.parseInt(port), remitente, password);
+            } else {
+                transport = mailSession.getTransport("smtp");
+                transport.connect(server, Integer.parseInt(port), remitente, password);
+            }
+            Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

@@ -36,7 +36,9 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
+import sv.gob.mined.envio.facade.PersistenciaFacade;
 import sv.gob.mined.envio.facade.ProcesoFacade;
+import sv.gob.mined.envio.model.EnvioMasivo;
 import sv.gob.mined.utils.jsf.JsfUtil;
 
 /**
@@ -67,6 +69,9 @@ public class EnvioView {
 
     @Inject
     private ProcesoFacade procesoFacade;
+    
+    @Inject
+    private PersistenciaFacade persistenciaFacade;
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("parametros");
 
@@ -226,6 +231,8 @@ public class EnvioView {
     }
 
     public void enviarProcesoPendiente() {
+        EnvioMasivo em = persistenciaFacade.findEnvio(idEnvio);
+        procesoFacade.envioPendiente(remitente, password, em.getTitulo(), em.getMensaje(), persistenciaFacade.findDetalleEnvio(idEnvio), transport, mailSession, server, port);
         JsfUtil.mensajeInformacion("El proceso de envio de correos se realizara en background.");
     }
 
@@ -233,8 +240,6 @@ public class EnvioView {
         Workbook wb = WorkbookFactory.create(input);
         Sheet sheet = wb.getSheetAt(0);
         Row row = sheet.getRow(0);
-        /*Cell cellNip = row.getCell(0);
-        Cell cellNombre = row.getCell(1);*/
         Cell cellCorreo = row.getCell(0);
 
         try {
