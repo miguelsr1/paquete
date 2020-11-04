@@ -83,6 +83,7 @@ public class LeerArchivoFacade {
                         }
                     }
 
+                    valores = "";
                     for (int i = 1; i <= titulos.split(",").length; i++) {
                         valores = valores.isEmpty() ? getValueOfCell(row.getCell(i)) : (valores.concat(",").concat(getValueOfCell(row.getCell(i))));
                     }

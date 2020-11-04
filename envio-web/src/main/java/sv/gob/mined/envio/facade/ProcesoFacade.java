@@ -87,7 +87,7 @@ public class ProcesoFacade {
         Integer correosEnviandos = 0;
         Integer serverCorreo = 0;
         List<BigDecimal> correosEnviados = new ArrayList<>();
-        HashMap<String, String> remitentes = new HashMap();
+        HashMap<String, String> remitentes;
 
         try {
             try {
@@ -101,7 +101,7 @@ public class ProcesoFacade {
                         //server office365
                         port = "587";
                         server = "smtp.office365.com";
-                        maxCorreoEnviado = 9999;
+                        maxCorreoEnviado = 5;
                         serverCorreo = 1;
                     } else {
                         //server gmail
@@ -130,8 +130,8 @@ public class ProcesoFacade {
                         }
                     }
 
-                    //Address from = new InternetAddress(remitente);
-                    //envioDeCorreo(from, transport, detalleEnvio, mensaje, titulo, mailSession, server, port, remitente, password);
+                    Address from = new InternetAddress(remitente);
+                    envioDeCorreo(from, transport, detalleEnvio, mensaje, titulo, mailSession, server, port, remitente, password);
                     correosEnviandos++;
 
                     Logger.getLogger(ProcesoFacade.class.getName()).log(Level.INFO, "Numero {0}", cont);
@@ -147,7 +147,7 @@ public class ProcesoFacade {
 
                     if (correosEnviandos.equals(maxCorreoEnviado)) {
                         correosEnviandos = 0;
-                        numBloque = 2;
+                        numBloque++;
 
                         remitente = remitentes.get("correo" + numBloque).split("::")[0];
                         password = remitentes.get("correo" + numBloque).split("::")[1];
@@ -166,23 +166,22 @@ public class ProcesoFacade {
                                     mailSession = eMailFacade.getMailSessionGmail(mailSession, remitente, password);
                                     break;
                             }
+
+                            transport = mailSession.getTransport("smtp");
+                            transport.connect(server, Integer.parseInt(port), remitente, password);
+
                         }
                     }
                 }
-
-                //JsfUtil.mensajeInformacion("Ha finalizado el proceso de envio de correos.");
             } catch (AddressException e) {
                 e.printStackTrace();
-                //JsfUtil.mensajeError("Ah ocurrido un error en el envio de correos.");
             }
             transport.close();
 
             persistenciaFacade.actualizarDetalleEnviado(correosEnviados);
         } catch (NoSuchProviderException ex) {
             Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MessagingException ex) {
-            Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex) {
+        } catch (MessagingException | IOException ex) {
             Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
 
