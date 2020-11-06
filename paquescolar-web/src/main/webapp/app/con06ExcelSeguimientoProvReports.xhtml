@@ -27,7 +27,7 @@
                     </h1>
                     <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10" style="width: 100%; border:0px none; background-color:transparent;" styleClass="form-group ui-panelgrid-blank">
                         <p:outputLabel value="Departamento: "/>
-                        <p:selectOneMenu id="codigoDepartamento" value="#{graficoController.departamento}"  required="true" >
+                        <p:selectOneMenu id="codigoDepartamento" value="#{graficoController.codigoDepartamento}"  required="true" >
                             <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
                             <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}"/>
                         </p:selectOneMenu>

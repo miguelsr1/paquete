@@ -1069,17 +1069,15 @@ p {
     .landing-body .landing-wrapper #header .header-content button {
       width: 170px; }
   .landing-body .landing-wrapper #features {
-    background-color: #393b3e; }
+    background-color: #ffffff; }
     .landing-body .landing-wrapper #features > div {
       width: 960px;
       margin: 0 auto;
       text-align: center;
-      padding: 60px 0 75px 0;
-      color: #ffffff; }
+      padding: 60px 0 75px 0; }
       .landing-body .landing-wrapper #features > div h1 {
         font-size: 22px;
         font-weight: 600;
-        color: #ffffff;
         margin: 15px 0; }
       .landing-body .landing-wrapper #features > div .features-content {
         text-align: left; }

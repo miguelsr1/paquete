@@ -28,7 +28,7 @@
                         </f:facet>
                         <h:panelGrid columns="5">
                             <p:outputLabel value="1. Departamento: "/>
-                            <p:selectOneMenu id="codigoDepartamento" value="#{graficoController.departamento}"  required="true" >
+                            <p:selectOneMenu id="codigoDepartamento" value="#{graficoController.codigoDepartamento}"  required="true" >
                                 <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
                                 <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />/>
                             </p:selectOneMenu>

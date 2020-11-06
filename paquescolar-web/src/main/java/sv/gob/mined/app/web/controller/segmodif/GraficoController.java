@@ -43,6 +43,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.primefaces.model.chart.PieChartModel;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
+import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.RptExcel;
 import sv.gob.mined.app.web.util.UtilFile;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
@@ -365,7 +366,7 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
 
     public void dowloadProveedoresFile(List<ReporteProveedorDTO> lista) throws FileNotFoundException, IOException, InvalidFormatException, URISyntaxException {
         CellStyle style;
-        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/sispaqescolar/reporte/cuadro_seguimiento_proveedor.xls")) {
+        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/sispaqescolar/reporte/cuadro_seguimiento_proveedor.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             style = wb1.createCellStyle();
             style.setWrapText(true);
@@ -453,7 +454,7 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
 
     public void dowloadDepartamentoFile(List<RptEntregasGeneralPorDepartamentoDto> lista) {
         HSSFCellStyle style;
-        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/excel/rptSegEntregaPorDepartamento.xls")) {
+        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptSegEntregaPorDepartamento.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             style = wb1.createCellStyle();
@@ -533,7 +534,7 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
 
     public void dowloadFile(List<ReporteGeneralDTO> lista) throws FileNotFoundException, IOException, InvalidFormatException, URISyntaxException {
         CellStyle style;
-        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/sispaqescolar/reporte/cuadro_seguimiento_CE.xls")) {
+        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/sispaqescolar/reporte/cuadro_seguimiento_CE.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             style = wb1.createCellStyle();
             style.setWrapText(true);
@@ -709,7 +710,7 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
             List<VwSeguimientoRptCentroEscolar> lista = recepcionEJB.getLstSeguimientoRptCE(detalleProcesoSeg.getIdDetProcesoAdq(), codigoDepartamento);
 
             HSSFCellStyle style;
-            try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/sispaqescolar/reporte/cuadro_seguimiento_CE2.xls")) {
+            try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/sispaqescolar/reporte/cuadro_seguimiento_CE2.xls")) {
                 wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
                 style = wb1.createCellStyle();
                 style.setWrapText(true);

@@ -94,6 +94,10 @@ public class ProcesoFacade {
                 remitentes = getRemitentes(pathArchivo, remitente, password);
 
                 if (remitentes.size() > 1) {
+                    if (transport.isConnected()) {
+                        transport.close();
+                    }
+
                     mailSession = null;
 
                     envioPorBloque = true;
@@ -101,19 +105,18 @@ public class ProcesoFacade {
                         //server office365
                         port = "587";
                         server = "smtp.office365.com";
-                        maxCorreoEnviado = 5;
+                        maxCorreoEnviado = 5; //9999;
                         serverCorreo = 1;
                     } else {
                         //server gmail
                         port = "587";
                         server = "smtp.gmail.com";
-                        maxCorreoEnviado = 1999;
+                        maxCorreoEnviado = 5; //1999;
                         serverCorreo = 2;
                     }
                 }
 
                 for (DetalleEnvio detalleEnvio : lstDetalle) {
-
                     if (envioPorBloque) {
                         remitente = remitentes.get("correo" + numBloque).split("::")[0];
                         password = remitentes.get("correo" + numBloque).split("::")[1];
@@ -127,6 +130,9 @@ public class ProcesoFacade {
                                     mailSession = eMailFacade.getMailSessionGmail(mailSession, remitente, password);
                                     break;
                             }
+
+                            transport = mailSession.getTransport("smtp");
+                            transport.connect(server, Integer.parseInt(port), remitente, password);
                         }
                     }
 
@@ -148,28 +154,29 @@ public class ProcesoFacade {
                     if (correosEnviandos.equals(maxCorreoEnviado)) {
                         correosEnviandos = 0;
                         numBloque++;
+                        if (numBloque <= remitentes.size()) {
+                            remitente = remitentes.get("correo" + numBloque).split("::")[0];
+                            password = remitentes.get("correo" + numBloque).split("::")[1];
 
-                        remitente = remitentes.get("correo" + numBloque).split("::")[0];
-                        password = remitentes.get("correo" + numBloque).split("::")[1];
-
-                        if (mailSession.getTransport().isConnected()) {
-                            mailSession.getTransport().close();
-                        }
-                        mailSession = null;
-
-                        if (mailSession == null) {
-                            switch (serverCorreo) {
-                                case 1:
-                                    mailSession = eMailFacade.getMailSessionOffice(mailSession, remitente, password);
-                                    break;
-                                case 2:
-                                    mailSession = eMailFacade.getMailSessionGmail(mailSession, remitente, password);
-                                    break;
+                            if (transport.isConnected()) {
+                                transport.close();
                             }
+                            mailSession = null;
 
-                            transport = mailSession.getTransport("smtp");
-                            transport.connect(server, Integer.parseInt(port), remitente, password);
+                            if (mailSession == null) {
+                                switch (serverCorreo) {
+                                    case 1:
+                                        mailSession = eMailFacade.getMailSessionOffice(mailSession, remitente, password);
+                                        break;
+                                    case 2:
+                                        mailSession = eMailFacade.getMailSessionGmail(mailSession, remitente, password);
+                                        break;
+                                }
 
+                                transport = mailSession.getTransport("smtp");
+                                transport.connect(server, Integer.parseInt(port), remitente, password);
+
+                            }
                         }
                     }
                 }
@@ -208,8 +215,10 @@ public class ProcesoFacade {
 
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
-                remitentes.put("correo" + cantidadRemitente, row.getCell(0).getStringCellValue().concat("::").concat(row.getCell(1).getStringCellValue()));
-                cantidadRemitente++;
+                if (row.getCell(0) != null) {
+                    remitentes.put("correo" + cantidadRemitente, row.getCell(0).getStringCellValue().concat("::").concat(row.getCell(1).getStringCellValue()));
+                    cantidadRemitente++;
+                }
             }
 
         } else {

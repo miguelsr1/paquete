@@ -75,7 +75,7 @@ public class Reportes {
         try {
             ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
             param.put("ubicacionImagenes", ctx.getRealPath(PATH_IMAGENES));
-            JasperPrint jasperPrint = JasperFillManager.fillReport(Reportes.class.getClassLoader().getResourceAsStream(paqueteRpt + File.separator + nombreRpt), param, new JRBeanCollectionDataSource(lst));
+            JasperPrint jasperPrint = JasperFillManager.fillReport(Reportes.getPathReporte(paqueteRpt + File.separator + nombreRpt), param, new JRBeanCollectionDataSource(lst));
             responseRptPdf(jasperPrint, nombrePdfGenerado);
         } catch (IOException | JRException ex) {
             Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, null, ex);
@@ -86,7 +86,7 @@ public class Reportes {
         try {
             ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
             param.put("ubicacionImagenes", ctx.getRealPath(PATH_IMAGENES));
-            JasperPrint jasperPrint = JasperFillManager.fillReport(Reportes.class.getClassLoader().getResourceAsStream(paqueteRpt + File.separator + nombreRpt), param, new JRBeanCollectionDataSource(lst));
+            JasperPrint jasperPrint = JasperFillManager.fillReport(Reportes.getPathReporte(paqueteRpt + File.separator + nombreRpt), param, new JRBeanCollectionDataSource(lst));
             return jasperPrint;
         } catch (JRException ex) {
             Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, null, ex);

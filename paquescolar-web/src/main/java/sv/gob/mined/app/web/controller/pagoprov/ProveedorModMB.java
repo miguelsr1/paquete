@@ -1461,7 +1461,7 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
                 param.put("pAnho", detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho());
 
                 nombreRpt = "sv/gob/mined/apps/reportes/declaracion/rptDeclaracionAdjudicatorio".concat(contratosOrdenesCompras.getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdPersoneria().getIdPersoneria().intValue() == 1 ? "PerNat" : "PerJur").concat(param.get("pAnho").toString());
-                rptTemp = reportesEJB.getRpt(param, ContratosOrdenesComprasController.class.getClassLoader().getResourceAsStream(nombreRpt + ".jasper"));
+                rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(nombreRpt + ".jasper"));
                 lstRptAImprimir.add(rptTemp);
             }
 

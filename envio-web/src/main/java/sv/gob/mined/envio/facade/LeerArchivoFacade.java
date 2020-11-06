@@ -81,26 +81,26 @@ public class LeerArchivoFacade {
                                 correo = row.getCell(0).getStringCellValue();
                                 break;
                         }
+
+                        valores = "";
+                        for (int i = 1; i <= titulos.split(",").length; i++) {
+                            valores = valores.isEmpty() ? getValueOfCell(row.getCell(i)) : (valores.concat(",").concat(getValueOfCell(row.getCell(i))));
+                        }
+
+                        String valorFinal = "";
+                        for (int i = 0; i < titulos.split(",").length; i++) {
+                            valorFinal = valorFinal.isEmpty() ? titulos.split(",")[i].concat("::").concat(valores.split(",")[i])
+                                    : (valorFinal.concat("&&").concat(titulos.split(",")[i].concat("::").concat(valores.split(",")[i])));
+                        }
+
+                        DetalleEnvio de = new DetalleEnvio();
+                        de.setCorreoDestinatario(correo);
+                        de.setIdEnvio(eMasivo);
+                        de.setNip(valorFinal);
+                        de.setEnviado((short) 0);
+
+                        eMasivo.getDetalleEnvioList().add(de);
                     }
-
-                    valores = "";
-                    for (int i = 1; i <= titulos.split(",").length; i++) {
-                        valores = valores.isEmpty() ? getValueOfCell(row.getCell(i)) : (valores.concat(",").concat(getValueOfCell(row.getCell(i))));
-                    }
-
-                    String valorFinal = "";
-                    for (int i = 0; i < titulos.split(",").length; i++) {
-                        valorFinal = valorFinal.isEmpty() ? titulos.split(",")[i].concat("::").concat(valores.split(",")[i])
-                                : (valorFinal.concat("&&").concat(titulos.split(",")[i].concat("::").concat(valores.split(",")[i])));
-                    }
-
-                    DetalleEnvio de = new DetalleEnvio();
-                    de.setCorreoDestinatario(correo);
-                    de.setIdEnvio(eMasivo);
-                    de.setNip(valorFinal);
-                    de.setEnviado((short) 0);
-
-                    eMasivo.getDetalleEnvioList().add(de);
                 }
             }
 

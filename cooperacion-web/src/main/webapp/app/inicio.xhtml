@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+
+        <h:outputScript name="js/nanoscroller.js" library="paradise-layout" />
+        <h:outputScript name="js/layout.js" library="paradise-layout" />
+        <h:outputScript name="calendar-localization.js" library="js"/>
+    </h:head>
+    <h:body style="max-width: 1024px; margin: auto; background-color: #303945;" styleClass="landing-body">
+        <div class="landing-wrapper">
+
+
+            <div id="features">
+                <div>
+                    <h1>Proyectos de Cooperación</h1>
+                    <div class="p-grid features-content">
+                        <div class="p-col-12 p-md-6 feature-left">
+                            <p:graphicImage name="editar.png" library="images" style="background-color: white;"  />
+                            <h3>Crear nuevo proyecto</h3>
+                            <p>Registro de la información general del proyecto a ejecutar en el Centro Educativo.</p>
+                        </div>
+                        <div class="p-col-12 p-md-6 feature-left">
+                            <p:graphicImage name="lista.png" library="images" style="background-color: white;"/>
+                            <h3>Listado de Proyectos</h3>
+                            <p>Listado de todos los proyectos registrados y el estado de cada uno de estos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <h:outputStylesheet name="css/primeicons.css" library="paradise-layout" />
+        <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout" />
+
+        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout" />
+    </h:body>
+</html>
+
