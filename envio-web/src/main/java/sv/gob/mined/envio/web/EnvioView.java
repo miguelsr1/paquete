@@ -203,9 +203,9 @@ public class EnvioView {
             error += "Debe de ingresar el Mensaje a enviar.<br/>";
         }
 
-        if (mensaje.length() > 4000 && mensaje.contains("data:image")) {
+        /*if (mensaje.length() > 4000 && mensaje.contains("data:image")) {
             error += "La imagen es muy grande por favor, reduzca el peso de la imagen.<br/>";
-        }
+        }*/
         if (file == null) {
             error += "Debe de seleccionar un archivo con la lista de correos a enviar.<br/>";
         }
