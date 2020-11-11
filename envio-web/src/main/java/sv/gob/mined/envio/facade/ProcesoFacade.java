@@ -102,7 +102,7 @@ public class ProcesoFacade {
                 remitentes = getRemitentes(pathArchivo, remitente, password);
 
                 if (remitentes.size() > 1) {
-                    if (transport.isConnected()) {
+                    if (transport != null && transport.isConnected()) {
                         transport.close();
                     }
 
