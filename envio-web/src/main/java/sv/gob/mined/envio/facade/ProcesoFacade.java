@@ -164,7 +164,7 @@ public class ProcesoFacade {
                     if (correosEnviandos.equals(maxCorreoEnviado)) {
                         correosEnviandos = 0;
                         numBloque++;
-                        if (numBloque == 42) {
+                        if (numBloque == remitentes.size() + 1) {
                             numBloque = 1;
                         }
 
