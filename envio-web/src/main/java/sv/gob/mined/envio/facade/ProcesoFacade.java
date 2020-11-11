@@ -213,7 +213,7 @@ public class ProcesoFacade {
             List<DetalleEnvio> lstDetalle,
             Transport transport, Session mailSession,
             String server, String port) {
-        envio(remitente, password, mensaje, titulo, lstDetalle, transport, mailSession, server, port, "");
+        envio(remitente, password, mensaje, titulo, lstDetalle, transport, mailSession, server, port, lstDetalle.get(0).getIdEnvio().getArchivo());
     }
 
     private HashMap<String, String> getRemitentes(String pathArchivo,
