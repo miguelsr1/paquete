@@ -1674,9 +1674,80 @@ public class ProveedorEJB {
     }
 
     public void calcularPreRef(Integer idDet) {
-        //idDet = 52;
         Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion = 0 and p.idDetProcesoAdq.idDetProcesoAdq=:idDet ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
         q.setParameter("idDet", idDet);
+
+        List<PreciosRefRubroEmp> lstPre = q.getResultList();
+        BigDecimal idEmpTemp = BigDecimal.ZERO;
+        EmpresaPreciosRef emp = null;
+
+        for (PreciosRefRubroEmp precios : lstPre) {
+
+            if (idEmpTemp.intValue() == 0) {
+                idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
+                emp = new EmpresaPreciosRef();
+                emp.setIdEmpresa(idEmpTemp);
+                emp.setIdDetProceoAdq(idDet);
+            } else {
+                if (idEmpTemp.intValue() == precios.getIdEmpresa().getIdEmpresa().intValue()) {
+
+                } else {
+                    em.persist(emp);
+
+                    idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
+                    emp = new EmpresaPreciosRef();
+                    emp.setIdEmpresa(idEmpTemp);
+                    emp.setIdDetProceoAdq(idDet);
+                }
+
+                switch (precios.getNoItem()) {
+                    case "1":
+                        emp.setItem1(precios.getPrecioReferencia());
+                        break;
+                    case "2":
+                        emp.setItem2(precios.getPrecioReferencia());
+                        break;
+                    case "3":
+                        emp.setItem3(precios.getPrecioReferencia());
+                        break;
+                    case "4":
+                        emp.setItem4(precios.getPrecioReferencia());
+                        break;
+                    case "5":
+                        emp.setItem5(precios.getPrecioReferencia());
+                        break;
+                    case "6":
+                        emp.setItem6(precios.getPrecioReferencia());
+                        break;
+                    case "7":
+                        emp.setItem7(precios.getPrecioReferencia());
+                        break;
+                    case "8":
+                        emp.setItem8(precios.getPrecioReferencia());
+                        break;
+                    case "9":
+                        emp.setItem9(precios.getPrecioReferencia());
+                        break;
+                    case "10":
+                        emp.setItem10(precios.getPrecioReferencia());
+                        break;
+                    case "11":
+                        emp.setItem11(precios.getPrecioReferencia());
+                        break;
+                    case "12":
+                        emp.setItem12(precios.getPrecioReferencia());
+                        break;
+                    case "13":
+                        emp.setItem13(precios.getPrecioReferencia());
+                        break;
+                }
+            }
+        }
+    }
+    public void calcularPreRefByNit(Integer idDet, String numeroNit ) {
+        Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion = 0 and p.idDetProcesoAdq.idDetProcesoAdq=:idDet and p.idEmpresa.numeroNit=:nit ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
+        q.setParameter("idDet", idDet);
+        q.setParameter("nit", numeroNit);
 
         List<PreciosRefRubroEmp> lstPre = q.getResultList();
         BigDecimal idEmpTemp = BigDecimal.ZERO;

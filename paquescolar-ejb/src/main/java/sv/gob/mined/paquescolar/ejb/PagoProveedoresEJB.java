@@ -21,13 +21,12 @@ import javax.persistence.Query;
 import sv.gob.mined.paquescolar.model.DetalleDocPago;
 import sv.gob.mined.paquescolar.model.DetallePlanilla;
 import sv.gob.mined.paquescolar.model.DetallePreCarga;
-import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.DetalleRequerimiento;
+import sv.gob.mined.paquescolar.model.Liquidacion;
 import sv.gob.mined.paquescolar.model.ListaNotificacionPago;
 import sv.gob.mined.paquescolar.model.PlanillaPago;
 import sv.gob.mined.paquescolar.model.PlanillaPagoCheque;
 import sv.gob.mined.paquescolar.model.PreCarga;
-import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.ReintegroRequerimiento;
 import sv.gob.mined.paquescolar.model.ResolucionesModificativas;
 import sv.gob.mined.paquescolar.model.TipoDocPago;
@@ -624,5 +623,11 @@ public class PagoProveedoresEJB {
         PlanillaPago pp = em.find(PlanillaPago.class, idPlanilla);
         pp.setNotificacion((short) 1);
         em.merge(pp);
+    }
+
+    public List<Liquidacion> findContratosALiquidarByProceso(Integer idProcesoAdq) {
+        Query q = em.createQuery("SELECT l FROM Liquidacion l WHERE l.estadoEliminacion = 0 and l.idContrato.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq.idProcesoAdq.idProcesoAdq=:idProcesoAdq", Liquidacion.class);
+        q.setParameter("idProcesoAdq", idProcesoAdq);
+        return q.getResultList();
     }
 }

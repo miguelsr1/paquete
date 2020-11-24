@@ -7,15 +7,10 @@
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
         <p:menubar id="menuBar" styleClass="divSticky"> 
-            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" oncomplete="onClick('btoBuscarC');"
-                        update="pnlFiltro" action="#{modificatoriaController.validarProcesoAdquisicion}"
-                        actionListener="#{modificatoriaController.prepararCreacion}"/>
-            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" oncomplete="onClick('btoBuscarC');"
-                        action="#{modificatoriaController.validarProcesoAdquisicion}" 
-                        actionListener="#{modificatoriaController.prepararEdicion}"
-                        update="pnlFiltro"/>
-            <p:menuitem value="Guardar" icon="fa fa-save" action="#{modificatoriaController.guardar}" ajax="true"/>
-            <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{ofertaMB.imprimirAnalisisEconomico}" />
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" />
+            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" />
+            <p:menuitem value="Guardar" icon="fa fa-save" ajax="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" />
             <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
             <f:facet  name="options" class="centradoVertical">  
@@ -30,90 +25,18 @@
                     <h1>
                         <i class="fa fa-file-text-o blue" style="font-size: 16px;"></i>
                         <p:spacer width="10" height="8"/>
-                        <p:outputLabel value="Datos Generales del Contrato"/>
+                        <p:outputLabel value="Filtro"/>
                     </h1>
 
-                    <p:outputPanel id="pnlFiltro" >
-                        <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
-                        <p:outputPanel id="codigoEntidad" >
-                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaMB.codigoEntidad}" size="6" disabled="#{ofertaMB.deshabilitar}" autocomplete="off" 
-                                         requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5">
-                                <p:ajax event="keyup" update="menuBar tblParticipantes nombreCE cldFechaApertura btoAgregarProveedor" listener="#{ofertaMB.buscarEntidadEducativa}"/>
-                            </p:inputText>
-                            <p:spacer width="10"/>
-                            <p:outputLabel id="nombreCE" value="#{ofertaMB.entidadEducativa.nombre}" style="font-weight: bold"/>
-                        </p:outputPanel>
-                        
-                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
-                        <p:selectOneMenu id="cboRubro" value="#{ofertaMB.rubro}" disabled="#{ofertaMB.deshabilitar}">
-                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="null" />
-                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
-                            <p:ajax update=":frmPrincipal:pnlFiltro tblParticipantes" listener="#{ofertaMB.limpiarFiltros}"/>
-                        </p:selectOneMenu>
-
-                    </p:outputPanel>
                 </div>
 
                 <div class="card clearfix">
                     <h1>
                         <i class="fa fa-list-ol blue" style="font-size: 16px;"></i>
                         <p:spacer width="10" height="8"/>
-                        <p:outputLabel value="Detalle de la Modificatoria"/>
+                        <p:outputLabel value="Listado de Contratos"/>
                     </h1>
                     <p:outputPanel id="pnlDatos" >
-                        <f:facet name="header" >
-                            <i class="fa fa-list-ol blue" style="font-size: 16px;"></i>
-                            <p:spacer width="10" height="8"/>
-                            <p:outputLabel value="Detalle de la Modificatoria"/>
-                        </f:facet>
-
-                        <p:outputPanel  id="pnlMsjInfo" style="display:#{(modificatoriaController.msjInformacion.length()>0)?'block':'none'}" styleClass="ui-messages-info">
-                            <i class="fa fa-info-circle blue" style="font-size: 12px;">
-                                <p:spacer width="10" height="8"/>
-                                <p:outputLabel styleClass="ayuda-descripcion" value="#{modificatoriaController.msjInformacion}" escape="false" /> 
-                            </i>
-                        </p:outputPanel>
-
-                        <p:panel visible="false">
-                            <p:inputText id="idContrato" value="#{modificatoriaController.idContratoTemp}"/>
-                        </p:panel>
-
-                        <h:panelGrid columns="2">
-                            <h:outputText value="Tipo de Modificación:"/>
-                            <p:selectOneMenu id="cboTipoModif" value="#{modificatoriaController.idTipoModif}">
-                                <f:selectItem itemLabel="Seleccione un valor"/>
-                                <f:selectItems value="#{modificatoriaController.lstTipoModifContratos}" var="idTipoModif" itemValue="#{idTipoModif.idModifContrato}" itemLabel="#{idTipoModif.descripcionModificativa}"/>
-                                <p:ajax update="pnlDatos tblDetalleItems pnlMsjInfo" listener="#{modificatoriaController.deshabilitarAcciones}" process="@this,pnlDatos"/>
-                            </p:selectOneMenu>
-                            <h:outputText value="Fecha de Orden Inicio:" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
-                            <p:calendar locale="es" value="#{modificatoriaController.fechaOrdenInicio}" pattern="dd/MM/yyyy" size="10" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
-                            <h:outputText value="Fecha de Solicitud:"/>
-                            <h:panelGroup>
-                                <p:calendar locale="es" value="#{modificatoriaController.resolucionesModificativas.fechaSolicitud}" pattern="dd/MM/yyyy" size="10"/>
-                                <p:spacer width="13" height="8"/>
-                                <h:outputText value="Fecha de Orden Inicio:" rendered="#{modificatoriaController.idTipoModif eq 13}"/>
-                                <p:spacer width="8" height="8" rendered="#{modificatoriaController.idTipoModif eq 13}"/>
-                                <p:calendar locale="es" value="#{modificatoriaController.fechaOrdenInicio}" pattern="dd/MM/yyyy" size="10" rendered="#{modificatoriaController.idTipoModif eq 13}"/>
-
-                                <h:outputText value="Fecha de Nota:" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
-                                <p:spacer width="8" height="8" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
-                                <p:calendar locale="es" value="#{modificatoriaController.resolucionesModificativas.fechaNota}" pattern="dd/MM/yyyy" size="10" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
-                                <p:spacer width="13" height="8" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
-                                <h:outputText value="Fecha de Resolucion" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
-                                <p:spacer width="8" height="8" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
-                                <p:calendar locale="es" value="#{modificatoriaController.resolucionesModificativas.fechaResolucion}" pattern="dd/MM/yyyy" size="10" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
-                            </h:panelGroup>
-
-                            <h:outputText value="Prorroga:" rendered="#{modificatoriaController.idTipoModif eq 4}"/>
-                            <h:panelGroup rendered="#{modificatoriaController.idTipoModif eq 4}">
-                                <p:inputText value="#{modificatoriaController.resolucionesModificativas.diasProrroga}" size="5" style="text-align: right;" />
-                                <p:spacer width="10" height="8"/>
-                                <h:outputText value="(Numero de dias)" rendered="#{modificatoriaController.idTipoModif eq 4}"/>
-                            </h:panelGroup>
-                            <h:outputText value="Justificación:"/>
-                            <p:inputTextarea value="#{modificatoriaController.resolucionesModificativas.justificacionModificativa}" cols="50" rows="3"/>
-                        </h:panelGrid>
-
                         <p:dataTable value="#{modificatoriaController.lstDetalleModificativas}" var="detalle" editable="true" editMode="cell" id="tblDetalleItems"
                                      rowKey="#{detalle.idDetalleModif}" widgetVar="tblDetalleItems" rowIndexVar="rowId"
                                      rowStyleClass="#{detalle.estadoEliminacion eq 1 ? 'filaEliminada' : null}" emptyMessage="No hay registros">
@@ -219,7 +142,6 @@
                             </p:column>
                         </p:dataTable>
                     </p:outputPanel>
-                    <p:remoteCommand name="updateDetalleOferta" action="#{modificatoriaController.updateFilaDetalle}"/>
                 </div>
             </div>
         </div>

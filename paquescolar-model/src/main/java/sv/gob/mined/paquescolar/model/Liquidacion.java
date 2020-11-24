@@ -11,9 +11,12 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -34,14 +37,15 @@ public class Liquidacion implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seqLiquidacion")
     @SequenceGenerator(name = "seqLiquidacion", sequenceName = "SEQ_LIQUIDACION", allocationSize = 1, initialValue = 1)
     private BigDecimal idLiquidacion;
-    
-    @Column(name = "ID_CONTRATO")
-    private BigDecimal idContrato;
-    
+
+    @JoinColumn(name = "ID_CONTRATO", referencedColumnName = "ID_CONTRATO")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private ContratosOrdenesCompras idContrato;
+
     @Basic(optional = false)
     @Column(name = "USUARIO_INSERCION")
     private String usuarioInsercion;
-    
+
     @Basic(optional = false)
     @Column(name = "FECHA_INSERCION")
     @Temporal(TemporalType.TIMESTAMP)
@@ -49,6 +53,13 @@ public class Liquidacion implements Serializable {
 
     @Column(name = "ESTADO_ELIMINACION")
     private Short estadoEliminacion;
+
+    @Column(name = "ACTA_RECEPCION")
+    private Short actaRecepcion;
+    @Column(name = "ESTADO_LIQUIDACION")
+    private Short estadoLiquidacion;
+    @Column(name = "COMENTARIO")
+    private String comentario;
 
     public Liquidacion() {
     }
@@ -61,11 +72,11 @@ public class Liquidacion implements Serializable {
         this.idLiquidacion = idLiquidacion;
     }
 
-    public BigDecimal getIdContrato() {
+    public ContratosOrdenesCompras getIdContrato() {
         return idContrato;
     }
 
-    public void setIdContrato(BigDecimal idContrato) {
+    public void setIdContrato(ContratosOrdenesCompras idContrato) {
         this.idContrato = idContrato;
     }
 
@@ -91,5 +102,29 @@ public class Liquidacion implements Serializable {
 
     public void setEstadoEliminacion(Short estadoEliminacion) {
         this.estadoEliminacion = estadoEliminacion;
+    }
+
+    public Short getActaRecepcion() {
+        return actaRecepcion;
+    }
+
+    public void setActaRecepcion(Short actaRecepcion) {
+        this.actaRecepcion = actaRecepcion;
+    }
+
+    public Short getEstadoLiquidacion() {
+        return estadoLiquidacion;
+    }
+
+    public void setEstadoLiquidacion(Short estadoLiquidacion) {
+        this.estadoLiquidacion = estadoLiquidacion;
+    }
+
+    public String getComentario() {
+        return comentario;
+    }
+
+    public void setComentario(String comentario) {
+        this.comentario = comentario;
     }
 }
