@@ -1641,6 +1641,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     public void calcularNoItemByNit() {
         if (getRecuperarProceso().getProcesoAdquisicion() != null) {
             proveedorEJB.calcularNoItems(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq(), numeroNit);
+            proveedorEJB.calcularPreRefByNit(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq(), numeroNit);
         }
     }
 
