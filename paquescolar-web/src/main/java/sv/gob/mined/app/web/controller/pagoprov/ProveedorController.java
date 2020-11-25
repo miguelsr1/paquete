@@ -10,7 +10,6 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,7 +29,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.primefaces.PrimeFaces;
@@ -38,7 +36,6 @@ import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DualListModel;
 import sv.gob.mined.app.web.controller.ParametrosMB;
-import sv.gob.mined.app.web.controller.contratacion.ContratosOrdenesComprasController;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.Reportes;
@@ -65,7 +62,6 @@ import sv.gob.mined.paquescolar.model.PreciosRefRubro;
 import sv.gob.mined.paquescolar.model.PreciosRefRubroEmp;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.RubrosAmostrarInteres;
-import sv.gob.mined.paquescolar.model.pojos.OfertaGlobal;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.DetalleAdjudicacionEmpDto;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.MunicipioDto;
 
@@ -682,7 +678,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
             lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), getDetalleProcesoAdq());
             switch (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue()) {
                 case 9://año 2021
-                    if (detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue() == 2) { //utiles y zapatos
+                    if (detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue() != 1) { //utiles y zapatos
                         preMaxRefPar = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(22), detalleProcesoAdq);
                     }
                     preMaxRefCi = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(3), detalleProcesoAdq);
@@ -797,6 +793,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         if (detalleProcesoAdq.getIdDetProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de contratación");
         } else {
+            String msj;
             Boolean preciosValidos = true;
             for (PreciosRefRubroEmp precio : lstPreciosReferencia) {
                 if (precio.getNoItem() != null && !precio.getNoItem().isEmpty() && precio.getIdNivelEducativo() != null && precio.getIdProducto() != null && precio.getPrecioReferencia() != null && precio.getPrecioReferencia().compareTo(BigDecimal.ZERO) == 1) {
@@ -807,11 +804,24 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
             }
 
             if (preciosValidos) {
-                for (PreciosRefRubroEmp precio : lstPreciosReferencia) {
+                lstPreciosReferencia.forEach((precio) -> {
                     proveedorEJB.guardar(precio);
-                }
+                });
                 lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), getDetalleProcesoAdq());
-                JsfUtil.mensajeUpdate();
+                
+                msj = "Actualización exitosa";
+
+                if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 8) { // anho mayor de 2020
+                    //validación de ingreso de todos los item para el rubro de uniforme
+                    if (detalleProcesoAdq.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
+                        if (lstPreciosReferencia.size() < 12) {
+                            msj = "Se han guardado los precios, pero es necesario que registre todos los item disponibles.";
+                        }
+                    }
+                }
+                
+                JsfUtil.mensajeInformacion(msj);
+
             } else {
                 JsfUtil.mensajeInformacion("Los precios de referencia no han sido guardados debido a que existen datos incompletos o erroneos.");
             }

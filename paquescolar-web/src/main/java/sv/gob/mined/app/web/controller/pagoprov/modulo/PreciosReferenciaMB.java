@@ -129,6 +129,7 @@ public class PreciosReferenciaMB implements Serializable {
         if (detalleProcesoAdq.getIdDetProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de contratación");
         } else {
+            String msj;
             Boolean preciosValidos = true;
             for (PreciosRefRubroEmp precio : lstPreciosReferencia) {
                 if (precio.getNoItem() != null && !precio.getNoItem().isEmpty() && precio.getIdNivelEducativo() != null && precio.getIdProducto() != null && precio.getPrecioReferencia() != null && precio.getPrecioReferencia().compareTo(BigDecimal.ZERO) == 1) {
@@ -139,13 +140,25 @@ public class PreciosReferenciaMB implements Serializable {
             }
 
             if (preciosValidos) {
-                for (PreciosRefRubroEmp precio : lstPreciosReferencia) {
+                lstPreciosReferencia.forEach((precio) -> {
                     precio.setFechaModificacion(new Date());
                     precio.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
                     proveedorEJB.guardar(precio);
-                }
+                });
                 lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), getDetalleProcesoAdq());
-                JsfUtil.mensajeUpdate();
+
+                msj = "Actualización exitosa";
+
+                if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 8) { // anho mayor de 2020
+                    //validación de ingreso de todos los item para el rubro de uniforme
+                    if (detalleProcesoAdq.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
+                        if (lstPreciosReferencia.size() < 12) {
+                            msj = "Se han guardado los precios, pero es necesario que registre todos los item disponibles.";
+                        }
+                    }
+                }
+
+                JsfUtil.mensajeInformacion(msj);
             } else {
                 JsfUtil.mensajeInformacion("Los precios de referencia no han sido guardados debido a que existen datos incompletos o erroneos.");
             }

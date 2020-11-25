@@ -29,7 +29,7 @@
                 $("#lbl" + lblNivel + "Uni").val(intlRound((matFem * preUniF) + (matMas * preUniM)));
                 $("#lbl" + lblNivel + "Uti").val(intlRound((matFem * preUtiF) + (matMas * preUtiM)));
                 $("#lbl" + lblNivel + "Zap").val(intlRound((matFem * preZapF) + (matMas * preZapM)));
-                
+
                 calcularTotales();
             }
             function calcularSubTotalMatricula(fem, mas, lbl) {
@@ -78,7 +78,7 @@
                 calcularMontoPorNivel('txtParF', 'txtParM', 'lblMatPar');
                 calcularSubTotalMatriculaNivelEdu('txtIni2F', 'txtIni3F', 'txtParF', 'txtIPFem', 'IP');
                 calcularSubTotalMatriculaNivelEdu('txtIni2M', 'txtIni3M', 'txtParM', 'txtIPMas', 'IP');
-                
+
                 calcularMontoPorNivel('txtParF', 'txtParM', 'Par');
                 calcularMontoPorNivel('txt1gfem', 'txt1gmas', 'G1');
                 calcularMontoPorNivel('txt2gfem', 'txt2gmas', 'G2');
@@ -117,11 +117,22 @@
                 var matCIIIMF = $("#lblMatCIIIMF").text();
                 var matBac = $("#lblMatBac").text();
                 var matBacMF = $("#lblMatBacMF").text();
+                var ini = 0;
+                var mf = 0;
+
+                if (isNaN(Number($("#lblIni2Uti").val()) + Number($("#lblIni3Uti").val()))) {
+                    ini = 0;
+                    mf = 0;
+                } else {
+                    ini = Number($("#lblIni2Uti").val()) + Number($("#lblIni3Uti").val());
+                    mf = Number($("#lblCIIIMFUti").val()) + Number($("#lblBacMFUti").val());
+                }
+
 
                 $("#lblTotalMatricula").text(Number(matIni2) + Number(matIni3) + Number(matPar) + Number(matCI) + Number(matCII) + Number(matCIII) + Number(matCIIIMF) + Number(matBac) + Number(matBacMF));
 
                 var montoTotalUni = Number($("#lblParUni").val()) + Number($("#lblCIUni").val()) + Number($("#lblCIIUni").val()) + Number($("#lblCIIIUni").val()) + Number($("#lblBacUni").val());
-                var montoTotalUti = Number($("#lblIni2Uti").val()) + Number($("#lblIni3Uti").val()) + Number($("#lblParUti").val()) + Number($("#lblCIUti").val()) + Number($("#lblCIIUti").val()) + Number($("#lblCIIIUti").val()) + Number($("#lblCIIIMFUti").val()) + Number($("#lblBacUti").val()) + Number($("#lblBacMFUti").val()) + Number($("#lblG1Uti").val()) + Number($("#lblG2Uti").val()) + Number($("#lblG3Uti").val()) + Number($("#lblG4Uti").val()) + Number($("#lblG5Uti").val()) + Number($("#lblG6Uti").val()) + Number($("#lblG7Uti").val()) + Number($("#lblG8Uti").val()) + Number($("#lblG9Uti").val()) + Number($("#lblB1Uti").val()) + Number($("#lblB2Uti").val());
+                var montoTotalUti = ini + Number($("#lblParUti").val()) + Number($("#lblCIUti").val()) + Number($("#lblCIIUti").val()) + Number($("#lblCIIIUti").val()) + Number($("#lblBacUti").val()) + mf + Number($("#lblG1Uti").val()) + Number($("#lblG2Uti").val()) + Number($("#lblG3Uti").val()) + Number($("#lblG4Uti").val()) + Number($("#lblG5Uti").val()) + Number($("#lblG6Uti").val()) + Number($("#lblG7Uti").val()) + Number($("#lblG8Uti").val()) + Number($("#lblG9Uti").val()) + Number($("#lblB1Uti").val()) + Number($("#lblB2Uti").val());
                 var montoTotalZap = Number($("#lblParZap").val()) + Number($("#lblCIZap").val()) + Number($("#lblCIIZap").val()) + Number($("#lblCIIIZap").val()) + Number($("#lblBacZap").val());
 
                 $("#lblTotalUni").text(intlRound(montoTotalUni));
@@ -284,7 +295,7 @@
                                     <p:inputText id="txtIPPreZapMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParZap.precioMaxMas}"/>
                                 </p:column>
                             </p:row>
-                            
+
                             <p:row>
                                 <p:column styleClass="numero">1er Grado</p:column>
                                 <p:column><p:inputNumber id="txt1gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est1grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt1gfem', 'txt1gmas', 'G1');calcularSubTotalMatriculaNivelEdu('txt1gfem', 'txt2gfem', 'txt3gfem', 'txtCIFem', 'CI');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>

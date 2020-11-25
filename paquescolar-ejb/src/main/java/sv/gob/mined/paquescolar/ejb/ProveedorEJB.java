@@ -1744,8 +1744,9 @@ public class ProveedorEJB {
             }
         }
     }
+    
     public void calcularPreRefByNit(Integer idDet, String numeroNit ) {
-        Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion = 0 and p.idDetProcesoAdq.idDetProcesoAdq=:idDet and p.idEmpresa.numeroNit=:nit ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
+        Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.idEmpresa.numeroNit=:nit and p.estadoEliminacion = 0 and p.idDetProcesoAdq.idDetProcesoAdq=:idDet ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
         q.setParameter("idDet", idDet);
         q.setParameter("nit", numeroNit);
 
@@ -1976,6 +1977,9 @@ public class ProveedorEJB {
             det.setAceptacionTerminos((short) 1);
             det.setUsuarioModificacion(usuario);
             em.merge(det);
+            
+            calcularNoItems(det.getIdDetProcesoAdq().getIdDetProcesoAdq(), det.getIdEmpresa().getNumeroNit());
+            calcularPreRefByNit(det.getIdDetProcesoAdq().getIdDetProcesoAdq(), det.getIdEmpresa().getNumeroNit());
         }
 
         return getIdGestionByProceso(idEmpresa, det.getIdDetProcesoAdq().getIdDetProcesoAdq());
