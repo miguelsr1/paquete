@@ -35,14 +35,15 @@ import javax.mail.internet.MimeMultipart;
 public class EMailFacade {
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public Boolean enviarMail(String destinatario, String remitente,
+    public Boolean enviarMail(InternetAddress[] to, InternetAddress[] cc, String remitente,
             String titulo, String mensaje, Session mailSession) {
         try {
             MimeMessage m = new MimeMessage(mailSession);
             Address from = new InternetAddress(remitente);
 
             m.setFrom(from);
-            m.setRecipients(Message.RecipientType.TO, destinatario);
+            m.setRecipients(Message.RecipientType.TO, to);
+            m.setRecipients(Message.RecipientType.CC, cc);
 
             BodyPart messageBodyPart1 = new MimeBodyPart();
 
@@ -53,13 +54,12 @@ public class EMailFacade {
 
             m.setContent(multipart);
             m.setSubject(titulo, "UTF-8");
-            
+
             Transport.send(m);
             return true;
         } catch (MessagingException ex) {
-            Logger.getLogger(EMailFacade.class.getName()).log(Level.WARNING, "Error en el envio de correo a: {0}", new Object[]{destinatario});
+            Logger.getLogger(EMailFacade.class.getName()).log(Level.WARNING, "Error en el envio de correo a: {0}", new Object[]{to});
             Logger.getLogger(EMailFacade.class.getName()).log(Level.WARNING, "Error", ex);
-
             return false;
         }
     }
@@ -100,8 +100,7 @@ public class EMailFacade {
             Logger.getLogger(EMailFacade.class.getName()).log(Level.SEVERE, "Error en el envio de correo");
         }
     }
-    
-    
+
     public Session getMailSessionOffice(Session mailSession, String remitente, String password) {
         if (mailSession == null) {
             Properties configEmail = new Properties();

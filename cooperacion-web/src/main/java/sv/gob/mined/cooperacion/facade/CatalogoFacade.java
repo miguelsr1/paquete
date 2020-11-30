@@ -11,9 +11,11 @@ import sv.gob.mined.cooperacion.model.EeGeoDepartamento;
 import sv.gob.mined.cooperacion.model.EeGeoMunicipio;
 import sv.gob.mined.cooperacion.model.GeoEntidadEducativa;
 import sv.gob.mined.cooperacion.model.ModalidadEjecucion;
+import sv.gob.mined.cooperacion.model.Notificacion;
 import sv.gob.mined.cooperacion.model.TipoCooperacion;
 import sv.gob.mined.cooperacion.model.TipoCooperante;
 import sv.gob.mined.cooperacion.model.TipoInstrumento;
+import sv.gob.mined.cooperacion.model.Usuario;
 
 @Stateless
 public class CatalogoFacade {
@@ -75,5 +77,17 @@ public class CatalogoFacade {
         Query q = emCooperacion.createQuery("SELECT d FROM Director d WHERE d.correoElectronico=:email AND d.activo=1", Director.class);
         q.setParameter("email", email);
         return q.getResultList().isEmpty() ? null : (Director) q.getResultList().get(0);
+    }
+    
+    public Usuario findUsuarioByEmail(String email) {
+        Query q = emCooperacion.createQuery("SELECT u FROM Usuario u WHERE u.usuario=:usu and u.activo = 1", Usuario.class);
+        q.setParameter("usu", email);
+        return q.getResultList().isEmpty() ? null : (Usuario) q.getResultList().get(0);
+    }
+    
+    public List<Notificacion> findNotificacionByTipoCooperacion(Long idTipoCooperacion){
+        Query q = emCooperacion.createQuery("SELECT n FROM Notificacion n WHERE n.idTipoCooperacion=:idTipo ORDER BY n.idNotificacion", Notificacion.class);
+        q.setParameter("idTipo", idTipoCooperacion);
+        return q.getResultList();
     }
 }

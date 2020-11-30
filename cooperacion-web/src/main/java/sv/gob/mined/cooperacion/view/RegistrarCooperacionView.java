@@ -1,14 +1,20 @@
 package sv.gob.mined.cooperacion.view;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.LatLng;
 import org.primefaces.model.map.MapModel;
@@ -21,13 +27,16 @@ import sv.gob.mined.cooperacion.model.Director;
 import sv.gob.mined.cooperacion.model.GeoEntidadEducativa;
 import sv.gob.mined.cooperacion.model.HisCambioEstadoPro;
 import sv.gob.mined.cooperacion.model.ModalidadEjecucion;
+import sv.gob.mined.cooperacion.model.Notificacion;
 import sv.gob.mined.cooperacion.model.ProyectoCooperacion;
 import sv.gob.mined.cooperacion.model.TipoCooperacion;
 import sv.gob.mined.cooperacion.model.TipoCooperante;
 import sv.gob.mined.cooperacion.model.TipoInstrumento;
+import sv.gob.mined.cooperacion.model.Usuario;
 import sv.gob.mined.cooperacion.model.paquete.Departamento;
 import sv.gob.mined.cooperacion.model.paquete.Municipio;
 import sv.gob.mined.cooperacion.model.paquete.VwCatalogoEntidadEducativa;
+import sv.gob.mined.utils.StringUtils;
 import sv.gob.mined.utils.jsf.JsfUtil;
 
 /**
@@ -61,14 +70,19 @@ public class RegistrarCooperacionView implements Serializable {
     @Inject
     private CatalogoFacade catalogoFacade;
 
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("bundle");
+
     @PostConstruct
     public void init() {
         FacesContext fc = FacesContext.getCurrentInstance();
 
-        if (fc.getExternalContext().getSessionMap().containsKey("director")) {
-            directorCe = (Director) fc.getExternalContext().getSessionMap().get("director");
-            codigoEntidad = directorCe.getCodigoEntidad();
-            buscarEntidadEducativa();
+        if (fc.getExternalContext().getSessionMap().containsKey("usuario")) {
+            Usuario usu = (Usuario) fc.getExternalContext().getSessionMap().get("usuario");
+            if (usu.getDirector() != null) {
+                directorCe = usu.getDirector();
+                codigoEntidad = directorCe.getCodigoEntidad();
+                buscarEntidadEducativa();
+            }
         }
     }
 
@@ -244,12 +258,72 @@ public class RegistrarCooperacionView implements Serializable {
         if (proyectoCooperacion.getIdProyecto() == null) {
             tmpFecha = new Date();
             proyectoCooperacion.setFechaInsercion(tmpFecha);
-            proyectoCooperacion.setUsuarioInsercion("ADMIN");
+            proyectoCooperacion.setUsuarioInsercion(directorCe.getIdDirector());
             proyectoCooperacion.setCodigoEntidad(codigoEntidad);
             proyectoCooperacion.setEstadoEliminacion((short) 1);
+
             if (mantenimientoFacade.guardar(proyectoCooperacion)) {
                 guardarHistoricoCambioEstado(tmpFecha, null, (short) 1);
                 JsfUtil.mensajeInsert();
+                List<Notificacion> lstNotificacion = catalogoFacade.findNotificacionByTipoCooperacion(proyectoCooperacion.getIdTipoCooperacion());
+
+                String titulo = "";
+                String mensaje = "";
+                String emailsTo = "";
+                String emailsCc = "";
+
+                InternetAddress[] to;
+                InternetAddress[] cc;
+                switch (proyectoCooperacion.getIdTipoCooperacion().intValue()) {
+                    case 2:
+                    case 7:
+                    case 8:
+                    case 10:
+                    case 11:
+                    case 14:
+                        titulo = RESOURCE_BUNDLE.getString("correo.respuestaAprovacionAutomatica.titulo");
+                        mensaje = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprovacionAutomatica.mensaje"),
+                                StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
+                                entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
+                                proyectoCooperacion.getNombreProyecto(), proyectoCooperacion.getObjetivos());
+
+                        for (Notificacion notificacion : lstNotificacion) {
+                            if (notificacion.getTipoDestinatario() == 1) {
+                                if (emailsTo.isEmpty()) {
+                                    emailsTo = directorCe.getCorreoElectronico();
+                                } else {
+                                    emailsTo = emailsTo.concat(",").concat(notificacion.getCorreo());
+                                }
+                            } else {
+                                if (emailsCc.isEmpty()) {
+                                    emailsCc = directorCe.getCorreoElectronico();
+                                } else {
+                                    emailsCc = emailsCc.concat(",").concat(notificacion.getCorreo());
+                                }
+                            }
+                        }
+
+                        to = new InternetAddress[emailsTo.split(",").length];
+                        cc = new InternetAddress[emailsCc.split(",").length];
+                        try {
+                            for (int i = 0; i < emailsTo.split(",").length; i++) {
+                                to[i] = new InternetAddress(emailsTo.split(",")[i]);
+                            }
+                            for (int i = 0; i < emailsCc.split(",").length; i++) {
+                                cc[i] = new InternetAddress(emailsCc.split(",")[i]);
+                            }
+
+                        } catch (AddressException ex) {
+                            Logger.getLogger(RegistrarCooperacionView.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        break;
+                    case 1:
+                    case 4:
+                    case 5:
+                    case 6:
+                        // cooperacion inferior a 5000
+                        break;
+                }
             } else {
                 JsfUtil.mensajeError("Ah ocurrido un error en la operación de guardar.");
             }
@@ -264,7 +338,7 @@ public class RegistrarCooperacionView implements Serializable {
         historico.setIdEstadoAnt(cambioAnt);
         historico.setIdEstadoNew(cambioNew);
         historico.setIdProyecto(proyectoCooperacion.getIdProyecto());
-        historico.setUsuarioCambio("ADMIN");
+        historico.setUsuarioCambio(directorCe.getIdDirector());
 
         mantenimientoFacade.guardar(historico);
     }

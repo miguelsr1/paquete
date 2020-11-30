@@ -4,6 +4,9 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
+
+    <f:event listener="#{userBean.isCentroEscolar}" type="preRenderView" />
+
     <h:head>
         <f:facet name="first">
             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -24,12 +27,12 @@
                 <div>
                     <h1>Proyectos de Cooperación</h1>
                     <div class="p-grid features-content">
-                        <div class="p-col-12 p-md-6 feature-left">
+                        <div class="p-col-12 p-md-6 feature-left" onclick="location.href='datosCe.mined';" style="cursor: pointer;">
                             <p:graphicImage name="editar.png" library="images" style="background-color: white;"  />
                             <h3>Crear nuevo proyecto</h3>
                             <p>Registro de la información general del proyecto a ejecutar en el Centro Educativo.</p>
                         </div>
-                        <div class="p-col-12 p-md-6 feature-left">
+                        <div class="p-col-12 p-md-6 feature-left" onclick="location.href='listadoProyectos.mined';" style="cursor: pointer;">
                             <p:graphicImage name="lista.png" library="images" style="background-color: white;"/>
                             <h3>Listado de Proyectos</h3>
                             <p>Listado de todos los proyectos registrados y el estado de cada uno de estos.</p>

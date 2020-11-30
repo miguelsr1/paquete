@@ -89,7 +89,7 @@ public class ProyectoCooperacion implements Serializable {
     private Date fechaInsercion;
     @Basic(optional = false)
     @Column(name = "USUARIO_INSERCION")
-    private String usuarioInsercion;
+    private Long usuarioInsercion;
     @Column(name = "ESTADO_ELIMINACION")
     private Short estadoEliminacion;
     @Column(name = "CODIGO_ENTIDAD")
@@ -104,7 +104,7 @@ public class ProyectoCooperacion implements Serializable {
         this.idProyecto = idProyecto;
     }
 
-    public ProyectoCooperacion(Long idProyecto, Date fechaInsercion, String usuarioInsercion) {
+    public ProyectoCooperacion(Long idProyecto, Date fechaInsercion, Long usuarioInsercion) {
         this.idProyecto = idProyecto;
         this.fechaInsercion = fechaInsercion;
         this.usuarioInsercion = usuarioInsercion;
@@ -294,11 +294,11 @@ public class ProyectoCooperacion implements Serializable {
         this.fechaInsercion = fechaInsercion;
     }
 
-    public String getUsuarioInsercion() {
+    public Long getUsuarioInsercion() {
         return usuarioInsercion;
     }
 
-    public void setUsuarioInsercion(String usuarioInsercion) {
+    public void setUsuarioInsercion(Long usuarioInsercion) {
         this.usuarioInsercion = usuarioInsercion;
     }
 

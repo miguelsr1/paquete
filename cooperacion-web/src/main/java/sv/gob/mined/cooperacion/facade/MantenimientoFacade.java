@@ -32,4 +32,14 @@ public class MantenimientoFacade {
         Query q = emCooperacion.createNativeQuery(QueryNativas.sqlListadoProyectos + " ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
         return q.getResultList();
     }
+
+    public List<ListadoProyectoDto> findProyectosByCodigoEntidad(String codigoEntidad) {
+        Query q = emCooperacion.createNativeQuery(QueryNativas.sqlListadoProyectos + " and vw.codigo_entidad = '" + codigoEntidad + "' ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
+        return q.getResultList();
+    }
+    
+    public List<ListadoProyectoDto> findProyectosByUT(String codigoEntidad) {
+        Query q = emCooperacion.createNativeQuery(QueryNativas.sqlListadoProyectos + " and vw.codigo_entidad = '" + codigoEntidad + "' ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
+        return q.getResultList();
+    }
 }

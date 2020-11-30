@@ -5,6 +5,9 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    
+    <f:event listener="#{userBean.isCentroEscolar}" type="preRenderView" />
+    
     <h:head>
         <f:facet name="first">
             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -260,7 +263,8 @@
                         </div>
                         <f:facet name="footer" class="ui-dialog-footer">
                             <p:commandButton value="Guardar" icon="pi pi-check" update="pnlDatosCe pnlDatosProyecto" validateClient="true" action="#{registrarCooperacionView.guardar()}"/>
-                            <p:commandButton value="Cancelar" icon="pi pi-times" class="secondary-button" update="pnlDatosCe pnlDatosProyecto" validateClient="true" action="#{registrarCooperacionView.guardar()}"/>
+                            <p:spacer width="10"/>
+                            <p:commandButton value="Cancelar" icon="pi pi-times" class="secondary-button" validateClient="true" process="@this" action="inicio?faces-redirect=true"/>
                         </f:facet>
                         
                     </p:panel>

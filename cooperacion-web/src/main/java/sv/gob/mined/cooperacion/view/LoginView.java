@@ -17,7 +17,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import sv.gob.mined.cooperacion.facade.CatalogoFacade;
 import sv.gob.mined.cooperacion.facade.EMailFacade;
-import sv.gob.mined.cooperacion.model.Director;
+import sv.gob.mined.cooperacion.model.Usuario;
 import sv.gob.mined.utils.jsf.JsfUtil;
 
 /**
@@ -121,12 +121,26 @@ public class LoginView implements Serializable {
                 context.getExternalContext().getSessionMap().put("remitente", remitente);
                 context.getExternalContext().getSessionMap().put("password", password);
 
-                Director director = catalogoFacade.findDirectorByEmail(remitente);
-                if (director != null) {
-                    context.getExternalContext().getSessionMap().put("director", director);
-                    url = "/app/datosCe?faces-redirect=true";
-                }else{
-                    url = "/app/listadoProyectos?faces-redirect=true";
+                Usuario usuario = catalogoFacade.findUsuarioByEmail(remitente);
+
+                context.getExternalContext().getSessionMap().put("usuario", usuario);
+                if (usuario != null) {
+                    String perfil;
+                    switch (usuario.getIdPerfil()) {
+                        case 1:
+                            perfil = "ADMIN";
+                            url = "/app/listadoProyectos?faces-redirect=true";
+                            break;
+                        case 2:
+                            perfil = "UT";
+                            break;
+                        default:
+                            perfil = "CE";
+                            url = "/app/inicio?faces-redirect=true";
+                            break;
+                    }
+
+                    context.getExternalContext().getSessionMap().put("role", perfil);
                 }
             }
         } catch (NoSuchProviderException ex) {

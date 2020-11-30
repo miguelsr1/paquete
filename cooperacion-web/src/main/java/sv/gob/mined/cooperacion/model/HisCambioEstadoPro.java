@@ -30,6 +30,9 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "HisCambioEstadoPro.findAll", query = "SELECT h FROM HisCambioEstadoPro h")})
 public class HisCambioEstadoPro implements Serializable {
 
+    @Column(name = "USUARIO_CAMBIO")
+    private Long usuarioCambio;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -41,8 +44,6 @@ public class HisCambioEstadoPro implements Serializable {
     private Short idEstadoAnt;
     @Column(name = "ID_ESTADO_NEW")
     private Short idEstadoNew;
-    @Column(name = "USUARIO_CAMBIO")
-    private String usuarioCambio;
     @Column(name = "FECHA_CAMBIO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCambio;
@@ -80,14 +81,6 @@ public class HisCambioEstadoPro implements Serializable {
         this.idEstadoNew = idEstadoNew;
     }
 
-    public String getUsuarioCambio() {
-        return usuarioCambio;
-    }
-
-    public void setUsuarioCambio(String usuarioNuevo) {
-        this.usuarioCambio = usuarioNuevo;
-    }
-
     public Date getFechaCambio() {
         return fechaCambio;
     }
@@ -110,10 +103,7 @@ public class HisCambioEstadoPro implements Serializable {
             return false;
         }
         HisCambioEstadoPro other = (HisCambioEstadoPro) object;
-        if ((this.idHistorico == null && other.idHistorico != null) || (this.idHistorico != null && !this.idHistorico.equals(other.idHistorico))) {
-            return false;
-        }
-        return true;
+        return !((this.idHistorico == null && other.idHistorico != null) || (this.idHistorico != null && !this.idHistorico.equals(other.idHistorico)));
     }
 
     @Override
@@ -128,5 +118,12 @@ public class HisCambioEstadoPro implements Serializable {
     public void setIdProyecto(Long idProyecto) {
         this.idProyecto = idProyecto;
     }
-    
+
+    public Long getUsuarioCambio() {
+        return usuarioCambio;
+    }
+
+    public void setUsuarioCambio(Long usuarioCambio) {
+        this.usuarioCambio = usuarioCambio;
+    }
 }

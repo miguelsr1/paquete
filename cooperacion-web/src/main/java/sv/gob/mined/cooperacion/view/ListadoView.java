@@ -9,10 +9,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import sv.gob.mined.cooperacion.facade.MantenimientoFacade;
+import sv.gob.mined.cooperacion.model.Usuario;
 import sv.gob.mined.cooperacion.model.dto.ListadoProyectoDto;
 
 /**
@@ -37,7 +39,24 @@ public class ListadoView implements Serializable {
 
     @PostConstruct
     public void init() {
-        lstProyectos = mantenimientoFacade.findAllProyectos();
+        FacesContext fc = FacesContext.getCurrentInstance();
+
+        if (fc.getExternalContext().getSessionMap().containsKey("usuario")) {
+            Usuario usu = (Usuario) fc.getExternalContext().getSessionMap().get("usuario");
+
+            switch (usu.getIdPerfil()) {
+                case 1:
+                    lstProyectos = mantenimientoFacade.findAllProyectos();
+                    break;
+                case 2:
+
+                    break;
+                default:
+                    lstProyectos = mantenimientoFacade.findProyectosByCodigoEntidad(usu.getDirector().getCodigoEntidad());
+                    break;
+            }
+        }
+
     }
 
     public List<ListadoProyectoDto> getLstProyectos() {
@@ -56,15 +75,15 @@ public class ListadoView implements Serializable {
         this.lblBottonEnviar = lblBottonEnviar;
     }
 
-    public void enviar(){
-        
+    public void enviar() {
+
     }
-    
+
     public void nuevoProyecto() {
-        
+
     }
-    
-    public void eliminarProyecto(){
-        
+
+    public void eliminarProyecto() {
+
     }
 }
