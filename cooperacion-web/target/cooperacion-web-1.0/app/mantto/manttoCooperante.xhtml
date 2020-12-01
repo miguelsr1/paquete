@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <h:outputScript name="js/nanoscroller.js" library="paradise-layout" />
+        <h:outputScript name="js/layout.js" library="paradise-layout" />
+    </h:head>
+    <h:body style="max-width: 1024px; margin: auto; background-color: #303945;">
+        <h:form prependId="false">
+            <p:messages id="messages" showDetail="true" closable="true" escape="false">
+                <p:autoUpdate />
+            </p:messages>
+            <div class="p-col-12">
+                <div class="card ui-fluid">
+                    <h5>Datos del Cooperante</h5>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Nombre Organización:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-10">
+                            <div class="ui-inputgroup">
+                                <span class="ui-inputgroup-addon">
+                                    <i class="fa fa-building"></i>
+                                </span>
+                                <p:inputText value="#{cooperanteView.cooperante.nombreCooperante}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Tipo:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-10">
+                            <p:selectOneMenu value="#{cooperanteView.idTipoCooperante}">
+                                <f:selectItem itemValue="null" itemLabel="Seleccione un valor"/>
+                                <f:selectItems value="#{cooperanteView.lstTipoCooperante}" var="coo" itemValue="#{coo.idTipoCooperante}" itemLabel="#{coo.descripcionCooperante}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Nombre Contanto:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-10">
+                            <div class="ui-inputgroup">
+                                <span class="ui-inputgroup-addon">
+                                    <i class="pi pi-tag"></i>
+                                </span>
+                                <p:inputText id="txtNombreCe" value="#{cooperanteView.cooperante.nombreContanto}" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Teléfono:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-4">
+                            <div class="ui-inputgroup">
+                                <span class="ui-inputgroup-addon">
+                                    <i class="fa fa-phone" aria-hidden="true"></i>
+                                </span>
+                                <p:inputMask id="txtTelefono" value="#{cooperanteView.cooperante.telefono}" mask="9999-9999"/>
+                            </div>
+                        </div>
+                        <p:outputLabel value="Celular:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-4">
+                            <div class="ui-inputgroup">
+                                <span class="ui-inputgroup-addon">
+                                    <i class="pi pi-mobile"></i>
+                                </span>
+                                <p:inputMask id="txtCelular" value="#{cooperanteView.cooperante.celular}" mask="9999-9999"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Correo electrónico:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-10">
+                            <div class="ui-inputgroup">
+                                <span class="ui-inputgroup-addon">
+                                    <i class="pi pi-envelope"></i>
+                                </span>
+                                <p:inputText id="txtCorreoDirector" value="#{cooperanteView.cooperante.correo}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="p-field p-grid">
+                        <div class="p-col-12 p-md-2">
+                            <p:commandButton value="Guardar" action="#{cooperanteView.guardarCooperante()}" icon="pi pi-save" />
+                        </div>
+                        <div class="p-col-12 p-md-2">
+                            <p:commandButton value="Cancelar" icon="pi pi-ban"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </h:form>
+        <h:outputStylesheet name="css/primeicons.css" library="paradise-layout" />
+        <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout" />
+        <h:outputStylesheet name="css/demo.css" library="demo" />
+
+        <h:outputStylesheet name="css/nanoscroller.css" library="paradise-layout" />
+        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout" />
+    </h:body>
+</html>
+

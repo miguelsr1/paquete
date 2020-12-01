@@ -1,6 +1,7 @@
 package sv.gob.mined.cooperacion.view;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,6 +14,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import org.primefaces.model.map.DefaultMapModel;
@@ -20,6 +23,7 @@ import org.primefaces.model.map.LatLng;
 import org.primefaces.model.map.MapModel;
 import org.primefaces.model.map.Marker;
 import sv.gob.mined.cooperacion.facade.CatalogoFacade;
+import sv.gob.mined.cooperacion.facade.EMailFacade;
 import sv.gob.mined.cooperacion.facade.MantenimientoFacade;
 import sv.gob.mined.cooperacion.facade.paquete.UbicacionFacade;
 import sv.gob.mined.cooperacion.model.Cooperante;
@@ -69,6 +73,11 @@ public class RegistrarCooperacionView implements Serializable {
     private MantenimientoFacade mantenimientoFacade;
     @Inject
     private CatalogoFacade catalogoFacade;
+    @Inject
+    private EMailFacade eMailFacade;
+
+    @Inject
+    private CredencialesView credencialesView;
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("bundle");
 
@@ -275,6 +284,7 @@ public class RegistrarCooperacionView implements Serializable {
                 InternetAddress[] to;
                 InternetAddress[] cc;
                 switch (proyectoCooperacion.getIdTipoCooperacion().intValue()) {
+                    //RESPUESTA AUTOMATICA DE VoBo
                     case 2:
                     case 7:
                     case 8:
@@ -287,7 +297,7 @@ public class RegistrarCooperacionView implements Serializable {
                                 entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
                                 proyectoCooperacion.getNombreProyecto(), proyectoCooperacion.getObjetivos());
 
-                        for (Notificacion notificacion : lstNotificacion) {
+                        /*for (Notificacion notificacion : lstNotificacion) {
                             if (notificacion.getTipoDestinatario() == 1) {
                                 if (emailsTo.isEmpty()) {
                                     emailsTo = directorCe.getCorreoElectronico();
@@ -315,15 +325,67 @@ public class RegistrarCooperacionView implements Serializable {
 
                         } catch (AddressException ex) {
                             Logger.getLogger(RegistrarCooperacionView.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                        }*/
                         break;
                     case 1:
                     case 4:
                     case 5:
                     case 6:
                         // cooperacion inferior a 5000
+                        if (proyectoCooperacion.getMontoInversion().compareTo(new BigDecimal(5000)) == 1) {
+
+                        } else {
+                            titulo = RESOURCE_BUNDLE.getString("correo.respuestaAprovacionAutomatica.titulo");
+                            mensaje = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprovacionAutomatica.mensaje"),
+                                    StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
+                                    entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
+                                    proyectoCooperacion.getNombreProyecto(), proyectoCooperacion.getObjetivos());
+                        }
+
+                        /*to = new InternetAddress[1];
+                        cc = new InternetAddress[1];*/
+                        break;
+                    default:
+                        /*to = new InternetAddress[1];
+                        cc = new InternetAddress[1];*/
                         break;
                 }
+
+                for (Notificacion notificacion : lstNotificacion) {
+                    if (notificacion.getTipoDestinatario() == 1) {
+                        if (emailsTo.isEmpty()) {
+                            emailsTo = directorCe.getCorreoElectronico();
+                        } else {
+                            emailsTo = emailsTo.concat(",").concat(notificacion.getCorreo());
+                        }
+                    } else {
+                        if (emailsCc.isEmpty()) {
+                            emailsCc = directorCe.getCorreoElectronico();
+                        } else {
+                            emailsCc = emailsCc.concat(",").concat(notificacion.getCorreo());
+                        }
+                    }
+                }
+
+                to = new InternetAddress[emailsTo.split(",").length];
+                cc = new InternetAddress[emailsCc.split(",").length];
+                try {
+                    for (int i = 0; i < emailsTo.split(",").length; i++) {
+                        to[i] = new InternetAddress(emailsTo.split(",")[i]);
+                    }
+                    for (int i = 0; i < emailsCc.split(",").length; i++) {
+                        cc[i] = new InternetAddress(emailsCc.split(",")[i]);
+                    }
+
+                } catch (AddressException ex) {
+                    Logger.getLogger(RegistrarCooperacionView.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                Session session = credencialesView.getMailSession();
+
+                eMailFacade.enviarMail(to, cc,
+                        directorCe.getCorreoElectronico(), titulo, mensaje,
+                        session);
             } else {
                 JsfUtil.mensajeError("Ah ocurrido un error en la operación de guardar.");
             }

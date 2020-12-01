@@ -11,12 +11,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.mail.MessagingException;
-import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
-import javax.mail.Transport;
 import sv.gob.mined.cooperacion.facade.CatalogoFacade;
-import sv.gob.mined.cooperacion.facade.EMailFacade;
 import sv.gob.mined.cooperacion.model.Usuario;
 import sv.gob.mined.utils.jsf.JsfUtil;
 
@@ -38,10 +34,10 @@ public class LoginView implements Serializable {
     private String port;
     private String server;
     private Session mailSession;
-    private Transport transport;
 
     @Inject
-    private EMailFacade eMailFacade;
+    private CredencialesView credencialesView;
+
     @Inject
     private CatalogoFacade catalogoFacade;
 
@@ -93,35 +89,24 @@ public class LoginView implements Serializable {
 
     public String validarCrendecialesDelCorreo() {
         String url = "";
-        try {
-            if (correoRemitente != null && password != null) {
-                if (idDominioCorreo.equals("1")) {
-                    remitente = correoRemitente.concat("@").concat("mined.gob.sv");
-                    port = "587";
-                    server = "svr2k13mail01.mined.gob.sv";
-                    mailSession = eMailFacade.getMailSessionMined(mailSession, dominio, password, remitente);
-                } else {
-                    remitente = correoRemitente.concat("@").concat("admin.mined.edu.sv");
-                    port = "587";
-                    server = "smtp.office365.com";
-                    mailSession = eMailFacade.getMailSessionOffice(mailSession, remitente, password);
-                }
+        if (correoRemitente != null && password != null) {
 
-                transport = mailSession.getTransport("smtp");
-                transport.connect(server, Integer.parseInt(port), remitente, password);
+            credencialesView.setDominio(idDominioCorreo);
+            credencialesView.setCorreoRemitente(correoRemitente);
+            credencialesView.setPassword(password);
+            credencialesView.validarCredencial();
+            
+            correoValido = credencialesView.isCorreoValido();
 
-                correoValido = true;
-
-                transport.close();
-
+            if (correoValido) {
                 FacesContext context = FacesContext.getCurrentInstance();
-                context.getExternalContext().getSessionMap().put("sessionMail", mailSession);
+                //context.getExternalContext().getSessionMap().put("sessionMail", mailSession);
                 context.getExternalContext().getSessionMap().put("server", server);
                 context.getExternalContext().getSessionMap().put("port", port);
                 context.getExternalContext().getSessionMap().put("remitente", remitente);
                 context.getExternalContext().getSessionMap().put("password", password);
 
-                Usuario usuario = catalogoFacade.findUsuarioByEmail(remitente);
+                Usuario usuario = catalogoFacade.findUsuarioByEmail(credencialesView.getRemitente());
 
                 context.getExternalContext().getSessionMap().put("usuario", usuario);
                 if (usuario != null) {
@@ -142,13 +127,9 @@ public class LoginView implements Serializable {
 
                     context.getExternalContext().getSessionMap().put("role", perfil);
                 }
+            } else {
+                JsfUtil.mensajeError("Error en el usuario o  clave de acceso.");
             }
-        } catch (NoSuchProviderException ex) {
-            JsfUtil.mensajeError("Error en el usuario o  clave de acceso.");
-            correoValido = false;
-        } catch (MessagingException ex) {
-            JsfUtil.mensajeError("Error en el usuario o  clave de acceso.");
-            correoValido = false;
         }
 
         return url;
