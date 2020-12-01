@@ -227,6 +227,9 @@ public class RegistrarCooperacionView implements Serializable {
 
     public void guardar() {
         Date tmpFecha;
+        String titulo = RESOURCE_BUNDLE.getString("correo.respuesta.titulo");
+        String mensaje = "";
+
         for (String nivel : nivelI) {
             switch (nivel) {
                 case "1":
@@ -271,96 +274,65 @@ public class RegistrarCooperacionView implements Serializable {
             proyectoCooperacion.setCodigoEntidad(codigoEntidad);
             proyectoCooperacion.setEstadoEliminacion((short) 1);
 
+            switch (proyectoCooperacion.getIdTipoCooperacion().intValue()) {
+                //RESPUESTA DE APROBACIÓN AUTOMATICA
+                case 2:
+                case 7:
+                case 8:
+                case 10:
+                case 11:
+                case 14:
+                    proyectoCooperacion.setIdEstado((short) 2);
+
+                    mensaje = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprovacionAutomatica.mensaje"),
+                            StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
+                            entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
+                            proyectoCooperacion.getNombreProyecto(), proyectoCooperacion.getObjetivos());
+                    break;
+
+                //RESPUESTA DEPENDERA DEL MONTO DEL PROYECTO
+                case 1:
+                case 4:
+                case 5:
+                case 6:
+                    // cooperacion inferior a 5000
+                    if (proyectoCooperacion.getMontoInversion().compareTo(new BigDecimal(5000)) == 1) {
+                        proyectoCooperacion.setIdEstado((short) 1);
+                    } else {
+                        proyectoCooperacion.setIdEstado((short) 2);
+
+                        mensaje = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprovacionAutomatica.mensaje"),
+                                StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
+                                entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
+                                proyectoCooperacion.getNombreProyecto(), proyectoCooperacion.getObjetivos());
+                    }
+                    /*to = new InternetAddress[1];
+                    cc = new InternetAddress[1];*/
+                    break;
+                default:
+                /*to = new InternetAddress[1];
+                cc = new InternetAddress[1];*/
+            }
+
             if (mantenimientoFacade.guardar(proyectoCooperacion)) {
                 guardarHistoricoCambioEstado(tmpFecha, null, (short) 1);
                 JsfUtil.mensajeInsert();
                 List<Notificacion> lstNotificacion = catalogoFacade.findNotificacionByTipoCooperacion(proyectoCooperacion.getIdTipoCooperacion());
 
-                String titulo = "";
-                String mensaje = "";
-                String emailsTo = "";
+                String emailsTo;
                 String emailsCc = "";
 
                 InternetAddress[] to;
                 InternetAddress[] cc;
-                switch (proyectoCooperacion.getIdTipoCooperacion().intValue()) {
-                    //RESPUESTA AUTOMATICA DE VoBo
-                    case 2:
-                    case 7:
-                    case 8:
-                    case 10:
-                    case 11:
-                    case 14:
-                        titulo = RESOURCE_BUNDLE.getString("correo.respuestaAprovacionAutomatica.titulo");
-                        mensaje = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprovacionAutomatica.mensaje"),
-                                StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
-                                entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
-                                proyectoCooperacion.getNombreProyecto(), proyectoCooperacion.getObjetivos());
 
-                        /*for (Notificacion notificacion : lstNotificacion) {
-                            if (notificacion.getTipoDestinatario() == 1) {
-                                if (emailsTo.isEmpty()) {
-                                    emailsTo = directorCe.getCorreoElectronico();
-                                } else {
-                                    emailsTo = emailsTo.concat(",").concat(notificacion.getCorreo());
-                                }
-                            } else {
-                                if (emailsCc.isEmpty()) {
-                                    emailsCc = directorCe.getCorreoElectronico();
-                                } else {
-                                    emailsCc = emailsCc.concat(",").concat(notificacion.getCorreo());
-                                }
-                            }
-                        }
-
-                        to = new InternetAddress[emailsTo.split(",").length];
-                        cc = new InternetAddress[emailsCc.split(",").length];
-                        try {
-                            for (int i = 0; i < emailsTo.split(",").length; i++) {
-                                to[i] = new InternetAddress(emailsTo.split(",")[i]);
-                            }
-                            for (int i = 0; i < emailsCc.split(",").length; i++) {
-                                cc[i] = new InternetAddress(emailsCc.split(",")[i]);
-                            }
-
-                        } catch (AddressException ex) {
-                            Logger.getLogger(RegistrarCooperacionView.class.getName()).log(Level.SEVERE, null, ex);
-                        }*/
-                        break;
-                    case 1:
-                    case 4:
-                    case 5:
-                    case 6:
-                        // cooperacion inferior a 5000
-                        if (proyectoCooperacion.getMontoInversion().compareTo(new BigDecimal(5000)) == 1) {
-
-                        } else {
-                            titulo = RESOURCE_BUNDLE.getString("correo.respuestaAprovacionAutomatica.titulo");
-                            mensaje = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprovacionAutomatica.mensaje"),
-                                    StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
-                                    entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
-                                    proyectoCooperacion.getNombreProyecto(), proyectoCooperacion.getObjetivos());
-                        }
-
-                        /*to = new InternetAddress[1];
-                        cc = new InternetAddress[1];*/
-                        break;
-                    default:
-                        /*to = new InternetAddress[1];
-                        cc = new InternetAddress[1];*/
-                        break;
-                }
+                emailsTo = directorCe.getCorreoElectronico();
 
                 for (Notificacion notificacion : lstNotificacion) {
                     if (notificacion.getTipoDestinatario() == 1) {
-                        if (emailsTo.isEmpty()) {
-                            emailsTo = directorCe.getCorreoElectronico();
-                        } else {
-                            emailsTo = emailsTo.concat(",").concat(notificacion.getCorreo());
-                        }
+                        emailsTo = emailsTo.concat(",").concat(notificacion.getCorreo());
                     } else {
                         if (emailsCc.isEmpty()) {
-                            emailsCc = directorCe.getCorreoElectronico();
+                            emailsCc = notificacion.getCorreo();
                         } else {
                             emailsCc = emailsCc.concat(",").concat(notificacion.getCorreo());
                         }
