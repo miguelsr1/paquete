@@ -38,9 +38,9 @@ public class GuestPreferences implements Serializable {
 
     private String inputStyle = "outlined";
 
-    private List<ComponentTheme> componentThemes = new ArrayList<ComponentTheme>();
+    private List<ComponentTheme> componentThemes = new ArrayList();
 
-    private List<LayoutColor> layoutColors = new ArrayList<LayoutColor>();
+    private List<LayoutColor> layoutColors = new ArrayList();
     
     @PostConstruct
     public void init() {  

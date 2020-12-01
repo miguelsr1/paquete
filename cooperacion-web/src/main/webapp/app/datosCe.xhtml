@@ -1,20 +1,13 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
-    
-    <f:event listener="#{userBean.isCentroEscolar}" type="preRenderView" />
-    
-    <h:head>
-        <f:facet name="first">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-            <meta name="apple-mobile-web-app-capable" content="yes" />
-        </f:facet>
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/plantilla.xhtml"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:define name="head">
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOZGfkDBXOJYiOY1ovS_alyW8YueD8hBg" type="text/javascript"></script>
         <h:outputScript name="js/nanoscroller.js" library="paradise-layout" />
         <h:outputScript name="js/layout.js" library="paradise-layout" />
@@ -25,43 +18,47 @@
                 width:20%;
                 padding:4px;
             }
-
             .value {
                 width:80%;
                 padding:4px;
             }
-
             .grid {
                 width:100%;
             }
-
             .error {
                 color: red;
             }
-
             .outputLabel {
                 font-weight: bold;
             }
-
             .grid {
                 width:33%;
                 padding:4px;
             }
-
             .ui-wizard-step-titles.ui-helper-reset.ui-helper-clearfix {
                 height: 80px;
             }
         </style>
+    </ui:define>
 
-    </h:head>
-    <h:body style="max-width: 1024px; margin: auto; background-color: #303945;">
-        <h:form prependId="false">
-            <p:messages id="messages" closable="true" escape="false" >
-                <p:autoUpdate />
-            </p:messages>
-            <div class="p-col-12">
+    <f:event listener="#{userBean.isCentroEscolar}" type="preRenderView" />
+
+    <ui:define name="contenido">
+        <p:messages id="messages" closable="true" escape="false" >
+            <p:autoUpdate />
+        </p:messages>
+
+        <div class="p-grid">
+            <div class="p-col">
                 <div class="card">
-                    <p:panel id="pnlDatosCe" header="Datos Generales del Centro Educativos"  toggleable="true">
+                    <p:breadCrumb>
+                        <p:menuitem value="Inicio" url="inicio.mined" />
+                        <p:menuitem value="Nuevo Proyecto de Cooperación" url="#" />
+                    </p:breadCrumb>
+                    <br/>
+
+                    <h5>Datos Generales del Centro Educativos</h5>
+                    <div class="invoice-to">
                         <div class="ui-fluid">
                             <div class="p-field p-grid">
                                 <p:outputLabel for="txtCodEnt" value="Código del C.E.:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
@@ -144,147 +141,145 @@
                                 </div>
                             </div>
                         </div>
-                    </p:panel>
-                </div>
-                <div class="card">
-                    <p:panel id="pnlDatosProyecto" header="Datos del Proyecto de Cooperación">
-                        <div class="ui-fluid ">
-                            <div class="p-field p-grid">
-                                <p:outputLabel for="txtNombreProyecto" value="Nombre del Proyecto:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
-                                <div class="p-col-12 p-md-9">
-                                    <p:inputText id="txtNombreProyecto" value="#{registrarCooperacionView.proyectoCooperacion.nombreProyecto}" maxlength="199" required="true" label="Nombre del Proyecto"/>
-                                </div>
-                            </div>
-                            <div class="p-field p-grid">
-                                <p:outputLabel for="cboCooperante" value="Cooperante:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                                <div class="p-col-12 p-md-10">
-                                    <p:selectOneMenu id="cboCooperante" value="#{registrarCooperacionView.proyectoCooperacion.idCooperante}" required="true" label="Cooperante">
-                                        <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
-                                        <f:selectItems value="#{registrarCooperacionView.lstCooperantes}" var="coo" itemValue="#{coo.idCooperante}" itemLabel="#{coo.nombreCooperante}"/>
-                                    </p:selectOneMenu>
-                                </div>
-                            </div>
-                            <div class="p-field p-grid">
-                                <p:outputLabel value="Modalidad de Ejec.:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                                <div class="p-col-12 p-md-4">
-                                    <p:selectOneMenu value="#{registrarCooperacionView.proyectoCooperacion.idModalidad}">
-                                        <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
-                                        <f:selectItems value="#{registrarCooperacionView.lstModalidadEjecucion}" var="modalidad" itemValue="#{modalidad.idModEjecucion}" itemLabel="#{modalidad.descripcionModalidad}"/>
-                                    </p:selectOneMenu>
-                                </div>
-                                <p:outputLabel value="Instrumento de formalización:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
-                                <div class="p-col-12 p-md-3">
-                                    <p:selectOneMenu value="#{registrarCooperacionView.proyectoCooperacion.idTipoInstrumento}">
-                                        <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
-                                        <f:selectItems value="#{registrarCooperacionView.lstTipoInstrumento}" var="instrumento" itemValue="#{instrumento.idTipoInstrumento}" itemLabel="#{instrumento.descripcionInstrumento}"/>
-                                    </p:selectOneMenu>
-                                </div>
-                            </div>
-
-                            <div class="p-formgrid p-grid">
-                                <div class="p-field p-col">
-                                    <p:outputLabel for="txtObj" value="Objetivo de la Cooperación:"/>
-                                    <p:inputTextarea id="txtObj" value="#{registrarCooperacionView.proyectoCooperacion.objetivos}" required="true" label="Objetivo de la Cooperación" maxlength="360" rows="4" />
-                                </div>
-                            </div>
-
-                            <div class="p-field p-grid">
-                                <p:outputLabel value="Fecha estimada Inicio:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
-                                <div class="p-col-12 p-md-3">
-                                    <p:calendar value="#{registrarCooperacionView.proyectoCooperacion.fechaEstimadaInicio}" pattern="dd/MM/yyyy" locale="es"/>
-                                </div>
-                                <p:outputLabel value="Fecha estimada Fin:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
-                                <div class="p-col-12 p-md-3">
-                                    <p:calendar value="#{registrarCooperacionView.proyectoCooperacion.fechaEstimadaFin}" pattern="dd/MM/yyyy" locale="es"/>
-                                </div>
-                            </div>
-
-
-                            <br/>
-                            <div class="p-field p-grid">
-                                <p:outputLabel value="Tipo de Cooperación:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
-                                <div class="p-col-12 p-md-9">
-                                    <p:selectOneMenu value="#{registrarCooperacionView.proyectoCooperacion.idTipoCooperacion}">
-                                        <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
-                                        <f:selectItems value="#{registrarCooperacionView.lstTipoCooperacion}" var="cooperacion" itemValue="#{cooperacion.idTipoCooperacion}" itemLabel="#{cooperacion.descripcionCooperacion}"/>
-                                    </p:selectOneMenu>
-                                </div>
-                            </div>                            
-                        </div>
-                        <br/>
-                        <div class="p-grid dashboard">
-                            <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
-                                <h6><p:outputLabel for="txtDescripcion">Descrip. de la Cooperación</p:outputLabel></h6>
-                                <p:inputText id="txtDescripcion" value="#{registrarCooperacionView.proyectoCooperacion.descripcion}" type="text" required="true" label="Descripción de la Cooperación"/>
-
-                                <p:tooltip id="toolTipContent" for="txtDescripcion" position="bottom">
-                                    <p:outputLabel escape="false">
-                                        Acá deberá ingresar el elemento a intervenir en la cooperación,<br/>aulas, paredes, capacitaciones, techo, pupitre
-                                    </p:outputLabel>
-                                </p:tooltip>
-                            </div>
-                            <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
-                                <h6><p:outputLabel for="txtCantidad">Cantidad a Cubrir</p:outputLabel></h6>
-                                <p:inputNumber id="txtCantidad" value="#{registrarCooperacionView.proyectoCooperacion.cantidad}" decimalPlaces="0" required="true" label="Cantidad a Cubrir" inputStyle="text-align: right; width: 100%;" />
-                            </div>
-                            <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
-                                <h6><p:outputLabel for="txtMonto">Monto a Invertir</p:outputLabel></h6>
-                                <p:inputNumber id="txtMonto" value="#{registrarCooperacionView.proyectoCooperacion.montoInversion}" decimalPlaces="2" required="true" label="Monto a Invertir" inputStyle="text-align: right;width: 100%;"/>
-                            </div>
-                            <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
-                                <h6><p:outputLabel for="txtCantidaBen">Cantidad Beneficiarios</p:outputLabel></h6>
-                                <p:inputNumber id="txtCantidaBen" value="#{registrarCooperacionView.proyectoCooperacion.montoInversion}" decimalPlaces="0" required="true" label="Cantidad de Beneficiarios" inputStyle="text-align: right;width: 100%;"/>
-                            </div>
-                        </div>
-                        <br/>
-                        <div class="p-field p-grid">
-                            <div class="p-col-12 p-md-3">
-                                <p:outputLabel value="Tipos Beneficiarios" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                            </div>
-                            <div class="p-col-12 p-md-9">
-
-                                <p:selectManyCheckbox value="#{registrarCooperacionView.nivelI}" layout="responsive" columns="3">
-                                    <f:selectItem itemLabel="Inicial" itemValue="1"/>
-                                    <f:selectItem itemLabel="Parvularia" itemValue="2"/>
-                                </p:selectManyCheckbox>
-
-                                <p:selectManyCheckbox value="#{registrarCooperacionView.nivelII}" layout="responsive" columns="3">
-                                    <f:selectItem itemLabel="Básica-Ciclo I" itemValue="3"/>
-                                    <f:selectItem itemLabel="Básica-Ciclo II" itemValue="4"/>
-                                    <f:selectItem itemLabel="Básica-Ciclo III" itemValue="5"/>
-                                </p:selectManyCheckbox>
-
-                                <p:selectManyCheckbox value="#{registrarCooperacionView.nivelIII}" layout="responsive" columns="3">
-                                    <f:selectItem itemLabel="Media" itemValue="6"/>
-                                    <f:selectItem itemLabel="Docente" itemValue="7"/>
-                                    <f:selectItem itemLabel="Otros" itemValue="8"/>
-                                </p:selectManyCheckbox>
-                            </div>
-                        </div>
-                        <f:facet name="footer" class="ui-dialog-footer">
-                            <p:commandButton value="Guardar" icon="pi pi-check" update="pnlDatosCe pnlDatosProyecto" validateClient="true" action="#{registrarCooperacionView.guardar()}"/>
-                            <p:spacer width="10"/>
-                            <p:commandButton value="Cancelar" icon="pi pi-times" class="secondary-button" validateClient="true" process="@this" action="inicio?faces-redirect=true"/>
-                        </f:facet>
-                        
-                    </p:panel>
+                    </div>
                 </div>
             </div>
+        </div>
+        <div class="card">
+            <p:panel id="pnlDatosProyecto" header="Datos del Proyecto de Cooperación">
+                <div class="ui-fluid ">
+                    <div class="p-field p-grid">
+                        <p:outputLabel for="txtNombreProyecto" value="Nombre del Proyecto:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-9">
+                            <p:inputText id="txtNombreProyecto" value="#{registrarCooperacionView.proyectoCooperacion.nombreProyecto}" maxlength="199" required="true" label="Nombre del Proyecto"/>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel for="cboCooperante" value="Cooperante:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-10">
+                            <p:selectOneMenu id="cboCooperante" value="#{registrarCooperacionView.proyectoCooperacion.idCooperante}" required="true" label="Cooperante">
+                                <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
+                                <f:selectItems value="#{registrarCooperacionView.lstCooperantes}" var="coo" itemValue="#{coo.idCooperante}" itemLabel="#{coo.nombreCooperante}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Modalidad de Ejec.:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-4">
+                            <p:selectOneMenu value="#{registrarCooperacionView.proyectoCooperacion.idModalidad}">
+                                <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
+                                <f:selectItems value="#{registrarCooperacionView.lstModalidadEjecucion}" var="modalidad" itemValue="#{modalidad.idModEjecucion}" itemLabel="#{modalidad.descripcionModalidad}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <p:outputLabel value="Instrumento de formalización:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-3">
+                            <p:selectOneMenu value="#{registrarCooperacionView.proyectoCooperacion.idTipoInstrumento}">
+                                <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
+                                <f:selectItems value="#{registrarCooperacionView.lstTipoInstrumento}" var="instrumento" itemValue="#{instrumento.idTipoInstrumento}" itemLabel="#{instrumento.descripcionInstrumento}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+
+                    <div class="p-formgrid p-grid">
+                        <div class="p-field p-col">
+                            <p:outputLabel for="txtObj" value="Objetivo de la Cooperación:"/>
+                            <p:inputTextarea id="txtObj" value="#{registrarCooperacionView.proyectoCooperacion.objetivos}" required="true" label="Objetivo de la Cooperación" maxlength="360" rows="4" />
+                        </div>
+                    </div>
+
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Fecha estimada Inicio:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-3">
+                            <p:calendar value="#{registrarCooperacionView.proyectoCooperacion.fechaEstimadaInicio}" pattern="dd/MM/yyyy" locale="es"/>
+                        </div>
+                        <p:outputLabel value="Fecha estimada Fin:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-3">
+                            <p:calendar value="#{registrarCooperacionView.proyectoCooperacion.fechaEstimadaFin}" pattern="dd/MM/yyyy" locale="es"/>
+                        </div>
+                    </div>
 
 
-            <p:dialog id="dlgMap" widgetVar="dlgMap" header="Ubicación del Centro Educativo" width="800" height="550">
-                <p:gmap id="mapa" center="#{registrarCooperacionView.posicionInicial}" zoom="9" type="ROADMAP" style="width: 100%; height: 500px;" 
-                        model="#{registrarCooperacionView.simpleModel}" mapTypeControl="false" />
+                    <br/>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Tipo de Cooperación:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-9">
+                            <p:selectOneMenu value="#{registrarCooperacionView.proyectoCooperacion.idTipoCooperacion}">
+                                <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
+                                <f:selectItems value="#{registrarCooperacionView.lstTipoCooperacion}" var="cooperacion" itemValue="#{cooperacion.idTipoCooperacion}" itemLabel="#{cooperacion.descripcionCooperacion}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>                            
+                </div>
+                <br/>
+                <div class="p-grid dashboard">
+                    <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
+                        <h6><p:outputLabel for="txtDescripcion">Descrip. de la Cooperación</p:outputLabel></h6>
+                        <p:inputText id="txtDescripcion" value="#{registrarCooperacionView.proyectoCooperacion.descripcion}" type="text" required="true" label="Descripción de la Cooperación"/>
 
-            </p:dialog>
+                        <p:tooltip id="toolTipContent" for="txtDescripcion" position="bottom">
+                            <p:outputLabel escape="false">
+                                Acá deberá ingresar el elemento a intervenir en la cooperación,<br/>aulas, paredes, capacitaciones, techo, pupitre
+                            </p:outputLabel>
+                        </p:tooltip>
+                    </div>
+                    <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
+                        <h6><p:outputLabel for="txtCantidad">Cantidad a Cubrir</p:outputLabel></h6>
+                        <p:inputNumber id="txtCantidad" value="#{registrarCooperacionView.proyectoCooperacion.cantidad}" decimalPlaces="0" required="true" label="Cantidad a Cubrir" inputStyle="text-align: right; width: 100%;" />
+                    </div>
+                    <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
+                        <h6><p:outputLabel for="txtMonto">Monto a Invertir</p:outputLabel></h6>
+                        <p:inputNumber id="txtMonto" value="#{registrarCooperacionView.proyectoCooperacion.montoInversion}" decimalPlaces="2" required="true" label="Monto a Invertir" inputStyle="text-align: right;width: 100%;"/>
+                    </div>
+                    <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
+                        <h6><p:outputLabel for="txtCantidaBen">Cantidad Beneficiarios</p:outputLabel></h6>
+                        <p:inputNumber id="txtCantidaBen" value="#{registrarCooperacionView.proyectoCooperacion.montoInversion}" decimalPlaces="0" required="true" label="Cantidad de Beneficiarios" inputStyle="text-align: right;width: 100%;"/>
+                    </div>
+                </div>
+                <br/>
+                <div class="p-field p-grid">
+                    <div class="p-col-12 p-md-3">
+                        <p:outputLabel value="Tipos Beneficiarios" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                    </div>
+                    <div class="p-col-12 p-md-9">
 
-        </h:form>
+                        <p:selectManyCheckbox value="#{registrarCooperacionView.nivelI}" layout="responsive" columns="3">
+                            <f:selectItem itemLabel="Inicial" itemValue="1"/>
+                            <f:selectItem itemLabel="Parvularia" itemValue="2"/>
+                        </p:selectManyCheckbox>
+
+                        <p:selectManyCheckbox value="#{registrarCooperacionView.nivelII}" layout="responsive" columns="3">
+                            <f:selectItem itemLabel="Básica-Ciclo I" itemValue="3"/>
+                            <f:selectItem itemLabel="Básica-Ciclo II" itemValue="4"/>
+                            <f:selectItem itemLabel="Básica-Ciclo III" itemValue="5"/>
+                        </p:selectManyCheckbox>
+
+                        <p:selectManyCheckbox value="#{registrarCooperacionView.nivelIII}" layout="responsive" columns="3">
+                            <f:selectItem itemLabel="Media" itemValue="6"/>
+                            <f:selectItem itemLabel="Docente" itemValue="7"/>
+                            <f:selectItem itemLabel="Otros" itemValue="8"/>
+                        </p:selectManyCheckbox>
+                    </div>
+                </div>
+                <f:facet name="footer" class="ui-dialog-footer">
+                    <p:commandButton value="Guardar" icon="pi pi-check" update="pnlDatosCe pnlDatosProyecto" validateClient="true" action="#{registrarCooperacionView.guardar()}"/>
+                    <p:spacer width="10"/>
+                    <p:commandButton value="Cancelar" icon="pi pi-times" class="secondary-button" validateClient="true" process="@this" action="inicio?faces-redirect=true"/>
+                </f:facet>
+
+            </p:panel>
+        </div>
+
+
+        <p:dialog id="dlgMap" widgetVar="dlgMap" header="Ubicación del Centro Educativo" width="800" height="550">
+            <p:gmap id="mapa" center="#{registrarCooperacionView.posicionInicial}" zoom="9" type="ROADMAP" style="width: 100%; height: 500px;" 
+                    model="#{registrarCooperacionView.simpleModel}" mapTypeControl="false" />
+
+        </p:dialog>
+
         <h:outputStylesheet name="css/primeicons.css" library="paradise-layout" />
         <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout" />
         <h:outputStylesheet name="css/demo.css" library="demo" />
-
         <h:outputStylesheet name="css/nanoscroller.css" library="paradise-layout" />
-        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout" />
-    </h:body>
-</html>
+    </ui:define>    
+</ui:composition>
 
