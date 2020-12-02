@@ -5,21 +5,22 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2020-11-30T21:10:45")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2020-12-02T14:24:28")
 @StaticMetamodel(ListadoProyectoDto.class)
 public class ListadoProyectoDto_ { 
 
-    public static volatile SingularAttribute<ListadoProyectoDto, String> nombreDirector;
     public static volatile SingularAttribute<ListadoProyectoDto, Long> idProyecto;
     public static volatile SingularAttribute<ListadoProyectoDto, String> codigoDepartamento;
+    public static volatile SingularAttribute<ListadoProyectoDto, String> estado;
     public static volatile SingularAttribute<ListadoProyectoDto, String> nombreDepartamento;
     public static volatile SingularAttribute<ListadoProyectoDto, String> nombreCe;
-    public static volatile SingularAttribute<ListadoProyectoDto, Date> fechaInicio;
     public static volatile SingularAttribute<ListadoProyectoDto, String> nombreMunicipio;
-    public static volatile SingularAttribute<ListadoProyectoDto, String> codigoEntidad;
     public static volatile SingularAttribute<ListadoProyectoDto, String> nombreProyecto;
+    public static volatile SingularAttribute<ListadoProyectoDto, Date> fechaFin;
+    public static volatile SingularAttribute<ListadoProyectoDto, String> nombreDirector;
+    public static volatile SingularAttribute<ListadoProyectoDto, Date> fechaInicio;
+    public static volatile SingularAttribute<ListadoProyectoDto, String> codigoEntidad;
     public static volatile SingularAttribute<ListadoProyectoDto, String> codigoMunicipio;
     public static volatile SingularAttribute<ListadoProyectoDto, String> correoElectronico;
-    public static volatile SingularAttribute<ListadoProyectoDto, Date> fechaFin;
 
 }

@@ -114,7 +114,7 @@ public class LoginView implements Serializable {
                     switch (usuario.getIdPerfil()) {
                         case 1:
                             perfil = "ADMIN";
-                            url = "/app/listadoProyectos?faces-redirect=true";
+                            url = "/app/inicio?faces-redirect=true";
                             break;
                         case 2:
                             perfil = "UT";

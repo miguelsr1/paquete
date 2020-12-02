@@ -40,6 +40,8 @@ public class ListadoProyectoDto implements Serializable {
     private Date fechaInicio;
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaFin;
+    
+    private Short idEstado;
 
     public ListadoProyectoDto() {
     }
@@ -138,6 +140,14 @@ public class ListadoProyectoDto implements Serializable {
 
     public void setFechaFin(Date fechaFin) {
         this.fechaFin = fechaFin;
+    }
+
+    public Short getIdEstado() {
+        return idEstado;
+    }
+
+    public void setIdEstado(Short estado) {
+        this.idEstado = estado;
     }
 
 }

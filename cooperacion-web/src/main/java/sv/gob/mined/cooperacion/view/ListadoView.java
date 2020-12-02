@@ -6,6 +6,7 @@
 package sv.gob.mined.cooperacion.view;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -14,8 +15,11 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import sv.gob.mined.cooperacion.facade.MantenimientoFacade;
+import sv.gob.mined.cooperacion.facade.paquete.UbicacionFacade;
+import sv.gob.mined.cooperacion.model.ProyectoCooperacion;
 import sv.gob.mined.cooperacion.model.Usuario;
 import sv.gob.mined.cooperacion.model.dto.ListadoProyectoDto;
+import sv.gob.mined.cooperacion.model.paquete.Municipio;
 
 /**
  *
@@ -25,8 +29,17 @@ import sv.gob.mined.cooperacion.model.dto.ListadoProyectoDto;
 @ViewScoped
 public class ListadoView implements Serializable {
 
+    private Short idEstado;
+    private BigDecimal idMunicipio;
     private String lblBottonEnviar = "";
+    private String codigoDepartamento;
+    private ProyectoCooperacion proyecto;
+    private Long idProyecto;
     private List<ListadoProyectoDto> lstProyectos = new ArrayList();
+    private List<Municipio> lstMunicipio = new ArrayList();
+
+    @Inject
+    private UbicacionFacade ubicacionFacade;
 
     @Inject
     private MantenimientoFacade mantenimientoFacade;
@@ -59,12 +72,56 @@ public class ListadoView implements Serializable {
 
     }
 
+    public Short getIdEstado() {
+        return idEstado;
+    }
+
+    public void setIdEstado(Short idEstado) {
+        this.idEstado = idEstado;
+    }
+
+    public Long getIdProyecto() {
+        return idProyecto;
+    }
+
+    public void setIdProyecto(Long idProyecto) {
+        this.idProyecto = idProyecto;
+    }
+
+    public ProyectoCooperacion getProyecto() {
+        return proyecto;
+    }
+
+    public void setProyecto(ProyectoCooperacion proyecto) {
+        this.proyecto = proyecto;
+    }
+
+    public String getCodigoDepartamento() {
+        return codigoDepartamento;
+    }
+
+    public void setCodigoDepartamento(String codigoDepartamento) {
+        this.codigoDepartamento = codigoDepartamento;
+    }
+
+    public BigDecimal getIdMunicipio() {
+        return idMunicipio;
+    }
+
+    public void setIdMunicipio(BigDecimal idMunicipio) {
+        this.idMunicipio = idMunicipio;
+    }
+
     public List<ListadoProyectoDto> getLstProyectos() {
         return lstProyectos;
     }
 
     public void setLstProyectos(List<ListadoProyectoDto> lstProyectos) {
         this.lstProyectos = lstProyectos;
+    }
+
+    public List<Municipio> getLstMunicipio() {
+        return lstMunicipio;
     }
 
     public String getLblBottonEnviar() {
@@ -85,5 +142,22 @@ public class ListadoView implements Serializable {
 
     public void eliminarProyecto() {
 
+    }
+
+    public void recuperarMunicipios() {
+        lstMunicipio = ubicacionFacade.getLstMunicipio(codigoDepartamento);
+        lstProyectos = mantenimientoFacade.findProyectosByDepartamento(codigoDepartamento);
+    }
+
+    public void recuperarLstProyectosByMunicipio() {
+        lstProyectos = mantenimientoFacade.findProyectosByMunicipio(idMunicipio);
+    }
+    
+    public void recuperarLstProyectosByEstado() {
+        lstProyectos = mantenimientoFacade.findProyectosByMunicipio(idMunicipio);
+    }
+
+    public void recuperarProyecto() {
+        proyecto = mantenimientoFacade.find(ProyectoCooperacion.class, idProyecto);
     }
 }

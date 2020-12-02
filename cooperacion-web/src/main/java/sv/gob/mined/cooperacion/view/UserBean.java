@@ -31,7 +31,7 @@ public class UserBean implements Serializable {
             nav.performNavigation("access-denied");
         }
     }
-    
+
     public void isCentroEscolar(ComponentSystemEvent event) {
 
         FacesContext fc = FacesContext.getCurrentInstance();
@@ -42,5 +42,11 @@ public class UserBean implements Serializable {
 
             nav.performNavigation("access-denied.mined");
         }
+    }
+
+    public Boolean getCentroEscolar() {
+        FacesContext fc = FacesContext.getCurrentInstance();
+
+        return "CE".equals(fc.getExternalContext().getSessionMap().get("role"));
     }
 }
