@@ -111,7 +111,7 @@
                                 </h:outputText>
                             </p:column>
                             <p:column headerText="Estado">
-                                <h:outputText value="#{proyecto.estado}"/>
+                                <h:outputText value="#{proyecto.idEstado eq 1 ? 'DIGITADO' : (proyecto.idEstado eq 2 ? 'EN REVISION': 'APROBADO')}"/>
                             </p:column>
                             <p:column headerText="Ver" rendered="display:#{!(userBean.centroEscolar)?'true':'false'}">
                                 <p:commandButton icon="pi pi-eye" update="manage-product-content" 
