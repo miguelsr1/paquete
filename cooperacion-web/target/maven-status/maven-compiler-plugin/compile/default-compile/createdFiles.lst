@@ -10,6 +10,7 @@ sv/gob/mined/cooperacion/model/TipoCooperacion.class
 sv/gob/mined/cooperacion/model/TipoCooperante_.class
 sv/gob/mined/cooperacion/facade/paquete/UbicacionFacade.class
 org/primefaces/paradise/view/GuestPreferences$LayoutColor.class
+sv/gob/mined/cooperacion/model/FechaCapacitacion_.class
 sv/gob/mined/cooperacion/view/UserBean.class
 sv/gob/mined/cooperacion/model/ProyectoCooperacion_.class
 sv/gob/mined/cooperacion/model/EeGeoDepartamento.class
@@ -38,6 +39,7 @@ sv/gob/mined/cooperacion/model/TipoCooperacion_.class
 org/primefaces/paradise/filter/CharacterEncodingFilter.class
 sv/gob/mined/cooperacion/model/paquete/Municipio.class
 sv/gob/mined/cooperacion/facade/MantenimientoFacade.class
+sv/gob/mined/cooperacion/model/FechaCapacitacion.class
 sv/gob/mined/cooperacion/view/RegistrarCooperacionView.class
 sv/gob/mined/cooperacion/facade/CatalogoFacade.class
 sv/gob/mined/cooperacion/model/EeGeoMunicipio_.class

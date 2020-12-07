@@ -86,9 +86,6 @@ public class ListadoView implements Serializable {
                         case "JURIDICO":
                             where = " and pro.id_tipo_cooperacion in (12,13) ";
                             break;
-                        case "ASISTENCIA":
-                            where = " and pro.id_tipo_cooperacion in (14) ";
-                            break;
                     }
 
                     lstProyectos = mantenimientoFacade.findProyectosByWhereCustom(where);

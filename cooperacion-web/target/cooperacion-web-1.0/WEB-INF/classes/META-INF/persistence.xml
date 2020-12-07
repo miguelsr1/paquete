@@ -18,6 +18,7 @@
     <class>sv.gob.mined.cooperacion.model.Notificacion</class>
     <class>sv.gob.mined.cooperacion.model.Usuario</class>
     <class>sv.gob.mined.cooperacion.model.UsuarioOrg</class>
+    <class>sv.gob.mined.cooperacion.model.FechaCapacitacion</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties/>
   </persistence-unit>

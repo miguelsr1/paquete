@@ -39,6 +39,10 @@
             .ui-wizard-step-titles.ui-helper-reset.ui-helper-clearfix {
                 height: 80px;
             }
+
+            .ui-fileupload-buttonbar .ui-fileupload-upload {
+                display: none !important;
+            }
         </style>
     </ui:define>
 
@@ -259,6 +263,12 @@
                                     </p:selectManyCheckbox>
                                 </div>
                             </div>
+
+                            <p:fileUpload id="updFile" auto="false" widgetVar="updFile" 
+                                          label="Seleccionar" allowTypes="/(\.|\/)(pdf)$/" invalidFileMessage="Unicamente archivos PDF (PDF)" 
+                                          mode="advanced" multiple="true"/>
+                            <br/>
+                            <br/>
 
                             <div class="products-buttonbar">
                                 <div>

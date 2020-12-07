@@ -3,10 +3,12 @@ package sv.gob.mined.cooperacion.model;
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.annotation.Generated;
+import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
+import sv.gob.mined.cooperacion.model.FechaCapacitacion;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2020-12-07T13:19:18")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2020-12-07T15:55:55")
 @StaticMetamodel(ProyectoCooperacion.class)
 public class ProyectoCooperacion_ { 
 
@@ -27,10 +29,11 @@ public class ProyectoCooperacion_ {
     public static volatile SingularAttribute<ProyectoCooperacion, Date> fechaInsercion;
     public static volatile SingularAttribute<ProyectoCooperacion, Long> idModalidad;
     public static volatile SingularAttribute<ProyectoCooperacion, Short> basicaCiii;
+    public static volatile ListAttribute<ProyectoCooperacion, FechaCapacitacion> fechaCapacitacionList;
     public static volatile SingularAttribute<ProyectoCooperacion, Long> idTipoInstrumento;
     public static volatile SingularAttribute<ProyectoCooperacion, Short> docente;
-    public static volatile SingularAttribute<ProyectoCooperacion, Short> inicial;
     public static volatile SingularAttribute<ProyectoCooperacion, Long> usuarioInsercion;
+    public static volatile SingularAttribute<ProyectoCooperacion, Short> inicial;
     public static volatile SingularAttribute<ProyectoCooperacion, Short> parvularia;
     public static volatile SingularAttribute<ProyectoCooperacion, Short> basicaCii;
     public static volatile SingularAttribute<ProyectoCooperacion, Short> idEstado;

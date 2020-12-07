@@ -8,14 +8,18 @@ package sv.gob.mined.cooperacion.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -31,9 +35,13 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "ProyectoCooperacion.findAll", query = "SELECT p FROM ProyectoCooperacion p")})
 public class ProyectoCooperacion implements Serializable {
 
+    @Column(name = "USUARIO_INSERCION")
+    private Long usuarioInsercion;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idProyecto", fetch = FetchType.LAZY)
+    private List<FechaCapacitacion> fechaCapacitacionList;
+
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
     @Column(name = "ID_PROYECTO")
     @GeneratedValue(generator = "SEQ_COOPERANTE",strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "SEQ_COOPERANTE", sequenceName = "SEQ_COOPERANTE", allocationSize = 1, initialValue = 1)
@@ -87,9 +95,6 @@ public class ProyectoCooperacion implements Serializable {
     @Column(name = "FECHA_INSERCION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaInsercion;
-    @Basic(optional = false)
-    @Column(name = "USUARIO_INSERCION")
-    private Long usuarioInsercion;
     @Column(name = "ESTADO_ELIMINACION")
     private Short estadoEliminacion;
     @Column(name = "CODIGO_ENTIDAD")
@@ -349,6 +354,14 @@ public class ProyectoCooperacion implements Serializable {
     @Override
     public String toString() {
         return "sv.gob.mined.cooperacion.web.model.ProyectoCooperacion[ idProyecto=" + idProyecto + " ]";
+    }
+
+    public List<FechaCapacitacion> getFechaCapacitacionList() {
+        return fechaCapacitacionList;
+    }
+
+    public void setFechaCapacitacionList(List<FechaCapacitacion> fechaCapacitacionList) {
+        this.fechaCapacitacionList = fechaCapacitacionList;
     }
     
 }

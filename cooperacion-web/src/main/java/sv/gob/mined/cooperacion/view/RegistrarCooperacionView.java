@@ -294,13 +294,13 @@ public class RegistrarCooperacionView implements Serializable {
                 case 4:
                 case 5:
                 case 6:
-                    // cooperacion inferior a 5000
-                    if (proyectoCooperacion.getMontoInversion().compareTo(new BigDecimal(5000)) == 1) {
-                        proyectoCooperacion.setIdEstado((short) 1);
-                    } else {
-                        proyectoCooperacion.setIdEstado((short) 2);
+                    proyectoCooperacion.setIdEstado((short) 1);
 
-                        mensaje = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprovacionAutomatica.mensaje"),
+                    if (proyectoCooperacion.getMontoInversion().compareTo(new BigDecimal(5000)) == 1) {
+                        
+                    } else {
+                        // cooperacion inferior a 5000
+                        mensaje = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprobacionAutomatica.mensaje"),
                                 StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
                                 entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
                                 proyectoCooperacion.getNombreProyecto(), proyectoCooperacion.getObjetivos());
