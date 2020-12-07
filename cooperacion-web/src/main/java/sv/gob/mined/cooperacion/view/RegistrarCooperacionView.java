@@ -271,7 +271,7 @@ public class RegistrarCooperacionView implements Serializable {
             proyectoCooperacion.setFechaInsercion(tmpFecha);
             proyectoCooperacion.setUsuarioInsercion(directorCe.getIdDirector());
             proyectoCooperacion.setCodigoEntidad(codigoEntidad);
-            proyectoCooperacion.setEstadoEliminacion((short) 1);
+            proyectoCooperacion.setEstadoEliminacion((short) 0);
 
             switch (proyectoCooperacion.getIdTipoCooperacion().intValue()) {
                 //RESPUESTA DE APROBACIÓN AUTOMATICA

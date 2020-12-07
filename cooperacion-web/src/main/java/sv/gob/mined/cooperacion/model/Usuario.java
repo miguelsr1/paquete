@@ -6,6 +6,7 @@
 package sv.gob.mined.cooperacion.model;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -28,13 +30,15 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u")})
 public class Usuario implements Serializable {
 
+    @OneToMany(mappedBy = "idUsuario", fetch = FetchType.LAZY)
+    private List<UsuarioOrg> usuarioOrgList;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @NotNull
     @Column(name = "ID_USUARIO")
     private Long idUsuario;
-    @Size(max = 250)
     @Column(name = "USUARIO")
     private String usuario;
     @Column(name = "ID_PERFIL")
@@ -114,6 +118,14 @@ public class Usuario implements Serializable {
     @Override
     public String toString() {
         return "sv.gob.mined.cooperacion.model.Usuario[ idUsuario=" + idUsuario + " ]";
+    }
+
+    public List<UsuarioOrg> getUsuarioOrgList() {
+        return usuarioOrgList;
+    }
+
+    public void setUsuarioOrgList(List<UsuarioOrg> usuarioOrgList) {
+        this.usuarioOrgList = usuarioOrgList;
     }
     
 }

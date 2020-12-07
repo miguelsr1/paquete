@@ -22,6 +22,7 @@ sv/gob/mined/cooperacion/model/paquete/Departamento.class
 sv/gob/mined/cooperacion/model/Director.class
 sv/gob/mined/cooperacion/model/paquete/VwCatalogoEntidadEducativa_.class
 sv/gob/mined/cooperacion/model/dto/ListadoProyectoDto_.class
+sv/gob/mined/cooperacion/model/UsuarioOrg_.class
 sv/gob/mined/cooperacion/model/paquete/VwCatalogoEntidadEducativa.class
 org/primefaces/paradise/view/GuestPreferences$ComponentTheme.class
 sv/gob/mined/cooperacion/model/EeGeoMunicipio.class
@@ -46,6 +47,7 @@ sv/gob/mined/cooperacion/model/ModalidadEjecucion_.class
 sv/gob/mined/cooperacion/model/TipoInstrumento.class
 org/primefaces/paradise/component/ParadiseMenu$PropertyKeys.class
 sv/gob/mined/cooperacion/facade/EMailFacade$1.class
+sv/gob/mined/cooperacion/model/UsuarioOrg.class
 sv/gob/mined/cooperacion/model/HisCambioEstadoPro.class
 sv/gob/mined/cooperacion/view/LoginView.class
 org/primefaces/paradise/component/ParadiseMenu.class

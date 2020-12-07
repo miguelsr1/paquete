@@ -49,4 +49,9 @@ public class UserBean implements Serializable {
 
         return "CE".equals(fc.getExternalContext().getSessionMap().get("role"));
     }
+
+    public String getPerfilUsuario() {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        return fc.getExternalContext().getSessionMap().get("role").toString();
+    }
 }

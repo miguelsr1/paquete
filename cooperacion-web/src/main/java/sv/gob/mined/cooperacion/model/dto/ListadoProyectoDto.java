@@ -6,7 +6,9 @@
 package sv.gob.mined.cooperacion.model.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityResult;
 import javax.persistence.Id;
@@ -40,7 +42,9 @@ public class ListadoProyectoDto implements Serializable {
     private Date fechaInicio;
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaFin;
-    
+    private BigDecimal geoPx;
+    private BigDecimal geoPy;
+
     private Short idEstado;
 
     public ListadoProyectoDto() {
@@ -150,4 +154,19 @@ public class ListadoProyectoDto implements Serializable {
         this.idEstado = estado;
     }
 
+    public BigDecimal getGeoPx() {
+        return geoPx;
+    }
+
+    public void setGeoPx(BigDecimal geoPx) {
+        this.geoPx = geoPx;
+    }
+
+    public BigDecimal getGeoPy() {
+        return geoPy;
+    }
+
+    public void setGeoPy(BigDecimal geoPy) {
+        this.geoPy = geoPy;
+    }
 }

@@ -38,13 +38,18 @@ public class MantenimientoFacade {
         return q.getResultList();
     }
 
-    public List<ListadoProyectoDto> findProyectosByDepartamento(String codigoDepartamento) {
+    /*public List<ListadoProyectoDto> findProyectosByDepartamento(String codigoDepartamento) {
         Query q = emCooperacion.createNativeQuery(QueryNativas.sqlListadoProyectos + " and mun.codigo_departamento='" + codigoDepartamento + "' ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
         return q.getResultList();
     }
 
     public List<ListadoProyectoDto> findProyectosByMunicipio(BigDecimal idMunicipio) {
         Query q = emCooperacion.createNativeQuery(QueryNativas.sqlListadoProyectos + " and mun.id_municipio=" + idMunicipio + " ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
+        return q.getResultList();
+    }*/
+
+    public List<ListadoProyectoDto> findProyectosByWhereCustom(String where) {
+        Query q = emCooperacion.createNativeQuery(QueryNativas.sqlListadoProyectos + where + " ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
         return q.getResultList();
     }
 
@@ -69,13 +74,13 @@ public class MantenimientoFacade {
         return q.getResultList();
     }
 
-    public List<ListadoProyectoDto> findProyectosByCodigoEntidad(String codigoEntidad) {
+    /*public List<ListadoProyectoDto> findProyectosByCodigoEntidad(String codigoEntidad) {
         Query q = emCooperacion.createNativeQuery(QueryNativas.sqlListadoProyectos + " and vw.codigo_entidad = '" + codigoEntidad + "' ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
         return q.getResultList();
-    }
+    }*/
 
-    public List<ListadoProyectoDto> findProyectosByUT(String codigoEntidad) {
+    /*public List<ListadoProyectoDto> findProyectosByUT(String codigoEntidad) {
         Query q = emCooperacion.createNativeQuery(QueryNativas.sqlListadoProyectos + " and vw.codigo_entidad = '" + codigoEntidad + "' ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
         return q.getResultList();
-    }
+    }*/
 }

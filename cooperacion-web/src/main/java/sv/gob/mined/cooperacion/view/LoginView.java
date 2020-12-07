@@ -95,7 +95,7 @@ public class LoginView implements Serializable {
             credencialesView.setCorreoRemitente(correoRemitente);
             credencialesView.setPassword(password);
             credencialesView.validarCredencial();
-            
+
             correoValido = credencialesView.isCorreoValido();
 
             if (correoValido) {
@@ -114,17 +114,15 @@ public class LoginView implements Serializable {
                     switch (usuario.getIdPerfil()) {
                         case 1:
                             perfil = "ADMIN";
-                            url = "/app/inicio?faces-redirect=true";
                             break;
                         case 2:
                             perfil = "UT";
                             break;
                         default:
                             perfil = "CE";
-                            url = "/app/inicio?faces-redirect=true";
                             break;
                     }
-
+                    url = "/app/inicio?faces-redirect=true";
                     context.getExternalContext().getSessionMap().put("role", perfil);
                 }
             } else {

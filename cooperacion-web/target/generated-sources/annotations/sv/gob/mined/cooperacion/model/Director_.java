@@ -5,7 +5,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 import sv.gob.mined.cooperacion.model.Usuario;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2020-12-02T14:24:28")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2020-12-07T13:19:18")
 @StaticMetamodel(Director.class)
 public class Director_ { 
 
