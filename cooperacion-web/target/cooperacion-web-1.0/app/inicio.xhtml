@@ -20,43 +20,47 @@
         <h:outputScript name="calendar-localization.js" library="js"/>
     </h:head>
     <h:body style="background-color: #303945;" styleClass="landing-body">
+        <h:form prependId="false">
 
-        <div class="landing-wrapper #{guestPreferences.menuMode}">
-            <div class="topbar">
-                <div class="topbar-wrapper">
-                    <div class="topbar-left">
-                        <h:graphicImage name="images/mined-logo.svg" style="height:100px; margin-right: 20px; font-family: Bembo Std;"/>
+            <div class="landing-wrapper #{guestPreferences.menuMode}">
+                <div class="topbar">
+                    <div class="topbar-wrapper">
+                        <div class="topbar-left">
+                            <h:graphicImage name="images/mined-logo.svg" style="height:100px; margin-right: 20px; font-family: Bembo Std;"/>
+                        </div>
+                        <div class="topbar-right" style="width: 100%;">
+                            <p:outputPanel style="float: left !important;">
+                                <h:outputText style="font-family: Bembo Std !important; font-size: 30px" value="Proyectos de Cooperación" /><br/>
+                                <h:outputText style="font-family: Bembo Std !important; font-size: 18px;" value="Dirección Nacional de Planificación" />
+                            </p:outputPanel>
+
+                            <p:commandButton value="Salir" icon="fa fa-sign-out" action="#{guestPreferences.logout()}"
+                                             style="float: right !important;top: 10px;position: static;" process="@this"/>
+                        </div>
                     </div>
-                    <div class="topbar-right">
-                        <p:outputPanel style="float: left !important;">
-                            <h:outputText style="font-family: Bembo Std !important; font-size: 30px" value="Proyectos de Cooperación" /><br/>
-                            <h:outputText style="font-family: Bembo Std !important; font-size: 18px;" value="Dirección Nacional de Planificación" />
-                        </p:outputPanel>
+                </div>
+
+
+                <div id="features" style="max-width: 1024px!important; margin: 0 auto; position: absolute;left: 50%;top: 40%;transform: translate(-50%, -50%);padding: 10px;">
+                    <div>
+                        <div class="p-grid features-content">
+                            <div class="p-col-12 p-md-6 feature-left" onclick="location.href = 'datosCe.mined';" 
+                                 style="cursor: pointer;display:#{(userBean.centroEscolar)?'block':'none'}">
+                                <p:graphicImage name="editar.png" library="images" style="background-color: white;"  />
+                                <h3>Crear nuevo proyecto</h3>
+                                <p>Registro de la información general del proyecto a ejecutar en el Centro Educativo.</p>
+                            </div>
+                            <div class="p-col-12 p-md-6 feature-left" onclick="location.href = 'listadoProyectos.mined';" style="cursor: pointer;">
+                                <p:graphicImage name="lista.png" library="images" style="background-color: white;"/>
+                                <h3>Listado de Proyectos</h3>
+                                <p>Listado de todos los proyectos registrados y el estado de cada uno de estos.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-
-            <div id="features" style="max-width: 1024px!important; margin: 0 auto; position: absolute;left: 50%;top: 40%;transform: translate(-50%, -50%);padding: 10px;">
-                <div>
-                    <div class="p-grid features-content">
-                        <div class="p-col-12 p-md-6 feature-left" onclick="location.href = 'datosCe.mined';" 
-                             style="cursor: pointer;display:#{(userBean.centroEscolar)?'block':'none'}">
-                            <p:graphicImage name="editar.png" library="images" style="background-color: white;"  />
-                            <h3>Crear nuevo proyecto</h3>
-                            <p>Registro de la información general del proyecto a ejecutar en el Centro Educativo.</p>
-                        </div>
-                        <div class="p-col-12 p-md-6 feature-left" onclick="location.href = 'listadoProyectos.mined';" style="cursor: pointer;">
-                            <p:graphicImage name="lista.png" library="images" style="background-color: white;"/>
-                            <h3>Listado de Proyectos</h3>
-                            <p>Listado de todos los proyectos registrados y el estado de cada uno de estos.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
+        </h:form>
         <h:outputStylesheet name="css/primeicons.css" library="paradise-layout" />
         <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout" />
 

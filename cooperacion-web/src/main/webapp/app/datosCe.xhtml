@@ -61,7 +61,7 @@
             <br/>        
             <div class="p-grid">
                 <div class="p-col">
-                    <div class="card">
+                    <div class="card" id="window">
                         <h5>Datos Generales del Centro Educativos</h5>
                         <div class="invoice-to" jsf:id="pnlDatosCe">
                             <div class="ui-fluid">
@@ -171,7 +171,7 @@
                                     <div class="p-col-12 p-md-4">
                                         <p:selectOneMenu value="#{registrarCooperacionView.proyectoCooperacion.idModalidad}">
                                             <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
-                                            <f:selectItems value="#{registrarCooperacionView.lstModalidadEjecucion}" var="modalidad" itemValue="#{modalidad.idModEjecucion}" itemLabel="#{modalidad.descripcionModalidad}"/>
+                                            <f:selectItems value="#{registrarCooperacionView.lstModalidadEjecucion}" var="modalidad" itemValue="#{modalidad.idModalidad}" itemLabel="#{modalidad.descripcionModalidad}"/>
                                         </p:selectOneMenu>
                                     </div>
                                     <p:outputLabel value="Instrumento de formalización:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
@@ -235,7 +235,7 @@
                                 </div>
                                 <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
                                     <h6><p:outputLabel for="txtCantidaBen">Cantidad Beneficiarios</p:outputLabel></h6>
-                                    <p:inputNumber id="txtCantidaBen" value="#{registrarCooperacionView.proyectoCooperacion.montoInversion}" decimalPlaces="0" required="true" label="Cantidad de Beneficiarios" inputStyle="text-align: right;width: 100%;"/>
+                                    <p:inputNumber id="txtCantidaBen" value="#{registrarCooperacionView.proyectoCooperacion.cantidadBeneficiarios}" decimalPlaces="0" required="true" label="Cantidad de Beneficiarios" inputStyle="text-align: right;width: 100%;"/>
                                 </div>
                             </div>
                             <br/>

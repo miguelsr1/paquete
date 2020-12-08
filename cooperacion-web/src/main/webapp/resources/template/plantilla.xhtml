@@ -27,11 +27,13 @@
                     <div class="topbar-left">
                         <h:graphicImage name="images/mined-logo.svg" style="height:100px; margin-right: 20px; font-family: Bembo Std;"/>
                     </div>
-                    <div class="topbar-right">
+                    <div class="topbar-right" style="width: 100%;">
                         <p:outputPanel style="float: left !important;">
                             <h:outputText style="font-family: Bembo Std !important; font-size: 30px" value="Proyectos de Cooperación" /><br/>
                             <h:outputText style="font-family: Bembo Std !important; font-size: 18px;" value="Dirección Nacional de Planificación" />
                         </p:outputPanel>
+                        <p:commandButton value="Salir" icon="fa fa-sign-out" action="#{guestPreferences.logout()}"
+                                         style="float: right !important;top: 10px;position: static;" process="@this"/>
                     </div>
                 </div>
             </div>

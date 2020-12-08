@@ -6,12 +6,15 @@
 package sv.gob.mined.cooperacion.model;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -24,27 +27,26 @@ import javax.persistence.Table;
     @NamedQuery(name = "ModalidadEjecucion.findAll", query = "SELECT m FROM ModalidadEjecucion m")})
 public class ModalidadEjecucion implements Serializable {
 
+    @OneToMany(mappedBy = "idModalidad", fetch = FetchType.LAZY)
+    private List<ProyectoCooperacion> proyectoCooperacionList;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "ID_MOD_EJECUCION")
-    private Long idModEjecucion;
+    @Column(name = "ID_MODALIDAD")
+    private Long idModalidad;
     @Column(name = "DESCRIPCION_MODALIDAD")
     private String descripcionModalidad;
 
     public ModalidadEjecucion() {
     }
 
-    public ModalidadEjecucion(Long idModEjecucion) {
-        this.idModEjecucion = idModEjecucion;
+    public Long getIdModalidad() {
+        return idModalidad;
     }
 
-    public Long getIdModEjecucion() {
-        return idModEjecucion;
-    }
-
-    public void setIdModEjecucion(Long idModEjecucion) {
-        this.idModEjecucion = idModEjecucion;
+    public void setIdModalidad(Long idModalidad) {
+        this.idModalidad = idModalidad;
     }
 
     public String getDescripcionModalidad() {
@@ -58,7 +60,7 @@ public class ModalidadEjecucion implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (idModEjecucion != null ? idModEjecucion.hashCode() : 0);
+        hash += (idModalidad != null ? idModalidad.hashCode() : 0);
         return hash;
     }
 
@@ -69,7 +71,7 @@ public class ModalidadEjecucion implements Serializable {
             return false;
         }
         ModalidadEjecucion other = (ModalidadEjecucion) object;
-        if ((this.idModEjecucion == null && other.idModEjecucion != null) || (this.idModEjecucion != null && !this.idModEjecucion.equals(other.idModEjecucion))) {
+        if ((this.idModalidad == null && other.idModalidad != null) || (this.idModalidad != null && !this.idModalidad.equals(other.idModalidad))) {
             return false;
         }
         return true;
@@ -77,7 +79,15 @@ public class ModalidadEjecucion implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.gob.mined.cooperacion.web.model.ModalidadEjecucion[ idModEjecucion=" + idModEjecucion + " ]";
+        return "sv.gob.mined.cooperacion.web.model.ModalidadEjecucion[ idModalidad=" + idModalidad + " ]";
     }
-    
+
+    public List<ProyectoCooperacion> getProyectoCooperacionList() {
+        return proyectoCooperacionList;
+    }
+
+    public void setProyectoCooperacionList(List<ProyectoCooperacion> proyectoCooperacionList) {
+        this.proyectoCooperacionList = proyectoCooperacionList;
+    }
+
 }

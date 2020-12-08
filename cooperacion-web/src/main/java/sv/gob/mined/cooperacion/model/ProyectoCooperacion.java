@@ -17,6 +17,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -24,6 +26,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -35,8 +38,22 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "ProyectoCooperacion.findAll", query = "SELECT p FROM ProyectoCooperacion p")})
 public class ProyectoCooperacion implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "USUARIO_INSERCION")
-    private Long usuarioInsercion;
+    private long usuarioInsercion;
+    @JoinColumn(name = "ID_COOPERANTE", referencedColumnName = "ID_COOPERANTE")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Cooperante idCooperante;
+    @JoinColumn(name = "ID_MODALIDAD", referencedColumnName = "ID_MODALIDAD")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ModalidadEjecucion idModalidad;
+    @JoinColumn(name = "ID_TIPO_COOPERACION", referencedColumnName = "ID_TIPO_COOPERACION")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private TipoCooperacion idTipoCooperacion;
+    @JoinColumn(name = "ID_TIPO_INSTRUMENTO", referencedColumnName = "ID_TIPO_INSTRUMENTO")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private TipoInstrumento idTipoInstrumento;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idProyecto", fetch = FetchType.LAZY)
     private List<FechaCapacitacion> fechaCapacitacionList;
 
@@ -48,12 +65,6 @@ public class ProyectoCooperacion implements Serializable {
     private Long idProyecto;
     @Column(name = "NOMBRE_PROYECTO")
     private String nombreProyecto;
-    @Column(name = "ID_COOPERANTE")
-    private Long idCooperante;
-    @Column(name = "ID_MODALIDAD")
-    private Long idModalidad;
-    @Column(name = "ID_TIPO_INSTRUMENTO")
-    private Long idTipoInstrumento;
     @Column(name = "OBJETIVOS")
     private String objetivos;
     @Column(name = "FECHA_ESTIMADA_INICIO")
@@ -62,8 +73,6 @@ public class ProyectoCooperacion implements Serializable {
     @Column(name = "FECHA_ESTIMADA_FIN")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaEstimadaFin;
-    @Column(name = "ID_TIPO_COOPERACION")
-    private Long idTipoCooperacion;
     @Column(name = "DESCRIPCION")
     private String descripcion;
     @Column(name = "CANTIDAD")
@@ -131,30 +140,6 @@ public class ProyectoCooperacion implements Serializable {
         this.nombreProyecto = nombreProyecto;
     }
 
-    public Long getIdCooperante() {
-        return idCooperante;
-    }
-
-    public void setIdCooperante(Long idCooperante) {
-        this.idCooperante = idCooperante;
-    }
-
-    public Long getIdModalidad() {
-        return idModalidad;
-    }
-
-    public void setIdModalidad(Long idModalidad) {
-        this.idModalidad = idModalidad;
-    }
-
-    public Long getIdTipoInstrumento() {
-        return idTipoInstrumento;
-    }
-
-    public void setIdTipoInstrumento(Long idTipoInstrumento) {
-        this.idTipoInstrumento = idTipoInstrumento;
-    }
-
     public String getObjetivos() {
         return objetivos;
     }
@@ -177,14 +162,6 @@ public class ProyectoCooperacion implements Serializable {
 
     public void setFechaEstimadaFin(Date fechaEstimadaFin) {
         this.fechaEstimadaFin = fechaEstimadaFin;
-    }
-
-    public Long getIdTipoCooperacion() {
-        return idTipoCooperacion;
-    }
-
-    public void setIdTipoCooperacion(Long idTipoCooperacion) {
-        this.idTipoCooperacion = idTipoCooperacion;
     }
 
     public String getDescripcion() {
@@ -362,6 +339,38 @@ public class ProyectoCooperacion implements Serializable {
 
     public void setFechaCapacitacionList(List<FechaCapacitacion> fechaCapacitacionList) {
         this.fechaCapacitacionList = fechaCapacitacionList;
+    }
+
+    public Cooperante getIdCooperante() {
+        return idCooperante;
+    }
+
+    public void setIdCooperante(Cooperante idCooperante) {
+        this.idCooperante = idCooperante;
+    }
+
+    public ModalidadEjecucion getIdModalidad() {
+        return idModalidad;
+    }
+
+    public void setIdModalidad(ModalidadEjecucion idModalidad) {
+        this.idModalidad = idModalidad;
+    }
+
+    public TipoCooperacion getIdTipoCooperacion() {
+        return idTipoCooperacion;
+    }
+
+    public void setIdTipoCooperacion(TipoCooperacion idTipoCooperacion) {
+        this.idTipoCooperacion = idTipoCooperacion;
+    }
+
+    public TipoInstrumento getIdTipoInstrumento() {
+        return idTipoInstrumento;
+    }
+
+    public void setIdTipoInstrumento(TipoInstrumento idTipoInstrumento) {
+        this.idTipoInstrumento = idTipoInstrumento;
     }
     
 }

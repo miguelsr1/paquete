@@ -43,7 +43,7 @@ public class EMailFacade {
 
             m.setFrom(from);
             m.setRecipients(Message.RecipientType.TO, to);
-            //m.setRecipients(Message.RecipientType.CC, cc);
+            m.setRecipients(Message.RecipientType.CC, cc);
 
             BodyPart messageBodyPart1 = new MimeBodyPart();
 

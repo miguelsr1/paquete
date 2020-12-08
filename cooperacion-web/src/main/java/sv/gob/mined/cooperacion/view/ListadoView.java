@@ -5,6 +5,7 @@
  */
 package sv.gob.mined.cooperacion.view;
 
+import java.io.File;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -39,8 +40,10 @@ public class ListadoView implements Serializable {
     private String codigoDepartamento;
     private String where;
     private final String posicionInicial = "13.749655, -88.822362";
-    private ProyectoCooperacion proyecto;
     private Long idProyecto;
+
+    private ProyectoCooperacion proyecto;
+    private ListadoProyectoDto proyectoDto;
     private List<ListadoProyectoDto> lstProyectos = new ArrayList();
     private List<Municipio> lstMunicipio = new ArrayList();
 
@@ -98,6 +101,14 @@ public class ListadoView implements Serializable {
         }
 
         simpleModel = new DefaultMapModel();
+    }
+
+    public ListadoProyectoDto getProyectoDto() {
+        return proyectoDto;
+    }
+
+    public void setProyectoDto(ListadoProyectoDto proyectoDto) {
+        this.proyectoDto = proyectoDto;
     }
 
     public String getPosicionInicial() {
@@ -214,9 +225,35 @@ public class ListadoView implements Serializable {
     }
 
     public void agregarPuntos() {
-        lstProyectos.stream().filter((pro) -> (pro.getGeoPx() != null && pro.getGeoPy() != null)).forEachOrdered((pro) -> {
+        StringBuilder ruta = new StringBuilder();
+        ruta.append(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath());
+        ruta.append("/resources/images/");
+        String urlIcono = "";
+
+        for (ListadoProyectoDto pro : lstProyectos) {
+
             LatLng coor = new LatLng(pro.getGeoPy().doubleValue(), pro.getGeoPx().doubleValue());
-            simpleModel.addOverlay(new Marker(coor, "CE: " + pro.getCodigoEntidad()));
-        });
+
+            switch (pro.getIdEstado()) {
+                case 1:
+                    urlIcono = ruta + File.separator + "gps_amarillo.png";
+                    break;
+                case 2:
+                    urlIcono = ruta + File.separator + "gps_naranja.png";
+                    break;
+                case 3:
+                    urlIcono = ruta + File.separator + "gps_verde.png";
+                    break;
+                case 4:
+                    urlIcono = ruta + File.separator + "gps_rojo.png";
+                    break;
+            }
+
+            simpleModel.addOverlay(new Marker(coor, "CE: " + pro.getCodigoEntidad(), "", urlIcono));
+        }
+    }
+
+    public void buscarProyecto() {
+        proyecto = mantenimientoFacade.find(ProyectoCooperacion.class, proyectoDto.getIdProyecto());
     }
 }

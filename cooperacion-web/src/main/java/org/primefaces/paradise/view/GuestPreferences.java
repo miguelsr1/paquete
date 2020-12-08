@@ -15,12 +15,18 @@
  */
 package org.primefaces.paradise.view;
 
+import java.io.IOException;
 import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 
 @ManagedBean
 @SessionScoped
@@ -41,9 +47,9 @@ public class GuestPreferences implements Serializable {
     private List<ComponentTheme> componentThemes = new ArrayList();
 
     private List<LayoutColor> layoutColors = new ArrayList();
-    
+
     @PostConstruct
-    public void init() {  
+    public void init() {
         componentThemes.add(new ComponentTheme("Blue", "blue", "#3984b8"));
         componentThemes.add(new ComponentTheme("Deep Purple", "deeppurple", "#B85CC8"));
         componentThemes.add(new ComponentTheme("Green", "green", "#37a533"));
@@ -61,7 +67,6 @@ public class GuestPreferences implements Serializable {
         layoutColors.add(new LayoutColor("Orange", "orange", "#f6ac2b"));
         layoutColors.add(new LayoutColor("Purple", "purple", "#7e8dcd"));
         layoutColors.add(new LayoutColor("Red", "red", "#f28a8b"));
-        
 
         layoutColors.add(new LayoutColor("Bliss", "bliss", "#360033"));
         layoutColors.add(new LayoutColor("Cheer", "cheer", "#556270"));
@@ -100,7 +105,7 @@ public class GuestPreferences implements Serializable {
     public String getMenuMode() {
         return this.menuMode;
     }
-    
+
     public void setMenuMode(String menuMode) {
         this.menuMode = menuMode;
     }
@@ -127,9 +132,10 @@ public class GuestPreferences implements Serializable {
 
     public List<ComponentTheme> getComponentThemes() {
         return componentThemes;
-    }  
+    }
 
     public class ComponentTheme {
+
         String name;
         String file;
         String color;
@@ -155,9 +161,10 @@ public class GuestPreferences implements Serializable {
 
     public List<LayoutColor> getLayoutColors() {
         return layoutColors;
-    }  
+    }
 
     public class LayoutColor {
+
         String name;
         String file;
         String color;
@@ -178,6 +185,18 @@ public class GuestPreferences implements Serializable {
 
         public String getColor() {
             return this.color;
+        }
+    }
+
+    public void logout() {
+        try {
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.getExternalContext().getSessionMap().clear();
+            ExternalContext externalContext = context.getExternalContext();
+            externalContext.redirect(((ServletContext) externalContext.getContext()).getContextPath() + "/index.mined");
+            System.gc();
+        } catch (IOException ex) {
+            Logger.getLogger(GuestPreferences.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

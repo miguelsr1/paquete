@@ -227,7 +227,8 @@ public class RegistrarCooperacionView implements Serializable {
     public void guardar() {
         Date tmpFecha;
         String titulo = RESOURCE_BUNDLE.getString("correo.respuesta.titulo");
-        String mensaje = "";
+        String mensajeParaCe = "";
+        String mensajeParaUt = "";
 
         for (String nivel : nivelI) {
             switch (nivel) {
@@ -267,13 +268,16 @@ public class RegistrarCooperacionView implements Serializable {
         }
 
         if (proyectoCooperacion.getIdProyecto() == null) {
+            InternetAddress[] to;
+            InternetAddress[] cc;
+
             tmpFecha = new Date();
             proyectoCooperacion.setFechaInsercion(tmpFecha);
             proyectoCooperacion.setUsuarioInsercion(directorCe.getIdDirector());
             proyectoCooperacion.setCodigoEntidad(codigoEntidad);
             proyectoCooperacion.setEstadoEliminacion((short) 0);
 
-            switch (proyectoCooperacion.getIdTipoCooperacion().intValue()) {
+            switch (proyectoCooperacion.getIdTipoCooperacion().getIdTipoCooperacion().intValue()) {
                 //RESPUESTA DE APROBACIÓN AUTOMATICA
                 case 2:
                 case 7:
@@ -283,7 +287,7 @@ public class RegistrarCooperacionView implements Serializable {
                 case 14:
                     proyectoCooperacion.setIdEstado((short) 2);
 
-                    mensaje = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprovacionAutomatica.mensaje"),
+                    mensajeParaCe = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprobacionAutomatica.mensaje"),
                             StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
                             entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
                             proyectoCooperacion.getNombreProyecto(), proyectoCooperacion.getObjetivos());
@@ -296,33 +300,35 @@ public class RegistrarCooperacionView implements Serializable {
                 case 6:
                     proyectoCooperacion.setIdEstado((short) 1);
 
-                    if (proyectoCooperacion.getMontoInversion().compareTo(new BigDecimal(5000)) == 1) {
+                    if (proyectoCooperacion.getIdTipoCooperacion().getIdTipoCooperacion().intValue() != 5) {
+                        mensajeParaCe = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprobacionVoBo.mensaje"),
+                                StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
+                                entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
+                                proyectoCooperacion.getNombreProyecto(), proyectoCooperacion.getObjetivos());
+
                         
+                        
+                    } else if (proyectoCooperacion.getMontoInversion().compareTo(new BigDecimal(5000)) == 1) {
+                        //cooperaciones mayores a 5,000.00
+
                     } else {
-                        // cooperacion inferior a 5000
-                        mensaje = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprobacionAutomatica.mensaje"),
+                        // cooperacion inferior a 5,000.00
+                        mensajeParaCe = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprobacionAutomatica.mensaje"),
                                 StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
                                 entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
                                 proyectoCooperacion.getNombreProyecto(), proyectoCooperacion.getObjetivos());
                     }
-                    /*to = new InternetAddress[1];
-                    cc = new InternetAddress[1];*/
                     break;
                 default:
-                /*to = new InternetAddress[1];
-                cc = new InternetAddress[1];*/
             }
 
             if (mantenimientoFacade.guardar(proyectoCooperacion)) {
-                guardarHistoricoCambioEstado(tmpFecha, null, (short) 1);
                 JsfUtil.mensajeInsert();
-                List<Notificacion> lstNotificacion = catalogoFacade.findNotificacionByTipoCooperacion(proyectoCooperacion.getIdTipoCooperacion());
+                guardarHistoricoCambioEstado(tmpFecha, null, (short) 1);
+                List<Notificacion> lstNotificacion = catalogoFacade.findNotificacionByTipoCooperacion(proyectoCooperacion.getIdTipoCooperacion().getIdTipoCooperacion());
 
                 String emailsTo;
                 String emailsCc = "";
-
-                InternetAddress[] to;
-                InternetAddress[] cc;
 
                 emailsTo = directorCe.getCorreoElectronico();
 
@@ -355,7 +361,7 @@ public class RegistrarCooperacionView implements Serializable {
                 Session session = credencialesView.getMailSession();
 
                 eMailFacade.enviarMail(to, cc,
-                        directorCe.getCorreoElectronico(), titulo, mensaje,
+                        directorCe.getCorreoElectronico(), titulo, mensajeParaCe,
                         session);
             } else {
                 JsfUtil.mensajeError("Ah ocurrido un error en la operación de guardar.");

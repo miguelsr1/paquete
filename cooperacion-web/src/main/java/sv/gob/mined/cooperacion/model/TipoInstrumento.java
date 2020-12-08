@@ -6,12 +6,15 @@
 package sv.gob.mined.cooperacion.model;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -23,6 +26,9 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "TipoInstrumento.findAll", query = "SELECT t FROM TipoInstrumento t")})
 public class TipoInstrumento implements Serializable {
+
+    @OneToMany(mappedBy = "idTipoInstrumento", fetch = FetchType.LAZY)
+    private List<ProyectoCooperacion> proyectoCooperacionList;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -78,6 +84,14 @@ public class TipoInstrumento implements Serializable {
     @Override
     public String toString() {
         return "sv.gob.mined.cooperacion.web.model.TipoInstrumento[ idTipoInstrumento=" + idTipoInstrumento + " ]";
+    }
+
+    public List<ProyectoCooperacion> getProyectoCooperacionList() {
+        return proyectoCooperacionList;
+    }
+
+    public void setProyectoCooperacionList(List<ProyectoCooperacion> proyectoCooperacionList) {
+        this.proyectoCooperacionList = proyectoCooperacionList;
     }
     
 }
