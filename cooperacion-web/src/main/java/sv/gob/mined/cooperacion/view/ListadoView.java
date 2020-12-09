@@ -6,15 +6,23 @@
 package sv.gob.mined.cooperacion.view;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.LatLng;
 import org.primefaces.model.map.MapModel;
@@ -24,6 +32,7 @@ import sv.gob.mined.cooperacion.facade.paquete.UbicacionFacade;
 import sv.gob.mined.cooperacion.model.ProyectoCooperacion;
 import sv.gob.mined.cooperacion.model.Usuario;
 import sv.gob.mined.cooperacion.model.dto.ListadoProyectoDto;
+import sv.gob.mined.cooperacion.model.dto.FileInfoDto;
 import sv.gob.mined.cooperacion.model.paquete.Municipio;
 
 /**
@@ -44,6 +53,7 @@ public class ListadoView implements Serializable {
 
     private ProyectoCooperacion proyecto;
     private ListadoProyectoDto proyectoDto;
+    private List<FileInfoDto> lstArchivos = new ArrayList();
     private List<ListadoProyectoDto> lstProyectos = new ArrayList();
     private List<Municipio> lstMunicipio = new ArrayList();
 
@@ -54,6 +64,8 @@ public class ListadoView implements Serializable {
 
     @Inject
     private MantenimientoFacade mantenimientoFacade;
+
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("bundle");
 
     /**
      * Creates a new instance of ListadoView
@@ -101,6 +113,10 @@ public class ListadoView implements Serializable {
         }
 
         simpleModel = new DefaultMapModel();
+    }
+
+    public List<FileInfoDto> getLstArchivos() {
+        return lstArchivos;
     }
 
     public ListadoProyectoDto getProyectoDto() {
@@ -255,5 +271,26 @@ public class ListadoView implements Serializable {
 
     public void buscarProyecto() {
         proyecto = mantenimientoFacade.find(ProyectoCooperacion.class, proyectoDto.getIdProyecto());
+
+        File folder = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto());
+
+        if (folder.exists()) {
+            for (File archivo : folder.listFiles()) {
+                try {
+                    FileTime fTime = (FileTime) Files.getAttribute(archivo.toPath(), "creationTime");
+                    FileInfoDto file = new FileInfoDto();
+
+                    try (PDDocument pdc = PDDocument.load(archivo)) {
+                        file.setFechaCreado(new Date(fTime.toMillis()));
+                        file.setNombreArchivo(archivo.getName());
+                        file.setNumeroPaginas(pdc.getNumberOfPages());
+
+                        lstArchivos.add(file);
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(ListadoView.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }
 }

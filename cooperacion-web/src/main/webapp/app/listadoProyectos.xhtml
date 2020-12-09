@@ -49,11 +49,11 @@
                 width: 0r !important;
                 height: 0r !important; 
             }
-            </style>
-        </ui:define>
+        </style>
+    </ui:define>
 
-        <ui:define name="contenido">
-            <p:messages id="messages" closable="true" escape="false" >
+    <ui:define name="contenido">
+        <p:messages id="messages" closable="true" escape="false" >
             <p:autoUpdate />
         </p:messages>
 
@@ -187,96 +187,174 @@
                 <div class="card">
                     <div class="ui-fluid ">
                         <div class="p-field p-grid">
-                            <p:outputLabel value="Nombre del Proyecto: "/>
-                            <p:spacer width="10"/>
-                            <p:outputLabel value="#{listadoView.proyecto.nombreProyecto}" style="font-weight: bold"/>
+                            <div class="p-col-12 p-md-6">
+                                <p:outputLabel value="Nombre del Proyecto: "/>
+                                <p:outputLabel value="#{listadoView.proyecto.nombreProyecto}" style="font-weight: bold"/>
+                            </div>
+                            <div class="p-col-12 p-md-9">
+                                
+                            </div>
                         </div>
                         <div class="p-field p-grid">
-                            <p:outputLabel value="Cooperante:" />
-                            <p:spacer width="10"/>
-                            <p:outputLabel value="#{listadoView.proyecto.idCooperante.nombreCooperante}" style="font-weight: bold"/>
+                            <div class="p-col-12 p-md-3">
+                                <p:outputLabel value="Cooperante:" />
+                            </div>
+                            <div class="p-col-12 p-md-9">
+                                <p:outputLabel value="#{listadoView.proyecto.idCooperante.nombreCooperante}" style="font-weight: bold"/>
+                            </div>
                         </div>
                         <div class="p-field p-grid">
-                            <p:outputLabel value="Modalidad de Ejec.:" />
-                            <div class="p-col-12 p-md-4">
+                            <div class="p-col-12 p-md-3">
+                                <p:outputLabel value="Modalidad de Ejec.:" />
+                            </div>
+                            <div class="p-col-12 p-md-3">
                                 <p:outputLabel value="#{listadoView.proyecto.idModalidad.descripcionModalidad}" style="font-weight: bold"/>
                             </div>
-                            <p:outputLabel value="Instrumento de formalización:" />
+                            <div class="p-col-12 p-md-3">
+                                <p:outputLabel value="Instrumento de formalización:" />
+                            </div>
                             <div class="p-col-12 p-md-3">
                                 <p:outputLabel value="#{listadoView.proyecto.idTipoInstrumento.descripcionInstrumento}" style="font-weight: bold"/>
                             </div>
                         </div>
 
                         <div class="p-field p-grid">
-                            <p:outputLabel  value="Objetivo de la Cooperación:"/>
-                            <p:spacer width="10"/>
-                            <p:outputLabel value="#{listadoView.proyecto.objetivos}" style="font-weight: bold"/>
+                            <div class="p-col-12 p-md-3">
+                                <p:outputLabel  value="Objetivo de la Cooperación:"/>
+                            </div>
+                            <div class="p-col-12 p-md-9">
+                                <p:outputLabel value="#{listadoView.proyecto.objetivos}" style="font-weight: bold"/>
+                            </div>
                         </div>
                         <div class="p-field p-grid">
-                            <p:outputLabel value="Fecha estimada Inicio:" />
-                            <div class="p-col-12 p-md-4">
+                            <div class="p-col-12 p-md-3">
+                                <p:outputLabel value="Fecha estimada Inicio:" />
+                            </div>
+                            <div class="p-col-12 p-md-3">
                                 <p:outputLabel value="#{listadoView.proyecto.fechaEstimadaFin}" style="font-weight: bold">
                                     <f:convertDateTime pattern="dd/MM/yyyy"/>
                                 </p:outputLabel>
                             </div>
-                            <p:outputLabel value="Fecha estimada Fin:"/>
-                            <div class="p-col-12 p-md-4">
+                            <div class="p-col-12 p-md-3">
+                                <p:outputLabel value="Fecha estimada Fin:"/>
+                            </div>
+                            <div class="p-col-12 p-md-3">
                                 <p:outputLabel value="#{listadoView.proyecto.fechaEstimadaFin}" style="font-weight: bold">
                                     <f:convertDateTime pattern="dd/MM/yyyy/"/>
                                 </p:outputLabel>
                             </div>
                         </div>
                         <div class="p-field p-grid">
-                            <p:outputLabel value="Tipo de Cooperación:" />
-                            <p:spacer width="10"/>
-                            <p:outputLabel value="#{listadoView.proyecto.idTipoCooperacion.descripcionCooperacion}" style="font-weight: bold"/>
-                        </div>                            
-                    </div>
-                    <br/>
-                    <div class="p-grid dashboard">
-                        <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
-                            <h6><p:outputLabel>Descrip. de la Cooperación</p:outputLabel></h6>
-                            <p:outputLabel value="#{listadoView.proyecto.descripcion}" style="font-weight: bold"/>
+                            <div class="p-col-12 p-md-3">
+                                <p:outputLabel value="Tipo de Cooperación:" />
+                            </div>
+                            <div class="p-col-12 p-md-9">
+                                <p:outputLabel value="#{listadoView.proyecto.idTipoCooperacion.descripcionCooperacion}" style="font-weight: bold"/>
+                            </div>
                         </div>
-                        <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
-                            <h6><p:outputLabel>Cantidad a Cubrir</p:outputLabel></h6>
-                            <p:outputLabel value="#{listadoView.proyecto.cantidad}" style="font-weight: bold"/>
-                        </div>
-                        <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
-                            <h6><p:outputLabel>Monto a Invertir</p:outputLabel></h6>
-                            <p:outputLabel value="#{listadoView.proyecto.montoInversion}" style="font-weight: bold"/>
-                        </div>
-                        <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
-                            <h6><p:outputLabel>Cantidad Beneficiarios</p:outputLabel></h6>
-                            <p:outputLabel value="#{listadoView.proyecto.cantidadBeneficiarios}" style="font-weight: bold"/>
-                        </div>
-                    </div>
-                    <br/>
-                    <div class="p-field p-grid">
-                        <div class="p-col-12 p-md-3">
-                            <p:outputLabel value="Tipos Beneficiarios" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                        </div>
-                        <div class="p-col-12 p-md-9">
 
-                            <h:panelGrid columns="3" style="width: 100%">
-                                <p:selectBooleanCheckbox value="#{listadoView.proyecto.inicial eq 1}" itemLabel="Inicial"/>
-                                <p:selectBooleanCheckbox value="#{listadoView.proyecto.parvularia eq 1}" itemLabel="Parvularia"/>
-                                <p:spacer width="10"/>
-                                <p:selectBooleanCheckbox value="#{listadoView.proyecto.basicaCi eq 1}" itemLabel="Básica-Ciclo I"/>
-                                <p:selectBooleanCheckbox value="#{listadoView.proyecto.basicaCii eq 1}" itemLabel="Básica-Ciclo II"/>
-                                <p:selectBooleanCheckbox value="#{listadoView.proyecto.basicaCiii eq 1}" itemLabel="Básica-Ciclo III"/>
-                                <p:selectBooleanCheckbox value="#{listadoView.proyecto.media eq 1}" itemLabel="Media"/>
-                                <p:selectBooleanCheckbox value="#{listadoView.proyecto.docente eq 1}" itemLabel="Docente"/>
-                                <p:selectBooleanCheckbox value="#{listadoView.proyecto.otros eq 1}" itemLabel="Otros"/>
-                            </h:panelGrid>
+                        <div class="p-field p-grid">
+                            <div class="p-col-12 p-md-3">
+                                <p:outputLabel value="Descrip. de la Cooperación:" />
+                            </div>
+                            <div class="p-col-12 p-md-3">
+                                <p:outputLabel value="#{listadoView.proyecto.descripcion}" style="font-weight: bold"/>
+                            </div>
+                            <div class="p-col-12 p-md-3">
+                                <p:outputLabel value="Cantidad a Cubrir:"/>
+                            </div>
+                            <div class="p-col-12 p-md-3">
+                                <p:outputLabel value="#{listadoView.proyecto.cantidad}" style="font-weight: bold">
+                                    <f:convertNumber pattern="#,##0"/>
+                                </p:outputLabel>
+                            </div>
                         </div>
+                        <div class="p-field p-grid">
+                            <div class="p-col-12 p-md-3">
+                                <p:outputLabel value="Monto a Invertir:" />
+                            </div>
+                            <div class="p-col-12 p-md-3">
+                                <p:outputLabel value="#{listadoView.proyecto.montoInversion}" style="font-weight: bold">
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </p:outputLabel>
+                            </div>
+                            <div class="p-col-12 p-md-3">
+                                <p:outputLabel value="Cantidad Beneficiarios:"/>
+                            </div>
+                            <div class="p-col-12 p-md-3">
+                                <p:outputLabel value="#{listadoView.proyecto.cantidadBeneficiarios}" style="font-weight: bold">
+                                    <f:convertNumber pattern="#,##0"/>
+                                </p:outputLabel>
+                            </div>
+                        </div>
+                        <div class="p-field p-grid">
+                            <div class="p-col-12 p-md-3">
+                                <p:outputLabel value="Tipos Beneficiarios" />
+                            </div>
+                            <div class="p-col-12 p-md-9">
+
+                                <h:panelGrid columns="3" style="width: 100%">
+                                    <p:outputPanel>
+                                        <p:selectBooleanCheckbox value="#{listadoView.proyecto.inicial eq 1}" disabled="true"/><p:spacer width="5"/>
+                                        <p:outputLabel value="Inicial"/>
+                                    </p:outputPanel>
+                                    <p:outputPanel>
+                                        <p:selectBooleanCheckbox value="#{listadoView.proyecto.inicial eq 1}" disabled="true"/><p:spacer width="5"/>
+                                        <p:outputLabel value="Parvularia"/>
+                                    </p:outputPanel>
+                                    <p:spacer width="10"/>
+                                    <p:outputPanel>
+                                        <p:selectBooleanCheckbox value="#{listadoView.proyecto.basicaCi eq 1}" disabled="true"/><p:spacer width="5"/>
+                                        <p:outputLabel value="Básica-Ciclo I"/>
+                                    </p:outputPanel>
+                                    <p:outputPanel>
+                                        <p:selectBooleanCheckbox value="#{listadoView.proyecto.basicaCii eq 1}" disabled="true"/><p:spacer width="5"/>
+                                        <p:outputLabel value="Básica-Ciclo II"/>
+                                    </p:outputPanel>
+                                    <p:outputPanel>
+                                        <p:selectBooleanCheckbox value="#{listadoView.proyecto.basicaCiii eq 1}" disabled="true"/><p:spacer width="5"/>
+                                        <p:outputLabel value="Básica-Ciclo III"/>
+                                    </p:outputPanel>
+                                    <p:outputPanel>
+                                        <p:selectBooleanCheckbox value="#{listadoView.proyecto.media eq 1}" disabled="true"/><p:spacer width="5"/>
+                                        <p:outputLabel value="Media"/>
+                                    </p:outputPanel>
+                                    <p:outputPanel>
+                                        <p:selectBooleanCheckbox value="#{listadoView.proyecto.docente eq 1}" disabled="true"/><p:spacer width="5"/>
+                                        <p:outputLabel value="Docente"/>
+                                    </p:outputPanel>
+                                    <p:outputPanel>
+                                        <p:selectBooleanCheckbox value="#{listadoView.proyecto.otros eq 1}" disabled="true"/><p:spacer width="5"/>
+                                        <p:outputLabel value="Otros"/>
+                                    </p:outputPanel>
+                                </h:panelGrid>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui-fluid ">
+                        <h5>Listado de Archivos</h5>
+                        <p:dataTable value="#{listadoView.lstArchivos}" var="archivo">
+                            <p:column headerText="Nombre">
+                                <p:outputLabel value="#{archivo.nombreArchivo}"/>
+                            </p:column>
+                            <p:column headerText="Núm. Páginas">
+                                <p:outputLabel value="#{archivo.numeroPaginas}"/>
+                            </p:column>
+                            <p:column headerText="Fecha Creación">
+                                <p:outputLabel value="#{archivo.fechaCreado}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:dataTable>
                     </div>
                 </div>
+
+
             </p:outputPanel>
 
             <f:facet name="footer">
                 <p:commandButton value="Aceptar" icon="pi pi-check" onclick="PF('manageProductDialog').hide()" 
-                                 class="primary-button" process="@this"/>
+                                 styleClass="primary-button text-button" process="@this"/>
             </f:facet>
         </p:dialog> 
 
