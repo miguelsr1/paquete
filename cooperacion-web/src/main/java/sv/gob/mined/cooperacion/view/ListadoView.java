@@ -6,6 +6,8 @@
 package sv.gob.mined.cooperacion.view;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -23,6 +25,8 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.LatLng;
 import org.primefaces.model.map.MapModel;
@@ -45,6 +49,7 @@ public class ListadoView implements Serializable {
 
     private Short idEstado;
     private BigDecimal idMunicipio;
+    private String nombreArchivo = "";
     private String lblBottonEnviar = "";
     private String codigoDepartamento;
     private String where;
@@ -113,6 +118,14 @@ public class ListadoView implements Serializable {
         }
 
         simpleModel = new DefaultMapModel();
+    }
+
+    public String getNombreArchivo() {
+        return nombreArchivo;
+    }
+
+    public void setNombreArchivo(String nombreArchivo) {
+        this.nombreArchivo = nombreArchivo;
     }
 
     public List<FileInfoDto> getLstArchivos() {
@@ -218,13 +231,13 @@ public class ListadoView implements Serializable {
 
     public void recuperarLstProyectos() {
         String whereTmp = "";
-        if (codigoDepartamento != null) {
+        if (!codigoDepartamento.equals("0")) {
             whereTmp = " and mun.codigo_departamento = '" + codigoDepartamento + "'";
         }
-        if (codigoDepartamento != null && idMunicipio != null) {
+        if (!codigoDepartamento.equals("0") && idMunicipio != null &&  idMunicipio != BigDecimal.ZERO) {
             whereTmp += " and mun.id_municipio=" + idMunicipio + "";
         }
-        if (idEstado != null) {
+        if (idEstado != null && idEstado != 0) {
             whereTmp += " and pro.id_estado = " + idEstado;
         }
 
@@ -270,6 +283,7 @@ public class ListadoView implements Serializable {
     }
 
     public void buscarProyecto() {
+        lstArchivos.clear();
         proyecto = mantenimientoFacade.find(ProyectoCooperacion.class, proyectoDto.getIdProyecto());
 
         File folder = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto());
@@ -292,5 +306,17 @@ public class ListadoView implements Serializable {
                 }
             }
         }
+    }
+
+    public StreamedContent getFile() throws FileNotFoundException {
+        File filePdf = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto() + File.separator + nombreArchivo);
+        FileInputStream fis = new FileInputStream(filePdf);
+        StreamedContent file = DefaultStreamedContent.builder()
+                .name(nombreArchivo)
+                .contentType("application/pdf")
+                .stream(() -> fis)
+                .build();
+
+        return file;
     }
 }

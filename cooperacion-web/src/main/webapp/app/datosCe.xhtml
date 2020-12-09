@@ -263,19 +263,18 @@
                                     </p:selectManyCheckbox>
                                 </div>
                             </div>
+                        </div>
 
-                            <p:fileUpload id="updFile" auto="false" widgetVar="updFile" 
-                                          label="Seleccionar" allowTypes="/(\.|\/)(pdf)$/" invalidFileMessage="Unicamente archivos PDF (PDF)" 
-                                          mode="advanced" multiple="true"/>
-                            <br/>
-                            <br/>
+                        <p:fileUpload id="updFile" auto="false" widgetVar="updFile" 
+                                      label="Seleccionar" allowTypes="/(\.|\/)(pdf)$/" invalidFileMessage="Unicamente archivos PDF (PDF)" 
+                                      mode="advanced" multiple="true"/>
+                        <br/>
 
-                            <div class="products-buttonbar">
-                                <div>
-                                    <p:commandButton value="Guardar" icon="pi pi-check" update="pnlDatosCe pnlDatosProyecto" validateClient="true" action="#{registrarCooperacionView.guardar()}"/>
-                                    <p:spacer />
-                                    <p:commandButton value="Cancelar" icon="pi pi-times" class="secondary-button" validateClient="true" process="@this" action="inicio?faces-redirect=true"/>    
-                                </div>
+                        <div class="products-buttonbar">
+                            <div>
+                                <p:commandButton value="Guardar" icon="pi pi-check" update="pnlDatosCe pnlDatosProyecto" validateClient="true" action="#{registrarCooperacionView.guardar()}"/>
+                                <p:spacer />
+                                <p:commandButton value="Cancelar" icon="pi pi-times" class="secondary-button" validateClient="true" process="@this" action="inicio?faces-redirect=true"/>    
                             </div>
                         </div>
                     </div>
