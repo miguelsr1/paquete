@@ -40,19 +40,40 @@
                 height: 80px;
             }
 
-            .ui-fileupload-buttonbar .ui-fileupload-upload {
-                display: none !important;
+
+            .ui-fileupload-upload, .ui-fileupload-cancel, .ui-fileupload-progress{
+                display: none;
+            }
+            .ui-fileupload-buttonbar, .ui-fileupload-content{
+                float: left;
+
+            }
+            body .ui-fileupload .ui-fileupload-content {
+                border: 0px;
+            }
+            .ui-fileupload-files{
+                margin: 0;
+            }
+
+            body .ui-fileupload .ui-fileupload-buttonbar {
+                border: 0px;
+                padding: 0rem;
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
+            }
+
+            body .ui-fileupload .ui-fileupload-content {
+                display: none;
             }
         </style>
+
     </ui:define>
 
-    <f:event listener="#{userBean.isCentroEscolar}" type="preRenderView" />
+    <f:metadata>
+        <f:event listener="#{userBean.validarCentroEscolar}" type="preRenderView" />
+    </f:metadata>
 
     <ui:define name="contenido">
-        <p:messages id="messages" closable="true" escape="false" >
-            <p:autoUpdate />
-        </p:messages>
-
         <div style="max-width: 1024px!important; margin: 0 auto;">
             <p:breadCrumb>
                 <p:menuitem value="Inicio" url="inicio.mined" />
@@ -160,8 +181,8 @@
                                 <div class="p-field p-grid">
                                     <p:outputLabel for="cboCooperante" value="Cooperante:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
                                     <div class="p-col-12 p-md-10">
-                                        <p:selectOneMenu id="cboCooperante" value="#{registrarCooperacionView.proyectoCooperacion.idCooperante}" required="true" label="Cooperante">
-                                            <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
+                                        <p:selectOneMenu id="cboCooperante" value="#{registrarCooperacionView.idCooperante}" required="true" label="Cooperante">
+                                            <f:selectItem itemValue="null" itemLabel="Seleccione un valor" noSelectionOption="true"/>
                                             <f:selectItems value="#{registrarCooperacionView.lstCooperantes}" var="coo" itemValue="#{coo.idCooperante}" itemLabel="#{coo.nombreCooperante}"/>
                                         </p:selectOneMenu>
                                     </div>
@@ -169,15 +190,15 @@
                                 <div class="p-field p-grid">
                                     <p:outputLabel value="Modalidad de Ejec.:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
                                     <div class="p-col-12 p-md-4">
-                                        <p:selectOneMenu value="#{registrarCooperacionView.proyectoCooperacion.idModalidad}">
-                                            <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
+                                        <p:selectOneMenu id="cboModalidad" value="#{registrarCooperacionView.idModalidad}" label="Modalidad Ejecución">
+                                            <f:selectItem itemValue="null" itemLabel="Seleccione un valor" noSelectionOption="true"/>
                                             <f:selectItems value="#{registrarCooperacionView.lstModalidadEjecucion}" var="modalidad" itemValue="#{modalidad.idModalidad}" itemLabel="#{modalidad.descripcionModalidad}"/>
                                         </p:selectOneMenu>
                                     </div>
                                     <p:outputLabel value="Instrumento de formalización:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
                                     <div class="p-col-12 p-md-3">
-                                        <p:selectOneMenu value="#{registrarCooperacionView.proyectoCooperacion.idTipoInstrumento}">
-                                            <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
+                                        <p:selectOneMenu id="cboTipoInstrumento" value="#{registrarCooperacionView.idTipoInstrumento}" label="Instrumento de formalización">
+                                            <f:selectItem itemValue="null" itemLabel="Seleccione un valor" noSelectionOption="true"/>
                                             <f:selectItems value="#{registrarCooperacionView.lstTipoInstrumento}" var="instrumento" itemValue="#{instrumento.idTipoInstrumento}" itemLabel="#{instrumento.descripcionInstrumento}"/>
                                         </p:selectOneMenu>
                                     </div>
@@ -193,11 +214,11 @@
                                 <div class="p-field p-grid">
                                     <p:outputLabel value="Fecha estimada Inicio:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
                                     <div class="p-col-12 p-md-3">
-                                        <p:calendar value="#{registrarCooperacionView.proyectoCooperacion.fechaEstimadaInicio}" pattern="dd/MM/yyyy" locale="es"/>
+                                        <p:calendar id="cldInicio" value="#{registrarCooperacionView.proyectoCooperacion.fechaEstimadaInicio}" pattern="dd/MM/yyyy" locale="es" required="true" label="Fecha estimada de Inicio"/>
                                     </div>
                                     <p:outputLabel value="Fecha estimada Fin:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
                                     <div class="p-col-12 p-md-3">
-                                        <p:calendar value="#{registrarCooperacionView.proyectoCooperacion.fechaEstimadaFin}" pattern="dd/MM/yyyy" locale="es"/>
+                                        <p:calendar id="cldFin" value="#{registrarCooperacionView.proyectoCooperacion.fechaEstimadaFin}" pattern="dd/MM/yyyy" locale="es" required="true" label="Fecha estimada de fin"/>
                                     </div>
                                 </div>
 
@@ -206,9 +227,10 @@
                                 <div class="p-field p-grid">
                                     <p:outputLabel value="Tipo de Cooperación:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
                                     <div class="p-col-12 p-md-9">
-                                        <p:selectOneMenu value="#{registrarCooperacionView.proyectoCooperacion.idTipoCooperacion}">
-                                            <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
+                                        <p:selectOneMenu id="cboTipoCooperacion" value="#{registrarCooperacionView.idTipoCooperacion}" label="Tipo de Cooperación">
+                                            <f:selectItem itemValue="null" itemLabel="Seleccione un valor" noSelectionOption="true"/>
                                             <f:selectItems value="#{registrarCooperacionView.lstTipoCooperacion}" var="cooperacion" itemValue="#{cooperacion.idTipoCooperacion}" itemLabel="#{cooperacion.descripcionCooperacion}"/>
+                                            <p:ajax update="cboTipoCooperacion"/>
                                         </p:selectOneMenu>
                                     </div>
                                 </div>                            
@@ -265,18 +287,31 @@
                             </div>
                         </div>
 
-                        <p:fileUpload id="updFile" auto="false" widgetVar="updFile" 
+                        <p:fileUpload id="updFile" auto="true" widgetVar="updFile" listener="#{registrarCooperacionView.handleFileUpload}"
                                       label="Seleccionar" allowTypes="/(\.|\/)(pdf)$/" invalidFileMessage="Unicamente archivos PDF (PDF)" 
-                                      mode="advanced" multiple="true"/>
+                                      multiple="true" update="lstArchivosDelProyecto"/>
                         <br/>
+                        <br/>
+                        <p:outputPanel>
+                            <p:dataList id="lstArchivosDelProyecto" value="#{registrarCooperacionView.archivosDelProyecto}" var="archivo" type="definition">
+                                <i class="pi pi-paperclip" aria-hidden="true"></i><p:spacer width="5"/>#{archivo.fileName}
+                            </p:dataList>
+                        </p:outputPanel>
 
+                        <br/>
+                        <br/>
                         <div class="products-buttonbar">
                             <div>
-                                <p:commandButton value="Guardar" icon="pi pi-check" update="pnlDatosCe pnlDatosProyecto" validateClient="true" action="#{registrarCooperacionView.guardar()}"/>
+                                <p:commandButton value="Guardar" icon="pi pi-check" update="pnlDatosCe pnlDatosProyecto" validateClient="true" 
+                                                 action="#{registrarCooperacionView.guardar()}"/>
                                 <p:spacer />
-                                <p:commandButton value="Cancelar" icon="pi pi-times" class="secondary-button" validateClient="true" process="@this" action="inicio?faces-redirect=true"/>    
+                                <p:commandButton value="Cancelar" icon="pi pi-times" class="secondary-button" process="@this" action="inicio?faces-redirect=true"/>    
                             </div>
                         </div>
+
+                        <p:messages id="messages" closable="true" escape="false" >
+                            <p:autoUpdate />
+                        </p:messages>
                     </div>
                 </div>
             </div>
@@ -286,6 +321,20 @@
             <p:gmap id="mapa" center="#{registrarCooperacionView.posicionInicial}" zoom="9" type="ROADMAP" style="width: 100%; height: 500px;" 
                     model="#{registrarCooperacionView.simpleModel}" mapTypeControl="false" />
 
+        </p:dialog>
+
+        <p:dialog header="Información" id="dlgAceptar" widgetVar="dlgAceptar" modal="true" responsive="true" width="350" showEffect="fade" hideEffect="fade" 
+                  closable="false" draggable="false" minimizable="false">
+
+            <p>
+                <i class="pi pi-save" style="font-size: 24px; font-weight: bold;"></i> 
+                <p:spacer width="5"/>
+                Datos almacenados correctamente
+            </p>
+            <f:facet name="footer">
+                <p:commandButton value="Aceptar" icon="pi pi-check" action="inicio?faces-redirect=true"
+                                 styleClass="primary-button text-button" process="@this"/>          
+            </f:facet>
         </p:dialog>
 
         <h:outputStylesheet name="css/primeicons.css" library="paradise-layout" />

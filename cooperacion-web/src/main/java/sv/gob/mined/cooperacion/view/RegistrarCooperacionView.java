@@ -1,7 +1,14 @@
 package sv.gob.mined.cooperacion.view;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,6 +24,9 @@ import javax.inject.Named;
 import javax.mail.Session;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import org.primefaces.PrimeFaces;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.file.UploadedFile;
 import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.LatLng;
 import org.primefaces.model.map.MapModel;
@@ -49,23 +59,30 @@ import sv.gob.mined.utils.jsf.JsfUtil;
 @Named
 @ViewScoped
 public class RegistrarCooperacionView implements Serializable {
-
+    
     private String posicionInicial = "13.749655, -88.822362";
     private String codigoEntidad;
     private String codigoDepartamento;
-
+    
     private String[] nivelI;
     private String[] nivelII;
     private String[] nivelIII;
-
+    
+    private Long idTipoCooperacion;
+    private Long idTipoInstrumento;
+    private Long idModalidad;
+    private Long idCooperante;
+    
     private Director directorCe;
     private ProyectoCooperacion proyectoCooperacion = new ProyectoCooperacion();
     private VwCatalogoEntidadEducativa entidadEducativa = new VwCatalogoEntidadEducativa();
     private GeoEntidadEducativa geoEntidadEducativa = new GeoEntidadEducativa();
+    
     private List<Municipio> lstMunicipio = new ArrayList();
-
+    
     private MapModel simpleModel;
-
+    private List<UploadedFile> archivosDelProyecto;
+    
     @Inject
     private UbicacionFacade ubicacionFacade;
     @Inject
@@ -74,16 +91,16 @@ public class RegistrarCooperacionView implements Serializable {
     private CatalogoFacade catalogoFacade;
     @Inject
     private EMailFacade eMailFacade;
-
+    
     @Inject
     private CredencialesView credencialesView;
-
+    
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("bundle");
-
+    
     @PostConstruct
     public void init() {
         FacesContext fc = FacesContext.getCurrentInstance();
-
+        
         if (fc.getExternalContext().getSessionMap().containsKey("usuario")) {
             Usuario usu = (Usuario) fc.getExternalContext().getSessionMap().get("usuario");
             if (usu.getDirector() != null) {
@@ -91,109 +108,147 @@ public class RegistrarCooperacionView implements Serializable {
                 codigoEntidad = directorCe.getCodigoEntidad();
                 buscarEntidadEducativa();
             }
+            
+            archivosDelProyecto = new ArrayList();
         }
     }
-
+    
+    public Long getIdTipoCooperacion() {
+        return idTipoCooperacion;
+    }
+    
+    public void setIdTipoCooperacion(Long idTipoCooperacion) {
+        this.idTipoCooperacion = idTipoCooperacion;
+    }
+    
+    public Long getIdTipoInstrumento() {
+        return idTipoInstrumento;
+    }
+    
+    public void setIdTipoInstrumento(Long idTipoInstrumento) {
+        this.idTipoInstrumento = idTipoInstrumento;
+    }
+    
+    public Long getIdModalidad() {
+        return idModalidad;
+    }
+    
+    public void setIdModalidad(Long idModalidad) {
+        this.idModalidad = idModalidad;
+    }
+    
+    public Long getIdCooperante() {
+        return idCooperante;
+    }
+    
+    public void setIdCooperante(Long idCooperante) {
+        this.idCooperante = idCooperante;
+    }
+    
+    public List<UploadedFile> getArchivosDelProyecto() {
+        return archivosDelProyecto;
+    }
+    
     public String getCodigoEntidad() {
         return codigoEntidad;
     }
-
+    
     public void setCodigoEntidad(String codigoEntidad) {
         this.codigoEntidad = codigoEntidad;
     }
-
+    
     public VwCatalogoEntidadEducativa getEntidadEducativa() {
         return entidadEducativa;
     }
-
+    
     public GeoEntidadEducativa getGeoEntidadEducativa() {
         return geoEntidadEducativa;
     }
-
+    
     public List<Departamento> getLstDepartamentos() {
         return ubicacionFacade.getLstDepartamentos();
     }
-
+    
     public List<Municipio> getLstMunicipio() {
         return lstMunicipio;
     }
-
+    
     public List<Cooperante> getLstCooperantes() {
         return catalogoFacade.findCooperante();
     }
-
+    
     public List<TipoCooperante> getLstTipoCooperante() {
         return catalogoFacade.findTipoCooperante();
     }
-
+    
     public List<TipoCooperacion> getLstTipoCooperacion() {
         return catalogoFacade.findTipoCooperacion();
     }
-
+    
     public List<ModalidadEjecucion> getLstModalidadEjecucion() {
         return catalogoFacade.findModalidadEjecucion();
     }
-
+    
     public List<TipoInstrumento> getLstTipoInstrumento() {
         return catalogoFacade.findTipoInstrumento();
     }
-
+    
     public String getCodigoDepartamento() {
         return codigoDepartamento;
     }
-
+    
     public void setCodigoDepartamento(String codigoDepartamento) {
         this.codigoDepartamento = codigoDepartamento;
     }
-
+    
     public String getPosicionInicial() {
         return posicionInicial;
     }
-
+    
     public MapModel getSimpleModel() {
         return simpleModel;
     }
-
+    
     public Director getDirectorCe() {
         return directorCe;
     }
-
+    
     public ProyectoCooperacion getProyectoCooperacion() {
         return proyectoCooperacion;
     }
-
+    
     public void setProyectoCooperacion(ProyectoCooperacion proyectoCooperacion) {
         this.proyectoCooperacion = proyectoCooperacion;
     }
-
+    
     public void recuperarMunicipios() {
         lstMunicipio = ubicacionFacade.getLstMunicipio(codigoDepartamento);
     }
-
+    
     public String[] getNivelI() {
         return nivelI;
     }
-
+    
     public void setNivelI(String[] nivelI) {
         this.nivelI = nivelI;
     }
-
+    
     public String[] getNivelII() {
         return nivelII;
     }
-
+    
     public void setNivelII(String[] nivelII) {
         this.nivelII = nivelII;
     }
-
+    
     public String[] getNivelIII() {
         return nivelIII;
     }
-
+    
     public void setNivelIII(String[] nivelIII) {
         this.nivelIII = nivelIII;
     }
-
+    
     public void buscarEntidadEducativa() {
         entidadEducativa = ubicacionFacade.findEntidadEducativaByCodigo(codigoEntidad);
         if (entidadEducativa != null) {
@@ -213,23 +268,23 @@ public class RegistrarCooperacionView implements Serializable {
             JsfUtil.mensajeAlerta("El código ingresado no existe.");
         }
     }
-
+    
     public void agregarGpsCe() {
         simpleModel = new DefaultMapModel();
-
+        
         if (geoEntidadEducativa.getGeoreferenciaX() != null && geoEntidadEducativa.getGeoreferenciaX().intValue() != 0
                 && geoEntidadEducativa.getGeoreferenciaY() != null && geoEntidadEducativa.getGeoreferenciaY().intValue() != 0) {
             LatLng coor = new LatLng(geoEntidadEducativa.getGeoreferenciaY().doubleValue(), geoEntidadEducativa.getGeoreferenciaX().doubleValue());
             simpleModel.addOverlay(new Marker(coor, "CE: " + geoEntidadEducativa.getCodigoEntidad()));
         }
     }
-
-    public void guardar() {
+    
+    public void guardar() throws IOException {
         Date tmpFecha;
         String titulo = RESOURCE_BUNDLE.getString("correo.respuesta.titulo");
         String mensajeParaCe = "";
         String mensajeParaUt = "";
-
+        
         for (String nivel : nivelI) {
             switch (nivel) {
                 case "1":
@@ -266,18 +321,18 @@ public class RegistrarCooperacionView implements Serializable {
                     break;
             }
         }
-
+        
         if (proyectoCooperacion.getIdProyecto() == null) {
             InternetAddress[] to;
             InternetAddress[] cc;
-
+            
             tmpFecha = new Date();
             proyectoCooperacion.setFechaInsercion(tmpFecha);
             proyectoCooperacion.setUsuarioInsercion(directorCe.getIdDirector());
             proyectoCooperacion.setCodigoEntidad(codigoEntidad);
             proyectoCooperacion.setEstadoEliminacion((short) 0);
-
-            switch (proyectoCooperacion.getIdTipoCooperacion().getIdTipoCooperacion().intValue()) {
+            
+            switch (idTipoCooperacion.intValue()) {
                 //RESPUESTA DE APROBACIÓN AUTOMATICA
                 case 2:
                 case 7:
@@ -286,7 +341,7 @@ public class RegistrarCooperacionView implements Serializable {
                 case 11:
                 case 14:
                     proyectoCooperacion.setIdEstado((short) 2);
-
+                    
                     mensajeParaCe = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprobacionAutomatica.mensaje"),
                             StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
                             entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
@@ -299,14 +354,12 @@ public class RegistrarCooperacionView implements Serializable {
                 case 5:
                 case 6:
                     proyectoCooperacion.setIdEstado((short) 1);
-
-                    if (proyectoCooperacion.getIdTipoCooperacion().getIdTipoCooperacion().intValue() != 5) {
+                    
+                    if (idTipoCooperacion.intValue() != 5) {
                         mensajeParaCe = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprobacionVoBo.mensaje"),
                                 StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
                                 entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
                                 proyectoCooperacion.getNombreProyecto(), proyectoCooperacion.getObjetivos());
-
-                        
                         
                     } else if (proyectoCooperacion.getMontoInversion().compareTo(new BigDecimal(5000)) == 1) {
                         //cooperaciones mayores a 5,000.00
@@ -321,17 +374,41 @@ public class RegistrarCooperacionView implements Serializable {
                     break;
                 default:
             }
-
+            
+            proyectoCooperacion.setIdCooperante(mantenimientoFacade.find(Cooperante.class, idCooperante));
+            proyectoCooperacion.setIdModalidad(mantenimientoFacade.find(ModalidadEjecucion.class, idModalidad));
+            proyectoCooperacion.setIdTipoCooperacion(mantenimientoFacade.find(TipoCooperacion.class, idTipoCooperacion));
+            proyectoCooperacion.setIdTipoInstrumento(mantenimientoFacade.find(TipoInstrumento.class, idTipoInstrumento));
+            
             if (mantenimientoFacade.guardar(proyectoCooperacion)) {
-                JsfUtil.mensajeInsert();
+                File folderProyecto = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyectoCooperacion.getIdProyecto() + File.separator);
+                if (!folderProyecto.exists()) {
+                    folderProyecto.mkdir();
+                }
+                
+                for (UploadedFile updFile : archivosDelProyecto) {
+                    Path folder = Paths.get(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyectoCooperacion.getIdProyecto() + File.separator + updFile.getFileName());
+                    Path arc;
+                    if (folder.toFile().exists()) {
+                        arc = folder;
+                    } else {
+                        arc = Files.createFile(folder);
+                    }
+                    
+                    try (InputStream input = updFile.getInputStream()) {
+                        Files.copy(input, arc, StandardCopyOption.REPLACE_EXISTING);
+                    }
+                }
+                
+                PrimeFaces.current().executeScript("PF('dlgAceptar').show()");
                 guardarHistoricoCambioEstado(tmpFecha, null, (short) 1);
                 List<Notificacion> lstNotificacion = catalogoFacade.findNotificacionByTipoCooperacion(proyectoCooperacion.getIdTipoCooperacion().getIdTipoCooperacion());
-
+                
                 String emailsTo;
                 String emailsCc = "";
-
+                
                 emailsTo = directorCe.getCorreoElectronico();
-
+                
                 for (Notificacion notificacion : lstNotificacion) {
                     if (notificacion.getTipoDestinatario() == 1) {
                         emailsTo = emailsTo.concat(",").concat(notificacion.getCorreo());
@@ -343,7 +420,7 @@ public class RegistrarCooperacionView implements Serializable {
                         }
                     }
                 }
-
+                
                 to = new InternetAddress[emailsTo.split(",").length];
                 cc = new InternetAddress[emailsCc.split(",").length];
                 try {
@@ -353,13 +430,13 @@ public class RegistrarCooperacionView implements Serializable {
                     for (int i = 0; i < emailsCc.split(",").length; i++) {
                         cc[i] = new InternetAddress(emailsCc.split(",")[i]);
                     }
-
+                    
                 } catch (AddressException ex) {
                     Logger.getLogger(RegistrarCooperacionView.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
+                
                 Session session = credencialesView.getMailSession();
-
+                
                 eMailFacade.enviarMail(to, cc,
                         directorCe.getCorreoElectronico(), titulo, mensajeParaCe,
                         session);
@@ -370,7 +447,7 @@ public class RegistrarCooperacionView implements Serializable {
             mantenimientoFacade.modificar(proyectoCooperacion);
         }
     }
-
+    
     private void guardarHistoricoCambioEstado(Date tmpFecha, Short cambioAnt, Short cambioNew) {
         HisCambioEstadoPro historico = new HisCambioEstadoPro();
         historico.setFechaCambio(tmpFecha);
@@ -378,7 +455,12 @@ public class RegistrarCooperacionView implements Serializable {
         historico.setIdEstadoNew(cambioNew);
         historico.setIdProyecto(proyectoCooperacion.getIdProyecto());
         historico.setUsuarioCambio(directorCe.getIdDirector());
-
+        
         mantenimientoFacade.guardar(historico);
+    }
+    
+    public void handleFileUpload(FileUploadEvent event) {
+        archivosDelProyecto.add(event.getFile());
+        PrimeFaces.current().ajax().update("lstArchivosDelProyecto");
     }
 }

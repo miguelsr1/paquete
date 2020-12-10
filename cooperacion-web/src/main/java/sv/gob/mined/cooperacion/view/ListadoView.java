@@ -25,6 +25,9 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.primefaces.PrimeFaces;
+import org.primefaces.context.PrimeFacesContext;
+import org.primefaces.event.map.OverlaySelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.map.DefaultMapModel;
@@ -47,14 +50,18 @@ import sv.gob.mined.cooperacion.model.paquete.Municipio;
 @ViewScoped
 public class ListadoView implements Serializable {
 
+    private Boolean dlgShowInfoCe = false;
+    
     private Short idEstado;
-    private BigDecimal idMunicipio;
+    
     private String nombreArchivo = "";
     private String lblBottonEnviar = "";
     private String codigoDepartamento;
     private String where;
     private final String posicionInicial = "13.749655, -88.822362";
+    
     private Long idProyecto;
+    private BigDecimal idMunicipio;
 
     private ProyectoCooperacion proyecto;
     private ListadoProyectoDto proyectoDto;
@@ -118,6 +125,10 @@ public class ListadoView implements Serializable {
         }
 
         simpleModel = new DefaultMapModel();
+    }
+    
+    public Boolean getDlgShowInfoCe() {
+        return dlgShowInfoCe;
     }
 
     public String getNombreArchivo() {
@@ -231,10 +242,10 @@ public class ListadoView implements Serializable {
 
     public void recuperarLstProyectos() {
         String whereTmp = "";
-        if (!codigoDepartamento.equals("0")) {
+        if (codigoDepartamento != null && !codigoDepartamento.equals("0")) {
             whereTmp = " and mun.codigo_departamento = '" + codigoDepartamento + "'";
         }
-        if (!codigoDepartamento.equals("0") && idMunicipio != null &&  idMunicipio != BigDecimal.ZERO) {
+        if (codigoDepartamento != null && !codigoDepartamento.equals("0") && idMunicipio != null && idMunicipio != BigDecimal.ZERO) {
             whereTmp += " and mun.id_municipio=" + idMunicipio + "";
         }
         if (idEstado != null && idEstado != 0) {
@@ -280,6 +291,8 @@ public class ListadoView implements Serializable {
 
             simpleModel.addOverlay(new Marker(coor, "CE: " + pro.getCodigoEntidad(), "", urlIcono));
         }
+        
+        PrimeFaces.current().executeScript("initialize()");
     }
 
     public void buscarProyecto() {
@@ -318,5 +331,12 @@ public class ListadoView implements Serializable {
                 .build();
 
         return file;
+    }
+
+    public void onMarkerSelect(OverlaySelectEvent event) {
+        Marker marker = (Marker) event.getOverlay();
+        dlgShowInfoCe = true;
+        String codigoEntidad = marker.getTitle().replace("CE: ", "");
+        
     }
 }

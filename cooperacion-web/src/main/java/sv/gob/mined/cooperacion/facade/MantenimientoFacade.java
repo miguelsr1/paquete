@@ -6,6 +6,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import sv.gob.mined.cooperacion.model.ProyectoCooperacion;
 import sv.gob.mined.cooperacion.model.dto.ListadoProyectoDto;
 import sv.gob.mined.cooperacion.util.QueryNativas;
 
@@ -38,16 +39,6 @@ public class MantenimientoFacade {
         return q.getResultList();
     }
 
-    /*public List<ListadoProyectoDto> findProyectosByDepartamento(String codigoDepartamento) {
-        Query q = emCooperacion.createNativeQuery(QueryNativas.sqlListadoProyectos + " and mun.codigo_departamento='" + codigoDepartamento + "' ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
-        return q.getResultList();
-    }
-
-    public List<ListadoProyectoDto> findProyectosByMunicipio(BigDecimal idMunicipio) {
-        Query q = emCooperacion.createNativeQuery(QueryNativas.sqlListadoProyectos + " and mun.id_municipio=" + idMunicipio + " ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
-        return q.getResultList();
-    }*/
-
     public List<ListadoProyectoDto> findProyectosByWhereCustom(String where) {
         Query q = emCooperacion.createNativeQuery(QueryNativas.sqlListadoProyectos + where + " ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
         return q.getResultList();
@@ -74,13 +65,10 @@ public class MantenimientoFacade {
         return q.getResultList();
     }
 
-    /*public List<ListadoProyectoDto> findProyectosByCodigoEntidad(String codigoEntidad) {
-        Query q = emCooperacion.createNativeQuery(QueryNativas.sqlListadoProyectos + " and vw.codigo_entidad = '" + codigoEntidad + "' ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
+    public List<ProyectoCooperacion> findProyectosByCodEntAndAnho(String codigoEntidad, String anho){
+        Query q = emCooperacion.createQuery("SELECT p FROM ProyectoCooperacion p WHERE p.codigoEntidad=:codEnt and p.anho=:anho", ProyectoCooperacion.class);
+        q.setParameter("codEnt", codigoEntidad);
+        q.setParameter("anho", anho);
         return q.getResultList();
-    }*/
-
-    /*public List<ListadoProyectoDto> findProyectosByUT(String codigoEntidad) {
-        Query q = emCooperacion.createNativeQuery(QueryNativas.sqlListadoProyectos + " and vw.codigo_entidad = '" + codigoEntidad + "' ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
-        return q.getResultList();
-    }*/
+    }
 }

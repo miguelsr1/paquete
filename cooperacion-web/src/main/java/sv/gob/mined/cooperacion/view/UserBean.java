@@ -7,6 +7,7 @@ package sv.gob.mined.cooperacion.view;
 
 import javax.inject.Named;
 import java.io.Serializable;
+import javax.annotation.PostConstruct;
 import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ComponentSystemEvent;
@@ -20,11 +21,9 @@ import javax.faces.view.ViewScoped;
 @ViewScoped
 public class UserBean implements Serializable {
 
-    public void isAdmin(ComponentSystemEvent event) {
-
+    private void isSessionValida(String role) {
         FacesContext fc = FacesContext.getCurrentInstance();
-
-        if (!"ADMIN".equals(fc.getExternalContext().getSessionMap().get("role"))) {
+        if (fc.getExternalContext().getSessionMap().get("role") == null || !role.equals(fc.getExternalContext().getSessionMap().get("role"))) {
             ConfigurableNavigationHandler nav
                     = (ConfigurableNavigationHandler) fc.getApplication().getNavigationHandler();
 
@@ -32,21 +31,16 @@ public class UserBean implements Serializable {
         }
     }
 
-    public void isCentroEscolar(ComponentSystemEvent event) {
+    public void validarAdmin(ComponentSystemEvent event) {
+        isSessionValida("ADMIN");
+    }
 
-        FacesContext fc = FacesContext.getCurrentInstance();
-
-        if (!"CE".equals(fc.getExternalContext().getSessionMap().get("role"))) {
-            ConfigurableNavigationHandler nav
-                    = (ConfigurableNavigationHandler) fc.getApplication().getNavigationHandler();
-
-            nav.performNavigation("access-denied.mined");
-        }
+    public void validarCentroEscolar(ComponentSystemEvent event) {
+        isSessionValida("CE");
     }
 
     public Boolean getCentroEscolar() {
         FacesContext fc = FacesContext.getCurrentInstance();
-
         return "CE".equals(fc.getExternalContext().getSessionMap().get("role"));
     }
 
