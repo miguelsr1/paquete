@@ -11,22 +11,23 @@
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
             <meta name="apple-mobile-web-app-capable" content="yes" />
         </f:facet>
-        <title>MINEDUCYT - Cooperación a Centros Educativos</title>
+        <title>Cooperación a Centros Educativos - Error</title>
     </h:head>
 
-    <h:body styleClass="exception-body access">
+    <h:body styleClass="exception-body notfound">
         <div class="exception-panel">
             <div class="exception-panel-content">
-                <p:graphicImage name="images/exception/access-icon.png" library="paradise-layout" />
-                <h1>Acceso denegado</h1>
-                <p>No tiene los permisos necesarios para acceder a este recurso.</p>
+                <p:graphicImage name="images/exception/404-icon.png" library="paradise-layout" />
+                <h1>404</h1>
+                <p>El recurso solicitado no existe.</p>
             </div>
-
+            
             <div class="exception-panel-footer">
-                <p:button value="Inicio" styleClass="blue-btn" outcome="inicio" />
+                <p:button value="Inicio" styleClass="blue-btn" outcome="validar" />
             </div>
         </div>
-
+    
         <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout" />
     </h:body>
-</html>      
+
+</html>

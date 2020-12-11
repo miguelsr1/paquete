@@ -808,7 +808,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                     proveedorEJB.guardar(precio);
                 });
                 lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), getDetalleProcesoAdq());
-                
+
                 msj = "Actualización exitosa";
 
                 if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 8) { // anho mayor de 2020
@@ -819,7 +819,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                         }
                     }
                 }
-                
+
                 JsfUtil.mensajeInformacion(msj);
 
             } else {
@@ -1709,5 +1709,9 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         if (resetUsuario && continuar) {
             proveedorEJB.resetActivacion(numeroNit);
         }
+    }
+
+    public void generarCodigoSeguridad() {
+        proveedorEJB.generarCodigoSeguridad(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq());
     }
 }

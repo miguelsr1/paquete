@@ -40,6 +40,9 @@
                             <p:outputLabel value="Numero nit:" />
                             <p:inputText value="#{proveedorController.numeroNit}"/>
 
+                            
+                            <p:commandButton value="Generar codigos" icon="fa fa-print" disabled="false" action="#{proveedorController.generarCodigoSeguridad()}" />
+                            
                             <f:facet name="footer">
                                 <p:commandButton value="Generar no Items" icon="fa fa-print" disabled="false" action="#{proveedorController.calcularNoItems()}" />
                                 <p:commandButton value="Generar item y precios by EMP" icon="fa fa-print" disabled="false" action="#{proveedorController.calcularNoItemByNit()}" />
