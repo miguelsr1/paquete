@@ -88,37 +88,12 @@
                                             <p:commandButton id="btnSend" widgetVar="btnSend" value="enviar" action="#{envioArchivoView.enviarCorreos()}"
                                                              update="outPrincipal"/>
                                         </p:panel>
-                                        <p:panel visible="false">
-                                            <p:inputText value="#{envioArchivoView.idEnvio}" />
-                                            <p:commandButton id="btnSendProceso" widgetVar="btnSend" value="enviar" action="#{envioArchivoView.enviarProcesoPendiente()}"
-                                                             update="outPrincipal"/>
-                                        </p:panel>
                                     </p:outputPanel>
                                 </p:outputPanel>
 
-                                <p:dialog header="Información" id="dlgEspera" widgetVar="dlgEspera" closable="false" width="200" height="90" modal="true">
-                                    <h:panelGrid columns="1" style="width: 100%; text-align: center;">
-                                        <p:outputLabel value="Por favor espere mientras se carga el archivo" style="font-size: 14px;"/>
-                                        <br/>   
-                                        <i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size: 16px"></i>
-                                    </h:panelGrid>
-                                </p:dialog>
-
-                                <p:dialog header="Información" id="dlgFinal" widgetVar="dlgFinal" closable="false" width="200" height="90" modal="true">
-                                    <h:panelGrid columns="1" style="width: 100%; text-align: center;">
-                                        <p:outputLabel value="Finalizo el proceso de envio de correos." style="font-size: 14px;"/>
-                                        <br/>   
-                                        <i class="fa fa-check-circle" style="font-size: 16px"></i>
-                                    </h:panelGrid>
-                                    <f:facet name="footer">
-                                        <p:commandButton value="Aceptar"/>
-                                    </f:facet>
-                                </p:dialog>
-
-                                
                                 <p:inputText value="#{envioArchivoView.codigoDepartamento}" />
                                 <p:commandButton value="separar" action="#{envioArchivoView.separar()}" />
-                                
+
                             </h:form>
                         </div>
                     </div>

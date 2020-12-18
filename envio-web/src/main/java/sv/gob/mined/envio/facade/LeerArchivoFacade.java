@@ -181,7 +181,6 @@ public class LeerArchivoFacade {
             String valores;
             String titulos = "";
 
-
             eMasivo.setArchivo(null);
             eMasivo.setCorreRemitente(remitente);
             eMasivo.setFechaEnvio(new Date());
@@ -206,7 +205,6 @@ public class LeerArchivoFacade {
             eMasivo.setMensaje(mensaje);
             eMasivo.setTitulo(titulo);
 
-            
             idEnvio = preFacade.guardarEnvio(eMasivo);
 
             //almacenar imagenes del mensaje
@@ -264,16 +262,13 @@ public class LeerArchivoFacade {
         PDDocument document = null;
 
         int interacion;
-        int indexPosicion;
         int contadorDeCortes;
         int siguienteInteracion = 0;
-        SimpleDateFormat sdf = new SimpleDateFormat("HHmmssSSS");
 
         String nie = "";
         String cadenaDeBusqueda;
         String pathArchivo;
 
-        //List<Destinatarios> lstCorreo = preFacade.getLstDestinatarioByCodigoDepartamento(codDepa);
         if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
             pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_windows");
         } else {
@@ -281,6 +276,11 @@ public class LeerArchivoFacade {
         }
 
         try {
+            File folderDepa = new File(pathArchivo + File.separator + "notas" + File.separator + codDepa);
+            if (!folderDepa.exists()) {
+                folderDepa.mkdir();
+            }
+
             document = PDDocument.load(new File(pathArchivo + File.separator + "notas" + File.separator + codDepa.concat(".pdf")));
             Splitter splitter = new Splitter();
             splitter.setStartPage(1);
@@ -296,29 +296,18 @@ public class LeerArchivoFacade {
             }
 
             cadenaDeBusqueda = "NIE:";
-            indexPosicion = 15;
-
             do {
                 interacion--;
-
+                String codigo = "";
                 for (PDDocument pd : splitter.split(document)) {
-                    String codTemp = "";
-
                     try {
-                        codTemp = getNieEstudiante(pd, cadenaDeBusqueda, nie);
+                        codigo = getNieEstudiante(pd, cadenaDeBusqueda, nie).trim();
 
-                        //obtener codigo del empleado de la boleta
-                        String codigo = codTemp.trim();
-
-                        /*File carpetaCodigo = new File(pathArchivo + File.separator + "notas" + File.separator + codigo);
-                        if (!carpetaCodigo.exists()) {
-                            carpetaCodigo.mkdir();
-                        }*/
                         //crear archivo pdf
                         pd.save(pathArchivo + File.separator + "notas" + File.separator + codigo + ".pdf");
 
                     } catch (StringIndexOutOfBoundsException e) {
-                        Logger.getLogger(LeerArchivoFacade.class.getName()).log(Level.SEVERE, "DEPA {0} - Error obteniendo el nip del docente{1}", new Object[]{codDepa, codTemp});
+                        Logger.getLogger(LeerArchivoFacade.class.getName()).log(Level.SEVERE, "DEPA {0} - Error obteniendo el nip del docente{1}", new Object[]{codDepa, codigo});
                     }
 
                     pd.close();
@@ -358,7 +347,7 @@ public class LeerArchivoFacade {
         tStripper.setEndPage(1);
         String pdfFileInText = tStripper.getText(pDDocument);
 
-        String strEnd = "@";
+        String strEnd = strEndIdentifier;
         int endInddex = pdfFileInText.indexOf(strEnd) + 4;
         if (endInddex != -1) {
             int posEnd = pdfFileInText.indexOf("Centro Educativo"); //503

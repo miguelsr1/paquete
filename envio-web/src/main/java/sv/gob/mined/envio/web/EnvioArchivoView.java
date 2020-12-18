@@ -244,12 +244,6 @@ public class EnvioArchivoView {
         reemplazarArchivo();
     }
     
-    public void enviarProcesoPendiente() {
-        EnvioMasivo em = persistenciaFacade.findEnvio(idEnvio);
-        procesoFacade.envioPendiente(remitente, password, em.getTitulo(), em.getMensaje(), persistenciaFacade.findDetalleEnvio(idEnvio), transport, mailSession, server, port);
-        JsfUtil.mensajeInformacion("El proceso de envio de correos se realizara en background.");
-    }
-    
     private Boolean validarArchivo(InputStream input) throws IOException {
         Workbook wb = WorkbookFactory.create(input);
         Sheet sheet = wb.getSheetAt(0);

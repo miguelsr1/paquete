@@ -11,6 +11,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -243,12 +247,11 @@ public class ProcesoFacade {
         //String mensaje = "";
         List<BigDecimal> correosEnviados = new ArrayList<>();
         List<Destinatarios> lstDestinatarios = persistenciaFacade.getLstDestinatarioByCodigoDepartamento(codigoDepartamento);
-        List<Remitentes> lstRemitentes = persistenciaFacade.getLstRemitentes(codigoDepartamento.equals("09"));
+        List<Remitentes> lstRemitentes = persistenciaFacade.getLstRemitentes(Integer.parseInt(codigoDepartamento) % 2 == 0);
 
         EnvioMasivo envioMasivo = persistenciaFacade.findEnvio(idEnvio);
         try {
             try {
-
                 String pathArchivo;
 
                 if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
@@ -256,6 +259,8 @@ public class ProcesoFacade {
                 } else {
                     pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_linux");
                 }
+                
+                File folderDepa = new File(pathArchivo + File.separator + "notas" + File.separator + codigoDepartamento);
 
                 if (lstRemitentes.size() > 1) {
                     if (transport != null && transport.isConnected()) {
@@ -307,12 +312,18 @@ public class ProcesoFacade {
                         }
 
                         Address from = new InternetAddress(remitente);
-                        envioDeCorreoArchivo(from, transport, destinatario, mensaje, titulo, mailSession, server, port, remitente, password, idEnvio);
+                        envioDeCorreoArchivo(from, transport, destinatario, mensaje, titulo, mailSession, server, port, remitente, password, idEnvio, nota, pathArchivo);
                         correosEnviandos++;
 
-                        Logger.getLogger(ProcesoFacade.class.getName()).log(Level.INFO, "Numero {0} - {1}", new Object[]{remitente, cont});
+                        try {
+                            Path temp = Files.move(Paths.get(nota.getAbsolutePath()),
+                                    Paths.get(folderDepa.getAbsolutePath() + File.separator + nota.getName()), StandardCopyOption.REPLACE_EXISTING);
+                        } catch (IOException ex) {
+                            Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
+                        }
 
-                        //correosEnviados.add(detalleEnvio.getIdDetalle());
+                        Logger.getLogger(ProcesoFacade.class.getName()).log(Level.INFO, "Numero {0} - {1} - {2}", new Object[]{cont, codigoDepartamento, destinatario.getNie()});
+
                         cont++;
                         contReset++;
 
@@ -528,7 +539,7 @@ public class ProcesoFacade {
     }
 
     public void envioDeCorreoArchivo(Address from, Transport transport, Destinatarios destinatario, String mensaje, String titulo,
-            Session mailSession, String server, String port, String remitente, String password, BigDecimal idEnvio) throws MessagingException, IOException {
+            Session mailSession, String server, String port, String remitente, String password, BigDecimal idEnvio, File nota, String pathArchivo) throws MessagingException, IOException {
         if (transport.isConnected()) {
 
         } else {
@@ -537,17 +548,7 @@ public class ProcesoFacade {
 
         try {
             String msjTemp = mensaje;
-            String pathArchivo;
-
-            if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
-                pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_windows");
-            } else {
-                pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_linux");
-            }
-
-            //for (String valor : valores.split("&&")) {
             msjTemp = msjTemp.replace(":NOMBRE:", destinatario.getNombre());
-            //}
 
             MimeMessage message = new MimeMessage(mailSession);
 
@@ -555,7 +556,6 @@ public class ProcesoFacade {
 
             InternetAddress[] address = {new InternetAddress(destinatario.getCorreo())};
             message.setRecipients(Message.RecipientType.TO, address);
-            //message.setRecipients(Message.RecipientType.BCC, "miguel.sanchez@admin.mined.edu.sv");
 
             BodyPart messageBodyPart1 = new MimeBodyPart();
 
@@ -565,14 +565,13 @@ public class ProcesoFacade {
 
             addImagenAlMensaje(idEnvio, multipart);
 
-            addAttachment(new File(pathArchivo + File.separator + "notas" + File.separator + destinatario.getNie().concat(".pdf")), multipart);
+            addAttachment(nota, multipart);
 
             message.setContent(multipart);
             message.setSubject(titulo, "UTF-8");
             message.saveChanges();
 
             transport.sendMessage(message, message.getAllRecipients());
-
         } catch (AddressException ex) {
             System.out.println("Error 1");
             if (transport.isConnected()) {
