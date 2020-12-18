@@ -84,8 +84,8 @@ public class ProcesoFacade {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     @TransactionTimeout(unit = TimeUnit.HOURS, value = 2)
     public void enviarCorreosArchivo(String titulo, String mensaje, Session mailSession, Transport transport,
-            String remitente, String password, String server, String port, String codigoDepartamento) {
-        iniciarArchivo(titulo, mensaje, mailSession, transport, remitente, password, server, port, codigoDepartamento);
+            String remitente, String password, String server, String port, String codigoDepartamento, BigDecimal idEnvio) {
+        iniciarArchivo(titulo, mensaje, mailSession, transport, remitente, password, server, port, codigoDepartamento, idEnvio);
     }
 
     private void iniciar(String pathArchivo, String titulo, String mensaje, Session mailSession, Transport transport,
@@ -97,10 +97,12 @@ public class ProcesoFacade {
     }
 
     private void iniciarArchivo(String titulo, String mensaje, Session mailSession, Transport transport,
-            String remitente, String password, String server, String port, String codigoDepartamento) {
+            String remitente, String password, String server, String port, String codigoDepartamento, BigDecimal idEnvio) {
         System.out.println("ok");
-        BigDecimal idEnvio = leerArchivoFacade.guardarRegistros(remitente, titulo, mensaje);
-        envioArchivo(remitente, password, titulo, mensaje, codigoDepartamento, transport, mailSession, server, port, idEnvio);
+        if (idEnvio == null) {
+            idEnvio = leerArchivoFacade.guardarRegistros(remitente, titulo, mensaje);
+        }
+        envioArchivo(remitente, password, codigoDepartamento, transport, mailSession, server, port, idEnvio);
         System.out.println("fin");
     }
 
@@ -233,7 +235,7 @@ public class ProcesoFacade {
     }
 
     @SuppressWarnings("empty-statement")
-    private void envioArchivo(String remitente, String password, String titulo, String mensaje,
+    private void envioArchivo(String remitente, String password,
             String codigoDepartamento,
             Transport transport, Session mailSession,
             String server, String port, BigDecimal idEnvio) {
@@ -244,22 +246,24 @@ public class ProcesoFacade {
         Integer numBloque = 1;
         Integer correosEnviandos = 0;
         Integer serverCorreo = 0;
-        //String mensaje = "";
-        List<BigDecimal> correosEnviados = new ArrayList<>();
+        String pathArchivo;
+        String titulo;
+        String mensaje;
+
         List<Destinatarios> lstDestinatarios = persistenciaFacade.getLstDestinatarioByCodigoDepartamento(codigoDepartamento);
         List<Remitentes> lstRemitentes = persistenciaFacade.getLstRemitentes(Integer.parseInt(codigoDepartamento) % 2 == 0);
+        System.out.println("Total de archivos a enviar " + lstDestinatarios.size());
 
         EnvioMasivo envioMasivo = persistenciaFacade.findEnvio(idEnvio);
         try {
             try {
-                String pathArchivo;
 
                 if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
                     pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_windows");
                 } else {
                     pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_linux");
                 }
-                
+
                 File folderDepa = new File(pathArchivo + File.separator + "notas" + File.separator + codigoDepartamento);
 
                 if (lstRemitentes.size() > 1) {
@@ -284,7 +288,7 @@ public class ProcesoFacade {
                         serverCorreo = 2;
                     }
                 }
-
+                titulo = envioMasivo.getTitulo();
                 mensaje = envioMasivo.getMensaje();
 
                 for (Destinatarios destinatario : lstDestinatarios) {
@@ -371,7 +375,7 @@ public class ProcesoFacade {
             }
             transport.close();
 
-            persistenciaFacade.actualizarDetalleEnviado(correosEnviados);
+            //persistenciaFacade.actualizarDetalleEnviado(correosEnviados);
         } catch (NoSuchProviderException ex) {
             Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MessagingException | IOException ex) {

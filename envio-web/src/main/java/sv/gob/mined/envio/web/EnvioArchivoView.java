@@ -231,7 +231,7 @@ public class EnvioArchivoView {
     }
     
     public void enviarCorreos() {
-        procesoFacade.enviarCorreosArchivo(titulo, mensaje, mailSession, transport, remitente, password, server, port, codigoDepartamento);
+        procesoFacade.enviarCorreosArchivo(titulo, mensaje, mailSession, transport, remitente, password, server, port, codigoDepartamento, idEnvio);
         JsfUtil.mensajeInformacion("El proceso de envio de correos se realizara en background.");
         limpiarFormato();
     }
