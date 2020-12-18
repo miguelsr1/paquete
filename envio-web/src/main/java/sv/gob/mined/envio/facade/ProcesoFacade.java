@@ -83,9 +83,8 @@ public class ProcesoFacade {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     @TransactionTimeout(unit = TimeUnit.HOURS, value = 2)
-    public void enviarCorreosArchivo(String titulo, String mensaje, Session mailSession, Transport transport,
-            String remitente, String password, String server, String port, String codigoDepartamento, BigDecimal idEnvio) {
-        iniciarArchivo(titulo, mensaje, mailSession, transport, remitente, password, server, port, codigoDepartamento, idEnvio);
+    public void enviarCorreosArchivo(String titulo, String mensaje, String remitente, String password, String codigoDepartamento, BigDecimal idEnvio) {
+        iniciarArchivo(titulo, mensaje, remitente, password, codigoDepartamento, idEnvio);
     }
 
     private void iniciar(String pathArchivo, String titulo, String mensaje, Session mailSession, Transport transport,
@@ -96,13 +95,13 @@ public class ProcesoFacade {
         System.out.println("fin");
     }
 
-    private void iniciarArchivo(String titulo, String mensaje, Session mailSession, Transport transport,
-            String remitente, String password, String server, String port, String codigoDepartamento, BigDecimal idEnvio) {
+    private void iniciarArchivo(String titulo, String mensaje,
+            String remitente, String password, String codigoDepartamento, BigDecimal idEnvio) {
         System.out.println("ok");
         if (idEnvio == null) {
             idEnvio = leerArchivoFacade.guardarRegistros(remitente, titulo, mensaje);
         }
-        envioArchivo(remitente, password, codigoDepartamento, transport, mailSession, server, port, idEnvio);
+        envioArchivo(remitente, password, codigoDepartamento, idEnvio);
         System.out.println("fin");
     }
 
@@ -237,18 +236,21 @@ public class ProcesoFacade {
     @SuppressWarnings("empty-statement")
     private void envioArchivo(String remitente, String password,
             String codigoDepartamento,
-            Transport transport, Session mailSession,
-            String server, String port, BigDecimal idEnvio) {
+            BigDecimal idEnvio) {
         Boolean envioPorBloque = false;
         Integer cont = 1;
         Integer contReset = 1;
         Integer maxCorreoEnviado = 0;
         Integer numBloque = 1;
         Integer correosEnviandos = 0;
-        Integer serverCorreo = 0;
         String pathArchivo;
         String titulo;
         String mensaje;
+        String server;
+        String port;
+
+        Transport transport = null;
+        Session mailSession = null;
 
         List<Destinatarios> lstDestinatarios = persistenciaFacade.getLstDestinatarioByCodigoDepartamento(codigoDepartamento);
         List<Remitentes> lstRemitentes = persistenciaFacade.getLstRemitentes(Integer.parseInt(codigoDepartamento) % 2 == 0);
@@ -257,7 +259,6 @@ public class ProcesoFacade {
         EnvioMasivo envioMasivo = persistenciaFacade.findEnvio(idEnvio);
         try {
             try {
-
                 if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
                     pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_windows");
                 } else {
@@ -266,28 +267,11 @@ public class ProcesoFacade {
 
                 File folderDepa = new File(pathArchivo + File.separator + "notas" + File.separator + codigoDepartamento);
 
-                if (lstRemitentes.size() > 1) {
-                    if (transport != null && transport.isConnected()) {
-                        transport.close();
-                    }
+                //server gmail
+                port = "587";
+                server = "smtp.gmail.com";
+                maxCorreoEnviado = 70; //1999;
 
-                    mailSession = null;
-
-                    envioPorBloque = true;
-                    if (lstRemitentes.get(0).getCorreo().contains("admin.mined.edu.sv")) {
-                        //server office365
-                        port = "587";
-                        server = "smtp.office365.com";
-                        maxCorreoEnviado = 5; //9999;
-                        serverCorreo = 1;
-                    } else {
-                        //server gmail
-                        port = "587";
-                        server = "smtp.gmail.com";
-                        maxCorreoEnviado = 70; //1999;
-                        serverCorreo = 2;
-                    }
-                }
                 titulo = envioMasivo.getTitulo();
                 mensaje = envioMasivo.getMensaje();
 
@@ -301,14 +285,7 @@ public class ProcesoFacade {
                             password = lstRemitentes.get(numBloque).getClave();
 
                             if (mailSession == null) {
-                                switch (serverCorreo) {
-                                    case 1:
-                                        mailSession = eMailFacade.getMailSessionOffice(mailSession, remitente, password);
-                                        break;
-                                    case 2:
-                                        mailSession = eMailFacade.getMailSessionGmail(mailSession, remitente, password);
-                                        break;
-                                }
+                                mailSession = eMailFacade.getMailSessionGmail(mailSession, remitente, password);
 
                                 transport = mailSession.getTransport("smtp");
                                 transport.connect(server, Integer.parseInt(port), remitente, password);
@@ -353,15 +330,7 @@ public class ProcesoFacade {
                                 mailSession = null;
 
                                 if (mailSession == null) {
-                                    switch (serverCorreo) {
-                                        case 1:
-                                            mailSession = eMailFacade.getMailSessionOffice(mailSession, remitente, password);
-                                            break;
-                                        case 2:
-                                            mailSession = eMailFacade.getMailSessionGmail(mailSession, remitente, password);
-                                            break;
-                                    }
-
+                                    mailSession = eMailFacade.getMailSessionGmail(mailSession, remitente, password);
                                     transport = mailSession.getTransport("smtp");
                                     transport.connect(server, Integer.parseInt(port), remitente, password);
 

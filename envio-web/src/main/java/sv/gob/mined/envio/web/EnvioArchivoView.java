@@ -39,7 +39,6 @@ import org.primefaces.model.file.UploadedFile;
 import sv.gob.mined.envio.facade.LeerArchivoFacade;
 import sv.gob.mined.envio.facade.PersistenciaFacade;
 import sv.gob.mined.envio.facade.ProcesoFacade;
-import sv.gob.mined.envio.model.EnvioMasivo;
 import sv.gob.mined.utils.jsf.JsfUtil;
 
 /**
@@ -49,13 +48,13 @@ import sv.gob.mined.utils.jsf.JsfUtil;
 @ManagedBean
 @SessionScoped
 public class EnvioArchivoView {
-    
+
     private Boolean showUploadFile = true;
-    
+
     private BigDecimal idEnvio;
-    
+
     private String remitente;
-    
+
     private String titulo;
     private String mensaje;
     private String pathArchivo;
@@ -63,47 +62,28 @@ public class EnvioArchivoView {
     private String server;
     private String password;
     private String codigoDepartamento;
-    
+
     private UploadedFile file;
-    
+
     private Transport transport;
     private Session mailSession;
-    
+
     @Inject
     private ProcesoFacade procesoFacade;
-    
-    @Inject
-    private PersistenciaFacade persistenciaFacade;
+
     @Inject
     private LeerArchivoFacade leerArchivoFacade;
-    
+
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("parametros");
-    
+
     public EnvioArchivoView() {
     }
-    
+
     @PostConstruct
     public void init() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        if (context.getExternalContext().getSessionMap().containsKey("sessionMail")) {
-            try {
-                mailSession = (Session) context.getExternalContext().getSessionMap().get("sessionMail");
-                server = (String) context.getExternalContext().getSessionMap().get("server");
-                port = (String) context.getExternalContext().getSessionMap().get("port");
-                remitente = (String) context.getExternalContext().getSessionMap().get("remitente");
-                password = (String) context.getExternalContext().getSessionMap().get("password");
-                
-                transport = mailSession.getTransport("smtp");
-                transport.connect(server, Integer.parseInt(port), remitente, password);
-                
-            } catch (NoSuchProviderException ex) {
-                Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (MessagingException ex) {
-                Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+
     }
-    
+
     @PreDestroy
     public void destroy() {
         if (!transport.isConnected()) {
@@ -119,47 +99,47 @@ public class EnvioArchivoView {
     public String getCodigoDepartamento() {
         return codigoDepartamento;
     }
-    
+
     public void setCodigoDepartamento(String codigoDepartamento) {
         this.codigoDepartamento = codigoDepartamento;
     }
-    
+
     public BigDecimal getIdEnvio() {
         return idEnvio;
     }
-    
+
     public void setIdEnvio(BigDecimal idEnvio) {
         this.idEnvio = idEnvio;
     }
-    
+
     public String getRemitente() {
         return remitente;
     }
-    
+
     public String getTitulo() {
         return titulo;
     }
-    
+
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }
-    
+
     public String getMensaje() {
         return mensaje;
     }
-    
+
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
     }
-    
+
     public UploadedFile getFile() {
         return file;
     }
-    
+
     public void setFile(UploadedFile file) {
         this.file = file;
     }
-    
+
     public Boolean getShowUploadFile() {
         return showUploadFile;
     }
@@ -167,9 +147,9 @@ public class EnvioArchivoView {
 
     public void handleFileUpload(FileUploadEvent event) throws IOException {
         file = event.getFile();
-        
+
         try {
-            
+
             if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
                 pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_windows") + File.separator + file.getFileName();
             } else {
@@ -177,13 +157,13 @@ public class EnvioArchivoView {
             }
             Path folder = Paths.get(pathArchivo);
             Path arc;
-            
+
             if (folder.toFile().exists()) {
                 arc = folder;
             } else {
                 arc = Files.createFile(folder);
             }
-            
+
             try (InputStream input = file.getInputStream()) {
                 if (file.getContentType().equals("application/pdf")) {
                     pathArchivo = folder.toString();
@@ -197,7 +177,7 @@ public class EnvioArchivoView {
                     JsfUtil.mensajeError("El archivo cargado no contiene el formato requerido");
                     showUploadFile = true;
                 }
-                
+
                 input.close();
             } catch (IOException ex) {
                 Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
@@ -208,34 +188,33 @@ public class EnvioArchivoView {
             JsfUtil.mensajeError("Ah ocurrido un error en la carga del archivo, por favor dar aviso al adminstrado de la página");
         }
     }
-    
+
     public void validarFormulario() {
         String error = "";
-        
-        if (titulo == null || titulo.trim().isEmpty()) {
+
+        /*if (titulo == null || titulo.trim().isEmpty()) {
             error += "Debe de ingresar un Titulo del Mensaje.<br/>";
         }
         if (mensaje == null || mensaje.trim().isEmpty()) {
             error += "Debe de ingresar el Mensaje a enviar.<br/>";
         }
 
-        /*if (mensaje.length() > 4000 && mensaje.contains("data:image")) {
+        if (mensaje.length() > 4000 && mensaje.contains("data:image")) {
             error += "La imagen es muy grande por favor, reduzca el peso de la imagen.<br/>";
         }*/
-
         if (error.isEmpty()) {
             PrimeFaces.current().executeScript("onClick('btnSend');");
         } else {
             JsfUtil.mensajeError("<br/>" + error);
         }
     }
-    
+
     public void enviarCorreos() {
-        procesoFacade.enviarCorreosArchivo(titulo, mensaje, mailSession, transport, remitente, password, server, port, codigoDepartamento, idEnvio);
+        procesoFacade.enviarCorreosArchivo(titulo, mensaje, remitente, password, codigoDepartamento, idEnvio);
         JsfUtil.mensajeInformacion("El proceso de envio de correos se realizara en background.");
         limpiarFormato();
     }
-    
+
     private void limpiarFormato() {
         titulo = "";
         mensaje = "";
@@ -243,26 +222,26 @@ public class EnvioArchivoView {
         pathArchivo = "";
         reemplazarArchivo();
     }
-    
+
     private Boolean validarArchivo(InputStream input) throws IOException {
         Workbook wb = WorkbookFactory.create(input);
         Sheet sheet = wb.getSheetAt(0);
         Row row = sheet.getRow(0);
         Cell cellCorreo = row.getCell(0);
-        
+
         try {
             return cellCorreo.getStringCellValue().toUpperCase().equals("CORREO");
         } catch (Exception e) {
             return false;
         }
-        
+
     }
-    
+
     public void reemplazarArchivo() {
         file = null;
         showUploadFile = true;
     }
-    
+
     public void logout() {
         try {
             FacesContext context = FacesContext.getCurrentInstance();
@@ -274,9 +253,9 @@ public class EnvioArchivoView {
             Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void separar() {
         leerArchivoFacade.splitPages(codigoDepartamento);
     }
-    
+
 }
