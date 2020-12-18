@@ -237,7 +237,6 @@ public class ProcesoFacade {
     private void envioArchivo(String remitente, String password,
             String codigoDepartamento,
             BigDecimal idEnvio) {
-        Boolean envioPorBloque = false;
         Integer cont = 1;
         Integer contReset = 1;
         Integer maxCorreoEnviado = 0;
