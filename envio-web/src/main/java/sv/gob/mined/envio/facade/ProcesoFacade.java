@@ -534,7 +534,6 @@ public class ProcesoFacade {
             multipart.addBodyPart(messageBodyPart1);
 
             addImagenAlMensaje(idEnvio, multipart);
-
             addAttachment(nota, multipart);
 
             message.setContent(multipart);
