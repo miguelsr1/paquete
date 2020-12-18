@@ -249,6 +249,14 @@ public class ProcesoFacade {
         try {
             try {
 
+                String pathArchivo;
+
+                if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
+                    pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_windows");
+                } else {
+                    pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_linux");
+                }
+
                 if (lstRemitentes.size() > 1) {
                     if (transport != null && transport.isConnected()) {
                         transport.close();
@@ -275,55 +283,13 @@ public class ProcesoFacade {
                 mensaje = envioMasivo.getMensaje();
 
                 for (Destinatarios destinatario : lstDestinatarios) {
-                    if (envioPorBloque) {
-                        remitente = lstRemitentes.get(numBloque).getCorreo();
-                        password = lstRemitentes.get(numBloque).getClave();
 
-                        if (mailSession == null) {
-                            switch (serverCorreo) {
-                                case 1:
-                                    mailSession = eMailFacade.getMailSessionOffice(mailSession, remitente, password);
-                                    break;
-                                case 2:
-                                    mailSession = eMailFacade.getMailSessionGmail(mailSession, remitente, password);
-                                    break;
-                            }
+                    File nota = new File(pathArchivo + File.separator + "notas" + File.separator + destinatario.getNie().concat(".pdf"));
 
-                            transport = mailSession.getTransport("smtp");
-                            transport.connect(server, Integer.parseInt(port), remitente, password);
-                        }
-                    }
-
-                    Address from = new InternetAddress(remitente);
-                    envioDeCorreoArchivo(from, transport, destinatario, mensaje, titulo, mailSession, server, port, remitente, password, idEnvio);
-                    correosEnviandos++;
-
-                    Logger.getLogger(ProcesoFacade.class.getName()).log(Level.INFO, "Numero {0} - {1}", new Object[]{remitente, cont});
-
-                    //correosEnviados.add(detalleEnvio.getIdDetalle());
-                    cont++;
-                    contReset++;
-
-                    if (contReset == 71) {
-                        transport.close();
-                        contReset = 1;
-                    }
-
-                    if (correosEnviandos.equals(maxCorreoEnviado)) {
-                        correosEnviandos = 0;
-                        numBloque++;
-                        if (numBloque == lstRemitentes.size() + 1) {
-                            numBloque = 1;
-                        }
-
-                        if (numBloque <= lstRemitentes.size()) {
+                    if (nota.exists()) {
+                        if (envioPorBloque) {
                             remitente = lstRemitentes.get(numBloque).getCorreo();
                             password = lstRemitentes.get(numBloque).getClave();
-
-                            if (transport.isConnected()) {
-                                transport.close();
-                            }
-                            mailSession = null;
 
                             if (mailSession == null) {
                                 switch (serverCorreo) {
@@ -337,7 +303,54 @@ public class ProcesoFacade {
 
                                 transport = mailSession.getTransport("smtp");
                                 transport.connect(server, Integer.parseInt(port), remitente, password);
+                            }
+                        }
 
+                        Address from = new InternetAddress(remitente);
+                        envioDeCorreoArchivo(from, transport, destinatario, mensaje, titulo, mailSession, server, port, remitente, password, idEnvio);
+                        correosEnviandos++;
+
+                        Logger.getLogger(ProcesoFacade.class.getName()).log(Level.INFO, "Numero {0} - {1}", new Object[]{remitente, cont});
+
+                        //correosEnviados.add(detalleEnvio.getIdDetalle());
+                        cont++;
+                        contReset++;
+
+                        if (contReset == 71) {
+                            transport.close();
+                            contReset = 1;
+                        }
+
+                        if (correosEnviandos.equals(maxCorreoEnviado)) {
+                            correosEnviandos = 0;
+                            numBloque++;
+                            if (numBloque == lstRemitentes.size() + 1) {
+                                numBloque = 1;
+                            }
+
+                            if (numBloque <= lstRemitentes.size()) {
+                                remitente = lstRemitentes.get(numBloque).getCorreo();
+                                password = lstRemitentes.get(numBloque).getClave();
+
+                                if (transport.isConnected()) {
+                                    transport.close();
+                                }
+                                mailSession = null;
+
+                                if (mailSession == null) {
+                                    switch (serverCorreo) {
+                                        case 1:
+                                            mailSession = eMailFacade.getMailSessionOffice(mailSession, remitente, password);
+                                            break;
+                                        case 2:
+                                            mailSession = eMailFacade.getMailSessionGmail(mailSession, remitente, password);
+                                            break;
+                                    }
+
+                                    transport = mailSession.getTransport("smtp");
+                                    transport.connect(server, Integer.parseInt(port), remitente, password);
+
+                                }
                             }
                         }
                     }
