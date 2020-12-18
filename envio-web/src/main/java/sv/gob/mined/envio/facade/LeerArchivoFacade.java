@@ -13,10 +13,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,6 +30,9 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
+import org.apache.pdfbox.multipdf.Splitter;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -35,6 +40,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.jboss.ejb3.annotation.TransactionTimeout;
+import sv.gob.mined.envio.model.Destinatarios;
 import sv.gob.mined.envio.model.DetalleEnvio;
 import sv.gob.mined.envio.model.EnvioMasivo;
 import sv.gob.mined.envio.web.EnvioView;
@@ -45,6 +51,8 @@ import sv.gob.mined.envio.web.EnvioView;
  */
 @Stateless
 public class LeerArchivoFacade {
+
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("parametros");
 
     @Inject
     private PersistenciaFacade preFacade;
@@ -179,5 +187,122 @@ public class LeerArchivoFacade {
                 break;
         }
         return valor;
+    }
+
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionTimeout(unit = TimeUnit.MINUTES, value = 120)
+    public void splitPages(String codDepa) {
+        PDDocument document = null;
+
+        int interacion;
+        int indexPosicion;
+        int contadorDeCortes;
+        int siguienteInteracion = 0;
+        SimpleDateFormat sdf = new SimpleDateFormat("HHmmssSSS");
+
+        String nie = "";
+        String cadenaDeBusqueda;
+        String pathArchivo;
+
+        //List<Destinatarios> lstCorreo = preFacade.getLstDestinatarioByCodigoDepartamento(codDepa);
+        if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
+            pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_windows");
+        } else {
+            pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_linux");
+        }
+
+        try {
+            document = PDDocument.load(new File(pathArchivo + File.separator + "notas" + File.separator + codDepa.concat(".pdf")));
+            Splitter splitter = new Splitter();
+            splitter.setStartPage(1);
+
+            if (document.getNumberOfPages() > 1000) {
+                siguienteInteracion = 1000;
+                splitter.setEndPage(siguienteInteracion);
+
+                interacion = ((int) (document.getNumberOfPages() / 1000)) + 1;
+            } else {
+                splitter.setEndPage(document.getNumberOfPages());
+                interacion = 1;
+            }
+
+            cadenaDeBusqueda = "NIE:";
+            indexPosicion = 15;
+
+            do {
+                interacion--;
+
+                for (PDDocument pd : splitter.split(document)) {
+                    String codTemp = "";
+
+                    try {
+                        codTemp = getNieEstudiante(pd, cadenaDeBusqueda, nie);
+
+                        //obtener codigo del empleado de la boleta
+                        String codigo = codTemp.trim();
+
+                        /*File carpetaCodigo = new File(pathArchivo + File.separator + "notas" + File.separator + codigo);
+                        if (!carpetaCodigo.exists()) {
+                            carpetaCodigo.mkdir();
+                        }*/
+
+                        //crear archivo pdf
+                        pd.save(pathArchivo + File.separator + "notas" + File.separator + codigo + ".pdf");
+
+                    } catch (StringIndexOutOfBoundsException e) {
+                        Logger.getLogger(LeerArchivoFacade.class.getName()).log(Level.SEVERE, "DEPA {0} - Error obteniendo el nip del docente{1}", new Object[]{codDepa, codTemp});
+                    }
+
+                    pd.close();
+                }
+                if (interacion > 0) {
+                    contadorDeCortes = siguienteInteracion + 1;
+                    siguienteInteracion = siguienteInteracion + 1000;
+                    splitter = new Splitter();
+                    splitter.setStartPage(contadorDeCortes);
+                    if (document.getNumberOfPages() > siguienteInteracion) {
+                        splitter.setEndPage(siguienteInteracion);
+                    } else {
+                        splitter.setEndPage(document.getNumberOfPages());
+                    }
+                }
+            } while (interacion != 0);
+
+            document.close();
+
+        } catch (IOException ex) {
+            try {
+                if (document != null) {
+                    document.close();
+                }
+            } catch (IOException ex1) {
+                Logger.getLogger(LeerArchivoFacade.class.getName()).log(Level.SEVERE, "DEPA : {0} Error en el archivo:", new Object[]{codDepa});
+                Logger.getLogger(LeerArchivoFacade.class.getName()).log(Level.SEVERE, "Muy probablemente, este archivo no es de boletas de pagos");
+                Logger.getLogger(LeerArchivoFacade.class.getName()).log(Level.SEVERE, "========== ERROR ==========", ex);
+            }
+        }
+    }
+
+    private String getNieEstudiante(PDDocument pDDocument, String strEndIdentifier, String nipOld) throws IOException {
+        String returnString;
+        PDFTextStripper tStripper = new PDFTextStripper();
+        tStripper.setStartPage(1);
+        tStripper.setEndPage(1);
+        String pdfFileInText = tStripper.getText(pDDocument);
+
+        String strEnd = strEndIdentifier;
+        int endInddex = pdfFileInText.indexOf(strEnd) + 4;
+        if (endInddex != -1) {
+            int posEnd = pdfFileInText.indexOf("Centro Educativo"); //503
+            returnString = pdfFileInText.substring(endInddex, posEnd);
+            System.out.println("NIE: " + returnString);
+            if (returnString.contains("_______")) {
+                returnString = "";
+            }
+        } else {
+            returnString = nipOld;
+        }
+
+        return returnString;
     }
 }
