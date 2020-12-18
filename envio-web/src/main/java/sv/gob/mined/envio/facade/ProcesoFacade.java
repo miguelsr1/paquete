@@ -539,9 +539,9 @@ public class ProcesoFacade {
 
             message.setContent(multipart);
             message.setSubject(titulo, "UTF-8");
-            //message.saveChanges();
+            message.saveChanges();
 
-            //transport.sendMessage(message, message.getAllRecipients());
+            transport.sendMessage(message, message.getAllRecipients());
         } catch (AddressException ex) {
             System.out.println("Error 1");
             if (transport.isConnected()) {
