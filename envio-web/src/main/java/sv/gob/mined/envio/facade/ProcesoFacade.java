@@ -280,16 +280,14 @@ public class ProcesoFacade {
                     File nota = new File(pathArchivo + File.separator + "notas" + File.separator + destinatario.getNie().concat(".pdf"));
 
                     if (nota.exists()) {
-                        if (envioPorBloque) {
-                            remitente = lstRemitentes.get(numBloque).getCorreo();
-                            password = lstRemitentes.get(numBloque).getClave();
+                        remitente = lstRemitentes.get(numBloque).getCorreo();
+                        password = lstRemitentes.get(numBloque).getClave();
 
-                            if (mailSession == null) {
-                                mailSession = eMailFacade.getMailSessionGmail(mailSession, remitente, password);
+                        if (mailSession == null) {
+                            mailSession = eMailFacade.getMailSessionGmail(mailSession, remitente, password);
 
-                                transport = mailSession.getTransport("smtp");
-                                transport.connect(server, Integer.parseInt(port), remitente, password);
-                            }
+                            transport = mailSession.getTransport("smtp");
+                            transport.connect(server, Integer.parseInt(port), remitente, password);
                         }
 
                         Address from = new InternetAddress(remitente);
@@ -571,7 +569,14 @@ public class ProcesoFacade {
 
     private void addImagenAlMensaje(BigDecimal idEnvio, Multipart multipart) {
         BodyPart messageBodyPart1;
-        File folderImagenes = new File("/opt/soporte/envio_masivo/envio" + idEnvio.intValue() + "/");
+        String pathArchivo = "";
+        if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
+            pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_windows") + File.separator;
+        } else {
+            pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_linux") + File.separator;
+        }
+
+        File folderImagenes = new File(pathArchivo + File.separator + idEnvio.intValue() + "/");
 
         if (folderImagenes.exists()) {
             for (File imagen : folderImagenes.listFiles()) {
