@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,7 +45,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.jboss.ejb3.annotation.TransactionTimeout;
+import sv.gob.mined.envio.model.Destinatarios;
 import sv.gob.mined.envio.model.DetalleEnvio;
+import sv.gob.mined.envio.model.EnvioMasivo;
+import sv.gob.mined.envio.model.Remitentes;
 
 /**
  *
@@ -62,6 +66,8 @@ public class ProcesoFacade {
     @Inject
     private EMailFacade eMailFacade;
 
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("parametros");
+
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     @TransactionTimeout(unit = TimeUnit.HOURS, value = 2)
@@ -70,11 +76,27 @@ public class ProcesoFacade {
         iniciar(pathArchivo, titulo, mensaje, mailSession, transport, remitente, password, server, port);
     }
 
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionTimeout(unit = TimeUnit.HOURS, value = 2)
+    public void enviarCorreosArchivo(String titulo, String mensaje, Session mailSession, Transport transport,
+            String remitente, String password, String server, String port, String codigoDepartamento) {
+        iniciarArchivo(titulo, mensaje, mailSession, transport, remitente, password, server, port, codigoDepartamento);
+    }
+
     private void iniciar(String pathArchivo, String titulo, String mensaje, Session mailSession, Transport transport,
             String remitente, String password, String server, String port) {
         System.out.println("ok");
         BigDecimal idEnvio = leerArchivoFacade.guardarRegistros(pathArchivo, remitente, titulo, mensaje);
         envio(remitente, password, titulo, mensaje, persistenciaFacade.findDetalleEnvio(idEnvio), transport, mailSession, server, port, pathArchivo);
+        System.out.println("fin");
+    }
+
+    private void iniciarArchivo(String titulo, String mensaje, Session mailSession, Transport transport,
+            String remitente, String password, String server, String port, String codigoDepartamento) {
+        System.out.println("ok");
+        BigDecimal idEnvio = leerArchivoFacade.guardarRegistros(remitente, titulo, mensaje);
+        envioArchivo(remitente, password, titulo, mensaje, codigoDepartamento, transport, mailSession, server, port, idEnvio);
         System.out.println("fin");
     }
 
@@ -168,6 +190,135 @@ public class ProcesoFacade {
                         if (numBloque <= remitentes.size()) {
                             remitente = remitentes.get("correo" + numBloque).split("::")[0];
                             password = remitentes.get("correo" + numBloque).split("::")[1];
+
+                            if (transport.isConnected()) {
+                                transport.close();
+                            }
+                            mailSession = null;
+
+                            if (mailSession == null) {
+                                switch (serverCorreo) {
+                                    case 1:
+                                        mailSession = eMailFacade.getMailSessionOffice(mailSession, remitente, password);
+                                        break;
+                                    case 2:
+                                        mailSession = eMailFacade.getMailSessionGmail(mailSession, remitente, password);
+                                        break;
+                                }
+
+                                transport = mailSession.getTransport("smtp");
+                                transport.connect(server, Integer.parseInt(port), remitente, password);
+
+                            }
+                        }
+                    }
+                }
+            } catch (AddressException e) {
+                e.printStackTrace();
+            }
+            transport.close();
+
+            persistenciaFacade.actualizarDetalleEnviado(correosEnviados);
+        } catch (NoSuchProviderException ex) {
+            Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MessagingException | IOException ex) {
+            Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+
+        }
+    }
+
+    @SuppressWarnings("empty-statement")
+    private void envioArchivo(String remitente, String password, String titulo, String mensaje,
+            String codigoDepartamento,
+            Transport transport, Session mailSession,
+            String server, String port, BigDecimal idEnvio) {
+        Boolean envioPorBloque = false;
+        Integer cont = 1;
+        Integer contReset = 1;
+        Integer maxCorreoEnviado = 0;
+        Integer numBloque = 1;
+        Integer correosEnviandos = 0;
+        Integer serverCorreo = 0;
+        //String mensaje = "";
+        List<BigDecimal> correosEnviados = new ArrayList<>();
+        List<Destinatarios> lstDestinatarios = persistenciaFacade.getLstDestinatarioByCodigoDepartamento(codigoDepartamento);
+        List<Remitentes> lstRemitentes = persistenciaFacade.getLstRemitentes(codigoDepartamento.equals("09"));
+
+        EnvioMasivo envioMasivo = persistenciaFacade.findEnvio(idEnvio);
+        try {
+            try {
+
+                if (lstRemitentes.size() > 1) {
+                    if (transport != null && transport.isConnected()) {
+                        transport.close();
+                    }
+
+                    mailSession = null;
+
+                    envioPorBloque = true;
+                    if (lstRemitentes.get(0).getCorreo().contains("admin.mined.edu.sv")) {
+                        //server office365
+                        port = "587";
+                        server = "smtp.office365.com";
+                        maxCorreoEnviado = 5; //9999;
+                        serverCorreo = 1;
+                    } else {
+                        //server gmail
+                        port = "587";
+                        server = "smtp.gmail.com";
+                        maxCorreoEnviado = 70; //1999;
+                        serverCorreo = 2;
+                    }
+                }
+
+                mensaje = envioMasivo.getMensaje();
+
+                for (Destinatarios destinatario : lstDestinatarios) {
+                    if (envioPorBloque) {
+                        remitente = lstRemitentes.get(numBloque).getCorreo();
+                        password = lstRemitentes.get(numBloque).getClave();
+
+                        if (mailSession == null) {
+                            switch (serverCorreo) {
+                                case 1:
+                                    mailSession = eMailFacade.getMailSessionOffice(mailSession, remitente, password);
+                                    break;
+                                case 2:
+                                    mailSession = eMailFacade.getMailSessionGmail(mailSession, remitente, password);
+                                    break;
+                            }
+
+                            transport = mailSession.getTransport("smtp");
+                            transport.connect(server, Integer.parseInt(port), remitente, password);
+                        }
+                    }
+
+                    Address from = new InternetAddress(remitente);
+                    envioDeCorreoArchivo(from, transport, destinatario, mensaje, titulo, mailSession, server, port, remitente, password, idEnvio);
+                    correosEnviandos++;
+
+                    Logger.getLogger(ProcesoFacade.class.getName()).log(Level.INFO, "Numero {0} - {1}", new Object[]{remitente, cont});
+
+                    //correosEnviados.add(detalleEnvio.getIdDetalle());
+                    cont++;
+                    contReset++;
+
+                    if (contReset == 71) {
+                        transport.close();
+                        contReset = 1;
+                    }
+
+                    if (correosEnviandos.equals(maxCorreoEnviado)) {
+                        correosEnviandos = 0;
+                        numBloque++;
+                        if (numBloque == lstRemitentes.size() + 1) {
+                            numBloque = 1;
+                        }
+
+                        if (numBloque <= lstRemitentes.size()) {
+                            remitente = lstRemitentes.get(numBloque).getCorreo();
+                            password = lstRemitentes.get(numBloque).getClave();
 
                             if (transport.isConnected()) {
                                 transport.close();
@@ -363,6 +514,76 @@ public class ProcesoFacade {
         }
     }
 
+    public void envioDeCorreoArchivo(Address from, Transport transport, Destinatarios destinatario, String mensaje, String titulo,
+            Session mailSession, String server, String port, String remitente, String password, BigDecimal idEnvio) throws MessagingException, IOException {
+        if (transport.isConnected()) {
+
+        } else {
+            transport.connect();
+        }
+
+        try {
+            String msjTemp = mensaje;
+            String pathArchivo;
+
+            if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
+                pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_windows");
+            } else {
+                pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_linux");
+            }
+
+            //for (String valor : valores.split("&&")) {
+            msjTemp = msjTemp.replace(":NOMBRE:", destinatario.getNombre());
+            //}
+
+            MimeMessage message = new MimeMessage(mailSession);
+
+            message.setFrom(from);
+
+            InternetAddress[] address = {new InternetAddress(destinatario.getCorreo())};
+            message.setRecipients(Message.RecipientType.TO, address);
+            //message.setRecipients(Message.RecipientType.BCC, "miguel.sanchez@admin.mined.edu.sv");
+
+            BodyPart messageBodyPart1 = new MimeBodyPart();
+
+            Multipart multipart = new MimeMultipart();
+            messageBodyPart1.setContent(msjTemp, "text/html; charset=utf-8");
+            multipart.addBodyPart(messageBodyPart1);
+
+            addImagenAlMensaje(idEnvio, multipart);
+
+            addAttachment(new File(pathArchivo + File.separator + "notas" + File.separator + destinatario.getNie().concat(".pdf")), multipart);
+
+            message.setContent(multipart);
+            message.setSubject(titulo, "UTF-8");
+            message.saveChanges();
+
+            //transport.sendMessage(message, message.getAllRecipients());
+
+        } catch (AddressException ex) {
+            System.out.println("Error 1");
+            if (transport.isConnected()) {
+                transport.close();
+
+                transport = mailSession.getTransport("smtp");
+                transport.connect(server, Integer.parseInt(port), remitente, password);
+            }
+            Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MessagingException ex) {
+            System.out.println("Error 2");
+            if (transport.isConnected()) {
+                transport.close();
+
+                transport = mailSession.getTransport("smtp");
+                transport.connect(server, Integer.parseInt(port), remitente, password);
+            } else {
+                transport = mailSession.getTransport("smtp");
+                transport.connect(server, Integer.parseInt(port), remitente, password);
+            }
+            Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     private void addImagenAlMensaje(BigDecimal idEnvio, Multipart multipart) {
         BodyPart messageBodyPart1;
         File folderImagenes = new File("/opt/soporte/envio_masivo/envio" + idEnvio.intValue() + "/");
@@ -381,6 +602,18 @@ public class ProcesoFacade {
                     Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+        }
+    }
+
+    private void addAttachment(File value, Multipart multipart) {
+        try {
+            DataSource source = new FileDataSource(value);
+            BodyPart messageBodyPart = new MimeBodyPart();
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName(value.getName());
+            multipart.addBodyPart(messageBodyPart);
+        } catch (MessagingException ex) {
+            Logger.getLogger(EMailFacade.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

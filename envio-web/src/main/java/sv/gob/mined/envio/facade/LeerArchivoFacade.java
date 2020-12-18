@@ -8,11 +8,9 @@ package sv.gob.mined.envio.facade;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,7 +38,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.jboss.ejb3.annotation.TransactionTimeout;
-import sv.gob.mined.envio.model.Destinatarios;
 import sv.gob.mined.envio.model.DetalleEnvio;
 import sv.gob.mined.envio.model.EnvioMasivo;
 import sv.gob.mined.envio.web.EnvioView;
@@ -169,6 +166,78 @@ public class LeerArchivoFacade {
         return idEnvio;
     }
 
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionTimeout(unit = TimeUnit.MINUTES, value = 120)
+    public BigDecimal guardarRegistros(String remitente, String titulo, String mensaje) {
+        InputStream input = null;
+        BigDecimal idEnvio = BigDecimal.ZERO;
+        EnvioMasivo eMasivo = new EnvioMasivo();
+        List<byte[]> lstImagenes = new ArrayList();
+        List<String> lstExtencionImagenes = new ArrayList();
+
+        try {
+
+            String correo = "";
+            String valores;
+            String titulos = "";
+
+
+            eMasivo.setArchivo(null);
+            eMasivo.setCorreRemitente(remitente);
+            eMasivo.setFechaEnvio(new Date());
+
+            //buscar imagenes dentro del mensaje para extraer el base64 para porterior almacenarlo como imagen en el servidor
+            int count = 1;
+            String regex = "<img src=\"data:image/(gif|jpe?g|png);base64,([^\"]*\")[^<>]*>";
+            Matcher m = Pattern.compile(regex).matcher(mensaje);
+            while (m.find()) {
+                String imageFileType = m.group(1);
+                String imageDataString = m.group(2);
+                byte[] imageData = Base64.decodeBase64(imageDataString);
+
+                lstImagenes.add(imageData);
+                lstExtencionImagenes.add(imageFileType);
+
+                mensaje = mensaje.replace(m.group(), "<img src=\"cid:imagen" + count + "\">");
+                count++;
+
+            }
+
+            eMasivo.setMensaje(mensaje);
+            eMasivo.setTitulo(titulo);
+
+            
+            idEnvio = preFacade.guardarEnvio(eMasivo);
+
+            //almacenar imagenes del mensaje
+            if (!lstImagenes.isEmpty()) {
+                File folder = new File("/opt/soporte/envio_masivo/envio" + idEnvio.intValue() + "/");
+                if (!folder.exists()) {
+                    folder.mkdir();
+                }
+                count = 1;
+                for (byte[] imgBytes : lstImagenes) {
+                    FileUtils.writeByteArrayToFile(new File("/opt/soporte/envio_masivo/envio" + idEnvio.intValue() + "/imagen" + count + "." + lstExtencionImagenes.get(count - 1)), imgBytes);
+                    count++;
+                }
+            }
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException | EncryptedDocumentException ex) {
+            Logger.getLogger(EnvioView.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (input != null) {
+                    input.close();
+                }
+            } catch (IOException ex) {
+            }
+        }
+
+        return idEnvio;
+    }
+
     private String getValueOfCell(Cell cell) {
         String valor;
         switch (cell.getCellType()) {
@@ -245,7 +314,6 @@ public class LeerArchivoFacade {
                         if (!carpetaCodigo.exists()) {
                             carpetaCodigo.mkdir();
                         }*/
-
                         //crear archivo pdf
                         pd.save(pathArchivo + File.separator + "notas" + File.separator + codigo + ".pdf");
 
@@ -290,7 +358,7 @@ public class LeerArchivoFacade {
         tStripper.setEndPage(1);
         String pdfFileInText = tStripper.getText(pDDocument);
 
-        String strEnd = strEndIdentifier;
+        String strEnd = "@";
         int endInddex = pdfFileInText.indexOf(strEnd) + 4;
         if (endInddex != -1) {
             int posEnd = pdfFileInText.indexOf("Centro Educativo"); //503

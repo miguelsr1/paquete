@@ -222,9 +222,7 @@ public class EnvioArchivoView {
         /*if (mensaje.length() > 4000 && mensaje.contains("data:image")) {
             error += "La imagen es muy grande por favor, reduzca el peso de la imagen.<br/>";
         }*/
-        if (file == null) {
-            error += "Debe de seleccionar un archivo con la lista de correos a enviar.<br/>";
-        }
+
         if (error.isEmpty()) {
             PrimeFaces.current().executeScript("onClick('btnSend');");
         } else {
@@ -233,7 +231,7 @@ public class EnvioArchivoView {
     }
     
     public void enviarCorreos() {
-        procesoFacade.enviarCorreos(pathArchivo, titulo, mensaje, mailSession, transport, remitente, password, server, port);
+        procesoFacade.enviarCorreosArchivo(titulo, mensaje, mailSession, transport, remitente, password, server, port, codigoDepartamento);
         JsfUtil.mensajeInformacion("El proceso de envio de correos se realizara en background.");
         limpiarFormato();
     }
