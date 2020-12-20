@@ -98,9 +98,17 @@ public class PersistenciaFacade {
         q.setParameter("codEnt", codigoDepartamento);
         return q.getResultList();
     }
-    
+
+    public List<Destinatarios> getLstDestinatarioByCodigoDepartamento(String codigoDepartamento, Long idInicio, Long idFin) {
+        Query q = em.createQuery("SELECT d FROM Destinatarios d WHERE d.codigo.codigoDepartamento=:codEnt and (d.id>=:inicio and d.id<=:fin)", Destinatarios.class);
+        q.setParameter("codEnt", codigoDepartamento);
+        q.setParameter("inicio", idInicio);
+        q.setParameter("fin", idFin);
+        return q.getResultList();
+    }
+
     public List<Remitentes> getLstRemitentes(Boolean asc) {
-        Query q = em.createQuery("SELECT r FROM Remitentes r ORDER BY r.clave "+(asc?"ASC":"DESC"), Remitentes.class);
+        Query q = em.createQuery("SELECT r FROM Remitentes r ORDER BY r.clave " + (asc ? "ASC" : "DESC"), Remitentes.class);
         return q.getResultList();
     }
 }

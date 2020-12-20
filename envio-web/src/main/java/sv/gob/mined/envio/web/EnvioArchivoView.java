@@ -52,21 +52,19 @@ public class EnvioArchivoView {
     private Boolean showUploadFile = true;
 
     private BigDecimal idEnvio;
-
+    private Long idInicio;
+    private Long idFin;
     private String remitente;
 
     private String titulo;
     private String mensaje;
     private String pathArchivo;
-    private String port;
-    private String server;
     private String password;
     private String codigoDepartamento;
 
     private UploadedFile file;
 
     private Transport transport;
-    private Session mailSession;
 
     @Inject
     private ProcesoFacade procesoFacade;
@@ -96,6 +94,24 @@ public class EnvioArchivoView {
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+
+    public Long getIdInicio() {
+        return idInicio;
+    }
+
+    public void setIdInicio(Long idInicio) {
+        this.idInicio = idInicio;
+    }
+
+    public Long getIdFin() {
+        return idFin;
+    }
+
+    public void setIdFin(Long idFin) {
+        this.idFin = idFin;
+    }
+    
+    
     public String getCodigoDepartamento() {
         return codigoDepartamento;
     }
@@ -210,7 +226,7 @@ public class EnvioArchivoView {
     }
 
     public void enviarCorreos() {
-        procesoFacade.enviarCorreosArchivo(titulo, mensaje, remitente, password, codigoDepartamento, idEnvio);
+        procesoFacade.enviarCorreosArchivo(titulo, mensaje, remitente, password, codigoDepartamento, idEnvio, idInicio, idFin);
         JsfUtil.mensajeInformacion("El proceso de envio de correos se realizara en background.");
         limpiarFormato();
     }

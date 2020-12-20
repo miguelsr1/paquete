@@ -83,8 +83,8 @@ public class ProcesoFacade {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     @TransactionTimeout(unit = TimeUnit.HOURS, value = 2)
-    public void enviarCorreosArchivo(String titulo, String mensaje, String remitente, String password, String codigoDepartamento, BigDecimal idEnvio) {
-        iniciarArchivo(titulo, mensaje, remitente, password, codigoDepartamento, idEnvio);
+    public void enviarCorreosArchivo(String titulo, String mensaje, String remitente, String password, String codigoDepartamento, BigDecimal idEnvio, Long idInicio, Long idFin) {
+        iniciarArchivo(titulo, mensaje, remitente, password, codigoDepartamento, idEnvio, idInicio, idFin);
     }
 
     private void iniciar(String pathArchivo, String titulo, String mensaje, Session mailSession, Transport transport,
@@ -96,12 +96,13 @@ public class ProcesoFacade {
     }
 
     private void iniciarArchivo(String titulo, String mensaje,
-            String remitente, String password, String codigoDepartamento, BigDecimal idEnvio) {
+            String remitente, String password, String codigoDepartamento, BigDecimal idEnvio,
+            Long idInicio, Long idFin) {
         System.out.println("ok");
         if (idEnvio == null) {
             idEnvio = leerArchivoFacade.guardarRegistros(remitente, titulo, mensaje);
         }
-        envioArchivo(remitente, password, codigoDepartamento, idEnvio);
+        envioArchivo(remitente, password, codigoDepartamento, idEnvio, idInicio, idFin);
         System.out.println("fin");
     }
 
@@ -236,7 +237,7 @@ public class ProcesoFacade {
     @SuppressWarnings("empty-statement")
     private void envioArchivo(String remitente, String password,
             String codigoDepartamento,
-            BigDecimal idEnvio) {
+            BigDecimal idEnvio, Long idInicio, Long idFin) {
         Integer cont = 1;
         Integer contReset = 1;
         Integer maxCorreoEnviado = 0;
@@ -251,7 +252,13 @@ public class ProcesoFacade {
         Transport transport = null;
         Session mailSession = null;
 
-        List<Destinatarios> lstDestinatarios = persistenciaFacade.getLstDestinatarioByCodigoDepartamento(codigoDepartamento);
+        List<Destinatarios> lstDestinatarios = null;
+
+        if (idInicio != null & idFin != null) {
+            lstDestinatarios = persistenciaFacade.getLstDestinatarioByCodigoDepartamento(codigoDepartamento, idInicio, idFin);
+        } else {
+            lstDestinatarios = persistenciaFacade.getLstDestinatarioByCodigoDepartamento(codigoDepartamento);
+        }
         List<Remitentes> lstRemitentes = persistenciaFacade.getLstRemitentes(Integer.parseInt(codigoDepartamento) % 2 == 0);
         System.out.println("Total de archivos a enviar " + lstDestinatarios.size());
 
@@ -279,6 +286,7 @@ public class ProcesoFacade {
                     File nota = new File(pathArchivo + File.separator + "notas" + File.separator + destinatario.getNie().concat(".pdf"));
 
                     if (nota.exists()) {
+                        nota.delete();
                         remitente = lstRemitentes.get(numBloque).getCorreo();
                         password = lstRemitentes.get(numBloque).getClave();
 
@@ -336,15 +344,17 @@ public class ProcesoFacade {
                         }
                     }
                 }
-            } catch (AddressException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            transport.close();
+            if (transport != null) {
+                transport.close();
+            }
 
             //persistenciaFacade.actualizarDetalleEnviado(correosEnviados);
         } catch (NoSuchProviderException ex) {
             Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MessagingException | IOException ex) {
+        } catch (MessagingException ex) {
             Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
 

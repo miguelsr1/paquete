@@ -37,8 +37,18 @@ public class Destinatarios implements Serializable {
     private String nombre;
     @Column(name = "CORREO")
     private String correo;
+    @Column(name = "ID")
+    private Long id;
 
     public Destinatarios() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Destinatarios(String nie) {
