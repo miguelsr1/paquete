@@ -254,7 +254,7 @@ public class ProcesoFacade {
 
         List<Destinatarios> lstDestinatarios = null;
 
-        if (idInicio != null & idFin != null) {
+        if (idInicio != null && idFin != null) {
             lstDestinatarios = persistenciaFacade.getLstDestinatarioByCodigoDepartamento(codigoDepartamento, idInicio, idFin);
         } else {
             lstDestinatarios = persistenciaFacade.getLstDestinatarioByCodigoDepartamento(codigoDepartamento);
@@ -286,7 +286,7 @@ public class ProcesoFacade {
                     File nota = new File(pathArchivo + File.separator + "notas" + File.separator + destinatario.getNie().concat(".pdf"));
 
                     if (nota.exists()) {
-                        nota.delete();
+                        //nota.delete();
                         remitente = lstRemitentes.get(numBloque).getCorreo();
                         password = lstRemitentes.get(numBloque).getClave();
 
@@ -342,6 +342,8 @@ public class ProcesoFacade {
                                 }
                             }
                         }
+                    }else{
+                        Logger.getLogger(ProcesoFacade.class.getName()).log(Level.INFO, "Nota enviada {0}", new Object[]{destinatario.getNie()});
                     }
                 }
             } catch (Exception e) {
