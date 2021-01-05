@@ -350,8 +350,8 @@ public class LeerArchivoFacade {
         String strEnd = strEndIdentifier;
         int endInddex = pdfFileInText.indexOf(strEnd) + 4;
         if (endInddex != -1) {
-            int posEnd = pdfFileInText.length(); //503
-            //int posEnd = pdfFileInText.indexOf("Centro Educativo"); //503
+            //int posEnd = pdfFileInText.length(); //503
+            int posEnd = pdfFileInText.indexOf("Centro Educativo"); //503
             returnString = pdfFileInText.substring(endInddex, posEnd).trim();
             System.out.println("NIE: " + returnString);
             if (returnString.contains("_______")) {
