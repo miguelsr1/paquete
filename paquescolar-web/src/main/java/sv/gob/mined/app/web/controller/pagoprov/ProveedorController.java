@@ -1712,6 +1712,6 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     }
 
     public void generarCodigoSeguridad() {
-        proveedorEJB.generarCodigoSeguridad(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq());
+        //proveedorEJB.generarCodigoSeguridad(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq());
     }
 }

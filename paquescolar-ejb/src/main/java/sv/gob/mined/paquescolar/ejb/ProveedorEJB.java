@@ -740,7 +740,7 @@ public class ProveedorEJB {
      * @param noItemSeparados
      * @param noItems
      * @return
-     */
+     -*/
     private String findLstIdEmpresa(String codDep, String codMun, String codCanton, Integer idMunicipio, String idMunicipios, Integer idRubro, Integer idDetProcesoAdq, Integer idDetProcesoAdqPrecio,
             Boolean municipioIgual, Integer cantidad, String noItemSeparados, String noItems, BigDecimal idAnho) {
 
@@ -843,7 +843,7 @@ public class ProveedorEJB {
                 + "                    cip.capacidad_acreditada,\n"
                 + "                    cip.capacidad_adjudicada,\n"
                 + "                    case when (cip.capacidad_acreditada-cip.capacidad_adjudicada) >= " + cantidad + " then " + (idRubro == 4 ? "12.50" : (idRubro == 5 ? "12.50" : porCapacidadCompleta.toString())) + " \n"
-                + "                    else (((cip.capacidad_acreditada-cip.capacidad_adjudicada)*100)/" + cantidad + ") * " + (idRubro == 4 ? "0.1250" : (idRubro == 5 ? "0.1250" : porCapacidadParcial.divide(BigDecimal.valueOf(100l)).toString())) + " \n"
+                + "                    else (((cip.capacidad_acreditada-cip.capacidad_adjudicada)*100)/" + cantidad + ") * " + (idRubro == 4 ? "0.1250" : (idRubro == 5 ? "0.1250" : porCapacidadParcial.divide(BigDecimal.valueOf(100)).toString())) + " \n"
                 + "                    end porcentaje_capacidad\n"
                 + "                from det_rubro_muestra_interes det\n"
                 + "                    inner join capa_inst_por_rubro cip      on det.id_muestra_interes = cip.id_muestra_interes\n"

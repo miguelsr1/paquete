@@ -178,6 +178,23 @@
                                     <p:outputLabel value="Capacidad Adjudicada: " />
                                     <p:inputNumber id="txtCapacidadAdj" value="#{datosGeneralesMB.capacidadInst.capacidadAdjudicada}" decimalPlaces="0" size="10" readonly="true"/>
                                 </p:panelGrid>
+                                
+                                <br/>
+                                <br/>
+                                <br/>
+                                <p:panelGrid columns="2" columnClasses="col3_label,col9"  styleClass="ui-panelgrid-blank form-group form-elements" 
+                                             style="border:0px none; background-color:transparent;" rendered="#{declaracionMB.rubroUniforme}">
+                                    <h:outputText value="¿Esta inscrito al IVA?"/>
+                                    <p:selectBooleanCheckbox value="#{declaracionMB.inscritoIva}">
+                                         <p:ajax update="chDesea" />
+                                    </p:selectBooleanCheckbox>
+                                </p:panelGrid>
+                                <br/>
+                                <p:panelGrid columns="2" columnClasses="col3_label,col9"  styleClass="ui-panelgrid-blank form-group form-elements" 
+                                             style="border:0px none; background-color:transparent;" rendered="#{declaracionMB.rubroUniforme}">
+                                    <h:outputText value="¿Desea inscribirse al IVA?"/>
+                                    <p:selectBooleanCheckbox id="chDesea" value="#{declaracionMB.deseaInscribirseIva}" disabled="#{declaracionMB.inscritoIva}"/>
+                                </p:panelGrid>
                             </p:tab>
                             <p:tab title="Cuenta Bancaria">
                                 <p:panelGrid columns="2" columnClasses="col3_label,col9" 

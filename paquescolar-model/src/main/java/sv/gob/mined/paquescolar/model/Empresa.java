@@ -74,7 +74,9 @@ public class Empresa implements Serializable {
     @Column(name = "FAX")
     private String fax;
     @Column(name = "ES_CONTRIBUYENTE")
-    private BigInteger esContribuyente;
+    private Short esContribuyente;
+    @Column(name = "DESEA_INSCRIBIRSE")
+    private Short deseaInscribirse;
     @Basic(optional = false)
     @Column(name = "USUARIO_INSERCION")
     private String usuarioInsercion;
@@ -134,6 +136,14 @@ public class Empresa implements Serializable {
         this.usuarioInsercion = usuarioInsercion;
         this.fechaInsercion = fechaInsercion;
         this.estadoEliminacion = estadoEliminacion;
+    }
+
+    public Short getDeseaInscribirse() {
+        return deseaInscribirse;
+    }
+
+    public void setDeseaInscribirse(Short deseaInscribirse) {
+        this.deseaInscribirse = deseaInscribirse;
     }
 
     public BigDecimal getIdEmpresa() {
@@ -224,11 +234,11 @@ public class Empresa implements Serializable {
         this.fax = fax;
     }
 
-    public BigInteger getEsContribuyente() {
+    public Short getEsContribuyente() {
         return esContribuyente;
     }
 
-    public void setEsContribuyente(BigInteger esContribuyente) {
+    public void setEsContribuyente(Short esContribuyente) {
         this.esContribuyente = esContribuyente;
     }
 
