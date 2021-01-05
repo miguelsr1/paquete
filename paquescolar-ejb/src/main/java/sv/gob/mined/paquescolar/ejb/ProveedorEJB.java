@@ -40,6 +40,7 @@ import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.DetalleRequerimiento;
 import sv.gob.mined.paquescolar.model.DisMunicipioInteres;
 import sv.gob.mined.paquescolar.model.Empresa;
+import sv.gob.mined.paquescolar.model.EmpresaCodigoSeg;
 import sv.gob.mined.paquescolar.model.EmpresaNoItem;
 import sv.gob.mined.paquescolar.model.EmpresaPreciosRef;
 import sv.gob.mined.paquescolar.model.EntidadFinanciera;
@@ -740,7 +741,8 @@ public class ProveedorEJB {
      * @param noItemSeparados
      * @param noItems
      * @return
-     -*/
+     -
+     */
     private String findLstIdEmpresa(String codDep, String codMun, String codCanton, Integer idMunicipio, String idMunicipios, Integer idRubro, Integer idDetProcesoAdq, Integer idDetProcesoAdqPrecio,
             Boolean municipioIgual, Integer cantidad, String noItemSeparados, String noItems, BigDecimal idAnho) {
 
@@ -1744,8 +1746,8 @@ public class ProveedorEJB {
             }
         }
     }
-    
-    public void calcularPreRefByNit(Integer idDet, String numeroNit ) {
+
+    public void calcularPreRefByNit(Integer idDet, String numeroNit) {
         Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.idEmpresa.numeroNit=:nit and p.estadoEliminacion = 0 and p.idDetProcesoAdq.idDetProcesoAdq=:idDet ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
         q.setParameter("idDet", idDet);
         q.setParameter("nit", numeroNit);
@@ -1977,7 +1979,7 @@ public class ProveedorEJB {
             det.setAceptacionTerminos((short) 1);
             det.setUsuarioModificacion(usuario);
             em.merge(det);
-            
+
             calcularNoItems(det.getIdDetProcesoAdq().getIdDetProcesoAdq(), det.getIdEmpresa().getNumeroNit());
             calcularPreRefByNit(det.getIdDetProcesoAdq().getIdDetProcesoAdq(), det.getIdEmpresa().getNumeroNit());
         }
@@ -2014,5 +2016,24 @@ public class ProveedorEJB {
         Query q = em.createQuery("SELECT u FROM Usuario u WHERE u.tokenCambioClave=:token", Usuario.class);
         q.setParameter("token", token);
         return !q.getResultList().isEmpty();
+    }
+
+    public void generarCodigoSeguridad(Integer idDetProcesoAdq) {
+        Query q = em.createQuery("SELECT d.idEmpresa FROM DetRubroMuestraInteres d WHERE d.idDetProcesoAdq.idDetProcesoAdq=:id", Empresa.class);
+        q.setParameter("id", idDetProcesoAdq);
+        List<Empresa> lst = q.getResultList();
+
+        RC4Crypter encript = new RC4Crypter();
+
+        for (Empresa empresa : lst) {
+            EmpresaCodigoSeg ecs = new EmpresaCodigoSeg();
+
+            ecs.setIdEmpresa(empresa.getIdEmpresa());
+            ecs.setCodigoSeguridad(encript.encrypt("ha", empresa.getIdEmpresa().toString().concat(empresa.getNumeroNit())).substring(0, 10));
+            ecs.setUsuarioActivado((short) 0);
+
+            em.persist(ecs);
+        }
+
     }
 }
