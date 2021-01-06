@@ -12,6 +12,7 @@ import javax.ejb.LocalBean;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import sv.gob.mined.paquescolar.model.Canton;
 import sv.gob.mined.paquescolar.model.Departamento;
 import sv.gob.mined.paquescolar.model.Municipio;
 import sv.gob.mined.paquescolar.model.MunicipioAledanho;
@@ -53,6 +54,12 @@ public class DatosGeograficosEJB {
             query.setParameter("departamento", codigoDepartamento);
         }
         return query.getResultList();
+    }
+    
+    public List<Canton> getLstCantonByMunicipio(BigDecimal idMunicipio){
+        Query q = em.createQuery("SELECT c FROM Canton c WHERE c.idMunicipio=:id ORDER BY c.codigoCanton", Canton.class);
+        q.setParameter("id", idMunicipio);
+        return q.getResultList();
     }
 
     public List<MunicipioDto> getLstMunicipiosDisponiblesDeInteres(BigDecimal idCapaDistribucion, String codigoDepartamento) {

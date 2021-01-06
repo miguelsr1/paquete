@@ -20,6 +20,7 @@ import sv.gob.mined.paquescolar.ejb.DatosGeograficosEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
 import sv.gob.mined.paquescolar.model.Anho;
+import sv.gob.mined.paquescolar.model.Canton;
 import sv.gob.mined.paquescolar.model.CapaDistribucionAcre;
 import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.Departamento;
@@ -35,6 +36,7 @@ import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 @ViewScoped
 public class DatosGeneralesMB implements Serializable {
 
+    private Boolean rubroUniforme = false;
     private Boolean datosVerificados = false;
     private Boolean personaNatural = false;
     private Boolean mismaDireccion = false;
@@ -46,6 +48,9 @@ public class DatosGeneralesMB implements Serializable {
 
     private BigDecimal idMunicipio = BigDecimal.ZERO;
     private BigDecimal idMunicipioLocal = BigDecimal.ZERO;
+    
+    private Long idCanton;
+    private Long idCantonLocal;
 
     private Empresa empresa = new Empresa();
     private CapaInstPorRubro capacidadInst = new CapaInstPorRubro();
@@ -70,6 +75,30 @@ public class DatosGeneralesMB implements Serializable {
 
             cargarDetalleCalificacion();
         }
+    }
+
+    public Boolean getRubroUniforme() {
+        return rubroUniforme;
+    }
+
+    public void setRubroUniforme(Boolean rubroUniforme) {
+        this.rubroUniforme = rubroUniforme;
+    }
+
+    public Long getIdCanton() {
+        return idCanton;
+    }
+
+    public void setIdCanton(Long idCanton) {
+        this.idCanton = idCanton;
+    }
+
+    public Long getIdCantonLocal() {
+        return idCantonLocal;
+    }
+
+    public void setIdCantonLocal(Long idCantonLocal) {
+        this.idCantonLocal = idCantonLocal;
     }
 
     public Boolean getMismaDireccion() {
@@ -140,6 +169,8 @@ public class DatosGeneralesMB implements Serializable {
 
                     idMunicipioLocal = empresa.getIdMunicipio().getIdMunicipio();
                     codigoDepartamentoLocal = empresa.getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
+                    
+                    rubroUniforme = (departamentoCalif.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
                 }
             }
         }
@@ -249,5 +280,12 @@ public class DatosGeneralesMB implements Serializable {
 
     public List<Municipio> getLstMunicipiosLocal() {
         return datosGeograficosEJB.getLstMunicipiosByDepartamento(codigoDepartamentoLocal);
+    }
+    
+    public List<Canton> getLstCantonLocal() {
+        return datosGeograficosEJB.getLstCantonByMunicipio(idMunicipioLocal);
+    }
+    public List<Canton> getLstCanton() {
+        return datosGeograficosEJB.getLstCantonByMunicipio(idMunicipio);
     }
 }
