@@ -43,6 +43,13 @@
                                             <p:selectOneMenu id="cboMuniEmp" value="#{datosGeneralesMB.idMunicipioLocal}" >
                                                 <f:selectItem noSelectionOption="true" itemLabel="Seleccione un municipio" />
                                                 <f:selectItems value="#{datosGeneralesMB.lstMunicipiosLocal}" var="mun" itemValue="#{mun.idMunicipio}" itemLabel="#{mun.codigoMunicipio} - #{mun.nombreMunicipio}" />
+                                                <p:ajax update="cboCantonEmp"/>
+                                            </p:selectOneMenu>
+
+                                            <p:outputLabel value="Cantón:" rendered="#{datosGeneralesMB.rubroUniforme}"/>
+                                            <p:selectOneMenu id="cboCantonEmp" value="#{datosGeneralesMB.idCantonLocal}" rendered="#{datosGeneralesMB.rubroUniforme}">
+                                                <f:selectItem noSelectionOption="true" itemLabel="Seleccione un cantón" />
+                                                <f:selectItems value="#{datosGeneralesMB.lstCanton}" var="canton" itemValue="#{canton.codigoCanton}" itemLabel="#{canton.codigoCanton} - #{canton.nombreCanton}"/>
                                             </p:selectOneMenu>
                                         </h:panelGrid>
                                     </h:panelGroup>
@@ -114,7 +121,7 @@
                                     <p:outputLabel value="Cantón:" rendered="#{datosGeneralesMB.rubroUniforme}"/>
                                     <p:selectOneMenu id="cboCanton" value="#{datosGeneralesMB.idCanton}" rendered="#{datosGeneralesMB.rubroUniforme}">
                                         <f:selectItem noSelectionOption="true" itemLabel="Seleccione un cantón" />
-                                        <f:selectItems value="#{datosGeneralesMB.lstCanton}" var="canton" itemValue="#{canton.idCanton}" itemLabel="#{canton.codigoCanton} - #{canton.nombreCanton}"/>
+                                        <f:selectItems value="#{datosGeneralesMB.lstCanton}" var="canton" itemValue="#{canton.codigoCanton}" itemLabel="#{canton.codigoCanton} - #{canton.nombreCanton}"/>
                                     </p:selectOneMenu>
                                 </p:panelGrid>
                                 <p:panelGrid columns="2" columnClasses="col2_label,col10"  layout="grid"
@@ -150,7 +157,7 @@
                                         <p:outputLabel value="Cantón:" rendered="#{datosGeneralesMB.rubroUniforme}"/>
                                         <p:selectOneMenu id="cboCantonLocal" value="#{datosGeneralesMB.idCantonLocal}" rendered="#{datosGeneralesMB.rubroUniforme}">
                                             <f:selectItem noSelectionOption="true" itemLabel="Seleccione un cantón" />
-                                            <f:selectItems value="#{datosGeneralesMB.lstCantonLocal}" var="canton" itemValue="#{canton.idCanton}" itemLabel="#{canton.codigoCanton} - #{canton.nombreCanton}"/>
+                                            <f:selectItems value="#{datosGeneralesMB.lstCantonLocal}" var="canton" itemValue="#{canton.cantonCanton}" itemLabel="#{canton.codigoCanton} - #{canton.nombreCanton}"/>
                                         </p:selectOneMenu>
                                     </p:panelGrid>
                                     <p:panelGrid columns="2" columnClasses="col2_label,col10" rendered="#{datosGeneralesMB.personaNatural}"
@@ -197,17 +204,17 @@
                                 <br/>
                                 <br/>
                                 <p:panelGrid columns="2" columnClasses="col3_label,col9"  styleClass="ui-panelgrid-blank form-group form-elements" 
-                                             style="border:0px none; background-color:transparent;" rendered="#{declaracionMB.rubroUniforme}">
+                                             style="border:0px none; background-color:transparent;" rendered="#{datosGeneralesMB.rubroUniforme}">
                                     <h:outputText value="¿Esta inscrito al IVA?"/>
-                                    <p:selectBooleanCheckbox value="#{declaracionMB.inscritoIva}">
+                                    <p:selectBooleanCheckbox value="#{datosGeneralesMB.inscritoIva}">
                                         <p:ajax update="chDesea" />
                                     </p:selectBooleanCheckbox>
                                 </p:panelGrid>
                                 <br/>
                                 <p:panelGrid columns="2" columnClasses="col3_label,col9"  styleClass="ui-panelgrid-blank form-group form-elements" 
-                                             style="border:0px none; background-color:transparent;" rendered="#{declaracionMB.rubroUniforme}">
+                                             style="border:0px none; background-color:transparent;" rendered="#{datosGeneralesMB.rubroUniforme}">
                                     <h:outputText value="¿Desea inscribirse al IVA?"/>
-                                    <p:selectBooleanCheckbox id="chDesea" value="#{declaracionMB.deseaInscribirseIva}" disabled="#{declaracionMB.inscritoIva}"/>
+                                    <p:selectBooleanCheckbox id="chDesea" value="#{datosGeneralesMB.deseaInscribirseIva}" disabled="#{datosGeneralesMB.inscritoIva}"/>
                                 </p:panelGrid>
                             </p:tab>
                             <p:tab title="Cuenta Bancaria">

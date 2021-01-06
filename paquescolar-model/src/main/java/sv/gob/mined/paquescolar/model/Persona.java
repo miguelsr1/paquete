@@ -130,8 +130,19 @@ public class Persona implements Serializable {
     private String foto;
     @Transient
     private String nombreCompleto;
+    
+    @Column(name = "CODIGO_CANTON")
+    private String codigoCanton;
 
     public Persona() {
+    }
+
+    public String getCodigoCanton() {
+        return codigoCanton;
+    }
+
+    public void setCodigoCanton(String codigoCanton) {
+        this.codigoCanton = codigoCanton;
     }
 
     public Persona(BigDecimal idPersona) {

@@ -40,6 +40,10 @@ public class DatosGeneralesMB implements Serializable {
     private Boolean datosVerificados = false;
     private Boolean personaNatural = false;
     private Boolean mismaDireccion = false;
+
+    private Boolean inscritoIva = false;
+    private Boolean deseaInscribirseIva = false;
+
     private String tapEmpresa;
     private String tapPersona;
     private String codigoDepartamentoCalificado;
@@ -48,9 +52,9 @@ public class DatosGeneralesMB implements Serializable {
 
     private BigDecimal idMunicipio = BigDecimal.ZERO;
     private BigDecimal idMunicipioLocal = BigDecimal.ZERO;
-    
-    private Long idCanton;
-    private Long idCantonLocal;
+
+    private String idCanton;
+    private String idCantonLocal;
 
     private Empresa empresa = new Empresa();
     private CapaInstPorRubro capacidadInst = new CapaInstPorRubro();
@@ -85,19 +89,19 @@ public class DatosGeneralesMB implements Serializable {
         this.rubroUniforme = rubroUniforme;
     }
 
-    public Long getIdCanton() {
+    public String getIdCanton() {
         return idCanton;
     }
 
-    public void setIdCanton(Long idCanton) {
+    public void setIdCanton(String idCanton) {
         this.idCanton = idCanton;
     }
 
-    public Long getIdCantonLocal() {
+    public String getIdCantonLocal() {
         return idCantonLocal;
     }
 
-    public void setIdCantonLocal(Long idCantonLocal) {
+    public void setIdCantonLocal(String idCantonLocal) {
         this.idCantonLocal = idCantonLocal;
     }
 
@@ -169,11 +173,30 @@ public class DatosGeneralesMB implements Serializable {
 
                     idMunicipioLocal = empresa.getIdMunicipio().getIdMunicipio();
                     codigoDepartamentoLocal = empresa.getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
-                    
+
                     rubroUniforme = (departamentoCalif.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
+
+                    inscritoIva = (empresa.getEsContribuyente() == 1);
+                    deseaInscribirseIva = (empresa.getDeseaInscribirse() == 1);
                 }
             }
         }
+    }
+
+    public Boolean getInscritoIva() {
+        return inscritoIva;
+    }
+
+    public void setInscritoIva(Boolean inscritoIva) {
+        this.inscritoIva = inscritoIva;
+    }
+
+    public Boolean getDeseaInscribirseIva() {
+        return deseaInscribirseIva;
+    }
+
+    public void setDeseaInscribirseIva(Boolean deseaInscribirseIva) {
+        this.deseaInscribirseIva = deseaInscribirseIva;
     }
 
     public Empresa getEmpresa() {
@@ -254,15 +277,27 @@ public class DatosGeneralesMB implements Serializable {
 
             if (mismaDireccion) {
                 idMunicipioLocal = idMunicipio;
+                idCantonLocal = idCanton;
                 empresa.setDireccionCompleta(empresa.getIdPersona().getDomicilio());
+
+                if (rubroUniforme) {
+                    empresa.setCodigoCanton(idCanton);
+                }
             }
         }
 
         empresa.getIdPersona().setIdMunicipio(new Municipio(idMunicipio));
+        empresa.getIdPersona().setCodigoCanton(idCanton);
         empresa.setIdMunicipio(new Municipio(idMunicipioLocal));
-        
+        empresa.setCodigoCanton(idCantonLocal);
+
         empresa.setFechaModificacion(new Date());
         empresa.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
+
+        if (rubroUniforme) {
+            empresa.setEsContribuyente(inscritoIva ? (short) 1 : 0);
+            empresa.setDeseaInscribirse(deseaInscribirseIva ? (short) 1 : 0);
+        }
 
         proveedorEJB.guardar(empresa);
 
@@ -281,10 +316,11 @@ public class DatosGeneralesMB implements Serializable {
     public List<Municipio> getLstMunicipiosLocal() {
         return datosGeograficosEJB.getLstMunicipiosByDepartamento(codigoDepartamentoLocal);
     }
-    
+
     public List<Canton> getLstCantonLocal() {
         return datosGeograficosEJB.getLstCantonByMunicipio(idMunicipioLocal);
     }
+
     public List<Canton> getLstCanton() {
         return datosGeograficosEJB.getLstCantonByMunicipio(idMunicipio);
     }

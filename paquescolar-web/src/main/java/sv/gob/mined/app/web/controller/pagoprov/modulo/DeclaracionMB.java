@@ -51,9 +51,6 @@ public class DeclaracionMB implements Serializable {
 
     private Boolean aceptarCondiciones = false;
     private Boolean aceptarDeclaracion = false;
-    private Boolean inscritoIva = false;
-    private Boolean deseaInscribirseIva = false;
-    private Boolean rubroUniforme = false;
     private String idGestion = "";
     private String cabecera;
     private String detalle;
@@ -97,38 +94,9 @@ public class DeclaracionMB implements Serializable {
                             empresa.getIdPersona().getEmail(),
                             empresa.getDireccionCompleta().concat(", ").concat(empresa.getIdMunicipio().getNombreMunicipio()).concat(", ").concat(empresa.getIdMunicipio().getCodigoDepartamento().getNombreDepartamento()),
                             capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho());
-
-                    rubroUniforme = (detalleProcesoAdq.getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
-
-                    inscritoIva = (empresa.getEsContribuyente() == 1);
-                    deseaInscribirseIva = (empresa.getDeseaInscribirse() == 1);
                 }
             }
         }
-    }
-
-    public Boolean getRubroUniforme() {
-        return rubroUniforme;
-    }
-
-    public void setRubroUniforme(Boolean rubroUniforme) {
-        this.rubroUniforme = rubroUniforme;
-    }
-
-    public Boolean getInscritoIva() {
-        return inscritoIva;
-    }
-
-    public void setInscritoIva(Boolean inscritoIva) {
-        this.inscritoIva = inscritoIva;
-    }
-
-    public Boolean getDeseaInscribirseIva() {
-        return deseaInscribirseIva;
-    }
-
-    public void setDeseaInscribirseIva(Boolean deseaInscribirseIva) {
-        this.deseaInscribirseIva = deseaInscribirseIva;
     }
 
     public String getCabecera() {
