@@ -215,8 +215,9 @@ public class DeclaracionMB implements Serializable {
 
             List<JasperPrint> jasperPrintList = new ArrayList();
 
-            jasperPrintList.add(JasperFillManager.fillReport(Reportes.class
-                    .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobalProv" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(lstDatos)));
+            jasperPrintList.add(JasperFillManager.fillReport(
+                    Reportes.getPathReporte("sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobalProv" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"),
+                    param, new JRBeanCollectionDataSource(lstDatos)));
 
             String muni = VarSession.getNombreMunicipioSession();
 
