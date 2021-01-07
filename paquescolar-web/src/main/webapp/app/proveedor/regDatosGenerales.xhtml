@@ -157,7 +157,7 @@
                                         <p:outputLabel value="Cantón:" rendered="#{datosGeneralesMB.rubroUniforme}"/>
                                         <p:selectOneMenu id="cboCantonLocal" value="#{datosGeneralesMB.idCantonLocal}" rendered="#{datosGeneralesMB.rubroUniforme}">
                                             <f:selectItem noSelectionOption="true" itemLabel="Seleccione un cantón" />
-                                            <f:selectItems value="#{datosGeneralesMB.lstCantonLocal}" var="canton" itemValue="#{canton.cantonCanton}" itemLabel="#{canton.codigoCanton} - #{canton.nombreCanton}"/>
+                                            <f:selectItems value="#{datosGeneralesMB.lstCantonLocal}" var="canton" itemValue="#{canton.codigoCanton}" itemLabel="#{canton.codigoCanton} - #{canton.nombreCanton}"/>
                                         </p:selectOneMenu>
                                     </p:panelGrid>
                                     <p:panelGrid columns="2" columnClasses="col2_label,col10" rendered="#{datosGeneralesMB.personaNatural}"

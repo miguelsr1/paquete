@@ -176,8 +176,12 @@ public class DatosGeneralesMB implements Serializable {
 
                     rubroUniforme = (departamentoCalif.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
 
-                    inscritoIva = (empresa.getEsContribuyente() == 1);
-                    deseaInscribirseIva = (empresa.getDeseaInscribirse() == 1);
+                    if (rubroUniforme) {
+                        inscritoIva = (empresa.getEsContribuyente() == 1);
+                        deseaInscribirseIva = (empresa.getDeseaInscribirse() == 1);
+                        idCanton = empresa.getIdPersona().getCodigoCanton();
+                        idCantonLocal = empresa.getCodigoCanton();
+                    }
                 }
             }
         }
