@@ -18,12 +18,7 @@
                         <p:outputLabel value="#{listadoView.proyecto.nombreProyecto}" style="font-weight: bold"/>
                     </div>
                 </div>
-                <div class="p-formgroup-inline">
-                    <div class="p-field">
-                        <p:outputLabel value="Cooperante:" />
-                        <p:outputLabel value="#{listadoView.proyecto.idCooperante.nombreCooperante}" style="font-weight: bold"/>
-                    </div>
-                </div>
+
                 <div class="p-formgroup-inline">
                     <div class="p-field">
                         <p:outputLabel value="Modalidad de Ejec.:" />
@@ -160,8 +155,12 @@
                 <div class="p-field p-grid invoice-to">
                     <p:outputLabel styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0">Cambiar estado:</p:outputLabel>
                     <div class="p-col-12 p-md-8">
-                        <p:selectOneMenu>
-                            <f:selectItem itemValue="null" itemLabel="Seleccione un valor" noSelectionOption="true"/>
+                        <p:selectOneMenu value="#{listadoView.proyecto.idEstado}">
+                            <f:selectItem itemLabel="Seleccione un valor" noSelectionOption="true"/>
+                            <f:selectItem itemValue="1" itemLabel="Digitado"/>
+                            <f:selectItem itemValue="2" itemLabel="Aprobado"/>
+                            <f:selectItem itemValue="3" itemLabel="Observado"/>
+                            <f:selectItem itemValue="4" itemLabel="Denegado"/>
                         </p:selectOneMenu>
                     </div>
                 </div>

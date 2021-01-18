@@ -65,3 +65,22 @@
     border-top: 0;
     background-color: white !important;
 }
+
+.proyecto1 .fc-event-inner {
+    background: #6c7dc6;
+}
+.proyecto2 .fc-event-inner {
+    background: #90A4AE;
+}
+.proyecto3 .fc-event-inner {
+    background: #3984b8;
+}
+.proyecto4 .fc-event-inner {
+    background: #36ae2c;
+}
+.proyecto5 .fc-event-inner {
+    background: #7e8dcd;
+}
+.proyecto6 .fc-event-inner {
+    background: #c8cee9;
+}

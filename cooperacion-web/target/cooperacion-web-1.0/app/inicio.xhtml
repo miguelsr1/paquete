@@ -5,8 +5,6 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
 
-    <!--f:event listener="{userBean.isCentroEscolar}" type="preRenderView" /-->
-
     <h:head>
         <f:facet name="first">
             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -33,7 +31,6 @@
                                 <h:outputText style="font-family: Bembo Std !important; font-size: 30px" value="Proyectos de Cooperación" /><br/>
                                 <h:outputText style="font-family: Bembo Std !important; font-size: 18px;" value="Dirección Nacional de Planificación" />
                             </p:outputPanel>
-
                             <p:commandButton value="Salir" icon="fa fa-sign-out" action="#{guestPreferences.logout()}"
                                              style="float: right !important;top: 10px;position: static;" process="@this"/>
                         </div>
@@ -41,7 +38,7 @@
                 </div>
 
 
-                <div id="features" style="max-width: 1024px!important; margin: 0 auto; position: absolute;left: 50%;top: 40%;transform: translate(-50%, -50%);padding: 10px;">
+                <div id="features" style="max-width: 1024px!important; margin: 0 auto; position: absolute;left: 50%;top: 310px;transform: translate(-50%, -50%);padding: 10px;">
                     <div>
                         <div class="p-grid features-content">
                             <div class="p-col-12 p-md-6 feature-left" onclick="location.href = 'datosCe.mined';" 
@@ -56,11 +53,21 @@
                                 <p>Listado de todos los proyectos registrados y el estado de cada uno de estos.</p>
                             </div>
                         </div>
+                        <br/>
+                        <br/>
+                        <div class="p-grid features-content">
+                            <div class="p-col-12 p-md-6 feature-left" onclick="location.href = 'mantto/inicioManttos.mined';" 
+                                 style="cursor: pointer; display:#{(userBean.perfilUsuario eq 'ADMIN')?'block':'none'}">
+                                <p:graphicImage name="settings.png" library="images" style="background-color: white;"/>
+                                <h3>Mantenimientos</h3>
+                                <p>Mantenimiento de los diferentes catalogos de la herramienta.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
         </h:form>
+
         <h:outputStylesheet name="css/primeicons.css" library="paradise-layout" />
         <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout" />
 

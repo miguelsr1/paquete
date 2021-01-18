@@ -1,10 +1,13 @@
 package sv.gob.mined.cooperacion.view;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.event.SelectEvent;
 import sv.gob.mined.cooperacion.facade.CatalogoFacade;
 import sv.gob.mined.cooperacion.facade.MantenimientoFacade;
 import sv.gob.mined.cooperacion.model.Cooperante;
@@ -17,11 +20,18 @@ public class CooperanteView implements Serializable {
 
     private Long idTipoCooperante;
     private Cooperante cooperante = new Cooperante();
+    
+    private List<Cooperante> lstCooperantes = new ArrayList();
    
     @Inject
     private CatalogoFacade catalogoFacade;
     @Inject
     private MantenimientoFacade manttoFacade;
+    
+    @PostConstruct
+    public void init(){
+        lstCooperantes = catalogoFacade.findAllCooperante();
+    }
 
     public List<TipoCooperante> getLstTipoCooperante() {
         return catalogoFacade.findTipoCooperante();
@@ -55,4 +65,11 @@ public class CooperanteView implements Serializable {
         JsfUtil.mensajeInformacion("Datos almacenados satisfactoriamente");
     }
 
+    public List<Cooperante> getLstCooperantes() {
+        return lstCooperantes;
+    }
+    
+    public void onRowSelect(SelectEvent<Cooperante> event) {
+        idTipoCooperante = cooperante.getIdTipoCooperante().getIdTipoCooperante();
+    }
 }

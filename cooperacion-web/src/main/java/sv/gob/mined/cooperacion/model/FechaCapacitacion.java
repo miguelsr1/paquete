@@ -10,11 +10,14 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -32,6 +35,8 @@ public class FechaCapacitacion implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Column(name = "ID_FECHA")
+    @GeneratedValue(generator = "SEQ_FECHA", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "SEQ_FECHA", sequenceName = "SEQ_FECHA", allocationSize = 1, initialValue = 1)
     private Integer idFecha;
     @Column(name = "FECHA_INICIO")
     @Temporal(TemporalType.TIMESTAMP)
@@ -50,6 +55,11 @@ public class FechaCapacitacion implements Serializable {
     @JoinColumn(name = "ID_PROYECTO", referencedColumnName = "ID_PROYECTO")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ProyectoCooperacion idProyecto;
+
+    @Column(name = "TITULO")
+    private String titulo;
+    @Column(name = "LUGAR")
+    private String lugar;
 
     public FechaCapacitacion() {
     }
@@ -138,5 +148,20 @@ public class FechaCapacitacion implements Serializable {
     public String toString() {
         return "sv.gob.mined.cooperacion.model.FechaCapacitacion[ idFecha=" + idFecha + " ]";
     }
-    
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getLugar() {
+        return lugar;
+    }
+
+    public void setLugar(String lugar) {
+        this.lugar = lugar;
+    }
 }

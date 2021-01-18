@@ -26,7 +26,6 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.primefaces.PrimeFaces;
-import org.primefaces.context.PrimeFacesContext;
 import org.primefaces.event.map.OverlaySelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -36,11 +35,14 @@ import org.primefaces.model.map.MapModel;
 import org.primefaces.model.map.Marker;
 import sv.gob.mined.cooperacion.facade.MantenimientoFacade;
 import sv.gob.mined.cooperacion.facade.paquete.UbicacionFacade;
+import sv.gob.mined.cooperacion.model.Cooperante;
 import sv.gob.mined.cooperacion.model.ProyectoCooperacion;
+import sv.gob.mined.cooperacion.model.TipoCooperacion;
 import sv.gob.mined.cooperacion.model.Usuario;
 import sv.gob.mined.cooperacion.model.dto.ListadoProyectoDto;
 import sv.gob.mined.cooperacion.model.dto.FileInfoDto;
 import sv.gob.mined.cooperacion.model.paquete.Municipio;
+import sv.gob.mined.cooperacion.model.paquete.VwCatalogoEntidadEducativa;
 
 /**
  *
@@ -51,23 +53,29 @@ import sv.gob.mined.cooperacion.model.paquete.Municipio;
 public class ListadoView implements Serializable {
 
     private Boolean dlgShowInfoCe = false;
-    
+
     private Short idEstado;
-    
+
     private String nombreArchivo = "";
     private String lblBottonEnviar = "";
     private String codigoDepartamento;
     private String where;
     private final String posicionInicial = "13.749655, -88.822362";
-    
+
     private Long idProyecto;
+    private Long idCooperante;
+    private Long idTipoCooperacion;
     private BigDecimal idMunicipio;
 
     private ProyectoCooperacion proyecto;
     private ListadoProyectoDto proyectoDto;
+    private VwCatalogoEntidadEducativa entidadEducativa = new VwCatalogoEntidadEducativa();
     private List<FileInfoDto> lstArchivos = new ArrayList();
     private List<ListadoProyectoDto> lstProyectos = new ArrayList();
     private List<Municipio> lstMunicipio = new ArrayList();
+    private List<ProyectoCooperacion> lstProyectoCooperacion = new ArrayList();
+    private List<Cooperante> lstCooperantes = new ArrayList();
+    private List<TipoCooperacion> lstTipoCooperaciones = new ArrayList();
 
     private MapModel simpleModel;
 
@@ -93,10 +101,10 @@ public class ListadoView implements Serializable {
             Usuario usu = (Usuario) fc.getExternalContext().getSessionMap().get("usuario");
 
             switch (usu.getIdPerfil()) {
-                case 1:
+                case 1://admin
                     lstProyectos = mantenimientoFacade.findAllProyectos();
                     break;
-                case 2:
+                case 2:// u.t.
                     switch (usu.getUsuarioOrgList().get(0).getDescripcion()) {
                         case "INFRA":
                             where = " and pro.id_tipo_cooperacion in (1,4,6) ";
@@ -125,8 +133,46 @@ public class ListadoView implements Serializable {
         }
 
         simpleModel = new DefaultMapModel();
+        lstCooperantes = mantenimientoFacade.findAllCooperantes();
+        lstTipoCooperaciones = mantenimientoFacade.findAllTipoCoopeciones();
     }
-    
+
+    public List<TipoCooperacion> getLstTipoCooperaciones() {
+        return lstTipoCooperaciones;
+    }
+
+    public Long getIdCooperante() {
+        return idCooperante;
+    }
+
+    public void setIdCooperante(Long idCooperante) {
+        this.idCooperante = idCooperante;
+    }
+
+    public Long getIdTipoCooperacion() {
+        return idTipoCooperacion;
+    }
+
+    public void setIdTipoCooperacion(Long idTipoCooperacion) {
+        this.idTipoCooperacion = idTipoCooperacion;
+    }
+
+    public List<Cooperante> getLstCooperantes() {
+        return lstCooperantes;
+    }
+
+    public void setLstCooperantes(List<Cooperante> lstCooperantes) {
+        this.lstCooperantes = lstCooperantes;
+    }
+
+    public VwCatalogoEntidadEducativa getEntidadEducativa() {
+        return entidadEducativa;
+    }
+
+    public List<ProyectoCooperacion> getLstProyectoCooperacion() {
+        return lstProyectoCooperacion;
+    }
+
     public Boolean getDlgShowInfoCe() {
         return dlgShowInfoCe;
     }
@@ -251,6 +297,12 @@ public class ListadoView implements Serializable {
         if (idEstado != null && idEstado != 0) {
             whereTmp += " and pro.id_estado = " + idEstado;
         }
+        if (idCooperante != null) {
+            whereTmp += " and pro.id_cooperante = " + idCooperante;
+        }
+        if (idTipoCooperacion != null) {
+            whereTmp += " and pro.id_tipo_cooperacion = " + idTipoCooperacion;
+        }
 
         FacesContext fc = FacesContext.getCurrentInstance();
         switch (fc.getExternalContext().getSessionMap().get("role").toString()) {
@@ -291,13 +343,18 @@ public class ListadoView implements Serializable {
 
             simpleModel.addOverlay(new Marker(coor, "CE: " + pro.getCodigoEntidad(), "", urlIcono));
         }
-        
+
         PrimeFaces.current().executeScript("initialize()");
     }
 
     public void buscarProyecto() {
         lstArchivos.clear();
-        proyecto = mantenimientoFacade.find(ProyectoCooperacion.class, proyectoDto.getIdProyecto());
+        if(proyectoDto != null && proyectoDto.getIdProyecto() != null){
+            idProyecto = proyectoDto.getIdProyecto();
+        }else{
+            idProyecto = proyecto.getIdProyecto();
+        }
+        proyecto = mantenimientoFacade.find(ProyectoCooperacion.class, idProyecto);
 
         File folder = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto());
 
@@ -337,6 +394,8 @@ public class ListadoView implements Serializable {
         Marker marker = (Marker) event.getOverlay();
         dlgShowInfoCe = true;
         String codigoEntidad = marker.getTitle().replace("CE: ", "");
-        
+        entidadEducativa = ubicacionFacade.findEntidadEducativaByCodigo(codigoEntidad);
+        lstMunicipio = ubicacionFacade.getLstMunicipio(entidadEducativa.getCodigoDepartamento());
+        lstProyectoCooperacion = mantenimientoFacade.findProyectosByCodEnt(codigoEntidad);
     }
 }

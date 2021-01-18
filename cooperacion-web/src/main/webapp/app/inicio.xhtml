@@ -5,8 +5,6 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
 
-    <!--f:event listener="{userBean.isCentroEscolar}" type="preRenderView" /-->
-
     <h:head>
         <f:facet name="first">
             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -26,14 +24,13 @@
                 <div class="topbar">
                     <div class="topbar-wrapper">
                         <div class="topbar-left">
-                            <h:graphicImage name="images/mined-logo.svg" style="height:100px; margin-right: 20px;"/>
+                            <h:graphicImage name="images/mined-logo.svg" style="height:100px; margin-right: 20px; font-family: Bembo Std;"/>
                         </div>
                         <div class="topbar-right" style="width: 100%;">
                             <p:outputPanel style="float: left !important;">
-                                <h:outputText style="font-size: 30px" value="Proyectos de Cooperación" /><br/>
-                                <h:outputText style="font-size: 18px;" value="Dirección Nacional de Planificación" />
+                                <h:outputText style="font-family: Bembo Std !important; font-size: 30px" value="Proyectos de Cooperación" /><br/>
+                                <h:outputText style="font-family: Bembo Std !important; font-size: 18px;" value="Dirección Nacional de Planificación" />
                             </p:outputPanel>
-
                             <p:commandButton value="Salir" icon="fa fa-sign-out" action="#{guestPreferences.logout()}"
                                              style="float: right !important;top: 10px;position: static;" process="@this"/>
                         </div>
@@ -59,7 +56,8 @@
                         <br/>
                         <br/>
                         <div class="p-grid features-content">
-                            <div class="p-col-12 p-md-6 feature-left" onclick="location.href = 'mantto/inicioManttos.mined';" style="cursor: pointer;">
+                            <div class="p-col-12 p-md-6 feature-left" onclick="location.href = 'mantto/inicioManttos.mined';" 
+                                 style="cursor: pointer; display:#{(userBean.perfilUsuario eq 'ADMIN')?'block':'none'}">
                                 <p:graphicImage name="settings.png" library="images" style="background-color: white;"/>
                                 <h3>Mantenimientos</h3>
                                 <p>Mantenimiento de los diferentes catalogos de la herramienta.</p>
@@ -68,8 +66,8 @@
                     </div>
                 </div>
             </div>
-
         </h:form>
+
         <h:outputStylesheet name="css/primeicons.css" library="paradise-layout" />
         <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout" />
 

@@ -12,7 +12,7 @@ import sv.gob.mined.cooperacion.model.ModalidadEjecucion;
 import sv.gob.mined.cooperacion.model.TipoCooperacion;
 import sv.gob.mined.cooperacion.model.TipoInstrumento;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2020-12-08T16:24:42")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2021-01-15T14:05:42")
 @StaticMetamodel(ProyectoCooperacion.class)
 public class ProyectoCooperacion_ { 
 
@@ -26,6 +26,7 @@ public class ProyectoCooperacion_ {
     public static volatile SingularAttribute<ProyectoCooperacion, String> nombreProyecto;
     public static volatile SingularAttribute<ProyectoCooperacion, BigDecimal> montoInversion;
     public static volatile SingularAttribute<ProyectoCooperacion, Short> media;
+    public static volatile SingularAttribute<ProyectoCooperacion, Short> modFelxible;
     public static volatile SingularAttribute<ProyectoCooperacion, Cooperante> idCooperante;
     public static volatile SingularAttribute<ProyectoCooperacion, String> objetivos;
     public static volatile SingularAttribute<ProyectoCooperacion, String> anho;
@@ -34,8 +35,10 @@ public class ProyectoCooperacion_ {
     public static volatile SingularAttribute<ProyectoCooperacion, ModalidadEjecucion> idModalidad;
     public static volatile SingularAttribute<ProyectoCooperacion, Short> basicaCiii;
     public static volatile ListAttribute<ProyectoCooperacion, FechaCapacitacion> fechaCapacitacionList;
+    public static volatile SingularAttribute<ProyectoCooperacion, Short> basicaNocturna;
     public static volatile SingularAttribute<ProyectoCooperacion, TipoInstrumento> idTipoInstrumento;
     public static volatile SingularAttribute<ProyectoCooperacion, Short> docente;
+    public static volatile SingularAttribute<ProyectoCooperacion, Short> especial;
     public static volatile SingularAttribute<ProyectoCooperacion, Long> usuarioInsercion;
     public static volatile SingularAttribute<ProyectoCooperacion, Short> inicial;
     public static volatile SingularAttribute<ProyectoCooperacion, Short> parvularia;

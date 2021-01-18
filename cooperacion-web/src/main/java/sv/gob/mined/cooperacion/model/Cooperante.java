@@ -44,8 +44,8 @@ public class Cooperante implements Serializable {
     private Long idCooperante;
     @Column(name = "NOMBRE_COOPERANTE")
     private String nombreCooperante;
-    @Column(name = "NOMBRE_CONTANTO")
-    private String nombreContanto;
+    @Column(name = "NOMBRE_CONTACTO")
+    private String nombreContacto;
     @Column(name = "TELEFONO")
     private String telefono;
     @Column(name = "CELULAR")
@@ -55,6 +55,11 @@ public class Cooperante implements Serializable {
     @JoinColumn(name = "ID_TIPO_COOPERANTE", referencedColumnName = "ID_TIPO_COOPERANTE")
     @ManyToOne(fetch = FetchType.LAZY)
     private TipoCooperante idTipoCooperante;
+    
+    @Column(name = "NOMBRE_ASISTENTE")
+    private String nombreAsistente;
+    @Column(name = "DIRECCION")
+    private String direccion;
 
     public Cooperante() {
     }
@@ -112,12 +117,12 @@ public class Cooperante implements Serializable {
         return "sv.gob.mined.cooperacion.web.model.Cooperante[ idCooperante=" + idCooperante + " ]";
     }
 
-    public String getNombreContanto() {
-        return nombreContanto;
+    public String getNombreContacto() {
+        return nombreContacto;
     }
 
-    public void setNombreContanto(String nombreContanto) {
-        this.nombreContanto = nombreContanto;
+    public void setNombreContacto(String nombreContanto) {
+        this.nombreContacto = nombreContanto;
     }
 
     public String getTelefono() {
@@ -150,6 +155,22 @@ public class Cooperante implements Serializable {
 
     public void setProyectoCooperacionList(List<ProyectoCooperacion> proyectoCooperacionList) {
         this.proyectoCooperacionList = proyectoCooperacionList;
+    }
+
+    public String getNombreAsistente() {
+        return nombreAsistente;
+    }
+
+    public void setNombreAsistente(String nombreAsistente) {
+        this.nombreAsistente = nombreAsistente;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
     
 }
