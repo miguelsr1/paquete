@@ -222,7 +222,6 @@
                                     </div>
                                 </div>
 
-
                                 <br/>
                                 <div class="p-field p-grid">
                                     <p:outputLabel value="Tipo de Cooperación:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
@@ -233,29 +232,32 @@
                                             <p:ajax update="cboTipoCooperacion"/>
                                         </p:selectOneMenu>
                                     </div>
-                                </div>                            
+                                </div>
+                                <div class="p-formgrid p-grid">
+                                    <div class="p-field p-col">
+
+                                        <p:outputLabel for="txtDescripcion">Descrip. de la Cooperación</p:outputLabel>
+                                        <p:inputTextarea id="txtDescripcion" value="#{registrarCooperacionView.proyectoCooperacion.descripcion}" required="true" label="Descripción de la Cooperación"/>
+
+                                        <p:tooltip id="toolTipContent" for="txtDescripcion" position="bottom">
+                                            <p:outputLabel escape="false">
+                                                Acá deberá ingresar el elemento a intervenir en la cooperación,<br/>aulas, paredes, capacitaciones, techo, pupitre
+                                            </p:outputLabel>
+                                        </p:tooltip>
+                                    </div>
+                                </div>
                             </div>
                             <br/>
                             <div class="p-grid dashboard">
-                                <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
-                                    <h6><p:outputLabel for="txtDescripcion">Descrip. de la Cooperación</p:outputLabel></h6>
-                                    <p:inputText id="txtDescripcion" value="#{registrarCooperacionView.proyectoCooperacion.descripcion}" type="text" required="true" label="Descripción de la Cooperación"/>
-
-                                    <p:tooltip id="toolTipContent" for="txtDescripcion" position="bottom">
-                                        <p:outputLabel escape="false">
-                                            Acá deberá ingresar el elemento a intervenir en la cooperación,<br/>aulas, paredes, capacitaciones, techo, pupitre
-                                        </p:outputLabel>
-                                    </p:tooltip>
-                                </div>
-                                <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
+                                <div class="p-col-12 p-md-4 p-xl-4" style="border:1px solid;">
                                     <h6><p:outputLabel for="txtCantidad">Cantidad a Cubrir</p:outputLabel></h6>
                                     <p:inputNumber id="txtCantidad" value="#{registrarCooperacionView.proyectoCooperacion.cantidad}" decimalPlaces="0" required="true" label="Cantidad a Cubrir" inputStyle="text-align: right; width: 100%;" />
                                 </div>
-                                <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
+                                <div class="p-col-12 p-md-4 p-xl-4" style="border:1px solid;">
                                     <h6><p:outputLabel for="txtMonto">Monto a Invertir</p:outputLabel></h6>
                                     <p:inputNumber id="txtMonto" value="#{registrarCooperacionView.proyectoCooperacion.montoInversion}" decimalPlaces="2" required="true" label="Monto a Invertir" inputStyle="text-align: right;width: 100%;"/>
                                 </div>
-                                <div class="p-col-12 p-md-4 p-xl-3" style="border:1px solid;">
+                                <div class="p-col-12 p-md-4 p-xl-4" style="border:1px solid;">
                                     <h6><p:outputLabel for="txtCantidaBen">Cantidad Beneficiarios</p:outputLabel></h6>
                                     <p:inputNumber id="txtCantidaBen" value="#{registrarCooperacionView.proyectoCooperacion.cantidadBeneficiarios}" decimalPlaces="0" required="true" label="Cantidad de Beneficiarios" inputStyle="text-align: right;width: 100%;"/>
                                 </div>
@@ -281,7 +283,13 @@
                                     <p:selectManyCheckbox value="#{registrarCooperacionView.nivelIII}" layout="responsive" columns="3">
                                         <f:selectItem itemLabel="Media" itemValue="6"/>
                                         <f:selectItem itemLabel="Docente" itemValue="7"/>
-                                        <f:selectItem itemLabel="Otros" itemValue="8"/>
+                                        <f:selectItem itemLabel="Básica-Nocturna" itemValue="8"/>
+                                    </p:selectManyCheckbox>
+                                    
+                                    <p:selectManyCheckbox value="#{registrarCooperacionView.nivelIV}" layout="responsive" columns="3">
+                                        <f:selectItem itemLabel="Modalidad Flexible" itemValue="9"/>
+                                        <f:selectItem itemLabel="Educación Especial" itemValue="10"/>
+                                        <f:selectItem itemLabel="Otros" itemValue="11"/>
                                     </p:selectManyCheckbox>
                                 </div>
                             </div>

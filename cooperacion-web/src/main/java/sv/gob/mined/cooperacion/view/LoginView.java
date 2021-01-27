@@ -101,10 +101,10 @@ public class LoginView implements Serializable {
             if (correoValido) {
                 FacesContext context = FacesContext.getCurrentInstance();
                 //context.getExternalContext().getSessionMap().put("sessionMail", mailSession);
-                context.getExternalContext().getSessionMap().put("server", server);
+                /*context.getExternalContext().getSessionMap().put("server", server);
                 context.getExternalContext().getSessionMap().put("port", port);
                 context.getExternalContext().getSessionMap().put("remitente", remitente);
-                context.getExternalContext().getSessionMap().put("password", password);
+                context.getExternalContext().getSessionMap().put("password", password);*/
 
                 Usuario usuario = catalogoFacade.findUsuarioByEmail(credencialesView.getRemitente());
 

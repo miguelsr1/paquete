@@ -29,36 +29,20 @@
                     </h:panelGrid>
                 </div>
                 <div class="p-col-12">
-                    <p:outputLabel value="Tipo de cuenta a utilizar"/>
-                    <div class="input-wrapper">
-                        <p:selectOneMenu id="rdTipo" value="#{loginView.idDominioCorreo}" style="width: 100%;">
-                            <f:selectItem itemLabel="Office 365" itemValue="2"/>
-                            <f:selectItem itemLabel="Correo Institucional" itemValue="1"/>
-                            <p:ajax update="lblDominio divDominio"/>
-                        </p:selectOneMenu>
-                    </div>
-                </div>
-                <div class="p-col-12">
                     <p:outputLabel for="txtUsuario" value="Correo" />
                     <div class="p-grid">
                         <div class="p-col-8">
-                            <p:inputText id="txtUsuario" placeholder="Usuario" style="width: 100%;" required="true" value="#{loginView.correoRemitente}"/>
+                            <p:inputText id="txtUsuario" placeholder="Usuario" style="width: 100%;" required="true" value="#{aprobarCapacitacionView.correoRemitente}"/>
                         </div>
                         <div class="p-col-4" >
-                            <p:outputLabel id="lblDominio" value="#{loginView.idDominioCorreo eq '1' ? '@mined.gob.sv':'@admin.mined.edu.sv'}"/>
+                            <p:outputLabel id="lblDominio" value="@admin.mined.edu.sv"/>
                         </div>
-                    </div>
-                </div>
-                <div jsf:id="divDominio" class="p-col-12" style="display:#{(loginView.idDominioCorreo eq '1')?'block':'none'}">
-                    <p:outputLabel for="txtDominio" value="Usuario WINDOWS" />
-                    <div class="input-wrapper">
-                        <p:inputText id="txtDominio" widgetVar="txtDominio" value="#{loginView.dominio}" rendered="#{loginView.idDominioCorreo eq '1'}" />
                     </div>
                 </div>
                 <div class="p-col-12">
                     <p:outputLabel for="txtClaveRemitente" value="Contraseña"/>
                     <div class="input-wrapper">
-                        <p:password id="txtClaveRemitente" widgetVar="txtClaveRemitente" value="#{loginView.password}" placeholder="Password" required="true"/>
+                        <p:password id="txtClaveRemitente" widgetVar="txtClaveRemitente" value="#{aprobarCapacitacionView.password}" placeholder="Password" required="true"/>
                         <i class="pi pi-lock" />
                     </div>
                 </div>
@@ -69,7 +53,7 @@
                     <div class="p-grid">
                         <div class="p-col-6">
                             <p:commandButton id="btnValidar" widgetVar="btnValidar" value="Validar" style="width: 110px;" 
-                                             action="#{loginView.validarCrendecialesDelCorreo()}" 
+                                             action="#{aprobarCapacitacionView.validarCrendecialesDelCorreo()}" 
                                              onclick="PF('btnValidar').disable();" 
                                              oncomplete="PF('btnValidar').enable();" update="outPrincipal"/> 
                         </div>

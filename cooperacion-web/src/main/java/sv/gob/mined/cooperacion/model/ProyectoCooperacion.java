@@ -60,8 +60,8 @@ public class ProyectoCooperacion implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Column(name = "ID_PROYECTO")
-    @GeneratedValue(generator = "SEQ_COOPERANTE",strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "SEQ_COOPERANTE", sequenceName = "SEQ_COOPERANTE", allocationSize = 1, initialValue = 1)
+    @GeneratedValue(generator = "SEQ_PROYECTO",strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "SEQ_PROYECTO", sequenceName = "SEQ_PROYECTO", allocationSize = 1, initialValue = 1)
     private Long idProyecto;
     @Column(name = "NOMBRE_PROYECTO")
     private String nombreProyecto;
@@ -98,6 +98,12 @@ public class ProyectoCooperacion implements Serializable {
     private Short docente;
     @Column(name = "OTROS")
     private Short otros;
+    @Column(name = "BASICA_NOCTURNA")
+    private Short basicaNocturna;
+    @Column(name = "MOD_FLEXIBLE")
+    private Short modFelxible;
+    @Column(name = "ESPECIAL")
+    private Short especial;
     @Column(name = "ID_ESTADO")
     private Short idEstado;
     @Basic(optional = false)
@@ -371,6 +377,30 @@ public class ProyectoCooperacion implements Serializable {
 
     public void setIdTipoInstrumento(TipoInstrumento idTipoInstrumento) {
         this.idTipoInstrumento = idTipoInstrumento;
+    }
+
+    public Short getBasicaNocturna() {
+        return basicaNocturna;
+    }
+
+    public void setBasicaNocturna(Short basicaNocturna) {
+        this.basicaNocturna = basicaNocturna;
+    }
+
+    public Short getModFelxible() {
+        return modFelxible;
+    }
+
+    public void setModFelxible(Short modFelxible) {
+        this.modFelxible = modFelxible;
+    }
+
+    public Short getEspecial() {
+        return especial;
+    }
+
+    public void setEspecial(Short especial) {
+        this.especial = especial;
     }
     
 }

@@ -49,6 +49,35 @@
             </div>        
         </div>
 
+        <p:ajaxStatus>
+            <f:facet name="default">
+
+            </f:facet>
+            <f:facet name="start">
+                <div id="div_modal" class="layout-content ui-widget-overlay ui-dialog-mask" style="z-index: 1000;"></div>
+                <div id="ajax_gif" class="ui-tooltip-text ui-corner-all ui-shadow">
+                    <i class="fa fa-refresh fa-spin ajax-loader" aria-hidden="true" 
+                       style="color: #349ffb; font-size: 36px; display: block;  position: relative;  top: 18%;  transform: translateY(-18%);"></i>
+                </div>
+            </f:facet>
+
+            <f:facet name="complete">
+                <h:outputText value="" />
+            </f:facet>
+        </p:ajaxStatus>
+        
+        <h:form>
+            <p:idleMonitor onactive="PF('sessionTimeOutDialog').show();" timeout="1500000" >
+                <p:confirmDialog id="sessionTimeOutDialog"
+                                 message="La sesión a caducado por inactividad, por favor, pulse sobre el siguiente botón para volver a acceder a la aplicación" closable="false"
+                                 header="Sesión finalizada" widgetVar="sessionTimeOutDialog">
+                    <p:commandButton id="Logout" value="Iniciar sesión"
+                                     icon="fa fa-sign-out" ajax="false"
+                                     action="#{guestPreferences.logout()}" />
+                </p:confirmDialog>
+            </p:idleMonitor>
+        </h:form>
+
         <h:outputStylesheet name="main.css" library="css" />
         <h:outputStylesheet name="css/primeicons.css" library="paradise-layout" />
         <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout" />

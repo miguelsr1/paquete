@@ -23,8 +23,8 @@ public class CatalogoFacade {
     @PersistenceContext(unitName = "cooperacionPU")
     private EntityManager emCooperacion;
 
-    public List<Cooperante> findCooperante() {
-        Query q = emCooperacion.createQuery("SELECT c FROM Cooperante c", Cooperante.class);
+    public List<Cooperante> findAllCooperante() {
+        Query q = emCooperacion.createQuery("SELECT c FROM Cooperante c ORDER BY c.idCooperante", Cooperante.class);
         return q.getResultList();
     }
     
@@ -86,7 +86,7 @@ public class CatalogoFacade {
     }
     
     public List<Notificacion> findNotificacionByTipoCooperacion(Long idTipoCooperacion){
-        Query q = emCooperacion.createQuery("SELECT n FROM Notificacion n WHERE n.idTipoCooperacion=:idTipo ORDER BY n.idNotificacion", Notificacion.class);
+        Query q = emCooperacion.createQuery("SELECT n FROM Notificacion n WHERE n.idTipoCooperacion=:idTipo and n.estadoEliminacion=0 ORDER BY n.idNotificacion", Notificacion.class);
         q.setParameter("idTipo", idTipoCooperacion);
         return q.getResultList();
     }

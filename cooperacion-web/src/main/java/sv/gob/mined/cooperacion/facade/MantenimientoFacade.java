@@ -6,7 +6,11 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import sv.gob.mined.cooperacion.model.Cooperante;
+import sv.gob.mined.cooperacion.model.Director;
+import sv.gob.mined.cooperacion.model.FechaCapacitacion;
 import sv.gob.mined.cooperacion.model.ProyectoCooperacion;
+import sv.gob.mined.cooperacion.model.TipoCooperacion;
 import sv.gob.mined.cooperacion.model.dto.ListadoProyectoDto;
 import sv.gob.mined.cooperacion.util.QueryNativas;
 
@@ -65,10 +69,51 @@ public class MantenimientoFacade {
         return q.getResultList();
     }
 
-    public List<ProyectoCooperacion> findProyectosByCodEntAndAnho(String codigoEntidad, String anho){
+    public List<ProyectoCooperacion> findProyectosByCodEntAndAnho(String codigoEntidad, String anho) {
         Query q = emCooperacion.createQuery("SELECT p FROM ProyectoCooperacion p WHERE p.codigoEntidad=:codEnt and p.anho=:anho", ProyectoCooperacion.class);
         q.setParameter("codEnt", codigoEntidad);
         q.setParameter("anho", anho);
         return q.getResultList();
+    }
+
+    public List<ProyectoCooperacion> findProyectosByCodEnt(String codigoEntidad) {
+        Query q = emCooperacion.createQuery("SELECT p FROM ProyectoCooperacion p WHERE p.codigoEntidad=:codEnt", ProyectoCooperacion.class);
+        q.setParameter("codEnt", codigoEntidad);
+        return q.getResultList();
+    }
+
+    public List<Cooperante> findAllCooperantes() {
+        Query q = emCooperacion.createQuery("SELECT c FROM Cooperante c ORDER BY c.nombreCooperante", Cooperante.class);
+        return q.getResultList();
+    }
+
+    public List<TipoCooperacion> findAllTipoCoopeciones() {
+        Query q = emCooperacion.createQuery("SELECT t FROM TipoCooperacion t ORDER BY t.descripcionCooperacion", TipoCooperacion.class);
+        return q.getResultList();
+    }
+
+    public List<FechaCapacitacion> findAllCapacitaciones() {
+        Query q = emCooperacion.createQuery("SELECT f FROM FechaCapacitacion f ORDER BY f.fechaInicio", FechaCapacitacion.class);
+        return q.getResultList();
+    }
+
+    public List<FechaCapacitacion> findCapacitacionesByProyecto(Long idProyecto) {
+        Query q = emCooperacion.createQuery("SELECT f FROM FechaCapacitacion f WHERE f.idProyecto.idProyecto=:id ORDER BY f.fechaInicio", FechaCapacitacion.class);
+        q.setParameter("id", idProyecto);
+        return q.getResultList();
+    }
+
+    public ProyectoCooperacion getProyectoByIdAndCooperanteAndCodEnt(Long idProyecto, Long idCooperante, String codigoEntidad) {
+        Query q = emCooperacion.createQuery("SELECT p FROM ProyectoCooperacion p WHERE p.idProyecto=:id and p.idCooperante.idCooperante=:idCo and p.codigoEntidad=:cod", ProyectoCooperacion.class);
+        q.setParameter("id", idProyecto);
+        q.setParameter("idCo", idCooperante);
+        q.setParameter("cod", codigoEntidad);
+        return q.getResultList().isEmpty() ? null : (ProyectoCooperacion) q.getResultList().get(0);
+    }
+
+    public Director getDirectorByCodigoEntidad(String codigoEntidad) {
+        Query q = emCooperacion.createQuery("select d from Director d where d.codigoEntidad=:cod", Director.class);
+        q.setParameter("cod", codigoEntidad);
+        return (Director) q.getResultList().get(0);
     }
 }
