@@ -29,8 +29,18 @@ public class EntidadEducativa implements Serializable {
     private String codigoEntidad;
     @Column(name = "CODIGO_DEPARTAMENTO")
     private String codigoDepartamento;
+    @Column(name = "NOMBRE")
+    private String nombre;
 
     public EntidadEducativa() {
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public EntidadEducativa(String codigoEntidad) {

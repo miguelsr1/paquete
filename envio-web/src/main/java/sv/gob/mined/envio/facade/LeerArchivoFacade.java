@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -28,6 +29,9 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.comparator.NameFileComparator;
+import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -269,6 +273,8 @@ public class LeerArchivoFacade {
         String cadenaDeBusqueda;
         String pathArchivo;
 
+        SimpleDateFormat sdf = new SimpleDateFormat("HHmmssSSS");
+
         if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
             pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_windows");
         } else {
@@ -276,12 +282,12 @@ public class LeerArchivoFacade {
         }
 
         try {
-            File folderDepa = new File(pathArchivo + File.separator + "notas" + File.separator + codDepa);
+            File folderDepa = new File(pathArchivo + File.separator + "ce" + File.separator + codDepa);
             if (!folderDepa.exists()) {
                 folderDepa.mkdir();
             }
 
-            document = PDDocument.load(new File(pathArchivo + File.separator + "notas" + File.separator + codDepa.concat(".pdf")));
+            document = PDDocument.load(new File(pathArchivo + File.separator + "ce" + File.separator + codDepa.concat(".pdf")));
             Splitter splitter = new Splitter();
             splitter.setStartPage(1);
 
@@ -295,16 +301,44 @@ public class LeerArchivoFacade {
                 interacion = 1;
             }
 
-            cadenaDeBusqueda = "NIE:";
+            cadenaDeBusqueda = "CÓDIGO: ";
             do {
                 interacion--;
                 String codigo = "";
+                String codigoTemp = "";
+
                 for (PDDocument pd : splitter.split(document)) {
+                    codigo = "";
+
                     try {
                         codigo = getNieEstudiante(pd, cadenaDeBusqueda, nie).trim();
 
-                        //crear archivo pdf
-                        pd.save(pathArchivo + File.separator + "notas" + File.separator + codigo + ".pdf");
+                        if (codigo.isEmpty()) {
+                            codigoTemp = codigo;
+
+                            File carpetaCodigo = new File(pathArchivo + File.separator + "ce" + File.separator + codigoTemp);
+                            if (!carpetaCodigo.exists()) {
+                                carpetaCodigo.mkdir();
+                            }
+
+                            //crear archivo pdf
+                            pd.save(pathArchivo + File.separator + "ce" + File.separator + codigoTemp + File.separator + sdf.format(new Date()) + ".pdf");
+                        } else {
+                            if (codigoTemp.equals(codigo)) {
+                                //El NIP es igual al NIP bandera, se agrega esta hoja al listado que se esta generando
+                            } else {
+                                //El NIP cambio, por lo tanto esta es una nueva hoja, se debe de mandar a persistir el listado 
+                                //del NIP anterior.
+                                codigoTemp = codigo;
+
+                                File carpetaCodigo = new File(pathArchivo + File.separator + "ce" + File.separator + codigoTemp);
+                                if (!carpetaCodigo.exists()) {
+                                    carpetaCodigo.mkdir();
+                                }
+                                //se limpia el listado y se agrega la hora actual
+                            }
+                            pd.save(pathArchivo + File.separator + "ce" + File.separator + codigoTemp + File.separator + sdf.format(new Date()) + ".pdf");
+                        }
 
                     } catch (StringIndexOutOfBoundsException e) {
                         Logger.getLogger(LeerArchivoFacade.class.getName()).log(Level.SEVERE, "DEPA {0} - Error obteniendo el nip del docente{1}", new Object[]{codDepa, codigo});
@@ -312,6 +346,7 @@ public class LeerArchivoFacade {
 
                     pd.close();
                 }
+
                 if (interacion > 0) {
                     contadorDeCortes = siguienteInteracion + 1;
                     siguienteInteracion = siguienteInteracion + 1000;
@@ -327,6 +362,7 @@ public class LeerArchivoFacade {
 
             document.close();
 
+            unirBoletasUnSolaArchivo(new File(pathArchivo + File.separator + "ce"));
         } catch (IOException ex) {
             try {
                 if (document != null) {
@@ -338,6 +374,49 @@ public class LeerArchivoFacade {
                 Logger.getLogger(LeerArchivoFacade.class.getName()).log(Level.SEVERE, "========== ERROR ==========", ex);
             }
         }
+
+    }
+
+    private void unirBoletasUnSolaArchivo(File carpetaPorCodigo) throws FileNotFoundException, IOException {
+        File[] lstPDf = carpetaPorCodigo.listFiles();
+        Arrays.sort(lstPDf);
+
+        for (File carpetaDocente : lstPDf) {
+            if (carpetaDocente.isDirectory()
+                    && !carpetaDocente.getName().equals("01")
+                    && !carpetaDocente.getName().equals("02")
+                    && !carpetaDocente.getName().equals("03")
+                    && !carpetaDocente.getName().equals("04")
+                    && !carpetaDocente.getName().equals("05")
+                    && !carpetaDocente.getName().equals("06")
+                    && !carpetaDocente.getName().equals("07")
+                    && !carpetaDocente.getName().equals("08")
+                    && !carpetaDocente.getName().equals("09")
+                    && !carpetaDocente.getName().equals("10")
+                    && !carpetaDocente.getName().equals("11")
+                    && !carpetaDocente.getName().equals("12")
+                    && !carpetaDocente.getName().equals("13")
+                    && !carpetaDocente.getName().equals("14")) {
+                PDFMergerUtility PDFmerger = new PDFMergerUtility();
+                PDFmerger.setDestinationFileName(carpetaPorCodigo.getPath() + File.separator + carpetaDocente.getName() + ".pdf");
+
+                File[] files = carpetaDocente.listFiles();
+
+                Arrays.sort(files, NameFileComparator.NAME_COMPARATOR);
+
+                for (File boleta : files) {
+                    PDFmerger.addSource(boleta);
+                }
+
+                PDFmerger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+
+                for (File boleta : carpetaDocente.listFiles()) {
+                    boleta.delete();
+                }
+                carpetaDocente.delete();
+            }
+        }
+
     }
 
     private String getNieEstudiante(PDDocument pDDocument, String strEndIdentifier, String nipOld) throws IOException {
@@ -348,12 +427,11 @@ public class LeerArchivoFacade {
         String pdfFileInText = tStripper.getText(pDDocument);
 
         String strEnd = strEndIdentifier;
-        int endInddex = pdfFileInText.indexOf(strEnd) + 4;
+        int endInddex = pdfFileInText.indexOf(strEnd) + 8;
         if (endInddex != -1) {
-            //int posEnd = pdfFileInText.length(); //503
-            int posEnd = pdfFileInText.indexOf("Centro Educativo"); //503
+            int posEnd = endInddex + 6; //503
             returnString = pdfFileInText.substring(endInddex, posEnd).trim();
-            System.out.println("NIE: " + returnString);
+            System.out.println("CODIGO: " + returnString);
             if (returnString.contains("_______")) {
                 returnString = "";
             }

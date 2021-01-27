@@ -18,6 +18,7 @@ import javax.persistence.Query;
 import org.jboss.ejb3.annotation.TransactionTimeout;
 import sv.gob.mined.envio.model.Destinatarios;
 import sv.gob.mined.envio.model.DetalleEnvio;
+import sv.gob.mined.envio.model.Director;
 import sv.gob.mined.envio.model.EnvioMasivo;
 import sv.gob.mined.envio.model.Remitentes;
 
@@ -96,6 +97,11 @@ public class PersistenciaFacade {
     public List<Destinatarios> getLstDestinatarioByCodigoDepartamento(String codigoDepartamento) {
         Query q = em.createQuery("SELECT d FROM Destinatarios d WHERE d.codigo.codigoDepartamento=:codEnt", Destinatarios.class);
         q.setParameter("codEnt", codigoDepartamento);
+        return q.getResultList();
+    }
+
+    public List<Director> getLstDirectores() {
+        Query q = em.createQuery("SELECT d FROM Director d", Director.class);
         return q.getResultList();
     }
 
