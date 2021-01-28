@@ -6,11 +6,15 @@
 package sv.gob.mined.envio.model;
 
 import java.io.Serializable;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -22,6 +26,9 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "EntidadEducativa.findAll", query = "SELECT e FROM EntidadEducativa e")})
 public class EntidadEducativa implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "codigoEntidad")
+    private List<Director> directorList;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -87,5 +94,12 @@ public class EntidadEducativa implements Serializable {
     public String toString() {
         return "sv.gob.mined.envio.model.EntidadEducativa[ codigoEntidad=" + codigoEntidad + " ]";
     }
-    
+
+    public List<Director> getDirectorList() {
+        return directorList;
+    }
+
+    public void setDirectorList(List<Director> directorList) {
+        this.directorList = directorList;
+    }
 }
