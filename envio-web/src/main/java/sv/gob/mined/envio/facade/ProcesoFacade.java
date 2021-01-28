@@ -385,7 +385,7 @@ public class ProcesoFacade {
         List<Director> lstDestinatarios = persistenciaFacade.getLstDirectores();
 
         List<Remitentes> lstRemitentes = persistenciaFacade.getLstRemitentes(true);
-        
+
         System.out.println("Total de archivos a enviar " + lstDestinatarios.size());
 
         EnvioMasivo envioMasivo = persistenciaFacade.findEnvio(idEnvio);
@@ -397,7 +397,7 @@ public class ProcesoFacade {
                     pathArchivo = RESOURCE_BUNDLE.getString("path_archivo_linux");
                 }
 
-                File folderDepa = new File(pathArchivo + File.separator + "notas" + File.separator + codigoDepartamento);
+                File folderDepa = new File(pathArchivo + File.separator + "ce" + File.separator + codigoDepartamento);
 
                 //server gmail
                 port = "587";
@@ -408,7 +408,7 @@ public class ProcesoFacade {
                 mensaje = envioMasivo.getMensaje();
 
                 for (Director destinatario : lstDestinatarios) {
-
+                    System.out.println("Codigo ent: " + destinatario.getCodigoEntidad().getCodigoEntidad());
                     File nota = new File(pathArchivo + File.separator + "ce" + File.separator + destinatario.getCodigoEntidad().getCodigoEntidad().concat(".pdf"));
 
                     if (nota.exists()) {
@@ -702,7 +702,7 @@ public class ProcesoFacade {
             Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void envioDeCorreoArchivo(Address from, Transport transport, Director destinatario, String mensaje, String titulo,
             Session mailSession, String server, String port, String remitente, String password, BigDecimal idEnvio, File nota, String pathArchivo) throws MessagingException, IOException {
         if (transport.isConnected()) {
