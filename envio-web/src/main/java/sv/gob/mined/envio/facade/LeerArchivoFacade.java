@@ -301,7 +301,7 @@ public class LeerArchivoFacade {
                 interacion = 1;
             }
 
-            cadenaDeBusqueda = "CÓDIGO: ";
+            cadenaDeBusqueda = "/2020/";
             do {
                 interacion--;
                 String codigo = "";
