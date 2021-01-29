@@ -278,7 +278,7 @@ public class OfertaBienesServiciosEJB {
             return lstResoluciones.get(0);
         }
     }
-
+    
     public ResolucionesAdjudicativas editResolucion(ResolucionesAdjudicativas resolucionesAdjudicativas, String usuarioModif) {
         resolucionesAdjudicativas.setFechaModificacion(new Date());
         resolucionesAdjudicativas.setUsuarioModificacion(usuarioModif);
