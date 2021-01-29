@@ -1168,7 +1168,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
             JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(lst);
 
             HashMap param = new HashMap();
-            param.put("SUBREPORT_DIR", JsfUtil.getValorFromBundleByKey("path_reportes").concat(Reportes.PATH_REPORTES) + File.separator);
+            param.put("SUBREPORT_DIR", JsfUtil.getPathReportes().concat(Reportes.PATH_REPORTES) + File.separator);
             param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
             param.put("pJustificacion", resolucionesModificativas.getJustificacionModificativa());
             param.put("pPlazoEntrega", resolucionesModificativas.getIdContrato().getPlazoPrevistoEntrega().intValue());
