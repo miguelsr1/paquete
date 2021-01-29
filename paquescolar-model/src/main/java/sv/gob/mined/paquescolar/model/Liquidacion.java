@@ -21,6 +21,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 /**
  *
@@ -60,6 +61,9 @@ public class Liquidacion implements Serializable {
     private Short estadoLiquidacion;
     @Column(name = "COMENTARIO")
     private String comentario;
+
+    @Transient
+    private Boolean recepcion;
 
     public Liquidacion() {
     }
@@ -126,5 +130,16 @@ public class Liquidacion implements Serializable {
 
     public void setComentario(String comentario) {
         this.comentario = comentario;
+    }
+
+    public void setRecepcion(Boolean recepcion) {
+        this.recepcion = recepcion;
+        actaRecepcion = recepcion ? (short) 1 : (short) 0;
+    }
+
+    public Boolean getRecepcion() {
+        recepcion = (actaRecepcion == 1);
+
+        return recepcion;
     }
 }

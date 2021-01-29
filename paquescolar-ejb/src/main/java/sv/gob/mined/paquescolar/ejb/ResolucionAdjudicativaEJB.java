@@ -28,6 +28,7 @@ import sv.gob.mined.paquescolar.model.DetalleOfertas;
 import sv.gob.mined.paquescolar.model.EstadoReserva;
 import sv.gob.mined.paquescolar.model.HistorialCamEstResAdj;
 import sv.gob.mined.paquescolar.model.InfoGeneralContratacion;
+import sv.gob.mined.paquescolar.model.Liquidacion;
 import sv.gob.mined.paquescolar.model.Participantes;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.ResolucionesModificativas;
@@ -458,10 +459,23 @@ public class ResolucionAdjudicativaEJB {
         q.setParameter("idDetProcesoAdq", idDetProcesoAdq);
         return q.getResultList().isEmpty() ? null : (ContratosOrdenesCompras) q.getResultList().get(0);
     }
+    
+    public ContratosOrdenesCompras findContratoByIdParticipante(BigDecimal idParticipante) {
+        Query q = em.createQuery("SELECT c FROM ContratosOrdenesCompras c WHERE c.idResolucionAdj.idParticipante.idParticipante=:idPar AND c.idResolucionAdj.idParticipante.idOferta.estadoEliminacion=0", ContratosOrdenesCompras.class);
+        q.setParameter("idPar", idParticipante);
+        return q.getResultList().isEmpty() ? null : (ContratosOrdenesCompras) q.getResultList().get(0);
+    }
 
     public ResolucionesModificativas findModificativaByIdContrato(BigDecimal idContrato) {
         Query q = em.createQuery("SELECT r FROM ResolucionesModificativas r WHERE r.idContrato.idContrato=idContrato and r.idEstadoReserva.idEstadoReserva=2", ResolucionesModificativas.class);
         q.setParameter("idContrato", idContrato);
         return q.getResultList().isEmpty() ? null : (ResolucionesModificativas) q.getResultList().get(0);
+    }
+    
+    
+    public void guardarLiquidacion(Liquidacion liquidacion){
+        if(liquidacion.getIdLiquidacion() == null){
+            em.persist(liquidacion);
+        }
     }
 }
