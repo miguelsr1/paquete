@@ -29,9 +29,11 @@ public class CredencialesView implements Serializable {
     private String password;
 
     private String remitente;
+    private String remitenteOficial;
     private String port;
     private String server;
     private Session mailSession;
+    private Session mailSessionRemitente;
     private Transport transport;
 
     @Inject
@@ -91,6 +93,23 @@ public class CredencialesView implements Serializable {
 
     public String getRemitente() {
         return remitente;
+    }
+
+    public Session getMailSessionRemitente() {
+        if(mailSessionRemitente == null){
+            remitenteOficial = "cooperacion@admin.mined.edu.sv";
+            mailSessionRemitente = eMailFacade.getMailSessionOffice(mailSessionRemitente, "cooperacion@admin.mined.edu.sv", "mined2021.*");
+        }
+        
+        return mailSessionRemitente;
+    }
+
+    public String getRemitenteOficial() {
+        return remitenteOficial;
+    }
+
+    public void setRemitenteOficial(String remitenteOficial) {
+        this.remitenteOficial = remitenteOficial;
     }
 
 }

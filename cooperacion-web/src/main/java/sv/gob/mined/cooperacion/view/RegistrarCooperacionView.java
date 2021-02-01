@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -95,6 +96,7 @@ public class RegistrarCooperacionView implements Serializable {
 
     @Inject
     private CredencialesView credencialesView;
+    
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("bundle");
 
@@ -114,9 +116,6 @@ public class RegistrarCooperacionView implements Serializable {
         }
 
         credencialesView.setDominio("2");
-        /*credencialesView.setCorreoRemitente("cooperacion");
-        credencialesView.setPassword("mined2021.*");
-        credencialesView.validarCredencial();*/
     }
 
     public Long getIdTipoCooperacion() {
@@ -386,7 +385,7 @@ public class RegistrarCooperacionView implements Serializable {
                 default:
             }
 
-            proyectoCooperacion.setIdEstado((short) (necesitaAprobacion ? 2 : 1));
+            proyectoCooperacion.setIdEstado((short) (necesitaAprobacion ? 1 : 2));
 
             if (mantenimientoFacade.guardar(proyectoCooperacion)) {
                 switch (idTipoCooperacion.intValue()) {
@@ -397,8 +396,6 @@ public class RegistrarCooperacionView implements Serializable {
                     case 10:
                     case 11:
                     case 14:
-                        proyectoCooperacion.setIdEstado((short) 2);
-
                         mensajeParaCe = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprobacionAutomatica.mensaje"),
                                 StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
                                 entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
@@ -410,9 +407,6 @@ public class RegistrarCooperacionView implements Serializable {
                     case 4:
                     case 5:
                     case 6:
-                        necesitaAprobacion = true;
-                        proyectoCooperacion.setIdEstado((short) 1);
-
                         if (idTipoCooperacion.intValue() != 5) {
                             mensajeParaCe = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprobacionVoBo.mensaje"),
                                     StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
@@ -423,7 +417,6 @@ public class RegistrarCooperacionView implements Serializable {
                         break;
 
                     case 3:
-                        necesitaAprobacion = true;
                         RC4Crypter seguridad = new RC4Crypter();
                         mensajeParaUt = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.notificacionDeCapacitacion.mensaje"),
                                 StringUtils.getFecha(new Date()),
@@ -460,7 +453,7 @@ public class RegistrarCooperacionView implements Serializable {
                 }
 
                 PrimeFaces.current().executeScript("PF('dlgAceptar').show()");
-                guardarHistoricoCambioEstado(tmpFecha, null, (short) 1);
+                guardarHistoricoCambioEstado(tmpFecha, null, (short) 1, null);
                 List<Notificacion> lstNotificacion = catalogoFacade.findNotificacionByTipoCooperacion(proyectoCooperacion.getIdTipoCooperacion().getIdTipoCooperacion());
 
                 String emailsTo = "";
@@ -497,20 +490,20 @@ public class RegistrarCooperacionView implements Serializable {
                         cc[i] = new InternetAddress(emailsCc.split(",")[i]);
                     }
 
-                    Session session = credencialesView.getMailSession();
+                    //Session session = credencialesView.getMailSession();
 
                     if (necesitaAprobacion) {
                         //CORREO PARA UNIDAD TÉNICA
-                        eMailFacade.enviarMail(to, cc, credencialesView.getRemitente(), titulo, mensajeParaUt, session);
+                        eMailFacade.enviarMail(to, cc, "cooperacion@admin.mined.edu.sv", titulo, mensajeParaUt, credencialesView.getMailSessionRemitente());
 
                         to = new InternetAddress[emailsTo.split(",").length];
                         to[0] = new InternetAddress(directorCe.getCorreoElectronico());
 
                         //CORREO PARA CENTRO ESCOLAR
-                        eMailFacade.enviarMail(to, cc, credencialesView.getRemitente(), titulo, mensajeParaCe, session);
+                        eMailFacade.enviarMail(to, cc, "cooperacion@admin.mined.edu.sv", titulo, mensajeParaCe, credencialesView.getMailSessionRemitente());
                     } else {
                         //CORREO PARA CENTRO ESCOLAR
-                        eMailFacade.enviarMail(to, cc, credencialesView.getRemitente(), titulo, mensajeParaCe, session);
+                        eMailFacade.enviarMail(to, cc, "cooperacion@admin.mined.edu.sv", titulo, mensajeParaCe, credencialesView.getMailSessionRemitente());
                     }
 
                 } catch (AddressException ex) {
@@ -524,11 +517,12 @@ public class RegistrarCooperacionView implements Serializable {
         }
     }
 
-    private void guardarHistoricoCambioEstado(Date tmpFecha, Short cambioAnt, Short cambioNew) {
+    private void guardarHistoricoCambioEstado(Date tmpFecha, Short cambioAnt, Short cambioNew, String comentario) {
         HisCambioEstadoPro historico = new HisCambioEstadoPro();
         historico.setFechaCambio(tmpFecha);
         historico.setIdEstadoAnt(cambioAnt);
         historico.setIdEstadoNew(cambioNew);
+        historico.setComentario(comentario);
         historico.setIdProyecto(proyectoCooperacion.getIdProyecto());
         historico.setUsuarioCambio(directorCe.getIdDirector());
 

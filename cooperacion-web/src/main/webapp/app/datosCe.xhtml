@@ -218,7 +218,8 @@
                                     </div>
                                     <p:outputLabel value="Fecha estimada Fin:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
                                     <div class="p-col-12 p-md-3">
-                                        <p:calendar id="cldFin" value="#{registrarCooperacionView.proyectoCooperacion.fechaEstimadaFin}" pattern="dd/MM/yyyy" locale="es" required="true" label="Fecha estimada de fin"/>
+                                        <p:calendar id="cldFin" value="#{registrarCooperacionView.proyectoCooperacion.fechaEstimadaFin}" pattern="dd/MM/yyyy" locale="es" required="true" label="Fecha estimada de fin"
+                                                    mindate="#{registrarCooperacionView.proyectoCooperacion.fechaEstimadaInicio}"/>
                                     </div>
                                 </div>
 
@@ -333,7 +334,6 @@
 
         <p:dialog header="Información" id="dlgAceptar" widgetVar="dlgAceptar" modal="true" responsive="true" width="350" showEffect="fade" hideEffect="fade" 
                   closable="false" draggable="false" minimizable="false">
-
             <p>
                 <i class="pi pi-save" style="font-size: 24px; font-weight: bold;"></i> 
                 <p:spacer width="5"/>
