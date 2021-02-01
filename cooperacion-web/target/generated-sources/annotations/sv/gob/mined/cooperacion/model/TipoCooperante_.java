@@ -6,7 +6,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 import sv.gob.mined.cooperacion.model.Cooperante;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2021-01-15T14:05:42")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2021-01-28T08:01:32")
 @StaticMetamodel(TipoCooperante.class)
 public class TipoCooperante_ { 
 

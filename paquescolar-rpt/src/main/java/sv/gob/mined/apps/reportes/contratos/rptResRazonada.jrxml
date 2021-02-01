@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c2e7d38b-5c49-49d8-9cde-fc70b16d1e76">
 	<property name="ireport.zoom" value="1.2100000000000006"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="93"/>
+	<property name="ireport.y" value="144"/>
 	<subDataset name="dataset1" uuid="259d4645-8280-4d86-9b1b-09251ab83076"/>
 	<parameter name="ubicacionImagenes" class="java.lang.String">
 		<defaultValueExpression><![CDATA["/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/"]]></defaultValueExpression>
@@ -32,7 +32,8 @@ where
     par.estado_eliminacion = 0 and
     det.estado_eliminacion = 0 and
     ofe.id_det_proceso_adq = 49 and
-    org.firma_contrato = 1 
+    org.firma_contrato = 1 and 
+    vw.codigo_departamento = '14'
 group by
     vw.nombre,
     vw.codigo_entidad,

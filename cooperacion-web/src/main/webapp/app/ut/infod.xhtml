@@ -74,9 +74,9 @@
 
 
     <ui:define name="contenido">
-        <p:messages id="messages" closable="true" escape="false" >
+        <p:growl id="messages" escape="false" showDetail="true">
             <p:autoUpdate />
-        </p:messages>
+        </p:growl>
 
         <p:breadCrumb style="display:#{(infodView.codigoBueno)?'block':'none'}">
             <p:menuitem value="Inicio" url="inicio.mined" />
@@ -204,13 +204,16 @@
         <div class="card" style="display:#{(infodView.codigoBueno)?'block':'none'}">
             <div class="products-buttonbar">
                 <div style="width: 100%">
-                    <p:commandButton value="Aprobar" icon="pi pi-check" action="#{infodView.guardar}"/>
+                    <p:commandButton value="Cambiar estado" icon="pi pi-check" onclick="PF('dlgCambioEstado').show();" process="@this"
+                                     disabled="#{infodView.proyectoAprobado}"/>
                     <p:spacer width="10"/>
-                    <p:commandButton value="Agregar evento" icon="pi pi-calendar-plus" onclick="PF('addEvent').show();" process="@this" styleClass="success-button"/>
+                    <p:commandButton value="Agregar evento" icon="pi pi-calendar-plus" onclick="PF('addEvent').show();" process="@this" 
+                                     styleClass="success-button" disabled="#{not infodView.proyectoAprobado}"/>
                     <p:spacer width="10"/>
-                    <p:commandButton value="Guardar fechas" icon="pi pi-save" action="#{infodView.guardar}" styleClass="info-button"/>
+                    <p:commandButton value="Guardar fechas" icon="pi pi-save" action="#{infodView.guardar}" styleClass="info-button" 
+                                     disabled="#{not infodView.proyectoAprobado}" process="@this"/>
                     <p:spacer width="10"/>
-                    <p:commandButton id="btnNotificar" value="Notificar al C.E." icon="pi pi-envelope" styleClass="help-button" action="#{infodView.notificarCe}" process="@this,btnNotificar"/>
+                    <p:commandButton id="btnNotificar" value="Notificar al C.E." icon="pi pi-envelope" styleClass="help-button" action="#{infodView.notificarAprobacionCe()}" process="@this,btnNotificar" disabled="#{not infodView.proyectoAprobado}"/>
                 </div>
             </div>
             <div >
@@ -252,9 +255,9 @@
         </div>
 
         <p:dialog widgetVar="addEvent" header="Agendar día de Capacitación" showEffect="clip" 
-                  hideEffect="clip" resizable="false" draggable="false" modal="true" width="1024" height="500">
+                  hideEffect="clip" resizable="false" draggable="false" modal="true" width="800" height="500">
             <h:panelGrid columnClasses="value">
-                <p:schedule id="schedule" value="#{infodView.eventModel}" widgetVar="myschedule" >
+                <p:schedule id="myschedule" value="#{infodView.eventModel}" widgetVar="myschedule" >
                     <p:ajax event="dateSelect" listener="#{infodView.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
                     <p:ajax event="eventSelect" listener="#{infodView.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
                     <p:ajax event="eventMove" listener="#{infodView.onEventMove}" update="messages" />
@@ -263,7 +266,7 @@
             </h:panelGrid>
         </p:dialog>  
 
-        <p:dialog widgetVar="eventDialog" header="Detalle de la Capacitación" showEffect="fade" width="350" responsive="true">
+        <p:dialog  widgetVar="eventDialog" header="Detalle de la Capacitación" showEffect="fade" width="350" responsive="true">
             <p:outputPanel id="eventDetails" styleClass="ui-fluid">
                 <div class="p-field">
                     <p:outputLabel for="title" value="Título" />
@@ -275,7 +278,7 @@
                 </div>
                 <div class="p-field">
                     <p:outputLabel for="to" value="Hasta" />
-                    <p:datePicker id="to" value="#{infodView.event.endDate}" pattern="dd/MM/yyyy" showTime="true" appendTo="@(body)" />
+                    <p:datePicker id="to" value="#{infodView.event.endDate}" pattern="dd/MM/yyyy" showTime="true" appendTo="@(body)" mindate="#{infodView.event.startDate}" />
                 </div>
                 <div class="p-field">
                     <p:outputLabel for="lugar" value="Lugar" />
@@ -283,10 +286,38 @@
                 </div>
             </p:outputPanel>
             <f:facet name="footer">
-                <p:commandButton id="addButton" value="Guardar" action="#{infodView.agregarEvento}" icon="pi pi-check" oncomplete="PF('myschedule').update();PF('eventDialog').hide();" update="tblFechas"/>
+                <p:commandButton id="addButton" value="Guardar" action="#{infodView.agregarEvento}" icon="pi pi-check" 
+                                 update="eventDetails tblFechas" oncomplete="PF('myschedule').update();" process=""
+                                 validateClient="true"/>
                 <p:commandButton type="reset" value="Reset" styleClass="secondary-button" icon="pi pi-refresh" disabled="#{infodView.disable}"/>
                 <p:spacer width="20"/>
                 <p:commandButton id="deleteButton" value="Eliminar" icon="pi pi-trash" action="#{infodView.eliminarEvento}" oncomplete="PF('mySchedule').update();PF('eventDialog').hide();" disabled="#{infodView.disable}"/>
+            </f:facet>
+        </p:dialog>   
+
+        <p:dialog id="dlgCambioEstado" widgetVar="dlgCambioEstado" header="Cambiar estado" showEffect="clip" 
+                  hideEffect="clip" resizable="false" draggable="false" modal="true" width="500" height="190">
+            <p:outputPanel id="pnlCambioEstado" styleClass="ui-fluid">
+                <div class="p-field">
+                    <p:outputLabel value="Estado" />
+                    <p:selectOneMenu id="cboEstado" value="#{infodView.proyecto.idEstado}">
+                        <f:selectItem itemLabel="Seleccione un valor" noSelectionOption="true"/>
+                        <f:selectItem itemValue="1" itemLabel="Digitado"/>
+                        <f:selectItem itemValue="2" itemLabel="Aprobado"/>
+                        <f:selectItem itemValue="3" itemLabel="Observado"/>
+                        <f:selectItem itemValue="4" itemLabel="Denegado"/>
+                    </p:selectOneMenu>
+                </div>
+                <div class="p-field">
+                    <p:outputLabel value="Observación" />
+                    <p:inputTextarea id="txaObservacion" value="#{infodView.observacion}" />
+                </div>                
+            </p:outputPanel>
+
+            <f:facet name="footer">
+                <p:commandButton value="Guardar" action="#{infodView.guardarCambioEstado()}" icon="pi pi-check" oncomplete="PF('myschedule').update();PF('dlgCambioEstado').hide();" 
+                                 update="tblFechas" process="@this,cboEstado, txaObservacion"/>
+                <p:commandButton value="Cancelar" onclick="PF('dlgCambioEstado').hide();"/>
             </f:facet>
         </p:dialog>   
 

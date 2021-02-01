@@ -23,8 +23,10 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.mail.Session;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.ScheduleEntryMoveEvent;
 import org.primefaces.event.ScheduleEntryResizeEvent;
 import org.primefaces.event.SelectEvent;
@@ -37,10 +39,12 @@ import sv.gob.mined.cooperacion.facade.MantenimientoFacade;
 import sv.gob.mined.cooperacion.facade.paquete.UbicacionFacade;
 import sv.gob.mined.cooperacion.model.Director;
 import sv.gob.mined.cooperacion.model.FechaCapacitacion;
+import sv.gob.mined.cooperacion.model.HisCambioEstadoPro;
 import sv.gob.mined.cooperacion.model.ProyectoCooperacion;
 import sv.gob.mined.cooperacion.model.paquete.VwCatalogoEntidadEducativa;
 import sv.gob.mined.cooperacion.util.RC4Crypter;
 import sv.gob.mined.utils.StringUtils;
+import sv.gob.mined.utils.jsf.JsfUtil;
 
 /**
  *
@@ -61,6 +65,10 @@ public class InfodView implements Serializable {
     private boolean disable = false;
 
     private Boolean codigoBueno = true;
+    private Boolean proyectoAprobado = false;
+
+    private String observacion;
+    private Short idEstadoOld;
 
     private Director directorCe;
     private VwCatalogoEntidadEducativa entidadEducativa = new VwCatalogoEntidadEducativa();
@@ -74,7 +82,7 @@ public class InfodView implements Serializable {
     private UbicacionFacade ubicacionFacade;
     @Inject
     private EMailFacade eMailFacade;
-    
+
     @Inject
     private CredencialesView credencialesView;
 
@@ -93,6 +101,9 @@ public class InfodView implements Serializable {
             try {
                 cod = seguridad.decrypt("ha", params.get("id")).split("::");
                 proyecto = mantenimientoFacade.find(ProyectoCooperacion.class, Long.parseLong(cod[0]));
+                idEstadoOld = proyecto.getIdEstado();
+
+                proyectoAprobado = (proyecto.getIdEstado() == 2);
                 entidadEducativa = ubicacionFacade.findEntidadEducativaByCodigo(proyecto.getCodigoEntidad());
                 directorCe = mantenimientoFacade.getDirectorByCodigoEntidad(entidadEducativa.getCodigoEntidad());
 
@@ -104,6 +115,20 @@ public class InfodView implements Serializable {
         } else {
             codigoBueno = false;
         }
+
+        credencialesView.setDominio("2");
+    }
+
+    public Boolean getProyectoAprobado() {
+        return proyectoAprobado;
+    }
+
+    public String getObservacion() {
+        return observacion;
+    }
+
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
     }
 
     public Boolean getCodigoBueno() {
@@ -203,17 +228,33 @@ public class InfodView implements Serializable {
         lstFechasProyecto.add(fechaTmp);
 
         event = new DefaultScheduleEvent();
+
+        PrimeFaces.current().executeScript("PF('eventDialog').hide()");
     }
 
     public void eliminarEvento() {
-        eventModel.deleteEvent(event);
-        lstFechasProyecto.stream().filter((fecha) -> (fecha.getIdFecha().equals(((FechaCapacitacion) event.getData()).getIdFecha()))).forEachOrdered((fecha) -> {
-            fecha.setEstadoEliminacion((short) 1);
-        });
+        if (event != null) {
+            ScheduleEvent<?> eventTmp = eventModel.getEvent(event.getId());
+            eventModel.deleteEvent(eventTmp);
+
+//            lstFechasProyecto.forEach((fecha) -> {
+//                if (eventTmp.getData() != null) {
+//                    FechaCapacitacion fechaTemp = (FechaCapacitacion) eventTmp.getData();
+//                    if (fechaTemp.getIdFecha() != null) {
+//                        if (Objects.equals(fecha.getIdFecha(), fechaTemp.getIdFecha())) {
+//                            fecha.setEstadoEliminacion((short) 1);
+//                        }
+//                    } else {
+//                        lstFechasProyecto.remove(eventTmp);
+//                    }
+//                } else {
+//                    lstFechasProyecto.remove(eventTmp);
+//                }
+//            });
+        }
     }
 
     public void guardar() {
-
         lstFechasProyecto.forEach((fechaCapacitacion) -> {
             if (fechaCapacitacion.getIdFecha() == null) {
                 mantenimientoFacade.guardar(fechaCapacitacion);
@@ -223,6 +264,7 @@ public class InfodView implements Serializable {
         });
 
         lstFechasProyecto = mantenimientoFacade.findCapacitacionesByProyecto(proyecto.getIdProyecto());
+        proyecto = mantenimientoFacade.find(ProyectoCooperacion.class, proyecto.getIdProyecto());
     }
 
     public void cargarDatosIniciales() {
@@ -239,48 +281,115 @@ public class InfodView implements Serializable {
         });
     }
 
-    public void notificarCe() {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            SimpleDateFormat sdfHora = new SimpleDateFormat("hh:mm a");
-            
-            String titulo = RESOURCE_BUNDLE.getString("correo.respuesta.titulo");
-            String mensajeNotificacionCabecera = RESOURCE_BUNDLE.getString("correo.respuestaSolicitudCapacitacion.mensaje");
-            String tblInicio = RESOURCE_BUNDLE.getString("correo.respuestaSolicitudCapacitacion.mensaje.tablaDetalle.header");
-            String tblDetalle = RESOURCE_BUNDLE.getString("correo.respuestaSolicitudCapacitacion.mensaje.tablaDetalle.detalle");
-            String tblFin = RESOURCE_BUNDLE.getString("correo.respuestaSolicitudCapacitacion.mensaje.tablaDetalle.fin");
-            String mensajeNotificacionFin = RESOURCE_BUNDLE.getString("correo.respuestaSolicitudCapacitacion.mensaje.fin");
-            
-            StringBuilder sb = new StringBuilder();
-            
-            sb.append(MessageFormat.format(mensajeNotificacionCabecera,
-                    StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
-                    entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
-                    proyecto.getNombreProyecto(), proyecto.getObjetivos()
-            ));
-            
-            sb.append(tblInicio);
-            lstFechasProyecto.forEach((fechaCapa) -> {
-                sb.append(MessageFormat.format(tblDetalle,
-                        sdf.format(fechaCapa.getFechaInicio()), sdfHora.format(fechaCapa.getFechaInicio()),
-                        sdfHora.format(fechaCapa.getFechaFin()), fechaCapa.getLugar()));
-            });
-            sb.append(tblFin);
-            
-            sb.append(mensajeNotificacionFin);
-            
-            InternetAddress[] to = new InternetAddress[1];
-            to[0] = new InternetAddress(directorCe.getCorreoElectronico());
-            
-            credencialesView.setDominio("2");
-            credencialesView.setCorreoRemitente("miguel.sanchez");
-            credencialesView.setPassword("miguelsr15.");
-            credencialesView.validarCredencial();
-            
-            eMailFacade.enviarMail(to, null, credencialesView.getRemitente(), titulo, sb.toString(), credencialesView.getMailSession());
-            
-        } catch (AddressException ex) {
-            Logger.getLogger(InfodView.class.getName()).log(Level.SEVERE, null, ex);
+    public void guardarCambioEstado() {
+        Boolean cambioValido = false;
+        //validar cambio de estado
+        if ((idEstadoOld == 1 && proyecto.getIdEstado() == 2) || (idEstadoOld == 3 && proyecto.getIdEstado() == 2)) {
+            //Digitado a Aprobado     o      Observado a Aprobado
+            cambioValido = true;
+        } else if (idEstadoOld == 1 && proyecto.getIdEstado() == 3) {
+            //Digitado a Observado
+            cambioValido = true;
+        } else if ((idEstadoOld == 1 && proyecto.getIdEstado() == 4) || (idEstadoOld == 3 && proyecto.getIdEstado() == 4)) {
+            //Digitado a Denegado     o     Observado a Denegado
+            cambioValido = true;
         }
+
+        if (cambioValido) {
+            HisCambioEstadoPro historico = new HisCambioEstadoPro();
+            historico.setFechaCambio(new Date());
+            historico.setIdEstadoAnt(idEstadoOld);
+            historico.setIdEstadoNew(proyecto.getIdEstado());
+            historico.setComentario(observacion);
+            historico.setIdProyecto(proyecto.getIdProyecto());
+            historico.setUsuarioCambio(directorCe.getIdDirector());
+
+            try {
+                switch (proyecto.getIdEstado()) {
+                    case 2:
+                        mantenimientoFacade.guardar(historico);
+                        mantenimientoFacade.modificar(proyecto);
+                        JsfUtil.mensajeInformacion(observacion);
+                        break;
+                    case 3:
+                        mantenimientoFacade.guardar(historico);
+                        mantenimientoFacade.modificar(proyecto);
+                        JsfUtil.mensajeInformacion(observacion);
+                        notificarObservacionProyecto();
+                        break;
+                }
+            } catch (AddressException ex) {
+                Logger.getLogger(InfodView.class.getName()).log(Level.SEVERE, "", ex);
+            }
+        }
+    }
+
+    private void notificarObservacionProyecto() throws AddressException {
+        String titulo = RESOURCE_BUNDLE.getString("correo.respuesta.titulo");
+        String mensaje = RESOURCE_BUNDLE.getString("correo.respuestaProyectoObservado.mensaje");
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(MessageFormat.format(mensaje,
+                StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
+                entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
+                proyecto.getNombreProyecto(), proyecto.getObjetivos(), observacion
+        ));
+
+        enviarCorreo(directorCe.getCorreoElectronico(), titulo, sb.toString());
+    }
+
+    public void notificarAprobacionCe() {
+        //Validar fechas
+        if (proyecto.getFechaCapacitacionList().isEmpty()) {
+            JsfUtil.mensajeAlerta("Debe de confirmar las fechas de las capacitaciones");
+        } else {
+            try {
+                notificarAprobacionCapacitacionCe();
+            } catch (AddressException ex) {
+                Logger.getLogger(InfodView.class.getName()).log(Level.SEVERE, "", ex);
+            }
+        }
+    }
+
+    private void notificarAprobacionCapacitacionCe() throws AddressException {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat sdfHora = new SimpleDateFormat("hh:mm a");
+
+        String titulo = RESOURCE_BUNDLE.getString("correo.respuesta.titulo");
+        String mensajeNotificacionCabecera = RESOURCE_BUNDLE.getString("correo.respuestaSolicitudCapacitacion.mensaje");
+        String tblInicio = RESOURCE_BUNDLE.getString("correo.respuestaSolicitudCapacitacion.mensaje.tablaDetalle.header");
+        String tblDetalle = RESOURCE_BUNDLE.getString("correo.respuestaSolicitudCapacitacion.mensaje.tablaDetalle.detalle");
+        String tblFin = RESOURCE_BUNDLE.getString("correo.respuestaSolicitudCapacitacion.mensaje.tablaDetalle.fin");
+        String mensajeNotificacionFin = RESOURCE_BUNDLE.getString("correo.respuestaSolicitudCapacitacion.mensaje.fin");
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(MessageFormat.format(mensajeNotificacionCabecera,
+                StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
+                entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
+                proyecto.getNombreProyecto(), proyecto.getObjetivos()
+        ));
+
+        sb.append(tblInicio);
+        lstFechasProyecto.forEach((fechaCapa) -> {
+            sb.append(MessageFormat.format(tblDetalle,
+                    sdf.format(fechaCapa.getFechaInicio()), sdfHora.format(fechaCapa.getFechaInicio()),
+                    sdfHora.format(fechaCapa.getFechaFin()), fechaCapa.getLugar()));
+        });
+        sb.append(tblFin);
+
+        sb.append(mensajeNotificacionFin);
+
+        enviarCorreo(directorCe.getCorreoElectronico(), titulo, sb.toString());
+    }
+
+    private void enviarCorreo(String destinatario, String titulo, String mensaje) throws AddressException {
+        InternetAddress[] to = new InternetAddress[1];
+        to[0] = new InternetAddress(destinatario);
+
+        Session sesion = credencialesView.getMailSessionRemitente();
+
+        eMailFacade.enviarMail(to, null, credencialesView.getRemitenteOficial(), titulo, mensaje, sesion);
     }
 }

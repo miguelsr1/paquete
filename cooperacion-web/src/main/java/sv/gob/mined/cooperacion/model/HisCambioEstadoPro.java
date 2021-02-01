@@ -49,8 +49,18 @@ public class HisCambioEstadoPro implements Serializable {
     private Date fechaCambio;
     @Column(name = "ID_PROYECTO")
     private Long idProyecto;
+    @Column(name = "comentario")
+    private String comentario;
 
     public HisCambioEstadoPro() {
+    }
+
+    public String getComentario() {
+        return comentario;
+    }
+
+    public void setComentario(String comentario) {
+        this.comentario = comentario;
     }
 
     public HisCambioEstadoPro(Integer idHistorico) {
