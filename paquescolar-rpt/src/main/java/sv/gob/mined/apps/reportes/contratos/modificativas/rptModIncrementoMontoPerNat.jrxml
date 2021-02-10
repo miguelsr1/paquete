@@ -132,7 +132,7 @@
 		<groupHeader>
 			<band height="71">
 				<componentElement>
-					<reportElement uuid="84753f6a-fea5-4757-a1f3-ddb0b8130aa9" key="table" style="table" x="10" y="19" width="490" height="50"/>
+					<reportElement key="table" style="table" x="10" y="19" width="490" height="50" uuid="84753f6a-fea5-4757-a1f3-ddb0b8130aa9"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 						<datasetRun subDataset="dsItemsOld" uuid="e6b6297e-5db7-4290-ab6c-54d6ef1708e8">
 							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleOld})]]></dataSourceExpression>
@@ -140,7 +140,7 @@
 						<jr:columnGroup width="372" uuid="4dad25a1-c229-4c5c-900f-fa2d2285d2fa">
 							<jr:columnFooter height="18" rowSpan="1">
 								<staticText>
-									<reportElement uuid="1bc83db2-718c-4a49-95a8-c716639203eb" x="0" y="0" width="372" height="16"/>
+									<reportElement x="0" y="0" width="372" height="16" uuid="1bc83db2-718c-4a49-95a8-c716639203eb"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font isBold="true"/>
 									</textElement>
@@ -150,14 +150,14 @@
 							<jr:column width="48" uuid="666b31af-943c-452f-9b95-7340b10b34da">
 								<jr:columnHeader style="table_TD" height="16" rowSpan="1">
 									<staticText>
-										<reportElement uuid="1bc83db2-718c-4a49-95a8-c716639203eb" x="0" y="0" width="48" height="16"/>
+										<reportElement x="0" y="0" width="48" height="16" uuid="1bc83db2-718c-4a49-95a8-c716639203eb"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle"/>
 										<text><![CDATA[No. Ítem]]></text>
 									</staticText>
 								</jr:columnHeader>
 								<jr:detailCell style="table_TD" height="14" rowSpan="1">
 									<textField>
-										<reportElement uuid="571b02ae-c733-433f-b4f9-04161c5bb3ae" x="0" y="0" width="48" height="14"/>
+										<reportElement x="0" y="0" width="48" height="14" uuid="571b02ae-c733-433f-b4f9-04161c5bb3ae"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle"/>
 										<textFieldExpression><![CDATA[$F{noItem}]]></textFieldExpression>
 									</textField>
@@ -166,14 +166,14 @@
 							<jr:column width="195" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
 								<jr:columnHeader style="table_TD" height="16" rowSpan="1">
 									<staticText>
-										<reportElement uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee" x="0" y="0" width="195" height="16"/>
+										<reportElement x="0" y="0" width="195" height="16" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle"/>
 										<text><![CDATA[Descripción del Ítem]]></text>
 									</staticText>
 								</jr:columnHeader>
 								<jr:detailCell style="table_TD" height="14" rowSpan="1">
 									<textField>
-										<reportElement uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e" x="2" y="0" width="191" height="14"/>
+										<reportElement x="2" y="0" width="191" height="14" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
 										<textElement verticalAlignment="Middle"/>
 										<textFieldExpression><![CDATA[$F{consolidadoEspTec}]]></textFieldExpression>
 									</textField>
@@ -182,14 +182,14 @@
 							<jr:column width="57" uuid="9d2ef7c2-8a0b-4851-826c-60b197cb42cb">
 								<jr:columnHeader style="table_TD" height="16" rowSpan="1">
 									<staticText>
-										<reportElement uuid="4f39794c-c566-4503-9b3f-cdf4f1910e38" x="0" y="0" width="57" height="16"/>
+										<reportElement x="0" y="0" width="57" height="16" uuid="4f39794c-c566-4503-9b3f-cdf4f1910e38"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle"/>
 										<text><![CDATA[Cantidad]]></text>
 									</staticText>
 								</jr:columnHeader>
 								<jr:detailCell style="table_TD" height="14" rowSpan="1">
 									<textField pattern="###0">
-										<reportElement uuid="f9818080-501d-4136-8b98-2be6c69d2b79" x="0" y="0" width="53" height="14"/>
+										<reportElement x="0" y="0" width="53" height="14" uuid="f9818080-501d-4136-8b98-2be6c69d2b79"/>
 										<textElement textAlignment="Right" verticalAlignment="Middle"/>
 										<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
 									</textField>
@@ -198,7 +198,7 @@
 							<jr:column width="72" uuid="06de5d58-dfb8-4844-8fe7-f93ee75eb61a">
 								<jr:columnHeader style="table_TD" height="16" rowSpan="1">
 									<staticText>
-										<reportElement uuid="b63937e5-54f9-479b-b504-a8f7368bb5d6" x="0" y="0" width="72" height="16"/>
+										<reportElement x="0" y="0" width="72" height="16" uuid="b63937e5-54f9-479b-b504-a8f7368bb5d6"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle">
 											<font size="9"/>
 										</textElement>
@@ -207,7 +207,7 @@
 								</jr:columnHeader>
 								<jr:detailCell style="table_TD" height="14" rowSpan="1">
 									<textField pattern="#,##0.00">
-										<reportElement uuid="72feb515-f4f4-4ea7-a210-a3aff26cc5b0" x="0" y="0" width="68" height="14"/>
+										<reportElement x="0" y="0" width="68" height="14" uuid="72feb515-f4f4-4ea7-a210-a3aff26cc5b0"/>
 										<textElement textAlignment="Right" verticalAlignment="Middle"/>
 										<textFieldExpression><![CDATA[$F{precioUnitario}]]></textFieldExpression>
 									</textField>
@@ -217,14 +217,14 @@
 						<jr:column width="76" uuid="e00c32b4-05d9-4193-b510-f36acab3597e">
 							<jr:columnHeader style="table_TD" height="16" rowSpan="1">
 								<staticText>
-									<reportElement uuid="a52e76a3-78bb-4538-9e0f-42fd81817404" x="0" y="0" width="76" height="16"/>
+									<reportElement x="0" y="0" width="76" height="16" uuid="a52e76a3-78bb-4538-9e0f-42fd81817404"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<text><![CDATA[Precio Total $]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:columnFooter height="18" rowSpan="1">
 								<textField pattern="$ #,##0.00">
-									<reportElement uuid="88cfe197-8298-42f0-92c6-0a1e8b50da8f" x="0" y="0" width="72" height="16"/>
+									<reportElement x="0" y="0" width="72" height="16" uuid="88cfe197-8298-42f0-92c6-0a1e8b50da8f"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font isBold="true"/>
 									</textElement>
@@ -233,7 +233,7 @@
 							</jr:columnFooter>
 							<jr:detailCell style="table_TD" height="14" rowSpan="1">
 								<textField pattern="#,##0.00">
-									<reportElement uuid="255e974a-2138-4511-8500-ae23eb17e481" x="0" y="0" width="72" height="14"/>
+									<reportElement x="0" y="0" width="72" height="14" uuid="255e974a-2138-4511-8500-ae23eb17e481"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{subTotal}]]></textFieldExpression>
 								</textField>
@@ -242,8 +242,7 @@
 					</jr:table>
 				</componentElement>
 				<staticText>
-					<reportElement uuid="742b667d-1aae-4a5c-8a9a-f37691c7b810" x="10" y="0" width="117" height="19"/>
-					<textElement/>
+					<reportElement x="10" y="0" width="117" height="19" uuid="742b667d-1aae-4a5c-8a9a-f37691c7b810"/>
 					<text><![CDATA[Cantidad contratada]]></text>
 				</staticText>
 			</band>
@@ -251,13 +250,11 @@
 		<groupFooter>
 			<band height="174">
 				<staticText>
-					<reportElement uuid="878dc138-f264-48d0-a92b-13397750bc1e" x="0" y="66" width="100" height="20"/>
-					<textElement/>
+					<reportElement x="0" y="66" width="100" height="20" uuid="878dc138-f264-48d0-a92b-13397750bc1e"/>
 					<text><![CDATA[NOTIFÍQUESE.]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true">
-					<reportElement uuid="8f987429-6387-4bf0-9f54-ae5e75b4a5e7" x="0" y="111" width="264" height="63"/>
-					<textElement/>
+					<reportElement x="0" y="111" width="264" height="63" uuid="8f987429-6387-4bf0-9f54-ae5e75b4a5e7"/>
 					<textFieldExpression><![CDATA["F.____________________________\n"
 +$F{nombreMiembro}
 +"\nPresidente del Organismo de"
@@ -265,15 +262,14 @@
 "CONTRATANTE"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement uuid="5ebe8c69-88d9-43db-872e-ac8e796a1661" x="266" y="111" width="244" height="63"/>
-					<textElement/>
+					<reportElement x="266" y="111" width="244" height="63" uuid="5ebe8c69-88d9-43db-872e-ac8e796a1661"/>
 					<textFieldExpression><![CDATA["F.____________________________\n"
 +$F{nombreRepresentante}
 +"\nNombre y firma del proveedor\n\n"+
 "CONTRATISTA"]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement uuid="91ecff33-47bd-499f-96f4-7289be10ea06" x="0" y="0" width="510" height="47"/>
+					<reportElement x="0" y="0" width="510" height="47" uuid="91ecff33-47bd-499f-96f4-7289be10ea06"/>
 					<textElement textAlignment="Justified">
 						<paragraph lineSpacing="1_1_2"/>
 					</textElement>
@@ -288,7 +284,7 @@
 		<groupHeader>
 			<band height="30">
 				<textField isStretchWithOverflow="true">
-					<reportElement uuid="f8945ecc-fc50-4532-8f2e-bdc580cdd27c" x="0" y="10" width="510" height="20"/>
+					<reportElement x="0" y="10" width="510" height="20" uuid="f8945ecc-fc50-4532-8f2e-bdc580cdd27c"/>
 					<textElement textAlignment="Justified">
 						<paragraph lineSpacing="1_1_2"/>
 					</textElement>
@@ -312,7 +308,7 @@
 	<title>
 		<band height="153" splitType="Stretch">
 			<image>
-				<reportElement uuid="f4a333fc-68e5-4442-8115-87aabaf37082" key="image-1" x="1" y="11" width="51" height="51"/>
+				<reportElement key="image-1" x="1" y="11" width="51" height="51" uuid="f4a333fc-68e5-4442-8115-87aabaf37082"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -322,7 +318,7 @@
 				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo_rpt.png"]]></imageExpression>
 			</image>
 			<image>
-				<reportElement uuid="5aa4cba5-61ed-4dba-b0cd-983efc007a2a" key="image-2" x="421" y="11" width="90" height="57"/>
+				<reportElement key="image-2" x="421" y="11" width="90" height="57" uuid="5aa4cba5-61ed-4dba-b0cd-983efc007a2a"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -332,7 +328,7 @@
 				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"logo_mined_rpt.png"]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="90274944-4c08-4de4-a182-5dd3b9cb2a69" x="80" y="11" width="332" height="92"/>
+				<reportElement x="80" y="11" width="332" height="92" uuid="90274944-4c08-4de4-a182-5dd3b9cb2a69"/>
 				<textElement textAlignment="Center">
 					<font isUnderline="false" isStrikeThrough="false"/>
 					<paragraph lineSpacing="Single"/>
@@ -342,7 +338,7 @@
 $F{descripcionRubro}+" "+$F{anhoContrato}+"\n"+$F{nombreCe}+"\n"+"Fuente Financiamiento: GOES"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="aba0ff22-1c29-41a5-a438-278710302dd1" x="1" y="103" width="510" height="46"/>
+				<reportElement x="1" y="103" width="510" height="46" uuid="aba0ff22-1c29-41a5-a438-278710302dd1"/>
 				<textElement textAlignment="Justified">
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
@@ -356,7 +352,7 @@ $F{descripcionRubro}+" "+$F{anhoContrato}+"\n"+$F{nombreCe}+"\n"+"Fuente Financi
 .concat(Herramientas.aLetras($F{montoContratoModif}).trim()).concat(" Dólares de los Estados Unidos de América (US$ ")
 .concat(Herramientas.getFormatoMonto2($F{montoContratoModif}) + ") IVA INCLUIDO; por un período de ").concat($F{plazoContrato}).concat(" días, contados a partir del ").concat(Herramientas.getNumDia($F{fechaOrdenInicio})).concat(" del mes de ")
 .concat(Herramientas.getNomMes($F{fechaOrdenInicio})).concat(" de ").concat(Herramientas.getNumAnyo($F{fechaOrdenInicio}))
-.concat(" al ").concat(Herramientas.addDiasAFecha($F{fechaOrdenInicio}, $P{pPlazoEntrega}))
+.concat(" al ").concat(Herramientas.addDiasAFecha($F{fechaOrdenInicio}, ($P{pPlazoEntrega}-1)))
 .concat("\n\nCONSIDERANDO:\n")
 .concat("Que en nota fecha "+(new SimpleDateFormat("dd/MM/yyyy")).format($F{fechaNota})).concat(", el solicitante ").concat($F{nombreMiembro})
 .concat(", Presidente del CDE ").concat($F{nombreCe}).concat(" comunica al proveedor ").concat($F{razonSocial})
@@ -376,12 +372,11 @@ $F{descripcionRubro}+" "+$F{anhoContrato}+"\n"+$F{nombreCe}+"\n"+"Fuente Financi
 	<detail>
 		<band height="75" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="742b667d-1aae-4a5c-8a9a-f37691c7b810" x="10" y="0" width="117" height="19"/>
-				<textElement/>
+				<reportElement x="10" y="0" width="117" height="19" uuid="742b667d-1aae-4a5c-8a9a-f37691c7b810"/>
 				<text><![CDATA[Cantidad modificada]]></text>
 			</staticText>
 			<componentElement>
-				<reportElement uuid="84753f6a-fea5-4757-a1f3-ddb0b8130aa9" key="table" style="table" x="10" y="19" width="490" height="50"/>
+				<reportElement key="table" style="table" x="10" y="19" width="490" height="50" uuid="84753f6a-fea5-4757-a1f3-ddb0b8130aa9"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="dsItemsOld" uuid="e6b6297e-5db7-4290-ab6c-54d6ef1708e8">
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleNew})]]></dataSourceExpression>
@@ -389,7 +384,7 @@ $F{descripcionRubro}+" "+$F{anhoContrato}+"\n"+$F{nombreCe}+"\n"+"Fuente Financi
 					<jr:columnGroup width="372" uuid="b720aa49-dc4e-4310-ac2e-417373cd8101">
 						<jr:columnFooter height="16" rowSpan="1">
 							<staticText>
-								<reportElement uuid="1bc83db2-718c-4a49-95a8-c716639203eb" x="0" y="0" width="372" height="16"/>
+								<reportElement x="0" y="0" width="372" height="16" uuid="1bc83db2-718c-4a49-95a8-c716639203eb"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font isBold="true"/>
 								</textElement>
@@ -399,14 +394,14 @@ $F{descripcionRubro}+" "+$F{anhoContrato}+"\n"+$F{nombreCe}+"\n"+"Fuente Financi
 						<jr:column width="48" uuid="666b31af-943c-452f-9b95-7340b10b34da">
 							<jr:columnHeader style="table_TD" height="16" rowSpan="1">
 								<staticText>
-									<reportElement uuid="1bc83db2-718c-4a49-95a8-c716639203eb" x="0" y="0" width="48" height="16"/>
+									<reportElement x="0" y="0" width="48" height="16" uuid="1bc83db2-718c-4a49-95a8-c716639203eb"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<text><![CDATA[No. Ítem]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="14" rowSpan="1">
 								<textField>
-									<reportElement uuid="571b02ae-c733-433f-b4f9-04161c5bb3ae" x="0" y="0" width="48" height="14"/>
+									<reportElement x="0" y="0" width="48" height="14" uuid="571b02ae-c733-433f-b4f9-04161c5bb3ae"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{noItem}]]></textFieldExpression>
 								</textField>
@@ -415,14 +410,14 @@ $F{descripcionRubro}+" "+$F{anhoContrato}+"\n"+$F{nombreCe}+"\n"+"Fuente Financi
 						<jr:column width="195" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
 							<jr:columnHeader style="table_TD" height="16" rowSpan="1">
 								<staticText>
-									<reportElement uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee" x="0" y="0" width="195" height="16"/>
+									<reportElement x="0" y="0" width="195" height="16" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<text><![CDATA[Descripción del Ítem]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="14" rowSpan="1">
 								<textField>
-									<reportElement uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e" x="2" y="0" width="191" height="14"/>
+									<reportElement x="2" y="0" width="191" height="14" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
 									<textElement verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{consolidadoEspTec}]]></textFieldExpression>
 								</textField>
@@ -431,14 +426,14 @@ $F{descripcionRubro}+" "+$F{anhoContrato}+"\n"+$F{nombreCe}+"\n"+"Fuente Financi
 						<jr:column width="57" uuid="9d2ef7c2-8a0b-4851-826c-60b197cb42cb">
 							<jr:columnHeader style="table_TD" height="16" rowSpan="1">
 								<staticText>
-									<reportElement uuid="4f39794c-c566-4503-9b3f-cdf4f1910e38" x="0" y="0" width="57" height="16"/>
+									<reportElement x="0" y="0" width="57" height="16" uuid="4f39794c-c566-4503-9b3f-cdf4f1910e38"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<text><![CDATA[Cantidad]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="14" rowSpan="1">
 								<textField pattern="###0">
-									<reportElement uuid="f9818080-501d-4136-8b98-2be6c69d2b79" x="0" y="0" width="53" height="14"/>
+									<reportElement x="0" y="0" width="53" height="14" uuid="f9818080-501d-4136-8b98-2be6c69d2b79"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
 								</textField>
@@ -447,7 +442,7 @@ $F{descripcionRubro}+" "+$F{anhoContrato}+"\n"+$F{nombreCe}+"\n"+"Fuente Financi
 						<jr:column width="72" uuid="06de5d58-dfb8-4844-8fe7-f93ee75eb61a">
 							<jr:columnHeader style="table_TD" height="16" rowSpan="1">
 								<staticText>
-									<reportElement uuid="b63937e5-54f9-479b-b504-a8f7368bb5d6" x="0" y="0" width="72" height="16"/>
+									<reportElement x="0" y="0" width="72" height="16" uuid="b63937e5-54f9-479b-b504-a8f7368bb5d6"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9"/>
 									</textElement>
@@ -456,7 +451,7 @@ $F{descripcionRubro}+" "+$F{anhoContrato}+"\n"+$F{nombreCe}+"\n"+"Fuente Financi
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="14" rowSpan="1">
 								<textField pattern="#,##0.00">
-									<reportElement uuid="72feb515-f4f4-4ea7-a210-a3aff26cc5b0" x="0" y="0" width="68" height="14"/>
+									<reportElement x="0" y="0" width="68" height="14" uuid="72feb515-f4f4-4ea7-a210-a3aff26cc5b0"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{precioUnitario}]]></textFieldExpression>
 								</textField>
@@ -466,21 +461,21 @@ $F{descripcionRubro}+" "+$F{anhoContrato}+"\n"+$F{nombreCe}+"\n"+"Fuente Financi
 					<jr:column width="76" uuid="e00c32b4-05d9-4193-b510-f36acab3597e">
 						<jr:columnHeader style="table_TD" height="16" rowSpan="1">
 							<staticText>
-								<reportElement uuid="a52e76a3-78bb-4538-9e0f-42fd81817404" x="0" y="0" width="76" height="16"/>
+								<reportElement x="0" y="0" width="76" height="16" uuid="a52e76a3-78bb-4538-9e0f-42fd81817404"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle"/>
 								<text><![CDATA[Precio Total $]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:columnFooter height="16" rowSpan="1">
 							<textField pattern="#,##0.00">
-								<reportElement uuid="255e974a-2138-4511-8500-ae23eb17e481" x="0" y="0" width="72" height="16"/>
+								<reportElement x="0" y="0" width="72" height="16" uuid="255e974a-2138-4511-8500-ae23eb17e481"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle"/>
 								<textFieldExpression><![CDATA[$V{vTotalOld}]]></textFieldExpression>
 							</textField>
 						</jr:columnFooter>
 						<jr:detailCell style="table_TD" height="14" rowSpan="1">
 							<textField pattern="#,##0.00">
-								<reportElement uuid="255e974a-2138-4511-8500-ae23eb17e481" x="0" y="0" width="72" height="14"/>
+								<reportElement x="0" y="0" width="72" height="14" uuid="255e974a-2138-4511-8500-ae23eb17e481"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle"/>
 								<textFieldExpression><![CDATA[$F{subTotal}]]></textFieldExpression>
 							</textField>
