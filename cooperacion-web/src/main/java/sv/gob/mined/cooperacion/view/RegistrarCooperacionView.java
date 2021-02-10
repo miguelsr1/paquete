@@ -36,6 +36,7 @@ import sv.gob.mined.cooperacion.facade.EMailFacade;
 import sv.gob.mined.cooperacion.facade.MantenimientoFacade;
 import sv.gob.mined.cooperacion.facade.paquete.UbicacionFacade;
 import sv.gob.mined.cooperacion.model.Cooperante;
+import sv.gob.mined.cooperacion.model.DatoInfraCe;
 import sv.gob.mined.cooperacion.model.Director;
 import sv.gob.mined.cooperacion.model.GeoEntidadEducativa;
 import sv.gob.mined.cooperacion.model.HisCambioEstadoPro;
@@ -307,6 +308,13 @@ public class RegistrarCooperacionView implements Serializable {
         String mensajeParaCe = "";
         String mensajeParaUt = "";
         Boolean necesitaAprobacion = false;
+
+        if (proyectoCooperacion.getIdTipoCooperacion().getIdTipoCooperacion() == 4) {
+            DatoInfraCe datoInfraCe = catalogoFacade.findDatoInfraByCe(proyectoCooperacion.getCodigoEntidad());
+            if (datoInfraCe == null) {
+                PrimeFaces.current().executeScript("PF('dlgDatoInfra').show();");
+            }
+        }
 
         for (String nivel : nivelI) {
             switch (nivel) {

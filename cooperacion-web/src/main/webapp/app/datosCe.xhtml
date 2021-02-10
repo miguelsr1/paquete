@@ -380,7 +380,12 @@
                     </div>
                 </div>
             </div>
+            <f:facet name="footer">
+                <p:commandButton value="Guardar"  icon="pi pi-check" oncomplete="PF('dlgDatoInfra').hide();" update="tblFechas"/>
+                <p:commandButton value="Cancelar" onclick="PF('dlgDatoInfra').hide();"/>
+            </f:facet>
         </p:dialog>
+        
         <h:outputStylesheet name="css/primeicons.css" library="paradise-layout" />
         <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout" />
         <h:outputStylesheet name="css/demo.css" library="demo" />
