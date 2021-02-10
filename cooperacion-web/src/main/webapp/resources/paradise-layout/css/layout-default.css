@@ -107,6 +107,11 @@ p:last-child {
 
 /* roboto-300 - latin */
 @font-face {
+    font-family: 'Bembo Std';
+    font-style: normal;
+    font-weight: 300;
+    src: url("#{resource['paradise-layout:fonts/BemboStd.otf']}");}
+@font-face {
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 300;

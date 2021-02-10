@@ -109,7 +109,7 @@ public class InfodView implements Serializable {
 
                 lstFechasProyecto = mantenimientoFacade.findCapacitacionesByProyecto(proyecto.getIdProyecto());
                 cargarDatosIniciales();
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
                 codigoBueno = false;
             }
         } else {

@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import sv.gob.mined.cooperacion.model.Cooperante;
+import sv.gob.mined.cooperacion.model.DatoInfraCe;
 import sv.gob.mined.cooperacion.model.Director;
 import sv.gob.mined.cooperacion.model.EeGeoDepartamento;
 import sv.gob.mined.cooperacion.model.EeGeoMunicipio;
@@ -27,7 +28,7 @@ public class CatalogoFacade {
         Query q = emCooperacion.createQuery("SELECT c FROM Cooperante c ORDER BY c.idCooperante", Cooperante.class);
         return q.getResultList();
     }
-    
+
     public List<TipoCooperante> findTipoCooperante() {
         Query q = emCooperacion.createQuery("SELECT t FROM TipoCooperante t", TipoCooperante.class);
         return q.getResultList();
@@ -72,22 +73,32 @@ public class CatalogoFacade {
         q.setParameter("codEnt", codigoEntidad);
         return q.getResultList().isEmpty() ? null : (Director) q.getSingleResult();
     }
-    
+
     public Director findDirectorByEmail(String email) {
         Query q = emCooperacion.createQuery("SELECT d FROM Director d WHERE d.correoElectronico=:email AND d.activo=1", Director.class);
         q.setParameter("email", email);
         return q.getResultList().isEmpty() ? null : (Director) q.getResultList().get(0);
     }
-    
+
     public Usuario findUsuarioByEmail(String email) {
         Query q = emCooperacion.createQuery("SELECT u FROM Usuario u WHERE u.usuario=:usu and u.activo = 1", Usuario.class);
         q.setParameter("usu", email);
         return q.getResultList().isEmpty() ? null : (Usuario) q.getResultList().get(0);
     }
-    
-    public List<Notificacion> findNotificacionByTipoCooperacion(Long idTipoCooperacion){
+
+    public List<Notificacion> findNotificacionByTipoCooperacion(Long idTipoCooperacion) {
         Query q = emCooperacion.createQuery("SELECT n FROM Notificacion n WHERE n.idTipoCooperacion=:idTipo and n.estadoEliminacion=0 ORDER BY n.idNotificacion", Notificacion.class);
         q.setParameter("idTipo", idTipoCooperacion);
         return q.getResultList();
+    }
+
+    public DatoInfraCe findDatoInfraByCe(String codigoEntidad) {
+        Query q = emCooperacion.createQuery("SELECT d FROM DatoInfraCe d WHERE d.codigoEntidad=:codEnt", DatoInfraCe.class);
+        q.setParameter("codEnt", codigoEntidad);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (DatoInfraCe) q.getResultList().get(0);
+        }
     }
 }

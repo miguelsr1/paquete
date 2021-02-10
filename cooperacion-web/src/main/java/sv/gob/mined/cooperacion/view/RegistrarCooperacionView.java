@@ -8,7 +8,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,12 +18,10 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.mail.Session;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import org.primefaces.PrimeFaces;
@@ -96,7 +96,8 @@ public class RegistrarCooperacionView implements Serializable {
 
     @Inject
     private CredencialesView credencialesView;
-    
+
+    private DateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("bundle");
 
@@ -260,6 +261,14 @@ public class RegistrarCooperacionView implements Serializable {
 
     public void setNivelIV(String[] nivelIV) {
         this.nivelIV = nivelIV;
+    }
+
+    public String getFechaInicio() {
+        if (proyectoCooperacion != null && proyectoCooperacion.getFechaEstimadaInicio() == null) {
+            return FORMAT_DATE.format(new Date());
+        } else {
+            return FORMAT_DATE.format(proyectoCooperacion.getFechaEstimadaInicio());
+        }
     }
 
     public void buscarEntidadEducativa() {
@@ -491,7 +500,6 @@ public class RegistrarCooperacionView implements Serializable {
                     }
 
                     //Session session = credencialesView.getMailSession();
-
                     if (necesitaAprobacion) {
                         //CORREO PARA UNIDAD TÉNICA
                         eMailFacade.enviarMail(to, cc, "cooperacion@admin.mined.edu.sv", titulo, mensajeParaUt, credencialesView.getMailSessionRemitente());
