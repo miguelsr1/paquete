@@ -595,4 +595,6 @@ public class RegistrarCooperacionView implements Serializable {
             }
         }
     }
+    
+    public void prueba(){}
 }
