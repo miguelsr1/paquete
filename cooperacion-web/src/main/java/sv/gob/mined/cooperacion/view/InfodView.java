@@ -5,7 +5,13 @@
  */
 package sv.gob.mined.cooperacion.view;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileTime;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -26,14 +32,17 @@ import javax.inject.Named;
 import javax.mail.Session;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.ScheduleEntryMoveEvent;
 import org.primefaces.event.ScheduleEntryResizeEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
+import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
+import org.primefaces.model.StreamedContent;
 import sv.gob.mined.cooperacion.facade.EMailFacade;
 import sv.gob.mined.cooperacion.facade.MantenimientoFacade;
 import sv.gob.mined.cooperacion.facade.paquete.UbicacionFacade;
@@ -41,6 +50,7 @@ import sv.gob.mined.cooperacion.model.Director;
 import sv.gob.mined.cooperacion.model.FechaCapacitacion;
 import sv.gob.mined.cooperacion.model.HisCambioEstadoPro;
 import sv.gob.mined.cooperacion.model.ProyectoCooperacion;
+import sv.gob.mined.cooperacion.model.dto.FileInfoDto;
 import sv.gob.mined.cooperacion.model.paquete.VwCatalogoEntidadEducativa;
 import sv.gob.mined.cooperacion.util.RC4Crypter;
 import sv.gob.mined.utils.StringUtils;
@@ -68,6 +78,7 @@ public class InfodView implements Serializable {
     private Boolean proyectoAprobado = false;
 
     private String observacion;
+    private String nombreArchivo = "";
     private Short idEstadoOld;
 
     private Director directorCe;
@@ -75,6 +86,7 @@ public class InfodView implements Serializable {
     private List<FechaCapacitacion> lstFechas = new ArrayList();
     private List<FechaCapacitacion> lstFechasProyecto = new ArrayList();
     private List<Integer> lstFechasEliminadas = new ArrayList();
+    private List<FileInfoDto> lstArchivos = new ArrayList();
 
     @Inject
     private MantenimientoFacade mantenimientoFacade;
@@ -117,6 +129,22 @@ public class InfodView implements Serializable {
         }
 
         credencialesView.setDominio("2");
+    }
+    
+    public String getNombreArchivo() {
+        return nombreArchivo;
+    }
+
+    public void setNombreArchivo(String nombreArchivo) {
+        this.nombreArchivo = nombreArchivo;
+    }
+
+    public List<FileInfoDto> getLstArchivos() {
+        return lstArchivos;
+    }
+
+    public void setLstArchivos(List<FileInfoDto> lstArchivos) {
+        this.lstArchivos = lstArchivos;
     }
 
     public Boolean getProyectoAprobado() {
@@ -236,21 +264,6 @@ public class InfodView implements Serializable {
         if (event != null) {
             ScheduleEvent<?> eventTmp = eventModel.getEvent(event.getId());
             eventModel.deleteEvent(eventTmp);
-
-//            lstFechasProyecto.forEach((fecha) -> {
-//                if (eventTmp.getData() != null) {
-//                    FechaCapacitacion fechaTemp = (FechaCapacitacion) eventTmp.getData();
-//                    if (fechaTemp.getIdFecha() != null) {
-//                        if (Objects.equals(fecha.getIdFecha(), fechaTemp.getIdFecha())) {
-//                            fecha.setEstadoEliminacion((short) 1);
-//                        }
-//                    } else {
-//                        lstFechasProyecto.remove(eventTmp);
-//                    }
-//                } else {
-//                    lstFechasProyecto.remove(eventTmp);
-//                }
-//            });
         }
     }
 
@@ -279,6 +292,27 @@ public class InfodView implements Serializable {
                 .build()).forEachOrdered((eventTemp) -> {
             eventModel.addEvent(eventTemp);
         });
+        
+        File folder = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto());
+
+        if (folder.exists()) {
+            for (File archivo : folder.listFiles()) {
+                try {
+                    FileTime fTime = (FileTime) Files.getAttribute(archivo.toPath(), "creationTime");
+                    FileInfoDto file = new FileInfoDto();
+
+                    try (PDDocument pdc = PDDocument.load(archivo)) {
+                        file.setFechaCreado(new Date(fTime.toMillis()));
+                        file.setNombreArchivo(archivo.getName());
+                        file.setNumeroPaginas(pdc.getNumberOfPages());
+
+                        lstArchivos.add(file);
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(ListadoView.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }
 
     public void guardarCambioEstado() {
@@ -391,5 +425,17 @@ public class InfodView implements Serializable {
         Session sesion = credencialesView.getMailSessionRemitente();
 
         eMailFacade.enviarMail(to, null, credencialesView.getRemitenteOficial(), titulo, mensaje, sesion);
+    }
+    
+    public StreamedContent getFile() throws FileNotFoundException {
+        File filePdf = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto() + File.separator + nombreArchivo);
+        FileInputStream fis = new FileInputStream(filePdf);
+        StreamedContent file = DefaultStreamedContent.builder()
+                .name(nombreArchivo)
+                .contentType("application/pdf")
+                .stream(() -> fis)
+                .build();
+
+        return file;
     }
 }

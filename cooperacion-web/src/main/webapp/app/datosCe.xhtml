@@ -169,7 +169,7 @@
                             </div>
                         </div>
                         <br />
-                        <h5>Datos Generales del Centro Educativos</h5>
+                        <h5>Datos Generales del Proyecto</h5>
                         <div class="invoice-to" jsf:id="pnlDatosProyecto">
                             <div class="ui-fluid ">
                                 <div class="p-field p-grid">
@@ -221,8 +221,7 @@
                                     <p:outputLabel value="Fecha estimada Fin:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
                                     <div class="p-col-12 p-md-3">
                                         <p:calendar id="cldFin" value="#{registrarCooperacionView.proyectoCooperacion.fechaEstimadaFin}" pattern="dd/MM/yyyy" locale="es" required="true" label="Fecha estimada de fin"
-                                                    mindate="#{registrarCooperacionView.fechaInicio}"
-                                                    maxdate="12/12/2021"/>
+                                                    mindate="#{registrarCooperacionView.fechaInicio}" />
                                     </div>
                                 </div>
 
@@ -315,7 +314,7 @@
                         <div class="products-buttonbar">
                             <div>
                                 <p:commandButton value="Guardar" icon="pi pi-check" update="pnlDatosCe pnlDatosProyecto" validateClient="true" 
-                                                 action="#{registrarCooperacionView.guardar()}"/>
+                                                 action="#{registrarCooperacionView.preValidacion()}"/>
                                 <p:spacer />
                                 <p:commandButton value="Cancelar" icon="pi pi-times" class="secondary-button" process="@this" action="inicio?faces-redirect=true"/>    
                             </div>
@@ -348,7 +347,7 @@
             </f:facet>
         </p:dialog>
 
-        <p:dialog id="dlgDatoInfra" widgetVar="dlgDatoInfra" header="Por favor completar" visible="true" width="550">
+        <p:dialog id="dlgDatoInfra" widgetVar="dlgDatoInfra" header="Por favor completar" modal="true" width="550">
             <div class="p-grid">
                 <div class="p-col">
                     <div class="card" id="window">
@@ -356,19 +355,19 @@
                             <div class="p-field p-grid">
                                 <p:outputLabel for="txtDir" value="Dirección:" styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0"/>
                                 <div class="p-col-12 p-md-8">
-                                    <p:inputTextarea id="txtDir" />
+                                    <p:inputTextarea id="txtDir" value="#{registrarCooperacionView.datoInfraCe.direccion}"/>
                                 </div>
                             </div>
                             <div class="p-field p-grid">
                                 <p:outputLabel for="txtMat" value="Matrícula:" styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0"/>
                                 <div class="p-col-12 p-md-8">
-                                    <p:inputText id="txtMat" />
+                                    <p:inputText id="txtMat" value="#{registrarCooperacionView.datoInfraCe.matricula}"/>
                                 </div>
                             </div>
                             <div class="p-field p-grid">
                                 <p:outputLabel for="cboPro" value="Propiedad del inmueble:" styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0"/>
                                 <div class="p-col-12 p-md-8">
-                                    <p:selectOneMenu id="cboPro">
+                                    <p:selectOneMenu id="cboPro" value="#{registrarCooperacionView.datoInfraCe.idDatoInfra}">
                                         <f:selectItem noSelectionOption="true" itemLabel="Seleccionar una opción"/>
                                         <f:selectItem itemValue="1" itemLabel="MINEDUCYT"/>
                                         <f:selectItem itemValue="2" itemLabel="ALCALDIA"/>
@@ -381,7 +380,7 @@
                 </div>
             </div>
             <f:facet name="footer">
-                <p:commandButton value="Guardar"  icon="pi pi-check" oncomplete="PF('dlgDatoInfra').hide();" update="tblFechas"/>
+                <p:commandButton value="Guardar" action="#{registrarCooperacionView.guardarDatoInfraCe()}" icon="pi pi-check" oncomplete="PF('dlgDatoInfra').hide();" />
                 <p:commandButton value="Cancelar" onclick="PF('dlgDatoInfra').hide();"/>
             </f:facet>
         </p:dialog>

@@ -77,6 +77,7 @@ public class RegistrarCooperacionView implements Serializable {
     private Long idCooperante;
 
     private Director directorCe;
+    private DatoInfraCe datoInfraCe;
     private ProyectoCooperacion proyectoCooperacion = new ProyectoCooperacion();
     private VwCatalogoEntidadEducativa entidadEducativa = new VwCatalogoEntidadEducativa();
     private GeoEntidadEducativa geoEntidadEducativa = new GeoEntidadEducativa();
@@ -111,6 +112,7 @@ public class RegistrarCooperacionView implements Serializable {
             if (usu.getDirector() != null) {
                 directorCe = usu.getDirector();
                 codigoEntidad = directorCe.getCodigoEntidad();
+                datoInfraCe = catalogoFacade.findDatoInfraByCe(codigoEntidad);
                 buscarEntidadEducativa();
             }
 
@@ -264,6 +266,17 @@ public class RegistrarCooperacionView implements Serializable {
         this.nivelIV = nivelIV;
     }
 
+    public DatoInfraCe getDatoInfraCe() {
+        if (datoInfraCe == null) {
+            datoInfraCe = new DatoInfraCe();
+        }
+        return datoInfraCe;
+    }
+
+    public void setDatoInfraCe(DatoInfraCe datoInfraCe) {
+        this.datoInfraCe = datoInfraCe;
+    }
+
     public String getFechaInicio() {
         if (proyectoCooperacion != null && proyectoCooperacion.getFechaEstimadaInicio() == null) {
             return FORMAT_DATE.format(new Date());
@@ -302,19 +315,36 @@ public class RegistrarCooperacionView implements Serializable {
         }
     }
 
-    public void guardar() throws IOException {
+    public void preValidacion() {
+        Boolean continuar = false;
+
+        proyectoCooperacion.setIdTipoCooperacion(mantenimientoFacade.find(TipoCooperacion.class, idTipoCooperacion));
+
+        switch (proyectoCooperacion.getIdTipoCooperacion().getIdTipoCooperacion().intValue()) {
+            case 1:
+            case 4:
+            case 6:
+                datoInfraCe = catalogoFacade.findDatoInfraByCe(proyectoCooperacion.getCodigoEntidad());
+                if (datoInfraCe == null) {
+                    PrimeFaces.current().executeScript("PF('dlgDatoInfra').show();");
+                    continuar = true;
+                }
+                break;
+            default:
+                continuar = true;
+        }
+
+        if (continuar) {
+            guardar();
+        }
+    }
+
+    public void guardar() {
         Date tmpFecha;
         String titulo = RESOURCE_BUNDLE.getString("correo.respuesta.titulo");
         String mensajeParaCe = "";
         String mensajeParaUt = "";
         Boolean necesitaAprobacion = false;
-
-        if (proyectoCooperacion.getIdTipoCooperacion().getIdTipoCooperacion() == 4) {
-            DatoInfraCe datoInfraCe = catalogoFacade.findDatoInfraByCe(proyectoCooperacion.getCodigoEntidad());
-            if (datoInfraCe == null) {
-                PrimeFaces.current().executeScript("PF('dlgDatoInfra').show();");
-            }
-        }
 
         for (String nivel : nivelI) {
             switch (nivel) {
@@ -377,7 +407,6 @@ public class RegistrarCooperacionView implements Serializable {
             proyectoCooperacion.setEstadoEliminacion((short) 0);
             proyectoCooperacion.setIdCooperante(mantenimientoFacade.find(Cooperante.class, idCooperante));
             proyectoCooperacion.setIdModalidad(mantenimientoFacade.find(ModalidadEjecucion.class, idModalidad));
-            proyectoCooperacion.setIdTipoCooperacion(mantenimientoFacade.find(TipoCooperacion.class, idTipoCooperacion));
             proyectoCooperacion.setIdTipoInstrumento(mantenimientoFacade.find(TipoInstrumento.class, idTipoInstrumento));
 
             switch (idTipoCooperacion.intValue()) {
@@ -393,10 +422,10 @@ public class RegistrarCooperacionView implements Serializable {
 
                 //RESPUESTA DEPENDERA DEL MONTO DEL PROYECTO
                 case 1:
+                case 3:
                 case 4:
                 case 5:
                 case 6:
-                case 3:
                     necesitaAprobacion = true;
                     break;
                 default:
@@ -437,13 +466,13 @@ public class RegistrarCooperacionView implements Serializable {
                         RC4Crypter seguridad = new RC4Crypter();
                         mensajeParaUt = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.notificacionDeCapacitacion.mensaje"),
                                 StringUtils.getFecha(new Date()),
-                                directorCe.getNombreDirector(), entidadEducativa.getNombre(),
+                                entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
                                 seguridad.encrypt("ha", "".concat(proyectoCooperacion.getIdProyecto().toString()).concat("::").concat(proyectoCooperacion.getIdCooperante().getIdCooperante().toString()).concat("::").concat(proyectoCooperacion.getCodigoEntidad()))
                         );
 
                         mensajeParaCe = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprobacionVoBo.mensaje"),
-                                StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
-                                entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
+                                StringUtils.getFecha(new Date()),
+                                directorCe.getNombreDirector(), entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
                                 proyectoCooperacion.getNombreProyecto(), proyectoCooperacion.getObjetivos());
 
                         break;
@@ -455,18 +484,23 @@ public class RegistrarCooperacionView implements Serializable {
                     folderProyecto.mkdir();
                 }
 
-                for (UploadedFile updFile : archivosDelProyecto) {
-                    Path folder = Paths.get(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyectoCooperacion.getIdProyecto() + File.separator + updFile.getFileName());
-                    Path arc;
-                    if (folder.toFile().exists()) {
-                        arc = folder;
-                    } else {
-                        arc = Files.createFile(folder);
+                try {
+                    for (UploadedFile updFile : archivosDelProyecto) {
+                        Path folder = Paths.get(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyectoCooperacion.getIdProyecto() + File.separator + updFile.getFileName());
+                        Path arc;
+                        if (folder.toFile().exists()) {
+                            arc = folder;
+                        } else {
+                            arc = Files.createFile(folder);
+                        }
+
+                        try (InputStream input = updFile.getInputStream()) {
+                            Files.copy(input, arc, StandardCopyOption.REPLACE_EXISTING);
+                        }
                     }
 
-                    try (InputStream input = updFile.getInputStream()) {
-                        Files.copy(input, arc, StandardCopyOption.REPLACE_EXISTING);
-                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(RegistrarCooperacionView.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
                 PrimeFaces.current().executeScript("PF('dlgAceptar').show()");
@@ -548,5 +582,17 @@ public class RegistrarCooperacionView implements Serializable {
     public void handleFileUpload(FileUploadEvent event) {
         archivosDelProyecto.add(event.getFile());
         PrimeFaces.current().ajax().update("lstArchivosDelProyecto");
+    }
+
+    public void guardarDatoInfraCe() {
+        if (datoInfraCe.getIdDatoInfra() == null) {
+            switch (proyectoCooperacion.getIdTipoCooperacion().getIdTipoCooperacion().intValue()) {
+                case 1:
+                case 4:
+                case 6:
+                    mantenimientoFacade.guardar(datoInfraCe);
+                    break;
+            }
+        }
     }
 }
