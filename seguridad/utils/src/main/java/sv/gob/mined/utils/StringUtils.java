@@ -20,6 +20,7 @@ public class StringUtils {
     private static final String[] meses = {"enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"};
     private static final String[] dias = {"domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"};
     private static final DateFormat FORMAT_DATE_RPT = new SimpleDateFormat("ddMMMyy_HHmmss");
+    private static final DateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * Devuelve la fecha y hora actual en formato ddMMyy_HHmmss
@@ -30,6 +31,10 @@ public class StringUtils {
         return FORMAT_DATE_RPT.format(new Date());
     }
 
+    public static String getFechaFormat(Date fecha){
+        return FORMAT_DATE.format(fecha);
+    }
+    
     public static String getFecha(Date fecha) {
         String fechaStr = "%s del mes de %s de %s";
 
