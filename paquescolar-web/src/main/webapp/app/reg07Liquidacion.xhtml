@@ -52,10 +52,11 @@
                         <p:selectOneMenu id="cboProveedor" value="#{liquidacionMB.idParticipante}"  onkeydown="setaFoco(this);" >
                             <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
                             <f:selectItems value="#{liquidacionMB.oferta.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{par.idEmpresa.razonSocial}"/>
+                            <p:ajax listener="#{liquidacionMB.recuperarLstLiquidacionByCodEntAndIdDetPro()}" update="tblLiquidaciones"/>
                         </p:selectOneMenu>
 
                         <p:spacer width="10"/>
-                        <p:commandButton value="Agregar" action="#{liquidacionMB.agregarContrato()}" update="detalleLiquidacion" onsuccess="PF('dlgLiquidacion').show();"/>
+                        <p:commandButton value="Agregar" update="detalleLiquidacion" action="#{liquidacionMB.recuperarDatos}" onsuccess="PF('dlgLiquidacion').show();"/>
                     </p:panelGrid>
                 </div>
 
@@ -75,15 +76,6 @@
                                 <f:convertDateTime pattern="dd/MM/yyyy"/>
                             </h:outputText>
                         </p:column>
-                        <p:column headerText="Acta Recepcion">
-                            <p:selectBooleanCheckbox value="#{liq.recepcion}"/>
-                        </p:column>
-                        <p:column headerText="Estado liquidación">
-                            <h:outputText value="#{liq.estadoLiquidacion eq 1 ? ('SIN REGISTRO'):(liq.estadoLiquidacion eq 2 ? 'EN PROCESO':'LIQUIDACIÓN')}"/>
-                        </p:column>
-                        <p:column headerText="Comentario">
-                            <h:outputText value="#{liq.comentario}"/>
-                        </p:column>
                         <p:column headerText="Imprimir" width="110">
                             <p:commandButton icon="fa fa-print" />
                         </p:column>
@@ -96,17 +88,8 @@
             <p:outputPanel id="detalleLiquidacion" styleClass="ui-fluid">
                 <p:panelGrid columns="2" style="width: 100%; border:0px none; background-color:transparent;"
                              styleClass="form-group ui-panelgrid-blank">
-                    <p:outputLabel for="txtFecha" value="Fecha contrato" />
                     <p:outputLabel for="txtMontoOriginal" value="Monto contrato" />
-
-                    <p:inputText id="txtFecha" value="#{liquidacionMB.contrato.fechaEmision}" readonly="true">
-                        <f:convertDateTime pattern="dd/MM/yyyy"/>
-                    </p:inputText>
                     <p:inputText id="txtMontoOriginal" value="#{liquidacionMB.montoOriginal}" />
-
-                    <p:outputLabel for="txtNumCon" value="Número contrato" />
-                    <p:spacer width="10"/>
-                    <p:inputText id="txtNumCon" value="#{liquidacionMB.numeroContrato}" />
                 </p:panelGrid>
                 
                 <p:panelGrid columns="1" style="width: 100%; border:0px none; background-color:transparent;"
@@ -116,21 +99,14 @@
 
                 <p:panelGrid columns="2" style="width: 100%; border:0px none; background-color:transparent;"
                              styleClass="form-group ui-panelgrid-blank" rendered="#{liquidacionMB.modificativa}">
-                    <p:outputLabel for="txtFechaModif" value="Fecha Modificativa" />
                     <p:outputLabel for="txtMontoModif" value="Monto contrato" />
-
-                    <p:inputText id="txtFechaModif" value="#{liquidacionMB.resModificativa.fechaModificacion}" readonly="true">
-                        <f:convertDateTime pattern="dd/MM/yyyy"/>
-                    </p:inputText>
                     <p:inputText id="txtMontoModif" value="#{liquidacionMB.montoModificativa}" readonly="true"/>
                 </p:panelGrid>
-
-
-                <p:panelGrid columns="1" style="width: 100%; border:0px none; background-color:transparent;"
+                
+                <p:panelGrid columns="2" style="width: 100%; border:0px none; background-color:transparent;"
                              styleClass="form-group ui-panelgrid-blank">
-                    <p:outputLabel for="txtComen" value="Comentario" />
-                    <p:inputTextarea id="txtComen" value="#{liquidacionMB.liquidacion.comentario}" />
-
+                    <p:outputLabel for="txtCantidadRecep" value="Cantidad Recepcionada" />
+                    <p:inputText id="txtCantidadRecep" value="#{liquidacionMB.cantidadRecepcion}" readonly="true"/>
                 </p:panelGrid>
             </p:outputPanel>
 

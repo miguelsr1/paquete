@@ -8,6 +8,7 @@ package sv.gob.mined.paquescolar.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,11 +18,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 /**
  *
@@ -30,6 +31,9 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "LIQUIDACION")
 public class Liquidacion implements Serializable {
+
+    @OneToMany(mappedBy = "idLiquidacion", fetch = FetchType.LAZY)
+    private List<DetalleLiquidacion> detalleLiquidacionList;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -55,15 +59,6 @@ public class Liquidacion implements Serializable {
     @Column(name = "ESTADO_ELIMINACION")
     private Short estadoEliminacion;
 
-    @Column(name = "ACTA_RECEPCION")
-    private Short actaRecepcion;
-    @Column(name = "ESTADO_LIQUIDACION")
-    private Short estadoLiquidacion;
-    @Column(name = "COMENTARIO")
-    private String comentario;
-
-    @Transient
-    private Boolean recepcion;
 
     public Liquidacion() {
     }
@@ -108,38 +103,11 @@ public class Liquidacion implements Serializable {
         this.estadoEliminacion = estadoEliminacion;
     }
 
-    public Short getActaRecepcion() {
-        return actaRecepcion;
+    public List<DetalleLiquidacion> getDetalleLiquidacionList() {
+        return detalleLiquidacionList;
     }
 
-    public void setActaRecepcion(Short actaRecepcion) {
-        this.actaRecepcion = actaRecepcion;
-    }
-
-    public Short getEstadoLiquidacion() {
-        return estadoLiquidacion;
-    }
-
-    public void setEstadoLiquidacion(Short estadoLiquidacion) {
-        this.estadoLiquidacion = estadoLiquidacion;
-    }
-
-    public String getComentario() {
-        return comentario;
-    }
-
-    public void setComentario(String comentario) {
-        this.comentario = comentario;
-    }
-
-    public void setRecepcion(Boolean recepcion) {
-        this.recepcion = recepcion;
-        actaRecepcion = recepcion ? (short) 1 : (short) 0;
-    }
-
-    public Boolean getRecepcion() {
-        recepcion = (actaRecepcion == 1);
-
-        return recepcion;
+    public void setDetalleLiquidacionList(List<DetalleLiquidacion> detalleLiquidacionList) {
+        this.detalleLiquidacionList = detalleLiquidacionList;
     }
 }

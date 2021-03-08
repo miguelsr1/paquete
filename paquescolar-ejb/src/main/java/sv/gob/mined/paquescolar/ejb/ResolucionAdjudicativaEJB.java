@@ -40,6 +40,9 @@ import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ParticipanteDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.VwRptContratoJurCabecera;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.VwRptPagare;
+import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosContratoDto;
+import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosModificativaDto;
+import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosRecepcionDto;
 
 /**
  *
@@ -459,7 +462,7 @@ public class ResolucionAdjudicativaEJB {
         q.setParameter("idDetProcesoAdq", idDetProcesoAdq);
         return q.getResultList().isEmpty() ? null : (ContratosOrdenesCompras) q.getResultList().get(0);
     }
-    
+
     public ContratosOrdenesCompras findContratoByIdParticipante(BigDecimal idParticipante) {
         Query q = em.createQuery("SELECT c FROM ContratosOrdenesCompras c WHERE c.idResolucionAdj.idParticipante.idParticipante=:idPar AND c.idResolucionAdj.idParticipante.idOferta.estadoEliminacion=0", ContratosOrdenesCompras.class);
         q.setParameter("idPar", idParticipante);
@@ -471,11 +474,36 @@ public class ResolucionAdjudicativaEJB {
         q.setParameter("idContrato", idContrato);
         return q.getResultList().isEmpty() ? null : (ResolucionesModificativas) q.getResultList().get(0);
     }
-    
-    
-    public void guardarLiquidacion(Liquidacion liquidacion){
-        if(liquidacion.getIdLiquidacion() == null){
+
+    public void guardarLiquidacion(Liquidacion liquidacion) {
+        if (liquidacion.getIdLiquidacion() == null) {
             em.persist(liquidacion);
         }
+    }
+
+    public List<Liquidacion> getLstLiquidacionByCodigoEntAndIdDetProcesoAdq(String codigoEnt, Integer idDetProcesoAdq) {
+        Query q = em.createQuery("SELECT l FROM Liquidacion l WHERE l.idContrato.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoEntidad=:codEnt and l.idContrato.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq.idDetProcesoAdq=:idDetPro ORDER BY l.idLiquidacion", Liquidacion.class);
+        q.setParameter("codEnt", codigoEnt);
+        q.setParameter("idDetPro", idDetProcesoAdq);
+        return q.getResultList();
+    }
+
+    public List<DatosContratoDto> getDatosContratoDto(String codigoEntidad, Integer idDetProcesoAdq) {
+        Query q = em.createQuery("SELECT d FROM DatosContratoDto d WHERE d.codigoEntidad=:codEnt and d.idDetProcesoAdq=:idDet", DatosContratoDto.class);
+        q.setParameter("codEnt", codigoEntidad);
+        q.setParameter("idDet", idDetProcesoAdq);
+        return q.getResultList();
+    }
+    
+    public List<DatosModificativaDto> getDatosModificativaDto(BigDecimal idContrato){
+        Query q = em.createQuery("SELECT d FROM DatosModificativaDto d WHERE d.idContrato=:idContrato", DatosModificativaDto.class);
+        q.setParameter("idContrato", idContrato);
+        return q.getResultList();
+    }
+    
+    public List<DatosRecepcionDto> getDatosRecepcionDto(BigDecimal idContrato){
+        Query q = em.createQuery("SELECT d FROM DatosRecepcionDto d WHERE d.idContrato=:idContrato", DatosRecepcionDto.class);
+        q.setParameter("idContrato", idContrato);
+        return q.getResultList();
     }
 }

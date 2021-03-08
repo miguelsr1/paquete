@@ -26,6 +26,9 @@ import sv.gob.mined.paquescolar.model.Liquidacion;
 import sv.gob.mined.paquescolar.model.OfertaBienesServicios;
 import sv.gob.mined.paquescolar.model.RecepcionBienesServicios;
 import sv.gob.mined.paquescolar.model.ResolucionesModificativas;
+import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosContratoDto;
+import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosModificativaDto;
+import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosRecepcionDto;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 
 /**
@@ -39,8 +42,11 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     private Boolean modificativa = false;
     private String codigoEntidad;
     private String numeroContrato;
+    private BigDecimal cantidadOriginal;
     private BigDecimal montoOriginal;
+    private BigDecimal cantidadModificativa;
     private BigDecimal montoModificativa;
+    private BigDecimal cantidadRecepcion;
     private BigDecimal idRubro;
     private BigDecimal idParticipante = BigDecimal.ZERO;
 
@@ -50,6 +56,10 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     private OfertaBienesServicios oferta = new OfertaBienesServicios();
     private RecepcionBienesServicios recepcion = new RecepcionBienesServicios();
     private ResolucionesModificativas resModificativa;
+
+    private List<DatosContratoDto> datosContratoDto;
+    private List<DatosModificativaDto> datosModificativaDto;
+    private List<DatosRecepcionDto> datosRecepcionDto;
 
     private List<Liquidacion> lstLiquidaciones = new ArrayList();
 
@@ -163,6 +173,30 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
         this.resModificativa = resModificativa;
     }
 
+    public BigDecimal getCantidadOriginal() {
+        return cantidadOriginal;
+    }
+
+    public void setCantidadOriginal(BigDecimal cantidadOriginal) {
+        this.cantidadOriginal = cantidadOriginal;
+    }
+
+    public BigDecimal getCantidadModificativa() {
+        return cantidadModificativa;
+    }
+
+    public void setCantidadModificativa(BigDecimal cantidadModificativa) {
+        this.cantidadModificativa = cantidadModificativa;
+    }
+
+    public BigDecimal getCantidadRecepcion() {
+        return cantidadRecepcion;
+    }
+
+    public void setCantidadRecepcion(BigDecimal cantidadRecepcion) {
+        this.cantidadRecepcion = cantidadRecepcion;
+    }
+
     public void buscarEntidadEducativa() {
         if (codigoEntidad.length() == 5) {
             /**
@@ -207,9 +241,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
 
             liquidacion = new Liquidacion();
 
-            liquidacion.setRecepcion(Boolean.TRUE);
             liquidacion.setEstadoEliminacion((short) 0);
-            liquidacion.setEstadoLiquidacion((short) 2);
             liquidacion.setFechaInsercion(new Date());
             liquidacion.setIdContrato(contrato);
             liquidacion.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
@@ -225,5 +257,39 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
         JsfUtil.mensajeInsert();
 
         liquidacion = new Liquidacion();
+    }
+
+    public void recuperarLstLiquidacionByCodEntAndIdDetPro() {
+        lstLiquidaciones = resolucionAdjudicativaEJB.getLstLiquidacionByCodigoEntAndIdDetProcesoAdq(codigoEntidad, detalleProceso.getIdDetProcesoAdq());
+    }
+
+    public void recuperarDatos() {
+        datosContratoDto = resolucionAdjudicativaEJB.getDatosContratoDto(codigoEntidad, detalleProceso.getIdDetProcesoAdq());
+        if (datosContratoDto.get(0).getIdEstadoReserva().intValue() == 5) {
+            datosModificativaDto = resolucionAdjudicativaEJB.getDatosModificativaDto(datosContratoDto.get(0).getIdContrato());
+            modificativa = true;
+        }
+
+        datosRecepcionDto = resolucionAdjudicativaEJB.getDatosRecepcionDto(datosContratoDto.get(0).getIdContrato());
+
+        cantidadOriginal = BigDecimal.ZERO;
+        montoOriginal = BigDecimal.ZERO;
+        datosContratoDto.stream().forEachOrdered(datoContrato -> {
+            cantidadOriginal = cantidadOriginal.add(datoContrato.getCantidad());
+            montoOriginal = montoOriginal.add(datoContrato.getCantidad().multiply(datoContrato.getPrecioUnitario()));
+        });
+        
+        cantidadModificativa = BigDecimal.ZERO;
+        montoModificativa = BigDecimal.ZERO;
+        datosModificativaDto.stream().forEachOrdered(datoContrato -> {
+            cantidadModificativa = cantidadModificativa.add(datoContrato.getCantidadNew());
+            montoModificativa = montoModificativa.add(datoContrato.getCantidadNew().multiply(datoContrato.getPrecioUnitarioNew()));
+        });
+        
+        cantidadRecepcion = BigDecimal.ZERO;
+        datosRecepcionDto.stream().forEachOrdered(datoContrato -> {
+            cantidadRecepcion = cantidadRecepcion.add(datoContrato.getCantidadEntregada());
+        });
+        
     }
 }

@@ -36,8 +36,7 @@ public class DetalleProcesoAdq implements Serializable {
     @OneToMany(mappedBy = "idDetProcesoAdq")
     private List<RptDocumentos> rptDocumentosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
-    private List<CreditoBancario> creditoBancarioList;
-    @OneToMany(mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
+
     private List<DetRubroMuestraInteres> detRubroMuestraInteresList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDetProcesoAdq")
     private List<OfertaBienesServicios> ofertaBienesServiciosList;
@@ -204,14 +203,6 @@ public class DetalleProcesoAdq implements Serializable {
 
     public void setDetRubroMuestraInteresList(List<DetRubroMuestraInteres> detRubroMuestraInteresList) {
         this.detRubroMuestraInteresList = detRubroMuestraInteresList;
-    }
-
-    public List<CreditoBancario> getCreditoBancarioList() {
-        return creditoBancarioList;
-    }
-
-    public void setCreditoBancarioList(List<CreditoBancario> creditoBancarioList) {
-        this.creditoBancarioList = creditoBancarioList;
     }
 
     public List<RptDocumentos> getRptDocumentosList() {
