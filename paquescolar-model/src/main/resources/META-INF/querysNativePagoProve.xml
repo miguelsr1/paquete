@@ -430,4 +430,58 @@
             ]]>
         </query>
     </named-native-query>
+    <named-native-query name="Liquidacion.DatosContratoDto" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosContratoDto">
+        <query>
+            <![CDATA[
+            select 
+                id_row             as idRow,
+                id_oferta          as idOferta,
+                no_item            as noItem,
+                cantidad           as cantidad,
+                precio_unitario    as precioUnitario,
+                id_contrato        as idContrato,
+                id_estado_reserva  as idEstadoReserva,
+                codigo_entidad     as codigoEntidad,
+                id_det_proceso_adq as idDetProcesoAdq
+            from vw_sub_liq_contrato_orig 
+            where codigo_entidad = ?1 and 
+                id_det_proceso_adq = ?2
+            order by to_number(no_item)
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Liquidacion.DatosModificativaDto" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosModificativaDto">
+        <query>
+            <![CDATA[
+            select 
+                id_row              as idRow,
+                id_contrato         as idContrato,
+                no_item             as noItem,
+                cantidad_new        as cantidadNew,
+                precio_unitario_new as precioUnitarioNew,
+                id_estado_reserva   as idEstadoReserva
+            from vw_sub_liq_contrato_modif
+            where id_contrato = ?1 and 
+                id_estado_reserva = 2
+            order by to_number(no_item)
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Liquidacion.DatosRecepcionDto" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosRecepcionDto">
+        <query>
+            <![CDATA[
+            select 
+                id_row              as idRow,
+                id_contrato         as idContrato,
+                no_item             as noItem,
+                cantidad_entregada  as cantidadEntregada
+            from vw_sub_liq_contrato_recep 
+            where id_contrato = ?1 
+            order by to_number(no_item)
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>

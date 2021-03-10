@@ -24,11 +24,20 @@ public class DatosRecepcionDto implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
     @javax.persistence.Id
+    private BigDecimal idRow;
     private java.math.BigDecimal idContrato;
     private String noItem;
     private BigDecimal cantidadEntregada;
 
     public DatosRecepcionDto() {
+    }
+
+    public BigDecimal getIdRow() {
+        return idRow;
+    }
+
+    public void setIdRow(BigDecimal idRow) {
+        this.idRow = idRow;
     }
 
     public BigDecimal getIdContrato() {

@@ -121,14 +121,14 @@
     <class>sv.gob.mined.paquescolar.model.pojos.contratacion.CantidadPorNivelDto</class>
     <class>sv.gob.mined.paquescolar.model.ListaNotificacionPago</class>
     <class>sv.gob.mined.paquescolar.model.pojos.recepcion.RptEntregasGeneralPorDepartamentoDto</class>
-    <class>sv.gob.mined.paquescolar.model.Liquidacion</class>
     <class>sv.gob.mined.paquescolar.model.EmpresaCodigoSeg</class>
     <class>sv.gob.mined.paquescolar.model.pojos.DeclaracionJurada</class>
     <class>sv.gob.mined.paquescolar.model.PorcentajeEvaluacion</class>
-    <class>sv.gob.mined.paquescolar.model.DetalleLiquidacion</class>
     <class>sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosContratoDto</class>
     <class>sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosModificativaDto</class>
     <class>sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosRecepcionDto</class>
+    <class>sv.gob.mined.paquescolar.model.DetalleLiquidacion</class>
+    <class>sv.gob.mined.paquescolar.model.Liquidacion</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>

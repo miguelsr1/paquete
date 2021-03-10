@@ -71,11 +71,6 @@
                         <p:column headerText="#" width="50">
                             <h:outputText value="#{rowId + 1}"/>
                         </p:column>
-                        <p:column headerText="Fecha de Contrato">
-                            <h:outputText value="#{liq.idContrato.fechaEmision}">
-                                <f:convertDateTime pattern="dd/MM/yyyy"/>
-                            </h:outputText>
-                        </p:column>
                         <p:column headerText="Imprimir" width="110">
                             <p:commandButton icon="fa fa-print" />
                         </p:column>
@@ -84,35 +79,30 @@
             </div>
         </div>
 
-        <p:dialog id="dlgLiquidacion" widgetVar="dlgLiquidacion" header="Información del Contrato" width="500">
+        <p:dialog id="dlgLiquidacion" widgetVar="dlgLiquidacion" header="Información del Contrato" width="550" modal="true">
             <p:outputPanel id="detalleLiquidacion" styleClass="ui-fluid">
-                <p:panelGrid columns="2" style="width: 100%; border:0px none; background-color:transparent;"
-                             styleClass="form-group ui-panelgrid-blank">
-                    <p:outputLabel for="txtMontoOriginal" value="Monto contrato" />
-                    <p:inputText id="txtMontoOriginal" value="#{liquidacionMB.montoOriginal}" />
-                </p:panelGrid>
-                
-                <p:panelGrid columns="1" style="width: 100%; border:0px none; background-color:transparent;"
-                             styleClass="form-group ui-panelgrid-blank">
-                    <p:selectBooleanCheckbox value="#{liquidacionMB.modificativa}" itemLabel="¿Tiene modificativa?" style="width: 100%;" disabled="true"/>
-                </p:panelGrid>
-
-                <p:panelGrid columns="2" style="width: 100%; border:0px none; background-color:transparent;"
-                             styleClass="form-group ui-panelgrid-blank" rendered="#{liquidacionMB.modificativa}">
-                    <p:outputLabel for="txtMontoModif" value="Monto contrato" />
-                    <p:inputText id="txtMontoModif" value="#{liquidacionMB.montoModificativa}" readonly="true"/>
-                </p:panelGrid>
-                
-                <p:panelGrid columns="2" style="width: 100%; border:0px none; background-color:transparent;"
-                             styleClass="form-group ui-panelgrid-blank">
-                    <p:outputLabel for="txtCantidadRecep" value="Cantidad Recepcionada" />
-                    <p:inputText id="txtCantidadRecep" value="#{liquidacionMB.cantidadRecepcion}" readonly="true"/>
-                </p:panelGrid>
+                <p:dataTable value="#{liquidacionMB.datosLiquidacionDtos}" var="liquidacion">
+                    <p:column headerText="NoItem">
+                        <p:outputLabel value="#{liquidacion.noItem}"/>
+                    </p:column>
+                    <p:column headerText="Contratado">
+                        <p:outputLabel value="#{liquidacion.cantidadContrato}"/>
+                    </p:column>
+                    <p:column headerText="Modificado">
+                        <p:outputLabel value="#{liquidacion.cantidadModificativa}"/>
+                    </p:column>
+                    <p:column headerText="Recepción">
+                        <p:outputLabel value="#{liquidacion.cantidadRecepcion}" />
+                    </p:column>
+                    <p:column headerText="Resguardo">
+                        <p:inputNumber value="#{liquidacion.cantidadResguardo}" inputStyle="text-align: right;" decimalPlaces="0"/>
+                    </p:column>
+                </p:dataTable>
             </p:outputPanel>
 
             <f:facet name="footer">
-                <p:commandButton id="btnGuardar" value="Guardar" action="#{liquidacionMB.agregarLista}" icon="pi pi-check" oncomplete="PF('dlgLiquidacion').hide();" update="tblLiquidaciones"/>
-                <p:commandButton id="btnCancelar" value="Cancelar" styleClass="secondary-button" icon="pi pi-refresh" onclick="PF('dlgLiquidacion').hide();"/>
+                <p:commandButton id="btnGuardar" value="Guardar" action="#{liquidacionMB.agregarLista}" icon="fa fa-check" oncomplete="PF('dlgLiquidacion').hide();" update="tblLiquidaciones"/>
+                <p:commandButton id="btnCancelar" value="Cancelar" styleClass="secondary-button" icon="fa fa-refresh" onclick="PF('dlgLiquidacion').hide();"/>
             </f:facet>
         </p:dialog>
     </ui:define>

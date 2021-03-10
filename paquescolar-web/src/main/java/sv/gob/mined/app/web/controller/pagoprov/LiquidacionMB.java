@@ -8,6 +8,7 @@ package sv.gob.mined.app.web.controller.pagoprov;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -21,12 +22,14 @@ import sv.gob.mined.paquescolar.ejb.OfertaBienesServiciosEJB;
 import sv.gob.mined.paquescolar.ejb.RecepcionEJB;
 import sv.gob.mined.paquescolar.ejb.ResolucionAdjudicativaEJB;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
+import sv.gob.mined.paquescolar.model.DetalleLiquidacion;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.Liquidacion;
 import sv.gob.mined.paquescolar.model.OfertaBienesServicios;
 import sv.gob.mined.paquescolar.model.RecepcionBienesServicios;
 import sv.gob.mined.paquescolar.model.ResolucionesModificativas;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosContratoDto;
+import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosLiquidacionDto;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosModificativaDto;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosRecepcionDto;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
@@ -60,6 +63,8 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     private List<DatosContratoDto> datosContratoDto;
     private List<DatosModificativaDto> datosModificativaDto;
     private List<DatosRecepcionDto> datosRecepcionDto;
+
+    private List<DatosLiquidacionDto> datosLiquidacionDtos;
 
     private List<Liquidacion> lstLiquidaciones = new ArrayList();
 
@@ -197,6 +202,10 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
         this.cantidadRecepcion = cantidadRecepcion;
     }
 
+    public List<DatosLiquidacionDto> getDatosLiquidacionDtos() {
+        return datosLiquidacionDtos;
+    }
+
     public void buscarEntidadEducativa() {
         if (codigoEntidad.length() == 5) {
             /**
@@ -220,37 +229,34 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
         }
     }
 
-    public void agregarContrato() {
-        contrato = resolucionAdjudicativaEJB.findContratoByIdParticipante(idParticipante);
-
-        if (contrato != null) {
-            modificativa = (contrato.getModificativa() == 1);
-            montoOriginal = contrato.getIdResolucionAdj().getIdParticipante().getMonto();
-            montoModificativa = BigDecimal.ZERO;
-
-            if (modificativa) {
-                resModificativa = new ResolucionesModificativas();
-                resModificativa = resolucionAdjudicativaEJB.findModificativaByIdContrato(contrato.getIdContrato());
-                resModificativa.getDetalleModificativaList().forEach((detalleModificativa) -> {
-                    montoModificativa = montoModificativa.add(detalleModificativa.getPrecioUnitarioNew().multiply(new BigDecimal(detalleModificativa.getCantidadNew())));
-                });
-            }
-
-            numeroContrato = "ME-" + contrato.getNumeroContrato() + "/" + contrato.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho();
-            recepcion = recepcionEJB.findRecepcionByIdContrato(contrato.getIdContrato());
-
-            liquidacion = new Liquidacion();
-
-            liquidacion.setEstadoEliminacion((short) 0);
-            liquidacion.setFechaInsercion(new Date());
-            liquidacion.setIdContrato(contrato);
-            liquidacion.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-
-        }
-    }
-
     public void agregarLista() {
-        lstLiquidaciones.add(liquidacion);
+        liquidacion = new Liquidacion();
+        liquidacion.setFechaInsercion(new Date());
+        liquidacion.setEstadoEliminacion((short) 0);
+        liquidacion.setIdContrato(datosContratoDto.get(0).getIdContrato());
+        liquidacion.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+
+        /**
+         * faltaria detalle de diferencia de items contratados por modificativa
+         * a contratos
+         */
+        datosLiquidacionDtos.forEach(dato -> {
+            DetalleLiquidacion det = new DetalleLiquidacion();
+            
+            det.setNoItem(dato.getNoItem());
+            det.setCantidad(dato.getCantidadContrato().longValue());
+            det.setPrecioUnitario(dato.getPrecioUnitarioContrato());
+            
+            det.setCantidadModificativa(dato.getCantidadModificativa().longValue());
+            det.setPrecioUnitarioModif(dato.getPrecioUnitarioModificativa());
+            
+            det.setCantidadEntregada(dato.getCantidadRecepcion().longValue());
+            det.setCantidadResguardo(dato.getCantidadResguardo().longValue());
+            
+            det.setIdLiquidacion(liquidacion);
+            
+            liquidacion.getDetalleLiquidacionList().add(det);
+        });
 
         resolucionAdjudicativaEJB.guardarLiquidacion(liquidacion);
 
@@ -258,12 +264,14 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
 
         liquidacion = new Liquidacion();
     }
-
+    
     public void recuperarLstLiquidacionByCodEntAndIdDetPro() {
         lstLiquidaciones = resolucionAdjudicativaEJB.getLstLiquidacionByCodigoEntAndIdDetProcesoAdq(codigoEntidad, detalleProceso.getIdDetProcesoAdq());
     }
 
     public void recuperarDatos() {
+        datosLiquidacionDtos = new ArrayList();
+
         datosContratoDto = resolucionAdjudicativaEJB.getDatosContratoDto(codigoEntidad, detalleProceso.getIdDetProcesoAdq());
         if (datosContratoDto.get(0).getIdEstadoReserva().intValue() == 5) {
             datosModificativaDto = resolucionAdjudicativaEJB.getDatosModificativaDto(datosContratoDto.get(0).getIdContrato());
@@ -272,24 +280,69 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
 
         datosRecepcionDto = resolucionAdjudicativaEJB.getDatosRecepcionDto(datosContratoDto.get(0).getIdContrato());
 
-        cantidadOriginal = BigDecimal.ZERO;
-        montoOriginal = BigDecimal.ZERO;
-        datosContratoDto.stream().forEachOrdered(datoContrato -> {
-            cantidadOriginal = cantidadOriginal.add(datoContrato.getCantidad());
-            montoOriginal = montoOriginal.add(datoContrato.getCantidad().multiply(datoContrato.getPrecioUnitario()));
+        switch (detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue()) {
+            case 1:
+            case 4:
+            case 5:
+                crearTablaDeCompracion(Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"));
+                break;
+            case 2:
+                crearTablaDeCompracion(Arrays.asList("1", "2", "3", "4", "5"));
+                break;
+            case 3:
+                crearTablaDeCompracion(Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"));
+                break;
+        }
+    }
+
+    private void crearTablaDeCompracion(List<String> listado) {
+        listado.forEach(noItem -> {
+            DatosLiquidacionDto datoLiquidacion = new DatosLiquidacionDto();
+            datoLiquidacion = subCrearTabla(noItem, datoLiquidacion);
+            if (datoLiquidacion != null) {
+                datosLiquidacionDtos.add(datoLiquidacion);
+            }
         });
-        
-        cantidadModificativa = BigDecimal.ZERO;
-        montoModificativa = BigDecimal.ZERO;
-        datosModificativaDto.stream().forEachOrdered(datoContrato -> {
-            cantidadModificativa = cantidadModificativa.add(datoContrato.getCantidadNew());
-            montoModificativa = montoModificativa.add(datoContrato.getCantidadNew().multiply(datoContrato.getPrecioUnitarioNew()));
-        });
-        
-        cantidadRecepcion = BigDecimal.ZERO;
-        datosRecepcionDto.stream().forEachOrdered(datoContrato -> {
-            cantidadRecepcion = cantidadRecepcion.add(datoContrato.getCantidadEntregada());
-        });
-        
+    }
+
+    private DatosLiquidacionDto subCrearTabla(String noItem, DatosLiquidacionDto datoLiquidacion) {
+        Boolean noEstaItem = true;
+        for (DatosContratoDto dato : datosContratoDto) {
+            if (dato.getNoItem().equals(noItem)) {
+                datoLiquidacion.setIdContrato(dato.getIdContrato());
+                datoLiquidacion.setNoItem(noItem);
+                datoLiquidacion.setCantidadContrato(dato.getCantidad());
+                datoLiquidacion.setPrecioUnitarioContrato(dato.getPrecioUnitario());
+                noEstaItem = false;
+                break;
+            }
+        }
+
+        for (DatosModificativaDto dato : datosModificativaDto) {
+            if (dato.getNoItem().equals(noItem)) {
+                datoLiquidacion.setIdContrato(dato.getIdContrato());
+                datoLiquidacion.setNoItem(noItem);
+                datoLiquidacion.setCantidadModificativa(dato.getCantidadNew());
+                datoLiquidacion.setPrecioUnitarioModificativa(dato.getPrecioUnitarioNew());
+                noEstaItem = false;
+                break;
+            }
+        }
+
+        for (DatosRecepcionDto dato : datosRecepcionDto) {
+            if (dato.getNoItem().equals(noItem)) {
+                datoLiquidacion.setIdContrato(dato.getIdContrato());
+                datoLiquidacion.setNoItem(noItem);
+                datoLiquidacion.setCantidadRecepcion(dato.getCantidadEntregada());
+                noEstaItem = false;
+                break;
+            }
+        }
+
+        if (noEstaItem) {
+            return null;
+        } else {
+            return datoLiquidacion;
+        }
     }
 }

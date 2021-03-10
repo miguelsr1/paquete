@@ -25,6 +25,7 @@ public class DatosModificativaDto implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    private BigDecimal idRow;
     private java.math.BigDecimal idContrato;
     private String noItem;
     private java.math.BigDecimal cantidadNew;
@@ -32,6 +33,14 @@ public class DatosModificativaDto implements java.io.Serializable {
     private java.math.BigDecimal idEstadoReserva;
 
     public DatosModificativaDto() {
+    }
+
+    public BigDecimal getIdRow() {
+        return idRow;
+    }
+
+    public void setIdRow(BigDecimal idRow) {
+        this.idRow = idRow;
     }
 
     public BigDecimal getIdContrato() {

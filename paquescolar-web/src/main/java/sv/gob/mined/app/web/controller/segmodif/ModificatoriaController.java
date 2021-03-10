@@ -888,7 +888,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                 }
 
                 lstTipoModifContratos = modificativaEJB.getLstTipoModifByTipoUsuario(VarSession.getUsuarioSession().getIdTipoUsuario().getIdTipoUsuario());
-                lstItem = proveedorEJB.findItemProveedor(contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdEmpresa(), detalleProceso);
+                lstItem = proveedorEJB.findItemProveedor(contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdEmpresa(), getDetallePrincipal(detalleProceso));
             } else if (vwContratoModificatoria.getIdResolucionAdj() != null
                     && vwContratoModificatoria.getIdResModifPadre() != null
                     && (vwContratoModificatoria.getIdResModifPadre().longValue() == vwContratoModificatoria.getIdResolucionModif().longValue())) {
@@ -904,11 +904,24 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                     idRubro = contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres();
                     detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
                     lstTipoModifContratos = modificativaEJB.getLstTipoModifByTipoUsuario(VarSession.getUsuarioSession().getIdTipoUsuario().getIdTipoUsuario());
-                    lstItem = proveedorEJB.findItemProveedor(contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdEmpresa(), detalleProceso);
+                    lstItem = proveedorEJB.findItemProveedor(contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdEmpresa(), getDetallePrincipal(detalleProceso));
                     idTipoModif = resolucionesModificativas.getIdModifContrato().getIdModifContrato();
                 }
             }
         }
+    }
+    
+    private DetalleProcesoAdq getDetallePrincipal(DetalleProcesoAdq detallePro){
+        if(detallePro.getIdProcesoAdq().getPadreIdProcesoAdq() != null){
+            for (DetalleProcesoAdq detallePadre : detallePro.getIdProcesoAdq().getPadreIdProcesoAdq().getDetalleProcesoAdqList()) {
+                if(detallePro.getIdRubroAdq().getIdRubroInteres().intValue() == detallePadre.getIdRubroAdq().getIdRubroInteres().intValue()){
+                    return detallePadre;
+                }
+            }
+        }else{
+            return detallePro;
+        }
+        return null;
     }
 
     public void onCargarModificativa(SelectEvent event) {

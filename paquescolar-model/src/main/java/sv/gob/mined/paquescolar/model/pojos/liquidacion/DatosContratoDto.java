@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.EntityResult;
 import javax.persistence.Id;
 import javax.persistence.SqlResultSetMapping;
-import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -27,6 +26,7 @@ public class DatosContratoDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    private BigDecimal idRow;
     private BigDecimal idOferta;
     private String noItem;
     private BigDecimal cantidad;
@@ -37,6 +37,14 @@ public class DatosContratoDto implements Serializable {
     private Integer idDetProcesoAdq;
     
     public DatosContratoDto() {
+    }
+
+    public BigDecimal getIdRow() {
+        return idRow;
+    }
+
+    public void setIdRow(BigDecimal idRow) {
+        this.idRow = idRow;
     }
 
     public BigDecimal getIdOferta() {

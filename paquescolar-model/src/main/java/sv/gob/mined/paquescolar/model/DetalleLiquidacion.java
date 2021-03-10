@@ -11,12 +11,14 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -24,28 +26,34 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "DETALLE_LIQUIDACION")
-@NamedQueries({
-    @NamedQuery(name = "DetalleLiquidacion.findAll", query = "SELECT d FROM DetalleLiquidacion d")})
+@XmlRootElement
 public class DetalleLiquidacion implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @Column(name = "ID_DET_LIQUIDACION")
+    @GeneratedValue(generator = "seqDetLiquidacion", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "seqDetLiquidacion", sequenceName = "SEQ_DET_LIQUIDACION", allocationSize = 1, initialValue = 1)
     private Long idDetLiquidacion;
     @Column(name = "NO_ITEM")
     private String noItem;
     @Column(name = "CANTIDAD")
     private Long cantidad;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Basic(optional = false)
     @Column(name = "PRECIO_UNITARIO")
     private BigDecimal precioUnitario;
     @Column(name = "CANTIDAD_ENTREGADA")
     private Long cantidadEntregada;
-    @Column(name = "CANTIDAD__RESGUARDO")
+    @Column(name = "CANTIDAD_RESGUARDO")
     private Long cantidadResguardo;
+    @Column(name = "PRECIO_UNITARIO_MODIF")
+    private BigDecimal precioUnitarioModif;
+    @Column(name = "CANTIDAD_MODIFICATIVA")
+    private Long cantidadModificativa;
     @JoinColumn(name = "ID_LIQUIDACION", referencedColumnName = "ID_LIQUIDACION")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Liquidacion idLiquidacion;
 
     public DetalleLiquidacion() {
@@ -53,6 +61,11 @@ public class DetalleLiquidacion implements Serializable {
 
     public DetalleLiquidacion(Long idDetLiquidacion) {
         this.idDetLiquidacion = idDetLiquidacion;
+    }
+
+    public DetalleLiquidacion(Long idDetLiquidacion, BigDecimal precioUnitario) {
+        this.idDetLiquidacion = idDetLiquidacion;
+        this.precioUnitario = precioUnitario;
     }
 
     public Long getIdDetLiquidacion() {
@@ -101,6 +114,22 @@ public class DetalleLiquidacion implements Serializable {
 
     public void setCantidadResguardo(Long cantidadResguardo) {
         this.cantidadResguardo = cantidadResguardo;
+    }
+
+    public BigDecimal getPrecioUnitarioModif() {
+        return precioUnitarioModif;
+    }
+
+    public void setPrecioUnitarioModif(BigDecimal precioUnitarioModif) {
+        this.precioUnitarioModif = precioUnitarioModif;
+    }
+
+    public Long getCantidadModificativa() {
+        return cantidadModificativa;
+    }
+
+    public void setCantidadModificativa(Long cantidadModificativa) {
+        this.cantidadModificativa = cantidadModificativa;
     }
 
     public Liquidacion getIdLiquidacion() {

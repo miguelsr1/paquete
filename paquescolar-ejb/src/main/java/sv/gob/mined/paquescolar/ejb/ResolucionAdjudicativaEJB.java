@@ -482,28 +482,36 @@ public class ResolucionAdjudicativaEJB {
     }
 
     public List<Liquidacion> getLstLiquidacionByCodigoEntAndIdDetProcesoAdq(String codigoEnt, Integer idDetProcesoAdq) {
-        Query q = em.createQuery("SELECT l FROM Liquidacion l WHERE l.idContrato.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoEntidad=:codEnt and l.idContrato.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq.idDetProcesoAdq=:idDetPro ORDER BY l.idLiquidacion", Liquidacion.class);
+        Query q = em.createQuery("SELECT c FROM ContratosOrdenesCompras c WHERE c.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoEntidad=:codEnt and c.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq.idDetProcesoAdq=:idDetPro", ContratosOrdenesCompras.class);
         q.setParameter("codEnt", codigoEnt);
         q.setParameter("idDetPro", idDetProcesoAdq);
+        BigDecimal idContrato = ((ContratosOrdenesCompras)q.getResultList().get(0)).getIdContrato();
+        
+        q = em.createQuery("SELECT l FROM Liquidacion l where l.idContrato=:idCon ORDER BY l.idLiquidacion", ContratosOrdenesCompras.class);
+        q.setParameter("idCon", idContrato);
         return q.getResultList();
     }
 
     public List<DatosContratoDto> getDatosContratoDto(String codigoEntidad, Integer idDetProcesoAdq) {
-        Query q = em.createQuery("SELECT d FROM DatosContratoDto d WHERE d.codigoEntidad=:codEnt and d.idDetProcesoAdq=:idDet", DatosContratoDto.class);
-        q.setParameter("codEnt", codigoEntidad);
-        q.setParameter("idDet", idDetProcesoAdq);
+        Query q = em.createNamedQuery("Liquidacion.DatosContratoDto", DatosContratoDto.class);
+        q.setParameter(1, codigoEntidad);
+        q.setParameter(2, idDetProcesoAdq);
         return q.getResultList();
     }
     
     public List<DatosModificativaDto> getDatosModificativaDto(BigDecimal idContrato){
-        Query q = em.createQuery("SELECT d FROM DatosModificativaDto d WHERE d.idContrato=:idContrato", DatosModificativaDto.class);
-        q.setParameter("idContrato", idContrato);
+        Query q = em.createNamedQuery("Liquidacion.DatosModificativaDto", DatosModificativaDto.class);
+        q.setParameter(1, idContrato);
         return q.getResultList();
     }
     
     public List<DatosRecepcionDto> getDatosRecepcionDto(BigDecimal idContrato){
-        Query q = em.createQuery("SELECT d FROM DatosRecepcionDto d WHERE d.idContrato=:idContrato", DatosRecepcionDto.class);
-        q.setParameter("idContrato", idContrato);
+        Query q = em.createNamedQuery("Liquidacion.DatosRecepcionDto", DatosRecepcionDto.class);
+        q.setParameter(1, idContrato);
         return q.getResultList();
+    }
+    
+    public ContratosOrdenesCompras findContratoByPk(BigDecimal idContrato){
+        return em.find(ContratosOrdenesCompras.class, idContrato);
     }
 }
