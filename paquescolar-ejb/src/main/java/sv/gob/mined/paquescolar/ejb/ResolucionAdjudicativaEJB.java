@@ -481,13 +481,14 @@ public class ResolucionAdjudicativaEJB {
         }
     }
 
-    public List<Liquidacion> getLstLiquidacionByCodigoEntAndIdDetProcesoAdq(String codigoEnt, Integer idDetProcesoAdq) {
-        Query q = em.createQuery("SELECT c FROM ContratosOrdenesCompras c WHERE c.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoEntidad=:codEnt and c.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq.idDetProcesoAdq=:idDetPro", ContratosOrdenesCompras.class);
+    public List<Liquidacion> getLstLiquidacionByCodigoEntAndIdDetProcesoAdqAndIdParticipante(String codigoEnt, Integer idDetProcesoAdq, BigDecimal idParticipante) {
+        Query q = em.createQuery("SELECT c FROM ContratosOrdenesCompras c WHERE c.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoEntidad=:codEnt and c.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq.idDetProcesoAdq=:idDetPro and c.idResolucionAdj.idParticipante.idParticipante=:idPar", ContratosOrdenesCompras.class);
         q.setParameter("codEnt", codigoEnt);
         q.setParameter("idDetPro", idDetProcesoAdq);
+        q.setParameter("idPar", idParticipante);
         BigDecimal idContrato = ((ContratosOrdenesCompras)q.getResultList().get(0)).getIdContrato();
         
-        q = em.createQuery("SELECT l FROM Liquidacion l where l.idContrato=:idCon ORDER BY l.idLiquidacion", ContratosOrdenesCompras.class);
+        q = em.createQuery("SELECT l FROM Liquidacion l where l.idContrato.idContrato=:idCon ORDER BY l.idLiquidacion", ContratosOrdenesCompras.class);
         q.setParameter("idCon", idContrato);
         return q.getResultList();
     }

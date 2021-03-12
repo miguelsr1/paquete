@@ -19,7 +19,6 @@ import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.OfertaBienesServiciosEJB;
-import sv.gob.mined.paquescolar.ejb.RecepcionEJB;
 import sv.gob.mined.paquescolar.ejb.ResolucionAdjudicativaEJB;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.DetalleLiquidacion;
@@ -76,8 +75,6 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     private OfertaBienesServiciosEJB ofertaBienesServiciosEJB;
     @EJB
     private ResolucionAdjudicativaEJB resolucionAdjudicativaEJB;
-    @EJB
-    private RecepcionEJB recepcionEJB;
 
     public LiquidacionMB() {
     }
@@ -233,7 +230,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
         liquidacion = new Liquidacion();
         liquidacion.setFechaInsercion(new Date());
         liquidacion.setEstadoEliminacion((short) 0);
-        liquidacion.setIdContrato(datosContratoDto.get(0).getIdContrato());
+        liquidacion.setIdContrato(resolucionAdjudicativaEJB.findContratoByPk(datosContratoDto.get(0).getIdContrato()));
         liquidacion.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
 
         /**
@@ -266,7 +263,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     }
     
     public void recuperarLstLiquidacionByCodEntAndIdDetPro() {
-        lstLiquidaciones = resolucionAdjudicativaEJB.getLstLiquidacionByCodigoEntAndIdDetProcesoAdq(codigoEntidad, detalleProceso.getIdDetProcesoAdq());
+        lstLiquidaciones = resolucionAdjudicativaEJB.getLstLiquidacionByCodigoEntAndIdDetProcesoAdqAndIdParticipante(codigoEntidad, detalleProceso.getIdDetProcesoAdq(),idParticipante);
     }
 
     public void recuperarDatos() {

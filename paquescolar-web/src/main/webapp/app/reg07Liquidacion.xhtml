@@ -71,6 +71,29 @@
                         <p:column headerText="#" width="50">
                             <h:outputText value="#{rowId + 1}"/>
                         </p:column>
+                        <p:column headerText="Contratado" styleClass="numero">
+                            <p:outputLabel value="#{liq.montoContratado}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Modificativa" styleClass="numero">
+                            <p:outputLabel value="#{liq.montoModificativa}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Recepción" styleClass="numero">
+                            <p:outputLabel value="#{liq.montoRecepcion}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Resguardo" styleClass="numero">
+                            <p:outputLabel value="#{liq.montoResguardo}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Estado" style="text-align: center;">
+                            <p:outputLabel value="#{liq.estadoLiquidacion?'LIQUIDADO':'EN PROCESO'}"/>
+                        </p:column>
                         <p:column headerText="Imprimir" width="110">
                             <p:commandButton icon="fa fa-print" />
                         </p:column>

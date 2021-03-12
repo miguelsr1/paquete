@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a33324b0-301f-4b19-ae18-5f50924ab00d">
+	<property name="ireport.zoom" value="1.6105100000000032"/>
+	<property name="ireport.x" value="84"/>
+	<property name="ireport.y" value="299"/>
+	<parameter name="p_id_contrato" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_nombre_canton" class="java.lang.String"/>
+	<parameter name="p_nombre_cacerio" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT 
+    DESCRIPCION_RUBRO,
+	INICIALES_MODALIDAD,
+	CODIGO_ENTIDAD,
+	NOMBRE,
+	DIRECCION,
+	NOMBRE_DEPARTAMENTO,
+	NOMBRE_MUNICIPIO,
+	TEL_DIRECTOR,
+	MIEMBRO_FIRMA,
+	observacion,
+    SUM(cantidad_contratada) cantidad_contratado,
+	SUM(monto_contratado) monto_contratado,
+    SUM(cantidad_modificada) cantidad_modificado,
+	SUM(monto_modificado) monto_modificado,
+    SUM(cantidad_recepcion) cantidad_recepcion,
+    SUM(monto_recepcion) monto_recepcion,
+    SUM(cantidad_resguardo) cantidad_resguardo,
+	SUM(monto_resguardo) monto_resguardo,
+	FECHA_INSERCION 
+FROM (SELECT 
+        rai.DESCRIPCION_RUBRO,
+        vw.INICIALES_MODALIDAD,
+        vw.CODIGO_ENTIDAD,
+        vw.NOMBRE,
+        vw.DIRECCION,
+        dep.NOMBRE_DEPARTAMENTO,
+        mun.NOMBRE_MUNICIPIO,
+        oe.TEL_DIRECTOR,
+        coc.MIEMBRO_FIRMA,
+        liq.observacion,
+        dl.cantidad cantidad_contratada,
+        dl.CANTIDAD*dl.PRECIO_UNITARIO monto_contratado,
+        nvl(dl.CANTIDAD_MODIFICATIVA,0) cantidad_modificada,
+        nvl((dl.CANTIDAD_MODIFICATIVA *dl.PRECIO_UNITARIO_MODIF),0) monto_modificado,
+        nvl(dl.CANTIDAD_ENTREGADA,0) cantidad_recepcion,
+        CASE when dl.CANTIDAD_MODIFICATIVA IS NULL THEN (dl.CANTIDAD_ENTREGADA * dl.PRECIO_UNITARIO) ELSE (dl.CANTIDAD_ENTREGADA * dl.PRECIO_UNITARIO_MODIF) END monto_recepcion,
+        nvl(dl.CANTIDAD_RESGUARDO,0) cantidad_resguardo,
+        CASE when dl.CANTIDAD_MODIFICATIVA IS NULL THEN (dl.CANTIDAD_RESGUARDO * dl.PRECIO_UNITARIO) ELSE (dl.CANTIDAD_RESGUARDO * dl.PRECIO_UNITARIO_MODIF) END monto_resguardo,
+        liq.FECHA_INSERCION 
+    FROM
+        LIQUIDACION liq 
+        INNER JOIN DETALLE_LIQUIDACION dl ON liq.ID_LIQUIDACION = dl.ID_LIQUIDACION 
+        INNER JOIN CONTRATOS_ORDENES_COMPRAS coc ON liq.ID_CONTRATO = coc.ID_CONTRATO 
+        INNER JOIN RESOLUCIONES_ADJUDICATIVAS ra ON ra.ID_RESOLUCION_ADJ = coc.ID_RESOLUCION_ADJ 
+        INNER JOIN PARTICIPANTES par ON par.ID_PARTICIPANTE = ra.ID_PARTICIPANTE 
+        INNER JOIN OFERTA_BIENES_SERVICIOS ofe ON ofe.ID_OFERTA = par.ID_OFERTA 
+        INNER JOIN DETALLE_PROCESO_ADQ dpa ON ofe.ID_DET_PROCESO_ADQ = dpa.ID_DET_PROCESO_ADQ 
+        INNER JOIN RUBROS_AMOSTRAR_INTERES rai ON rai.ID_RUBRO_INTERES = dpa.ID_RUBRO_ADQ 
+        INNER JOIN ORGANIZACION_EDUCATIVA oe ON oe.CODIGO_ENTIDAD = ofe.CODIGO_ENTIDAD
+        INNER JOIN VW_CATALOGO_ENTIDAD_EDUCATIVA vw ON ofe.codigo_entidad = vw.CODIGO_ENTIDAD 
+        INNER JOIN DEPARTAMENTO dep ON vw.CODIGO_DEPARTAMENTO  = dep.CODIGO_DEPARTAMENTO 
+        INNER JOIN MUNICIPIO mun ON mun.CODIGO_DEPARTAMENTO = dep.CODIGO_DEPARTAMENTO AND mun.CODIGO_MUNICIPIO = vw.CODIGO_MUNICIPIO 
+    WHERE OE.FIRMA_CONTRATO = 1 AND
+        COC.ESTADO_ELIMINACION = 0 AND
+        RA.ESTADO_ELIMINACION = 0 AND
+        RA.ID_eSTADO_RESERVA IN (2,5) AND
+        PAR.ESTADO_ELIMINACION = 0 AND
+        OFE.ESTADO_ELIMINACION = 0 AND
+        COC.ID_CONTRATO = $P{p_id_contrato})
+GROUP BY DESCRIPCION_RUBRO,
+	INICIALES_MODALIDAD,
+	CODIGO_ENTIDAD,
+	NOMBRE,
+	DIRECCION,
+	NOMBRE_DEPARTAMENTO,
+	NOMBRE_MUNICIPIO,
+	TEL_DIRECTOR,
+	MIEMBRO_FIRMA,
+	observacion,
+	FECHA_INSERCION ]]>
+	</queryString>
+	<field name="DESCRIPCION_RUBRO" class="java.lang.String"/>
+	<field name="INICIALES_MODALIDAD" class="java.lang.String"/>
+	<field name="CODIGO_ENTIDAD" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="DIRECCION" class="java.lang.String"/>
+	<field name="NOMBRE_DEPARTAMENTO" class="java.lang.String"/>
+	<field name="NOMBRE_MUNICIPIO" class="java.lang.String"/>
+	<field name="TEL_DIRECTOR" class="java.lang.String"/>
+	<field name="MIEMBRO_FIRMA" class="java.lang.String"/>
+	<field name="OBSERVACION" class="java.lang.String"/>
+	<field name="CANTIDAD_CONTRATADO" class="java.math.BigDecimal"/>
+	<field name="MONTO_CONTRATADO" class="java.math.BigDecimal"/>
+	<field name="CANTIDAD_MODIFICADO" class="java.math.BigDecimal"/>
+	<field name="MONTO_MODIFICADO" class="java.math.BigDecimal"/>
+	<field name="CANTIDAD_RECEPCION" class="java.math.BigDecimal"/>
+	<field name="MONTO_RECEPCION" class="java.math.BigDecimal"/>
+	<field name="CANTIDAD_RESGUARDO" class="java.math.BigDecimal"/>
+	<field name="MONTO_RESGUARDO" class="java.math.BigDecimal"/>
+	<field name="FECHA_INSERCION" class="java.sql.Timestamp"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="32" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="514" splitType="Stretch">
+			<rectangle>
+				<reportElement x="42" y="317" width="283" height="19" uuid="9d181b31-e1f2-49be-9926-a7dc22067932"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="42" y="272" width="283" height="30" uuid="de946830-a1f3-46e7-9296-13f9d27e489f"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="42" y="257" width="283" height="15" uuid="57d1f30b-92bd-4fdd-9e63-af365a79f971"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="325" y="207" width="90" height="20" uuid="e5256885-0153-4d14-b756-24184e9e0563"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="42" y="242" width="283" height="15" uuid="7ee7c5d3-a64a-4c5a-acc5-8f3b9b009629"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="22" y="17" width="517" height="26" uuid="2da37968-5e3d-4174-8922-c58b387fa878"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["NOMBRE DEL RUBRO: "+$F{DESCRIPCION_RUBRO}+"\n"+
+"FUENTE DE FINANCIAMIENTO: GOES"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="22" y="43" width="517" height="15" uuid="2eb43820-1b22-41ee-ad45-9ae34c049c84"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[1. DATOS DEL ORGANISMO DE ADMINISTRACIÓN ESCOLAR:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="42" y="58" width="497" height="38" uuid="0115c7c3-3977-4675-abeb-38fc3d81917c"/>
+				<textFieldExpression><![CDATA["1.1.  TIPO DE ORGANISMO: "+$F{DESCRIPCION_RUBRO}+"\n"+
+"1.2.  CÓDIGO DEL CENTRO EDUCATIVO: "+$F{CODIGO_ENTIDAD}+"\n"+
+"        NOMBRE DEL CENTRO EDUCATIVO: "+$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="22" y="99" width="517" height="15" uuid="a67e3723-ca27-4331-99d3-9db88fb36135"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[2. UBICACIÓN GEOGRÁFICA:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="42" y="114" width="497" height="73" uuid="93aaeb24-eaeb-4c15-8dab-7266beab088a"/>
+				<textFieldExpression><![CDATA["2.1.  DIRECCIÓN: "+$F{DIRECCION}+"\n"+
+"2.2.  DEPARTAMENTO: "+$F{NOMBRE_DEPARTAMENTO}+"\n"+
+"2.3.  MUNICIPIO: "+$F{NOMBRE_MUNICIPIO}+"\n"+
+"2.4.  CANTÓN: "+$P{p_nombre_canton}+"\n"+
+"2.5.  CASERIO: "+$P{p_nombre_cacerio}+"\n"+
+"2.6.  TELÉFONO: "+$F{TEL_DIRECTOR}+"\n"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="22" y="190" width="517" height="15" uuid="12a46aac-fa4b-42dd-9aae-4ee75b803406"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[3. BIENES ADQUIRIDOS, RECIBIDOS Y LIQUIDADOS:]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="42" y="207" width="283" height="20" uuid="4c75d4fe-ae56-4669-ab10-22ec0704a93e"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="415" y="207" width="90" height="20" uuid="02d035eb-fd92-40b6-9faf-a3badfa12116"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="46" y="207" width="117" height="20" uuid="1893d5bc-ad1d-45fa-b6cb-564ccc75d1d5"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONCEPTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="325" y="207" width="90" height="20" uuid="68829d0a-5d59-4237-b3e8-eb1b80953085"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CANTIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="415" y="207" width="90" height="20" uuid="26de8cdb-994f-4361-87f8-4cb9928b8906"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MONTO ($)]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="42" y="227" width="283" height="15" uuid="4599c5f1-4f2b-462b-8e8b-f8b885fd2a16"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="46" y="227" width="238" height="15" uuid="01269620-5d40-4aab-a5cc-dff4279ac9aa"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[3.1. BIENES ADQUIRIDOS SEGÚN CONTRATO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="46" y="242" width="279" height="15" uuid="f348d608-ebca-49f3-8c47-017b9e2b694f"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[3.2. BIENES ADQUIRIDOS SEGÚN MODIFICATIVAS AL CONTRATO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="46" y="257" width="279" height="15" uuid="850cfc38-8d03-4f8a-bcaf-ed2ce142c44a"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[3.3. TOTAL DE BIENES ADQUIRIDOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="46" y="272" width="279" height="30" uuid="ff067a91-bf9e-40fb-9075-bb94fb7f29ed"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[3.4. MENOS BIENES ENTREGADOS (según formulario de recepción de bienes por parte dde los padres, madres, responsables de estudiantes y estudiantes de tercer ciclo y bachillerato)]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="42" y="302" width="283" height="15" uuid="a6708363-df7d-4fdd-a5f5-262f416a0689"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="46" y="302" width="279" height="15" uuid="10514d9d-4ec6-4b51-a1ed-33e3f50b4d16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[3.5. TOTAL DE BIENES SOBRANTES (RESGUARDO)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="46" y="317" width="279" height="19" uuid="57feb19f-4674-4a87-b077-2a35fbaac4d7"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[3.6. MENOS BIENES EN RESGUARDO (según formulario control de devolución de productos sobrantes)]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="42" y="336" width="283" height="15" uuid="efd1bec5-c7b3-4f07-ba05-fedb8987cac8"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="46" y="336" width="279" height="15" uuid="42965486-bc2f-4c99-9765-181888e59e3d"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[3.7. SALDO]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="325" y="227" width="90" height="15" uuid="0db2f178-311c-4f67-94fe-9777f9a558a1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="415" y="227" width="90" height="15" uuid="edfc7458-6a06-48ee-8b73-5c799353feff"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="325" y="242" width="90" height="15" uuid="a9a1c3eb-ac42-4015-a154-c091e3cc9367"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="415" y="242" width="90" height="15" uuid="bb00f729-5e33-4c66-8b9c-f364c78550b5"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="325" y="257" width="90" height="15" uuid="029c3f9b-347f-4fe8-a60f-0cf984791272"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="415" y="257" width="90" height="15" uuid="b3606c7a-36d1-44c3-812f-7f17d7d8537d"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="325" y="302" width="90" height="15" uuid="c7ae1cc6-060f-44c4-9e36-4d95c1c446b1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="415" y="302" width="90" height="15" uuid="f0611388-fc04-448d-a856-31245cce7fb2"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="325" y="336" width="90" height="15" uuid="596ac2c8-22f5-46e3-bdef-51d477023de5"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="415" y="336" width="90" height="15" uuid="a7a3e8cf-2109-4f01-afdb-499ca273a76b"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="325" y="317" width="90" height="19" uuid="05332d45-fc07-43ba-985a-a82404f61341"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="415" y="317" width="90" height="19" uuid="f263de50-e73b-4e06-9f74-4c710602716a"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="325" y="272" width="90" height="30" uuid="8429ecbe-5a26-4e5d-b729-baf0c61de00f"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="415" y="272" width="90" height="30" uuid="568fc8d3-36a6-417f-a7f4-2650b540044a"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField pattern="#,##0">
+				<reportElement x="325" y="227" width="85" height="15" uuid="a9270756-5364-4b5f-a225-a094eb45d44b"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANTIDAD_CONTRATADO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="415" y="227" width="85" height="15" uuid="ae96aad2-48a4-410c-9d3a-cf6ebddb87f2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONTO_CONTRATADO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="325" y="242" width="85" height="15" uuid="9fb1010f-6bdc-4cbd-806e-eae62b5ae01f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANTIDAD_MODIFICADO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="415" y="242" width="85" height="15" uuid="15a3a6e4-06d3-4c87-b36a-64614f3115ed"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONTO_MODIFICADO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="325" y="257" width="85" height="15" uuid="01bc892b-87f1-4659-8036-a125c2e50145"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{CANTIDAD_MODIFICADO}.compareTo( java.math.BigDecimal.ZERO ) == 0)?$F{CANTIDAD_CONTRATADO}:$F{CANTIDAD_MODIFICADO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="415" y="257" width="85" height="15" uuid="86ddd2d8-415f-4da0-9bdf-6aef6ab7baee"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{CANTIDAD_MODIFICADO}.compareTo( java.math.BigDecimal.ZERO ) == 0)?$F{MONTO_CONTRATADO}:$F{MONTO_MODIFICADO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="415" y="272" width="85" height="15" uuid="d177d8a7-a2b7-4486-b00c-324dda81e2eb"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONTO_RECEPCION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="325" y="272" width="85" height="15" uuid="b019b4a9-3b4a-49fe-b227-af6b88c0f544"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANTIDAD_RECEPCION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="415" y="302" width="85" height="15" uuid="ea09eafa-1211-4480-8472-c37e079233a4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONTO_RESGUARDO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="325" y="302" width="85" height="15" uuid="751dd8f8-fc52-4831-94b0-cb19feab86ea"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANTIDAD_RESGUARDO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="42" y="356" width="463" height="27" uuid="71fce098-3f63-4863-add5-3b744d6d5dd5"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Declaramos bajo juramento que los datos en la presente autoliquidación son las cifras reales, por lo que asumimos la resposabilidad correspondiente]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="5" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="6" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="6" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="5" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="5" splitType="Stretch"/>
+	</summary>
+</jasperReport>

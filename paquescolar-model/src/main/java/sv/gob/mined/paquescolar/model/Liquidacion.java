@@ -7,7 +7,6 @@ package sv.gob.mined.paquescolar.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +25,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -46,8 +46,9 @@ public class Liquidacion implements Serializable {
     @GeneratedValue(generator = "seqLiquidacion", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "seqLiquidacion", sequenceName = "SEQ_LIQUIDACION", allocationSize = 1, initialValue = 1)
     private BigDecimal idLiquidacion;
-    @Column(name = "ID_CONTRATO")
-    private BigDecimal idContrato;
+    @JoinColumn(name = "ID_CONTRATO", referencedColumnName = "ID_CONTRATO")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private ContratosOrdenesCompras idContrato;
     @Column(name = "USUARIO_INSERCION")
     private String usuarioInsercion;
     @Column(name = "FECHA_INSERCION")
@@ -57,6 +58,17 @@ public class Liquidacion implements Serializable {
     private Short estadoEliminacion;
     @OneToMany(mappedBy = "idLiquidacion", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<DetalleLiquidacion> detalleLiquidacionList;
+
+    @Transient
+    private BigDecimal montoRecepcion;
+    @Transient
+    private BigDecimal montoContratado;
+    @Transient
+    private BigDecimal montoModificativa;
+    @Transient
+    private BigDecimal montoResguardo;
+    @Transient
+    private Boolean estadoLiquidacion;
 
     public Liquidacion() {
     }
@@ -73,14 +85,13 @@ public class Liquidacion implements Serializable {
         this.idLiquidacion = idLiquidacion;
     }
 
-    public BigDecimal getIdContrato() {
+    public ContratosOrdenesCompras getIdContrato() {
         return idContrato;
     }
 
-    public void setIdContrato(BigDecimal idContrato) {
+    public void setIdContrato(ContratosOrdenesCompras idContrato) {
         this.idContrato = idContrato;
     }
-
 
     public String getUsuarioInsercion() {
         return usuarioInsercion;
@@ -108,7 +119,7 @@ public class Liquidacion implements Serializable {
 
     @XmlTransient
     public List<DetalleLiquidacion> getDetalleLiquidacionList() {
-        if(detalleLiquidacionList == null){
+        if (detalleLiquidacionList == null) {
             detalleLiquidacionList = new ArrayList();
         }
         return detalleLiquidacionList;
@@ -132,15 +143,90 @@ public class Liquidacion implements Serializable {
             return false;
         }
         Liquidacion other = (Liquidacion) object;
-        if ((this.idLiquidacion == null && other.idLiquidacion != null) || (this.idLiquidacion != null && !this.idLiquidacion.equals(other.idLiquidacion))) {
-            return false;
-        }
-        return true;
+        return !((this.idLiquidacion == null && other.idLiquidacion != null) || (this.idLiquidacion != null && !this.idLiquidacion.equals(other.idLiquidacion)));
     }
 
     @Override
     public String toString() {
         return "sv.gob.mined.paquescolar.model.Liquidacion[ idLiquidacion=" + idLiquidacion + " ]";
+    }
+
+    public Boolean getEstadoLiquidacion() {
+        if (!detalleLiquidacionList.isEmpty() && detalleLiquidacionList.get(0).getPrecioUnitarioModif() != null) {
+            estadoLiquidacion = (getMontoRecepcion().compareTo(getMontoModificativa()) == 0);
+        } else {
+            estadoLiquidacion = (getMontoRecepcion().compareTo(getMontoContratado()) == 0);
+        }
+        return estadoLiquidacion;
+    }
+
+    public void setEstadoLiquidacion(Boolean estadoLiquidacion) {
+        this.estadoLiquidacion = estadoLiquidacion;
+    }
+
+    public BigDecimal getMontoRecepcion() {
+        montoRecepcion = BigDecimal.ZERO;
+
+        detalleLiquidacionList.forEach(detalleLiquidacion -> {
+            if (detalleLiquidacion.getPrecioUnitarioModif() == null) {
+                montoRecepcion = montoRecepcion.add(detalleLiquidacion.getPrecioUnitario().multiply(new BigDecimal(detalleLiquidacion.getCantidadEntregada())));
+            } else {
+                montoRecepcion = montoRecepcion.add(detalleLiquidacion.getPrecioUnitarioModif().multiply(new BigDecimal(detalleLiquidacion.getCantidadEntregada())));
+            }
+        });
+
+        return montoRecepcion;
+    }
+
+    public void setMontoRecepcion(BigDecimal montoRecepcion) {
+        this.montoRecepcion = montoRecepcion;
+    }
+
+    public BigDecimal getMontoContratado() {
+        montoContratado = BigDecimal.ZERO;
+
+        detalleLiquidacionList.forEach(detalleLiquidacion -> {
+            montoContratado = montoContratado.add(detalleLiquidacion.getPrecioUnitario().multiply(new BigDecimal(detalleLiquidacion.getCantidad())));
+        });
+
+        return montoContratado;
+    }
+
+    public void setMontoContratado(BigDecimal montoContratado) {
+        this.montoContratado = montoContratado;
+    }
+
+    public BigDecimal getMontoModificativa() {
+
+        montoModificativa = BigDecimal.ZERO;
+
+        detalleLiquidacionList.forEach(detalleLiquidacion -> {
+            montoModificativa = montoModificativa.add(detalleLiquidacion.getPrecioUnitarioModif().multiply(new BigDecimal(detalleLiquidacion.getCantidadModificativa())));
+        });
+
+        return montoModificativa;
+    }
+
+    public void setMontoModificativa(BigDecimal montoModificativa) {
+        this.montoModificativa = montoModificativa;
+    }
+
+    public BigDecimal getMontoResguardo() {
+        montoResguardo = BigDecimal.ZERO;
+
+        detalleLiquidacionList.forEach(detalleLiquidacion -> {
+            if (detalleLiquidacion.getPrecioUnitarioModif() == null) {
+                montoResguardo = montoResguardo.add(detalleLiquidacion.getPrecioUnitario().multiply(new BigDecimal(detalleLiquidacion.getCantidadResguardo())));
+            } else {
+                montoResguardo = montoResguardo.add(detalleLiquidacion.getPrecioUnitarioModif().multiply(new BigDecimal(detalleLiquidacion.getCantidadResguardo())));
+            }
+        });
+
+        return montoResguardo;
+    }
+
+    public void setMontoResguardo(BigDecimal montoResguardo) {
+        this.montoResguardo = montoResguardo;
     }
 
 }
