@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,6 +117,7 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
     private HSSFWorkbook wb1;
     private Boolean mostrarGraficoCentroEducativo;
     private static DataFormat FORMATO_DATA;
+    private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     public GraficoController() {
     }
@@ -481,6 +483,9 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
                 escribirValor(row.getEstadoReserva(), i, 10, style);
                 escribirValor(row.getObservacion(), i, 11, style);
                 escribirValor(row.getFormatoRequerimiento(), i, 12, style);
+                if (row.getFechaRecepcion() != null) {
+                    escribirValor(dateFormat.format(row.getFechaRecepcion()), i, 13, style);
+                }
 
                 i++;
             }

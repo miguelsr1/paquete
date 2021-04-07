@@ -308,8 +308,8 @@ public class EntidadEducativaEJB {
         }
     }
 
-    public OrganizacionEducativa getEncargadoDeCompras(String codigoEntidad) {
-        Query query = em.createNativeQuery("SELECT * FROM organizacion_educativa  WHERE codigo_entidad=?1 and firma_contrato=0 and cargo='ENCARGADO_COMPRA'", OrganizacionEducativa.class);
+    public OrganizacionEducativa getMiembro(String codigoEntidad, String cargo) {
+        Query query = em.createNativeQuery("SELECT * FROM organizacion_educativa  WHERE codigo_entidad=?1 and firma_contrato=0 and cargo='" + cargo + "'", OrganizacionEducativa.class);
         query.setParameter(1, codigoEntidad);
         List<OrganizacionEducativa> lst = query.getResultList();
         if (lst.isEmpty()) {
@@ -321,11 +321,18 @@ public class EntidadEducativaEJB {
 
     public void create(OrganizacionEducativa organizacionEducativa) {
         em.persist(organizacionEducativa);
-
     }
 
     public OrganizacionEducativa edit(OrganizacionEducativa organizacionEducativa) {
         return em.merge(organizacionEducativa);
+    }
+    
+    public void guardar(OrganizacionEducativa org){
+        if(org.getIdOrganizacionEducativa() == null){
+            create(org);
+        }else{
+            edit(org);
+        }
     }
 
     public EstadisticaCenso asignarTechoCe(EstadisticaCenso estadisticaCenso, Integer idProceso) {

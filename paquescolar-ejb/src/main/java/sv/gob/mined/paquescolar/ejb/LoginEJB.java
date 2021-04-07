@@ -109,4 +109,10 @@ public class LoginEJB {
 
         return mapa;
     }
+
+    public String getNombreByUsername(String username) {
+        Query q = em.createNativeQuery("select PRIMER_NOMBRE || NVL(' ' ||SEGUNDO_NOMBRE, '') || NVL(' ' ||  PRIMER_APELLIDO, '') || NVL(' ' ||SEGUNDO_APELLIDO, '') || NVL(' ' ||ACASADA, '') from persona WHERE usuario= ?1");
+        q.setParameter(1, username);
+        return (String) q.getResultList().get(0);
+    }
 }

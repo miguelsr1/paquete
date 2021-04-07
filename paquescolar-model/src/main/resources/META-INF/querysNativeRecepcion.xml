@@ -66,7 +66,8 @@
                 observacion,
                 id_contrato         as idContrato,
                 id_det_proceso_adq  as idDepProcesoAdq,
-                formato_requerimiento as formatoRequerimiento
+                formato_requerimiento as formatoRequerimiento,
+                fecha_recepcion       as fechaRecepcion
             from (select 
                     nombre_departamento,
                     nombre_municipio,
@@ -81,7 +82,8 @@
                     observacion,
                     id_contrato,
                     id_det_proceso_adq,
-                    formato_requerimiento
+                    formato_requerimiento,
+                    fecha_recepcion
                 from
                     vw_rpt_seg_general_depa
                 where
@@ -101,7 +103,8 @@
                     observacion,
                     id_contrato,
                     id_det_proceso_adq,
-                    formato_requerimiento
+                    formato_requerimiento,
+                    fecha_recepcion
                 from
                     vw_rpt_seg_general_depa_modif
                 where

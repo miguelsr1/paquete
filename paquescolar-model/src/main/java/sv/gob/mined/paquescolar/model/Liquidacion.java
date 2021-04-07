@@ -54,8 +54,13 @@ public class Liquidacion implements Serializable {
     @Column(name = "FECHA_INSERCION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaInsercion;
+    @Column(name = "FECHA_LIQUIDACION")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaLiquidacion;
     @Column(name = "ESTADO_ELIMINACION")
     private Short estadoEliminacion;
+    @Column(name = "ESTADO_LIQUIDACION")
+    private Character estadoLiquidacion;
     @OneToMany(mappedBy = "idLiquidacion", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<DetalleLiquidacion> detalleLiquidacionList;
 
@@ -68,9 +73,17 @@ public class Liquidacion implements Serializable {
     @Transient
     private BigDecimal montoResguardo;
     @Transient
-    private Boolean estadoLiquidacion;
+    private Boolean estadoLiq;
 
     public Liquidacion() {
+    }
+
+    public Date getFechaLiquidacion() {
+        return fechaLiquidacion;
+    }
+
+    public void setFechaLiquidacion(Date fechaLiquidacion) {
+        this.fechaLiquidacion = fechaLiquidacion;
     }
 
     public Liquidacion(BigDecimal idLiquidacion) {
@@ -151,17 +164,25 @@ public class Liquidacion implements Serializable {
         return "sv.gob.mined.paquescolar.model.Liquidacion[ idLiquidacion=" + idLiquidacion + " ]";
     }
 
-    public Boolean getEstadoLiquidacion() {
-        if (!detalleLiquidacionList.isEmpty() && detalleLiquidacionList.get(0).getPrecioUnitarioModif() != null) {
-            estadoLiquidacion = (getMontoRecepcion().compareTo(getMontoModificativa()) == 0);
-        } else {
-            estadoLiquidacion = (getMontoRecepcion().compareTo(getMontoContratado()) == 0);
-        }
+    public Character getEstadoLiquidacion() {
         return estadoLiquidacion;
     }
 
-    public void setEstadoLiquidacion(Boolean estadoLiquidacion) {
+    public void setEstadoLiquidacion(Character estadoLiquidacion) {
         this.estadoLiquidacion = estadoLiquidacion;
+    }
+
+    public Boolean getEstadoLiq() {
+        if (!detalleLiquidacionList.isEmpty() && detalleLiquidacionList.get(0).getPrecioUnitarioModif() != null) {
+            estadoLiq = (getMontoRecepcion().compareTo(getMontoModificativa()) == 0);
+        } else {
+            estadoLiq = (getMontoRecepcion().compareTo(getMontoContratado()) == 0);
+        }
+        return estadoLiq;
+    }
+
+    public void setEstadoLiq(Boolean estadoLiquidacion) {
+        this.estadoLiq = estadoLiquidacion;
     }
 
     public BigDecimal getMontoRecepcion() {

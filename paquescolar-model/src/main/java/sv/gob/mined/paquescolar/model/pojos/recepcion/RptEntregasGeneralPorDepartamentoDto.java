@@ -7,10 +7,12 @@ package sv.gob.mined.paquescolar.model.pojos.recepcion;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.EntityResult;
 import javax.persistence.Id;
 import javax.persistence.SqlResultSetMapping;
+import javax.persistence.Temporal;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -34,6 +36,9 @@ public class RptEntregasGeneralPorDepartamentoDto implements Serializable {
     private String razonSocial;
     private BigDecimal cantidadTotal;
     private BigDecimal montoTotal;
+    
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date fechaRecepcion;
 
     public String getFormatoRequerimiento() {
         return formatoRequerimiento;
@@ -163,4 +168,11 @@ public class RptEntregasGeneralPorDepartamentoDto implements Serializable {
         this.idDetProcesoAdq = idDetProcesoAdq;
     }
 
+    public Date getFechaRecepcion() {
+        return fechaRecepcion;
+    }
+
+    public void setFechaRecepcion(Date fechaRecepcion) {
+        this.fechaRecepcion = fechaRecepcion;
+    }
 }

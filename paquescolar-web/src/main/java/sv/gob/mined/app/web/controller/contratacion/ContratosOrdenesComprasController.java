@@ -88,7 +88,6 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
     private BigDecimal rubro = BigDecimal.ZERO;
     private BigDecimal idParticipante = BigDecimal.ZERO;
     private BigDecimal idMunicipio;
-    private HashMap<String, String> mapItems;
 
     private DetalleProcesoAdq detalleProceso = new DetalleProcesoAdq();
     private OfertaBienesServicios oferta;
@@ -430,7 +429,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
             razonSocial = resolucionAdj.getIdParticipante().getIdEmpresa().getRazonSocial();
             representanteLegal = proveedorEJB.getRespresentanteLegalEmp(resolucionAdj.getIdParticipante().getIdEmpresa().getIdPersona().getIdPersona());
             representanteCe = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
-            nombreEncargadoCompra = entidadEducativaEJB.getEncargadoDeCompras(codigoEntidad).getNombreMiembro();
+            nombreEncargadoCompra = entidadEducativaEJB.getMiembro(codigoEntidad, "ENCARGADO_COMPRA").getNombreMiembro();
 
             soloLectura = (resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 2);
 
@@ -634,7 +633,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                     }
                                 }
 
-                                nombreEncargadoCompra = entidadEducativaEJB.getEncargadoDeCompras(codigoEntidad).getNombreMiembro();
+                                nombreEncargadoCompra = entidadEducativaEJB.getMiembro(codigoEntidad, "ENCARGADO_COMPRA").getNombreMiembro();
                                 //BUSCAR REPRESENTANTE DEL ORGANISMO DE ADMINISTRACION ESCOLAR
                                 representanteCe = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
                                 if (representanteCe == null) {
@@ -685,9 +684,6 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                     showGarantiaUsoTela = (rubro.intValue() == 1 || rubro.intValue() == 4 || rubro.intValue() == 5);
                     lstDocumentosImp = utilEJB.getLstDocumentosImp(showGarantiaUsoTela);
                     showFechaOrdenInicio = !showGarantiaUsoTela;
-
-                    mapItems = entidadEducativaEJB.getNoItemsByCodigoEntidadAndIdProcesoAdq(codigoEntidad, detalleProceso,
-                            detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
 
                     switch (estadoEdicion) {
                         case 1: //BUSCAR RESOLUCION ADJUDICATIVA

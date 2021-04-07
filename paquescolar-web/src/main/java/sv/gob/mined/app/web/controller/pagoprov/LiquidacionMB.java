@@ -5,20 +5,27 @@
  */
 package sv.gob.mined.app.web.controller.pagoprov;
 
+import java.io.File;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
+import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
+import sv.gob.mined.paquescolar.ejb.LoginEJB;
 import sv.gob.mined.paquescolar.ejb.OfertaBienesServiciosEJB;
+import sv.gob.mined.paquescolar.ejb.ReportesEJB;
 import sv.gob.mined.paquescolar.ejb.ResolucionAdjudicativaEJB;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.DetalleLiquidacion;
@@ -44,6 +51,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     private Boolean modificativa = false;
     private String codigoEntidad;
     private String numeroContrato;
+    private String observacion;
     private BigDecimal cantidadOriginal;
     private BigDecimal montoOriginal;
     private BigDecimal cantidadModificativa;
@@ -75,8 +83,20 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     private OfertaBienesServiciosEJB ofertaBienesServiciosEJB;
     @EJB
     private ResolucionAdjudicativaEJB resolucionAdjudicativaEJB;
+    @EJB
+    private LoginEJB loginEJB;
+    @EJB
+    private ReportesEJB reportesEJB;
 
     public LiquidacionMB() {
+    }
+
+    public String getObservacion() {
+        return observacion;
+    }
+
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
     }
 
     public String getNumeroContrato() {
@@ -341,5 +361,21 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
         } else {
             return datoLiquidacion;
         }
+    }
+    
+    public void imprimirReporte(){
+        String nombreUsuario = loginEJB.getNombreByUsername(liquidacion.getUsuarioInsercion());
+        
+        HashMap param = new HashMap();
+        ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        
+        param.put("pEscudo", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
+        param.put("p_id_liquidacion", liquidacion.getIdLiquidacion());
+        param.put("p_id_contrato", liquidacion.getIdContrato().getIdContrato());
+        param.put("p_nombre_canton", "");
+        param.put("p_nombre_cacerio", "");
+        param.put("p_nombre_usuario", nombreUsuario);
+        
+        Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/pagoproveedor/", "rptLiquidacion", "rptLiquidacion");
     }
 }

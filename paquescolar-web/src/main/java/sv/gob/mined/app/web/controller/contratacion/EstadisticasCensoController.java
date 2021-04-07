@@ -52,6 +52,8 @@ public class EstadisticasCensoController implements Serializable {
     private String nombreEncargadoCompras;
     private String codigoEntidad;
     private String nombre;
+    private String nombreTesorero;
+    private String nombreConsejal;
     private String telefono1;
     private String telefono2;
     private String numeroDui;
@@ -90,6 +92,8 @@ public class EstadisticasCensoController implements Serializable {
     private ProcesoAdquisicion procesoAdquisicion = new ProcesoAdquisicion();
     private OrganizacionEducativa organizacionEducativa;
     private OrganizacionEducativa organizacionEducativaEncargadoCompra;
+    private OrganizacionEducativa orgTesorero;
+    private OrganizacionEducativa orgConsejal;
     private DetalleProcesoAdq detProAdqUni;
     private DetalleProcesoAdq detProAdqUni2;
     private DetalleProcesoAdq detProAdqUti;
@@ -137,11 +141,6 @@ public class EstadisticasCensoController implements Serializable {
     private PreciosRefRubro preCicloIIIZap = new PreciosRefRubro();
     private PreciosRefRubro preBacZap = new PreciosRefRubro();
 
-    /*private PreciosRefRubro preParMascarilla = new PreciosRefRubro();
-    private PreciosRefRubro preCicloIMascarilla = new PreciosRefRubro();
-    private PreciosRefRubro preCicloIIMascarilla = new PreciosRefRubro();
-    private PreciosRefRubro preCicloIIIMascarilla = new PreciosRefRubro();
-    private PreciosRefRubro preBacMascarilla = new PreciosRefRubro();*/
     private PreciosRefRubro preGrado1Uti = new PreciosRefRubro();
     private PreciosRefRubro preGrado2Uti = new PreciosRefRubro();
     private PreciosRefRubro preGrado3Uti = new PreciosRefRubro();
@@ -158,7 +157,7 @@ public class EstadisticasCensoController implements Serializable {
     private TechoRubroEntEdu techoUni2 = new TechoRubroEntEdu();
     private TechoRubroEntEdu techoUti = new TechoRubroEntEdu();
     private TechoRubroEntEdu techoZap = new TechoRubroEntEdu();
-    //private TechoRubroEntEdu techoMascarilla = new TechoRubroEntEdu();
+
     @EJB
     private EntidadEducativaEJB entidadEducativaEJB;
     @EJB
@@ -188,6 +187,22 @@ public class EstadisticasCensoController implements Serializable {
             mostrarInicial = (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 8);
             mostrarModFlex = (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 8);
         }
+    }
+
+    public String getNombreTesorero() {
+        return nombreTesorero;
+    }
+
+    public void setNombreTesorero(String nombreTesorero) {
+        this.nombreTesorero = nombreTesorero;
+    }
+
+    public String getNombreConsejal() {
+        return nombreConsejal;
+    }
+
+    public void setNombreConsejal(String nombreConsejal) {
+        this.nombreConsejal = nombreConsejal;
     }
 
     public String getNombreEncargadoCompras() {
@@ -863,7 +878,9 @@ public class EstadisticasCensoController implements Serializable {
 
             if (procesoAdquisicion != null) {
                 organizacionEducativa = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
-                organizacionEducativaEncargadoCompra = entidadEducativaEJB.getEncargadoDeCompras(codigoEntidad);
+                organizacionEducativaEncargadoCompra = entidadEducativaEJB.getMiembro(codigoEntidad, "ENCARGADO_COMPRA");
+                orgTesorero = entidadEducativaEJB.getMiembro(codigoEntidad, "TESORERO");
+                orgConsejal = entidadEducativaEJB.getMiembro(codigoEntidad, "CONSEJAL");
 
                 if (organizacionEducativa.getIdOrganizacionEducativa() == null) {
                     organizacionEducativa.setCargo("Presidente Propietario, Director");
@@ -877,6 +894,8 @@ public class EstadisticasCensoController implements Serializable {
                     telefono1 = organizacionEducativa.getTelDirector();
                     telefono2 = organizacionEducativa.getTelDirector2();
                     numeroDui = organizacionEducativa.getNumeroDui();
+                    nombreTesorero = orgTesorero.getNombreMiembro();
+                    nombreConsejal = orgConsejal.getNombreMiembro();
                 }
 
                 if (organizacionEducativaEncargadoCompra.getIdOrganizacionEducativa() == null) {
@@ -902,7 +921,6 @@ public class EstadisticasCensoController implements Serializable {
 
                 detProAdqUti = JsfUtil.findDetalle(procesoAdquisicion, new BigDecimal(2));
                 detProAdqZap = JsfUtil.findDetalle(procesoAdquisicion, new BigDecimal(3));
-                //detProAdqMascarilla = JsfUtil.findDetalle(procesoAdquisicion, new BigDecimal(6));
 
                 recuperarEstadisticas();
                 recuperarPreciosMaxRef();
@@ -1372,11 +1390,27 @@ public class EstadisticasCensoController implements Serializable {
             }
 
             organizacionEducativaEncargadoCompra.setNombreMiembro(nombreEncargadoCompras);
-            if (organizacionEducativaEncargadoCompra.getIdOrganizacionEducativa() == null) {
-                entidadEducativaEJB.create(organizacionEducativaEncargadoCompra);
-            } else {
-                entidadEducativaEJB.edit(organizacionEducativaEncargadoCompra);
-            }
+            initOrg(orgTesorero, "TESORERO", nombreTesorero);
+            initOrg(orgConsejal, "CONSEJAL", nombreConsejal);
+
+            entidadEducativaEJB.guardar(organizacionEducativaEncargadoCompra);
+            entidadEducativaEJB.guardar(orgTesorero);
+            entidadEducativaEJB.guardar(orgConsejal);
+        }
+    }
+
+    private void initOrg(OrganizacionEducativa org, String cargo, String nombre) {
+        org.setNombreMiembro(nombre);
+        org.setCodigoEntidad(codigoEntidad);
+        if (org.getIdOrganizacionEducativa() == null) {
+            org.setFechaInsercion(new Date());
+            org.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+            org.setCargo(cargo);
+            org.setFirmaContrato(BigInteger.ZERO);
+            org.setEstadoEliminacion(BigInteger.ZERO);
+        } else {
+            org.setFechaModificacion(new Date());
+            org.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
         }
     }
 
@@ -1432,13 +1466,6 @@ public class EstadisticasCensoController implements Serializable {
                 preCiclo3Temp = preCicloIIIZap;
                 preBacTemp = preBacZap;
                 break;
-            /*case 6:
-                preParTemp = preParMascarilla;
-                preCiclo1Temp = preCicloIMascarilla;
-                preCiclo2Temp = preCicloIIMascarilla;
-                preCiclo3Temp = preCicloIIIMascarilla;
-                preBacTemp = preBacMascarilla;
-                break;*/
             default://para rubro 4 y 5, 1er y 2do uniforme respectivamente
                 preParTemp = preParUni;
                 preCiclo1Temp = preCicloIUni;
@@ -1497,8 +1524,6 @@ public class EstadisticasCensoController implements Serializable {
         } else if (idRubro == 3 && procesoAdquisicion.getIdAnho().getIdAnho().intValue() >= 9) { //mayor o igual de anho 2018
             presupuesto = presupuesto.add(new BigDecimal(estInicial1grado.getMasculino().add(estInicial1grado.getFemenimo())).multiply(preParZap.getPrecioMaxMas()));
             presupuesto = presupuesto.add(new BigDecimal(estInicial2grado.getMasculino().add(estInicial2grado.getFemenimo())).multiply(preParZap.getPrecioMaxMas()));
-            //presupuesto = presupuesto.add(new BigDecimal(estaditicaCiclo3MF.getMasculino().add(estaditicaCiclo3MF.getFemenimo())).multiply(preCicloIIIMFUti.getPrecioMaxMas()));
-            //presupuesto = presupuesto.add(new BigDecimal(estaditicaBacMF.getMasculino().add(estaditicaBacMF.getFemenimo())).multiply(preBacMFUti.getPrecioMaxMas()));
         }
 
         return presupuesto;

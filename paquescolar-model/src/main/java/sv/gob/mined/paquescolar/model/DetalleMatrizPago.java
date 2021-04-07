@@ -44,7 +44,6 @@ public class DetalleMatrizPago implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     private MatrizPago idMatriz;
     private static final long serialVersionUID = 1L;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
     @Column(name = "ID_DETALLE_MATRIZ")

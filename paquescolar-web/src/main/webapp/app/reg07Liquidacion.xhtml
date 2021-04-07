@@ -92,10 +92,13 @@
                             </p:outputLabel>
                         </p:column>
                         <p:column headerText="Estado" style="text-align: center;">
-                            <p:outputLabel value="#{liq.estadoLiquidacion?'LIQUIDADO':'EN PROCESO'}"/>
+                            <p:outputLabel value="#{liq.estadoLiquidacion eq 'L' ?'LIQUIDADO':'EN PROCESO'}"/>
                         </p:column>
                         <p:column headerText="Imprimir" width="110">
-                            <p:commandButton icon="fa fa-print" />
+                            <h:commandLink action="#{liquidacionMB.imprimirReporte}" style="float: right;">
+                                <i class="fa fa-download"></i>
+                                <f:setPropertyActionListener value="#{liq}" target="#{liquidacionMB.liquidacion}"/>  
+                            </h:commandLink>
                         </p:column>
                     </p:dataTable>
                 </div>
@@ -104,6 +107,10 @@
 
         <p:dialog id="dlgLiquidacion" widgetVar="dlgLiquidacion" header="Información del Contrato" width="550" modal="true">
             <p:outputPanel id="detalleLiquidacion" styleClass="ui-fluid">
+                <p:panelGrid columns="1">
+                    <p:outputLabel value="Observaciones"/>
+                    <p:inputTextarea value="#{liquidacionMB.observacion}"/>
+                </p:panelGrid>
                 <p:dataTable value="#{liquidacionMB.datosLiquidacionDtos}" var="liquidacion">
                     <p:column headerText="NoItem">
                         <p:outputLabel value="#{liquidacion.noItem}"/>

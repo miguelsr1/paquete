@@ -528,7 +528,9 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
             SimpleDateFormat sd = new SimpleDateFormat("dd/MM/yyyy");
             List lst = ofertaBienesServiciosEJB.getDatosRptAnalisisEconomico(getSelected().getCodigoEntidad().getCodigoEntidad(), getSelected().getIdDetProcesoAdq());
             Bean2Excel oReport = new Bean2Excel(lst, detalleProceso.getIdRubroAdq().getDescripcionRubro(), entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(), "", sd.format(getSelected().getFechaApertura()), getSelected().getUsuarioInsercion());
-            oReport.createFile(getSelected().getCodigoEntidad().getCodigoEntidad(), entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad).getNombreMiembro(), entidadEducativaEJB.getEncargadoDeCompras(codigoEntidad).getNombreMiembro());
+            oReport.createFile(getSelected().getCodigoEntidad().getCodigoEntidad(), 
+                    entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad).getNombreMiembro(), 
+                    entidadEducativaEJB.getMiembro(codigoEntidad, "ENCARGADO_COMPRA").getNombreMiembro());
         }
     }
 
