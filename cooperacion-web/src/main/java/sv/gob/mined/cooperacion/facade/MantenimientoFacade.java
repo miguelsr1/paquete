@@ -116,4 +116,9 @@ public class MantenimientoFacade {
         q.setParameter("cod", codigoEntidad);
         return (Director) q.getResultList().get(0);
     }
+    
+    public List<Cooperante> findCooperantesDeProyecto(){
+        Query q = emCooperacion.createQuery("SELECT distinct p.idCooperante FROM ProyectoCooperacion p ORDER BY p.idCooperante.nombreCooperante", Cooperante.class);
+        return q.getResultList();
+    }
 }

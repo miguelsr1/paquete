@@ -316,6 +316,42 @@ public class ListadoView implements Serializable {
         lstProyectos = mantenimientoFacade.findProyectosByWhereCustom(whereTmp);
     }
 
+    public void recuperarLstProyectosPorCooperante() {
+        String whereTmp = " and pro.id_cooperante = " + idCooperante;
+        lstProyectos = mantenimientoFacade.findProyectosByWhereCustom(whereTmp);
+
+        simpleModel = new DefaultMapModel();
+        StringBuilder ruta = new StringBuilder();
+        ruta.append(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath());
+        ruta.append("/resources/images/");
+        String urlIcono = "";
+
+        for (ListadoProyectoDto pro : lstProyectos) {
+
+            LatLng coor = new LatLng(pro.getGeoPy().doubleValue(), pro.getGeoPx().doubleValue());
+            System.out.println((72 - pro.getIdProyecto().intValue()));
+            urlIcono = ruta + File.separator + "gps_" + (72 - pro.getIdProyecto().intValue()) + ".png";
+            /*switch (pro.getIdEstado()) {
+                case 1:
+                    
+                    break;
+                case 2:
+                    urlIcono = ruta + File.separator + "gps_naranja.png";
+                    break;
+                case 3:
+                    urlIcono = ruta + File.separator + "gps_verde.png";
+                    break;
+                case 4:
+                    urlIcono = ruta + File.separator + "gps_rojo.png";
+                    break;
+            }*/
+
+            simpleModel.addOverlay(new Marker(coor, "CE: " + pro.getCodigoEntidad(), "", urlIcono));
+        }
+
+        PrimeFaces.current().executeScript("initialize()");
+    }
+
     public void agregarPuntos() {
         StringBuilder ruta = new StringBuilder();
         ruta.append(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath());
@@ -325,8 +361,9 @@ public class ListadoView implements Serializable {
         for (ListadoProyectoDto pro : lstProyectos) {
 
             LatLng coor = new LatLng(pro.getGeoPy().doubleValue(), pro.getGeoPx().doubleValue());
-
-            switch (pro.getIdEstado()) {
+            System.out.println((72 - pro.getIdProyecto().intValue()));
+            urlIcono = ruta + File.separator + "gps_" + (72 - pro.getIdProyecto().intValue()) + ".png";
+            /*switch (pro.getIdEstado()) {
                 case 1:
                     urlIcono = ruta + File.separator + "gps_amarillo.png";
                     break;
@@ -339,7 +376,7 @@ public class ListadoView implements Serializable {
                 case 4:
                     urlIcono = ruta + File.separator + "gps_rojo.png";
                     break;
-            }
+            }*/
 
             simpleModel.addOverlay(new Marker(coor, "CE: " + pro.getCodigoEntidad(), "", urlIcono));
         }
@@ -349,9 +386,9 @@ public class ListadoView implements Serializable {
 
     public void buscarProyecto() {
         lstArchivos.clear();
-        if(proyectoDto != null && proyectoDto.getIdProyecto() != null){
+        if (proyectoDto != null && proyectoDto.getIdProyecto() != null) {
             idProyecto = proyectoDto.getIdProyecto();
-        }else{
+        } else {
             idProyecto = proyecto.getIdProyecto();
         }
         proyecto = mantenimientoFacade.find(ProyectoCooperacion.class, idProyecto);
@@ -397,5 +434,9 @@ public class ListadoView implements Serializable {
         entidadEducativa = ubicacionFacade.findEntidadEducativaByCodigo(codigoEntidad);
         lstMunicipio = ubicacionFacade.getLstMunicipio(entidadEducativa.getCodigoDepartamento());
         lstProyectoCooperacion = mantenimientoFacade.findProyectosByCodEnt(codigoEntidad);
+    }
+
+    public List<Cooperante> getLstCooperantePorProyecto() {
+        return mantenimientoFacade.findCooperantesDeProyecto();
     }
 }
