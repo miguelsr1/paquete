@@ -317,8 +317,12 @@ public class ListadoView implements Serializable {
     }
 
     public void recuperarLstProyectosPorCooperante() {
-        String whereTmp = " and pro.id_cooperante = " + idCooperante;
-        lstProyectos = mantenimientoFacade.findProyectosByWhereCustom(whereTmp);
+        if (idCooperante == 0) {
+            lstProyectos = mantenimientoFacade.findProyectosByWhereCustom("");
+        } else {
+            String whereTmp = " and pro.id_cooperante = " + idCooperante;
+            lstProyectos = mantenimientoFacade.findProyectosByWhereCustom(whereTmp);
+        }
 
         simpleModel = new DefaultMapModel();
         StringBuilder ruta = new StringBuilder();
@@ -328,10 +332,11 @@ public class ListadoView implements Serializable {
 
         for (ListadoProyectoDto pro : lstProyectos) {
 
-            LatLng coor = new LatLng(pro.getGeoPy().doubleValue(), pro.getGeoPx().doubleValue());
-            System.out.println((72 - pro.getIdCooperante().intValue()));
-            urlIcono = ruta + File.separator + "gps_" + (169 - pro.getIdCooperante().intValue() ) + ".png";
-            /*switch (pro.getIdEstado()) {
+            if (pro.getGeoPy() != null) {
+                LatLng coor = new LatLng(pro.getGeoPy().doubleValue(), pro.getGeoPx().doubleValue());
+                //System.out.println((72 - pro.getIdCooperante().intValue()));
+                urlIcono = ruta + File.separator + "gps_" + (169 - pro.getIdCooperante().intValue()) + ".png";
+                /*switch (pro.getIdEstado()) {
                 case 1:
                     
                     break;
@@ -346,7 +351,8 @@ public class ListadoView implements Serializable {
                     break;
             }*/
 
-            simpleModel.addOverlay(new Marker(coor, "CE: " + pro.getCodigoEntidad(), "", urlIcono));
+                simpleModel.addOverlay(new Marker(coor, "CE: " + pro.getCodigoEntidad(), "", urlIcono));
+            }
         }
 
         PrimeFaces.current().executeScript("initialize()");
@@ -360,10 +366,11 @@ public class ListadoView implements Serializable {
 
         for (ListadoProyectoDto pro : lstProyectos) {
 
-            LatLng coor = new LatLng(pro.getGeoPy().doubleValue(), pro.getGeoPx().doubleValue());
-            System.out.println((72 - pro.getIdCooperante().intValue()));
-            urlIcono = ruta + File.separator + "gps_" + (169 - pro.getIdCooperante().intValue()) + ".png";
-            /*switch (pro.getIdEstado()) {
+            if (pro.getGeoPy() != null) {
+                LatLng coor = new LatLng(pro.getGeoPy().doubleValue(), pro.getGeoPx().doubleValue());
+                //System.out.println((72 - pro.getIdCooperante().intValue()));
+                urlIcono = ruta + File.separator + "gps_" + (169 - pro.getIdCooperante().intValue()) + ".png";
+                /*switch (pro.getIdEstado()) {
                 case 1:
                     urlIcono = ruta + File.separator + "gps_amarillo.png";
                     break;
@@ -378,7 +385,8 @@ public class ListadoView implements Serializable {
                     break;
             }*/
 
-            simpleModel.addOverlay(new Marker(coor, "CE: " + pro.getCodigoEntidad(), "", urlIcono));
+                simpleModel.addOverlay(new Marker(coor, "CE: " + pro.getCodigoEntidad(), "", urlIcono));
+            }
         }
 
         PrimeFaces.current().executeScript("initialize()");
