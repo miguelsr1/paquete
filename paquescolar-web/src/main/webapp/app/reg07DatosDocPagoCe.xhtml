@@ -162,19 +162,19 @@
                 </p:row>
                 <p:row>
                     <p:column>
-                        <p:outputLabel value="Cantidad Original:"/>
+                        <p:outputLabel value="Cantidad Contrato"/>
                     </p:column>
                     <p:column>
-                        <p:inputNumber id="txtCantidadOrg" decimalPlaces="0" decimalSeparator="." thousandSeparator="," disabled="true" value="#{pagoProveedoresController.detalleDocPago.idDetRequerimiento.cantidadTotal}" inputStyle="text-align: right;" size="15"/>
+                        <p:inputNumber id="txtCantidadOrg" decimalPlaces="0" decimalSeparator="." thousandSeparator="," disabled="true" value="#{pagoProveedoresController.cantidadContrato}" inputStyle="text-align: right;" size="15"/>
                     </p:column>
                     <p:column>
                         <p:spacer width="5" height="8"/>
                     </p:column>
                     <p:column>
-                        <p:outputLabel value="Monto Original:"/>
+                        <p:outputLabel value="Monto Contrato:"/>
                     </p:column>
                     <p:column>
-                        <p:inputNumber id="txtMontoOrg" decimalPlaces="2" decimalSeparator="." thousandSeparator="," readonly="true" value="#{pagoProveedoresController.detalleDocPago.idDetRequerimiento.montoTotal}" inputStyle="text-align: right;" size="15"/>
+                        <p:inputNumber id="txtMontoOrg" decimalPlaces="2" decimalSeparator="." thousandSeparator="," readonly="true" value="#{pagoProveedoresController.montoContrato}" inputStyle="text-align: right;" size="15"/>
                     </p:column>
                 </p:row>
                 <p:row>
@@ -196,7 +196,29 @@
                     <p:column colspan="5">
                         <p:separator/>
                     </p:column>
-                </p:row>                
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Cantidad Requerimiento:"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputNumber id="txtCantidadReq" decimalPlaces="0" decimalSeparator="." thousandSeparator="," disabled="true" value="#{pagoProveedoresController.detalleDocPago.idDetRequerimiento.cantidadTotal}" inputStyle="text-align: right;" size="15"/>
+                    </p:column>
+                    <p:column>
+                        <p:spacer width="5" height="8"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Monto Requerimiento:"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputNumber id="txtMontoReq" decimalPlaces="2" decimalSeparator="." thousandSeparator="," readonly="true" value="#{pagoProveedoresController.detalleDocPago.idDetRequerimiento.montoTotal}" inputStyle="text-align: right;" size="15"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="5">
+                        <p:separator/>
+                    </p:column>
+                </p:row>
                 <p:row>
                     <p:column>
                         <p:outputLabel value="No de Resolucion modificativa (*):"/>

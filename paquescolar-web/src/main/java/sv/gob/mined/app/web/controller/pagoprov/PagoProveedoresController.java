@@ -53,6 +53,7 @@ import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
 import sv.gob.mined.paquescolar.ejb.ServiciosJsonEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
+import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.DetalleDocPago;
 import sv.gob.mined.paquescolar.model.DetalleModificativa;
 import sv.gob.mined.paquescolar.model.DetallePlanilla;
@@ -159,12 +160,13 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
     private BigDecimal montoSaldo = BigDecimal.ZERO;
     private BigDecimal montoSujetoRenta = BigDecimal.ZERO;
     private BigDecimal montoRenta = BigDecimal.ZERO;
-
+    private BigDecimal montoContrato = BigDecimal.ZERO;
     private BigDecimal ceContratados = BigDecimal.ZERO;
     private BigDecimal totalContratado = BigDecimal.ZERO;
     private BigDecimal totalPagado = BigDecimal.ZERO;
     private BigDecimal totalPendiente = BigDecimal.ZERO;
     private BigDecimal totalReintegro = BigDecimal.ZERO;
+    private BigInteger cantidadContrato = BigInteger.ZERO;
 
     private DonutChartModel donutModel = new DonutChartModel();
 
@@ -210,6 +212,14 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public BigDecimal getMontoContrato() {
+        return montoContrato;
+    }
+
+    public BigInteger getCantidadContrato() {
+        return cantidadContrato;
+    }
+
     public Boolean getDlgDetPagoProveedor() {
         return dlgDetPagoProveedor;
     }
@@ -1647,7 +1657,12 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
         }
         if (contratoModificado) {
             ResolucionesModificativas resModif = pagoProveedoresEJB.getUltimaModificativa(new BigDecimal(detalleRequerimiento.getIdContrato()));
+
             if (resModif != null) {
+
+                montoContrato = resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getMonto();
+                cantidadContrato = resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getCantidad();
+
                 if (resModif.getIdEstadoReserva().intValue() == 1) {
                     JsfUtil.mensajeAlerta("Este contrato tiene una modificativa en estado de DIGITACIÓN");
                 } else {
@@ -1664,6 +1679,10 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
                     }
                 }
             }
+        } else {
+            ContratosOrdenesCompras contrato = utilEJB.find(ContratosOrdenesCompras.class, new BigDecimal(detalleRequerimiento.getIdContrato()));
+            montoContrato = contrato.getIdResolucionAdj().getIdParticipante().getMonto();
+            cantidadContrato = contrato.getIdResolucionAdj().getIdParticipante().getCantidad();
         }
 
         //verificación del tipo de rubro y personeria natural para determinar si aplica o no el calculo de renta
@@ -2044,7 +2063,6 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
             lstEmailProveeCredito = pagoProveedoresEJB.getLstNitProveeByIdPlanilla(planillaPago.getIdPlanilla());
 
             //Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
-
             //lstEmailProveeCredito.forEach((datosProveDto) -> { Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Email {0} Proveedor {1} {2}", new String[]{datosProveDto.getCorreoElectronico(), datosProveDto.getRazonSocial(), datosProveDto.getNumeroNit()});});
         } else if (planillaPago.getIdTipoPlanilla() == 1) {
             emailUnico = pagoProveedoresEJB.getEMailProveedorByNit(lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit());
@@ -2085,7 +2103,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
                             }
                         }
                     }
-                    
+
                     pagoProveedoresEJB.planillaNotificada(planillaPago.getIdPlanilla());
                     break;
                 default:
@@ -2343,7 +2361,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
             idPlanilla = BigDecimal.ZERO;
         }
 
-        switch(idRubro.intValue()){
+        switch (idRubro.intValue()) {
             case 0:
                 idDet = null;
                 break;
@@ -2353,7 +2371,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
             default:
                 idDet = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
                 break;
-        } 
+        }
 
         lstBusquedaPlanillas = pagoProveedoresEJB.buscarPlanillas(idPlanilla, montoTotal, numeroNit,
                 nombreEntFinanciera, getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq(),
