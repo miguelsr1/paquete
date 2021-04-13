@@ -329,8 +329,8 @@ public class ListadoView implements Serializable {
         for (ListadoProyectoDto pro : lstProyectos) {
 
             LatLng coor = new LatLng(pro.getGeoPy().doubleValue(), pro.getGeoPx().doubleValue());
-            System.out.println((72 - pro.getIdProyecto().intValue()));
-            urlIcono = ruta + File.separator + "gps_" + (72 - pro.getIdProyecto().intValue()) + ".png";
+            System.out.println((72 - pro.getIdCooperante().intValue()));
+            urlIcono = ruta + File.separator + "gps_" + (169 - pro.getIdCooperante().intValue() ) + ".png";
             /*switch (pro.getIdEstado()) {
                 case 1:
                     
@@ -361,8 +361,8 @@ public class ListadoView implements Serializable {
         for (ListadoProyectoDto pro : lstProyectos) {
 
             LatLng coor = new LatLng(pro.getGeoPy().doubleValue(), pro.getGeoPx().doubleValue());
-            System.out.println((72 - pro.getIdProyecto().intValue()));
-            urlIcono = ruta + File.separator + "gps_" + (72 - pro.getIdProyecto().intValue()) + ".png";
+            System.out.println((72 - pro.getIdCooperante().intValue()));
+            urlIcono = ruta + File.separator + "gps_" + (169 - pro.getIdCooperante().intValue()) + ".png";
             /*switch (pro.getIdEstado()) {
                 case 1:
                     urlIcono = ruta + File.separator + "gps_amarillo.png";

@@ -44,10 +44,19 @@ public class ListadoProyectoDto implements Serializable {
     private Date fechaFin;
     private BigDecimal geoPx;
     private BigDecimal geoPy;
-
+    private Long idCooperante;
     private Short idEstado;
+    private BigDecimal idRow;
 
     public ListadoProyectoDto() {
+    }
+
+    public BigDecimal getIdRow() {
+        return idRow;
+    }
+
+    public void setIdRow(BigDecimal idRow) {
+        this.idRow = idRow;
     }
 
     public Long getIdProyecto() {
@@ -168,5 +177,13 @@ public class ListadoProyectoDto implements Serializable {
 
     public void setGeoPy(BigDecimal geoPy) {
         this.geoPy = geoPy;
+    }
+
+    public Long getIdCooperante() {
+        return idCooperante;
+    }
+
+    public void setIdCooperante(Long idCooperante) {
+        this.idCooperante = idCooperante;
     }
 }
