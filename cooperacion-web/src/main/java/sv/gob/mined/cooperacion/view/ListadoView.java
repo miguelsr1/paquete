@@ -16,6 +16,7 @@ import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,6 +34,7 @@ import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.LatLng;
 import org.primefaces.model.map.MapModel;
 import org.primefaces.model.map.Marker;
+import org.primefaces.util.LangUtils;
 import sv.gob.mined.cooperacion.facade.MantenimientoFacade;
 import sv.gob.mined.cooperacion.facade.paquete.UbicacionFacade;
 import sv.gob.mined.cooperacion.model.Cooperante;
@@ -60,6 +62,7 @@ public class ListadoView implements Serializable {
     private String lblBottonEnviar = "";
     private String codigoDepartamento;
     private String where;
+    private String nombreProyecto;
     private final String posicionInicial = "13.749655, -88.822362";
 
     private Long idProyecto;
@@ -72,6 +75,7 @@ public class ListadoView implements Serializable {
     private VwCatalogoEntidadEducativa entidadEducativa = new VwCatalogoEntidadEducativa();
     private List<FileInfoDto> lstArchivos = new ArrayList();
     private List<ListadoProyectoDto> lstProyectos = new ArrayList();
+    private List<ListadoProyectoDto> lstProyectosFiltrados = new ArrayList();
     private List<Municipio> lstMunicipio = new ArrayList();
     private List<ProyectoCooperacion> lstProyectoCooperacion = new ArrayList();
     private List<Cooperante> lstCooperantes = new ArrayList();
@@ -135,6 +139,22 @@ public class ListadoView implements Serializable {
         simpleModel = new DefaultMapModel();
         lstCooperantes = mantenimientoFacade.findAllCooperantes();
         lstTipoCooperaciones = mantenimientoFacade.findAllTipoCoopeciones();
+    }
+
+    public List<ListadoProyectoDto> getLstProyectosFiltrados() {
+        return lstProyectosFiltrados;
+    }
+
+    public void setLstProyectosFiltrados(List<ListadoProyectoDto> lstProyectosFiltrados) {
+        this.lstProyectosFiltrados = lstProyectosFiltrados;
+    }
+
+    public String getNombreProyecto() {
+        return nombreProyecto;
+    }
+
+    public void setNombreProyecto(String nombreProyecto) {
+        this.nombreProyecto = nombreProyecto;
     }
 
     public List<TipoCooperacion> getLstTipoCooperaciones() {
@@ -282,6 +302,7 @@ public class ListadoView implements Serializable {
     }
 
     public void recuperarMunicipios() {
+        idMunicipio = null;
         lstMunicipio = ubicacionFacade.getLstMunicipio(codigoDepartamento);
         recuperarLstProyectos();
     }
@@ -328,28 +349,13 @@ public class ListadoView implements Serializable {
         StringBuilder ruta = new StringBuilder();
         ruta.append(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath());
         ruta.append("/resources/images/");
-        String urlIcono = "";
+        String urlIcono;
 
         for (ListadoProyectoDto pro : lstProyectos) {
 
             if (pro.getGeoPy() != null) {
                 LatLng coor = new LatLng(pro.getGeoPy().doubleValue(), pro.getGeoPx().doubleValue());
-                //System.out.println((72 - pro.getIdCooperante().intValue()));
                 urlIcono = ruta + File.separator + "gps_" + (169 - pro.getIdCooperante().intValue()) + ".png";
-                /*switch (pro.getIdEstado()) {
-                case 1:
-                    
-                    break;
-                case 2:
-                    urlIcono = ruta + File.separator + "gps_naranja.png";
-                    break;
-                case 3:
-                    urlIcono = ruta + File.separator + "gps_verde.png";
-                    break;
-                case 4:
-                    urlIcono = ruta + File.separator + "gps_rojo.png";
-                    break;
-            }*/
 
                 simpleModel.addOverlay(new Marker(coor, "CE: " + pro.getCodigoEntidad(), "", urlIcono));
             }
@@ -359,31 +365,25 @@ public class ListadoView implements Serializable {
     }
 
     public void agregarPuntos() {
+        simpleModel = new DefaultMapModel();
+        
+        if(!lstProyectosFiltrados.isEmpty()){
+            cargarPunto(lstProyectosFiltrados);
+        }else{
+            cargarPunto(lstProyectos);
+        }
+    }
+
+    private void cargarPunto(List<ListadoProyectoDto> listado) {
         StringBuilder ruta = new StringBuilder();
         ruta.append(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath());
         ruta.append("/resources/images/");
-        String urlIcono = "";
+        String urlIcono;
 
-        for (ListadoProyectoDto pro : lstProyectos) {
-
+        for (ListadoProyectoDto pro : listado) {
             if (pro.getGeoPy() != null) {
                 LatLng coor = new LatLng(pro.getGeoPy().doubleValue(), pro.getGeoPx().doubleValue());
-                //System.out.println((72 - pro.getIdCooperante().intValue()));
                 urlIcono = ruta + File.separator + "gps_" + (169 - pro.getIdCooperante().intValue()) + ".png";
-                /*switch (pro.getIdEstado()) {
-                case 1:
-                    urlIcono = ruta + File.separator + "gps_amarillo.png";
-                    break;
-                case 2:
-                    urlIcono = ruta + File.separator + "gps_naranja.png";
-                    break;
-                case 3:
-                    urlIcono = ruta + File.separator + "gps_verde.png";
-                    break;
-                case 4:
-                    urlIcono = ruta + File.separator + "gps_rojo.png";
-                    break;
-            }*/
 
                 simpleModel.addOverlay(new Marker(coor, "CE: " + pro.getCodigoEntidad(), "", urlIcono));
             }
@@ -447,4 +447,15 @@ public class ListadoView implements Serializable {
     public List<Cooperante> getLstCooperantePorProyecto() {
         return mantenimientoFacade.findCooperantesDeProyecto();
     }
+
+    public boolean globalFilterFunction(Object value, Object filter, Locale locale) {
+        String filterText = (filter == null) ? null : filter.toString().trim().toLowerCase();
+        if (LangUtils.isValueBlank(filterText)) {
+            return true;
+        }
+
+        ListadoProyectoDto customer = (ListadoProyectoDto) value;
+        return customer.getNombreProyecto().toLowerCase().contains(filterText);
+    }
+
 }

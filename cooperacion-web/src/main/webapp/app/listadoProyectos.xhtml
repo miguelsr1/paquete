@@ -14,6 +14,16 @@
         <h:outputScript name="js/layout.js" library="paradise-layout" />
         <h:outputScript name="calendar-localization.js" library="js"/>
 
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $(".first").keyup(function () {
+                    $(".second").val($(".first").val());
+
+                    $('.second').keyup();
+                });
+            });
+        </script>
+
         <style type="text/css">
             .label {
                 width:20%;
@@ -92,18 +102,16 @@
                         <div jsf:id="divFiltros">
                             <div class="ui-fluid">
                                 <div class="p-field p-grid">
-                                    <p:outputLabel for="cboDepa" styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0">Departamento</p:outputLabel>
-                                    <div class="p-col-12 p-md-8">
+                                    <p:outputLabel for="cboDepa" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Departamento</p:outputLabel>
+                                    <div class="p-col-12 p-md-4">
                                         <p:selectOneMenu id="cboDepa" value="#{listadoView.codigoDepartamento}">
                                             <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
                                             <f:selectItems value="#{ubicacionView.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
                                             <p:ajax listener="#{listadoView.recuperarMunicipios}" update="cboMuni tblProyectos"/>
                                         </p:selectOneMenu>
                                     </div>
-                                </div>
-                                <div class="p-field p-grid">
-                                    <p:outputLabel for="cboMuni" styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0">Municipio</p:outputLabel>
-                                    <div class="p-col-12 p-md-8">
+                                    <p:outputLabel for="cboMuni" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Municipio</p:outputLabel>
+                                    <div class="p-col-12 p-md-4">
                                         <p:selectOneMenu id="cboMuni" value="#{listadoView.idMunicipio}">
                                             <f:selectItem itemLabel="Seleccione un valor"/>
                                             <f:selectItems value="#{listadoView.lstMunicipio}" var="mun" itemValue="#{mun.idMunicipio}" itemLabel="#{mun.codigoMunicipio} - #{mun.nombreMunicipio}"/>
@@ -112,20 +120,31 @@
                                     </div>
                                 </div>
                                 <div class="p-field p-grid">
-                                    <p:outputLabel for="cboEstado" styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0">Estado</p:outputLabel>
-                                    <div class="p-col-12 p-md-8">
+                                    <p:outputLabel for="cboEstado" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Estado</p:outputLabel>
+                                    <div class="p-col-12 p-md-4">
                                         <p:selectOneMenu id="cboEstado" value="#{listadoView.idEstado}">
                                             <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
                                             <f:selectItem itemValue="1" itemLabel="DIGITADO"/>
-                                            <f:selectItem itemValue="2" itemLabel="EN REVISIÓN"/>
-                                            <f:selectItem itemValue="3" itemLabel="APROBADO"/>
+                                            <f:selectItem itemValue="2" itemLabel="APROBADO"/>
+                                            <f:selectItem itemValue="3" itemLabel="DENEGADO"/>
                                             <p:ajax listener="#{listadoView.recuperarLstProyectos()}" update="tblProyectos" />
                                         </p:selectOneMenu>
                                     </div>
                                 </div>
                                 <div class="p-field p-grid">
-                                    <p:outputLabel for="cboCooperante" styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0">Cooperante</p:outputLabel>
-                                    <div class="p-col-12 p-md-8">
+                                    <p:outputLabel for="cboTipoCooperacion" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Tipo de Cooperación</p:outputLabel>
+                                    <div class="p-col-12 p-md-4">
+                                        <p:selectOneMenu id="cboTipoCooperacion" value="#{listadoView.idTipoCooperacion}">
+                                            <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
+                                            <f:selectItems value="#{listadoView.lstTipoCooperaciones}" var="tipo" itemValue="#{tipo.idTipoCooperacion}" itemLabel="#{tipo.descripcionCooperacion}" />
+                                            <p:ajax listener="#{listadoView.recuperarLstProyectos()}" update="tblProyectos" />
+                                        </p:selectOneMenu>
+                                    </div>
+
+                                </div>
+                                <div class="p-field p-grid">
+                                    <p:outputLabel for="cboCooperante" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Cooperante</p:outputLabel>
+                                    <div class="p-col-12 p-md-10">
                                         <p:selectOneMenu id="cboCooperante" value="#{listadoView.idCooperante}">
                                             <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
                                             <f:selectItems value="#{listadoView.lstCooperantes}" var="coo" itemValue="#{coo.idCooperante}" itemLabel="#{coo.nombreCooperante}" />
@@ -134,13 +153,9 @@
                                     </div>
                                 </div>
                                 <div class="p-field p-grid">
-                                    <p:outputLabel for="cboTipoCooperacion" styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0">Tipo de Cooperación</p:outputLabel>
-                                    <div class="p-col-12 p-md-8">
-                                        <p:selectOneMenu id="cboTipoCooperacion" value="#{listadoView.idTipoCooperacion}">
-                                            <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
-                                            <f:selectItems value="#{listadoView.lstTipoCooperaciones}" var="tipo" itemValue="#{tipo.idTipoCooperacion}" itemLabel="#{tipo.descripcionCooperacion}" />
-                                            <p:ajax listener="#{listadoView.recuperarLstProyectos()}" update="tblProyectos" />
-                                        </p:selectOneMenu>
+                                    <p:outputLabel for="globalF" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Nombre proyecto</p:outputLabel>
+                                    <div class="p-col-12 p-md-10">
+                                        <p:inputText id="globalF" class="first" style="width:300px" />
                                     </div>
                                 </div>
                             </div>
@@ -169,39 +184,48 @@
                         </div>
                     </div>
                     <div class="invoice-to">
-                        <p:dataTable id="tblProyectos" value="#{listadoView.lstProyectos}" var="proyecto" reflow="true" styleClass="fixed-size">
-                            <p:column headerText="Código C.E." width="50">
+                        <p:dataTable id="tblProyectos" value="#{listadoView.lstProyectos}" var="proyecto" reflow="true" styleClass="fixed-size"
+                                     filteredValue="#{listadoView.lstProyectosFiltrados}" rowKey="#{proyecto.idRow}"
+                                     globalFilterFunction="#{listadoView.globalFilterFunction}" widgetVar="tblProyectos">
+
+                            <f:facet name="header">
+                                <p:panel visible="false">
+                                    <p:inputText id="globalFilter" class="second" onkeyup="PF('tblProyectos').filter()" style="width:300px" />
+                                </p:panel>
+                            </f:facet>
+
+                            <p:column headerText="Código C.E." width="50" filterable="false">
                                 <h:outputText value="#{proyecto.codigoEntidad}"/>
                             </p:column>
-                            <p:column headerText="Nombre C.E.">
+                            <p:column headerText="Nombre C.E." filterable="false">
                                 <h:outputText value="#{proyecto.nombreCe}"/>
                             </p:column>
-                            <p:column headerText="Ubicación">
+                            <p:column headerText="Ubicación" filterable="false">
                                 <h:outputText value="#{proyecto.nombreMunicipio}, #{proyecto.nombreDepartamento}"/>
                             </p:column>
-                            <p:column headerText="Nombre Director" rendered="false">
+                            <p:column headerText="Nombre Director" rendered="false" filterable="false">
                                 <h:outputText value="#{proyecto.nombreDirector}"/>
                             </p:column>
-                            <p:column headerText="Correo Director" rendered="false">
+                            <p:column headerText="Correo Director" rendered="false" filterable="false">
                                 <h:outputText value="#{proyecto.correoElectronico}"/>
                             </p:column>
-                            <p:column headerText="Nombre Proyecto">
+                            <p:column headerText="Nombre Proyecto" filterable="true" filterBy="#{proyecto.nombreProyecto}" filterMatchMode="contains">
                                 <h:outputText value="#{proyecto.nombreProyecto}"/>
                             </p:column>
-                            <p:column headerText="Fecha Inicio" width="70">
+                            <p:column headerText="Fecha Inicio" width="70" filterable="false">
                                 <h:outputText value="#{proyecto.fechaInicio}">
                                     <f:convertDateTime pattern="dd/MM/yyyy"/>
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="Fecha Fin" width="70">
+                            <p:column headerText="Fecha Fin" width="70" filterable="false">
                                 <h:outputText value="#{proyecto.fechaFin}">
                                     <f:convertDateTime pattern="dd/MM/yyyy"/>
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="Estado" width="100">
+                            <p:column headerText="Estado" width="100" filterable="false">
                                 <h:outputText value="#{proyecto.idEstado eq 1 ? 'DIGITADO' : (proyecto.idEstado eq 2 ? 'APROBADO': 'DENEGADO')}"/>
                             </p:column>
-                            <p:column width="30">
+                            <p:column width="30" filterable="false">
                                 <p:commandButton icon="pi pi-eye" update="manage-product-content" action="#{listadoView.buscarProyecto}"
                                                  oncomplete="PF('manageProductDialog').show()"
                                                  styleClass="warning-button rounded-button" process="@this">
@@ -228,7 +252,7 @@
             <h:panelGrid columns="2">
                 <p:outputLabel value="Cooperante: "/>
                 <p:selectOneMenu value="#{listadoView.idCooperante}">
-                    <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
+                    <f:selectItem itemValue="0" itemLabel="TODOS LOS COOPERANTES"/>
                     <f:selectItems value="#{listadoView.lstCooperantePorProyecto}" var="coo" itemValue="#{coo.idCooperante}" itemLabel="#{coo.nombreCooperante}" />
                     <p:ajax listener="#{listadoView.recuperarLstProyectosPorCooperante()}" update="mapa" />
                 </p:selectOneMenu>
