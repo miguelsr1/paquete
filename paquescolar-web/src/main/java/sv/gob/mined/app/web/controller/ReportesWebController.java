@@ -20,7 +20,6 @@ import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.CantidadPorNivelDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleContratacionPorItemDto;
-import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto;
 
 /**
  *
@@ -87,7 +86,7 @@ public class ReportesWebController extends RecuperarProcesoUtil implements Seria
     }
     
     public void generarRptMatricula() {
-        lstCantidadPorNivelDtos =  proveedorEJB.getLstContratacionPorItemByIdAnho(getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getIdAnho().intValue());
+        lstCantidadPorNivelDtos =  proveedorEJB.getLstContratacionPorItemByIdAnho(getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq());
     }
 
     public List<CantidadPorNivelDto> getLstCantidadPorNivelDtos() {

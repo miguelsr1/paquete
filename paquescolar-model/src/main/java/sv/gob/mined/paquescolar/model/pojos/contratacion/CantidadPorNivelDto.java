@@ -26,6 +26,15 @@ public class CantidadPorNivelDto implements Serializable {
     @Id
     private BigDecimal idRow;
     private String codigoEntidad;
+    private String nombreCe;
+    private String nombreDepartamento;
+    private String nombreMunicipio;
+
+    private BigDecimal inicial2Fem;
+    private BigDecimal inicial2Mas;
+    private BigDecimal inicial3Fem;
+    private BigDecimal inicial3Mas;
+
     private BigDecimal parFem;
     private BigDecimal parMas;
     private BigDecimal grado1Fem;
@@ -46,6 +55,10 @@ public class CantidadPorNivelDto implements Serializable {
     private BigDecimal grado8Mas;
     private BigDecimal grado9Fem;
     private BigDecimal grado9Mas;
+
+    private BigDecimal fleCiclo3Fem;
+    private BigDecimal fleCiclo3Mas;
+
     private BigDecimal media1Fem;
     private BigDecimal media1Mas;
     private BigDecimal media2Fem;
@@ -53,7 +66,18 @@ public class CantidadPorNivelDto implements Serializable {
     private BigDecimal media3Fem;
     private BigDecimal media3Mas;
 
+    private BigDecimal fleMediaFem;
+    private BigDecimal fleMediaMas;
+
     public CantidadPorNivelDto() {
+    }
+
+    public BigDecimal getIdRow() {
+        return idRow;
+    }
+
+    public void setIdRow(BigDecimal idRow) {
+        this.idRow = idRow;
     }
 
     public String getCodigoEntidad() {
@@ -270,6 +294,94 @@ public class CantidadPorNivelDto implements Serializable {
 
     public void setMedia3Mas(BigDecimal media3Mas) {
         this.media3Mas = media3Mas;
+    }
+
+    public String getNombreCe() {
+        return nombreCe;
+    }
+
+    public void setNombreCe(String nombreCe) {
+        this.nombreCe = nombreCe;
+    }
+
+    public String getNombreDepartamento() {
+        return nombreDepartamento;
+    }
+
+    public void setNombreDepartamento(String nombreDepartamento) {
+        this.nombreDepartamento = nombreDepartamento;
+    }
+
+    public String getNombreMunicipio() {
+        return nombreMunicipio;
+    }
+
+    public void setNombreMunicipio(String nombreMunicipio) {
+        this.nombreMunicipio = nombreMunicipio;
+    }
+
+    public BigDecimal getInicial2Fem() {
+        return inicial2Fem;
+    }
+
+    public void setInicial2Fem(BigDecimal inicial2Fem) {
+        this.inicial2Fem = inicial2Fem;
+    }
+
+    public BigDecimal getInicial2Mas() {
+        return inicial2Mas;
+    }
+
+    public void setInicial2Mas(BigDecimal inicial2Mas) {
+        this.inicial2Mas = inicial2Mas;
+    }
+
+    public BigDecimal getInicial3Fem() {
+        return inicial3Fem;
+    }
+
+    public void setInicial3Fem(BigDecimal inicial3Fem) {
+        this.inicial3Fem = inicial3Fem;
+    }
+
+    public BigDecimal getInicial3Mas() {
+        return inicial3Mas;
+    }
+
+    public void setInicial3Mas(BigDecimal inicial3Mas) {
+        this.inicial3Mas = inicial3Mas;
+    }
+
+    public BigDecimal getFleCiclo3Fem() {
+        return fleCiclo3Fem;
+    }
+
+    public void setFleCiclo3Fem(BigDecimal fleCiclo3Fem) {
+        this.fleCiclo3Fem = fleCiclo3Fem;
+    }
+
+    public BigDecimal getFleCiclo3Mas() {
+        return fleCiclo3Mas;
+    }
+
+    public void setFleCiclo3Mas(BigDecimal fleCiclo3Mas) {
+        this.fleCiclo3Mas = fleCiclo3Mas;
+    }
+
+    public BigDecimal getFleMediaFem() {
+        return fleMediaFem;
+    }
+
+    public void setFleMediaFem(BigDecimal fleMediaFem) {
+        this.fleMediaFem = fleMediaFem;
+    }
+
+    public BigDecimal getFleMediaMas() {
+        return fleMediaMas;
+    }
+
+    public void setFleMediaMas(BigDecimal fleMediaMas) {
+        this.fleMediaMas = fleMediaMas;
     }
 
 }

@@ -51,12 +51,12 @@
                         <p:outputLabel value="Proveedor:" />
                         <p:selectOneMenu id="cboProveedor" value="#{liquidacionMB.idParticipante}"  onkeydown="setaFoco(this);" >
                             <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
-                            <f:selectItems value="#{liquidacionMB.oferta.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{par.idEmpresa.razonSocial}"/>
+                            <f:selectItems value="#{liquidacionMB.lstParticipantes}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{par.razonSocial}"/>
                             <p:ajax listener="#{liquidacionMB.recuperarLstLiquidacionByCodEntAndIdDetPro()}" update="tblLiquidaciones"/>
                         </p:selectOneMenu>
 
                         <p:spacer width="10"/>
-                        <p:commandButton value="Agregar" update="detalleLiquidacion" action="#{liquidacionMB.recuperarDatos}" onsuccess="PF('dlgLiquidacion').show();"/>
+                        <p:commandButton value="Agregar" update="detalleLiquidacion" action="#{liquidacionMB.recuperarDatos}" onsuccess="PF('dlgLiquidacion').show();" icon="fa fa-plus"/>
                     </p:panelGrid>
                 </div>
 
@@ -107,21 +107,22 @@
 
         <p:dialog id="dlgLiquidacion" widgetVar="dlgLiquidacion" header="Información del Contrato" width="550" modal="true">
             <p:outputPanel id="detalleLiquidacion" styleClass="ui-fluid">
-                <p:panelGrid columns="1">
+                <h:panelGrid columns="1" style="width: 100%;">
                     <p:outputLabel value="Observaciones"/>
                     <p:inputTextarea value="#{liquidacionMB.observacion}"/>
-                </p:panelGrid>
+                </h:panelGrid>
+                <br/>
                 <p:dataTable value="#{liquidacionMB.datosLiquidacionDtos}" var="liquidacion">
                     <p:column headerText="NoItem">
                         <p:outputLabel value="#{liquidacion.noItem}"/>
                     </p:column>
-                    <p:column headerText="Contratado">
+                    <p:column headerText="Contratado" styleClass="numero">
                         <p:outputLabel value="#{liquidacion.cantidadContrato}"/>
                     </p:column>
-                    <p:column headerText="Modificado">
+                    <p:column headerText="Modificado" styleClass="numero">
                         <p:outputLabel value="#{liquidacion.cantidadModificativa}"/>
                     </p:column>
-                    <p:column headerText="Recepción">
+                    <p:column headerText="Recepción" styleClass="numero">
                         <p:outputLabel value="#{liquidacion.cantidadRecepcion}" />
                     </p:column>
                     <p:column headerText="Resguardo">
@@ -132,7 +133,7 @@
 
             <f:facet name="footer">
                 <p:commandButton id="btnGuardar" value="Guardar" action="#{liquidacionMB.agregarLista}" icon="fa fa-check" oncomplete="PF('dlgLiquidacion').hide();" update="tblLiquidaciones"/>
-                <p:commandButton id="btnCancelar" value="Cancelar" styleClass="secondary-button" icon="fa fa-refresh" onclick="PF('dlgLiquidacion').hide();"/>
+                <p:commandButton id="btnCancelar" value="Cancelar" styleClass="secondary-button" icon="fa fa-times" onclick="PF('dlgLiquidacion').hide();"/>
             </f:facet>
         </p:dialog>
     </ui:define>

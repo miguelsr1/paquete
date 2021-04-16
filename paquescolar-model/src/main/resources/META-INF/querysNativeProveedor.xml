@@ -100,4 +100,21 @@
             ]]>
         </query>
     </named-native-query>
+    
+    <named-native-query name="Proveedor.ContratoActivo" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.ParticipanteConContratoDto">
+        <query>
+            <![CDATA[
+            select 
+                id_participante as idParticipante,
+                razon_social    as razonSocial,
+                codigo_entidad  as codigoEntidad,
+                id_det_proceso_adq as idDetProceso_adq
+            from vw_find_emp_contratos 
+            where 
+                codigo_entidad=?1 and id_det_proceso_adq=?2
+            order by razon_social asc
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>

@@ -31,9 +31,10 @@ import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.DetalleLiquidacion;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.Liquidacion;
-import sv.gob.mined.paquescolar.model.OfertaBienesServicios;
+import sv.gob.mined.paquescolar.model.Participantes;
 import sv.gob.mined.paquescolar.model.RecepcionBienesServicios;
 import sv.gob.mined.paquescolar.model.ResolucionesModificativas;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.ParticipanteConContratoDto;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosContratoDto;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosLiquidacionDto;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosModificativaDto;
@@ -63,7 +64,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     private ContratosOrdenesCompras contrato = new ContratosOrdenesCompras();
     private DetalleProcesoAdq detalleProceso = new DetalleProcesoAdq();
     private Liquidacion liquidacion = new Liquidacion();
-    private OfertaBienesServicios oferta = new OfertaBienesServicios();
+    //private OfertaBienesServicios oferta = new OfertaBienesServicios();
     private RecepcionBienesServicios recepcion = new RecepcionBienesServicios();
     private ResolucionesModificativas resModificativa;
 
@@ -74,6 +75,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     private List<DatosLiquidacionDto> datosLiquidacionDtos;
 
     private List<Liquidacion> lstLiquidaciones = new ArrayList();
+    private List<ParticipanteConContratoDto> lstParticipantes = new ArrayList();
 
     private VwCatalogoEntidadEducativa entidadEducativa = new VwCatalogoEntidadEducativa();
 
@@ -89,6 +91,10 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     private ReportesEJB reportesEJB;
 
     public LiquidacionMB() {
+    }
+
+    public List<ParticipanteConContratoDto> getLstParticipantes() {
+        return lstParticipantes;
     }
 
     public String getObservacion() {
@@ -139,9 +145,9 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
         this.idParticipante = idParticipante;
     }
 
-    public OfertaBienesServicios getOferta() {
+    /*public OfertaBienesServicios getOferta() {
         return oferta;
-    }
+    }*/
 
     public VwCatalogoEntidadEducativa getEntidadEducativa() {
         return entidadEducativa;
@@ -238,7 +244,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
                     JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + codigoEntidad);
                 } else {
                     detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
-                    oferta = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(codigoEntidad, detalleProceso);
+                    lstParticipantes = resolucionAdjudicativaEJB.findParticipantesConContratoByCodEntAndIdDetProcesoAdq(codigoEntidad, detalleProceso.getIdDetProcesoAdq());
                 }
             }
         } else {
@@ -259,19 +265,19 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
          */
         datosLiquidacionDtos.forEach(dato -> {
             DetalleLiquidacion det = new DetalleLiquidacion();
-            
+
             det.setNoItem(dato.getNoItem());
             det.setCantidad(dato.getCantidadContrato().longValue());
             det.setPrecioUnitario(dato.getPrecioUnitarioContrato());
-            
+
             det.setCantidadModificativa(dato.getCantidadModificativa().longValue());
             det.setPrecioUnitarioModif(dato.getPrecioUnitarioModificativa());
-            
+
             det.setCantidadEntregada(dato.getCantidadRecepcion().longValue());
             det.setCantidadResguardo(dato.getCantidadResguardo().longValue());
-            
+
             det.setIdLiquidacion(liquidacion);
-            
+
             liquidacion.getDetalleLiquidacionList().add(det);
         });
 
@@ -281,9 +287,9 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
 
         liquidacion = new Liquidacion();
     }
-    
+
     public void recuperarLstLiquidacionByCodEntAndIdDetPro() {
-        lstLiquidaciones = resolucionAdjudicativaEJB.getLstLiquidacionByCodigoEntAndIdDetProcesoAdqAndIdParticipante(codigoEntidad, detalleProceso.getIdDetProcesoAdq(),idParticipante);
+        lstLiquidaciones = resolucionAdjudicativaEJB.getLstLiquidacionByCodigoEntAndIdDetProcesoAdqAndIdParticipante(codigoEntidad, detalleProceso.getIdDetProcesoAdq(), idParticipante);
     }
 
     public void recuperarDatos() {
@@ -362,20 +368,20 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
             return datoLiquidacion;
         }
     }
-    
-    public void imprimirReporte(){
+
+    public void imprimirReporte() {
         String nombreUsuario = loginEJB.getNombreByUsername(liquidacion.getUsuarioInsercion());
-        
+
         HashMap param = new HashMap();
         ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-        
+
         param.put("pEscudo", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
         param.put("p_id_liquidacion", liquidacion.getIdLiquidacion());
         param.put("p_id_contrato", liquidacion.getIdContrato().getIdContrato());
         param.put("p_nombre_canton", "");
         param.put("p_nombre_cacerio", "");
         param.put("p_nombre_usuario", nombreUsuario);
-        
+
         Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/pagoproveedor/", "rptLiquidacion", "rptLiquidacion");
     }
 }

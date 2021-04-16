@@ -1522,9 +1522,9 @@ public class ProveedorEJB {
         return q.getResultList();
     }
 
-    public List<CantidadPorNivelDto> getLstContratacionPorItemByIdAnho(Integer idAnho) {
+    public List<CantidadPorNivelDto> getLstContratacionPorItemByIdAnho(Integer idProcesoAdq) {
         Query q = em.createNamedQuery("Contratacion.Matricula", CantidadPorNivelDto.class);
-        q.setParameter(1, idAnho);
+        q.setParameter(1, idProcesoAdq);
         return q.getResultList();
     }
 
@@ -1836,7 +1836,7 @@ public class ProveedorEJB {
                 + "                pemp.id_empresa = " + idEmpresa + " and \n"
                 + "                pemp.id_proceso_adq = " + idProcesoAdq + " and\n"
                 + "                pemp.estado_eliminacion = 0 and\n"
-                + "                pemp.id_nivel_educativo in (" + (idNivelesCe.replace("1", "22").replace("5", "5,23").replace("6", "6,24")) + ")\n"
+                +(idProcesoAdq>55?" pemp.id_nivel_educativo in (" + (idNivelesCe.replace("1", "22").replace("5", "5,23").replace("6", "6,24")) + ")\n":"                pemp.id_nivel_educativo in (" + (idNivelesCe) + ")\n")
                 + "            order by to_number(pemp.no_item)", PrecioReferenciaEmpresaDto.class);
         return q.getResultList();
     }

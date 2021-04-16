@@ -37,6 +37,7 @@ import sv.gob.mined.paquescolar.model.TechoRubroEntEdu;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.SaldoProveedorDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ContratoDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.ParticipanteConContratoDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ParticipanteDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.VwRptContratoJurCabecera;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.VwRptPagare;
@@ -514,5 +515,12 @@ public class ResolucionAdjudicativaEJB {
     
     public ContratosOrdenesCompras findContratoByPk(BigDecimal idContrato){
         return em.find(ContratosOrdenesCompras.class, idContrato);
+    }
+    
+    public List<ParticipanteConContratoDto> findParticipantesConContratoByCodEntAndIdDetProcesoAdq(String codigoEntidad, Integer idDetProcesoAdq){
+        Query q = em.createNamedQuery("Proveedor.ContratoActivo", ParticipanteConContratoDto.class);
+        q.setParameter(1, codigoEntidad);
+        q.setParameter(2, idDetProcesoAdq);
+        return q.getResultList();
     }
 }
