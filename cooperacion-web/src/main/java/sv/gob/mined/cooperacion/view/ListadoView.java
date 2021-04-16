@@ -41,6 +41,7 @@ import sv.gob.mined.cooperacion.model.Cooperante;
 import sv.gob.mined.cooperacion.model.ProyectoCooperacion;
 import sv.gob.mined.cooperacion.model.TipoCooperacion;
 import sv.gob.mined.cooperacion.model.Usuario;
+import sv.gob.mined.cooperacion.model.dto.AtributoValorDto;
 import sv.gob.mined.cooperacion.model.dto.ListadoProyectoDto;
 import sv.gob.mined.cooperacion.model.dto.FileInfoDto;
 import sv.gob.mined.cooperacion.model.paquete.Municipio;
@@ -63,6 +64,7 @@ public class ListadoView implements Serializable {
     private String codigoDepartamento;
     private String where;
     private String nombreProyecto;
+    private String anho;
     private final String posicionInicial = "13.749655, -88.822362";
 
     private Long idProyecto;
@@ -139,6 +141,14 @@ public class ListadoView implements Serializable {
         simpleModel = new DefaultMapModel();
         lstCooperantes = mantenimientoFacade.findAllCooperantes();
         lstTipoCooperaciones = mantenimientoFacade.findAllTipoCoopeciones();
+    }
+
+    public String getAnho() {
+        return anho;
+    }
+
+    public void setAnho(String anho) {
+        this.anho = anho;
     }
 
     public List<ListadoProyectoDto> getLstProyectosFiltrados() {
@@ -285,6 +295,10 @@ public class ListadoView implements Serializable {
         this.lblBottonEnviar = lblBottonEnviar;
     }
 
+    public List<AtributoValorDto> getLstAnhosProyectos() {
+        return mantenimientoFacade.findAnhosDeProyecto();
+    }
+
     public void enviar() {
 
     }
@@ -338,11 +352,25 @@ public class ListadoView implements Serializable {
     }
 
     public void recuperarLstProyectosPorCooperante() {
-        if (idCooperante == 0) {
-            lstProyectos = mantenimientoFacade.findProyectosByWhereCustom("");
+        String whereTmp = "";
+        if (idCooperante == null || idCooperante == 0) {
+            
         } else {
-            String whereTmp = " and pro.id_cooperante = " + idCooperante;
+            whereTmp = " and pro.id_cooperante = " + idCooperante;
+
+        }
+        if (anho != null && !anho.isEmpty() & !anho.equals("00")) {
+            if (whereTmp.isEmpty()) {
+                whereTmp = " and pro.anho = '" + anho + "'";
+            } else {
+                whereTmp += " and pro.anho = '" + anho + "'";
+            }
+        }
+
+        if (!whereTmp.isEmpty()) {
             lstProyectos = mantenimientoFacade.findProyectosByWhereCustom(whereTmp);
+        }else{
+            lstProyectos = mantenimientoFacade.findProyectosByWhereCustom("");
         }
 
         simpleModel = new DefaultMapModel();
@@ -366,10 +394,10 @@ public class ListadoView implements Serializable {
 
     public void agregarPuntos() {
         simpleModel = new DefaultMapModel();
-        
-        if(!lstProyectosFiltrados.isEmpty()){
+
+        if (!lstProyectosFiltrados.isEmpty()) {
             cargarPunto(lstProyectosFiltrados);
-        }else{
+        } else {
             cargarPunto(lstProyectos);
         }
     }

@@ -3,6 +3,7 @@
   <persistence-unit name="cooperacionPU" transaction-type="JTA">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <jta-data-source>java:/CooperacionDS</jta-data-source>
+    <mapping-file>META-INF/nativeQueries.xml</mapping-file>
     <class>sv.gob.mined.cooperacion.model.Director</class>
     <class>sv.gob.mined.cooperacion.model.Cooperante</class>
     <class>sv.gob.mined.cooperacion.model.TipoCooperacion</class>
@@ -20,6 +21,7 @@
     <class>sv.gob.mined.cooperacion.model.UsuarioOrg</class>
     <class>sv.gob.mined.cooperacion.model.FechaCapacitacion</class>
     <class>sv.gob.mined.cooperacion.model.DatoInfraCe</class>
+    <class>sv.gob.mined.cooperacion.model.dto.AtributoValorDto</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>

@@ -38,6 +38,7 @@ public class ListadoProyectoDto implements Serializable {
     private String nombreDirector;
     private String correoElectronico;
     private String nombreProyecto;
+    private String anho;
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaInicio;
     @Temporal(TemporalType.TIMESTAMP)
@@ -185,5 +186,13 @@ public class ListadoProyectoDto implements Serializable {
 
     public void setIdCooperante(Long idCooperante) {
         this.idCooperante = idCooperante;
+    }
+
+    public String getAnho() {
+        return anho;
+    }
+
+    public void setAnho(String anho) {
+        this.anho = anho;
     }
 }

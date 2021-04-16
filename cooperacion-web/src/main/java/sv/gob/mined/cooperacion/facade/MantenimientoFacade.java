@@ -1,6 +1,7 @@
 package sv.gob.mined.cooperacion.facade;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -11,6 +12,7 @@ import sv.gob.mined.cooperacion.model.Director;
 import sv.gob.mined.cooperacion.model.FechaCapacitacion;
 import sv.gob.mined.cooperacion.model.ProyectoCooperacion;
 import sv.gob.mined.cooperacion.model.TipoCooperacion;
+import sv.gob.mined.cooperacion.model.dto.AtributoValorDto;
 import sv.gob.mined.cooperacion.model.dto.ListadoProyectoDto;
 import sv.gob.mined.cooperacion.util.QueryNativas;
 
@@ -39,12 +41,17 @@ public class MantenimientoFacade {
     }
 
     public List<ListadoProyectoDto> findAllProyectos() {
-        Query q = emCooperacion.createNativeQuery(QueryNativas.sqlListadoProyectos + " ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
+        Query q = emCooperacion.createNativeQuery(QueryNativas.SQL_LISTADO_PROYECTOS + " ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
         return q.getResultList();
     }
 
     public List<ListadoProyectoDto> findProyectosByWhereCustom(String where) {
-        Query q = emCooperacion.createNativeQuery(QueryNativas.sqlListadoProyectos + where + " ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
+        Query q = emCooperacion.createNativeQuery(QueryNativas.SQL_LISTADO_PROYECTOS + where + " ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
+        return q.getResultList();
+    }
+    
+    public List<AtributoValorDto> findAnhosDeProyecto(){
+        Query q = emCooperacion.createNamedQuery("Cooperacion.AnhoProyecto", AtributoValorDto.class);
         return q.getResultList();
     }
 
@@ -65,7 +72,7 @@ public class MantenimientoFacade {
             where = where + " and pro.id_estado =" + idEstado;
         }
 
-        Query q = emCooperacion.createNativeQuery(QueryNativas.sqlListadoProyectos + where + " ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
+        Query q = emCooperacion.createNativeQuery(QueryNativas.SQL_LISTADO_PROYECTOS + where + " ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
         return q.getResultList();
     }
 

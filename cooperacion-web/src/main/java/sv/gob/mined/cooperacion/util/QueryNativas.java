@@ -11,7 +11,7 @@ package sv.gob.mined.cooperacion.util;
  */
 public class QueryNativas {
 
-    public final static String sqlListadoProyectos = "select \n"
+    public final static String SQL_LISTADO_PROYECTOS = "select \n"
             + "    pro.id_proyecto         as idProyecto,\n"
             + "    nombre                  as nombreCe,\n"
             + "    vw.codigo_entidad       as codigoEntidad,\n"
@@ -30,7 +30,8 @@ public class QueryNativas {
             + "    geo.georeferencia_y     as geoPy,\n"
             + "    pro.id_cooperante        as idCooperante,\n"
             + "    pro.id_tipo_cooperacion  as idTipoCooperacion,\n"
-            + "    rownum                   as idRow\n"
+            + "    rownum                   as idRow,\n"
+            + "    pro.anho                 as anho\n"
             + "from proyecto_cooperacion pro\n"
             + "    inner join vw_Catalogo_entidad_educativa vw on pro.codigo_entidad = vw.codigo_entidad\n"
             + "    inner join paquetes.departamento dep on vw.codigo_departamento = dep.codigo_departamento\n"
