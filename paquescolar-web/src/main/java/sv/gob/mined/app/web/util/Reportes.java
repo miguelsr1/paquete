@@ -48,8 +48,8 @@ public class Reportes {
     public static final String PATH_IMAGENES = File.separator + "resources" + File.separator + "images" + File.separator;
 
     public static InputStream getPathReporte(String pathReporte) {
+        String tmpPath;
         try {
-            String tmpPath;
             if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
                 tmpPath = JsfUtil.getValorFromBundleByKey("path_reportes_win");
                 pathReporte = pathReporte.replaceAll("/", "\\\\");
@@ -58,8 +58,15 @@ public class Reportes {
             }
             return new FileInputStream(tmpPath.concat(pathReporte));
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, "ERROR REPORTES: No se encontro el reporte en la ubicación " + pathReporte, ex);
-            return null;
+            try {
+                tmpPath = JsfUtil.getValorFromBundleByKey("path_reportes_linux2");
+
+                return new FileInputStream(tmpPath.concat(pathReporte));
+            } catch (FileNotFoundException ex1) {
+                Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, "ERROR REPORTES: No se encontro el reporte en la ubicación " + pathReporte, ex);
+                return null;
+            }
+
         }
     }
 

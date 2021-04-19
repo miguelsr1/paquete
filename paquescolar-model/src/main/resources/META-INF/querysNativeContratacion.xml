@@ -617,7 +617,7 @@
                     nombre              as nombreCe,
                     nombre_departamento as nombreDepartamento,
                     nombre_municipio    as nombreMunicipio,
-                    inicial_2_fem       as inicial2Fem
+                    inicial_2_fem       as inicial2Fem,
                     inicial_2_mas       as inicial2Mas,
                     inicial_3_fem       as inicial3Fem,
                     inicial_3_mas       as inicial4Fem,

@@ -740,8 +740,7 @@ public class ProveedorEJB {
      * @param cantidad
      * @param noItemSeparados
      * @param noItems
-     * @return
-     -
+     * @return -
      */
     private String findLstIdEmpresa(String codDep, String codMun, String codCanton, Integer idMunicipio, String idMunicipios, Integer idRubro, Integer idDetProcesoAdq, Integer idDetProcesoAdqPrecio,
             Boolean municipioIgual, Integer cantidad, String noItemSeparados, String noItems, BigDecimal idAnho) {
@@ -1522,8 +1521,14 @@ public class ProveedorEJB {
         return q.getResultList();
     }
 
-    public List<CantidadPorNivelDto> getLstContratacionPorItemByIdAnho(Integer idProcesoAdq) {
-        Query q = em.createNamedQuery("Contratacion.Matricula", CantidadPorNivelDto.class);
+    public List<CantidadPorNivelDto> getLstContratacionPorItemByIdAnho(Integer idProcesoAdq, String codigoDepartamento) {
+        String where = " WHERE id_proceso_adq = " + idProcesoAdq;
+        if (codigoDepartamento.equals("00")) {
+        } else {
+            where += " and dep.codigo_departamento = '" + codigoDepartamento + "' ";
+        }
+
+        Query q = em.createNativeQuery(Constantes.QUERY_CONTRATACION_MATRICULA.replace(":CONDICION:", where), CantidadPorNivelDto.class);
         q.setParameter(1, idProcesoAdq);
         return q.getResultList();
     }
@@ -1836,7 +1841,7 @@ public class ProveedorEJB {
                 + "                pemp.id_empresa = " + idEmpresa + " and \n"
                 + "                pemp.id_proceso_adq = " + idProcesoAdq + " and\n"
                 + "                pemp.estado_eliminacion = 0 and\n"
-                +(idProcesoAdq>55?" pemp.id_nivel_educativo in (" + (idNivelesCe.replace("1", "22").replace("5", "5,23").replace("6", "6,24")) + ")\n":"                pemp.id_nivel_educativo in (" + (idNivelesCe) + ")\n")
+                + (idProcesoAdq > 55 ? " pemp.id_nivel_educativo in (" + (idNivelesCe.replace("1", "22").replace("5", "5,23").replace("6", "6,24")) + ")\n" : "                pemp.id_nivel_educativo in (" + (idNivelesCe) + ")\n")
                 + "            order by to_number(pemp.no_item)", PrecioReferenciaEmpresaDto.class);
         return q.getResultList();
     }
@@ -2036,5 +2041,5 @@ public class ProveedorEJB {
         }
 
     }
-    
+
 }

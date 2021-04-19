@@ -68,10 +68,10 @@ public class ReportesWebController extends RecuperarProcesoUtil implements Seria
         cantidadTotal = BigDecimal.ZERO;
         idDetProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();//anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
         lstProveedoresHaciendaDto = proveedorEJB.getLstProveedoresHacienda(idDetProceso, codigoDepartamento);
-        for (VwRptProveedoresContratadosDto vwRptProveedoresHaciendaDto : lstProveedoresHaciendaDto) {
+        lstProveedoresHaciendaDto.forEach(vwRptProveedoresHaciendaDto -> {
             cantidadTotal = cantidadTotal.add(vwRptProveedoresHaciendaDto.getCantidadContrato());
             montoTotal = montoTotal.add((vwRptProveedoresHaciendaDto.getMontoContrato()));
-        }
+        });
     }
 
     public void generarRptResumenContrataciones() {
@@ -79,14 +79,14 @@ public class ReportesWebController extends RecuperarProcesoUtil implements Seria
         cantidadTotal = BigDecimal.ZERO;
         idDetProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();//anhoProcesoEJB.getDetProcesoAdq(recuperarProceso.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
         lstProveedoresHaciendaDto = proveedorEJB.getLstResumenContratacionByProcesoAndDepartamento(idDetProceso, codigoDepartamento);
-        for (VwRptProveedoresContratadosDto vwRptProveedoresHaciendaDto : lstProveedoresHaciendaDto) {
+        lstProveedoresHaciendaDto.forEach(vwRptProveedoresHaciendaDto -> {
             cantidadTotal = cantidadTotal.add(vwRptProveedoresHaciendaDto.getCantidadContrato());
             montoTotal = montoTotal.add((vwRptProveedoresHaciendaDto.getMontoContrato()));
-        }
+        });
     }
-    
+
     public void generarRptMatricula() {
-        lstCantidadPorNivelDtos =  proveedorEJB.getLstContratacionPorItemByIdAnho(getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq());
+        lstCantidadPorNivelDtos = proveedorEJB.getLstContratacionPorItemByIdAnho(getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq(), codigoDepartamento);
     }
 
     public List<CantidadPorNivelDto> getLstCantidadPorNivelDtos() {
@@ -128,5 +128,11 @@ public class ReportesWebController extends RecuperarProcesoUtil implements Seria
                 JsfUtil.mensajeInformacion("No se encontraron registros.");
             }
         }
+    }
+    
+    public void generar(){
+        lstCantidadPorNivelDtos = proveedorEJB.getLstContratacionPorItemByIdAnho(getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq(), codigoDepartamento);
+        
+        RptExcel.generarRptGenerico(lstCantidadPorNivelDtos, "rptDetalleMatricula");
     }
 }

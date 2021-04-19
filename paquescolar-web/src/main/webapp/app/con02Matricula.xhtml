@@ -30,7 +30,7 @@
                             <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
                             <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
                             <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
-                            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                            <p:menuitem value="Imprimir" icon="fa fa-print" action="#{reportesWebController.generar()}" ajax="false" />
                             <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>  
                         </p:menubar>
 
@@ -50,6 +50,25 @@
 
                             <p:commandButton action="#{reportesWebController.generarRptMatricula()}" value="Buscar" id="ingresar" update="pnlDatos"/>
                         </p:panelGrid>
+                    </div>
+
+                    <div class="card card-w-title">
+                        <h1>
+                            <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                            <p:spacer width="10" />
+                            <p:outputLabel value="Datos"/>
+                        </h1>
+
+                        <p:outputPanel id="pnlDatos" >
+                            <p:dataTable value="#{reportesWebController.lstCantidadPorNivelDtos}" var="mat">
+                                <p:column headerText="#{bundle['tabla.codEnt']}">
+                                    <p:outputLabel value="#{mat.codigoEntidad}"/>
+                                </p:column>
+                                <p:column headerText="#{bundle['tabla.nomEntCorto']}">
+                                    <p:outputLabel value="#{mat.nombreCe}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:outputPanel>
                     </div>
                 </div>
             </div>
