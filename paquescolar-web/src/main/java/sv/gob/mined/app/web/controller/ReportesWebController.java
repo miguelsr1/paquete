@@ -129,10 +129,10 @@ public class ReportesWebController extends RecuperarProcesoUtil implements Seria
             }
         }
     }
-    
-    public void generar(){
+
+    public void generar() {
         lstCantidadPorNivelDtos = proveedorEJB.getLstContratacionPorItemByIdAnho(getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq(), codigoDepartamento);
-        
-        RptExcel.generarRptGenerico(lstCantidadPorNivelDtos, "rptDetalleMatricula");
+
+        RptExcel.generarRptGenerico(lstCantidadPorNivelDtos, "rptDetalleMatricula", 1);
     }
 }

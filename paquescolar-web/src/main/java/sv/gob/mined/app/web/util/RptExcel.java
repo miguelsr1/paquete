@@ -37,10 +37,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.primefaces.util.AjaxRequestBuilder;
 import sv.gob.mined.paquescolar.model.pojos.credito.ResumenCreditosDto;
 import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
-import sv.gob.mined.paquescolar.model.pojos.contratacion.CantidadPorNivelDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
 import sv.gob.mined.paquescolar.model.pojos.credito.DatosProveedoresFinanDto;
 
@@ -53,9 +51,9 @@ public class RptExcel {
     private static HSSFWorkbook wb1;
     private static DataFormat FORMATO_DATA;
 
-    public static void generarRptGenerico(List<? extends Object> lst, String nombreExcel) {
+    public static void generarRptGenerico(List<? extends Object> lst, String nombreExcel, int rowInicial) {
         HSSFCellStyle style;
-        int row = 1;
+        int row = rowInicial;
         try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/" + nombreExcel + ".xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
@@ -108,68 +106,6 @@ public class RptExcel {
         }
 
         return (T) valorRetorno;
-    }
-
-    public static void generarRptMatricula(List<CantidadPorNivelDto> lst) {
-        HSSFCellStyle style;
-        int row = 1;
-        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptDetalleMatricula.xls")) {
-            wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
-            FORMATO_DATA = wb1.createDataFormat();
-            style = wb1.createCellStyle();
-            style.setWrapText(true);
-            style.setBorderBottom(BorderStyle.THIN);
-            style.setBorderTop(BorderStyle.THIN);
-            style.setBorderRight(BorderStyle.THIN);
-            style.setBorderLeft(BorderStyle.THIN);
-
-            HSSFSheet s1 = wb1.getSheetAt(0);   //sheet by index
-
-            for (CantidadPorNivelDto dato : lst) {
-                escribirTexto(dato.getCodigoEntidad(), row, 0, style, s1);
-                escribirTexto(dato.getNombreCe(), row, 1, style, s1);
-                escribirTexto(dato.getNombreDepartamento(), row, 2, style, s1);
-                escribirTexto(dato.getNombreMunicipio(), row, 3, style, s1);
-                escribirNumero(dato.getInicial2Fem().toString(), row, 4, style, true, s1);
-                escribirNumero(dato.getInicial2Mas().toString(), row, 5, style, true, s1);
-                escribirNumero(dato.getInicial3Fem().toString(), row, 6, style, true, s1);
-                escribirNumero(dato.getInicial3Mas().toString(), row, 7, style, true, s1);
-                escribirNumero(dato.getParFem().toString(), row, 8, style, true, s1);
-                escribirNumero(dato.getParMas().toString(), row, 9, style, true, s1);
-                escribirNumero(dato.getGrado1Fem().toString(), row, 10, style, true, s1);
-                escribirNumero(dato.getGrado1Mas().toString(), row, 11, style, true, s1);
-                escribirNumero(dato.getGrado2Fem().toString(), row, 12, style, true, s1);
-                escribirNumero(dato.getGrado2Mas().toString(), row, 13, style, true, s1);
-                escribirNumero(dato.getGrado3Fem().toString(), row, 14, style, true, s1);
-                escribirNumero(dato.getGrado3Mas().toString(), row, 15, style, true, s1);
-                escribirNumero(dato.getGrado4Fem().toString(), row, 16, style, true, s1);
-                escribirNumero(dato.getGrado4Mas().toString(), row, 17, style, true, s1);
-                escribirNumero(dato.getGrado5Fem().toString(), row, 18, style, true, s1);
-                escribirNumero(dato.getGrado5Mas().toString(), row, 19, style, true, s1);
-                escribirNumero(dato.getGrado6Fem().toString(), row, 20, style, true, s1);
-                escribirNumero(dato.getGrado6Mas().toString(), row, 21, style, true, s1);
-                escribirNumero(dato.getGrado7Fem().toString(), row, 22, style, true, s1);
-                escribirNumero(dato.getGrado7Mas().toString(), row, 23, style, true, s1);
-                escribirNumero(dato.getGrado8Fem().toString(), row, 24, style, true, s1);
-                escribirNumero(dato.getGrado8Mas().toString(), row, 25, style, true, s1);
-                escribirNumero(dato.getGrado9Fem().toString(), row, 26, style, true, s1);
-                escribirNumero(dato.getGrado9Mas().toString(), row, 27, style, true, s1);
-                escribirNumero(dato.getFleCiclo3Fem().toString(), row, 28, style, true, s1);
-                escribirNumero(dato.getFleCiclo3Mas().toString(), row, 29, style, true, s1);
-                escribirNumero(dato.getMedia1Fem().toString(), row, 30, style, true, s1);
-                escribirNumero(dato.getMedia1Mas().toString(), row, 31, style, true, s1);
-                escribirNumero(dato.getMedia2Fem().toString(), row, 32, style, true, s1);
-                escribirNumero(dato.getMedia2Mas().toString(), row, 33, style, true, s1);
-                escribirNumero(dato.getMedia3Fem().toString(), row, 34, style, true, s1);
-                escribirNumero(dato.getMedia3Mas().toString(), row, 35, style, true, s1);
-                escribirNumero(dato.getFleMediaFem().toString(), row, 36, style, true, s1);
-                escribirNumero(dato.getFleMediaMas().toString(), row, 37, style, true, s1);
-            }
-
-            generarArchivo(wb1, "rptDetalleMatricula");
-        } catch (IOException | InvalidFormatException ex) {
-            Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     public static void generarRptProveedoresHacienda(List<VwRptProveedoresContratadosDto> lst) {
@@ -281,7 +217,7 @@ public class RptExcel {
         }
     }
 
-    public static void generarRptRentaMensual(List<DatosProveDto> lst, String anho) {
+    /*public static void generarRptRentaMensual(List<DatosProveDto> lst) {
         HSSFCellStyle style;
         int row = 2;
         try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rentaMensual.xls")) {
@@ -307,11 +243,11 @@ public class RptExcel {
                 escribirNumero(dato.getMontoRenta().toString(), row, 7, style, false, s1);
                 row++;
             }
-            generarArchivo(wb1, "Paquete" + anho + "-RentaMensua");
+            generarArchivo(wb1, "Paquete-RentaMensual");
         } catch (IOException | InvalidFormatException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+    }*/
 
     public static void generarRptResumenGeneralCreditos(List<ResumenCreditosDto> listaResumenGen, String anho) {
         try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptCreditoResumenGeneral.xls")) {
