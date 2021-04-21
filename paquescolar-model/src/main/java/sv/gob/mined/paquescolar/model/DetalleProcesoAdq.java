@@ -37,15 +37,12 @@ public class DetalleProcesoAdq implements Serializable {
     private List<RptDocumentos> rptDocumentosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
 
-    private List<DetRubroMuestraInteres> detRubroMuestraInteresList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDetProcesoAdq")
+    
     private List<OfertaBienesServicios> ofertaBienesServiciosList;
     @OneToMany(mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
     private List<TechoRubroEntEdu> techoRubroEntEduList;
-    @OneToMany(mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
-    private List<PreciosRefRubro> preciosRefRubroList;
-    @OneToMany(mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
-    private List<PreciosRefRubroEmp> preciosRefRubroEmpList;
+    
+    
     @OneToMany(mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
     private List<RequerimientoFondos> requerimientoFondosList;
     @OneToMany(mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
@@ -165,22 +162,6 @@ public class DetalleProcesoAdq implements Serializable {
         return "sv.gob.mined.paquescolar.model.DetalleProcesoAdq[ idDetProcesoAdq=" + idDetProcesoAdq + " ]";
     }
 
-    public List<PreciosRefRubroEmp> getPreciosRefRubroEmpList() {
-        return preciosRefRubroEmpList;
-    }
-
-    public void setPreciosRefRubroEmpList(List<PreciosRefRubroEmp> preciosRefRubroEmpList) {
-        this.preciosRefRubroEmpList = preciosRefRubroEmpList;
-    }
-
-    public List<PreciosRefRubro> getPreciosRefRubroList() {
-        return preciosRefRubroList;
-    }
-
-    public void setPreciosRefRubroList(List<PreciosRefRubro> preciosRefRubroList) {
-        this.preciosRefRubroList = preciosRefRubroList;
-    }
-
     public List<TechoRubroEntEdu> getTechoRubroEntEduList() {
         return techoRubroEntEduList;
     }
@@ -195,14 +176,6 @@ public class DetalleProcesoAdq implements Serializable {
 
     public void setOfertaBienesServiciosList(List<OfertaBienesServicios> ofertaBienesServiciosList) {
         this.ofertaBienesServiciosList = ofertaBienesServiciosList;
-    }
-
-    public List<DetRubroMuestraInteres> getDetRubroMuestraInteresList() {
-        return detRubroMuestraInteresList;
-    }
-
-    public void setDetRubroMuestraInteresList(List<DetRubroMuestraInteres> detRubroMuestraInteresList) {
-        this.detRubroMuestraInteresList = detRubroMuestraInteresList;
     }
 
     public List<RptDocumentos> getRptDocumentosList() {

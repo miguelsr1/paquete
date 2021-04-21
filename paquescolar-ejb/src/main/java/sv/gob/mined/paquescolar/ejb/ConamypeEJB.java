@@ -29,7 +29,6 @@ import sv.gob.mined.paquescolar.model.CatalogoProducto;
 import sv.gob.mined.paquescolar.model.Departamento;
 import sv.gob.mined.paquescolar.model.DetCapaSegunRubro;
 import sv.gob.mined.paquescolar.model.DetRubroMuestraInteres;
-import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.Empresa;
 import sv.gob.mined.paquescolar.model.EmpresaCodigoSeg;
 import sv.gob.mined.paquescolar.model.EstadoRegistro;
@@ -39,6 +38,7 @@ import sv.gob.mined.paquescolar.model.NivelEducativo;
 import sv.gob.mined.paquescolar.model.Persona;
 import sv.gob.mined.paquescolar.model.Productor;
 import sv.gob.mined.paquescolar.model.ProveedorEmpresa;
+import sv.gob.mined.paquescolar.model.RubrosAmostrarInteres;
 import sv.gob.mined.paquescolar.model.TipoEmpresa;
 import sv.gob.mined.paquescolar.model.TipoPersoneria;
 import sv.gob.mined.paquescolar.util.RC4Crypter;
@@ -174,6 +174,7 @@ public class ConamypeEJB {
 
                             js = (JSONObject) jsonParser.parse(jsonObj.get("datos_calificacion").toString());
                             BigDecimal rubro = new BigDecimal(js.get("rubro").toString());
+                            String anho = js.get("anho").toString();
 
                             if (rubro.intValue() == 4) {
                                 rubro = rubro.add(BigDecimal.ONE.negate());
@@ -184,9 +185,9 @@ public class ConamypeEJB {
                                     rubro = new BigDecimal(4);
                                     break;
                             }
-                            DetalleProcesoAdq detalleProceso = anhoProcesoEJB.getDetProcesoAdq(String.valueOf(Integer.parseInt(js.get("anho").toString()) + 1), rubro);
+                            //DetalleProcesoAdq detalleProceso = anhoProcesoEJB.getDetProcesoAdq(String.valueOf(Integer.parseInt(js.get("anho").toString()) + 1), rubro);
 
-                            DetRubroMuestraInteres detRubro = getDetRubroMuestraInteres(detalleProceso, empresa);
+                            DetRubroMuestraInteres detRubro = getDetRubroMuestraInteres(rubro, anho, empresa);
                             if (detRubro == null) {
                                 //nuevo registro de calificacion
                                 detRubro = new DetRubroMuestraInteres();
@@ -194,7 +195,8 @@ public class ConamypeEJB {
                                 detRubro.setFechaInsercion(new Date());
                                 detRubro.setEstadoEliminacion(BigInteger.ZERO);
                                 detRubro.setIdEmpresa(empresa);
-                                detRubro.setIdDetProcesoAdq(detalleProceso);
+                                detRubro.setIdRubroInteres(utilEJB.find(RubrosAmostrarInteres.class, rubro));
+                                detRubro.setIdAnho(anhoProcesoEJB.getAnhoByAnho(anho));
                                 empresa.getDetRubroMuestraInteresList().add(detRubro);
 
                                 CapaDistribucionAcre capaDistribucion = new CapaDistribucionAcre();
@@ -384,9 +386,20 @@ public class ConamypeEJB {
         }
     }
 
-    private DetRubroMuestraInteres getDetRubroMuestraInteres(DetalleProcesoAdq detalleProceso, Empresa empresa) {
+    /*private DetRubroMuestraInteres getDetRubroMuestraInteres(DetalleProcesoAdq detalleProceso, Empresa empresa) {
         Query q = em.createQuery("SELECT d FROM DetRubroMuestraInteres d WHERE d.idDetProcesoAdq=:detProceso and d.idEmpresa=:idEmpresa and d.estadoEliminacion = 0", DetRubroMuestraInteres.class);
         q.setParameter("detProceso", detalleProceso);
+        q.setParameter("idEmpresa", empresa);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (DetRubroMuestraInteres) q.getSingleResult();
+        }
+    }*/
+    private DetRubroMuestraInteres getDetRubroMuestraInteres(BigDecimal idRubro, String anho, Empresa empresa) {
+        Query q = em.createQuery("SELECT d FROM DetRubroMuestraInteres d WHERE d.idRubroInteres.idRubroInteres=:pIdRubro and d.idAnho.anho=:pAnho and d.idEmpresa=:idEmpresa and d.estadoEliminacion = 0", DetRubroMuestraInteres.class);
+        q.setParameter("pIdRubro", idRubro);
+        q.setParameter("pAnho", anho);
         q.setParameter("idEmpresa", empresa);
         if (q.getResultList().isEmpty()) {
             return null;

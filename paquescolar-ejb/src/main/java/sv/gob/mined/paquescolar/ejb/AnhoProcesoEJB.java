@@ -6,6 +6,7 @@ package sv.gob.mined.paquescolar.ejb;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -33,6 +34,12 @@ public class AnhoProcesoEJB {
     public List<Anho> getLstAnhos() {
         Query q = em.createQuery("SELECT a FROM Anho a ORDER BY a.idAnho DESC", Anho.class);
         return q.getResultList();
+    }
+
+    public Anho getAnhoByAnho(String anho) {
+        Query q = em.createQuery("SELECT a FROM Anho a WHERE a.anho=:pAnho", Anho.class);
+        q.setParameter("pAnho", anho);
+        return q.getResultList().isEmpty() ? null : (Anho) q.getResultList().get(0);
     }
 
     public List<Anho> getLstAnhosDesde(String idAnho) {
@@ -71,9 +78,7 @@ public class AnhoProcesoEJB {
 
     public List<RubrosAmostrarInteres> getLstRubrosByRubro(BigDecimal... params) {
         List lst = new ArrayList();
-        for (BigDecimal param : params) {
-            lst.add(param);
-        }
+        lst.addAll(Arrays.asList(params));
         Query q = em.createQuery("SELECT r FROM RubrosAmostrarInteres r WHERE r.idRubroInteres in :lstRubros ORDER BY r.idRubroInteres", RubrosAmostrarInteres.class);
         q.setParameter("lstRubros", lst);
         return q.getResultList();

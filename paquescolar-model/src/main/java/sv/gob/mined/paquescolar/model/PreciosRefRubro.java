@@ -32,9 +32,14 @@ import org.eclipse.persistence.annotations.AdditionalCriteria;
     @NamedQuery(name = "PreciosRefRubro.findAll", query = "SELECT p FROM PreciosRefRubro p")})
 @AdditionalCriteria("this.estadoEliminacion = 0")
 public class PreciosRefRubro implements Serializable {
-    @JoinColumn(name = "ID_DET_PROCESO_ADQ", referencedColumnName = "ID_DET_PROCESO_ADQ")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private DetalleProcesoAdq idDetProcesoAdq;
+
+    @JoinColumn(name = "ID_ANHO", referencedColumnName = "ID_ANHO")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Anho idAnho;
+    @JoinColumn(name = "ID_RUBRO_INTERES", referencedColumnName = "ID_RUBRO_INTERES")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private RubrosAmostrarInteres idRubroInteres;
+    
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -179,11 +184,19 @@ public class PreciosRefRubro implements Serializable {
         return "sv.gob.mined.paquescolar.model.PreciosRefRubro[ idPrecioSegunRubro=" + idPrecioSegunRubro + " ]";
     }
 
-    public DetalleProcesoAdq getIdDetProcesoAdq() {
-        return idDetProcesoAdq;
+    public Anho getIdAnho() {
+        return idAnho;
     }
 
-    public void setIdDetProcesoAdq(DetalleProcesoAdq idDetProcesoAdq) {
-        this.idDetProcesoAdq = idDetProcesoAdq;
+    public void setIdAnho(Anho idAnho) {
+        this.idAnho = idAnho;
+    }
+
+    public RubrosAmostrarInteres getIdRubroInteres() {
+        return idRubroInteres;
+    }
+
+    public void setIdRubroInteres(RubrosAmostrarInteres idRubroInteres) {
+        this.idRubroInteres = idRubroInteres;
     }
 }

@@ -65,8 +65,8 @@ public class EmpresaNoItem implements Serializable {
     private String item13;
     @Column(name = "ITEM_22")
     private String item22;
-    @Column(name = "ID_DET_PROCEO_ADQ")
-    private Integer idDetProceoAdq;
+    @Column(name = "ID_MUESTRA_INTERES")
+    private BigDecimal idMuestraInteres;
 
     public EmpresaNoItem() {
     }
@@ -203,12 +203,12 @@ public class EmpresaNoItem implements Serializable {
         this.item22 = item22;
     }
 
-    public Integer getIdDetProceoAdq() {
-        return idDetProceoAdq;
+    public BigDecimal getIdMuestraInteres() {
+        return idMuestraInteres;
     }
 
-    public void setIdDetProceoAdq(Integer idDetProceoAdq) {
-        this.idDetProceoAdq = idDetProceoAdq;
+    public void setIdMuestraInteres(BigDecimal idMuestraInteres) {
+        this.idMuestraInteres = idMuestraInteres;
     }
 
     @Override
@@ -232,5 +232,5 @@ public class EmpresaNoItem implements Serializable {
     public String toString() {
         return "sv.gob.mined.paquescolar.model.EmpresaNoItem[ idEmpNo=" + idEmpNo + " ]";
     }
-   
+
 }

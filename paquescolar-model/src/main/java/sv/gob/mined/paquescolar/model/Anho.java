@@ -27,6 +27,11 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Anho.findAll", query = "SELECT a FROM Anho a")})
 public class Anho implements Serializable {
+
+    @OneToMany(mappedBy = "idAnho", fetch = FetchType.LAZY)
+    private List<DetRubroMuestraInteres> detRubroMuestraInteresList;
+    @OneToMany(mappedBy = "idAnho", fetch = FetchType.LAZY)
+    private List<PreciosRefRubro> preciosRefRubroList;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -99,6 +104,22 @@ public class Anho implements Serializable {
     @Override
     public String toString() {
         return anho;
+    }
+
+    public List<DetRubroMuestraInteres> getDetRubroMuestraInteresList() {
+        return detRubroMuestraInteresList;
+    }
+
+    public void setDetRubroMuestraInteresList(List<DetRubroMuestraInteres> detRubroMuestraInteresList) {
+        this.detRubroMuestraInteresList = detRubroMuestraInteresList;
+    }
+
+    public List<PreciosRefRubro> getPreciosRefRubroList() {
+        return preciosRefRubroList;
+    }
+
+    public void setPreciosRefRubroList(List<PreciosRefRubro> preciosRefRubroList) {
+        this.preciosRefRubroList = preciosRefRubroList;
     }
     
 }

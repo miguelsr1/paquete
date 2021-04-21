@@ -51,6 +51,15 @@ import org.eclipse.persistence.annotations.StoredProcedureParameter;
 )
 public class DetRubroMuestraInteres implements Serializable {
 
+    @OneToMany(mappedBy = "idMuestraInteres", fetch = FetchType.LAZY)
+    private List<PreciosRefRubroEmp> preciosRefRubroEmpList;
+    @JoinColumn(name = "ID_ANHO", referencedColumnName = "ID_ANHO")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Anho idAnho;
+    @JoinColumn(name = "ID_RUBRO_INTERES", referencedColumnName = "ID_RUBRO_INTERES")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private RubrosAmostrarInteres idRubroInteres;
+
     @OneToMany(mappedBy = "idMuestraInteres", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProveedorEmpresa> proveedorEmpresaList;
     private static final long serialVersionUID = 1L;
@@ -88,9 +97,7 @@ public class DetRubroMuestraInteres implements Serializable {
     private List<CapaDistribucionAcre> capaDistribucionAcreList = new ArrayList<CapaDistribucionAcre>();
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMuestraInteres", fetch = FetchType.LAZY)
     private List<CapaInstPorRubro> capaInstPorRubroList = new ArrayList<CapaInstPorRubro>();
-    @JoinColumn(name = "ID_DET_PROCESO_ADQ", referencedColumnName = "ID_DET_PROCESO_ADQ")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private DetalleProcesoAdq idDetProcesoAdq;
+    
     @Column(name = "DATOS_VERIFICADOS")
     private Short datosVerificados;
     @Column(name = "ACEPTACION_TERMINOS")
@@ -222,10 +229,7 @@ public class DetRubroMuestraInteres implements Serializable {
             return false;
         }
         DetRubroMuestraInteres other = (DetRubroMuestraInteres) object;
-        if ((this.idMuestraInteres == null && other.idMuestraInteres != null) || (this.idMuestraInteres != null && !this.idMuestraInteres.equals(other.idMuestraInteres))) {
-            return false;
-        }
-        return true;
+        return !((this.idMuestraInteres == null && other.idMuestraInteres != null) || (this.idMuestraInteres != null && !this.idMuestraInteres.equals(other.idMuestraInteres)));
     }
 
     @Override
@@ -239,14 +243,6 @@ public class DetRubroMuestraInteres implements Serializable {
 
     public void setCapaInstPorRubroList(List<CapaInstPorRubro> capaInstPorRubroList) {
         this.capaInstPorRubroList = capaInstPorRubroList;
-    }
-
-    public DetalleProcesoAdq getIdDetProcesoAdq() {
-        return idDetProcesoAdq;
-    }
-
-    public void setIdDetProcesoAdq(DetalleProcesoAdq idDetProcesoAdq) {
-        this.idDetProcesoAdq = idDetProcesoAdq;
     }
 
     public List<ProveedorEmpresa> getProveedorEmpresaList() {
@@ -263,5 +259,29 @@ public class DetRubroMuestraInteres implements Serializable {
 
     public void setDatosVerificados(Short datosVerificados) {
         this.datosVerificados = datosVerificados;
+    }
+
+    public List<PreciosRefRubroEmp> getPreciosRefRubroEmpList() {
+        return preciosRefRubroEmpList;
+    }
+
+    public void setPreciosRefRubroEmpList(List<PreciosRefRubroEmp> preciosRefRubroEmpList) {
+        this.preciosRefRubroEmpList = preciosRefRubroEmpList;
+    }
+
+    public Anho getIdAnho() {
+        return idAnho;
+    }
+
+    public void setIdAnho(Anho idAnho) {
+        this.idAnho = idAnho;
+    }
+
+    public RubrosAmostrarInteres getIdRubroInteres() {
+        return idRubroInteres;
+    }
+
+    public void setIdRubroInteres(RubrosAmostrarInteres idRubroInteres) {
+        this.idRubroInteres = idRubroInteres;
     }
 }
