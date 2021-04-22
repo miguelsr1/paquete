@@ -403,7 +403,7 @@ public class ParticipantesController implements Serializable {
                 detalleProceso = participante.getIdOferta().getIdDetProcesoAdq();
 
                 //verificar si el proveedor seleccionado posee precios de referencia
-                if (proveedorEJB.isPrecioRef(participante.getIdEmpresa(), participante.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho())) {
+                if (proveedorEJB.isPrecioRef(participante.getIdEmpresa().getNumeroNit(), participante.getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres(), participante.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho())) {
                     //cargar estilos, unicamente si el rubro es zapatos
                     if (detalleProceso.getIdRubroAdq().getIdRubroInteres().compareTo(new BigDecimal(3)) == 0) {
                         File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + participante.getIdEmpresa().getNumeroNit() + "/");

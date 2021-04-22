@@ -814,12 +814,13 @@ public class ProveedorEJB {
                 + "    ((capacidad_adjudicada*100)/capacidad_acreditada) porcentajeAdjudicacion\n"
                 + "from (select \n"
                 + "        emp.id_empresa,\n"
+                + "        det.id_muestra_interes,\n"
                 + "        emp.razon_social,\n"
                 + "        nvl(emp.distribuidor,0)      as distribuidor,\n"
                 + "        mun_e.nombre_municipio,\n"
                 + "        dep_e.nombre_departamento,\n"
                 + "        tbl.precio_promedio,\n"
-                + "        round((((min(tbl.precio_promedio) OVER (order by tbl.precio_promedio))*100)/tbl.precio_promedio)*0.4,2) as porcentaje_precio,\n"
+                + "        round((((min( distinct tbl.precio_promedio) OVER (order by tbl.precio_promedio))*100)/tbl.precio_promedio)*0.4,2) as porcentaje_precio,\n"
                 + "        mun_e.id_municipio,\n"
                 + "        mun_e.codigo_departamento,\n"
                 + "        emp.codigo_canton,\n"
@@ -829,18 +830,20 @@ public class ProveedorEJB {
                 + "        inner join empresa emp                  on emp.id_empresa = det.id_empresa\n"
                 + "        inner join municipio mun_e              on mun_e.id_municipio = emp.id_municipio\n"
                 + "        inner join departamento dep_e           on mun_e.codigo_departamento = dep_e.codigo_departamento\n"
-                + "        inner join capa_distribucion_acre cda   on det.id_muestra_interes = cda.id_muestra_interes and cda.id_capa_distribucion in (select id_capa_distribucion from dis_municipio_interes dis inner join municipio mun on mun.id_municipio = dis.id_municipio where dis.estado_eliminacion = 0 and dis.id_municipio = " + idMunicipio + " and  dis.id_capa_distribucion = cda.id_capa_distribucion and " + (municipioIgual ? "mun.codigo_municipio ='" + codMun + "'and mun.codigo_departamento = '" + codDep + "'" : "mun.id_municipio in (" + (idMunicipios.isEmpty() ? idMunicipio : idMunicipios + "," + idMunicipio) + ")") + ")\n"
-                + "        inner join (select id_empresa, round(avg(precio_referencia),3) precio_promedio,((count(id_empresa)*100)/" + noItems.split(",").length + ")*" + getPorcentajePorItems(idRubro) + " porcentaje_capacidad\n"
-                + "                    from precios_Ref_rubro_emp\n"
-                + "                    where id_empresa in (select id_empresa from empresa_no_item where id_det_proceo_adq = " + idDetProcesoAdqPrecio + " " + (municipioIgual ? " and (" + noItemSeparados + ")" : "") + ") and\n"
-                + "                        no_item in (" + noItems + ") and estado_eliminacion = 0 and\n"
-                + "                        id_det_proceso_adq =  " + idDetProcesoAdqPrecio + "\n"
-                + "                    group by id_empresa) tbl on det.id_empresa = tbl.id_empresa\n"
-                + "    where det.id_det_proceso_adq in (" + idDetProcesoAdqPrecio + ") and\n"
+                + "        inner join capa_distribucion_acre cda   on det.id_muestra_interes = cda.id_muestra_interes \n"
+                + "        inner join (select pre.id_muestra_interes,pre.id_empresa, round(avg(precio_referencia),3) precio_promedio,((count(pre.id_empresa)*100)/" + noItems.split(",").length + ")*" + getPorcentajePorItems(idRubro) + " porcentaje_capacidad\n"
+                + "                    from precios_ref_rubro_emp pre\n"
+                + "                        inner join empresa_no_item emp on emp.id_muestra_interes = pre.id_muestra_interes\n"
+                + "                        inner join det_rubro_muestra_interes det on emp.id_muestra_interes = det.id_muestra_interes\n"
+                + "                    where " + (municipioIgual ? " (" + noItemSeparados + ") and " : "") + "\n"
+                + "                        no_item in (" + noItems + ") and pre.estado_eliminacion = 0 and\n"
+                + "                        det.id_rubro_interes =  " + idRubro + " and det.id_anho = " + idAnho + " \n"
+                + "                    group by pre.id_muestra_interes, pre.id_empresa) tbl on det.id_muestra_interes = tbl.id_muestra_interes\n"
+                + "    where \n"
                 + "        cda.estado_eliminacion = 0 and\n"
                 + "        det.estado_eliminacion = 0) tb1\n"
                 + "    inner join (select \n"
-                + "                    det.id_empresa,\n"
+                + "                    det.id_muestra_interes,\n"
                 + "                    cip.capacidad_acreditada,\n"
                 + "                    cip.capacidad_adjudicada,\n"
                 + "                    case when (cip.capacidad_acreditada-cip.capacidad_adjudicada) >= " + cantidad + " then " + (idRubro == 4 ? "12.50" : (idRubro == 5 ? "12.50" : porCapacidadCompleta.toString())) + " \n"
@@ -848,10 +851,10 @@ public class ProveedorEJB {
                 + "                    end porcentaje_capacidad\n"
                 + "                from det_rubro_muestra_interes det\n"
                 + "                    inner join capa_inst_por_rubro cip      on det.id_muestra_interes = cip.id_muestra_interes\n"
-                + "                    inner join capa_distribucion_acre dis on dis.id_muestra_interes = det.id_muestra_interes \n"
-                + "                    inner join dis_municipio_interes mun on mun.id_capa_distribucion = dis.id_capa_distribucion and mun.id_municipio =  " + idMunicipio
-                + "                where det.id_det_proceso_adq in (" + idDetProcesoAdq + ") and\n"
-                + "                    det.estado_eliminacion = 0) tb2 on tb1.id_empresa = tb2.id_empresa\n"
+                + "                    inner join capa_distribucion_acre cda on cda.id_muestra_interes = det.id_muestra_interes and cda.id_capa_distribucion in (select id_capa_distribucion from dis_municipio_interes dis inner join municipio mun on mun.id_municipio = dis.id_municipio where dis.estado_eliminacion = 0 and dis.id_municipio = " + idMunicipio + " and  dis.id_capa_distribucion = cda.id_capa_distribucion and " + (municipioIgual ? "mun.codigo_municipio ='" + codMun + "'and mun.codigo_departamento = '" + codDep + "'" : "mun.id_municipio in (" + (idMunicipios.isEmpty() ? idMunicipio : idMunicipios + "," + idMunicipio) + ")") + ")\n"
+                + "                    inner join dis_municipio_interes mun on mun.id_capa_distribucion = cda.id_capa_distribucion and mun.id_municipio =  " + idMunicipio + "\n"
+                + "                where \n"
+                + "                    det.estado_eliminacion = 0) tb2 on tb1.id_muestra_interes = tb2.id_muestra_interes\n"
                 + "where \n"
                 + "    id_municipio " + (municipioIgual ? "=" : "<>") + " (select id_municipio from municipio where codigo_municipio = '" + codMun + "' and codigo_departamento = '" + codDep + "') \n"
                 + "    " + (idRubro == 2 ? " and codigo_departamento = '" + codDep + "' " : "")
@@ -971,14 +974,16 @@ public class ProveedorEJB {
      * Verifica la existencia de los precios de referencia para un proveedor y
      * año en particular
      *
-     * @param idEmpresa
-     * @param anho
+     * @param numeroNit
+     * @param idRubro
+     * @param idAnho
      * @return devuelve true si existen
      */
-    public Boolean isPrecioRef(Empresa idEmpresa, String anho) {
-        Query query = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.idEmpresa=:idEmpresa and p.idDetProcesoAdq.idProcesoAdq.idAnho.anho=:anho and p.estadoEliminacion=0", PreciosRefRubroEmp.class);
-        query.setParameter("idEmpresa", idEmpresa);
-        query.setParameter("anho", anho);
+    public Boolean isPrecioRef(String numeroNit, BigDecimal idRubro, BigDecimal idAnho) {
+        Query query = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion=0 and p.idMuestraInteres.idEmpresa.numeroNit=:pNumeroNit and p.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and  p.idMuestraInteres.idAnho.idAnho=:pIdAnho", PreciosRefRubroEmp.class);
+        query.setParameter("pNumeroNit", numeroNit);
+        query.setParameter("pIdRubro", idRubro);
+        query.setParameter("pIdAnho", idAnho);
 
         List<PreciosRefRubroEmp> lstPrecios = query.getResultList();
 
