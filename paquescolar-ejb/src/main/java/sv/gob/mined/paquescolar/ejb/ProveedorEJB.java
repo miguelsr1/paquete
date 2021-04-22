@@ -1533,10 +1533,11 @@ public class ProveedorEJB {
         return q.getResultList();
     }
 
-    public void calcularNoItems(BigDecimal idMuestraInteres) {
+    public void calcularNoItems(BigDecimal idRubro, BigDecimal idAnho) {
         //idDet = 52;
-        Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion = 0 and p.idMuestraInteres.idMuestraInteres=:pIdMuestraInteres ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
-        q.setParameter("pIdMuestraIntere", idMuestraInteres);
+        Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion = 0 and p.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and p.idMuestraInteres.idAnho.idAnho=:pIdAnho ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
+        q.setParameter("pIdRubro", idRubro);
+        q.setParameter("pIdAnho", idAnho);
 
         List<PreciosRefRubroEmp> lstPre = q.getResultList();
         BigDecimal idEmpTemp = BigDecimal.ZERO;
@@ -1548,7 +1549,7 @@ public class ProveedorEJB {
                 idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
                 emp = new EmpresaNoItem();
                 emp.setIdEmpresa(idEmpTemp);
-                emp.setIdMuestraInteres(idMuestraInteres);
+                emp.setIdMuestraInteres(findDetRubroByIdEmpresaAndIdRubroAndIdAnho(precios.getIdEmpresa().getIdEmpresa(), idRubro, idAnho).getIdMuestraInteres());
             } else if (idEmpTemp.intValue() == precios.getIdEmpresa().getIdEmpresa().intValue()) {
 
             } else {
@@ -1557,7 +1558,7 @@ public class ProveedorEJB {
                 idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
                 emp = new EmpresaNoItem();
                 emp.setIdEmpresa(idEmpTemp);
-                emp.setIdMuestraInteres(idMuestraInteres);
+                emp.setIdMuestraInteres(findDetRubroByIdEmpresaAndIdRubroAndIdAnho(precios.getIdEmpresa().getIdEmpresa(), idRubro, idAnho).getIdMuestraInteres());
             }
 
             switch (precios.getNoItem()) {
@@ -1606,15 +1607,27 @@ public class ProveedorEJB {
         em.persist(emp);
     }
 
-    public void calcularNoItems(BigDecimal idMuestraInteres, String numeroNit) {
-        //idDet = 52;
-        Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.idEmpresa.numeroNit=:nit and p.estadoEliminacion = 0 and p.idMuestraInteres.idMuestraInteres=:pIdMuestraInteres ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
-        q.setParameter("pIdMuestraInteres", idMuestraInteres);
-        q.setParameter("nit", numeroNit);
+    private DetRubroMuestraInteres findDetRubroByIdEmpresaAndIdRubroAndIdAnho(BigDecimal idEmpresa, BigDecimal idRubro, BigDecimal idAnho) {
+        Query q = em.createQuery("SELECT d FROM DetRubroMuestraInteres d WHERE d.estadoEliminacion=0 and d.idEmpresa.idEmpresa=:pIdEmpresa and d.idRubroInteres.idRubroInteres=:pIdRubro and d.idAnho.idAnho=:pIdAnho", DetRubroMuestraInteres.class);
+        q.setParameter("pIdEmpresa", idEmpresa);
+        q.setParameter("pIdRubro", idRubro);
+        q.setParameter("pIdAnho", idAnho);
+
+        return (DetRubroMuestraInteres) q.getResultList().get(0);
+    }
+
+    public void calcularNoItems(BigDecimal idRubro, BigDecimal idAnho, String numeroNit, DetRubroMuestraInteres detRubro) {
+        Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.idEmpresa.numeroNit=:pNit and p.estadoEliminacion = 0 and p.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and p.idMuestraInteres.idAnho.idAnho=:pIdAnho ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
+        q.setParameter("pNit", numeroNit);
+        q.setParameter("pIdRubro", idRubro);
+        q.setParameter("pIdAnho", idAnho);
 
         List<PreciosRefRubroEmp> lstPre = q.getResultList();
         BigDecimal idEmpTemp = BigDecimal.ZERO;
         EmpresaNoItem emp = null;
+        if (detRubro == null) {
+            detRubro = lstPre.get(0).getIdMuestraInteres();
+        }
 
         for (PreciosRefRubroEmp precios : lstPre) {
 
@@ -1622,7 +1635,7 @@ public class ProveedorEJB {
                 idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
                 emp = new EmpresaNoItem();
                 emp.setIdEmpresa(idEmpTemp);
-                emp.setIdMuestraInteres(idMuestraInteres);
+                emp.setIdMuestraInteres(detRubro.getIdMuestraInteres());
             } else if (idEmpTemp.intValue() == precios.getIdEmpresa().getIdEmpresa().intValue()) {
 
             } else {
@@ -1631,7 +1644,7 @@ public class ProveedorEJB {
                 idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
                 emp = new EmpresaNoItem();
                 emp.setIdEmpresa(idEmpTemp);
-                emp.setIdMuestraInteres(idMuestraInteres);
+                emp.setIdMuestraInteres(detRubro.getIdMuestraInteres());
             }
 
             switch (precios.getNoItem()) {
@@ -1680,9 +1693,10 @@ public class ProveedorEJB {
         em.persist(emp);
     }
 
-    public void calcularPreRef(Integer idDet) {
-        Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion = 0 and p.idDetProcesoAdq.idDetProcesoAdq=:idDet ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
-        q.setParameter("idDet", idDet);
+    public void calcularPreRef(BigDecimal idRubro, BigDecimal idAnho) {
+        Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion = 0 and p.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and p.idMuestraInteres.idAnho.idAnho=:pIdAnho ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
+        q.setParameter("pIdRubro", idRubro);
+        q.setParameter("pIdAnho", idAnho);
 
         List<PreciosRefRubroEmp> lstPre = q.getResultList();
         BigDecimal idEmpTemp = BigDecimal.ZERO;
@@ -1694,7 +1708,7 @@ public class ProveedorEJB {
                 idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
                 emp = new EmpresaPreciosRef();
                 emp.setIdEmpresa(idEmpTemp);
-                emp.setIdDetProceoAdq(idDet);
+                emp.setIdMuestraInteres(precios.getIdMuestraInteres().getIdMuestraInteres());
             } else {
                 if (idEmpTemp.intValue() == precios.getIdEmpresa().getIdEmpresa().intValue()) {
 
@@ -1704,7 +1718,7 @@ public class ProveedorEJB {
                     idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
                     emp = new EmpresaPreciosRef();
                     emp.setIdEmpresa(idEmpTemp);
-                    emp.setIdDetProceoAdq(idDet);
+                    emp.setIdMuestraInteres(precios.getIdMuestraInteres().getIdMuestraInteres());
                 }
 
                 switch (precios.getNoItem()) {
@@ -1752,10 +1766,11 @@ public class ProveedorEJB {
         }
     }
 
-    public void calcularPreRefByNit(BigDecimal idMuestraInteres, String numeroNit) {
-        Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.idEmpresa.numeroNit=:nit and p.estadoEliminacion = 0 and p.idMuestraInteres.idMuestraInteres=:pIdMuestraInteres ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
-        q.setParameter("pIdMuestraInteres", idMuestraInteres);
-        q.setParameter("nit", numeroNit);
+    public void calcularPreRefByNit(BigDecimal idRubro, BigDecimal idAnho, String numeroNit) {
+        Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.idMuestraInteres.idEmpresa.numeroNit=:pNit and p.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and p.idMuestraInteres.idAnho.idAnho=:pIdAnho ORDER BY p.idEmpresa", PreciosRefRubroEmp.class);
+        q.setParameter("pNit", numeroNit);
+        q.setParameter("pIdRubro", idRubro);
+        q.setParameter("pIdAnho", idAnho);
 
         List<PreciosRefRubroEmp> lstPre = q.getResultList();
         BigDecimal idEmpTemp = BigDecimal.ZERO;
@@ -1767,7 +1782,7 @@ public class ProveedorEJB {
                 idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
                 emp = new EmpresaPreciosRef();
                 emp.setIdEmpresa(idEmpTemp);
-                emp.setIdDetProceoAdq(idMuestraInteres);
+                emp.setIdMuestraInteres(precios.getIdMuestraInteres().getIdMuestraInteres());
             } else {
                 if (idEmpTemp.intValue() == precios.getIdEmpresa().getIdEmpresa().intValue()) {
 
@@ -1777,7 +1792,7 @@ public class ProveedorEJB {
                     idEmpTemp = precios.getIdEmpresa().getIdEmpresa();
                     emp = new EmpresaPreciosRef();
                     emp.setIdEmpresa(idEmpTemp);
-                    emp.setIdDetProceoAdq(idMuestraInteres);
+                    emp.setIdMuestraInteres(precios.getIdMuestraInteres().getIdMuestraInteres());
                 }
 
                 switch (precios.getNoItem()) {
@@ -1976,26 +1991,26 @@ public class ProveedorEJB {
     }
 
     public String datosConfirmados(BigDecimal idDetRubro, BigDecimal idEmpresa, String usuario) {
-        DetRubroMuestraInteres det = em.find(DetRubroMuestraInteres.class, idDetRubro);
+        DetRubroMuestraInteres detRubro = em.find(DetRubroMuestraInteres.class, idDetRubro);
 
-        if (det.getAceptacionTerminos() == 0) {
-            det.setFechaModificacion(new Date());
-            det.setDatosVerificados((short) 1);
-            det.setAceptacionTerminos((short) 1);
-            det.setUsuarioModificacion(usuario);
-            em.merge(det);
+        if (detRubro.getAceptacionTerminos() == 0) {
+            detRubro.setFechaModificacion(new Date());
+            detRubro.setDatosVerificados((short) 1);
+            detRubro.setAceptacionTerminos((short) 1);
+            detRubro.setUsuarioModificacion(usuario);
+            em.merge(detRubro);
 
-            calcularNoItems(det.getIdMuestraInteres(), det.getIdEmpresa().getNumeroNit());
-            calcularPreRefByNit(det.getIdMuestraInteres(), det.getIdEmpresa().getNumeroNit());
+            calcularNoItems(detRubro.getIdRubroInteres().getIdRubroInteres(), detRubro.getIdAnho().getIdAnho(), detRubro.getIdEmpresa().getNumeroNit(), detRubro);
+            calcularPreRefByNit(detRubro.getIdRubroInteres().getIdRubroInteres(), detRubro.getIdAnho().getIdAnho(), detRubro.getIdEmpresa().getNumeroNit());
         }
 
-        return getIdGestionByProceso(idEmpresa, det.getIdDetProcesoAdq().getIdDetProcesoAdq());
+        return getIdGestionByProceso(idEmpresa, detRubro.getIdMuestraInteres());
     }
 
-    public String getIdGestionByProceso(BigDecimal idEmpresa, Integer idDetProcesoAdq) {
+    public String getIdGestionByProceso(BigDecimal idEmpresa, BigDecimal idMuestraInteres) {
         StoredProcedureQuery q = em.createNamedStoredProcedureQuery("SP_GET_ID_GESTION");
         q.setParameter("P_ID_EMPRESA", idEmpresa);
-        q.setParameter("P_ID_DET_PROCESO_ADQ", idDetProcesoAdq);
+        q.setParameter("P_ID_MUESTRA_INTERES", idMuestraInteres);
         q.execute();
         return (String) q.getOutputParameterValue(3);
     }

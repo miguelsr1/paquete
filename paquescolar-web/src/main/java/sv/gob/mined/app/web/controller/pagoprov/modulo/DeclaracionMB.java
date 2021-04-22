@@ -82,18 +82,20 @@ public class DeclaracionMB implements Serializable {
                 }
                 capacidadInst = proveedorEJB.findDetProveedor(proceso, empresa, CapaInstPorRubro.class);
                 if (capacidadInst != null) {
-                    detalleProcesoAdq = capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq();
+                    detalleProcesoAdq = JsfUtil.findDetalleByRubroAndAnho(proceso,
+                            capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres(),
+                            capacidadInst.getIdMuestraInteres().getIdAnho().getIdAnho());
                     aceptarCondiciones = (capacidadInst.getIdMuestraInteres().getDatosVerificados() == 1);
                     aceptarDeclaracion = (capacidadInst.getIdMuestraInteres().getAceptacionTerminos() == 1);
 
                     cabecera = MessageFormat.format(UTIL_CORREO.getString("prov.declaracion.cabecera"),
-                            capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getDescripcionRubro(),
+                            capacidadInst.getIdMuestraInteres().getIdRubroInteres().getDescripcionRubro(),
                             anho.getAnho());
                     detalle = MessageFormat.format(UTIL_CORREO.getString("prov.declaracion.detalle"),
-                            capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getDescripcionRubro(),
+                            capacidadInst.getIdMuestraInteres().getIdRubroInteres().getDescripcionRubro(),
                             empresa.getIdPersona().getEmail(),
                             empresa.getDireccionCompleta().concat(", ").concat(empresa.getIdMunicipio().getNombreMunicipio()).concat(", ").concat(empresa.getIdMunicipio().getCodigoDepartamento().getNombreDepartamento()),
-                            capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho());
+                            capacidadInst.getIdMuestraInteres().getIdAnho().getAnho());
                 }
             }
         }
@@ -168,13 +170,13 @@ public class DeclaracionMB implements Serializable {
             param.put("pEscudo", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
             param.put("usuarioInsercion", VarSession.getVariableSessionUsuario());
             param.put("pLugar", lugar);
-            param.put("pRubro", JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
-            param.put("pIdRubro", capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue());
+            param.put("pRubro", JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres()));
+            param.put("pIdRubro", capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres().intValue());
             param.put("pCorreoPersona", capacidadInst.getIdMuestraInteres().getIdEmpresa().getIdPersona().getEmail());
             param.put("pIdGestion", idGestion);
 
             List<OfertaGlobal> lstDatos = reportesEJB.getLstOfertaGlobal(empresa.getNumeroNit(), detalleProcesoAdq.getIdDetProcesoAdq(), detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue());
-            lstDatos.get(0).setRubro(JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
+            lstDatos.get(0).setRubro(JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres()));
             if (lstDatos.get(0).getDepartamento().contains("TODO EL PAIS")) {
                 param.put("productor", Boolean.TRUE);
             } else {
@@ -223,7 +225,7 @@ public class DeclaracionMB implements Serializable {
         bcc.add("rafael.arias@mined.gob.sv");
         to.add(empresa.getIdPersona().getEmail());
 
-        titulo = MessageFormat.format(UTIL_CORREO.getString("prov_notif_inscripcion.email.titulo"), capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho());
+        titulo = MessageFormat.format(UTIL_CORREO.getString("prov_notif_inscripcion.email.titulo"), capacidadInst.getIdMuestraInteres().getIdAnho().getAnho());
         mensaje = MessageFormat.format(UTIL_CORREO.getString("prov_notif_inscripcion.email.mensaje"),
                 sdfHora.format(fecha).split(":")[0], sdfHora.format(fecha).split(":")[1],
                 Herramientas.getNumDia(fecha), Herramientas.getNomMes(fecha), Herramientas.getNumAnyo(fecha),

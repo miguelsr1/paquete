@@ -186,7 +186,9 @@ public class PreciosReferenciaMB implements Serializable {
                         && capacidadInst.getIdMuestraInteres().getDatosVerificados() == 1) {
                     datosVerificados = true;
                 }
-                detalleProcesoAdq = capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq();
+                detalleProcesoAdq = JsfUtil.findDetalleByRubroAndAnho(proceso,
+                            capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres(),
+                            capacidadInst.getIdMuestraInteres().getIdAnho().getIdAnho());
 
                 cargarPrecioRef();
                 cargarPreciosMaximos();
@@ -999,10 +1001,8 @@ public class PreciosReferenciaMB implements Serializable {
     }
 
     private boolean isProductoIsValid(BigDecimal idProducto) {
-        for (CatalogoProducto producto : lstItem) {
-            if (producto.getIdProducto().intValue() == idProducto.intValue()) {
-                return true;
-            }
+        if (lstItem.stream().anyMatch(producto -> (producto.getIdProducto().intValue() == idProducto.intValue()))) {
+            return true;
         }
         JsfUtil.mensajeError("El proveedore NO ESTA CALIFICADO para ofertar este ITEM");
         return false;

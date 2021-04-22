@@ -45,7 +45,7 @@ import org.eclipse.persistence.annotations.StoredProcedureParameter;
         returnsResultSet = false,
         parameters = {
             @StoredProcedureParameter(mode =  ParameterMode.IN, type = BigDecimal.class, name = "P_ID_EMPRESA", queryParameter = "P_ID_EMPRESA"),
-            @StoredProcedureParameter(mode =  ParameterMode.IN, type = Integer.class, name = "P_ID_DET_PROCESO_ADQ", queryParameter = "P_ID_DET_PROCESO_ADQ"),
+            @StoredProcedureParameter(mode =  ParameterMode.IN, type = Integer.class, name = "P_ID_MUESTRA_INTERES", queryParameter = "P_ID_MUESTRA_INTERES"),
             @StoredProcedureParameter(mode =  ParameterMode.OUT, type = String.class, name = "P_ID_GESTION", queryParameter = "P_ID_GESTION")
         }
 )

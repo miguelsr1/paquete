@@ -63,8 +63,8 @@ public class EmpresaPreciosRef implements Serializable {
     private BigDecimal item12;
     @Column(name = "ITEM_13")
     private BigDecimal item13;
-    @Column(name = "ID_DET_PROCEO_ADQ")
-    private Integer idDetProceoAdq;
+    @Column(name = "ID_MUESTRA_INTERES")
+    private BigDecimal idMuestraInteres;
 
     public EmpresaPreciosRef() {
     }
@@ -193,12 +193,12 @@ public class EmpresaPreciosRef implements Serializable {
         this.item13 = item13;
     }
 
-    public Integer getIdDetProceoAdq() {
-        return idDetProceoAdq;
+    public BigDecimal getIdMuestraInteres() {
+        return idMuestraInteres;
     }
 
-    public void setIdDetProceoAdq(Integer idDetProceoAdq) {
-        this.idDetProceoAdq = idDetProceoAdq;
+    public void setIdMuestraInteres(BigDecimal idMuestraInteres) {
+        this.idMuestraInteres = idMuestraInteres;
     }
 
     @Override
@@ -215,15 +215,12 @@ public class EmpresaPreciosRef implements Serializable {
             return false;
         }
         EmpresaPreciosRef other = (EmpresaPreciosRef) object;
-        if ((this.idEmpresaPreRef == null && other.idEmpresaPreRef != null) || (this.idEmpresaPreRef != null && !this.idEmpresaPreRef.equals(other.idEmpresaPreRef))) {
-            return false;
-        }
-        return true;
+        return !((this.idEmpresaPreRef == null && other.idEmpresaPreRef != null) || (this.idEmpresaPreRef != null && !this.idEmpresaPreRef.equals(other.idEmpresaPreRef)));
     }
 
     @Override
     public String toString() {
         return "sv.gob.mined.paquescolar.model.EmpresaPreciosRef[ idEmpresaPreRef=" + idEmpresaPreRef + " ]";
     }
-    
+
 }

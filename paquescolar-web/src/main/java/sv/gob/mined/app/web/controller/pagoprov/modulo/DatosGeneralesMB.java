@@ -174,7 +174,7 @@ public class DatosGeneralesMB implements Serializable {
                     idMunicipioLocal = empresa.getIdMunicipio().getIdMunicipio();
                     codigoDepartamentoLocal = empresa.getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
 
-                    rubroUniforme = (departamentoCalif.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
+                    rubroUniforme = (departamentoCalif.getIdMuestraInteres().getIdRubroInteres().getIdRubroUniforme().intValue() == 1);
 
                     if (rubroUniforme) {
                         inscritoIva = (empresa.getEsContribuyente() == 1);

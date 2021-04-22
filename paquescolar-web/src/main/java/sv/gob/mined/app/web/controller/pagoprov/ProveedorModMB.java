@@ -42,7 +42,6 @@ import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DualListModel;
 import sv.gob.mined.app.web.controller.ParametrosMB;
-import sv.gob.mined.app.web.controller.contratacion.ContratosOrdenesComprasController;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.Reportes;
@@ -83,7 +82,7 @@ import sv.gob.mined.paquescolar.model.pojos.proveedor.MunicipioDto;
 public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable {
 
     private int idRow;
-    
+
     //private Boolean deshabiliar = true;
     private Boolean showFoto = true;
     private Boolean showCapacidadAdjudicada = false;
@@ -182,8 +181,6 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
-
-    
     public List<DetalleItemDto> getLstPreciosMaximos() {
         return lstPreciosMaximos;
     }
@@ -276,13 +273,6 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
         this.showFoto = showFoto;
     }
 
-    
-
-    
-
-    
-
-    
     public List<Departamento> getLstDepartamentos() {
         return datosGeograficosEJB.getLstDepartamentos();
     }
@@ -381,7 +371,6 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
         this.municipio = municipio;
     }
 
-    
     public String getNumeroNit() {
         return numeroNit;
     }
@@ -424,14 +413,16 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
             if (capacidadInst == null) {
                 JsfUtil.mensajeAlerta("No se han cargado los datos de este proveedor para el proceso de contratación del año " + proceso.getIdAnho().getAnho());
             } else {
-                detalleProcesoAdq = capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq();
+                detalleProcesoAdq = JsfUtil.findDetalleByRubroAndAnho(proceso,
+                        capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres(),
+                        capacidadInst.getIdMuestraInteres().getIdAnho().getIdAnho());
                 departamentoCalif = proveedorEJB.findDetProveedor(proceso, empresa, CapaDistribucionAcre.class);
 
                 if (departamentoCalif == null || departamentoCalif.getCodigoDepartamento() == null) {
                     JsfUtil.mensajeAlerta("Este proveedor no posee departamento de calificación " + proceso.getIdAnho().getAnho());
                 } else {
                     cargarPreciosMaximos();
-                            
+
                     codigoDepartamentoCalificado = departamentoCalif.getCodigoDepartamento().getCodigoDepartamento();
 
                     if (empresa.getIdPersona().getUrlImagen() == null) {
@@ -478,7 +469,7 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
             det.setConsolidadoEspTec("Pantalon, PARVULARIA");
             det.setPrecioUnitario(new BigDecimal("6.00"));
             lstPreciosMaximos.add(det);
-            
+
             det = new DetalleItemDto();
             det.setNoItem("6");
             det.setConsolidadoEspTec("Blusas, BASICA(I, II Y III)");
@@ -502,7 +493,7 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
             det.setConsolidadoEspTec("Pantalon, BASICA(I, II Y III)");
             det.setPrecioUnitario(new BigDecimal("6.00"));
             lstPreciosMaximos.add(det);
-            
+
             det = new DetalleItemDto();
             det.setNoItem("10");
             det.setConsolidadoEspTec("Blusas, BACHILLERATO");
@@ -679,7 +670,7 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
 
     private void cargarPrecioRef() {
         if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
-            rubrosAmostrarInteres = capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq();
+            rubrosAmostrarInteres = capacidadInst.getIdMuestraInteres().getIdRubroInteres();
             lstItem = proveedorEJB.findItemProveedor(empresa, detalleProcesoAdq);
             lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), getDetalleProcesoAdq());
             preMaxRefPar = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(BigDecimal.ONE, detalleProcesoAdq);
@@ -706,10 +697,6 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
         PrimeFaces.current().ajax().update("frmPrincipal");
     }
 
-    
-
-    
-
     public void guardarPreciosRef() {
         if (detalleProcesoAdq.getIdDetProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de contratación");
@@ -724,9 +711,9 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
             }
 
             if (preciosValidos) {
-                for (PreciosRefRubroEmp precio : lstPreciosReferencia) {
+                lstPreciosReferencia.forEach(precio -> {
                     proveedorEJB.guardar(precio);
-                }
+                });
                 lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), getDetalleProcesoAdq());
                 JsfUtil.mensajeUpdate();
             } else {
@@ -1200,10 +1187,8 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
     }
 
     private boolean isProductoIsValid(BigDecimal idProducto) {
-        for (CatalogoProducto producto : lstItem) {
-            if (producto.getIdProducto().intValue() == idProducto.intValue()) {
-                return true;
-            }
+        if (lstItem.stream().anyMatch(producto -> (producto.getIdProducto().intValue() == idProducto.intValue()))) {
+            return true;
         }
         JsfUtil.mensajeError("El proveedore NO ESTA CALIFICADO para ofertar este ITEM");
         return false;
@@ -1238,7 +1223,7 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
                 current.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
                 current.setFechaInsercion(new Date());
                 current.setIdEmpresa(empresa);
-                current.setIdDetProcesoAdq(detalleProcesoAdq);
+                current.setIdMuestraInteres(capacidadInst.getIdMuestraInteres());
                 lstPreciosReferencia.add(current);
             } else {
                 JsfUtil.mensajeInformacion("Debe de seleccionar un proceso de contratación.");
@@ -1271,11 +1256,11 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
             param.put("pEscudo", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
             param.put("usuarioInsercion", VarSession.getVariableSessionUsuario());
             param.put("pLugar", lugar + ", " + sdf.format(new Date()));
-            param.put("pRubro", JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
-            param.put("pIdRubro", capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue());
+            param.put("pRubro", JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres()));
+            param.put("pIdRubro", capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres().intValue());
 
             List<OfertaGlobal> lstDatos = reportesEJB.getLstOfertaGlobal(empresa.getNumeroNit(), detalleProcesoAdq.getIdDetProcesoAdq(), detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue());
-            lstDatos.get(0).setRubro(JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres()));
+            lstDatos.get(0).setRubro(JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres()));
             if (lstDatos.get(0).getDepartamento().contains("TODO EL PAIS")) {
                 param.put("productor", Boolean.TRUE);
             } else {
@@ -1348,7 +1333,9 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
                 cargarDetalleCalificacion(true);
 
                 if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
-                    detalleProcesoAdq = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres());
+                    detalleProcesoAdq = JsfUtil.findDetalleByRubroAndAnho(getRecuperarProceso().getProcesoAdquisicion(),
+                            capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres(),
+                            capacidadInst.getIdMuestraInteres().getIdAnho().getIdAnho());
 
                     lstResumenAdj = proveedorEJB.resumenAdjProveedor(empresa.getNumeroNit(), detalleProcesoAdq.getIdDetProcesoAdq());
                     if (lstResumenAdj.isEmpty()) {
@@ -1356,10 +1343,10 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
                     } else {
                         totalItems = BigDecimal.ZERO;
                         totalMonto = BigDecimal.ZERO;
-                        for (DetalleAdjudicacionEmpDto resumen : lstResumenAdj) {
+                        lstResumenAdj.forEach(resumen -> {
                             totalItems = totalItems.add(resumen.getCantidad());
                             totalMonto = totalMonto.add(resumen.getMonto());
-                        }
+                        });
                         lstDetalleAdj = proveedorEJB.detalleAdjProveedor(empresa.getNumeroNit(), detalleProcesoAdq.getIdDetProcesoAdq());
                     }
                 }
@@ -1423,19 +1410,14 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
 
     public String getNombreRubroProveedor() {
         if (capacidadInst != null && capacidadInst.getIdMuestraInteres() != null) {
-            return JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres());
+            return JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres());
         } else {
             return "";
         }
     }
 
-    public void calcularNoItems() {
-        if (getRecuperarProceso().getProcesoAdquisicion() != null) {
-            proveedorEJB.calcularNoItems(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq());
-        }
-    }
 
-    public void calcularNoItemByNit() {
+    /*public void calcularNoItemByNit() {
         if (getRecuperarProceso().getProcesoAdquisicion() != null) {
             proveedorEJB.calcularNoItems(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq(), numeroNit);
         }
@@ -1445,7 +1427,7 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
         if (getRecuperarProceso().getProcesoAdquisicion() != null) {
             proveedorEJB.calcularPreRef(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq());
         }
-    }
+    }*/
 
     public void imprimirDeclaraciones() {
         try {
@@ -1470,6 +1452,5 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
             Logger.getLogger(ProveedorController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
+
 }

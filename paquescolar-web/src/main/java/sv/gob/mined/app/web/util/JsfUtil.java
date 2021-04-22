@@ -298,6 +298,16 @@ public class JsfUtil {
         }
     }
 
+    public static DetalleProcesoAdq findDetalleByRubroAndAnho(ProcesoAdquisicion procesoAdquisicion, BigDecimal idRubro, BigDecimal idAnho) {
+        Optional<DetalleProcesoAdq> detalle = procesoAdquisicion.getDetalleProcesoAdqList().stream().parallel().
+                filter(det -> det.getIdRubroAdq().getIdRubroInteres().compareTo(idRubro) == 0 && det.getIdProcesoAdq().getIdAnho().getIdAnho().compareTo(idAnho) == 0).findAny();
+        if (detalle.isPresent()) {
+            return detalle.get();
+        } else {
+            return null;
+        }
+    }
+    
     public static DetalleProcesoAdq findDetalle(ProcesoAdquisicion procesoAdquisicion, BigDecimal idRubro) {
         Optional<DetalleProcesoAdq> detalle = procesoAdquisicion.getDetalleProcesoAdqList().stream().parallel().
                 filter(det -> det.getIdRubroAdq().getIdRubroInteres().compareTo(idRubro) == 0).findAny();
