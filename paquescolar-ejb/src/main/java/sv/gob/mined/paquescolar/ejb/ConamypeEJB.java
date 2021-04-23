@@ -467,14 +467,16 @@ public class ConamypeEJB {
      * Web service operation
      *
      * @param numeroNit
-     * @param idDet
+     * @param idRubro
+     * @param idAnho
      * @param capacidad
      */
     @WebMethod(operationName = "updCapacidadByNitAndIdDet")
-    public void updCapacidadByNitAndIdDet(String numeroNit, Integer idDet, BigInteger capacidad) {
-        Query q = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa.numeroNit=:nit and c.idMuestraInteres.idDetProcesoAdq.idDetProcesoAdq =:idDet and c.idMuestraInteres.estadoEliminacion=0", CapaInstPorRubro.class);
+    public void updCapacidadByNitAndIdDet(String numeroNit, BigDecimal idRubro, BigDecimal idAnho, BigInteger capacidad) {
+        Query q = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa.numeroNit=:nit and c.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and c.idMuestraInteres.idAnho.idAnho=:pIdAnho and c.idMuestraInteres.estadoEliminacion=0", CapaInstPorRubro.class);
         q.setParameter("nit", numeroNit);
-        q.setParameter("idDet", idDet);
+        q.setParameter("pIdRubro", idRubro);
+        q.setParameter("pIdAnho", idAnho);
         if (q.getResultList().isEmpty()) {
             Logger.getLogger(ProveedorEJB.class.getName()).log(Level.INFO, "No se encontro la empresa con numero de nit: {0}", numeroNit);
         } else {

@@ -672,7 +672,9 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
         if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
             rubrosAmostrarInteres = capacidadInst.getIdMuestraInteres().getIdRubroInteres();
             lstItem = proveedorEJB.findItemProveedor(empresa, detalleProcesoAdq);
-            lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), getDetalleProcesoAdq());
+            lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), 
+                    getDetalleProcesoAdq().getIdRubroAdq().getIdRubroInteres(),
+                    getDetalleProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
             preMaxRefPar = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(BigDecimal.ONE, detalleProcesoAdq);
             preMaxRefCi = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(3), detalleProcesoAdq);
             preMaxRefCii = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(4), detalleProcesoAdq);
@@ -714,7 +716,9 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
                 lstPreciosReferencia.forEach(precio -> {
                     proveedorEJB.guardar(precio);
                 });
-                lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), getDetalleProcesoAdq());
+                lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), 
+                        getDetalleProcesoAdq().getIdRubroAdq().getIdRubroInteres(),
+                        getDetalleProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
                 JsfUtil.mensajeUpdate();
             } else {
                 JsfUtil.mensajeInformacion("Los precios de referencia no han sido guardados debido a que existen datos incompletos o erroneos.");

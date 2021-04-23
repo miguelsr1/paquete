@@ -145,7 +145,9 @@ public class PreciosReferenciaMB implements Serializable {
                     precio.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
                     proveedorEJB.guardar(precio);
                 });
-                lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), getDetalleProcesoAdq());
+                lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), 
+                        getDetalleProcesoAdq().getIdRubroAdq().getIdRubroInteres(),
+                        getDetalleProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
 
                 msj = "Actualización exitosa";
 
@@ -218,7 +220,9 @@ public class PreciosReferenciaMB implements Serializable {
     private void cargarPrecioRef() {
         if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
             lstItem = proveedorEJB.findItemProveedor(empresa, detalleProcesoAdq);
-            lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), getDetalleProcesoAdq());
+            lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), 
+                    getDetalleProcesoAdq().getIdRubroAdq().getIdRubroInteres(),
+                    getDetalleProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
 
             switch (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue()) {
                 case 9:

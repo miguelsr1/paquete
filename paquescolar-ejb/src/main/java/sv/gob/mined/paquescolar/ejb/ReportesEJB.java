@@ -92,6 +92,7 @@ public class ReportesEJB {
 
     public List<OfertaGlobal> getLstOfertaGlobal(String nit, Integer idDetProcesoAdq, int idRubro) {
         PreciosRefRubroEmp preTem;
+        DetalleProcesoAdq detalleProcesoAdq = em.find(DetalleProcesoAdq.class, idDetProcesoAdq);
         List<OfertaGlobal> lstRpt;
         Query q = em.createNamedQuery("DatosProveDto.ofertaGlobal", OfertaGlobal.class);
         q.setParameter(1, nit);
@@ -99,7 +100,7 @@ public class ReportesEJB {
 
         lstRpt = q.getResultList();
 
-        lstRpt.get(0).setAnho(em.find(DetalleProcesoAdq.class, idDetProcesoAdq).getIdProcesoAdq().getIdAnho().getAnho());
+        lstRpt.get(0).setAnho(detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho());
 
         q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion=0 and p.idEmpresa.numeroNit=:nit and p.idDetProcesoAdq.idDetProcesoAdq=:idDetProcesoAdq AND p.idProducto.idProducto not in (1) ORDER BY  FUNC('TO_NUMBER', p.noItem)", PreciosRefRubroEmp.class);
         q.setParameter("nit", nit);
@@ -280,9 +281,10 @@ public class ReportesEJB {
                 break;
         }
 
-        q = em.createQuery("SELECT d FROM DisMunicipioInteres d WHERE d.estadoEliminacion=0 and d.idCapaDistribucion.idMuestraInteres.idEmpresa.numeroNit=:nit and d.idCapaDistribucion.idMuestraInteres.idDetProcesoAdq.idDetProcesoAdq=:idDetProcesoAdq ORDER BY d.idMunicipio.codigoDepartamento.codigoDepartamento, d.idMunicipio.codigoMunicipio ASC", DisMunicipioInteres.class);
+        q = em.createQuery("SELECT d FROM DisMunicipioInteres d WHERE d.estadoEliminacion=0 and d.idCapaDistribucion.idMuestraInteres.idEmpresa.numeroNit=:nit and d.idCapaDistribucion.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and d.idCapaDistribucion.idMuestraInteres.idAnho.idAnho=:pIdAnho ORDER BY d.idMunicipio.codigoDepartamento.codigoDepartamento, d.idMunicipio.codigoMunicipio ASC", DisMunicipioInteres.class);
         q.setParameter("nit", nit);
-        q.setParameter("idDetProcesoAdq", idDetProcesoAdq);
+        q.setParameter("pIdRubro", detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres());
+        q.setParameter("pIdAnho", detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho());
         List<DisMunicipioInteres> lstMunicipios = q.getResultList();
 
         for (DisMunicipioInteres disMunicipioInteres : lstMunicipios) {

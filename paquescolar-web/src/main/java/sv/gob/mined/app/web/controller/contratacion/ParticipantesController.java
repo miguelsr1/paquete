@@ -445,7 +445,9 @@ public class ParticipantesController implements Serializable {
                     switch (idResolucion) {
                         case 1://digitacion
                         case 3://revertida
-                            lstPreciosEmp = proveedorEJB.findPreciosRefRubroEmpRubro(participante.getIdEmpresa(), detalleProceso);
+                            lstPreciosEmp = proveedorEJB.findPreciosRefRubroEmpRubro(participante.getIdEmpresa(), 
+                                    detalleProceso.getIdRubroAdq().getIdRubroInteres(),
+                                    detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho());
                             lstNiveles = entidadEducativaEJB.getLstNivelesConMatriculaReportadaByIdProcesoAdqAndCodigoEntidad(detalleProceso.getIdProcesoAdq().getIdProcesoAdq(), participante.getIdOferta().getCodigoEntidad().getCodigoEntidad());
 
                             //en el momento de creación del detalle de oferta, se agregaran todos los items calificados del proveedor
@@ -688,8 +690,8 @@ public class ParticipantesController implements Serializable {
             PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":descripcionItem");
             PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":precioUnitario");
             PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":subTotal");
-            PrimeFaces.current().ajax().update(nombreTabla + ":" + (numRow - 1) + ":totalCantidad");
-            PrimeFaces.current().ajax().update(nombreTabla + ":" + (numRow - 1) + ":total");
+            PrimeFaces.current().ajax().update(nombreTabla + ":" + (numRow) + ":totalCantidad");
+            PrimeFaces.current().ajax().update(nombreTabla + ":" + (numRow) + ":total");
             if (!msjError.isEmpty()) {
                 JsfUtil.mensajeAlerta(msjError);
             }

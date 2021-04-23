@@ -677,7 +677,9 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
             rubrosAmostrarInteres = capacidadInst.getIdMuestraInteres().getIdRubroInteres();
             lstItem = proveedorEJB.findItemProveedor(empresa, detalleProcesoAdq);
-            lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), getDetalleProcesoAdq());
+            lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), 
+                    getDetalleProcesoAdq().getIdRubroAdq().getIdRubroInteres(),
+                    getDetalleProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
             switch (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue()) {
                 case 9://año 2021
                     if (detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue() != 1) { //utiles y zapatos
@@ -809,7 +811,9 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                 lstPreciosReferencia.forEach((precio) -> {
                     proveedorEJB.guardar(precio);
                 });
-                lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), getDetalleProcesoAdq());
+                lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), 
+                        getDetalleProcesoAdq().getIdRubroAdq().getIdRubroInteres(),
+                        getDetalleProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
 
                 msj = "Actualización exitosa";
 

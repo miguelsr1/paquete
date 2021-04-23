@@ -193,11 +193,12 @@ public class SaldosEJB {
 
             //no devuelve nada cuando no hay registros
             Query query;
-            if (res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho().equals("2018")) {
-                query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idAnho=:idAnho and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
+            //if (res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho().equals("2018")) {
+                query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq.idProcesoAdq.idAnho=:pIdAnho and c.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
                 query.setParameter("idEmpresa", res.getIdParticipante().getIdEmpresa());
-                query.setParameter("idAnho", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho());
-            } else if(res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getDescripcionProcesoAdq().contains("SOBREDEMANDA")){
+                query.setParameter("pIdAnho", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho());
+                query.setParameter("pIdRubro", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres());
+            /*} else if(res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getDescripcionProcesoAdq().contains("SOBREDEMANDA")){
                 query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq=:idDetProcesoAdq and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
                 query.setParameter("idEmpresa", res.getIdParticipante().getIdEmpresa());
                 query.setParameter("idDetProcesoAdq", getDetalleProcesoDotacion(res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getPadreIdProcesoAdq(), res.getIdParticipante().getIdOferta().getIdDetProcesoAdq()));
@@ -205,7 +206,7 @@ public class SaldosEJB {
                 query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq=:idDetProcesoAdq and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
                 query.setParameter("idEmpresa", res.getIdParticipante().getIdEmpresa());
                 query.setParameter("idDetProcesoAdq", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq());
-            }
+            }*/
             List<CapaInstPorRubro> lst = query.getResultList();
 
             if (!lst.isEmpty()) {
@@ -249,14 +250,14 @@ public class SaldosEJB {
         }
     }
     
-    private DetalleProcesoAdq getDetalleProcesoDotacion(ProcesoAdquisicion procesoPadre, DetalleProcesoAdq detalleSobredemanda){
+    /*private DetalleProcesoAdq getDetalleProcesoDotacion(ProcesoAdquisicion procesoPadre, DetalleProcesoAdq detalleSobredemanda){
         for (DetalleProcesoAdq detalleProcesoAdq : procesoPadre.getDetalleProcesoAdqList()) {
             if(detalleSobredemanda.getIdRubroAdq().getIdRubroInteres().intValue() == detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()){
                 return detalleProcesoAdq;
             }
         }
         return null;
-    }
+    }*/
 
     private BigDecimal getAdjParticipante(Participantes par) {
         List lst = getAdjudicacionParticipante(par);

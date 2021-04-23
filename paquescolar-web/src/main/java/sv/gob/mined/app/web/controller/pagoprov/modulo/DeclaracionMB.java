@@ -135,7 +135,7 @@ public class DeclaracionMB implements Serializable {
             if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 8) { // anho mayor de 2020
                 //validación de ingreso de todos los item para el rubro de uniforme
                 if (detalleProcesoAdq.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
-                    List<PreciosRefRubroEmp> lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), detalleProcesoAdq);
+                    List<PreciosRefRubroEmp> lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres(), detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho());
                     if (lstPreciosReferencia.size() < 12) {
                         todoBien = false;
                     }
