@@ -24,6 +24,7 @@ import sv.gob.mined.paquescolar.model.Canton;
 import sv.gob.mined.paquescolar.model.CapaDistribucionAcre;
 import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.Departamento;
+import sv.gob.mined.paquescolar.model.DetRubroMuestraInteres;
 import sv.gob.mined.paquescolar.model.Empresa;
 import sv.gob.mined.paquescolar.model.Municipio;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
@@ -147,7 +148,8 @@ public class DatosGeneralesMB implements Serializable {
             if (proceso.getPadreIdProcesoAdq() != null) {
                 proceso = proceso.getPadreIdProcesoAdq();
             }
-            capacidadInst = proveedorEJB.findDetProveedor(proceso, empresa, CapaInstPorRubro.class);
+            DetRubroMuestraInteres detRubro = proveedorEJB.findDetRubroByAnhoAndRubro(anho.getIdAnho(), empresa.getIdEmpresa());
+            capacidadInst = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), anho.getIdAnho(), empresa, CapaInstPorRubro.class);
             if (capacidadInst == null) {
                 JsfUtil.mensajeAlerta("No se han cargado los datos de este proveedor para el proceso de contratación del año " + proceso.getIdAnho().getAnho());
             } else {
@@ -156,7 +158,7 @@ public class DatosGeneralesMB implements Serializable {
                     datosVerificados = true;
                 }
 
-                departamentoCalif = proveedorEJB.findDetProveedor(proceso, empresa, CapaDistribucionAcre.class);
+                departamentoCalif = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), anho.getIdAnho(), empresa, CapaDistribucionAcre.class);
 
                 if (departamentoCalif == null || departamentoCalif.getCodigoDepartamento() == null) {
                     JsfUtil.mensajeAlerta("Este proveedor no posee departamento de calificación " + proceso.getIdAnho().getAnho());

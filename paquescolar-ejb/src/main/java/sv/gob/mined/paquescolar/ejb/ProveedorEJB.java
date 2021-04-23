@@ -349,9 +349,10 @@ public class ProveedorEJB {
         return q.getResultList();
     }
 
-    public DetRubroMuestraInteres findRubroByProveedor(BigDecimal idEmpresa) {
-        Query q = em.createQuery("SELECT d FROM DetRubroMuestraInteres d WHERE d.idEmpresa.idEmpresa=:idEmpresa and d.estadoEliminacion=0", DetRubroMuestraInteres.class);
+    public DetRubroMuestraInteres findDetRubroByAnhoAndRubro(BigDecimal idAnho, BigDecimal idEmpresa) {
+        Query q = em.createQuery("SELECT d FROM DetRubroMuestraInteres d WHERE d.idEmpresa.idEmpresa=:idEmpresa and d.idAnho.idAnho=:pIdAnho and d.estadoEliminacion=0", DetRubroMuestraInteres.class);
         q.setParameter("idEmpresa", idEmpresa);
+        q.setParameter("pIdAnho", idAnho);
         if (q.getResultList().isEmpty()) {
             return null;
         } else {

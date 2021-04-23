@@ -52,6 +52,7 @@ import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.CatalogoProducto;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.Departamento;
+import sv.gob.mined.paquescolar.model.DetRubroMuestraInteres;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.DisMunicipioInteres;
 import sv.gob.mined.paquescolar.model.Empresa;
@@ -98,6 +99,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     private String codigoDepartamentoLocal = "";
     private BigDecimal idMunicipioLocal = BigDecimal.ZERO;
 
+    private BigDecimal idAnho = BigDecimal.ZERO;
     private BigDecimal rubro = BigDecimal.ZERO;
     private BigDecimal idMunicipio = BigDecimal.ZERO;
     private BigDecimal totalItems = BigDecimal.ZERO;
@@ -561,20 +563,23 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     private void cargarDetalleCalificacion() {
         ProcesoAdquisicion proceso = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getProceso();
+        idAnho = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getAnho().getIdAnho();
         if (proceso == null || proceso.getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe seleccionar un proceso de contratación");
         } else {
             if (proceso.getPadreIdProcesoAdq() != null) {
                 proceso = proceso.getPadreIdProcesoAdq();
             }
-            capacidadInst = proveedorEJB.findDetProveedor(proceso, empresa, CapaInstPorRubro.class);
+            DetRubroMuestraInteres detRubro = proveedorEJB.findDetRubroByAnhoAndRubro(idAnho, empresa.getIdEmpresa());
+            capacidadInst = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), idAnho, empresa, CapaInstPorRubro.class);
             if (capacidadInst == null) {
                 JsfUtil.mensajeAlerta("No se han cargado los datos de este proveedor para el proceso de contratación del año " + proceso.getIdAnho().getAnho());
             } else {
                 detalleProcesoAdq = JsfUtil.findDetalleByRubroAndAnho(proceso,
                         capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres(),
                         capacidadInst.getIdMuestraInteres().getIdAnho().getIdAnho());
-                departamentoCalif = proveedorEJB.findDetProveedor(proceso, empresa, CapaDistribucionAcre.class);
+                departamentoCalif = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), idAnho, empresa, CapaDistribucionAcre.class);
                 /**
                  * Fecha: 30/08/2018 Comentario: Adición de validación de
                  * departamento calificado para proveedor
@@ -677,7 +682,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
             rubrosAmostrarInteres = capacidadInst.getIdMuestraInteres().getIdRubroInteres();
             lstItem = proveedorEJB.findItemProveedor(empresa, detalleProcesoAdq);
-            lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), 
+            lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(),
                     getDetalleProcesoAdq().getIdRubroAdq().getIdRubroInteres(),
                     getDetalleProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
             switch (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue()) {
@@ -811,7 +816,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                 lstPreciosReferencia.forEach((precio) -> {
                     proveedorEJB.guardar(precio);
                 });
-                lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), 
+                lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(),
                         getDetalleProcesoAdq().getIdRubroAdq().getIdRubroInteres(),
                         getDetalleProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
 

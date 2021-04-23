@@ -35,6 +35,7 @@ import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
 import sv.gob.mined.paquescolar.model.Anho;
 import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
+import sv.gob.mined.paquescolar.model.DetRubroMuestraInteres;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.Empresa;
 import sv.gob.mined.paquescolar.model.PreciosRefRubroEmp;
@@ -80,7 +81,8 @@ public class DeclaracionMB implements Serializable {
                 if (proceso.getPadreIdProcesoAdq() != null) {
                     proceso = proceso.getPadreIdProcesoAdq();
                 }
-                capacidadInst = proveedorEJB.findDetProveedor(proceso, empresa, CapaInstPorRubro.class);
+                DetRubroMuestraInteres detRubro = proveedorEJB.findDetRubroByAnhoAndRubro(anho.getIdAnho(), empresa.getIdEmpresa());
+                capacidadInst = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), anho.getIdAnho(), empresa, CapaInstPorRubro.class);
                 if (capacidadInst != null) {
                     detalleProcesoAdq = JsfUtil.findDetalleByRubroAndAnho(proceso,
                             capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres(),

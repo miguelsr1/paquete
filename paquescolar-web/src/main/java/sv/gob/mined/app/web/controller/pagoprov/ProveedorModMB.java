@@ -59,6 +59,7 @@ import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.CatalogoProducto;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.Departamento;
+import sv.gob.mined.paquescolar.model.DetRubroMuestraInteres;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.Empresa;
 import sv.gob.mined.paquescolar.model.EntidadFinanciera;
@@ -101,6 +102,7 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
     private String url;
     private String msjError = "";
     private String codigoDepartamento = "";
+    private BigDecimal idAnho = BigDecimal.ZERO;
     private BigDecimal rubro = BigDecimal.ZERO;
     private BigDecimal idMunicipio = BigDecimal.ZERO;
     private BigDecimal totalItems = BigDecimal.ZERO;
@@ -403,20 +405,24 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
     private void cargarDetalleCalificacion(Boolean inicio) {
         ProcesoAdquisicion proceso = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getProceso();
+
+        idAnho = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getAnho().getIdAnho();
         if (proceso == null || proceso.getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe seleccionar un proceso de contratación");
         } else {
             if (proceso.getPadreIdProcesoAdq() != null) {
                 proceso = proceso.getPadreIdProcesoAdq();
             }
-            capacidadInst = proveedorEJB.findDetProveedor(proceso, empresa, CapaInstPorRubro.class);
+            DetRubroMuestraInteres detRubro = proveedorEJB.findDetRubroByAnhoAndRubro(idAnho, empresa.getIdEmpresa());
+            capacidadInst = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), idAnho, empresa, CapaInstPorRubro.class);
             if (capacidadInst == null) {
                 JsfUtil.mensajeAlerta("No se han cargado los datos de este proveedor para el proceso de contratación del año " + proceso.getIdAnho().getAnho());
             } else {
                 detalleProcesoAdq = JsfUtil.findDetalleByRubroAndAnho(proceso,
                         capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres(),
                         capacidadInst.getIdMuestraInteres().getIdAnho().getIdAnho());
-                departamentoCalif = proveedorEJB.findDetProveedor(proceso, empresa, CapaDistribucionAcre.class);
+                departamentoCalif = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), idAnho, empresa, CapaDistribucionAcre.class);
 
                 if (departamentoCalif == null || departamentoCalif.getCodigoDepartamento() == null) {
                     JsfUtil.mensajeAlerta("Este proveedor no posee departamento de calificación " + proceso.getIdAnho().getAnho());
@@ -672,7 +678,7 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
         if (capacidadInst != null && capacidadInst.getIdCapInstRubro() != null) {
             rubrosAmostrarInteres = capacidadInst.getIdMuestraInteres().getIdRubroInteres();
             lstItem = proveedorEJB.findItemProveedor(empresa, detalleProcesoAdq);
-            lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), 
+            lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(),
                     getDetalleProcesoAdq().getIdRubroAdq().getIdRubroInteres(),
                     getDetalleProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
             preMaxRefPar = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(BigDecimal.ONE, detalleProcesoAdq);
@@ -716,7 +722,7 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
                 lstPreciosReferencia.forEach(precio -> {
                     proveedorEJB.guardar(precio);
                 });
-                lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(), 
+                lstPreciosReferencia = proveedorEJB.findPreciosRefRubroEmpRubro(getEmpresa(),
                         getDetalleProcesoAdq().getIdRubroAdq().getIdRubroInteres(),
                         getDetalleProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
                 JsfUtil.mensajeUpdate();
@@ -1432,7 +1438,6 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
             proveedorEJB.calcularPreRef(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq());
         }
     }*/
-
     public void imprimirDeclaraciones() {
         try {
             String nombreRpt;

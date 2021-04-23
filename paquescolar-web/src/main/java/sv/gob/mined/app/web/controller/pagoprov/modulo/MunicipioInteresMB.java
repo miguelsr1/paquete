@@ -23,6 +23,7 @@ import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.model.Anho;
 import sv.gob.mined.paquescolar.model.CapaDistribucionAcre;
 import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
+import sv.gob.mined.paquescolar.model.DetRubroMuestraInteres;
 import sv.gob.mined.paquescolar.model.DisMunicipioInteres;
 import sv.gob.mined.paquescolar.model.Empresa;
 import sv.gob.mined.paquescolar.model.Municipio;
@@ -68,10 +69,8 @@ public class MunicipioInteresMB implements Serializable {
         if (proceso == null || proceso.getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe seleccionar un proceso de contratación");
         } else {
-            if (proceso.getPadreIdProcesoAdq() != null) {
-                proceso = proceso.getPadreIdProcesoAdq();
-            }
-            capacidadInst = proveedorEJB.findDetProveedor(proceso, empresa, CapaInstPorRubro.class);
+            DetRubroMuestraInteres detRubro = proveedorEJB.findDetRubroByAnhoAndRubro(anho.getIdAnho(), empresa.getIdEmpresa());
+            capacidadInst = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), anho.getIdAnho(), empresa, CapaInstPorRubro.class);
             if (capacidadInst == null) {
                 JsfUtil.mensajeAlerta("No se han cargado los datos de este proveedor para el proceso de contratación del año " + anho.getAnho());
             } else {
@@ -79,7 +78,7 @@ public class MunicipioInteresMB implements Serializable {
                         && capacidadInst.getIdMuestraInteres().getDatosVerificados() == 1) {
                     datosVerificados = true;
                 }
-                departamentoCalif = proveedorEJB.findDetProveedor(proceso, empresa, CapaDistribucionAcre.class);
+                departamentoCalif = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), anho.getIdAnho(), empresa, CapaDistribucionAcre.class);
 
                 if (departamentoCalif != null && departamentoCalif.getCodigoDepartamento() != null) {
                     lstMunSource = datosGeograficosEJB.getLstMunicipiosDisponiblesDeInteres(departamentoCalif.getIdCapaDistribucion(), departamentoCalif.getCodigoDepartamento().getCodigoDepartamento());
