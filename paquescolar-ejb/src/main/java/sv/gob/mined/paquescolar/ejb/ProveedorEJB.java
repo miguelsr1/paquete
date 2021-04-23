@@ -359,9 +359,10 @@ public class ProveedorEJB {
         }
     }
 
-    public <T extends Object> T findDetProveedor(ProcesoAdquisicion proceso, Empresa idEmpresa, Class clase) {
-        Query q = em.createQuery("SELECT d FROM " + clase.getSimpleName() + " d WHERE d.idMuestraInteres.idDetProcesoAdq.idProcesoAdq=:proceso and d.idMuestraInteres.idEmpresa=:idEmpresa and d.estadoEliminacion=0 and d.idMuestraInteres.estadoEliminacion=0 ORDER BY d.idMuestraInteres.idDetProcesoAdq", clase);
-        q.setParameter("proceso", proceso);
+    public <T extends Object> T findDetProveedor(BigDecimal idRubro, BigDecimal idAnho, Empresa idEmpresa, Class clase) {
+        Query q = em.createQuery("SELECT d FROM " + clase.getSimpleName() + " d WHERE d.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and d.idMuestraInteres.idAnho.idAnho=:pIdAnho and d.idMuestraInteres.idEmpresa=:idEmpresa and d.estadoEliminacion=0 and d.idMuestraInteres.estadoEliminacion=0 ORDER BY d.idMuestraInteres.idDetProcesoAdq", clase);
+        q.setParameter("pIdRubro", idRubro);
+        q.setParameter("pIdAnho", idAnho);
         q.setParameter("idEmpresa", idEmpresa);
         if (q.getResultList().isEmpty()) {
             return null;

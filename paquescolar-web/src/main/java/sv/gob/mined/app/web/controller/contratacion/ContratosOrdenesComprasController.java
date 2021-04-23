@@ -891,7 +891,8 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                             break;
                         case 11: //oferta Global
                             Empresa emp = resolucionAdj.getIdParticipante().getIdEmpresa();
-                            CapaInstPorRubro capacidadInst = proveedorEJB.findDetProveedor(detalleProceso.getIdProcesoAdq(), emp, CapaInstPorRubro.class);
+                            CapaInstPorRubro capacidadInst = proveedorEJB.findDetProveedor(detalleProceso.getIdRubroAdq().getIdRubroInteres(), 
+                                    detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho(), emp, CapaInstPorRubro.class);
 
                             lstRptAImprimir.addAll(Reportes.getReporteOfertaDeProveedor(capacidadInst, resolucionAdj.getIdParticipante().getIdEmpresa(), detalleProceso,
                                     reportesEJB.getLstOfertaGlobal(resolucionAdj.getIdParticipante().getIdEmpresa().getNumeroNit(), detalleProceso.getIdDetProcesoAdq(), detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue()),
