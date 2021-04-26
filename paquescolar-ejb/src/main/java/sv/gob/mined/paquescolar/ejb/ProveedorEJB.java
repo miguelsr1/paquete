@@ -361,7 +361,7 @@ public class ProveedorEJB {
     }
 
     public <T extends Object> T findDetProveedor(BigDecimal idRubro, BigDecimal idAnho, Empresa idEmpresa, Class clase) {
-        Query q = em.createQuery("SELECT d FROM " + clase.getSimpleName() + " d WHERE d.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and d.idMuestraInteres.idAnho.idAnho=:pIdAnho and d.idMuestraInteres.idEmpresa=:idEmpresa and d.estadoEliminacion=0 and d.idMuestraInteres.estadoEliminacion=0 ORDER BY d.idMuestraInteres.idDetProcesoAdq", clase);
+        Query q = em.createQuery("SELECT d FROM " + clase.getSimpleName() + " d WHERE d.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and d.idMuestraInteres.idAnho.idAnho=:pIdAnho and d.idMuestraInteres.idEmpresa=:idEmpresa and d.estadoEliminacion=0 and d.idMuestraInteres.estadoEliminacion=0 ORDER BY d.idMuestraInteres", clase);
         q.setParameter("pIdRubro", idRubro);
         q.setParameter("pIdAnho", idAnho);
         q.setParameter("idEmpresa", idEmpresa);
@@ -984,12 +984,13 @@ public class ProveedorEJB {
         return !lstPrecios.isEmpty();
     }
 
-    public PreciosRefRubroEmp getPrecioRef(Empresa idEmpresa, BigDecimal idNivelEdu, BigDecimal idProducto, String anho) {
-        Query query = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.idEmpresa=:idEmpresa and p.idNivelEducativo.idNivelEducativo=:idNivelEdu and p.idProducto.idProducto=:idProducto and p.idDetProcesoAdq.idProcesoAdq.idAnho.anho=:anho and p.estadoEliminacion=0", PreciosRefRubroEmp.class);
+    public PreciosRefRubroEmp getPrecioRef(Empresa idEmpresa, BigDecimal idNivelEdu, BigDecimal idProducto, BigDecimal idRubro, BigDecimal idAnho) {
+        Query query = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.idEmpresa=:idEmpresa and p.idNivelEducativo.idNivelEducativo=:idNivelEdu and p.idProducto.idProducto=:idProducto and p.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and p.idMuestraInteres.idAnho.idAnho=:pIdAnho and p.estadoEliminacion=0", PreciosRefRubroEmp.class);
         query.setParameter("idEmpresa", idEmpresa);
         query.setParameter("idNivelEdu", idNivelEdu);
         query.setParameter("idProducto", idProducto);
-        query.setParameter("anho", anho);
+        query.setParameter("pIdRubro", idRubro);
+        query.setParameter("pIdAnho", idAnho);
 
         List<PreciosRefRubroEmp> lstPrecios = query.getResultList();
         if (lstPrecios.isEmpty()) {

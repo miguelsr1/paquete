@@ -28,20 +28,20 @@ public class PreciosReferenciaEJB {
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-    public PreciosRefRubro findPreciosRefRubroByNivelEduAndRubro(BigDecimal nivelEdu, DetalleProcesoAdq rubro) {
+    public PreciosRefRubro findPreciosRefRubroByNivelEduAndRubro(BigDecimal nivelEdu, DetalleProcesoAdq detRubro) {
         PreciosRefRubro pr = new PreciosRefRubro();
         NivelEducativo n = em.find(NivelEducativo.class, nivelEdu);
         pr.setIdNivelEducativo(n);
         pr.setPrecioMaxFem(BigDecimal.ZERO);
         pr.setPrecioMaxMas(BigDecimal.ZERO);
 
-        if (rubro == null || nivelEdu == null) {
+        if (detRubro == null || nivelEdu == null) {
             return pr;
         }
-        Query q = em.createQuery("SELECT p FROM PreciosRefRubro p WHERE p.idNivelEducativo.idNivelEducativo=:nivelEdu and p.idDetProcesoAdq.idProcesoAdq.idAnho.anho=:anho and p.idDetProcesoAdq.idRubroAdq.idRubroInteres=:idRubro", PreciosRefRubro.class);
+        Query q = em.createQuery("SELECT p FROM PreciosRefRubro p WHERE p.idNivelEducativo.idNivelEducativo=:nivelEdu and p.idAnho.idAnho=:pIdAnho and p.idRubroInteres.idRubroInteres=:pIdRubro", PreciosRefRubro.class);
         q.setParameter("nivelEdu", nivelEdu);
-        q.setParameter("anho", rubro.getIdProcesoAdq().getIdAnho().getAnho());
-        q.setParameter("idRubro", rubro.getIdRubroAdq().getIdRubroInteres());
+        q.setParameter("pIdRubro", detRubro.getIdRubroAdq().getIdRubroInteres());
+        q.setParameter("pIdAnho", detRubro.getIdProcesoAdq().getIdAnho().getIdAnho());
 
         if (q.getResultList().isEmpty()) {
             return pr;

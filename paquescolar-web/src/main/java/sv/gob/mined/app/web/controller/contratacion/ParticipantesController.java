@@ -776,7 +776,9 @@ public class ParticipantesController implements Serializable {
                 det.setConsolidadoEspTec(item.toString() + ", " + nivel.toString());
                 det.setIdProducto(item);
                 det.setIdNivelEducativo(nivel);
-                PreciosRefRubroEmp precio = proveedorEJB.getPrecioRef(participante.getIdEmpresa(), nivel.getIdNivelEducativo(), item.getIdProducto(), participante.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho());
+                PreciosRefRubroEmp precio = proveedorEJB.getPrecioRef(participante.getIdEmpresa(), nivel.getIdNivelEducativo(), item.getIdProducto(), 
+                        participante.getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres(), 
+                        participante.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
                 if (precio != null) {
                     det.setPrecioUnitario(precio.getPrecioReferencia());
                 } else {
