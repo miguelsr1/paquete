@@ -38,10 +38,10 @@ public class PreciosReferenciaEJB {
         if (rubro == null || nivelEdu == null) {
             return pr;
         }
-        Query q = em.createQuery("SELECT p FROM PreciosRefRubro p WHERE p.idNivelEducativo.idNivelEducativo=:nivelEdu and p.idDetProcesoAdq.idProcesoAdq.idAnho.anho=:anho and p.idDetProcesoAdq.idRubroAdq.idRubroInteres=:idRubro", PreciosRefRubro.class);
+        Query q = em.createQuery("SELECT p FROM PreciosRefRubro p WHERE p.idNivelEducativo.idNivelEducativo=:nivelEdu and p.idRubroInteres.idRubroInteres=:pIdRubro and p.idAnho.idAnho=:pIdAnho", PreciosRefRubro.class);
         q.setParameter("nivelEdu", nivelEdu);
-        q.setParameter("anho", rubro.getIdProcesoAdq().getIdAnho().getAnho());
-        q.setParameter("idRubro", rubro.getIdRubroAdq().getIdRubroInteres());
+        q.setParameter("pIdRubro", rubro.getIdRubroAdq().getIdRubroInteres());
+        q.setParameter("pIdAnho", rubro.getIdProcesoAdq().getIdAnho().getIdAnho());
 
         if (q.getResultList().isEmpty()) {
             return pr;
