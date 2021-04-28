@@ -135,7 +135,7 @@ public class ProcesoFacade {
                     mailSession = null;
 
                     envioPorBloque = true;
-                    if (remitentes.get("correo1").contains("admin.mined.edu.sv")) {
+                    if (remitentes.get("correo1").contains("mined")) {
                         //server office365
                         port = "587";
                         server = "smtp.office365.com";

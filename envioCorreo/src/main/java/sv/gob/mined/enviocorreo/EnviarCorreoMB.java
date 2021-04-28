@@ -67,7 +67,7 @@ public class EnviarCorreoMB implements Serializable {
             }
         });
 
-        leerBoletasEJB.leerArchivosPendientes(mailSession, codDepa, usuario);
+        //leerBoletasEJB.leerArchivosPendientes(mailSession, codDepa, usuario);
     }
 
     public String getCodDepa() {

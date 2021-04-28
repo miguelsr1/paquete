@@ -493,7 +493,8 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                 det.setConsolidadoEspTec(item.toString() + ", " + nivel.toString());
                 det.setIdProducto(item.getIdProducto());
                 det.setIdNivelEducativo(nivel.getIdNivelEducativo());
-                PreciosRefRubroEmp precio = proveedorEJB.getPrecioRef(contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdEmpresa(), nivel.getIdNivelEducativo(), item.getIdProducto(), detalleProceso.getIdProcesoAdq().getIdAnho().getAnho());
+                PreciosRefRubroEmp precio = proveedorEJB.getPrecioRef(contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdEmpresa(), nivel.getIdNivelEducativo(), item.getIdProducto(),
+                        detalleProceso.getIdRubroAdq().getIdRubroInteres(), detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho());
                 if (precio != null) {
                     det.setPrecioUnitarioNew(precio.getPrecioReferencia());
                 } else {
@@ -842,7 +843,8 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                             detalleModificativa.setPrecioUnitarioOld(detalle.getPrecioUnitarioNew());
                             detalleModificativa.setConsolidadoEspTec(detalle.getConsolidadoEspTec());
 
-                            PreciosRefRubroEmp precio = proveedorEJB.getPrecioRef(contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdEmpresa(), detalleModificativa.getIdNivelEducativo(), detalleModificativa.getIdProducto(), detalleProceso.getIdProcesoAdq().getIdAnho().getAnho());
+                            PreciosRefRubroEmp precio = proveedorEJB.getPrecioRef(contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdEmpresa(), detalleModificativa.getIdNivelEducativo(), detalleModificativa.getIdProducto(),
+                                    detalleProceso.getIdRubroAdq().getIdRubroInteres(), detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho());
 
                             detalleModificativa.setPrecioUnitarioNew(precio.getPrecioReferencia());
                             detalleModificativa.setFechaInsercion(new Date());
@@ -854,7 +856,6 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                         }
                     }
                 } else {//modificación de un contrato
-                    //for (DetalleOfertas detalle : contratoOriginal.getIdResolucionAdj().getIdParticipante().getDetalleOfertasList()) {
                     for (DetalleOfertas detalle : resolucionAdjudicativaEJB.findDetalleOfertas(contratoOriginal.getIdResolucionAdj().getIdParticipante())) {
                         if (!detalle.getEliminar()) {
                             DetalleModificativa detalleModificativa = new DetalleModificativa();
@@ -865,7 +866,8 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                             detalleModificativa.setPrecioUnitarioOld(detalle.getPrecioUnitario());
                             detalleModificativa.setConsolidadoEspTec(detalle.getConsolidadoEspTec());
 
-                            PreciosRefRubroEmp precio = proveedorEJB.getPrecioRef(contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdEmpresa(), detalleModificativa.getIdNivelEducativo(), detalleModificativa.getIdProducto(), detalleProceso.getIdProcesoAdq().getIdAnho().getAnho());
+                            PreciosRefRubroEmp precio = proveedorEJB.getPrecioRef(contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdEmpresa(), detalleModificativa.getIdNivelEducativo(), detalleModificativa.getIdProducto(),
+                                    detalleProceso.getIdRubroAdq().getIdRubroInteres(), detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho());
 
                             detalleModificativa.setPrecioUnitarioNew(precio.getPrecioReferencia());
                             detalleModificativa.setFechaInsercion(new Date());
@@ -910,15 +912,15 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
             }
         }
     }
-    
-    private DetalleProcesoAdq getDetallePrincipal(DetalleProcesoAdq detallePro){
-        if(detallePro.getIdProcesoAdq().getPadreIdProcesoAdq() != null){
+
+    private DetalleProcesoAdq getDetallePrincipal(DetalleProcesoAdq detallePro) {
+        if (detallePro.getIdProcesoAdq().getPadreIdProcesoAdq() != null) {
             for (DetalleProcesoAdq detallePadre : detallePro.getIdProcesoAdq().getPadreIdProcesoAdq().getDetalleProcesoAdqList()) {
-                if(detallePro.getIdRubroAdq().getIdRubroInteres().intValue() == detallePadre.getIdRubroAdq().getIdRubroInteres().intValue()){
+                if (detallePro.getIdRubroAdq().getIdRubroInteres().intValue() == detallePadre.getIdRubroAdq().getIdRubroInteres().intValue()) {
                     return detallePadre;
                 }
             }
-        }else{
+        } else {
             return detallePro;
         }
         return null;

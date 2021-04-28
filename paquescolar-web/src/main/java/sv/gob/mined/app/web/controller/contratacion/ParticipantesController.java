@@ -445,7 +445,7 @@ public class ParticipantesController implements Serializable {
                     switch (idResolucion) {
                         case 1://digitacion
                         case 3://revertida
-                            lstPreciosEmp = proveedorEJB.findPreciosRefRubroEmpRubro(participante.getIdEmpresa(), 
+                            lstPreciosEmp = proveedorEJB.findPreciosRefRubroEmpRubro(participante.getIdEmpresa(),
                                     detalleProceso.getIdRubroAdq().getIdRubroInteres(),
                                     detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho());
                             lstNiveles = entidadEducativaEJB.getLstNivelesConMatriculaReportadaByIdProcesoAdqAndCodigoEntidad(detalleProceso.getIdProcesoAdq().getIdProcesoAdq(), participante.getIdOferta().getCodigoEntidad().getCodigoEntidad());
@@ -690,8 +690,8 @@ public class ParticipantesController implements Serializable {
             PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":descripcionItem");
             PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":precioUnitario");
             PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":subTotal");
-            PrimeFaces.current().ajax().update(nombreTabla + ":" + (numRow) + ":totalCantidad");
-            PrimeFaces.current().ajax().update(nombreTabla + ":" + (numRow) + ":total");
+            PrimeFaces.current().ajax().update(nombreTabla + ":" + (numRow == 1 ? 0 : numRow) + ":totalCantidad");
+            PrimeFaces.current().ajax().update(nombreTabla + ":" + (numRow == 1 ? 0 : numRow) + ":total");
             if (!msjError.isEmpty()) {
                 JsfUtil.mensajeAlerta(msjError);
             }
@@ -776,7 +776,9 @@ public class ParticipantesController implements Serializable {
                 det.setConsolidadoEspTec(item.toString() + ", " + nivel.toString());
                 det.setIdProducto(item);
                 det.setIdNivelEducativo(nivel);
-                PreciosRefRubroEmp precio = proveedorEJB.getPrecioRef(participante.getIdEmpresa(), nivel.getIdNivelEducativo(), item.getIdProducto(), participante.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho());
+                PreciosRefRubroEmp precio = proveedorEJB.getPrecioRef(participante.getIdEmpresa(), nivel.getIdNivelEducativo(), item.getIdProducto(),
+                        participante.getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres(),
+                        participante.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
                 if (precio != null) {
                     det.setPrecioUnitario(precio.getPrecioReferencia());
                 } else {
