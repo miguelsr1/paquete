@@ -1344,12 +1344,12 @@ public class ProveedorEJB {
                 case 1: //UNIFORMES
                 case 4:
                 case 5:
-                    switch (Integer.parseInt(numItem)) {
-                        case 0:
+                    switch (numItem) {
+                        case "0":
                             break;
-                        case 1:
-                        case 6:
-                        case 10:
+                        case "1":
+                        case "6":
+                        case "10":
                             item = findProducto("30");
                             switch (Integer.parseInt(numItem)) {
                                 case 1:
@@ -1363,9 +1363,9 @@ public class ProveedorEJB {
                                     break;
                             }
                             break;
-                        case 2:
-                        case 7:
-                        case 11:
+                        case "2":
+                        case "7":
+                        case "11":
                             item = findProducto("44");
                             switch (Integer.parseInt(numItem)) {
                                 case 2:
@@ -1379,9 +1379,9 @@ public class ProveedorEJB {
                                     break;
                             }
                             break;
-                        case 3:
-                        case 8:
-                        case 12:
+                        case "3":
+                        case "8":
+                        case "12":
                             item = findProducto("29");
                             switch (Integer.parseInt(numItem)) {
                                 case 3:
@@ -1395,19 +1395,19 @@ public class ProveedorEJB {
                                     break;
                             }
                             break;
-                        case 4:
+                        case "4":
                             item = findProducto("31");
                             nivel = findNivelEducativo("1");
                             break;
-                        case 5:
+                        case "5":
                             item = findProducto("34");
                             nivel = findNivelEducativo("1");
                             break;
-                        case 9:
+                        case "9":
                             item = findProducto("34");
                             nivel = findNivelEducativo("2");
                             break;
-                        case 13:
+                        case "13":
                             item = findProducto("34");
                             switch (Integer.parseInt(numItem)) {
                                 case 5:
@@ -1429,21 +1429,27 @@ public class ProveedorEJB {
                 case 2: //UTILES
                     item = findProducto("54");
 
-                    switch (Integer.parseInt(numItem)) {
-                        case 1:
+                    switch (numItem) {
+                        case "1":
                             nivel = findNivelEducativo("1");
                             break;
-                        case 2:
+                        case "2":
                             nivel = findNivelEducativo("3");
                             break;
-                        case 3:
+                        case "3":
                             nivel = findNivelEducativo("4");
                             break;
-                        case 4:
+                        case "4":
                             nivel = findNivelEducativo("5");
                             break;
-                        case 5:
+                        case "4.4":
+                            nivel = findNivelEducativo("23");
+                            break;
+                        case "5":
                             nivel = findNivelEducativo("6");
+                            break;
+                        case "5.1":
+                            nivel = findNivelEducativo("24");
                             break;
                         default:
                             error = "El item ingresado no es válido.";
@@ -1451,44 +1457,44 @@ public class ProveedorEJB {
                     }
                     break;
                 case 3: //ZAPATOS
-                    switch (Integer.parseInt(numItem)) {
-                        case 1:
+                    switch (numItem) {
+                        case "1":
                             item = findProducto("21");
                             nivel = findNivelEducativo("1");
                             break;
-                        case 2:
+                        case "2":
                             item = findProducto("43");
                             nivel = findNivelEducativo("1");
                             break;
-                        case 3:
+                        case "3":
                             item = findProducto("21");
                             nivel = findNivelEducativo("3");
                             break;
-                        case 4:
+                        case "4":
                             item = findProducto("43");
                             nivel = findNivelEducativo("3");
                             break;
-                        case 5:
+                        case "5":
                             item = findProducto("21");
                             nivel = findNivelEducativo("4");
                             break;
-                        case 6:
+                        case "6":
                             item = findProducto("43");
                             nivel = findNivelEducativo("4");
                             break;
-                        case 7:
+                        case "7":
                             item = findProducto("21");
                             nivel = findNivelEducativo("5");
                             break;
-                        case 8:
+                        case "8":
                             item = findProducto("43");
                             nivel = findNivelEducativo("5");
                             break;
-                        case 9:
+                        case "9":
                             item = findProducto("21");
                             nivel = findNivelEducativo("6");
                             break;
-                        case 10:
+                        case "10":
                             item = findProducto("43");
                             nivel = findNivelEducativo("6");
                             break;

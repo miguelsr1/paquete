@@ -51,6 +51,8 @@ public class OfertaGlobal implements Serializable {
     private List<DetMunIntOfertaGlobal> lstMunIntOfertaGlobal = new ArrayList();
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
+    private BigDecimal idRubroIntres;
+    private BigDecimal idAnho;
 
     public OfertaGlobal() {
     }
@@ -173,5 +175,21 @@ public class OfertaGlobal implements Serializable {
 
     public void setFechaModificacion(Date fechaModificacion) {
         this.fechaModificacion = fechaModificacion;
+    }
+
+    public BigDecimal getIdRubroIntres() {
+        return idRubroIntres;
+    }
+
+    public void setIdRubroIntres(BigDecimal idRubroIntres) {
+        this.idRubroIntres = idRubroIntres;
+    }
+
+    public BigDecimal getIdAnho() {
+        return idAnho;
+    }
+
+    public void setIdAnho(BigDecimal idAnho) {
+        this.idAnho = idAnho;
     }
 }

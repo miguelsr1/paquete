@@ -32,6 +32,7 @@ import sv.gob.mined.paquescolar.model.ResolucionesModificativas;
 import sv.gob.mined.paquescolar.model.TipoDocPago;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosBusquedaPlanillaDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
+import sv.gob.mined.paquescolar.model.pojos.pagoprove.InformeF14Dto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.PreCargaDto;
 import sv.gob.mined.paquescolar.util.Constantes;
 
@@ -71,6 +72,14 @@ public class PagoProveedoresEJB {
         Query q = em.createNamedQuery("PagoProve.FileF910", DatosProveDto.class);
         q.setParameter(1, codigoDepartamento);
         q.setParameter(2, anho);
+        return q.getResultList();
+    }
+    
+    public List<InformeF14Dto> getDatosF14(String codigoDepartamento, Integer anho, String idMes) {
+        Query q = em.createNamedQuery("PagoProve.FileF14v15", InformeF14Dto.class);
+        q.setParameter(1, anho);
+        q.setParameter(2, codigoDepartamento);
+        q.setParameter(3, idMes);
         return q.getResultList();
     }
 

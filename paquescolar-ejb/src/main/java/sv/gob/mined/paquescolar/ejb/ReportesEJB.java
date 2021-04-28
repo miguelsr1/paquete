@@ -25,6 +25,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import sv.gob.mined.paquescolar.model.Anho;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.DisMunicipioInteres;
 import sv.gob.mined.paquescolar.model.Empresa;
@@ -58,7 +59,7 @@ public class ReportesEJB {
             JasperPrint jp;
             Connection conn = em.unwrap(java.sql.Connection.class);
             jp = JasperFillManager.fillReport(input, map, conn);
-            
+
             input.close();
             return jp;
         } catch (JRException | IOException ex) {
@@ -90,28 +91,31 @@ public class ReportesEJB {
         }
     }
 
-    public List<OfertaGlobal> getLstOfertaGlobal(String nit, Integer idDetProcesoAdq, int idRubro) {
+    public List<OfertaGlobal> getLstOfertaGlobal(String nit, BigDecimal idRubro, BigDecimal idAnho) {
         PreciosRefRubroEmp preTem;
-        DetalleProcesoAdq detalleProcesoAdq = em.find(DetalleProcesoAdq.class, idDetProcesoAdq);
         List<OfertaGlobal> lstRpt;
+        Anho anho = em.find(Anho.class, idAnho);
         Query q = em.createNamedQuery("DatosProveDto.ofertaGlobal", OfertaGlobal.class);
         q.setParameter(1, nit);
-        q.setParameter(2, idDetProcesoAdq);
+        q.setParameter(2, idRubro);
+        q.setParameter(3, idAnho);
 
         lstRpt = q.getResultList();
 
-        lstRpt.get(0).setAnho(detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho());
+        lstRpt.get(0).setAnho(anho.getAnho());
 
-        q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion=0 and p.idEmpresa.numeroNit=:nit and p.idDetProcesoAdq.idDetProcesoAdq=:idDetProcesoAdq AND p.idProducto.idProducto not in (1) ORDER BY  FUNC('TO_NUMBER', p.noItem)", PreciosRefRubroEmp.class);
+        q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion=0 and p.idMuestraInteres.idEmpresa.numeroNit=:nit and p.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro AND p.idMuestraInteres.idAnho.idAnho=:pIdAnho and p.idProducto.idProducto not in (1) ORDER BY  FUNC('TO_NUMBER', p.noItem)", PreciosRefRubroEmp.class);
         q.setParameter("nit", nit);
-        q.setParameter("idDetProcesoAdq", idDetProcesoAdq);
+        q.setParameter("pIdRubro", idRubro);
+        q.setParameter("pIdAnho", idAnho);
         List<PreciosRefRubroEmp> lstPrecios = q.getResultList();
 
-        q = em.createNativeQuery("select prr.* from PRECIOS_REF_RUBRO prr inner join NIVEL_EDUCATIVO niv on niv.ID_NIVEL_EDUCATIVO = prr.ID_NIVEL_EDUCATIVO where ID_DET_PROCESO_ADQ = ?1 order by niv.ORDEN2", PreciosRefRubro.class);
-        q.setParameter(1, idDetProcesoAdq);
+        q = em.createNativeQuery("select prr.* from PRECIOS_REF_RUBRO prr inner join NIVEL_EDUCATIVO niv on niv.ID_NIVEL_EDUCATIVO = prr.ID_NIVEL_EDUCATIVO where prr.id_rubro_interes = ?1 and prr.id_anho = ?2 order by niv.ORDEN2", PreciosRefRubro.class);
+        q.setParameter(1, idRubro);
+        q.setParameter(2, idAnho);
         List<PreciosRefRubro> lstPrecioMax = q.getResultList();
 
-        switch (idRubro) {
+        switch (idRubro.intValue()) {
             case 1:
             case 4:
                 for (int i = 0; i < 13; i++) {
@@ -283,8 +287,8 @@ public class ReportesEJB {
 
         q = em.createQuery("SELECT d FROM DisMunicipioInteres d WHERE d.estadoEliminacion=0 and d.idCapaDistribucion.idMuestraInteres.idEmpresa.numeroNit=:nit and d.idCapaDistribucion.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and d.idCapaDistribucion.idMuestraInteres.idAnho.idAnho=:pIdAnho ORDER BY d.idMunicipio.codigoDepartamento.codigoDepartamento, d.idMunicipio.codigoMunicipio ASC", DisMunicipioInteres.class);
         q.setParameter("nit", nit);
-        q.setParameter("pIdRubro", detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres());
-        q.setParameter("pIdAnho", detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho());
+        q.setParameter("pIdRubro", idRubro);
+        q.setParameter("pIdAnho", idAnho);
         List<DisMunicipioInteres> lstMunicipios = q.getResultList();
 
         for (DisMunicipioInteres disMunicipioInteres : lstMunicipios) {
@@ -309,10 +313,11 @@ public class ReportesEJB {
         }));
     }
 
-    public List<DeclaracionJurada> getDeclaracionJurada(Empresa empresa, DetalleProcesoAdq idDetProcesoAdq, String ciudad) {
+    public List<DeclaracionJurada> getDeclaracionJurada(Empresa empresa, DetalleProcesoAdq detRubro, String ciudad) {
         Query q = em.createNamedQuery("Proveedor.DeclaracionJurada", DeclaracionJurada.class);
         q.setParameter(1, empresa.getNumeroNit());
-        q.setParameter(2, idDetProcesoAdq.getIdDetProcesoAdq());
+        q.setParameter(2, detRubro.getIdRubroAdq().getIdRubroInteres());
+        q.setParameter(3, detRubro.getIdProcesoAdq().getIdAnho().getIdAnho());
 
         List<DeclaracionJurada> lstDeclaracion = q.getResultList();
         if (!lstDeclaracion.isEmpty()) {

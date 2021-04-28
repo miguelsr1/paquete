@@ -38,7 +38,7 @@ public class UtilFile {
         HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
         response.reset();
         response.setContentType(CONTENIDO_TEXTPLANO);
-        response.setHeader("Content-Disposition", "attachment; filename=" + nombreFile + "." + extension);
+        response.setHeader("Content-Disposition", "attachment; filename=" + nombreFile + getFechaGeneracionReporte() + "." + extension);
         OutputStream out = response.getOutputStream();
         Writer writer = new OutputStreamWriter(out, "ISO-8859-15");
         try {

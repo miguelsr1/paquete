@@ -1473,7 +1473,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     public void impOfertaGlobal() {
         try {
             List<JasperPrint> jasperPrintList = Reportes.getReporteOfertaDeProveedor(capacidadInst, empresa, detalleProcesoAdq,
-                    reportesEJB.getLstOfertaGlobal(empresa.getNumeroNit(), detalleProcesoAdq.getIdDetProcesoAdq(), detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()),
+                    reportesEJB.getLstOfertaGlobal(empresa.getNumeroNit(), detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres(), detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho()),
                     reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, VarSession.getNombreMunicipioSession()));
             if (!jasperPrintList.isEmpty()) {
                 Reportes.generarReporte(jasperPrintList, "oferta_global_" + getEmpresa().getNumeroNit());

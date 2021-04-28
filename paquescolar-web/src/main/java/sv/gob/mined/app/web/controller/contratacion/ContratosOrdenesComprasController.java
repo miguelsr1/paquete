@@ -895,7 +895,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                     detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho(), emp, CapaInstPorRubro.class);
 
                             lstRptAImprimir.addAll(Reportes.getReporteOfertaDeProveedor(capacidadInst, resolucionAdj.getIdParticipante().getIdEmpresa(), detalleProceso,
-                                    reportesEJB.getLstOfertaGlobal(resolucionAdj.getIdParticipante().getIdEmpresa().getNumeroNit(), detalleProceso.getIdDetProcesoAdq(), detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue()),
+                                    reportesEJB.getLstOfertaGlobal(resolucionAdj.getIdParticipante().getIdEmpresa().getNumeroNit(), detalleProceso.getIdRubroAdq().getIdRubroInteres(), detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho()),
                                     reportesEJB.getDeclaracionJurada(resolucionAdj.getIdParticipante().getIdEmpresa(), detalleProceso, VarSession.getNombreMunicipioSession())));
                             break;
                         case 13://Acta de recomendacion

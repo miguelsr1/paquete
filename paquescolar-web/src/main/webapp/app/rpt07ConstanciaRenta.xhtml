@@ -129,7 +129,7 @@
                                 </p:dataTable>
                             </p:tab>
                             <p:tab title="Reporte de Renta Mensual">
-                                <p:commandButton value="Generar Reporte" icon="fa fa-file-excel-o" style="float: right;" action="#{pagoProveedoresController.generarRptRentaMensual}" ajax="false"/>                                
+                                <p:commandButton value="Generar Reporte" icon="fa fa-file-excel-o" style="float: right;" action="#{pagoProveedoresController.generarRptRentaMensual}" ajax="false"/>
                                 <h3>Datos de mes y año de pago:</h3>
                                 <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col6_label,col6"
                                              style="width: 100%; border:0px none; background-color:transparent;"
@@ -181,6 +181,40 @@
                                 <h:panelGrid columns="2" style="height: 30px;">
                                     <h:outputText value="Presione el botón para descargar el archivo:"/>
                                 </h:panelGrid>
+                            </p:tab>
+                            <p:tab title="F14v15 - Renta Mensual" >
+                                <p:commandButton value="Archivo F14" icon="fa fa-download" style="float: right;" 
+                                                 action="#{pagoProveedoresController.generarArchivoF14}" ajax="false"/>
+
+                                <p:panelGrid columns="2" columnClasses="col6_label,col6"
+                                             style="width: 100%; border:0px none; background-color:transparent;"
+                                             styleClass="form-group ui-panelgrid-blank">
+                                    <h:outputText value="Seleccione un mes (*):"/>
+                                    <p:selectOneMenu value="#{pagoProveedoresController.idMes}" >
+                                        <f:selectItem itemValue="0" itemLabel="-----"/>
+                                        <f:selectItem itemValue="1" itemLabel="ENERO"/>
+                                        <f:selectItem itemValue="2" itemLabel="FEBRERO"/>
+                                        <f:selectItem itemValue="3" itemLabel="MARZO"/>
+                                        <f:selectItem itemValue="4" itemLabel="ABRIL"/>
+                                        <f:selectItem itemValue="5" itemLabel="MAYO"/>
+                                        <f:selectItem itemValue="6" itemLabel="JUNIO"/>
+                                        <f:selectItem itemValue="7" itemLabel="JULIO"/>
+                                        <f:selectItem itemValue="8" itemLabel="AGOSTO"/>
+                                        <f:selectItem itemValue="9" itemLabel="SEPTIEMBRE"/>
+                                        <f:selectItem itemValue="10" itemLabel="OCTUBRE"/>
+                                        <f:selectItem itemValue="11" itemLabel="NOVIEMBRE"/>
+                                        <f:selectItem itemValue="12" itemLabel="DICIEMBRE"/>
+                                    </p:selectOneMenu>
+                                    <f:facet name="footer">
+                                        <p:outputLabel value="(*) Filtros requeridos"/>
+                                    </f:facet>
+                                </p:panelGrid>
+
+                                <p:panel visible="false">
+                                    <p:commandButton ajax="false">
+                                        <p:fileDownload value="#{pagoProveedoresController.file}" />
+                                    </p:commandButton>
+                                </p:panel>
                             </p:tab>
                         </p:tabView>
                     </p:panel>
