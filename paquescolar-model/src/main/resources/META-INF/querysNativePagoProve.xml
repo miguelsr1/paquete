@@ -103,9 +103,8 @@
                     ddp.estado_eliminacion = 0 and
                     dp.estado_eliminacion = 0 and
                     pp.estado_eliminacion = 0 and
-                    id_anho = ?1 and
-                    der.codigo_departamento = ?2 and
-                    to_char(dp.fecha_insercion,'mm') = ?3
+                    der.codigo_departamento = ?1 and
+                    to_char(dp.fecha_insercion,'mmyyyy') = ?2
                 group by 
                     razon_social,
                     numero_nit,

@@ -77,7 +77,10 @@ public class RptExcel {
                                 escribirTexto(callMethodReflection("get".concat(StringUtils.capitalize(attibuto.getName())), item), row, col, style, s1);
                                 break;
                             case "java.math.BigDecimal":
-                                escribirNumero(callMethodReflection("get".concat(StringUtils.capitalize(attibuto.getName())), item).toString(), row, col, style, true, s1);
+                                Object value = callMethodReflection("get".concat(StringUtils.capitalize(attibuto.getName())), item);
+                                if (value != null) {
+                                    escribirNumero(value.toString(), row, col, style, true, s1);
+                                }
                                 break;
                             case "java.math.Integer":
                                 break;
@@ -217,7 +220,7 @@ public class RptExcel {
         }
     }
 
-    /*public static void generarRptRentaMensual(List<DatosProveDto> lst) {
+    public static void generarRptRentaMensual(List<DatosProveDto> lst) {
         HSSFCellStyle style;
         int row = 2;
         try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rentaMensual.xls")) {
@@ -247,7 +250,7 @@ public class RptExcel {
         } catch (IOException | InvalidFormatException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }*/
+    }
 
     public static void generarRptResumenGeneralCreditos(List<ResumenCreditosDto> listaResumenGen, String anho) {
         try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptCreditoResumenGeneral.xls")) {

@@ -6,29 +6,28 @@
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
+        <p:menubar id="menuBar"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" ajax="true" process="@this" 
+                        action="#{personaController.prepareCreate}" update="pnlUsuario menuBar">
+                <p:resetInput target="pnlUsuario" /> 
+            </p:menuitem>
+
+            <p:menuitem value="Modificar" icon="fa fa-edit" ajax="true" process="@this" 
+                        action="#{personaController.prepareEdit}" 
+                        update="pnlUsuario dialogFiltro">
+                <p:resetInput target="pnlUsuario" /> 
+            </p:menuitem>
+            <p:menuitem value="Guardar" icon="fa fa-save" update="pngUsuario menuBar" action="#{personaController.guardarUsuario}"
+                        disabled="#{menuController.usuarioSoloLectura || personaController.deshabilitado}"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined" />
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}" process="@this"/>
+            </f:facet>  
+        </p:menubar>
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar id="menuBar"> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" ajax="true" process="@this" 
-                                    action="#{personaController.prepareCreate}" update="pnlUsuario menuBar">
-                            <p:resetInput target="pnlUsuario" /> 
-                        </p:menuitem>
-
-                        <p:menuitem value="Modificar" icon="fa fa-edit" ajax="true" process="@this" 
-                                    action="#{personaController.prepareEdit}" 
-                                    update="pnlUsuario dialogFiltro">
-                            <p:resetInput target="pnlUsuario" /> 
-                        </p:menuitem>
-                        <p:menuitem value="Guardar" icon="fa fa-save" update="pngUsuario menuBar" action="#{personaController.guardarUsuario}"
-                                    disabled="#{menuController.usuarioSoloLectura || personaController.deshabilitado}"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined" />
-                        <f:facet  name="options">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-
                     <h3>
                         <i class="fa fa-user blue" style="font-size: 16px;"></i>
                         <p:spacer width="10" height="8"/>

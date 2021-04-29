@@ -75,11 +75,10 @@ public class PagoProveedoresEJB {
         return q.getResultList();
     }
     
-    public List<InformeF14Dto> getDatosF14(String codigoDepartamento, Integer anho, String idMes) {
+    public List<InformeF14Dto> getDatosF14(String codigoDepartamento, String idMes) {
         Query q = em.createNamedQuery("PagoProve.FileF14v15", InformeF14Dto.class);
-        q.setParameter(1, anho);
-        q.setParameter(2, codigoDepartamento);
-        q.setParameter(3, idMes);
+        q.setParameter(1, codigoDepartamento);
+        q.setParameter(2, idMes);
         return q.getResultList();
     }
 

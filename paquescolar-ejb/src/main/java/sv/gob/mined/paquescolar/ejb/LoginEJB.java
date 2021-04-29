@@ -115,4 +115,18 @@ public class LoginEJB {
         q.setParameter(1, username);
         return (String) q.getResultList().get(0);
     }
+
+    public void actualizarClaveAcceso(String username, String clave) {
+        Query q = em.createQuery("SELECT u FROM Usuario u WHERE u.idPersona.usuario=:user", Usuario.class);
+        q.setParameter("user", username);
+        
+        Usuario usuario = (Usuario) q.getSingleResult();
+        usuario.setCambiarClave((short) 0);
+        
+        Persona persona = usuario.getIdPersona();
+        persona.setClaveAcceso((new RC4Crypter()).encrypt("ha", clave));
+
+        em.merge(usuario);
+        em.merge(persona);
+    }
 }

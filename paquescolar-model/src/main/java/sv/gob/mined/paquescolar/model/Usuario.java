@@ -92,6 +92,8 @@ public class Usuario implements Serializable {
     private Short rangoFechaLogin;
     @Column(name = "ACTIVO")
     private Short activo;
+    @Column(name = "CAMBIAR_CLAVE")
+    private Short cambiarClave;
 
     @Transient
     private String msj;
@@ -288,5 +290,13 @@ public class Usuario implements Serializable {
 
     public void setActivo(Short activo) {
         this.activo = activo;
+    }
+
+    public Short getCambiarClave() {
+        return cambiarClave;
+    }
+
+    public void setCambiarClave(Short cambiarClave) {
+        this.cambiarClave = cambiarClave;
     }
 }

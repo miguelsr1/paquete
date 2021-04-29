@@ -400,7 +400,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un proveedor");
             } else {
                 empresaSeleccionada = proveedorEJB.findEmpresaByPk(idEmpresa);
-                lstPrecios = proveedorEJB.getLstPreciosByIdEmpresaAndIdProcesoAdq(empresaSeleccionada.getIdEmpresa(), JsfUtil.getProcesoAdqPadre(detalleProceso.getIdProcesoAdq()), mapItems.get("idNivelesCe"));
+                lstPrecios = proveedorEJB.getLstPreciosByIdEmpresaAndIdProcesoAdq(empresaSeleccionada.getIdEmpresa(), detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho(), mapItems.get("idNivelesCe"));
                 if (lstPrecios.isEmpty()) {
                     JsfUtil.mensajeAlerta("Este proveedor no posee precios de referencia. No se puede ingresar a la oferta.");
                 } else {
@@ -841,7 +841,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         //capaInstSeleccionada = capa;
         empresaSeleccionada = proveedorEJB.findEmpresaByPk(idEmpresa);
         File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + empresaSeleccionada.getNumeroNit() + "/");
-        lstPrecios = proveedorEJB.getLstPreciosByIdEmpresaAndIdProcesoAdq(empresaSeleccionada.getIdEmpresa(), detalleProceso.getIdProcesoAdq().getIdProcesoAdq(), mapItems.get("idNivelesCe"));
+        lstPrecios = proveedorEJB.getLstPreciosByIdEmpresaAndIdProcesoAdq(empresaSeleccionada.getIdEmpresa(), detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho(), mapItems.get("idNivelesCe"));
 
         if (carpetaNfs.list() != null) {
             lstEstilos = new SelectItem[carpetaNfs.list().length + 1];

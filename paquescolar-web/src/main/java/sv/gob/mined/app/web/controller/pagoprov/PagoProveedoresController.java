@@ -399,7 +399,9 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
     }
 
     public void setIdMes(int idMes) {
-        this.idMes = idMes;
+        if (idMes != 0) {
+            this.idMes = idMes;
+        }
     }
 
     public Empresa getEmpresa() {
@@ -2292,8 +2294,8 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
                 JsfUtil.mensajeInformacion("No se encontraron datos");
 
             } else {
-                //RptExcel.generarRptRentaMensual(lstProveedores, anho);
-                RptExcel.generarRptGenerico(lstProveedores, "rentaMensual", 2);
+                RptExcel.generarRptRentaMensual(lstProveedores);
+                //RptExcel.generarRptGenerico(lstProveedores, "rentaMensual", 2);
             }
         }
     }
@@ -2313,8 +2315,8 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
     }
 
     public void generarArchivoF14() {
-        lstF14 = pagoProveedoresEJB.getDatosF14(codigoDepartamento, getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getIdAnho().intValue(),
-                (idMes < 10 ? "0".concat(String.valueOf(idMes)) : String.valueOf(idMes)));
+        lstF14 = pagoProveedoresEJB.getDatosF14(codigoDepartamento,
+                (idMes < 10 ? "0".concat(String.valueOf(idMes)) : String.valueOf(idMes)).concat(getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getAnho()));
         if (lstF14.isEmpty()) {
             JsfUtil.mensajeInformacion("No se existen datos para el año seleccionado");
 

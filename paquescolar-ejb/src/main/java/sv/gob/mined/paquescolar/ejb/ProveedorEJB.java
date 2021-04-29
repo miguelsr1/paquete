@@ -1847,7 +1847,7 @@ public class ProveedorEJB {
         }
     }
 
-    public List<PrecioReferenciaEmpresaDto> getLstPreciosByIdEmpresaAndIdProcesoAdq(BigDecimal idEmpresa, Integer idProcesoAdq, String idNivelesCe) {
+    public List<PrecioReferenciaEmpresaDto> getLstPreciosByIdEmpresaAndIdProcesoAdq(BigDecimal idEmpresa, BigDecimal idAnho, String idNivelesCe) {
         Query q = em.createNativeQuery("select \n"
                 + "                rownum                  idRow,\n"
                 + "                pemp.no_item            noItem,\n"
@@ -1856,14 +1856,18 @@ public class ProveedorEJB {
                 + "                pmax.precio_maximo      precioMaximo,\n"
                 + "                pemp.precio_referencia  precioReferencia\n"
                 + "            from precio_maximo_referencia pmax\n"
-                + "                inner join precios_ref_rubro_emp pemp on pmax.id_producto = pemp.id_producto and pmax.id_proceso_adq = pemp.id_proceso_adq and pmax.no_item = pemp.no_item\n"
+                + "                inner join det_rubro_muestra_interes det on pmax.id_rubro_interes = det.id_rubro_interes and\n"
+                + "                                                            pmax.id_anho = det.id_anho                                                            \n"
+                + "                inner join precios_ref_rubro_emp pemp on pmax.id_producto = pemp.id_producto and \n"
+                + "                                                        pmax.no_item = pemp.no_item and\n"
+                + "                                                        pemp.id_muestra_interes = det.id_muestra_interes\n"
                 + "                inner join catalogo_producto cat      on pemp.id_producto = cat.id_producto\n"
                 + "                inner join nivel_educativo niv        on pemp.id_nivel_educativo = niv.id_nivel_educativo\n"
                 + "            where \n"
-                + "                pemp.id_empresa = " + idEmpresa + " and \n"
-                + "                pemp.id_proceso_adq = " + idProcesoAdq + " and\n"
+                + "                det.id_empresa = " + idEmpresa + " and \n"
+                + "                det.id_anho = " + idAnho + " and\n"
                 + "                pemp.estado_eliminacion = 0 and\n"
-                + (idProcesoAdq > 55 ? " pemp.id_nivel_educativo in (" + (idNivelesCe.replace("1", "22").replace("5", "5,23").replace("6", "6,24")) + ")\n" : "                pemp.id_nivel_educativo in (" + (idNivelesCe) + ")\n")
+                + (idAnho.intValue() > 8 ? " pemp.id_nivel_educativo in (" + (idNivelesCe.replace("1", "22").replace("5", "5,23").replace("6", "6,24")) + ")\n" : "                pemp.id_nivel_educativo in (" + (idNivelesCe) + ")\n")
                 + "            order by to_number(pemp.no_item)", PrecioReferenciaEmpresaDto.class);
         return q.getResultList();
     }

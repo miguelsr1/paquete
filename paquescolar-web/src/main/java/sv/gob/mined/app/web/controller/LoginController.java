@@ -161,7 +161,12 @@ public class LoginController implements Serializable {
             VarSession.setVariableSession("idEmpresa", usu.getIdPersona().getEmpresaList().get(0).getIdEmpresa());
             return "/app/proveedor/regDatosGenerales?faces-redirect=true";
         } else {
-            return "/app/inicial?faces-redirect=true";
+            if (usu.getCambiarClave().compareTo((short) 1) == 0) {
+                VarSession.setVariableSession("cambioClave", true);
+                return "/actualizarClave?faces-redirect=true";
+            } else {
+                return "/app/inicial?faces-redirect=true";
+            }
         }
     }
 
@@ -169,7 +174,7 @@ public class LoginController implements Serializable {
         HashMap<String, String> valor = loginEJB.solicitarEnlaceNuevaClave(usuario);
 
         if (valor.isEmpty()) {
-            JsfUtil.mensajeAlerta("Este NIT no existe en la base de proveedores. Recuerde que si es un proveedor con personeria juridica el NIT es del Representante Legal");
+            JsfUtil.mensajeAlerta("Este NIT no existe en la base.");
         } else {
             String titulo = "Paquete Escolar On Line - Cambiar Clave de Acceso";
             String mensaje = UTIL_CORREO.getString("prov.recordarcontrasenha");
@@ -181,10 +186,10 @@ public class LoginController implements Serializable {
 
             to.add(valor.get("correo"));
 
-            if(eMailEJB.enviarMail("rafael.arias@mined.gob.sv", titulo, mensaje, to, cc, new ArrayList(), new HashMap<>())){
+            if (eMailEJB.enviarMail("rafael.arias@mined.gob.sv", titulo, mensaje, to, cc, new ArrayList(), new HashMap<>())) {
                 JsfUtil.mensajeInformacion("Por favor revisar su correo para poder cambiar la clave de acceso");
             }
-            
+
         }
     }
 }
