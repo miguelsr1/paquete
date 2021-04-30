@@ -7,10 +7,12 @@ package sv.gob.mined.paquescolar.model.pojos;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.EntityResult;
 import javax.persistence.Id;
 import javax.persistence.SqlResultSetMapping;
+import javax.persistence.Temporal;
 
 /**
  *
@@ -45,6 +47,8 @@ public class VwRptProveedoresContratadosDto implements Serializable {
     private String numeroTelefono;
     private String telefonoEmp2;
     private String telefonoEmp3;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date fechaEmision;
 
     public VwRptProveedoresContratadosDto() {
     }
@@ -231,5 +235,13 @@ public class VwRptProveedoresContratadosDto implements Serializable {
 
     public void setTelefonoEmp3(String telefonoEmp3) {
         this.telefonoEmp3 = telefonoEmp3;
+    }
+
+    public Date getFechaEmision() {
+        return fechaEmision;
+    }
+
+    public void setFechaEmision(Date fechaEmision) {
+        this.fechaEmision = fechaEmision;
     }
 }

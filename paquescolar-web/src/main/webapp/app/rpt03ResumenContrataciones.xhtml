@@ -127,6 +127,11 @@
                                 <p:column headerText="Prov.Telefono 3">
                                     <p:outputLabel value="#{prov.telefonoEmp3}"/>
                                 </p:column>
+                                <p:column headerText="Fecha Emisión">
+                                    <p:outputLabel value="#{prov.fechaEmision}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>
 
                                 <p:summaryRow>
                                     <p:column colspan="10" style="text-align:right">
@@ -141,6 +146,8 @@
                                         <h:outputText value="#{reportesWebController.montoTotal}">
                                             <f:convertNumber type="currency" currencySymbol="$" />
                                         </h:outputText>
+                                    </p:column>
+                                    <p:column>
                                     </p:column>
                                 </p:summaryRow>
                             </p:dataTable>
