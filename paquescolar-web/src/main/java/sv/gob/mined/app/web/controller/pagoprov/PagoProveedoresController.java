@@ -2328,10 +2328,10 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
                 StringBuilder sb = new StringBuilder();
 
                 for (InformeF14Dto dato : lstF14) {
-                    sb = sb.append(dato.getColA()).append(",").append(dato.getColB()).append(",").append(dato.getColC()).append(",").append(dato.getColD()).append(",").append(dato.getColE()).
-                            append(",").append(dato.getColF()).append(",").append(dato.getColG()).append(",").append(dato.getColH()).append(",").append(dato.getColI()).append(",").append(dato.getColJ()).
-                            append(",").append(dato.getColK()).append(",").append(dato.getColL()).append(",").append(dato.getColLl()).append(",").append(dato.getColM()).append(",").append(dato.getColN()).
-                            append(",").append(dato.getColO()).append(",").append(dato.getColP()).append(",").append(dato.getColQ()).append("\n");
+                    sb = sb.append(dato.getColA()).append(";").append(dato.getColB()).append(";").append(dato.getColC()).append(";").append(dato.getColD()).append(";").append(dato.getColE()).
+                            append(";").append(dato.getColF()).append(";").append(dato.getColG()).append(";").append(dato.getColH()).append(";").append(dato.getColI()).append(";").append(dato.getColJ()).
+                            append(";").append(dato.getColK()).append(";").append(dato.getColL()).append(";").append(dato.getColLl()).append(";").append(dato.getColM()).append(";").append(dato.getColN()).
+                            append(";").append(dato.getColO()).append(";").append(dato.getColP()).append(";").append(dato.getColQ()).append("\n");
                 }
 
                 UtilFile.downloadFileTextoPlano(sb.toString(), "rptF14", UtilFile.EXTENSION_CSV);

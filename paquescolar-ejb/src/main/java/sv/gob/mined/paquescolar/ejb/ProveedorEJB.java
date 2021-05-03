@@ -987,7 +987,7 @@ public class ProveedorEJB {
     public PreciosRefRubroEmp getPrecioRef(Empresa idEmpresa, BigDecimal idNivelEdu, BigDecimal idProducto, BigDecimal idRubro, BigDecimal idAnho) {
         Query query = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.idEmpresa=:idEmpresa and p.idNivelEducativo.idNivelEducativo=:idNivelEdu and p.idProducto.idProducto=:idProducto and p.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and p.idMuestraInteres.idAnho.idAnho=:pIdAnho and p.estadoEliminacion=0", PreciosRefRubroEmp.class);
         query.setParameter("idEmpresa", idEmpresa);
-        query.setParameter("idNivelEdu", idNivelEdu);
+        query.setParameter("idNivelEdu", idAnho.intValue() > 8 ? (idNivelEdu.compareTo(BigDecimal.ONE) == 0 ? new BigDecimal(22) : idNivelEdu) : idNivelEdu);
         query.setParameter("idProducto", idProducto);
         query.setParameter("pIdRubro", idRubro);
         query.setParameter("pIdAnho", idAnho);

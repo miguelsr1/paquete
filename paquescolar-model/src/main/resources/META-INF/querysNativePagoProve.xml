@@ -75,8 +75,8 @@
             from (select 
                     '1'                         as colA,
                     '9300'                      as colB,
-                    SUBSTR(razon_social,0, 100) as colC,
-                    numero_nit                  as colD,
+                    SUBSTR(FN_GET_NOMBRE_EMP_F14(der.numero_nit),0, 100) as colC,
+                    replace(numero_nit,'-','')  as colD,
                     '11'                        as colE,
                     to_char(sum(dp.monto_actual))        as colF,
                     '0'                         as colG,
