@@ -1097,8 +1097,9 @@ public class ProveedorEJB {
     }
 
     public List<DetRubroMuestraInteres> findDetRubroMuestraInteresEntitiesByRubroAndEmpresa(DetalleProcesoAdq detProceso, Empresa empresa) {
-        Query q = em.createQuery("SELECT d FROM DetRubroMuestraInteres d WHERE d.estadoEliminacion = 0 and d.idDetProcesoAdq.idProcesoAdq.idAnho=:detProceso and d.idEmpresa=:empresa", DetRubroMuestraInteres.class);
-        q.setParameter("detProceso", detProceso.getIdProcesoAdq().getIdAnho());
+        Query q = em.createQuery("SELECT d FROM DetRubroMuestraInteres d WHERE d.estadoEliminacion = 0 and d.idAnho.idAnho=:pIdAnho and d.idRubroInteres.idRubroInteres=:pIdRubro and d.idEmpresa=:empresa", DetRubroMuestraInteres.class);
+        q.setParameter("pIdAnho", detProceso.getIdProcesoAdq().getIdAnho().getIdAnho());
+        q.setParameter("pIdRubro", detProceso.getIdRubroAdq().getIdRubroInteres());
         q.setParameter("empresa", empresa);
 
         return q.getResultList();
