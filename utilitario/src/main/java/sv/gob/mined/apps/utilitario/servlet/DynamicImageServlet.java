@@ -5,10 +5,9 @@
 package sv.gob.mined.apps.utilitario.servlet;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,9 +21,11 @@ public class DynamicImageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        cargarImagen(response, request.getParameter("file"));
+    }
+
+    private void cargarImagen(HttpServletResponse response, String file) {
         try {
-            // Get image file.
-            String file = request.getParameter("file");
             byte[] bytes;
             // Get image contents.
             try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
@@ -36,7 +37,7 @@ public class DynamicImageServlet extends HttpServlet {
             // Write image contents to response.
             response.getOutputStream().write(bytes);
         } catch (IOException e) {
-            //Logger.getLogger(DynamicImageServlet.class.getName()).log(Level.WARNING, "No se ha podido cargar la imagen {0}", request.getParameter("file"));
+            cargarImagen(response, file + File.separator + "sin_foto.png");
         }
     }
 }
