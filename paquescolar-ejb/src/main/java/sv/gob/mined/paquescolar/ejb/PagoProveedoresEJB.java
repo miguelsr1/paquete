@@ -27,6 +27,7 @@ import sv.gob.mined.paquescolar.model.ListaNotificacionPago;
 import sv.gob.mined.paquescolar.model.PlanillaPago;
 import sv.gob.mined.paquescolar.model.PlanillaPagoCheque;
 import sv.gob.mined.paquescolar.model.PreCarga;
+import sv.gob.mined.paquescolar.model.RecepcionBienesServicios;
 import sv.gob.mined.paquescolar.model.ReintegroRequerimiento;
 import sv.gob.mined.paquescolar.model.ResolucionesModificativas;
 import sv.gob.mined.paquescolar.model.TipoDocPago;
@@ -74,7 +75,7 @@ public class PagoProveedoresEJB {
         q.setParameter(2, anho);
         return q.getResultList();
     }
-    
+
     public List<InformeF14Dto> getDatosF14(String codigoDepartamento, String idMes) {
         Query q = em.createNamedQuery("PagoProve.FileF14v15", InformeF14Dto.class);
         q.setParameter(1, codigoDepartamento);
@@ -637,5 +638,11 @@ public class PagoProveedoresEJB {
         Query q = em.createQuery("SELECT l FROM Liquidacion l WHERE l.estadoEliminacion = 0 and l.idContrato.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq.idProcesoAdq.idProcesoAdq=:idProcesoAdq", Liquidacion.class);
         q.setParameter("idProcesoAdq", idProcesoAdq);
         return q.getResultList();
+    }
+
+    public Boolean contratoConActaDeRecepcion(BigDecimal idContrato) {
+        Query q = em.createQuery("SELECT r FROM RecepcionBienesServicios r WHERE r.estadoEliminacion=0 and r.idContrato.idContrato=:pIdContrato and r.idEstadoSeguimiento.idEstadoSeguimiento=2", RecepcionBienesServicios.class);
+        q.setParameter("pIdContrato", idContrato);
+        return !q.getResultList().isEmpty();
     }
 }

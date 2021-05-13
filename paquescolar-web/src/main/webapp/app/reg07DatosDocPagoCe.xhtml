@@ -4,6 +4,7 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:p="http://primefaces.org/ui"
     xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:jsf="http://xmlns.jcp.org/jsf"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
         <div class="ui-g">
@@ -105,7 +106,12 @@
         </div>
 
         <p:dialog header="Informacion de proveedor" modal="true" id="dlgEdtDetDocPago" widgetVar="dlgEdtDetDocPago" visible="#{pagoProveedoresController.dlgEdtDetDocPago}" closable="false">
-            <p:panelGrid id="pngDocPago" styleClass="companyHeaderGrid ui-panelgrid-blank">
+
+            <div jsf:id="dvMensaje" style="display:#{(!pagoProveedoresController.contratoSinActaRecepcion)?'block':'none'}">
+                <p:outputLabel value="Este contrato no tiene ACTA DE RECEPCIÓN registrada"/>
+            </div>
+
+            <p:panelGrid id="pngDocPago" styleClass="companyHeaderGrid ui-panelgrid-blank" style="display:#{(pagoProveedoresController.contratoSinActaRecepcion)?'block':'none'}">
                 <p:row>
                     <p:column>
                         <p:outputLabel value="¿Contrato extinguido?:"/>
@@ -286,10 +292,15 @@
                 </p:row>
             </p:panelGrid>
             <f:facet name="footer">
-                <p:commandButton id="btnAceptar" value="Aceptar" actionListener="#{pagoProveedoresController.editEdtDetDocPago}" 
-                                 disabled="#{menuController.usuarioSoloLectura}" icon="fa fa-check-circle" 
-                                 update="tblDetRequerimiento"/>
-                <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{pagoProveedoresController.closeDlgEdtDetDocPago}" onclick="PF('dlgEdtDetDocPago').hide();" />
+                <h:panelGrid columns="3">
+                    <p:commandButton id="btnAceptar" value="Aceptar" actionListener="#{pagoProveedoresController.editEdtDetDocPago}" 
+                                     disabled="#{menuController.usuarioSoloLectura}" icon="fa fa-check-circle" 
+                                     update="tblDetRequerimiento" style="display:#{(pagoProveedoresController.contratoSinActaRecepcion)?'block':'none'}"/>
+                    <p:commandButton id="btnAceptarCerrar" value="Aceptarc" action="#{pagoProveedoresController.closeDlgEdtDetDocPago}" onclick="PF('dlgEdtDetDocPago').hide();"
+                                     disabled="#{menuController.usuarioSoloLectura}" icon="fa fa-check-circle" 
+                                     update="tblDetRequerimiento" style="display:#{(!pagoProveedoresController.contratoSinActaRecepcion)?'block':'none'}"/>
+                    <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{pagoProveedoresController.closeDlgEdtDetDocPago}" onclick="PF('dlgEdtDetDocPago').hide();" />
+                </h:panelGrid>
             </f:facet>
         </p:dialog>
 

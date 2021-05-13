@@ -132,6 +132,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
     private Boolean tipoPagoEntFinanciera = false;
     private Boolean isRubroUniforme = false;
     private Boolean isPlanillaLectura = false;
+    private Boolean contratoSinActaRecepcion = false;
 
     private String anho;
     private String anhoRptAnual;
@@ -214,6 +215,14 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public Boolean getContratoSinActaRecepcion() {
+        return contratoSinActaRecepcion;
+    }
+
+    public void setContratoSinActaRecepcion(Boolean contratoSinActaRecepcion) {
+        this.contratoSinActaRecepcion = contratoSinActaRecepcion;
+    }
+
     public BigDecimal getMontoContrato() {
         return montoContrato;
     }
@@ -1638,63 +1647,65 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
 
     //docPago
     public void showDlgEdtDetDocPago() {
-        ajusteRenta = 0;
-        contratoModificado = false;
-        contratoExtinguido = (detalleRequerimiento.getActivo() == 1);
-        renderMontoRenta = false;
+        contratoSinActaRecepcion = pagoProveedoresEJB.contratoConActaDeRecepcion(new BigDecimal(detalleRequerimiento.getIdContrato()));
+        if (contratoSinActaRecepcion) {
+            ajusteRenta = 0;
+            contratoModificado = false;
+            contratoExtinguido = (detalleRequerimiento.getActivo() == 1);
+            renderMontoRenta = false;
 
-        detalleDocPago = proveedorEJB.getDetalleDocPago(detalleRequerimiento);
+            detalleDocPago = proveedorEJB.getDetalleDocPago(detalleRequerimiento);
 
-        if (detalleDocPago.getIdDetalleDocPago() == null) {
-            detalleDocPago.setIdDetRequerimiento(detalleRequerimiento);
-            detalleDocPago.setIdTipoDocPago(1);
-        } else {
-            contratoModificado = (detalleDocPago.getContratoModif() == (short) 1);
-        }
-        isRubroUniforme = (detalleRequerimiento.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue() == 1)
-                || (detalleRequerimiento.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue() == 4)
-                || (detalleRequerimiento.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue() == 5);
+            if (detalleDocPago.getIdDetalleDocPago() == null) {
+                detalleDocPago.setIdDetRequerimiento(detalleRequerimiento);
+                detalleDocPago.setIdTipoDocPago(1);
+            } else {
+                contratoModificado = (detalleDocPago.getContratoModif() == (short) 1);
+            }
+            isRubroUniforme = (detalleRequerimiento.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue() == 1)
+                    || (detalleRequerimiento.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue() == 4)
+                    || (detalleRequerimiento.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue() == 5);
 
-        //verificar si ha existido modificativa al contrato original
-        if (!contratoModificado) {
-            contratoModificado = pagoProveedoresEJB.isContratoConModificativa(new BigDecimal(detalleRequerimiento.getIdContrato()));
-        }
-        if (contratoModificado) {
-            ResolucionesModificativas resModif = pagoProveedoresEJB.getUltimaModificativa(new BigDecimal(detalleRequerimiento.getIdContrato()));
+            //verificar si ha existido modificativa al contrato original
+            if (!contratoModificado) {
+                contratoModificado = pagoProveedoresEJB.isContratoConModificativa(new BigDecimal(detalleRequerimiento.getIdContrato()));
+            }
+            if (contratoModificado) {
+                ResolucionesModificativas resModif = pagoProveedoresEJB.getUltimaModificativa(new BigDecimal(detalleRequerimiento.getIdContrato()));
 
-            if (resModif != null) {
+                if (resModif != null) {
 
-                montoContrato = resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getMonto();
-                cantidadContrato = resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getCantidad();
+                    montoContrato = resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getMonto();
+                    cantidadContrato = resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getCantidad();
 
-                if (resModif.getIdEstadoReserva().intValue() == 1) {
-                    JsfUtil.mensajeAlerta("Este contrato tiene una modificativa en estado de DIGITACIÓN");
-                } else {
-                    detalleDocPago.setFechaModificativa(resModif.getFechaResolucion());
-                    detalleDocPago.setCantidadActual(BigInteger.ZERO);
-                    detalleDocPago.setMontoActual(BigDecimal.ZERO);
-                    for (DetalleModificativa detalle : resModif.getDetalleModificativaList()) {
-                        if (detalle.getEstadoEliminacion() == 0) {
-                            if (detalle.getIdProducto().intValue() != 1) {
-                                detalleDocPago.setCantidadActual(detalleDocPago.getCantidadActual().add(new BigInteger(detalle.getCantidadNew().toString())));
+                    if (resModif.getIdEstadoReserva().intValue() == 1) {
+                        JsfUtil.mensajeAlerta("Este contrato tiene una modificativa en estado de DIGITACIÓN");
+                    } else {
+                        detalleDocPago.setFechaModificativa(resModif.getFechaResolucion());
+                        detalleDocPago.setCantidadActual(BigInteger.ZERO);
+                        detalleDocPago.setMontoActual(BigDecimal.ZERO);
+                        for (DetalleModificativa detalle : resModif.getDetalleModificativaList()) {
+                            if (detalle.getEstadoEliminacion() == 0) {
+                                if (detalle.getIdProducto().intValue() != 1) {
+                                    detalleDocPago.setCantidadActual(detalleDocPago.getCantidadActual().add(new BigInteger(detalle.getCantidadNew().toString())));
+                                }
+                                detalleDocPago.setMontoActual(detalleDocPago.getMontoActual().add(detalle.getPrecioUnitarioNew().multiply(new BigDecimal(detalle.getCantidadNew()))));
                             }
-                            detalleDocPago.setMontoActual(detalleDocPago.getMontoActual().add(detalle.getPrecioUnitarioNew().multiply(new BigDecimal(detalle.getCantidadNew()))));
                         }
                     }
                 }
+            } else {
+                ContratosOrdenesCompras contrato = utilEJB.find(ContratosOrdenesCompras.class, new BigDecimal(detalleRequerimiento.getIdContrato()));
+                montoContrato = contrato.getIdResolucionAdj().getIdParticipante().getMonto();
+                cantidadContrato = contrato.getIdResolucionAdj().getIdParticipante().getCantidad();
             }
-        } else {
-            ContratosOrdenesCompras contrato = utilEJB.find(ContratosOrdenesCompras.class, new BigDecimal(detalleRequerimiento.getIdContrato()));
-            montoContrato = contrato.getIdResolucionAdj().getIdParticipante().getMonto();
-            cantidadContrato = contrato.getIdResolucionAdj().getIdParticipante().getCantidad();
+
+            //verificación del tipo de rubro y personeria natural para determinar si aplica o no el calculo de renta
+            renderMontoRenta = (isRubroUniforme
+                    && proveedorEJB.isPersonaNatural(detalleDocPago.getIdDetRequerimiento().getNumeroNit()));
+            //Si aplica, se realiza el calculo del monto de renta
+            calculoDeRenta();
         }
-
-        //verificación del tipo de rubro y personeria natural para determinar si aplica o no el calculo de renta
-        renderMontoRenta = (isRubroUniforme
-                && proveedorEJB.isPersonaNatural(detalleDocPago.getIdDetRequerimiento().getNumeroNit()));
-        //Si aplica, se realiza el calculo del monto de renta
-        calculoDeRenta();
-
         dlgEdtDetDocPago = true;
     }
 
@@ -1899,7 +1910,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
 
                 Reportes.generarReporte(jasperPrintList, "rptReintegro_" + codigoDepartamento.replace(" ", ""));
             } catch (IOException | JRException ex) {
-                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, "Error en el reporte de Reintegro " + reintegroRequerimiento);
+                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, "Error en el reporte de Reintegro {0}", reintegroRequerimiento);
             }
         }
     }

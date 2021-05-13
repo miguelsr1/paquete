@@ -47,6 +47,8 @@
             function calcularMontoPorNivel(fem, mas, lblNivel) {
                 var femM = $("#" + fem + "_input").val();
                 var masM = $("#" + mas + "_input").val();
+                console.log($("#" + fem + "_input").val());
+                
                 $("#lblMat" + lblNivel).text(Number(femM) + Number(masM));
 
                 var preUniF = $("#txt" + lblNivel + "PreUniFem").val();
@@ -178,7 +180,7 @@
             </div>
             <div class="ui-g-12">
                 <div class="card">
-                    <p:tabView id="tabDatos">
+                    <p:tabView id="tabDatos" prependId="false">
                         <p:tab title="Estadistica de Censo Rápido y Asignación Presupuestaria">
                             <f:facet name="header">
                                 <i class="fa fa-list-alt acua" style="font-size: 16px;"></i>
