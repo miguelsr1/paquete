@@ -3,87 +3,94 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      lang="en">
 
     <h:head>
         <f:facet name="first">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-            <meta name="apple-mobile-web-app-capable" content="yes" />
+            <meta name="apple-mobile-web-app-capable" content="yes"/>
         </f:facet>
-        <title>MINEDUCYT - Envío de correo masivos</title>
-
+        <title><ui:insert name="title">Cooperación a CE's</ui:insert></title>
+        <h:outputScript name="js/layout.js" library="paradise-layout"/>
+        <h:outputScript name="js/prism.js" library="paradise-layout"/>
+        <h:outputScript name="funciones.js" library="js"/>
+        <h:outputScript name="calendar-localization.js" library="js"/>
         <ui:insert name="head"/>
 
-        <h:outputScript name="funciones.js" library="js" />
+        <style>
+            body .ui-menu.ui-menubar {
+                padding: 0rem;
+                background: #f8f9fa;
+                border-radius: 4px;
+            }
+
+            .layout-content .content-section {
+                padding: 2rem;
+                padding-bottom: 2rem;
+            }
+
+            .layout-content .content-section.introduction {
+                background-color: var(--surface-b);
+                color: var(--text-color);
+                padding-bottom: 0;
+                display: flex;
+                align-items: top;
+                justify-content: space-between;
+            }
+            .layout-content .content-section.introduction {
+                color: var(--text-color);
+            }
+            .layout-content .content-section.implementation {
+                background-color: var(--surface-b);
+                color: var(--text-color);
+            }
+            .pageColumnMid{
+                float : left;
+                vertical-align: middle !important;
+                clear : none;
+                height: 82px;
+                padding-left: 30px;
+            }
+        </style>
     </h:head>
 
     <h:body styleClass="#{guestPreferences.inputStyleClass}">
         <div class="layout-wrapper #{guestPreferences.menuMode} ">
+            <p:growl id="growl" showDetail="true" escape="false" sticky="true" >
+                <p:autoUpdate />
+            </p:growl>
 
-            <div class="topbar">
-                <div class="topbar-wrapper">
-                    <div class="topbar-left">
-                        <h:graphicImage name="images/mined-logo.svg" style="height:100px; margin-right: 20px; font-family: Bembo Std;"/>
-                    </div>
-                    <div class="topbar-right" style="width: 100%;">
-                        <p:outputPanel style="float: left !important;">
-                            <h:outputText style="font-family: Bembo Std !important; font-size: 30px" value="Proyectos de Cooperación" /><br/>
-                            <h:outputText style="font-family: Bembo Std !important; font-size: 18px;" value="Dirección Nacional de Planificación" />
-                        </p:outputPanel>
-                        <p:commandButton value="Salir" icon="fa fa-sign-out" action="#{guestPreferences.logout()}"
-                                         style="float: right !important;top: 10px;position: static;" process="@this"/>
-                    </div>
-                </div>
-            </div>
+            <ui:include src="./topbar.xhtml"/>
 
             <div class="layout-main">
 
-                <div class="layout-content" style="max-width: 95%; margin: auto;">
-                    <h:form prependId="false">
+                <div class="layout-content">
+                    <h:form id="frmPrincipal" prependId="false" >
                         <ui:insert name="contenido"/>
                     </h:form>
                 </div>
 
-            </div>        
+            </div>
         </div>
 
-        <!--p:ajaxStatus>
-            <f:facet name="default">
-
-            </f:facet>
+        <p:ajaxStatus style="width:32px;height:32px;position:fixed;right:7px;bottom:7px">
             <f:facet name="start">
-                <div id="div_modal" class="layout-content ui-widget-overlay ui-dialog-mask" style="z-index: 1000;"></div>
-                <div id="ajax_gif" class="ui-tooltip-text ui-corner-all ui-shadow">
-                    <i class="fa fa-refresh fa-spin ajax-loader" aria-hidden="true" 
-                       style="color: #349ffb; font-size: 36px; display: block;  position: relative;  top: 18%;  transform: translateY(-18%);"></i>
-                </div>
+                <i class="pi pi-spin pi-spinner layout-ajax-loader-icon" aria-hidden="true"></i>
             </f:facet>
 
             <f:facet name="complete">
-                <h:outputText value="" />
+                <h:outputText value=""/>
             </f:facet>
-        </p:ajaxStatus-->
-        
-        <h:form>
-            <p:idleMonitor onactive="PF('sessionTimeOutDialog').show();" timeout="1500000" >
-                <p:confirmDialog id="sessionTimeOutDialog"
-                                 message="La sesión a caducado por inactividad, por favor, pulse sobre el siguiente botón para volver a acceder a la aplicación" closable="false"
-                                 header="Sesión finalizada" widgetVar="sessionTimeOutDialog">
-                    <p:commandButton id="Logout" value="Iniciar sesión"
-                                     icon="fa fa-sign-out" ajax="false"
-                                     action="#{guestPreferences.logout()}" />
-                </p:confirmDialog>
-            </p:idleMonitor>
-        </h:form>
-
-        <h:outputStylesheet name="main.css" library="css" />
-        <h:outputStylesheet name="css/primeicons.css" library="paradise-layout" />
-        <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout" />
-        <h:outputStylesheet name="css/demo.css" library="demo" />
-
-        <h:outputStylesheet name="css/nanoscroller.css" library="paradise-layout" />
-        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout" />
+        </p:ajaxStatus>
+        <div class="layout-mask modal-in"></div>
+        <h:outputStylesheet name="personalizadas.css" library="css"/>
+        <h:outputStylesheet name="css/primeicons.css" library="paradise-layout"/>
+        <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout"/>
+        <h:outputStylesheet name="css/demo.css" library="demo"/>
+        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout"/>
     </h:body>
+
 </html>

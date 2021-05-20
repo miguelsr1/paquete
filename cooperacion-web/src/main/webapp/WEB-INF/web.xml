@@ -26,6 +26,20 @@
     </context-param>
     
     <context-param>
+        <param-name>com.sun.faces.numberOfViewsInSession</param-name>
+        <param-value>5</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.sun.faces.serializeServerState</param-name>
+        <param-value>false</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>primefaces.MULTI_VIEW_STATE_STORE</param-name>
+        <param-value>client-window</param-value>
+    </context-param>
+    
+    <context-param>
         <param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
         <param-value>true</param-value>
     </context-param>

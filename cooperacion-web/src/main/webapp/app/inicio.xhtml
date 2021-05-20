@@ -1,76 +1,69 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/plantilla.xhtml"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:jsf="http://xmlns.jcp.org/jsf">
 
-    <h:head>
-        <f:facet name="first">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-            <meta name="apple-mobile-web-app-capable" content="yes" />
-        </f:facet>
-
+    <ui:define name="head">
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOZGfkDBXOJYiOY1ovS_alyW8YueD8hBg" type="text/javascript"></script>
         <h:outputScript name="js/nanoscroller.js" library="paradise-layout" />
         <h:outputScript name="js/layout.js" library="paradise-layout" />
         <h:outputScript name="calendar-localization.js" library="js"/>
-    </h:head>
-    <h:body style="background-color: #303945;" styleClass="landing-body">
-        <h:form prependId="false">
+    </ui:define>
 
-            <div class="landing-wrapper #{guestPreferences.menuMode}">
-                <div class="topbar">
-                    <div class="topbar-wrapper">
-                        <div class="topbar-left">
-                            <h:graphicImage name="images/mined-logo.svg" style="height:100px; margin-right: 20px; font-family: Bembo Std;"/>
-                        </div>
-                        <div class="topbar-right" style="width: 100%;">
-                            <p:outputPanel style="float: left !important;">
-                                <h:outputText style="font-family: Bembo Std !important; font-size: 30px" value="Proyectos de Cooperación" /><br/>
-                                <h:outputText style="font-family: Bembo Std !important; font-size: 18px;" value="Dirección Nacional de Planificación" />
-                            </p:outputPanel>
-                            <p:commandButton value="Salir" icon="fa fa-sign-out" action="#{guestPreferences.logout()}"
-                                             style="float: right !important;top: 10px;position: static;" process="@this"/>
+
+    <ui:define name="contenido">
+        <div class="layout-main">
+            <div class="layout-content">
+                <div class="p-grid dashboard p-jc-center">
+                    <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'datosCe.mined';" 
+                         style="cursor: pointer;display:#{(userBean.centroEscolar)?'block':'none'};">
+                        <div class="card overview-box" style="text-align: center !important">
+                            <br/><br/>
+                            <p:graphicImage name="editar.png" library="images" style="background-color: white;" width="80" />
+                            <h5>Crear nuevo proyecto</h5>
+                            <br/><br/>
                         </div>
                     </div>
-                </div>
-
-
-                <div id="features" style="max-width: 1024px!important; margin: 0 auto; position: absolute;left: 50%;top: 310px;transform: translate(-50%, -50%);padding: 10px;">
-                    <div>
-                        <div class="p-grid features-content">
-                            <div class="p-col-12 p-md-6 feature-left" onclick="location.href = 'datosCe.mined';" 
-                                 style="cursor: pointer;display:#{(userBean.centroEscolar)?'block':'none'}">
-                                <p:graphicImage name="editar.png" library="images" style="background-color: white;"  />
-                                <h3>Crear nuevo proyecto</h3>
-                                <p>Registro de la información general del proyecto a ejecutar en el Centro Educativo.</p>
-                            </div>
-                            <div class="p-col-12 p-md-6 feature-left" onclick="location.href = 'listadoProyectos.mined';" style="cursor: pointer;">
-                                <p:graphicImage name="lista.png" library="images" style="background-color: white;"/>
-                                <h3>Listado de Proyectos</h3>
-                                <p>Listado de todos los proyectos registrados y el estado de cada uno de estos.</p>
-                            </div>
+                    <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'listadoProyectos.mined';" style="cursor: pointer;">
+                        <div class="card overview-box" style="text-align: center !important">
+                            <br/><br/>
+                            <p:graphicImage name="lista.png" library="images" style="background-color: white;" width="80"/>
+                            <h5>Listado de Proyectos</h5>
+                            <br/><br/>
                         </div>
-                        <br/>
-                        <br/>
-                        <div class="p-grid features-content">
-                            <div class="p-col-12 p-md-6 feature-left" onclick="location.href = 'mantto/inicioManttos.mined';" 
-                                 style="cursor: pointer; display:#{(userBean.perfilUsuario eq 'ADMIN')?'block':'none'}">
-                                <p:graphicImage name="settings.png" library="images" style="background-color: white;"/>
-                                <h3>Mantenimientos</h3>
-                                <p>Mantenimiento de los diferentes catalogos de la herramienta.</p>
-                            </div>
+                    </div>
+                    <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'mantto/inicioManttos.mined';" 
+                         style="cursor: pointer; display:#{(userBean.perfilUsuario eq 'ADMIN')?'block':'none'}">
+                        <div class="card overview-box" style="text-align: center !important">
+                            <br/><br/>
+                            <p:graphicImage name="settings.png" library="images" style="background-color: white;" width="80"/>
+                            <h5>Mantenimientos</h5>
+                            <br/><br/>
+                        </div>
+                    </div>
+                    <div class="p-col-6 p-md-4 p-xl-3"  
+                         style="cursor: pointer; display:#{(userBean.perfilUsuario eq 'ADMIN')?'block':'none'}">
+                        <div class="card overview-box" style="text-align: center !important">
+                            <br/><br/>
+                            <p:graphicImage name="reporte.png" library="images" style="background-color: white;" width="80"/>
+                            <h5>Reportes</h5>
+                            <br/><br/>
                         </div>
                     </div>
                 </div>
             </div>
-        </h:form>
+        </div>
 
-        <h:outputStylesheet name="css/primeicons.css" library="paradise-layout" />
-        <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout" />
 
-        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout" />
-    </h:body>
-</html>
+        <h:outputStylesheet name="personalizadas.css" library="css"/>
+        <h:outputStylesheet name="css/primeicons.css" library="paradise-layout"/>
+        <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout"/>
+        <h:outputStylesheet name="css/demo.css" library="demo"/>
+        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout"/>
+    </ui:define>
+</ui:composition>
