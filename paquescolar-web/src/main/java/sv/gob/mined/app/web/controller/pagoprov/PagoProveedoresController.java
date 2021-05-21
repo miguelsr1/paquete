@@ -151,6 +151,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
 
     private BigDecimal idPlanilla;
     private BigDecimal idReq = BigDecimal.ZERO;
+    private BigDecimal idDetReq = BigDecimal.ZERO;
     private BigDecimal idRubro = BigDecimal.ZERO;
     private BigDecimal montoCheque = BigDecimal.ZERO;
     private BigDecimal cantidadCe = BigDecimal.ZERO;
@@ -215,6 +216,14 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public BigDecimal getIdDetReq() {
+        return idDetReq;
+    }
+
+    public void setIdDetReq(BigDecimal idDetReq) {
+        this.idDetReq = idDetReq;
+    }
+
     public Boolean getContratoSinActaRecepcion() {
         return contratoSinActaRecepcion;
     }
@@ -2467,5 +2476,10 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
 
     public void cerrarDlgDetPagoProvee() {
         dlgDetPagoProveedor = false;
+    }
+
+    public void extingirContrato() {
+        pagoProveedoresEJB.extingirContrato(idDetReq);
+        buscarRequerimiento();
     }
 }

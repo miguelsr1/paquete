@@ -76,13 +76,20 @@
                             <p:column headerText="Ent. Finan">
                                 <p:outputLabel value="#{detReq.nombreEntFinan}"/>
                             </p:column>
-                            <p:column headerText="Num.Cuenta">
+                            <p:column headerText="Num.Cuenta" rendered="false">
                                 <p:outputLabel value="#{detReq.numeroCuenta}"/>
                             </p:column>
                             <p:column headerText="#{bundle['tabla.monto']}" width="70" styleClass="numero">
                                 <p:outputLabel value="#{detReq.montoTotal}">
                                     <f:convertNumber pattern="$ #,##0.00"/>
                                 </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="¿Extinguir?" width="70" style="text-align: center;" rendered="#{menuController.isUsuarioAdmin}">
+                                <p:commandLink oncomplete="PF('dlgConfirmar').show();" disabled="#{detReq.activo eq 1}">
+                                    <p:outputLabel> <i class="fa fa-check"></i></p:outputLabel>
+                                    <f:setPropertyActionListener value="#{detReq.idDetRequerimiento}" target="#{pagoProveedoresController.idDetReq}"/>  
+                                </p:commandLink>
+
                             </p:column>
                             <p:column headerText="Inf. Doc. Pago" width="30" style="text-align: center;">
                                 <p:commandLink action="#{pagoProveedoresController.showDlgEdtDetDocPago}" update="dlgEdtDetDocPago">
@@ -94,7 +101,7 @@
                             <p:column headerText="Estado **" width="33" style="text-align: center;">
                                 <p:inputSwitch id="estado" value="#{detReq.regCompleto}" disabled="true" onLabel="C" offLabel="I"/>
                             </p:column>
-                            <p:column headerText="Id.Pla." width="50" style="text-align: center;">
+                            <p:column headerText="Id.Pla." width="40" style="text-align: center;">
                                 <p:commandLink action="#{pagoProveedoresController.verPlanillaPago}" value="#{detReq.idPlanilla}" oncomplete="PF('dlgPlanillaPago').show();">
                                     <f:setPropertyActionListener value="#{detReq.idPlanilla}" target="#{pagoProveedoresController.idPlanilla}"/>
                                 </p:commandLink>
@@ -307,6 +314,13 @@
         <p:dialog id="dlgPlanillaPago" widgetVar="dlgPlanillaPago" header="Planilla de Pago" width="900" height="600" modal="true" resizable="false">
             <ui:include src="/app/comunes/fragmentos/pagoProveedores/planillaPago.xhtml"/>
         </p:dialog>
+
+        <p:confirmDialog id="dlgConfirmar" message="¿Está seguro de extingir este contrato?" severity="alert" appendTo="@(body)" 
+                         header="Confirmación" widgetVar="dlgConfirmar" closable="false" showEffect="puff" hideEffect="puff">  
+            <p:commandButton value="Si" icon="fa fa-check-circle" ajax="true" process="@this" action="#{pagoProveedoresController.extingirContrato}"
+                             update="pnlLstContratos" oncomplete="PF('dlgConfirmar').hide();"/>  
+            <p:commandButton value="No" onclick="PF('dlgConfirmar').hide();" type="button" icon="fa fa-times-circle"/>
+        </p:confirmDialog>
 
         <p:panel id="pnlDatos" visible="false"></p:panel>
 

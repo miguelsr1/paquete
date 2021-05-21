@@ -645,4 +645,10 @@ public class PagoProveedoresEJB {
         q.setParameter("pIdContrato", idContrato);
         return !q.getResultList().isEmpty();
     }
+    
+    public void extingirContrato(BigDecimal idDetReque){
+        Query q = em.createQuery("UPDATE DetalleRequerimiento dr SET dr.activo=1 WHERE dr.idDetRequerimiento=:pIdDetReque");
+        q.setParameter("pIdDetReque", idDetReque);
+        q.executeUpdate();
+    }
 }

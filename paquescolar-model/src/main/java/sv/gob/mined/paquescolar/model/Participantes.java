@@ -85,7 +85,7 @@ public class Participantes implements Serializable {
     @Column(name = "PORCENTAJE_CAPACIDAD")
     private BigDecimal porcentajeCapacidad;
 
-    @OneToMany(mappedBy = "idParticipante", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "idParticipante", fetch = FetchType.LAZY)
     @OrderBy("noItem ASC")
     private List<DetalleOfertas> detalleOfertasList;
 

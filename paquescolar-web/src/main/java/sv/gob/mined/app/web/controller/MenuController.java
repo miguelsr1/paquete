@@ -203,8 +203,12 @@ public class MenuController implements Serializable {
             return (usuario.getIdTipoUsuario().getIdTipoUsuario().intValue() != 1);
         }
     }
-    
-    public void cerrarSession(){
+
+    public Boolean getIsUsuarioAdmin() {
+        return (usuario.getIdTipoUsuario().getIdTipoUsuario().intValue() == 1);
+    }
+
+    public void cerrarSession() {
         ((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false)).invalidate();
         JsfUtil.redirectToIndex();
     }
