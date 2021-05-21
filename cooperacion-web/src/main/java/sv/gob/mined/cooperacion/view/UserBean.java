@@ -9,7 +9,6 @@ import javax.inject.Named;
 import java.io.Serializable;
 import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ComponentSystemEvent;
 import javax.faces.view.ViewScoped;
 
 /**
@@ -19,6 +18,7 @@ import javax.faces.view.ViewScoped;
 @Named
 @ViewScoped
 public class UserBean implements Serializable {
+    
 
     public Boolean getCentroEscolar() {
         FacesContext fc = FacesContext.getCurrentInstance();

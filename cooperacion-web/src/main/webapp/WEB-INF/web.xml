@@ -48,7 +48,20 @@
         <error-code>404</error-code>
         <location>/app/notfound.mined</location> 
     </error-page>
+    <error-page>
+        <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+        <location>/viewExpired.mined</location>
+    </error-page>
 
+    
+<!--    <filter>
+        <filter-name>FilterWeb</filter-name>
+        <filter-class>sv.gob.mined.cooperacion.util.FilterWeb</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>FilterWeb</filter-name>
+        <url-pattern>/app/*</url-pattern>
+    </filter-mapping>-->
     
     
     <listener>
@@ -83,7 +96,7 @@
     </servlet-mapping>
     <session-config>
         <session-timeout>
-            30
+            10
         </session-timeout>
     </session-config>
     <welcome-file-list>

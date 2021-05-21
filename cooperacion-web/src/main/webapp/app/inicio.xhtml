@@ -17,44 +17,43 @@
 
 
     <ui:define name="contenido">
-        <div class="layout-main">
-            <div class="layout-content">
-                <div class="p-grid dashboard p-jc-center">
-                    <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'datosCe.mined';" 
-                         style="cursor: pointer;display:#{(userBean.centroEscolar)?'block':'none'};">
-                        <div class="card overview-box" style="text-align: center !important">
-                            <br/><br/>
-                            <p:graphicImage name="editar.png" library="images" style="background-color: white;" width="80" />
-                            <h5>Crear nuevo proyecto</h5>
-                            <br/><br/>
-                        </div>
-                    </div>
-                    <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'listadoProyectos.mined';" style="cursor: pointer;">
-                        <div class="card overview-box" style="text-align: center !important">
-                            <br/><br/>
-                            <p:graphicImage name="lista.png" library="images" style="background-color: white;" width="80"/>
-                            <h5>Listado de Proyectos</h5>
-                            <br/><br/>
-                        </div>
-                    </div>
-                    <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'mantto/inicioManttos.mined';" 
-                         style="cursor: pointer; display:#{(userBean.perfilUsuario eq 'ADMIN')?'block':'none'}">
-                        <div class="card overview-box" style="text-align: center !important">
-                            <br/><br/>
-                            <p:graphicImage name="settings.png" library="images" style="background-color: white;" width="80"/>
-                            <h5>Mantenimientos</h5>
-                            <br/><br/>
-                        </div>
-                    </div>
-                    <div class="p-col-6 p-md-4 p-xl-3"  
-                         style="cursor: pointer; display:#{(userBean.perfilUsuario eq 'ADMIN')?'block':'none'}">
-                        <div class="card overview-box" style="text-align: center !important">
-                            <br/><br/>
-                            <p:graphicImage name="reporte.png" library="images" style="background-color: white;" width="80"/>
-                            <h5>Reportes</h5>
-                            <br/><br/>
-                        </div>
-                    </div>
+        <div class="p-grid dashboard p-jc-center p-ai-center vertical-container" style="background-color: white !important; height: 88vh;">
+            <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'datosCe.mined';" style="cursor: pointer;display:#{(userBean.centroEscolar)?'block':'none'};">
+                <div class="card overview-box" style="text-align: center !important; margin-top: -200px;">
+                    <br/><br/>
+                    <p:graphicImage name="editar.png" library="images" style="background-color: white;" width="80" />
+                    <br/><br/>
+                    <h5>Crear nuevo proyecto</h5>
+                    <br/><br/>
+                </div>
+            </div>
+            <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'listadoProyectos.mined';" style="cursor: pointer;">
+                <div class="card overview-box" style="text-align: center !important; margin-top: -200px;">
+                    <br/><br/>
+                    <p:graphicImage name="lista.png" library="images" style="background-color: white;" width="80"/>
+                    <br/><br/>
+                    <h5>Listado de Proyectos</h5>
+                    <br/><br/>
+                </div>
+            </div>
+            <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'mantto/inicioManttos.mined';" 
+                 style="cursor: pointer; display:#{(userBean.perfilUsuario eq 'ADMIN')?'block':'none'}">
+                <div class="card overview-box" style="text-align: center !important; margin-top: -200px;">
+                    <br/><br/>
+                    <p:graphicImage name="settings.png" library="images" style="background-color: white;" width="80"/>
+                    <br/><br/>
+                    <h5>Mantenimientos</h5>
+                    <br/><br/>
+                </div>
+            </div>
+            <div class="p-col-6 p-md-4 p-xl-3"  
+                 style="cursor: pointer; display:#{(userBean.perfilUsuario eq 'ADMIN')?'block':'none'}">
+                <div class="card overview-box" style="text-align: center !important; margin-top: -200px;">
+                    <br/><br/>
+                    <p:graphicImage name="reporte.png" library="images" style="background-color: white;" width="80"/>
+                    <br/><br/>
+                    <h5>Reportes</h5>
+                    <br/><br/>
                 </div>
             </div>
         </div>

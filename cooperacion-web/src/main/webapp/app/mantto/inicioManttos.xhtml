@@ -18,19 +18,24 @@
 
     <ui:define name="contenido">
 
-        <div class="layout-main">
-            <div class="layout-content">
-                <div class="p-grid dashboard p-jc-center">
-                    <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'manttoCooperante.mined';" style="cursor: pointer">
-                        <div class="card overview-box" style="text-align: center !important">
-                            <p:graphicImage name="editar.png" library="images" style="background-color: white;" width="80" />
-                            <h5>Cooperantes</h5>
-                        </div>
-                    </div>
-
+        <div class="p-grid dashboard p-jc-center p-ai-center vertical-container" style="background-color: white !important; height: 88vh;">
+            <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'manttoCooperante.mined';" >
+                <div class="card overview-box" style="text-align: center !important; margin-top: -200px;">
+                    <br/><br/>        
+                    <p:graphicImage name="editar.png" library="images" style="background-color: white;" width="80" />
+                    <br/>
+                    <h5>Cooperantes</h5>
+                    <br/><br/>
+                    <br/><br/>
                 </div>
             </div>
         </div>
 
+
+        <h:outputStylesheet name="personalizadas.css" library="css"/>
+        <h:outputStylesheet name="css/primeicons.css" library="paradise-layout"/>
+        <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout"/>
+        <h:outputStylesheet name="css/demo.css" library="demo"/>
+        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout"/>
     </ui:define>
 </ui:composition>

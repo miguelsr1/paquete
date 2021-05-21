@@ -112,11 +112,7 @@
         <div class="p-grid crud-demo">
             <div class="p-col">
                 <div class="card" style="display:#{!(userBean.centroEscolar)?'block':'none'}">
-                    <h1>
-                        <i class="fa fa-filter" style="font-size: 16px;"></i>
-                        <p:spacer width="10" height="8"/>
-                        <p:outputLabel value="Filtro de busqueda"/>
-                    </h1>
+                    <h5>Filtro de busqueda</h5>
                     <div class="products-buttonbar invoice-to">
                         <div jsf:id="divFiltros">
                             <div class="ui-fluid">
@@ -183,23 +179,13 @@
                 </div>
 
                 <div class="card">
-                    <div class="products-buttonbar">
-                        <div style="width: 100%">
-                            <p:panelGrid id="pnlFiltro" columns="2"
-                                         style="width: 100%; border:0px none; background-color:transparent;"
-                                         styleClass="form-group ui-panelgrid-blank">
-                                <p:outputPanel>
-                                    <h1>
-                                        <i class="fa fa-list-ol" style="font-size: 16px;"></i>
-                                        <p:spacer width="10"/>
-                                        <p:outputLabel value="Listado"/>
-                                    </h1>
-                                </p:outputPanel>
-                                <p:commandButton value="Ver" style="float: right" icon="pi pi-map-marker"
-                                                 action="#{listadoView.agregarPuntos}"
-                                                 styleClass="edit-button rounded-button success-button"
-                                                 onclick="PF('dlgMap').show();" update="mapa" process="@this"/>
-                            </p:panelGrid>
+                    <div class="card-header">
+                        <h5>Listado</h5>
+                        <div id="order-tabs-container" class="order-tabs">
+                            <p:commandButton value="Ver" style="float: right" icon="pi pi-map-marker"
+                                             action="#{listadoView.agregarPuntos}"
+                                             styleClass="edit-button rounded-button success-button"
+                                             onclick="PF('dlgMap').show();" update="mapa" process="@this"/>
                         </div>
                     </div>
                     <div class="invoice-to">

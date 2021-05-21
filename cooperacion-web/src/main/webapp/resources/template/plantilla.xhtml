@@ -12,6 +12,7 @@
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
             <meta name="apple-mobile-web-app-capable" content="yes"/>
+            <link href="#{request.contextPath}/resources/images/favicon.png" rel="shortcut icon"/>
         </f:facet>
         <title><ui:insert name="title">Cooperación a CE's</ui:insert></title>
         <h:outputScript name="js/layout.js" library="paradise-layout"/>
@@ -52,7 +53,14 @@
                 vertical-align: middle !important;
                 clear : none;
                 height: 82px;
-                padding-left: 30px;
+                padding-left: 60px;
+            }
+
+            .card {
+                background: var(--surface-e);
+                padding: 2rem;
+                box-shadow: 0 4px 2px 1px rgba(0, 0, 0, 0.2), 0 1px 1px 1px rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+                border-radius: 4px;
             }
         </style>
     </h:head>
