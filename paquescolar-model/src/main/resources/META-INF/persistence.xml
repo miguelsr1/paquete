@@ -130,6 +130,7 @@
     <class>sv.gob.mined.paquescolar.model.DetalleLiquidacion</class>
     <class>sv.gob.mined.paquescolar.model.Liquidacion</class>
     <class>sv.gob.mined.paquescolar.model.pojos.pagoprove.InformeF14Dto</class>
+    <class>sv.gob.mined.paquescolar.model.ConceptoInconsistencia</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>

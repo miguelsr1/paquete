@@ -148,7 +148,6 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     /*public OfertaBienesServicios getOferta() {
         return oferta;
     }*/
-
     public VwCatalogoEntidadEducativa getEntidadEducativa() {
         return entidadEducativa;
     }
@@ -270,12 +269,15 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
             det.setCantidad(dato.getCantidadContrato().longValue());
             det.setPrecioUnitario(dato.getPrecioUnitarioContrato());
 
-            det.setCantidadModificativa(dato.getCantidadModificativa().longValue());
-            det.setPrecioUnitarioModif(dato.getPrecioUnitarioModificativa());
+            if (modificativa) {
+                det.setCantidadModificativa(dato.getCantidadModificativa().longValue());
+                det.setPrecioUnitarioModif(dato.getPrecioUnitarioModificativa());
+            }
 
             det.setCantidadEntregada(dato.getCantidadRecepcion().longValue());
-            det.setCantidadResguardo(dato.getCantidadResguardo().longValue());
-
+            if (dato.getCantidadResguardo() != null && dato.getCantidadResguardo().intValue() > 0) {
+                det.setCantidadResguardo(dato.getCantidadResguardo().longValue());
+            }
             det.setIdLiquidacion(liquidacion);
 
             liquidacion.getDetalleLiquidacionList().add(det);
@@ -341,14 +343,16 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
             }
         }
 
-        for (DatosModificativaDto dato : datosModificativaDto) {
-            if (dato.getNoItem().equals(noItem)) {
-                datoLiquidacion.setIdContrato(dato.getIdContrato());
-                datoLiquidacion.setNoItem(noItem);
-                datoLiquidacion.setCantidadModificativa(dato.getCantidadNew());
-                datoLiquidacion.setPrecioUnitarioModificativa(dato.getPrecioUnitarioNew());
-                noEstaItem = false;
-                break;
+        if (modificativa) {
+            for (DatosModificativaDto dato : datosModificativaDto) {
+                if (dato.getNoItem().equals(noItem)) {
+                    datoLiquidacion.setIdContrato(dato.getIdContrato());
+                    datoLiquidacion.setNoItem(noItem);
+                    datoLiquidacion.setCantidadModificativa(dato.getCantidadNew());
+                    datoLiquidacion.setPrecioUnitarioModificativa(dato.getPrecioUnitarioNew());
+                    noEstaItem = false;
+                    break;
+                }
             }
         }
 
