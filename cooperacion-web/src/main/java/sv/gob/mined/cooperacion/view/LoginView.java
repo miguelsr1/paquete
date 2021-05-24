@@ -30,11 +30,6 @@ public class LoginView implements Serializable {
     private String dominio;
     private String password;
 
-    private String remitente;
-    private String port;
-    private String server;
-    private Session mailSession;
-
     @Inject
     private CredencialesView credencialesView;
 
@@ -100,7 +95,6 @@ public class LoginView implements Serializable {
 
             if (correoValido) {
                 FacesContext context = FacesContext.getCurrentInstance();
-                context.getExternalContext().getSessionMap().put("userName", correoRemitente);
                 /*context.getExternalContext().getSessionMap().put("server", server);
                 context.getExternalContext().getSessionMap().put("port", port);
                 context.getExternalContext().getSessionMap().put("remitente", remitente);

@@ -15,6 +15,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import sv.gob.mined.cooperacion.model.Usuario;
 
 public class FilterWeb implements Filter {
 
@@ -51,7 +52,7 @@ public class FilterWeb implements Filter {
         doBeforeProcessing(request, response);
         Throwable problem = null;
         try {
-            String user = (String) session.getAttribute("username");
+            Usuario user = (Usuario) session.getAttribute("usuario");
             if (user != null) {
                 chain.doFilter(request, response);
             } else {

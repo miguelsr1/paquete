@@ -1,10 +1,19 @@
 package sv.gob.mined.cooperacion.facade;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
 import sv.gob.mined.cooperacion.model.Cooperante;
 import sv.gob.mined.cooperacion.model.DatoInfraCe;
 import sv.gob.mined.cooperacion.model.Director;
@@ -17,6 +26,7 @@ import sv.gob.mined.cooperacion.model.TipoCooperacion;
 import sv.gob.mined.cooperacion.model.TipoCooperante;
 import sv.gob.mined.cooperacion.model.TipoInstrumento;
 import sv.gob.mined.cooperacion.model.Usuario;
+import sv.gob.mined.cooperacion.model.dto.MatrizProyectoDto;
 
 @Stateless
 public class CatalogoFacade {
@@ -99,6 +109,26 @@ public class CatalogoFacade {
             return null;
         } else {
             return (DatoInfraCe) q.getResultList().get(0);
+        }
+    }
+    
+    public List<MatrizProyectoDto> getMatrizProyectosByAnho(String anho){
+        Query q = emCooperacion.createNamedQuery("Cooperacion.MatrizProyecto", MatrizProyectoDto.class);
+        q.setParameter(1, anho);
+        return q.getResultList();
+    }
+    
+    public JasperPrint getRpt(HashMap map, InputStream input) {
+        try {
+            JasperPrint jp;
+            Connection conn = emCooperacion.unwrap(java.sql.Connection.class);
+            jp = JasperFillManager.fillReport(input, map, conn);
+
+            input.close();
+            return jp;
+        } catch (JRException | IOException ex) {
+            Logger.getLogger(CatalogoFacade.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
     }
 }

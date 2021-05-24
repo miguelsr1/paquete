@@ -54,14 +54,14 @@
     </error-page>
 
     
-<!--    <filter>
+    <filter>
         <filter-name>FilterWeb</filter-name>
         <filter-class>sv.gob.mined.cooperacion.util.FilterWeb</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>FilterWeb</filter-name>
         <url-pattern>/app/*</url-pattern>
-    </filter-mapping>-->
+    </filter-mapping>
     
     
     <listener>
