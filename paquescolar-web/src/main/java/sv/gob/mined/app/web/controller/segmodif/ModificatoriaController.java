@@ -1118,6 +1118,9 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                 case 1:
                 case 6:
                     nombreRpt = "rptModCantSinIncrementoMonto";
+                    if (detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() == 8) {
+                        nombreRpt += detalleProceso.getIdProcesoAdq().getIdAnho().getAnho();
+                    }
                     break;
                 case 4:
                     nombreRpt = "rptModProrroga";
@@ -1187,6 +1190,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
             param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
             param.put("pJustificacion", resolucionesModificativas.getJustificacionModificativa());
             param.put("pPlazoEntrega", resolucionesModificativas.getIdContrato().getPlazoPrevistoEntrega().intValue());
+            param.put("pFechaEmision", resolucionesModificativas.getIdContrato().getFechaEmision());
             if (nombreRpt.contains("rptModProrroga")) {
                 param.put("JUSTIFICACION", resolucionesModificativas.getJustificacionModificativa());
                 param.put("DIAS_PRORROGA", resolucionesModificativas.getDiasProrroga().toString());
