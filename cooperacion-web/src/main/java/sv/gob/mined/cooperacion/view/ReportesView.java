@@ -30,10 +30,9 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import sv.gob.mined.cooperacion.facade.CatalogoFacade;
@@ -42,17 +41,17 @@ import sv.gob.mined.cooperacion.model.dto.MatrizProyectoDto;
 @Named
 @ViewScoped
 public class ReportesView implements Serializable {
-    
+
     private HSSFWorkbook wb;
     private DataFormat FORMATO_DATA;
     private final DateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
     private final String EXTENSION_XLS = "xls";
     private final String CONTENIDO_XLS = "application/ms-excel";
     private final DateFormat FORMAT_DATE_RPT = new SimpleDateFormat("ddMMMyy_HHmmss");
-    
+
     @Inject
     private CatalogoFacade catalogoFacade;
-    
+
     public void generarMatrizProyecto() {
         List<MatrizProyectoDto> lstDatos = catalogoFacade.getMatrizProyectosByAnho("2020");
         HSSFCellStyle style;
@@ -61,78 +60,63 @@ public class ReportesView implements Serializable {
             wb = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb.createDataFormat();
             style = wb.createCellStyle();
-            
+            style.setBorderBottom(BorderStyle.THIN);
+            style.setBorderTop(BorderStyle.THIN);
+            style.setBorderRight(BorderStyle.THIN);
+            style.setBorderLeft(BorderStyle.THIN);
+
             HSSFSheet s1 = wb.getSheetAt(0);   //sheet by index
 
             for (MatrizProyectoDto dato : lstDatos) {
-                escribirNumero(dato.getIdProyecto().toString(), row, 0, style, true, s1);
-                escribirTexto(dato.getNombreProyecto(), row, 1, style, s1);
-                escribirTexto(dato.getDescripcion(), row, 2, style, s1);
-                escribirTexto(dato.getInstitucion(), row, 3, style, s1);
-                escribirTexto(dato.getSectorIntervencion(), row, 4, style, s1);
-                escribirTexto(dato.getTmCooperacion(), row, 5, style, s1);
-                escribirTexto(dato.getDescripcionObjetivo(), row, 6, style, s1);
-                escribirTexto(dato.getDescripcionMeta(), row, 7, style, s1);
-                escribirTexto(dato.getFechaEstimadaInicio(), row, 8, style, s1);
-                escribirTexto(dato.getFechaEstimadaFin(), row, 9, style, s1);
-                escribirTexto(dato.getNombreCooperante(), row, 10, style, s1);
-                
-                escribirNumero(dato.getMontoInversion().toString(), row, 11, style, false, s1);
-                escribirTexto("", row, 12, style, s1);
-                escribirTexto("", row, 13, style, s1);
-                escribirTexto("", row, 14, style, s1);
-                escribirTexto("", row, 15, style, s1);
+                HSSFRow hrow = s1.createRow(row);
+
+                escribirNumero(dato.getIdProyecto().toString(), hrow, 0, style, true);
+                escribirTexto(dato.getNombreProyecto(), hrow, 1, style);
+                escribirTexto(dato.getDescripcion(), hrow, 2, style);
+                escribirTexto(dato.getInstitucion(), hrow, 3, style);
+                escribirTexto(dato.getSectorIntervencion(), hrow, 4, style);
+                escribirTexto(dato.getTmCooperacion(), hrow, 5, style);
+                escribirTexto(dato.getDescripcionObjetivo(), hrow, 6, style);
+                escribirTexto(dato.getDescripcionMeta(), hrow, 7, style);
+                escribirTexto(dato.getFechaEstimadaInicio(), hrow, 8, style);
+                escribirTexto(dato.getFechaEstimadaFin(), hrow, 9, style);
+                escribirTexto(dato.getNombreCooperante(), hrow, 10, style);
+
+                escribirNumero((dato.getMontoInversion() == null ? "" : dato.getMontoInversion().toString()), hrow, 11, style, false);
+                escribirTexto("", hrow, 12, style);
+                escribirTexto("", hrow, 13, style);
+                escribirTexto("", hrow, 14, style);
+                escribirTexto("", hrow, 15, style);
                 row++;
             }
-            
+
             generarArchivo(wb, "rptMatrizProyecto");
         } catch (IOException | InvalidFormatException ex) {
             Logger.getLogger(ReportesView.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void escribirTexto(String text, Integer row, Integer col, CellStyle style, HSSFSheet hoja) {
+
+    private void escribirTexto(String text, HSSFRow hrow, Integer col, CellStyle style) {
         HSSFRichTextString texto = new HSSFRichTextString(text);
-        if (hoja.getRow(row) == null) {
-            Row row1 = hoja.createRow(row);
-            Cell c = row1.createCell(col);
-            c.setCellValue(texto);
-            c.setCellStyle(style);
-        } else {
-            Row row1 = hoja.getRow(row);
-            Cell c = row1.createCell(col);
-            c.setCellValue(texto);
-            c.setCellStyle(style);
-        }
-    }
-    
-    private void escribirFecha(Date fecha, Integer row, Integer col, CellStyle style, HSSFSheet hoja) {
-        HSSFRow row1 = hoja.getRow(row);
-        HSSFCell cell = row1.getCell(col);
-        if (cell == null) {
-            cell = row1.createCell(col);
-        }
-        if (fecha != null) {
-            cell.setCellValue(FORMAT_DATE.format(fecha));
-        }
+        HSSFCell cell = hrow.createCell(col);
+        style.setWrapText(true);
         cell.setCellStyle(style);
+        cell.setCellValue(texto);
+
     }
-    
-    private void escribirNumero(String text, Integer row, Integer col, CellStyle style, Boolean entero, HSSFSheet hoja) {
+
+    private void escribirNumero(String text, HSSFRow hrow, Integer col, CellStyle style, Boolean entero) {
         text = text.replace(",", "");
-        HSSFRow hrow = hoja.getRow(row);
-        HSSFCell cell = hrow.getCell(col);
-        if (cell == null) {
-            hrow.createCell(col);
-            cell = hrow.getCell(col);
-        }
-        style.setDataFormat(entero ? FORMATO_DATA.getFormat("#,##0") : FORMATO_DATA.getFormat("#,##0.00"));
-        cell.setCellStyle(style);
+        HSSFCell cell = hrow.createCell(col);
+
         if (text != null && !text.isEmpty()) {
-            cell.setCellValue(entero ? Integer.parseInt(text) : Double.parseDouble(text));
+            cell.setCellValue(Double.parseDouble(text));
         }
+
+        style.setDataFormat(entero ? FORMATO_DATA.getFormat("0") : FORMATO_DATA.getFormat("#,##0.00"));
+        cell.setCellStyle(style);
     }
-    
+
     private void generarArchivo(Workbook wb, String nombreFile) {
         try (ByteArrayOutputStream outByteStream = new ByteArrayOutputStream()) {
             wb.write(outByteStream);
@@ -142,12 +126,12 @@ public class ReportesView implements Serializable {
             Logger.getLogger(ReportesView.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void downloadFileBytes(byte[] outArray, String nombreFile, String tipoDeContenido, String extension) throws IOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         ExternalContext externalContext = facesContext.getExternalContext();
         HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-        
+
         response.setContentType(tipoDeContenido);
         response.setContentLength(outArray.length);
         response.setHeader("Content-disposition", "attachment; filename=" + nombreFile + "-" + getFechaGeneracionReporte() + "." + extension);
@@ -158,11 +142,11 @@ public class ReportesView implements Serializable {
         facesContext.responseComplete();
         facesContext.renderResponse();
     }
-    
+
     public String getFechaGeneracionReporte() {
         return FORMAT_DATE_RPT.format(new Date());
     }
-    
+
     public String formatearNumero(int posisiones, String valor, Boolean numInt) {
         valor = valor.replaceAll("[.]", "");
         Formatter fmt = new Formatter();
