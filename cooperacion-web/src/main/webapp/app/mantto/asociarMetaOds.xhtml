@@ -77,12 +77,19 @@
         <p:breadCrumb>
             <p:menuitem value="Inicio" url="../inicio.mined" />
             <p:menuitem value="Mantenimientos" url="inicioManttos.mined" />
+            <p:menuitem value="Asociar meta ODS" url="#" />
         </p:breadCrumb>
         <br/>
         <div class="p-grid crud-demo">
             <div class="p-col-12">
                 <div class="card ui-fluid" jsf:id="divDatos">
-                    <h5>Datos del Cooperante</h5>
+                    <div class="card-header">
+                        <h5>Datos del Proyecto</h5>
+                        <div id="order-tabs-container" class="order-tabs">
+                            <p:commandButton value="Seleccionar proyecto" icon="pi pi-link" process="@this" onclick="PF('dlgCooperante').show();" />
+                        </div>
+                    </div>
+                    <br/><br/>
                     <div class="p-field p-grid">
                         <p:outputLabel value="Nombre Organización:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
                         <div class="p-col-12 p-md-10">
@@ -90,82 +97,38 @@
                                 <span class="ui-inputgroup-addon">
                                     <i class="fa fa-building"></i>
                                 </span>
-                                <p:inputText value="#{cooperanteView.cooperante.nombreCooperante}"/>
+                                <p:inputText />
                             </div>
                         </div>
                     </div>
                     <div class="p-field p-grid">
-                        <p:outputLabel value="Tipo:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <p:outputLabel value="Proyecto" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
                         <div class="p-col-12 p-md-10">
-                            <p:selectOneMenu value="#{cooperanteView.idTipoCooperante}">
+                            <div class="ui-inputgroup">
+                                <span class="ui-inputgroup-addon">
+                                    <i class="pi pi-tag"></i>
+                                </span>
+                                <p:inputTextarea id="txtNomProyecto"  />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Objetivo de Desarrollo:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-10">
+                            <p:selectOneMenu id="cboObjetivo" value="#{asociarProyectoMetaView.idObjetivo}">
                                 <f:selectItem itemValue="null" itemLabel="Seleccione un valor"/>
-                                <f:selectItems value="#{cooperanteView.lstTipoCooperante}" var="coo" itemValue="#{coo.idTipoCooperante}" itemLabel="#{coo.descripcionCooperante}"/>
+                                <f:selectItems value="#{asociarProyectoMetaView.objetivosDesarrollo}" var="obj" itemValue="#{obj.idObjetivo}" itemLabel="#{obj.descripcionObjetivo}"/>
+                                <p:ajax update="cboMeta"/>
                             </p:selectOneMenu>
                         </div>
                     </div>
-
                     <div class="p-field p-grid">
-                        <p:outputLabel value="Nombre Contanto:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <p:outputLabel value="Meta ODS:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
                         <div class="p-col-12 p-md-10">
-                            <div class="ui-inputgroup">
-                                <span class="ui-inputgroup-addon">
-                                    <i class="pi pi-tag"></i>
-                                </span>
-                                <p:inputText id="txtNombreCe" value="#{cooperanteView.cooperante.nombreContacto}" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-field p-grid">
-                        <p:outputLabel value="Teléfono:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                        <div class="p-col-12 p-md-4">
-                            <div class="ui-inputgroup">
-                                <span class="ui-inputgroup-addon">
-                                    <i class="fa fa-phone" aria-hidden="true"></i>
-                                </span>
-                                <p:inputMask id="txtTelefono" value="#{cooperanteView.cooperante.telefono}" mask="9999-9999"/>
-                            </div>
-                        </div>
-                        <p:outputLabel value="Celular:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                        <div class="p-col-12 p-md-4">
-                            <div class="ui-inputgroup">
-                                <span class="ui-inputgroup-addon">
-                                    <i class="pi pi-mobile"></i>
-                                </span>
-                                <p:inputMask id="txtCelular" value="#{cooperanteView.cooperante.celular}" mask="9999-9999"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-field p-grid">
-                        <p:outputLabel value="Correo electrónico:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                        <div class="p-col-12 p-md-10">
-                            <div class="ui-inputgroup">
-                                <span class="ui-inputgroup-addon">
-                                    <i class="pi pi-envelope"></i>
-                                </span>
-                                <p:inputText id="txtCorreoDirector" value="#{cooperanteView.cooperante.correo}"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-field p-grid">
-                        <p:outputLabel value="Nombre Asistente:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                        <div class="p-col-12 p-md-10">
-                            <div class="ui-inputgroup">
-                                <span class="ui-inputgroup-addon">
-                                    <i class="pi pi-tag"></i>
-                                </span>
-                                <p:inputText id="txtNombreAsistente" value="#{cooperanteView.cooperante.nombreAsistente}" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-field p-grid">
-                        <p:outputLabel value="Dirección" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                        <div class="p-col-12 p-md-10">
-                            <div class="ui-inputgroup">
-                                <span class="ui-inputgroup-addon">
-                                    <i class="pi pi-tag"></i>
-                                </span>
-                                <p:inputTextarea id="txtDireccion" value="#{cooperanteView.cooperante.nombreAsistente}" />
-                            </div>
+                            <p:selectOneMenu id="cboMeta" value="#{asociarProyectoMetaView.idMeta}">
+                                <f:selectItem itemValue="null" itemLabel="Seleccione un valor"/>
+                                <f:selectItems value="#{asociarProyectoMetaView.meta}" var="meta" itemValue="#{meta.idMeta}" itemLabel="#{meta.descripcionMeta}"/>
+                            </p:selectOneMenu>
                         </div>
                     </div>
 
@@ -177,30 +140,42 @@
                         <div class="p-col-12 p-md-2">
                             <p:commandButton value="Cancelar" icon="pi pi-ban" process="@this" action="inicioManttos.mined?faces-redirect=true"/>
                         </div>
-                        <div class="p-col-12 p-md-2">
-                            <p:commandButton value="Modifcar" icon="pi pi-pencil" process="@this" onclick="PF('dlgCooperante').show();" />
-                        </div>
                     </div>
                 </div>
 
-                <p:dialog id="dlgCooperante" widgetVar="dlgCooperante" modal="true" closable="false" width="1000" height="500">
-                    <h5>
-                        Listado de Cooperantes
-                    </h5>
-                    <p:dataTable value="#{cooperanteView.lstCooperantes}" var="coo" paginator="true" paginatorPosition="top" rows="10"
-                                 selection="#{cooperanteView.cooperante}" selectionMode="single" rowKey="#{coo.idCooperante}">
-                        <p:ajax update="divDatos" event="rowSelect" listener="#{cooperanteView.onRowSelect}" oncomplete="PF('dlgCooperante').hide();"/>
+                <p:dialog id="dlgProyecto" widgetVar="dlgProyecto" modal="true" closable="false" width="1000" height="500">
+                    <h5>Listado de Proyectos</h5>
+
+                    <h:panelGrid columns="5">
+                        <p:outputLabel value="Cooperante: "/>
+                        <p:selectOneMenu value="#{listadoView.idCooperante}">
+                            <f:selectItem itemValue="0" itemLabel="TODOS LOS COOPERANTES"/>
+                            <f:selectItems value="#{listadoView.lstCooperantePorProyecto}" var="coo" itemValue="#{coo.idCooperante}" itemLabel="#{coo.nombreCooperante}" />
+                            <p:ajax listener="#{listadoView.recuperarLstProyectosPorCooperante()}" update="mapa" />
+                        </p:selectOneMenu>
+                        <p:spacer width="20"/>
+                        <p:outputLabel value="Año: "/>
+                        <p:selectOneMenu value="#{listadoView.anho}">
+                            <f:selectItem itemValue="0" itemLabel="TODOS LOS AÑOS"/>
+                            <f:selectItems value="#{listadoView.lstAnhosProyectos}" var="anho" itemValue="#{anho.atributo}" itemLabel="#{anho.valor}" />
+                            <p:ajax listener="#{listadoView.recuperarLstProyectosPorCooperante()}" update="mapa" />
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+
+                    <p:dataTable value="#{asociarProyectoMetaView.lstProyectos}" var="proyecto" paginator="true" paginatorPosition="top" rows="10"
+                                 selection="#{asociarProyectoMetaView.proyectoCooperacion}" selectionMode="single" rowKey="#{proyecto.idProyecto}">
+                        <p:ajax update="divDatos" event="rowSelect" oncomplete="PF('dlgProyecto').hide();"/>
                         <p:column headerText="Id" width="10">
-                            <h:outputText value="#{coo.idCooperante}"/>
+                            <h:outputText value="#{proyecto.idProyecto}"/>
                         </p:column>
                         <p:column headerText="Organización">
-                            <h:outputText value="#{coo.nombreCooperante}"/>
+                            <h:outputText value="#{proyecto.idCooperante.nombreCooperante}"/>
                         </p:column>
-                        <p:column headerText="Tipo" width="250">
-                            <h:outputText value="#{coo.idTipoCooperante.descripcionCooperante}"/>
+                        <p:column headerText="Beneficiario" width="250">
+                            <h:outputText value="#{proyecto.codigoEntidad}"/>
                         </p:column>
-                        <p:column headerText="Contacto" width="300">
-                            <h:outputText value="#{coo.nombreContacto}"/>
+                        <p:column headerText="Modalidad" width="300">
+                            <h:outputText value="#{proyecto.idModalidad.descripcionModalidad}"/>
                         </p:column>
                     </p:dataTable>
                 </p:dialog>

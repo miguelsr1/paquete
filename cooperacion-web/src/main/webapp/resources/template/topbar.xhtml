@@ -23,9 +23,11 @@
             </div>
             <div class="topbar-right">
                 <div id="user-display" style="padding-top: 1px; text-align: right;">
-                    <p:commandLink action="#{guestPreferences.logout()}">
-                        <i class="pi pi pi-fw pi-power-off" style="font-size: 18px;" />
-                    </p:commandLink>
+                    <h:form>
+                        <p:commandLink action="#{guestPreferences.logout()}">
+                            <i class="pi pi pi-fw pi-power-off" style="font-size: 18px;" />
+                        </p:commandLink>
+                    </h:form>
                 </div>
             </div>
         </div>

@@ -2,10 +2,12 @@ package sv.gob.mined.cooperacion.model.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.EntityResult;
 import javax.persistence.Id;
 import javax.persistence.SqlResultSetMapping;
+import javax.persistence.Temporal;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
@@ -23,8 +25,10 @@ public class MatrizProyectoDto implements Serializable {
     private String tmCooperacion;
     private String descripcionObjetivo;
     private String descripcionMeta;
-    private String fechaEstimadaInicio;
-    private String fechaEstimadaFin;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date fechaEstimadaInicio;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date fechaEstimadaFin;
     private String nombreCooperante;
     private BigDecimal montoInversion;
     private String anho;
@@ -96,19 +100,19 @@ public class MatrizProyectoDto implements Serializable {
         this.descripcionMeta = descripcionMeta;
     }
 
-    public String getFechaEstimadaInicio() {
+    public Date getFechaEstimadaInicio() {
         return fechaEstimadaInicio;
     }
 
-    public void setFechaEstimadaInicio(String fechaEstimadaInicio) {
+    public void setFechaEstimadaInicio(Date fechaEstimadaInicio) {
         this.fechaEstimadaInicio = fechaEstimadaInicio;
     }
 
-    public String getFechaEstimadaFin() {
+    public Date getFechaEstimadaFin() {
         return fechaEstimadaFin;
     }
 
-    public void setFechaEstimadaFin(String fechaEstimadaFin) {
+    public void setFechaEstimadaFin(Date fechaEstimadaFin) {
         this.fechaEstimadaFin = fechaEstimadaFin;
     }
 
@@ -135,5 +139,5 @@ public class MatrizProyectoDto implements Serializable {
     public void setAnho(String anho) {
         this.anho = anho;
     }
-    
+
 }

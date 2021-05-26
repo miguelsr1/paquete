@@ -243,7 +243,11 @@
 
                                     <p:tooltip id="toolTipContent" for="txtDescripcion" position="bottom">
                                         <p:outputLabel escape="false">
-                                            Acá deberá ingresar el elemento a intervenir en la cooperación,<br/>aulas, paredes, capacitaciones, techo, pupitre
+                                            Explicar en qué consiste el tipo de cooperación a recibir, detallar su descripción y uso, estado, explicar los beneficios que proporcionará, el tipo de entrega (según cronograma o una sola entrega).
+
+                                            Ejemplo:
+
+                                            Se recibirá una dotación de libros para promover la lectura en los niños de primer a tercer grado. Los libros que se recibirán son: 30 libros de cuentos, 30 libros ilustrados de personajes de la historia, 30 libros de principales inventos y sus inventores. Las colecciones son nuevas, en perfecto estado y se realizará en una sola entrega.
                                         </p:outputLabel>
                                     </p:tooltip>
                                 </div>
@@ -254,6 +258,11 @@
                             <div class="p-col-12 p-md-4 p-xl-4" style="border:1px solid;">
                                 <h6><p:outputLabel for="txtCantidad">Cantidad a Cubrir</p:outputLabel></h6>
                                 <p:inputNumber id="txtCantidad" value="#{registrarCooperacionView.proyectoCooperacion.cantidad}" decimalPlaces="0" required="true" label="Cantidad a Cubrir" inputStyle="text-align: right; width: 100%;" />
+                                <p:tooltip id="toolTipCantidad" for="txtCantidad" position="bottom">
+                                    <p:outputLabel escape="false">
+                                        La cantidad de insumos que se recibirá en la donación
+                                    </p:outputLabel>
+                                </p:tooltip>
                             </div>
                             <div class="p-col-12 p-md-4 p-xl-4" style="border:1px solid;">
                                 <h6><p:outputLabel for="txtMonto">Monto a Invertir</p:outputLabel></h6>
@@ -365,7 +374,7 @@
                             <div class="p-field p-grid">
                                 <p:outputLabel for="cboPro" value="Propiedad del inmueble:" styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0"/>
                                 <div class="p-col-12 p-md-8">
-                                    <p:selectOneMenu id="cboPro" value="#{registrarCooperacionView.datoInfraCe.idDatoInfra}">
+                                    <p:selectOneMenu id="cboPro" value="#{registrarCooperacionView.datoInfraCe.propiedadInmueble}">
                                         <f:selectItem noSelectionOption="true" itemLabel="Seleccionar una opción"/>
                                         <f:selectItem itemValue="1" itemLabel="MINEDUCYT"/>
                                         <f:selectItem itemValue="2" itemLabel="ALCALDIA"/>

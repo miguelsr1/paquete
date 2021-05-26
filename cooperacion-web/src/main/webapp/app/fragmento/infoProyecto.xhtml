@@ -164,8 +164,19 @@
                         </p:selectOneMenu>
                     </div>
                 </div>
+                <div class="p-field p-grid invoice-to">
+                    <p:outputLabel styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0">Etapa de ejecución:</p:outputLabel>
+                    <div class="p-col-12 p-md-8">
+                        <p:selectOneMenu value="#{listadoView.proyecto.idEstado}">
+                            <f:selectItem itemLabel="Seleccione un valor" noSelectionOption="true"/>
+                            <f:selectItem itemValue="1" itemLabel="No iniciado"/>
+                            <f:selectItem itemValue="2" itemLabel="En Ejecución"/>
+                            <f:selectItem itemValue="3" itemLabel="Finalizado"/>
+                            <f:selectItem itemValue="4" itemLabel="No finalizado"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
             </div>
         </div>
-
     </p:outputPanel>
 </ui:composition>

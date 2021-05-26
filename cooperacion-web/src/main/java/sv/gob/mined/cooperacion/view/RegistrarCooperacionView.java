@@ -324,9 +324,11 @@ public class RegistrarCooperacionView implements Serializable {
             case 1:
             case 4:
             case 6:
-                datoInfraCe = catalogoFacade.findDatoInfraByCe(proyectoCooperacion.getCodigoEntidad());
+                datoInfraCe = catalogoFacade.findDatoInfraByCe(codigoEntidad);
                 if (datoInfraCe == null) {
                     PrimeFaces.current().executeScript("PF('dlgDatoInfra').show();");
+                    continuar = false;
+                }else{
                     continuar = true;
                 }
                 break;
@@ -335,6 +337,10 @@ public class RegistrarCooperacionView implements Serializable {
         }
 
         if (continuar) {
+            java.util.Calendar calendar = java.util.Calendar.getInstance();
+            calendar.setTime(proyectoCooperacion.getFechaEstimadaInicio());
+            proyectoCooperacion.setAnho(String.valueOf(calendar.get(java.util.Calendar.YEAR)));
+            proyectoCooperacion.setIdEtapaEjecucion((short) 1);
             guardar();
         }
     }
@@ -504,6 +510,7 @@ public class RegistrarCooperacionView implements Serializable {
                 }
 
                 PrimeFaces.current().executeScript("PF('dlgAceptar').show()");
+                
                 guardarHistoricoCambioEstado(tmpFecha, null, (short) 1, null);
                 List<Notificacion> lstNotificacion = catalogoFacade.findNotificacionByTipoCooperacion(proyectoCooperacion.getIdTipoCooperacion().getIdTipoCooperacion());
 
@@ -590,11 +597,14 @@ public class RegistrarCooperacionView implements Serializable {
                 case 1:
                 case 4:
                 case 6:
+                    datoInfraCe.setCodigoEntidad(codigoEntidad);
                     mantenimientoFacade.guardar(datoInfraCe);
                     break;
             }
         }
+        preValidacion();
     }
-    
-    public void prueba(){}
+
+    public void prueba() {
+    }
 }

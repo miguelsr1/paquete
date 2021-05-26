@@ -20,8 +20,11 @@ import sv.gob.mined.cooperacion.model.Director;
 import sv.gob.mined.cooperacion.model.EeGeoDepartamento;
 import sv.gob.mined.cooperacion.model.EeGeoMunicipio;
 import sv.gob.mined.cooperacion.model.GeoEntidadEducativa;
+import sv.gob.mined.cooperacion.model.Meta;
 import sv.gob.mined.cooperacion.model.ModalidadEjecucion;
 import sv.gob.mined.cooperacion.model.Notificacion;
+import sv.gob.mined.cooperacion.model.ObjetivoDesarrollo;
+import sv.gob.mined.cooperacion.model.ProyectoCooperacion;
 import sv.gob.mined.cooperacion.model.TipoCooperacion;
 import sv.gob.mined.cooperacion.model.TipoCooperante;
 import sv.gob.mined.cooperacion.model.TipoInstrumento;
@@ -130,5 +133,21 @@ public class CatalogoFacade {
             Logger.getLogger(CatalogoFacade.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
+    }
+    
+    public List<ObjetivoDesarrollo> findAllObjetivos(){
+        Query q = emCooperacion.createQuery("SELECT o FROM ObjetivoDesarrollo o ORDER BY o.idObjetivo", ObjetivoDesarrollo.class);
+        return q.getResultList();
+    }
+    
+    public List<Meta> findMetaByObjetivo(Integer idObjetivo){
+        Query q = emCooperacion.createQuery("SELECT m FROM Meta m WHERE m.idObjetivo = :pIdObjetivo BY m.idMeta", Meta.class);
+        q.setParameter("pIdObjetivo", idObjetivo);
+        return q.getResultList();
+    }
+    
+    public List<ProyectoCooperacion> findAllProyectos(){
+        Query q = emCooperacion.createQuery("SELECT p FROM ProyectoCooperacion p WHERE p.idProyecto", ProyectoCooperacion.class);
+        return q.getResultList();
     }
 }

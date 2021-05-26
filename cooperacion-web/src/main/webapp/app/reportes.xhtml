@@ -17,25 +17,25 @@
 
 
     <ui:define name="contenido">
-        <div class="p-grid dashboard p-jc-center p-ai-center vertical-container" style="background-color: white !important; height: 88vh;">
-            <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'datosCe.mined';" >
-                <div class="card overview-box" style="text-align: center !important; margin-top: -200px;">
-                    <p:commandButton value="Matriz Proyectos" ajax="false" action="#{reportesView.generarMatrizProyecto()}"/>
-                </div>
-            </div>
-            <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'datosCe.mined';" >
-                <div class="card overview-box" style="text-align: center !important; margin-top: -200px;">
-                    <p:commandButton value="Resumen Fuentes de Finan. " ajax="false" />
-                </div>
-            </div>
-            <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'datosCe.mined';" >
-                <div class="card overview-box" style="text-align: center !important; margin-top: -200px;">
-                    <p:commandButton value="Detalle cooperación" ajax="false" />
-                </div>
-            </div>
-            <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'datosCe.mined';" >
-                <div class="card overview-box" style="text-align: center !important; margin-top: -200px;">
-                    <p:commandButton value="Consolidado etapas de proyectos" ajax="false" />
+        <p:breadCrumb>
+            <p:menuitem value="Inicio" url="inicio.mined" />
+            <p:menuitem value="Reportes" url="#" />
+        </p:breadCrumb>
+        <br/>
+        <div class="p-grid crud-demo">
+            <div class="p-col-12">
+                <div class="card ui-fluid " style="height: 75vh;">
+                    <div class="p-col-6 p-md-4 p-xl-3" style="margin: 0 auto;" onclick="location.href = 'datosCe.mined';" >
+                        <div class="card overview-box" >
+                            <p:commandButton value="Matriz Proyectos" ajax="false" action="#{reportesView.generarMatrizProyecto()}" />
+                            <br/><br/>
+                            <p:commandButton value="Resumen Fuentes de Finan. " ajax="false"  />
+                            <br/><br/>
+                            <p:commandButton value="Detalle cooperación" ajax="false"  />
+                            <br/><br/>
+                            <p:commandButton value="Consolidado etapas de proyectos" ajax="false" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

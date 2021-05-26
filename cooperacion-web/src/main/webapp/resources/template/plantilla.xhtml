@@ -84,17 +84,25 @@
             </div>
         </div>
 
-        <p:ajaxStatus style="width:32px;height:32px;position:fixed;right:7px;bottom:7px">
+        <p:ajaxStatus>
+            <f:facet name="default">
+                
+            </f:facet>
             <f:facet name="start">
-                <i class="pi pi-spin pi-spinner layout-ajax-loader-icon" aria-hidden="true"></i>
+                <div id="div_modal" class="layout-content ui-widget-overlay ui-dialog-mask" style="z-index: 1000;"></div>
+                <div id="ajax_gif" class="ui-tooltip-text ui-corner-all ui-shadow">
+                    <i class="fa fa-refresh fa-spin ajax-loader" aria-hidden="true" 
+                       style="color: #349ffb; font-size: 36px; display: block;  position: relative;  top: 18%;  transform: translateY(-18%);"></i>
+                </div>
             </f:facet>
 
             <f:facet name="complete">
-                <h:outputText value=""/>
+                <h:outputText value="" />
             </f:facet>
         </p:ajaxStatus>
+
         <div class="layout-mask modal-in"></div>
-        <h:outputStylesheet name="personalizadas.css" library="css"/>
+        <h:outputStylesheet name="main.css" library="css"/>
         <h:outputStylesheet name="css/primeicons.css" library="paradise-layout"/>
         <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout"/>
         <h:outputStylesheet name="css/demo.css" library="demo"/>

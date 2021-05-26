@@ -63,6 +63,7 @@ public class ListadoView implements Serializable {
     private String lblBottonEnviar = "";
     private String codigoDepartamento;
     private String where;
+    private String whereEspecifico;
     private String nombreProyecto;
     private String anho;
     private final String posicionInicial = "13.749655, -88.822362";
@@ -136,6 +137,7 @@ public class ListadoView implements Serializable {
                     lstProyectos = mantenimientoFacade.findProyectosByWhereCustom(where);
                     break;
             }
+            whereEspecifico = where;
         }
 
         simpleModel = new DefaultMapModel();
@@ -354,7 +356,7 @@ public class ListadoView implements Serializable {
     public void recuperarLstProyectosPorCooperante() {
         String whereTmp = "";
         if (idCooperante == null || idCooperante == 0) {
-            
+
         } else {
             whereTmp = " and pro.id_cooperante = " + idCooperante;
 
@@ -368,9 +370,15 @@ public class ListadoView implements Serializable {
         }
 
         if (!whereTmp.isEmpty()) {
-            lstProyectos = mantenimientoFacade.findProyectosByWhereCustom(whereTmp);
-        }else{
+            if (whereEspecifico == null || whereEspecifico.isEmpty()) {
+                lstProyectos = mantenimientoFacade.findProyectosByWhereCustom(whereTmp);
+            } else {
+                lstProyectos = mantenimientoFacade.findProyectosByWhereCustom(whereEspecifico + " " + whereTmp);
+            }
+        } else if (whereEspecifico == null || whereEspecifico.isEmpty()) {
             lstProyectos = mantenimientoFacade.findProyectosByWhereCustom("");
+        } else {
+            lstProyectos = mantenimientoFacade.findProyectosByWhereCustom(whereEspecifico);
         }
 
         simpleModel = new DefaultMapModel();

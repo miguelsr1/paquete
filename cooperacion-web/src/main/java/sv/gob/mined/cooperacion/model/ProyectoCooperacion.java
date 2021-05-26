@@ -106,6 +106,8 @@ public class ProyectoCooperacion implements Serializable {
     private Short especial;
     @Column(name = "ID_ESTADO")
     private Short idEstado;
+    @Column(name = "ID_ETAPA_EJECUCION")
+    private Short idEtapaEjecucion;
     @Basic(optional = false)
     @Column(name = "FECHA_INSERCION")
     @Temporal(TemporalType.TIMESTAMP)
@@ -272,6 +274,14 @@ public class ProyectoCooperacion implements Serializable {
 
     public void setIdEstado(Short idEstado) {
         this.idEstado = idEstado;
+    }
+
+    public Short getIdEtapaEjecucion() {
+        return idEtapaEjecucion;
+    }
+
+    public void setIdEtapaEjecucion(Short idEtapaEjecucion) {
+        this.idEtapaEjecucion = idEtapaEjecucion;
     }
 
     public Date getFechaInsercion() {

@@ -55,7 +55,11 @@ public class AprobarCapacitacionView implements Serializable {
                 valores = seguridad.decrypt("ha", codigo).split("::");
                 pro = mantenimientoFacade.getProyectoByIdAndCooperanteAndCodEnt(Long.parseLong(valores[0]), Long.parseLong(valores[1]), valores[2]);
 
-                codigoEncritado = seguridad.encrypt("ha", valores[0].concat("::").concat(valores[1]));
+                /*codigoEncritado = seguridad.encrypt("ha", valores[0].concat("::").concat(valores[1]));
+                
+                String[] cod = seguridad.decrypt("ha", codigoEncritado).split("::");
+                pro = mantenimientoFacade.find(ProyectoCooperacion.class, Long.parseLong(cod[0]));
+                 */
             } catch (Exception e) {
                 codigoBueno = false;
             }
@@ -101,7 +105,17 @@ public class AprobarCapacitacionView implements Serializable {
                 Usuario usuario = catalogoFacade.findUsuarioByEmail(credencialesView.getRemitente());
                 //validar que este usuario es de la UT que debe de aprobar este proyecto
                 context.getExternalContext().getSessionMap().put("usuario", usuario);
-                url = "/app/ut/infod?faces-redirect=true&id=" + codigoEncritado;
+
+                switch (pro.getIdTipoCooperacion().getIdTipoCooperacion().intValue()) {
+                    case 1:
+                    case 4:
+                    case 6://infraestructura
+                        url = "/app/ut/infra?faces-redirect=true&id=" + codigoEncritado;
+                        break;
+                    case 15:
+                        url = "/app/ut/infod?faces-redirect=true&id=" + codigoEncritado;
+                        break;
+                }
 
             } else {
                 JsfUtil.mensajeError("Error en el usuario o  clave de acceso.");

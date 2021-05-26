@@ -94,7 +94,6 @@ public class InfodView implements Serializable {
     private UbicacionFacade ubicacionFacade;
     @Inject
     private EMailFacade eMailFacade;
-
     @Inject
     private CredencialesView credencialesView;
 
