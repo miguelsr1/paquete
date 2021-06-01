@@ -75,7 +75,7 @@ public class CredencialesView implements Serializable {
             }
 
             transport = mailSession.getTransport("smtp");
-            //transport.connect(server, Integer.parseInt(port), remitente, password);
+            transport.connect(server, Integer.parseInt(port), remitente, password);
 
             correoValido = true;
 
