@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,6 +21,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -30,6 +32,9 @@ import javax.persistence.TemporalType;
 @NamedQueries({
     @NamedQuery(name = "CatalogoProducto.findAll", query = "SELECT c FROM CatalogoProducto c")})
 public class CatalogoProducto implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idProducto", fetch = FetchType.LAZY)
+    private List<DetalleResguardo> detalleResguardoList;
 
     @OneToMany(mappedBy = "idProducto", fetch = FetchType.LAZY)
     private List<ResguardoBienes> reguardoBienesList;
@@ -209,6 +214,15 @@ public class CatalogoProducto implements Serializable {
 
     public void setReguardoBienesList(List<ResguardoBienes> reguardoBienesList) {
         this.reguardoBienesList = reguardoBienesList;
+    }
+
+    @XmlTransient
+    public List<DetalleResguardo> getDetalleResguardoList() {
+        return detalleResguardoList;
+    }
+
+    public void setDetalleResguardoList(List<DetalleResguardo> detalleResguardoList) {
+        this.detalleResguardoList = detalleResguardoList;
     }
     
 }
