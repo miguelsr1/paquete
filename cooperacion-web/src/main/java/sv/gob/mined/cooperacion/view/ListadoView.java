@@ -9,10 +9,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileTime;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,19 +30,26 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
+import javax.mail.internet.InternetAddress;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.FilesUploadEvent;
 import org.primefaces.event.map.OverlaySelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.file.UploadedFile;
 import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.LatLng;
 import org.primefaces.model.map.MapModel;
 import org.primefaces.model.map.Marker;
 import org.primefaces.util.LangUtils;
+import sv.gob.mined.cooperacion.facade.CatalogoFacade;
+import sv.gob.mined.cooperacion.facade.EMailFacade;
 import sv.gob.mined.cooperacion.facade.MantenimientoFacade;
 import sv.gob.mined.cooperacion.facade.paquete.UbicacionFacade;
 import sv.gob.mined.cooperacion.model.Cooperante;
+import sv.gob.mined.cooperacion.model.Notificacion;
 import sv.gob.mined.cooperacion.model.ProyectoCooperacion;
 import sv.gob.mined.cooperacion.model.TipoCooperacion;
 import sv.gob.mined.cooperacion.model.Usuario;
@@ -46,6 +58,8 @@ import sv.gob.mined.cooperacion.model.dto.ListadoProyectoDto;
 import sv.gob.mined.cooperacion.model.dto.FileInfoDto;
 import sv.gob.mined.cooperacion.model.paquete.Municipio;
 import sv.gob.mined.cooperacion.model.paquete.VwCatalogoEntidadEducativa;
+import sv.gob.mined.cooperacion.util.RC4Crypter;
+import sv.gob.mined.utils.StringUtils;
 
 /**
  *
@@ -91,6 +105,15 @@ public class ListadoView implements Serializable {
 
     @Inject
     private MantenimientoFacade mantenimientoFacade;
+
+    @Inject
+    private EMailFacade eMailFacade;
+
+    @Inject
+    private CatalogoFacade catalogoFacade;
+
+    @Inject
+    private CredencialesView credencialesView;
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("bundle");
 
@@ -145,6 +168,7 @@ public class ListadoView implements Serializable {
         lstTipoCooperaciones = mantenimientoFacade.findAllTipoCoopeciones();
     }
 
+    // <editor-fold defaultstate="collapsed" desc="getter-setter">
     public String getAnho() {
         return anho;
     }
@@ -301,6 +325,7 @@ public class ListadoView implements Serializable {
         return mantenimientoFacade.findAnhosDeProyecto();
     }
 
+    //</editor-fold>
     public void enviar() {
 
     }
@@ -459,6 +484,37 @@ public class ListadoView implements Serializable {
         }
     }
 
+    public void handleFileUpload(FilesUploadEvent event) {
+        //UploadedFile updFile = event.getFile();
+
+        File folderProyecto = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto() + File.separator);
+        if (!folderProyecto.exists()) {
+            folderProyecto.mkdir();
+        }
+
+        try {
+            for (UploadedFile updFile : event.getFiles().getFiles()) {
+                Path folder = Paths.get(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto() + File.separator + updFile.getFileName());
+                Path arc;
+                if (folder.toFile().exists()) {
+                    arc = folder;
+                } else {
+                    arc = Files.createFile(folder);
+                }
+
+                try (InputStream input = updFile.getInputStream()) {
+                    Files.copy(input, arc, StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+            
+            notificarAgregacionDeArchivos();
+        } catch (IOException ex) {
+            Logger.getLogger(RegistrarCooperacionView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        buscarProyecto();
+    }
+
     public StreamedContent getFile() throws FileNotFoundException {
         File filePdf = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto() + File.separator + nombreArchivo);
         FileInputStream fis = new FileInputStream(filePdf);
@@ -494,4 +550,40 @@ public class ListadoView implements Serializable {
         return customer.getNombreProyecto().toLowerCase().contains(filterText);
     }
 
+    public void guardarCambioDeEtapa() {
+        mantenimientoFacade.modificar(proyecto);
+    }
+
+    private void notificarAgregacionDeArchivos() {
+        RC4Crypter seguridad = new RC4Crypter();
+        String mensajeParaUt = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.notificacioDeAdicionDeArchivos.mensaje"),
+                StringUtils.getFecha(new Date()),
+                entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
+                seguridad.encrypt("ha", "".concat(proyecto.getIdProyecto().toString()).concat("::").concat(proyecto.getIdCooperante().getIdCooperante().toString()).concat("::").concat(proyecto.getCodigoEntidad()))
+        );
+
+        List<Notificacion> lstNotificacion = catalogoFacade.findNotificacionByTipoCooperacion(proyecto.getIdTipoCooperacion().getIdTipoCooperacion());
+
+        String emailsTo = "";
+        String emailsCc = "";
+
+        for (Notificacion notificacion : lstNotificacion) {
+            if (notificacion.getTipoDestinatario() == 1) {
+                emailsTo = notificacion.getCorreo();
+            } else {
+                if (emailsCc.isEmpty()) {
+                    emailsCc = notificacion.getCorreo();
+                } else {
+                    emailsCc = emailsCc.concat(",").concat(notificacion.getCorreo());
+                }
+            }
+        }
+
+        InternetAddress[] to = new InternetAddress[emailsTo.split(",").length];
+        InternetAddress[] cc = new InternetAddress[emailsCc.split(",").length];
+
+        eMailFacade.enviarMail(to, cc, "cooperacion@admin.mined.edu.sv",
+                RESOURCE_BUNDLE.getString("correo.respuesta.titulo"),
+                mensajeParaUt, credencialesView.getMailSessionRemitente());
+    }
 }

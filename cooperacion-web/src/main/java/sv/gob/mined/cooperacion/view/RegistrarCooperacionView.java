@@ -469,13 +469,6 @@ public class RegistrarCooperacionView implements Serializable {
                         break;
 
                     case 3:
-                        RC4Crypter seguridad = new RC4Crypter();
-                        mensajeParaUt = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.notificacionDeCapacitacion.mensaje"),
-                                StringUtils.getFecha(new Date()),
-                                entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
-                                seguridad.encrypt("ha", "".concat(proyectoCooperacion.getIdProyecto().toString()).concat("::").concat(proyectoCooperacion.getIdCooperante().getIdCooperante().toString()).concat("::").concat(proyectoCooperacion.getCodigoEntidad()))
-                        );
-
                         mensajeParaCe = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.respuestaAprobacionVoBo.mensaje"),
                                 StringUtils.getFecha(new Date()),
                                 directorCe.getNombreDirector(), entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
@@ -550,6 +543,14 @@ public class RegistrarCooperacionView implements Serializable {
 
                     //Session session = credencialesView.getMailSession();
                     if (necesitaAprobacion) {
+                        RC4Crypter seguridad = new RC4Crypter();
+                        mensajeParaUt = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.notificacionDeCooperacion.mensaje"),
+                                StringUtils.getFecha(new Date()),
+                                entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
+                                seguridad.encrypt("ha", "".concat(proyectoCooperacion.getIdProyecto().toString()).concat("::").concat(proyectoCooperacion.getIdCooperante().getIdCooperante().toString()).concat("::").concat(proyectoCooperacion.getCodigoEntidad()))
+                        );                    
+                        
+                        
                         //CORREO PARA UNIDAD TÉNICA
                         eMailFacade.enviarMail(to, cc, "cooperacion@admin.mined.edu.sv", titulo, mensajeParaUt, credencialesView.getMailSessionRemitente());
 

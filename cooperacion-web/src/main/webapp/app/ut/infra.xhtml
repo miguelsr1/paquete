@@ -194,7 +194,7 @@
                         </h:panelGrid>
                     </h:panelGrid>
                 </div>
-                <div class="p-col-12 p-md-5" >
+                <div class="p-col-12 p-md-5" jsf:id="pnlObservacion" >
                     <h5 class="leyenda">
                         <i class="pi pi-list" style="color: #3984b8"></i>
                         <p:spacer width="5"/>
@@ -208,11 +208,14 @@
                             <p:outputLabel value="#{archivo.numeroPaginas}"/>
                         </p:column>
                         <p:column width="20">   
-
+                            <h:commandLink styleClass="rounded-button blue" style="font-weight:bold">
+                                <i class="pi pi-download"></i>
+                                <f:setPropertyActionListener value="#{archivo.nombreArchivo}" target="#{infraView.nombreArchivo}" />
+                                <p:fileDownload contentDisposition="inline" value="#{infraView.file}" />
+                            </h:commandLink>
                         </p:column>
                     </p:dataTable>
 
-                    <br/>
                     <br/>
 
                     <h5 class="leyenda">
@@ -222,18 +225,30 @@
                     <div class="p-field p-grid invoice-to">
                         <p:outputLabel styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0">Cambiar estado:</p:outputLabel>
                         <div class="p-col-12 p-md-8">
-                            <p:selectOneMenu value="#{infraView.proyecto.idEstado}">
+                            <p:selectOneMenu id="cboEstado" value="#{infraView.proyecto.idEstado}">
                                 <f:selectItem itemLabel="Seleccione un valor" noSelectionOption="true"/>
                                 <f:selectItem itemValue="1" itemLabel="Digitado"/>
                                 <f:selectItem itemValue="2" itemLabel="Aprobado"/>
                                 <f:selectItem itemValue="3" itemLabel="Observado"/>
                                 <f:selectItem itemValue="4" itemLabel="Denegado"/>
+                                <p:ajax update="pnlObservacion" process="@this"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid invoice-to" style="display:#{(infraView.proyecto.idEstado eq 3)?'flex':'none'}">
+                        <p:outputLabel styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0">Tipo de observación:</p:outputLabel>
+                        <div class="p-col-12 p-md-8">
+                            <p:selectOneMenu value="#{infraView.idTipoObservacion}">
+                                <f:selectItem itemLabel="Seleccione un valor" noSelectionOption="true"/>
+                                <f:selectItem itemValue="1" itemLabel="Falta carpeta técnica"/>
+                                <f:selectItem itemValue="2" itemLabel="Se necesita visita ténica"/>
                             </p:selectOneMenu>
                         </div>
                     </div>
                     <br/><br/>
                     <div class="p-field p-grid invoice-to p-jc-center">
-                        <p:commandButton id="addButton" value="Guardar" icon="pi pi-check" />
+                        <p:commandButton id="addButton" value="Guardar" icon="pi pi-check" action="#{infraView.notificarRespuestaCe()}"
+                                         disabled="#{infraView.proyecto.idEstado eq 2}"/>
                     </div>
                 </div>
             </div>

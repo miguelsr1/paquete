@@ -114,13 +114,13 @@ public class CatalogoFacade {
             return (DatoInfraCe) q.getResultList().get(0);
         }
     }
-    
-    public List<MatrizProyectoDto> getMatrizProyectosByAnho(String anho){
+
+    public List<MatrizProyectoDto> getMatrizProyectosByAnho(String anho) {
         Query q = emCooperacion.createNamedQuery("Cooperacion.MatrizProyecto", MatrizProyectoDto.class);
         q.setParameter(1, anho);
         return q.getResultList();
     }
-    
+
     public JasperPrint getRpt(HashMap map, InputStream input) {
         try {
             JasperPrint jp;
@@ -134,20 +134,24 @@ public class CatalogoFacade {
             return null;
         }
     }
-    
-    public List<ObjetivoDesarrollo> findAllObjetivos(){
+
+    public List<ObjetivoDesarrollo> findAllObjetivos() {
         Query q = emCooperacion.createQuery("SELECT o FROM ObjetivoDesarrollo o ORDER BY o.idObjetivo", ObjetivoDesarrollo.class);
         return q.getResultList();
     }
-    
-    public List<Meta> findMetaByObjetivo(Integer idObjetivo){
-        Query q = emCooperacion.createQuery("SELECT m FROM Meta m WHERE m.idObjetivo = :pIdObjetivo BY m.idMeta", Meta.class);
+
+    public List<Meta> findMetaByObjetivo(Integer idObjetivo) {
+        Query q = emCooperacion.createQuery("SELECT m FROM Meta m WHERE m.idObjetivo.idObjetivo = :pIdObjetivo ORDER BY m.idMeta", Meta.class);
         q.setParameter("pIdObjetivo", idObjetivo);
         return q.getResultList();
     }
-    
-    public List<ProyectoCooperacion> findAllProyectos(){
-        Query q = emCooperacion.createQuery("SELECT p FROM ProyectoCooperacion p WHERE p.idProyecto", ProyectoCooperacion.class);
+
+    public List<ProyectoCooperacion> findAllProyectos() {
+        Query q = emCooperacion.createQuery("SELECT p FROM ProyectoCooperacion p ORDER BY p.idProyecto", ProyectoCooperacion.class);
         return q.getResultList();
+    }
+
+    public ObjetivoDesarrollo getObjetivoByIdMeta(Integer idMeta) {
+        return emCooperacion.find(Meta.class, idMeta).getIdObjetivo();
     }
 }

@@ -118,6 +118,10 @@ public class ProyectoCooperacion implements Serializable {
     private String codigoEntidad;
     @Column(name = "ANHO")
     private String anho;
+    @Column(name = "SECTOR_INTERVENCION")
+    private String sectorIntervencion;
+    @Column(name = "ID_META")
+    private Integer idMeta;
 
     public ProyectoCooperacion() {
     }
@@ -146,6 +150,14 @@ public class ProyectoCooperacion implements Serializable {
 
     public void setNombreProyecto(String nombreProyecto) {
         this.nombreProyecto = nombreProyecto;
+    }
+
+    public Integer getIdMeta() {
+        return idMeta;
+    }
+
+    public void setIdMeta(Integer idMeta) {
+        this.idMeta = idMeta;
     }
 
     public String getObjetivos() {
@@ -411,6 +423,14 @@ public class ProyectoCooperacion implements Serializable {
 
     public void setEspecial(Short especial) {
         this.especial = especial;
+    }
+
+    public String getSectorIntervencion() {
+        return sectorIntervencion;
+    }
+
+    public void setSectorIntervencion(String sectorIntervencion) {
+        this.sectorIntervencion = sectorIntervencion;
     }
     
 }

@@ -45,10 +45,13 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.DateFormatConverter;
 import sv.gob.mined.cooperacion.facade.CatalogoFacade;
 import sv.gob.mined.cooperacion.model.dto.MatrizProyectoDto;
+import sv.gob.mined.utils.StringUtils;
 
 @Named
 @ViewScoped
 public class ReportesView implements Serializable {
+
+    private String anho = "";
 
     private HSSFWorkbook wb;
     private DataFormat FORMATO_DATA;
@@ -61,9 +64,12 @@ public class ReportesView implements Serializable {
     private CatalogoFacade catalogoFacade;
 
     public void generarMatrizProyecto() {
-        List<MatrizProyectoDto> lstDatos = catalogoFacade.getMatrizProyectosByAnho("2020");
+        anho = "2020";
+        int row = 8;
+        Date date = new Date();
+
+        List<MatrizProyectoDto> lstDatos = catalogoFacade.getMatrizProyectosByAnho(anho);
         HSSFCellStyle style;
-        int row = 1;
         try (InputStream ins = ReportesView.class.getClassLoader().getResourceAsStream("sv/gob/mined/rpt/excel/matrizProyecto.xls")) {
             wb = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb.createDataFormat();
@@ -94,7 +100,7 @@ public class ReportesView implements Serializable {
             styleEntero.setVerticalAlignment(VerticalAlignment.TOP);
             styleEntero.setAlignment(HorizontalAlignment.JUSTIFY);
             styleEntero.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0"));
-            
+
             HSSFCellStyle styleDecimal = wb.createCellStyle();
             styleDecimal.setBorderBottom(BorderStyle.THIN);
             styleDecimal.setBorderTop(BorderStyle.THIN);
@@ -106,26 +112,37 @@ public class ReportesView implements Serializable {
 
             HSSFSheet s1 = wb.getSheetAt(0);   //sheet by index
 
+            HSSFRow hrow = s1.getRow(3);
+            HSSFCell cell = hrow.getCell(2);
+            cell.setCellValue("Matriz de Proyectos en Ejecución - " + anho);
+
+            
+
+            hrow = s1.getRow(4);
+            cell = hrow.getCell(2);
+            cell.setCellValue("Resumen por Unidad Técnica al  " + StringUtils.getNumDia(date) + " de " + StringUtils.getNomMes(date) + " de " + anho);
+
             for (MatrizProyectoDto dato : lstDatos) {
-                HSSFRow hrow = s1.createRow(row);
+                hrow = s1.createRow(row);
 
                 escribirNumeroEntero(dato.getIdProyecto().toString(), hrow, 0, styleEntero);
                 escribirTexto(dato.getNombreProyecto(), hrow, 1, style);
                 escribirTexto(dato.getDescripcion(), hrow, 2, style);
                 escribirTexto(dato.getInstitucion(), hrow, 3, style);
                 escribirTexto(dato.getSectorIntervencion(), hrow, 4, style);
-                escribirTexto(dato.getTmCooperacion(), hrow, 5, style);
-                escribirTexto(dato.getDescripcionObjetivo(), hrow, 6, style);
-                escribirTexto(dato.getDescripcionMeta(), hrow, 7, style);
-                escribirFecha(dato.getFechaEstimadaInicio(), hrow, 8, styleFecha);
-                escribirFecha(dato.getFechaEstimadaFin(), hrow, 9, styleFecha);
-                escribirTexto(dato.getNombreCooperante(), hrow, 10, style);
+                escribirTexto(dato.getDescripcionCooperacion(), hrow, 5, style);
+                escribirTexto(dato.getDescripcionModalidad(), hrow, 6, style);
+                escribirTexto(dato.getDescripcionObjetivo(), hrow, 7, style);
+                escribirTexto(dato.getDescripcionMeta(), hrow, 8, style);
+                escribirFecha(dato.getFechaEstimadaInicio(), hrow, 9, styleFecha);
+                escribirFecha(dato.getFechaEstimadaFin(), hrow, 10, styleFecha);
+                escribirTexto(dato.getNombreCooperante(), hrow, 11, style);
 
-                escribirNumeroDecimal((dato.getMontoInversion() == null ? "" : dato.getMontoInversion().toString()), hrow, 11, styleDecimal);
-                escribirTexto("", hrow, 12, style);
+                escribirNumeroDecimal((dato.getMontoInversion() == null ? "" : dato.getMontoInversion().toString()), hrow, 12, styleDecimal);
                 escribirTexto("", hrow, 13, style);
                 escribirTexto("", hrow, 14, style);
                 escribirTexto("", hrow, 15, style);
+                escribirTexto("", hrow, 16, style);
                 row++;
 
                 hrow.setHeight((short) -1);
@@ -155,7 +172,7 @@ public class ReportesView implements Serializable {
     }
 
     private void escribirNumeroDecimal(String text, HSSFRow hrow, Integer col, CellStyle style) {
-        if(text == null || text.trim().isEmpty()){
+        if (text == null || text.trim().isEmpty()) {
             text = "0";
         }
         text = text.replace(",", "");

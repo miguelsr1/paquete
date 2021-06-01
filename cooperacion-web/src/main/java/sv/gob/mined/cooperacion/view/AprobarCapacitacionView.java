@@ -55,11 +55,10 @@ public class AprobarCapacitacionView implements Serializable {
                 valores = seguridad.decrypt("ha", codigo).split("::");
                 pro = mantenimientoFacade.getProyectoByIdAndCooperanteAndCodEnt(Long.parseLong(valores[0]), Long.parseLong(valores[1]), valores[2]);
 
-                /*codigoEncritado = seguridad.encrypt("ha", valores[0].concat("::").concat(valores[1]));
+                codigoEncritado = seguridad.encrypt("ha", valores[0].concat("::").concat(valores[1]));
                 
                 String[] cod = seguridad.decrypt("ha", codigoEncritado).split("::");
                 pro = mantenimientoFacade.find(ProyectoCooperacion.class, Long.parseLong(cod[0]));
-                 */
             } catch (Exception e) {
                 codigoBueno = false;
             }

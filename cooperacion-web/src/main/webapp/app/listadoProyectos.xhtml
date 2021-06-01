@@ -250,6 +250,8 @@
             <f:facet name="footer">
                 <p:commandButton value="Aceptar" icon="pi pi-check" onclick="PF('manageProductDialog').hide()" 
                                  styleClass="primary-button text-button" process="@this"/>
+                <p:commandButton value="Guardar" icon="pi pi-save"  action="#{listadoView.guardarCambioDeEtapa}"
+                                 styleClass="primary-button text-button" process="@this" rendered="#{userBean.perfilUsuario ne 'UT'}"/>
             </f:facet>
         </p:dialog> 
 

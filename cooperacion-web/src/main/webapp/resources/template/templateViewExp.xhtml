@@ -28,7 +28,9 @@
             </div>
 
             <div class="exception-panel-footer">
-                <p:commandButton ajax="false" icon="pi pi-sign-in" value="Iniciar sesión" iconPos="rigth" onclick="location.href = 'inicio.mined';"/>
+                <h:form>
+                    <p:commandButton ajax="false" icon="pi pi-sign-in" value="Iniciar sesión" iconPos="rigth" action="index?faces-redirect=true"/>
+                </h:form>
             </div>
         </div>
 

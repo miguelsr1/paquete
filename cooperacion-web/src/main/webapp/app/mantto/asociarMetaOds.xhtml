@@ -86,7 +86,8 @@
                     <div class="card-header">
                         <h5>Datos del Proyecto</h5>
                         <div id="order-tabs-container" class="order-tabs">
-                            <p:commandButton value="Seleccionar proyecto" icon="pi pi-link" process="@this" onclick="PF('dlgCooperante').show();" />
+                            <p:commandButton value="Seleccionar proyecto" icon="pi pi-link" action="#{asociarProyectoMetaView.buscarProyecto}" 
+                                             onclick="PF('dlgProyecto').show();" update="divDialog" process="@this" />
                         </div>
                     </div>
                     <br/><br/>
@@ -97,7 +98,7 @@
                                 <span class="ui-inputgroup-addon">
                                     <i class="fa fa-building"></i>
                                 </span>
-                                <p:inputText />
+                                <p:inputText value="#{asociarProyectoMetaView.proyectoCooperacion.idCooperante.nombreCooperante}" readonly="true"/>
                             </div>
                         </div>
                     </div>
@@ -108,7 +109,7 @@
                                 <span class="ui-inputgroup-addon">
                                     <i class="pi pi-tag"></i>
                                 </span>
-                                <p:inputTextarea id="txtNomProyecto"  />
+                                <p:inputText value="#{asociarProyectoMetaView.proyectoCooperacion.nombreProyecto}" readonly="true" />
                             </div>
                         </div>
                     </div>
@@ -135,7 +136,7 @@
                     <br/>
                     <div class="p-field p-grid">
                         <div class="p-col-12 p-md-2">
-                            <p:commandButton value="Guardar" action="#{cooperanteView.guardarCooperante()}" icon="pi pi-save" />
+                            <p:commandButton value="Guardar" action="#{asociarProyectoMetaView.guardar}" icon="pi pi-save" />
                         </div>
                         <div class="p-col-12 p-md-2">
                             <p:commandButton value="Cancelar" icon="pi pi-ban" process="@this" action="inicioManttos.mined?faces-redirect=true"/>
@@ -143,41 +144,46 @@
                     </div>
                 </div>
 
-                <p:dialog id="dlgProyecto" widgetVar="dlgProyecto" modal="true" closable="false" width="1000" height="500">
+                <p:dialog id="dlgProyecto" widgetVar="dlgProyecto" modal="true" closable="true" width="1000" height="500">
                     <h5>Listado de Proyectos</h5>
 
-                    <h:panelGrid columns="5">
-                        <p:outputLabel value="Cooperante: "/>
-                        <p:selectOneMenu value="#{listadoView.idCooperante}">
-                            <f:selectItem itemValue="0" itemLabel="TODOS LOS COOPERANTES"/>
-                            <f:selectItems value="#{listadoView.lstCooperantePorProyecto}" var="coo" itemValue="#{coo.idCooperante}" itemLabel="#{coo.nombreCooperante}" />
-                            <p:ajax listener="#{listadoView.recuperarLstProyectosPorCooperante()}" update="mapa" />
-                        </p:selectOneMenu>
-                        <p:spacer width="20"/>
-                        <p:outputLabel value="Año: "/>
-                        <p:selectOneMenu value="#{listadoView.anho}">
-                            <f:selectItem itemValue="0" itemLabel="TODOS LOS AÑOS"/>
-                            <f:selectItems value="#{listadoView.lstAnhosProyectos}" var="anho" itemValue="#{anho.atributo}" itemLabel="#{anho.valor}" />
-                            <p:ajax listener="#{listadoView.recuperarLstProyectosPorCooperante()}" update="mapa" />
-                        </p:selectOneMenu>
-                    </h:panelGrid>
+                    <p:outputPanel id="divDialog">
+                        <h:panelGrid columns="5">
+                            <p:outputLabel value="Cooperante: "/>
+                            <p:selectOneMenu value="#{listadoView.idCooperante}">
+                                <f:selectItem itemValue="0" itemLabel="TODOS LOS COOPERANTES"/>
+                                <f:selectItems value="#{listadoView.lstCooperantePorProyecto}" var="coo" itemValue="#{coo.idCooperante}" itemLabel="#{coo.nombreCooperante}" />
+                                <p:ajax listener="#{listadoView.recuperarLstProyectosPorCooperante()}"  />
+                            </p:selectOneMenu>
+                            <p:spacer width="20"/>
+                            <p:outputLabel value="Año: "/>
+                            <p:selectOneMenu value="#{listadoView.anho}">
+                                <f:selectItem itemValue="0" itemLabel="TODOS LOS AÑOS"/>
+                                <f:selectItems value="#{listadoView.lstAnhosProyectos}" var="anho" itemValue="#{anho.atributo}" itemLabel="#{anho.valor}" />
+                                <p:ajax listener="#{listadoView.recuperarLstProyectosPorCooperante()}" />
+                            </p:selectOneMenu>
+                        </h:panelGrid>
 
-                    <p:dataTable value="#{asociarProyectoMetaView.lstProyectos}" var="proyecto" paginator="true" paginatorPosition="top" rows="10"
-                                 selection="#{asociarProyectoMetaView.proyectoCooperacion}" selectionMode="single" rowKey="#{proyecto.idProyecto}">
-                        <p:ajax update="divDatos" event="rowSelect" oncomplete="PF('dlgProyecto').hide();"/>
-                        <p:column headerText="Id" width="10">
-                            <h:outputText value="#{proyecto.idProyecto}"/>
-                        </p:column>
-                        <p:column headerText="Organización">
-                            <h:outputText value="#{proyecto.idCooperante.nombreCooperante}"/>
-                        </p:column>
-                        <p:column headerText="Beneficiario" width="250">
-                            <h:outputText value="#{proyecto.codigoEntidad}"/>
-                        </p:column>
-                        <p:column headerText="Modalidad" width="300">
-                            <h:outputText value="#{proyecto.idModalidad.descripcionModalidad}"/>
-                        </p:column>
-                    </p:dataTable>
+                        <p:dataTable value="#{asociarProyectoMetaView.lstProyectos}" var="proyecto" paginator="true" paginatorPosition="top" rows="10"
+                                     selection="#{asociarProyectoMetaView.proyectoCooperacion}" selectionMode="single" rowKey="#{proyecto.idProyecto}">
+                            <p:ajax update="divDatos" event="rowSelect" listener="#{asociarProyectoMetaView.proyectoSelect}" oncomplete="PF('dlgProyecto').hide();"/>
+                            <p:column headerText="Id" width="10">
+                                <h:outputText value="#{proyecto.idProyecto}"/>
+                            </p:column>
+                            <p:column headerText="Organización">
+                                <h:outputText value="#{proyecto.idCooperante.nombreCooperante}"/>
+                            </p:column>
+                            <p:column headerText="Beneficiario" width="250">
+                                <h:outputText value="#{proyecto.codigoEntidad}"/>
+                            </p:column>
+                            <p:column headerText="Modalidad" width="300">
+                                <h:outputText value="#{proyecto.idModalidad.descripcionModalidad}"/>
+                            </p:column>
+                            <p:column headerText="Proyecto" width="300">
+                                <h:outputText value="#{proyecto.nombreProyecto}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:outputPanel>
                 </p:dialog>
             </div>
         </div>

@@ -22,7 +22,8 @@ public class MatrizProyectoDto implements Serializable {
     private String descripcion;
     private String institucion;
     private String sectorIntervencion;
-    private String tmCooperacion;
+    private String descripcionCooperacion;
+    private String descripcionModalidad;
     private String descripcionObjetivo;
     private String descripcionMeta;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -76,12 +77,20 @@ public class MatrizProyectoDto implements Serializable {
         this.sectorIntervencion = sectorIntervencion;
     }
 
-    public String getTmCooperacion() {
-        return tmCooperacion;
+    public String getDescripcionCooperacion() {
+        return descripcionCooperacion;
     }
 
-    public void setTmCooperacion(String tmCooperacion) {
-        this.tmCooperacion = tmCooperacion;
+    public void setDescripcionCooperacion(String descripcionCooperacion) {
+        this.descripcionCooperacion = descripcionCooperacion;
+    }
+
+    public String getDescripcionModalidad() {
+        return descripcionModalidad;
+    }
+
+    public void setDescripcionModalidad(String descripcionModalidad) {
+        this.descripcionModalidad = descripcionModalidad;
     }
 
     public String getDescripcionObjetivo() {

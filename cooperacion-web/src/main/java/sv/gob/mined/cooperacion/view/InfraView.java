@@ -6,12 +6,13 @@
 package sv.gob.mined.cooperacion.view;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +29,8 @@ import javax.mail.Session;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import sv.gob.mined.cooperacion.facade.CatalogoFacade;
 import sv.gob.mined.cooperacion.facade.EMailFacade;
 import sv.gob.mined.cooperacion.facade.MantenimientoFacade;
@@ -39,7 +42,6 @@ import sv.gob.mined.cooperacion.model.dto.FileInfoDto;
 import sv.gob.mined.cooperacion.model.paquete.VwCatalogoEntidadEducativa;
 import sv.gob.mined.cooperacion.util.RC4Crypter;
 import sv.gob.mined.utils.StringUtils;
-import sv.gob.mined.utils.jsf.JsfUtil;
 
 @Named
 @ViewScoped
@@ -47,8 +49,10 @@ public class InfraView implements Serializable {
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("bundle");
 
+    private int idTipoObservacion;
     private Boolean codigoBueno = true;
     private String observacion = "";
+    private String nombreArchivo = "";
 
     private Director directorCe;
     private DatoInfraCe datoInfraCe;
@@ -74,12 +78,12 @@ public class InfraView implements Serializable {
         if (params.containsKey("id")) {
             RC4Crypter seguridad = new RC4Crypter();
 
-            String cod = null;
+            String[] cod = null;
 
             try {
-                //cod = seguridad.decrypt("ha", params.get("id")).split("::");
-                cod = params.get("id");
-                proyecto = mantenimientoFacade.find(ProyectoCooperacion.class, Long.parseLong(cod));
+                cod = seguridad.decrypt("ha", params.get("id")).split("::");
+                //cod = params.get("id");
+                proyecto = mantenimientoFacade.find(ProyectoCooperacion.class, Long.parseLong(cod[0]));
                 datoInfraCe = catalogoFacade.findDatoInfraByCe(proyecto.getCodigoEntidad());
 
                 cargarArchivos();
@@ -91,9 +95,25 @@ public class InfraView implements Serializable {
         }
     }
 
+    public String getNombreArchivo() {
+        return nombreArchivo;
+    }
+
+    public void setNombreArchivo(String nombreArchivo) {
+        this.nombreArchivo = nombreArchivo;
+    }
+
+    public int getIdTipoObservacion() {
+        return idTipoObservacion;
+    }
+
+    public void setIdTipoObservacion(int idTipoObservacion) {
+        this.idTipoObservacion = idTipoObservacion;
+    }
+
     private void cargarArchivos() {
-        directorCe = mantenimientoFacade.getDirectorByCodigoEntidad(entidadEducativa.getCodigoEntidad());
         entidadEducativa = ubicacionFacade.findEntidadEducativaByCodigo(proyecto.getCodigoEntidad());
+        directorCe = mantenimientoFacade.getDirectorByCodigoEntidad(entidadEducativa.getCodigoEntidad());
 
         lstArchivos.clear();
 
@@ -139,42 +159,41 @@ public class InfraView implements Serializable {
         return lstArchivos;
     }
 
-    public void notificarCe() {
-        //Validar fechas
-        if (proyecto.getFechaCapacitacionList().isEmpty()) {
-            JsfUtil.mensajeAlerta("Debe de confirmar las fechas de las capacitaciones");
-        } else {
-            try {
-                notificarRespuestaCe();
-            } catch (AddressException ex) {
-                Logger.getLogger(InfodView.class.getName()).log(Level.SEVERE, "", ex);
+    public void notificarRespuestaCe() {
+        try {
+            String titulo = RESOURCE_BUNDLE.getString("correo.respuesta.titulo");
+            String mensajeNotificacionCabecera = "";
+
+            switch (proyecto.getIdEstado()) {
+                case 2://aprobado
+                    mensajeNotificacionCabecera = RESOURCE_BUNDLE.getString("correo.respuestaAprobacionInfraestructura.mensaje");
+                    break;
+                case 3://observado
+                    switch (idTipoObservacion) {
+                        case 1:
+                            mensajeNotificacionCabecera = RESOURCE_BUNDLE.getString("correo.respuestaObsCarpetaTecnicaInfraestructura.mensaje");
+                            break;
+                        case 2:
+                            mensajeNotificacionCabecera = RESOURCE_BUNDLE.getString("correo.respuestaObsVisitaTecnicaInfraestructura.mensaje");
+                            break;
+                    }
+                    break;
             }
+            mantenimientoFacade.modificar(proyecto);
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.append(MessageFormat.format(mensajeNotificacionCabecera,
+                    StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
+                    entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
+                    datoInfraCe.getDireccion(), datoInfraCe.getMatricula(),
+                    (datoInfraCe.getPropiedadInmueble() == 1 ? "MINEDUCYT" : (datoInfraCe.getPropiedadInmueble() == 2 ? "ALCALDIA" : "COMODATO")),
+                    proyecto.getNombreProyecto(), proyecto.getObjetivos()));
+
+            enviarCorreo(directorCe.getCorreoElectronico(), titulo, sb.toString());
+        } catch (AddressException ex) {
+            Logger.getLogger(InfraView.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    private void notificarRespuestaCe() throws AddressException {
-        String titulo = RESOURCE_BUNDLE.getString("correo.respuesta.titulo");
-        String mensajeNotificacionCabecera = "";
-        
-        switch(proyecto.getIdEstado()){
-            case 2://aprobado
-                mensajeNotificacionCabecera = RESOURCE_BUNDLE.getString("correo.respuestaAprobacionInfraestructura.mensaje");
-                break;
-            case 3://observado
-                mensajeNotificacionCabecera = RESOURCE_BUNDLE.getString("correo.respuestaObservacionInfraestructura.mensaje");
-                break;
-        }
-
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(MessageFormat.format(mensajeNotificacionCabecera,
-                StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
-                entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
-                datoInfraCe.getDireccion(), datoInfraCe.getMatricula(),
-                (datoInfraCe.getPropiedadInmueble() == 1 ? "MINEDUCYT" : (datoInfraCe.getPropiedadInmueble() == 2 ? "ALCALDIA" : "COMODATO")),
-                proyecto.getNombreProyecto(), proyecto.getObjetivos()));
-
-        enviarCorreo(directorCe.getCorreoElectronico(), titulo, sb.toString());
     }
 
     private void enviarCorreo(String destinatario, String titulo, String mensaje) throws AddressException {
@@ -184,5 +203,17 @@ public class InfraView implements Serializable {
         Session sesion = credencialesView.getMailSessionRemitente();
 
         eMailFacade.enviarMail(to, null, credencialesView.getRemitenteOficial(), titulo, mensaje, sesion);
+    }
+
+    public StreamedContent getFile() throws FileNotFoundException {
+        File filePdf = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto() + File.separator + nombreArchivo);
+        FileInputStream fis = new FileInputStream(filePdf);
+        StreamedContent file = DefaultStreamedContent.builder()
+                .name(nombreArchivo)
+                .contentType("application/pdf")
+                .stream(() -> fis)
+                .build();
+
+        return file;
     }
 }

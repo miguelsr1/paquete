@@ -23,6 +23,8 @@
     <class>sv.gob.mined.cooperacion.model.DatoInfraCe</class>
     <class>sv.gob.mined.cooperacion.model.dto.AtributoValorDto</class>
     <class>sv.gob.mined.cooperacion.model.dto.MatrizProyectoDto</class>
+    <class>sv.gob.mined.cooperacion.model.Meta</class>
+    <class>sv.gob.mined.cooperacion.model.ObjetivoDesarrollo</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>

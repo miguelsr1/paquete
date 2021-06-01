@@ -122,12 +122,20 @@
                 </h:panelGrid>
             </div>
             <div class="p-col-12 p-md-5" >
-                <h5 class="leyenda">
-                    <i class="pi pi-list" style="color: #3984b8"></i>
-                    <p:spacer width="5"/>
-                    Listado de Archivos
-                </h5>
-                <p:dataTable class="invoice-to" value="#{listadoView.lstArchivos}" var="archivo">
+                <h:panelGrid columns="2" style="width: 100%;">
+                    <p:outputPanel>
+                        <h5 class="leyenda">
+                            <i class="pi pi-list" style="color: #3984b8"></i>
+                            <p:spacer width="5"/>
+                            Listado de Archivos
+                        </h5>
+                    </p:outputPanel>
+                    <p:fileUpload mode="simple" skinSimple="true" style="float: right;" label="Seleccionar" auto="true" 
+                                  listener="#{listadoView.handleFileUpload}" update="tblArchivos" multiple="true"
+                                  rendered="#{userBean.centroEscolar}" process="@this"/>
+                </h:panelGrid>
+                
+                <p:dataTable id="tblArchivos" class="invoice-to" value="#{listadoView.lstArchivos}" var="archivo">
                     <p:column headerText="Nombre">
                         <p:outputLabel value="#{archivo.nombreArchivo}"/>
                     </p:column>
@@ -138,9 +146,7 @@
                         <h:commandLink styleClass="rounded-button blue" style="font-weight:bold">
                             <i class="pi pi-download"></i>
                             <f:setPropertyActionListener value="#{archivo.nombreArchivo}" target="#{listadoView.nombreArchivo}" />
-                            <p:fileDownload 
-                                contentDisposition="inline"
-                                value="#{listadoView.file}" />
+                            <p:fileDownload contentDisposition="inline" value="#{listadoView.file}" />
                         </h:commandLink>
                     </p:column>
                 </p:dataTable>
@@ -155,7 +161,7 @@
                 <div class="p-field p-grid invoice-to">
                     <p:outputLabel styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0">Cambiar estado:</p:outputLabel>
                     <div class="p-col-12 p-md-8">
-                        <p:selectOneMenu value="#{listadoView.proyecto.idEstado}">
+                        <p:selectOneMenu value="#{listadoView.proyecto.idEstado}" disabled="#{(userBean.centroEscolar)?'true':'false'}">
                             <f:selectItem itemLabel="Seleccione un valor" noSelectionOption="true"/>
                             <f:selectItem itemValue="1" itemLabel="Digitado"/>
                             <f:selectItem itemValue="2" itemLabel="Aprobado"/>
@@ -167,12 +173,12 @@
                 <div class="p-field p-grid invoice-to">
                     <p:outputLabel styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0">Etapa de ejecución:</p:outputLabel>
                     <div class="p-col-12 p-md-8">
-                        <p:selectOneMenu value="#{listadoView.proyecto.idEstado}">
+                        <p:selectOneMenu value="#{listadoView.proyecto.idEtapaEjecucion}">
                             <f:selectItem itemLabel="Seleccione un valor" noSelectionOption="true"/>
                             <f:selectItem itemValue="1" itemLabel="No iniciado"/>
                             <f:selectItem itemValue="2" itemLabel="En Ejecución"/>
                             <f:selectItem itemValue="3" itemLabel="Finalizado"/>
-                            <f:selectItem itemValue="4" itemLabel="No finalizado"/>
+                            <f:selectItem itemValue="4" itemLabel="Suspendido"/>
                         </p:selectOneMenu>
                     </div>
                 </div>

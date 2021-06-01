@@ -6,16 +6,18 @@
 package sv.gob.mined.cooperacion.view;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import javax.faces.bean.ViewScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.event.SelectEvent;
 import sv.gob.mined.cooperacion.facade.CatalogoFacade;
 import sv.gob.mined.cooperacion.facade.MantenimientoFacade;
 import sv.gob.mined.cooperacion.model.Meta;
 import sv.gob.mined.cooperacion.model.ObjetivoDesarrollo;
 import sv.gob.mined.cooperacion.model.ProyectoCooperacion;
-import sv.gob.mined.cooperacion.model.dto.ListadoProyectoDto;
+import sv.gob.mined.utils.jsf.JsfUtil;
 
 /**
  *
@@ -28,8 +30,9 @@ public class AsociarProyectoMetaView implements Serializable {
     private Integer idObjetivo;
     private Integer idMeta;
 
-    private ProyectoCooperacion proyectoCooperacion;
-    
+    private ProyectoCooperacion proyectoCooperacion = new ProyectoCooperacion();
+    private List<ProyectoCooperacion> lstProyecto = new ArrayList();
+
     @Inject
     private CatalogoFacade catalogoFacade;
     @Inject
@@ -60,7 +63,11 @@ public class AsociarProyectoMetaView implements Serializable {
     }
 
     public List<ProyectoCooperacion> getLstProyectos() {
-        return catalogoFacade.findAllProyectos();
+        return lstProyecto;
+    }
+
+    public void buscarProyecto() {
+        lstProyecto = catalogoFacade.findAllProyectos();
     }
 
     public List<ObjetivoDesarrollo> getObjetivosDesarrollo() {
@@ -69,5 +76,17 @@ public class AsociarProyectoMetaView implements Serializable {
 
     public List<Meta> getMeta() {
         return catalogoFacade.findMetaByObjetivo(idObjetivo);
+    }
+
+    public void proyectoSelect(SelectEvent<ProyectoCooperacion> event) {
+        proyectoCooperacion = event.getObject();
+        idMeta = proyectoCooperacion.getIdMeta();
+        idObjetivo = catalogoFacade.getObjetivoByIdMeta(idMeta).getIdObjetivo();
+    }
+    
+    public void guardar(){
+        proyectoCooperacion.setIdMeta(idMeta);
+        mantenimientoFacade.modificar(proyectoCooperacion);
+        JsfUtil.mensajeUpdate();
     }
 }
