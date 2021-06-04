@@ -6,7 +6,9 @@
 package sv.gob.mined.paquescolar.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
@@ -14,11 +16,17 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -35,13 +43,14 @@ public class Resguardo implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "ID_RESGUARDO")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_resguardo")
+    @SequenceGenerator(name = "seq_resguardo", sequenceName = "SEQ_RESGUARDO", allocationSize = 1, initialValue = 1)
     private Long idResguardo;
-    @Basic(optional = false)
-    @Column(name = "CODIGO_ENTIDAD")
-    private String codigoEntidad;
-    @Basic(optional = false)
-    @Column(name = "ID_DET_PROCESO_ADQ")
-    private BigInteger idDetProcesoAdq;
+
+    @JoinColumn(name = "ID_CONTRATO", referencedColumnName = "ID_CONTRATO")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private ContratosOrdenesCompras idContrato;
+
     @Basic(optional = false)
     @Column(name = "USUARIO_INSERCION")
     private String usuarioInsercion;
@@ -63,20 +72,14 @@ public class Resguardo implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idResguardo", fetch = FetchType.LAZY)
     private List<DetalleResguardo> detalleResguardoList;
 
+    @Transient
+    private BigInteger totalCantidad;
+
     public Resguardo() {
     }
 
     public Resguardo(Long idResguardo) {
         this.idResguardo = idResguardo;
-    }
-
-    public Resguardo(Long idResguardo, String codigoEntidad, BigInteger idDetProcesoAdq, String usuarioInsercion, Date fechaInsercion, short estadoEliminacion) {
-        this.idResguardo = idResguardo;
-        this.codigoEntidad = codigoEntidad;
-        this.idDetProcesoAdq = idDetProcesoAdq;
-        this.usuarioInsercion = usuarioInsercion;
-        this.fechaInsercion = fechaInsercion;
-        this.estadoEliminacion = estadoEliminacion;
     }
 
     public Long getIdResguardo() {
@@ -87,20 +90,12 @@ public class Resguardo implements Serializable {
         this.idResguardo = idResguardo;
     }
 
-    public String getCodigoEntidad() {
-        return codigoEntidad;
+    public ContratosOrdenesCompras getIdContrato() {
+        return idContrato;
     }
 
-    public void setCodigoEntidad(String codigoEntidad) {
-        this.codigoEntidad = codigoEntidad;
-    }
-
-    public BigInteger getIdDetProcesoAdq() {
-        return idDetProcesoAdq;
-    }
-
-    public void setIdDetProcesoAdq(BigInteger idDetProcesoAdq) {
-        this.idDetProcesoAdq = idDetProcesoAdq;
+    public void setIdContrato(ContratosOrdenesCompras idContrato) {
+        this.idContrato = idContrato;
     }
 
     public String getUsuarioInsercion() {
@@ -153,6 +148,9 @@ public class Resguardo implements Serializable {
 
     @XmlTransient
     public List<DetalleResguardo> getDetalleResguardoList() {
+        if (detalleResguardoList == null) {
+            detalleResguardoList = new ArrayList();
+        }
         return detalleResguardoList;
     }
 
@@ -174,15 +172,22 @@ public class Resguardo implements Serializable {
             return false;
         }
         Resguardo other = (Resguardo) object;
-        if ((this.idResguardo == null && other.idResguardo != null) || (this.idResguardo != null && !this.idResguardo.equals(other.idResguardo))) {
-            return false;
-        }
-        return true;
+        return !((this.idResguardo == null && other.idResguardo != null) || (this.idResguardo != null && !this.idResguardo.equals(other.idResguardo)));
     }
 
     @Override
     public String toString() {
         return "sv.gob.mined.paquescolar.model.Resguardo[ idResguardo=" + idResguardo + " ]";
     }
-    
+
+    public BigInteger getTotalCantidad() {
+        totalCantidad = BigInteger.ZERO;
+        if (detalleResguardoList != null) {
+            detalleResguardoList.forEach(det -> {
+                totalCantidad = totalCantidad.add(det.getCantidad());
+            });
+        }
+        return totalCantidad;
+    }
+
 }

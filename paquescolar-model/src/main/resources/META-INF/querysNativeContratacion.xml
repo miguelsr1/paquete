@@ -472,7 +472,8 @@
                 vw.id_producto          as idProducto,
                 vw.descripcion_nivel    as descripcionNivel,
                 vw.nombre_producto      as nombreProducto,
-                vw.cantidad          
+                vw.no_item              as noItem,
+                0 cantidad          
             from 
                 vw_detalle_contratacion vw
                 left outer join resguardo_bienes res on vw.id_det_proceso_adq = res.id_det_proceso_adq and vw.id_nivel_educativo = res.id_nivel_educativo and vw.id_producto = res.id_producto and vw.codigo_entidad = res.codigo_entidad

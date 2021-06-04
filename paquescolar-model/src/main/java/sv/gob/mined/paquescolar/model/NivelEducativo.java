@@ -37,6 +37,8 @@ public class NivelEducativo implements Serializable {
     private List<PreciosRefRubro> preciosRefRubroList;
     @OneToMany(mappedBy = "idNivelEducativo", fetch = FetchType.LAZY)
     private List<ResguardoBienes> resguardoBienesList;
+    @OneToMany(mappedBy = "idNivelEducativo", fetch = FetchType.LAZY)
+    private List<DetalleResguardo> detalleResguardoBienesList;
 
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -78,6 +80,14 @@ public class NivelEducativo implements Serializable {
 
     public void setDetCapaSegunRubroList(List<DetCapaSegunRubro> detCapaSegunRubroList) {
         this.detCapaSegunRubroList = detCapaSegunRubroList;
+    }
+
+    public List<DetalleResguardo> getDetalleResguardoBienesList() {
+        return detalleResguardoBienesList;
+    }
+
+    public void setDetalleResguardoBienesList(List<DetalleResguardo> detalleResguardoBienesList) {
+        this.detalleResguardoBienesList = detalleResguardoBienesList;
     }
 
     @Override

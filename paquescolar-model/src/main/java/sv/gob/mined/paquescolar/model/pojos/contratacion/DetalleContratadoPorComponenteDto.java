@@ -31,6 +31,7 @@ public class DetalleContratadoPorComponenteDto implements Serializable {
     private BigDecimal cantidad;
     private String descripcionNivel;
     private String nombreProducto;
+    private String noItem;
 
     public BigDecimal getIdRow() {
         return idRow;
@@ -38,6 +39,14 @@ public class DetalleContratadoPorComponenteDto implements Serializable {
 
     public void setIdRow(BigDecimal idRow) {
         this.idRow = idRow;
+    }
+
+    public String getNoItem() {
+        return noItem;
+    }
+
+    public void setNoItem(String noItem) {
+        this.noItem = noItem;
     }
 
     public String getCodigoEntidad() {

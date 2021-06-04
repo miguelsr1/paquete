@@ -28,7 +28,7 @@ import sv.gob.mined.paquescolar.model.DetalleOfertas;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.OfertaBienesServicios;
 import sv.gob.mined.paquescolar.model.Participantes;
-import sv.gob.mined.paquescolar.model.ResguardoBienes;
+import sv.gob.mined.paquescolar.model.Resguardo;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.pojos.Bean;
 import sv.gob.mined.paquescolar.model.pojos.ReportPOIBean;
@@ -286,10 +286,11 @@ public class OfertaBienesServiciosEJB {
         return em.merge(resolucionesAdjudicativas);
     }
 
-    public List<ResguardoBienes> getLstResguardoBienesByCodEntAndIdDetPro(String codigoEntidad, Integer idDetProcesoAdq) {
-        Query q = em.createQuery("SELECT r FROM ResguardoBienes r WHERE r.codigoEntidad=:codEnt and r.idDetProcesoAdq.idDetProcesoAdq=:idDet and r.estadoEliminacion = 0 ORDER BY r.idNivelEducativo.idNivelEducativo, r.idProducto.idProducto", ResguardoBienes.class);
+    public List<Resguardo> getLstResguardoBienesByCodEntAndIdDetPro(String codigoEntidad, Integer idDetProcesoAdq, BigDecimal idParticipante) {
+        Query q = em.createQuery("SELECT r FROM Resguardo r WHERE r.idContrato.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoEntidad=:codEnt and r.idContrato.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq.idDetProcesoAdq=:idDet and r.idContrato.idResolucionAdj.idParticipante.idParticipante=:idParticipante and r.estadoEliminacion = 0 ORDER BY r.idResguardo", Resguardo.class);
         q.setParameter("codEnt", codigoEntidad);
         q.setParameter("idDet", idDetProcesoAdq);
+        q.setParameter("idParticipante", idParticipante);
         return q.getResultList();
     }
 
@@ -300,7 +301,7 @@ public class OfertaBienesServiciosEJB {
         return q.getResultList();
     }
 
-    public void guardarResguardo(ResguardoBienes resguardoBienes, String usuario) {
+    public void guardarResguardo(Resguardo resguardoBienes, String usuario) {
         if (resguardoBienes.getIdResguardo() == null) {
             resguardoBienes.setFechaInsercion(new Date());
             resguardoBienes.setUsuarioInsercion(usuario);

@@ -13,9 +13,12 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,10 +38,15 @@ public class DetalleResguardo implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "ID_DET_RESGUARDO")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_det_resguardo")
+    @SequenceGenerator(name = "seq_det_resguardo", sequenceName = "SEQ_DET_RESGUARDO", allocationSize = 1, initialValue = 1)
     private BigDecimal idDetResguardo;
     @Basic(optional = false)
     @Column(name = "CANTIDAD")
     private BigInteger cantidad;
+    @Basic(optional = false)
+    @Column(name = "NO_ITEM")
+    private String noItem;
     @Basic(optional = false)
     @Column(name = "USUARIO_INSERCION")
     private String usuarioInsercion;
@@ -61,6 +69,10 @@ public class DetalleResguardo implements Serializable {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Resguardo idResguardo;
 
+    @JoinColumn(name = "ID_NIVEL_EDUCATIVO", referencedColumnName = "ID_NIVEL_EDUCATIVO")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private NivelEducativo idNivelEducativo;
+    
     public DetalleResguardo() {
     }
 
@@ -74,6 +86,14 @@ public class DetalleResguardo implements Serializable {
         this.usuarioInsercion = usuarioInsercion;
         this.fechaInsercion = fechaInsercion;
         this.estadoEliminacion = estadoEliminacion;
+    }
+
+    public String getNoItem() {
+        return noItem;
+    }
+
+    public void setNoItem(String noItem) {
+        this.noItem = noItem;
     }
 
     public BigDecimal getIdDetResguardo() {
@@ -146,6 +166,14 @@ public class DetalleResguardo implements Serializable {
 
     public void setIdResguardo(Resguardo idResguardo) {
         this.idResguardo = idResguardo;
+    }
+
+    public NivelEducativo getIdNivelEducativo() {
+        return idNivelEducativo;
+    }
+
+    public void setIdNivelEducativo(NivelEducativo idNivelEducativo) {
+        this.idNivelEducativo = idNivelEducativo;
     }
 
     @Override

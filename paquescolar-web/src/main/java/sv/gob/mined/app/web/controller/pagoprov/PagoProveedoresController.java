@@ -1417,6 +1417,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
         lstProveedores.clear();
         lstTipoDocImp.clear();
         lstDetalleRequerimientoSeleccionado.clear();
+        documentosAImprimir();
     }
 
     public void selectRequerimiento() {
@@ -1656,7 +1657,10 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
 
     //docPago
     public void showDlgEdtDetDocPago() {
-        contratoSinActaRecepcion = pagoProveedoresEJB.contratoConActaDeRecepcion(new BigDecimal(detalleRequerimiento.getIdContrato()));
+        contratoSinActaRecepcion = true;
+        if (getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getIdAnho().intValue() > 8) {
+            contratoSinActaRecepcion = pagoProveedoresEJB.contratoConActaDeRecepcion(new BigDecimal(detalleRequerimiento.getIdContrato()));
+        }
         if (contratoSinActaRecepcion) {
             ajusteRenta = 0;
             contratoModificado = false;

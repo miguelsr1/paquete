@@ -39,8 +39,8 @@ public class ResguardoBienes implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "ID_RESGUARDO")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_resguardo")
-    @SequenceGenerator(name = "seq_resguardo", sequenceName = "SEQ_RESGUARDO", allocationSize = 1, initialValue = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_resguardo_bienes")
+    @SequenceGenerator(name = "seq_resguardo_bienes", sequenceName = "SEQ_RESGUARDO_BIENES", allocationSize = 1, initialValue = 1)
     private Long idResguardo;
     @Basic(optional = false)
     @Column(name = "CODIGO_ENTIDAD")

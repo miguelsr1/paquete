@@ -7,7 +7,6 @@ package sv.gob.mined.app.web.controller.contratacion;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,13 +19,17 @@ import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.OfertaBienesServiciosEJB;
+import sv.gob.mined.paquescolar.ejb.RecepcionEJB;
+import sv.gob.mined.paquescolar.ejb.ResolucionAdjudicativaEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
 import sv.gob.mined.paquescolar.model.CatalogoProducto;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
+import sv.gob.mined.paquescolar.model.DetalleResguardo;
 import sv.gob.mined.paquescolar.model.NivelEducativo;
 import sv.gob.mined.paquescolar.model.OfertaBienesServicios;
-import sv.gob.mined.paquescolar.model.ResguardoBienes;
+import sv.gob.mined.paquescolar.model.Resguardo;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleContratadoPorComponenteDto;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.ParticipanteConContratoDto;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 
 /**
@@ -42,14 +45,14 @@ public class ResguardoMB extends RecuperarProcesoUtil implements Serializable {
     private BigDecimal rubro = BigDecimal.ZERO;
     private BigDecimal idParticipante = BigDecimal.ZERO;
 
-    private ResguardoBienes resguardoBienes = new ResguardoBienes();
+    private Resguardo resguardoBienes = new Resguardo();
     private DetalleProcesoAdq detalleProceso = new DetalleProcesoAdq();
     private OfertaBienesServicios current = new OfertaBienesServicios();
     private VwCatalogoEntidadEducativa entidadEducativa = new VwCatalogoEntidadEducativa();
 
-    private List<ResguardoBienes> lstResguardoBienes = new ArrayList();
+    private List<Resguardo> lstResguardoBienes = new ArrayList();
     private List<DetalleContratadoPorComponenteDto> lstDetalle = new ArrayList();
-    private List<DetalleContratadoPorComponenteDto> lstDetalleSelect = new ArrayList();
+    private List<ParticipanteConContratoDto> lstParticipantes = new ArrayList();
 
     @EJB
     private EntidadEducativaEJB entidadEducativaEJB;
@@ -57,14 +60,10 @@ public class ResguardoMB extends RecuperarProcesoUtil implements Serializable {
     private OfertaBienesServiciosEJB ofertaBienesServiciosEJB;
     @EJB
     private UtilEJB utilEJB;
-
-    public List<DetalleContratadoPorComponenteDto> getLstDetalleSelect() {
-        return lstDetalleSelect;
-    }
-
-    public void setLstDetalleSelect(List<DetalleContratadoPorComponenteDto> lstDetalleSelect) {
-        this.lstDetalleSelect = lstDetalleSelect;
-    }
+    @EJB
+    private RecepcionEJB recepcionEJB;
+    @EJB
+    private ResolucionAdjudicativaEJB resolucionAdjudicativaEJB;
 
     public List<DetalleContratadoPorComponenteDto> getLstDetalle() {
         return lstDetalle;
@@ -114,12 +113,20 @@ public class ResguardoMB extends RecuperarProcesoUtil implements Serializable {
         this.entidadEducativa = entidadEducativa;
     }
 
-    public List<ResguardoBienes> getLstResguardoBienes() {
+    public List<Resguardo> getLstResguardoBienes() {
         return lstResguardoBienes;
     }
 
-    public void setLstResguardoBienes(List<ResguardoBienes> lstResguardoBienes) {
+    public void setLstResguardoBienes(List<Resguardo> lstResguardoBienes) {
         this.lstResguardoBienes = lstResguardoBienes;
+    }
+
+    public List<ParticipanteConContratoDto> getLstParticipantes() {
+        return lstParticipantes;
+    }
+
+    public void setLstParticipantes(List<ParticipanteConContratoDto> lstParticipantes) {
+        this.lstParticipantes = lstParticipantes;
     }
 
     public OfertaBienesServicios getCurrent() {
@@ -130,11 +137,11 @@ public class ResguardoMB extends RecuperarProcesoUtil implements Serializable {
         this.current = current;
     }
 
-    public ResguardoBienes getResguardoBienes() {
+    public Resguardo getResguardoBienes() {
         return resguardoBienes;
     }
 
-    public void setResguardoBienes(ResguardoBienes resguardoBienes) {
+    public void setResguardoBienes(Resguardo resguardoBienes) {
         this.resguardoBienes = resguardoBienes;
     }
 
@@ -159,7 +166,7 @@ public class ResguardoMB extends RecuperarProcesoUtil implements Serializable {
                         if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(dep) || (Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {
                             current = ofertaBienesServiciosEJB.getOfertaByProcesoCodigoEntidad(codigoEntidad, detalleProceso);
                             if (current != null) {
-                                lstResguardoBienes = ofertaBienesServiciosEJB.getLstResguardoBienesByCodEntAndIdDetPro(codigoEntidad, detalleProceso.getIdDetProcesoAdq());
+                                lstParticipantes = resolucionAdjudicativaEJB.findParticipantesConContratoByCodEntAndIdDetProcesoAdq(codigoEntidad, detalleProceso.getIdDetProcesoAdq());
                             } else {
                                 JsfUtil.mensajeError("No existe un proceso de contratación para este centro escolar.");
                             }
@@ -185,19 +192,23 @@ public class ResguardoMB extends RecuperarProcesoUtil implements Serializable {
         codigoEntidad = "";
     }
 
-    public void guardar() {
-        for (ResguardoBienes resguardo : lstResguardoBienes) {
-            ofertaBienesServiciosEJB.guardarResguardo(resguardo, VarSession.getVariableSessionUsuario());
-        }
+    public void buscarResguardoPorContrato() {
+        lstResguardoBienes = ofertaBienesServiciosEJB.getLstResguardoBienesByCodEntAndIdDetPro(codigoEntidad, detalleProceso.getIdDetProcesoAdq(), idParticipante);
+    }
 
-        lstResguardoBienes = ofertaBienesServiciosEJB.getLstResguardoBienesByCodEntAndIdDetPro(codigoEntidad, detalleProceso.getIdDetProcesoAdq());
+    public void guardar() {
+        lstResguardoBienes.forEach(resguardo -> {
+            ofertaBienesServiciosEJB.guardarResguardo(resguardo, VarSession.getVariableSessionUsuario());
+        });
+
+        lstResguardoBienes = ofertaBienesServiciosEJB.getLstResguardoBienesByCodEntAndIdDetPro(codigoEntidad, detalleProceso.getIdDetProcesoAdq(), idParticipante);
 
         JsfUtil.mensajeInsert();
     }
 
     public void eliminarDetalle() {
         if (resguardoBienes != null) {
-            if (resguardoBienes.getEstadoEliminacion().compareTo((short) 0) == 0) {
+            if (resguardoBienes.getEstadoEliminacion() == (short) 0) {
                 if (resguardoBienes.getIdResguardo() != null) {
                     resguardoBienes.setEstadoEliminacion((short) 1);
                 } else {
@@ -214,23 +225,37 @@ public class ResguardoMB extends RecuperarProcesoUtil implements Serializable {
     }
 
     public void buscarItem() {
+        //acta de recepcion de todos los proveedores contratados?
+
         lstDetalle = ofertaBienesServiciosEJB.getLstDetalleContratado(codigoEntidad, detalleProceso.getIdDetProcesoAdq());
         PrimeFaces.current().executeScript("PF('dlgDetalle').show();");
     }
 
     public void agregarDetalle() {
-        for (DetalleContratadoPorComponenteDto detContratado : lstDetalleSelect) {
-            ResguardoBienes res = new ResguardoBienes();
-            res.setCantidad(BigInteger.ZERO);
-            res.setCodigoEntidad(codigoEntidad);
-            res.setEstadoEliminacion((short) 0);
-            res.setFechaInsercion(new Date());
-            res.setIdDetProcesoAdq(detalleProceso);
-            res.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, detContratado.getIdNivelEducativo()));
-            res.setIdProducto(utilEJB.find(CatalogoProducto.class, detContratado.getIdProducto()));
-            res.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
 
-            lstResguardoBienes.add(res);
-        }
+        Resguardo res = new Resguardo();
+//        res.setIdContrato(BigDecimal.ZERO);
+        res.setEstadoEliminacion((short) 0);
+
+        lstDetalle.forEach(detalle -> {
+            DetalleResguardo det = new DetalleResguardo();
+            det.setNoItem(detalle.getNoItem());
+            det.setCantidad(detalle.getCantidad().toBigInteger());
+            det.setEstadoEliminacion((short) 0);
+            det.setFechaInsercion(new Date());
+            det.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, detalle.getIdNivelEducativo()));
+            det.setIdProducto(utilEJB.find(CatalogoProducto.class, detalle.getIdProducto()));
+            det.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+            det.setIdResguardo(res);
+            res.getDetalleResguardoList().add(det);
+        });
+
+        ofertaBienesServiciosEJB.guardarResguardo(res, VarSession.getVariableSessionUsuario());
+        JsfUtil.mensajeInsert();
+
+        lstResguardoBienes = ofertaBienesServiciosEJB.getLstResguardoBienesByCodEntAndIdDetPro(codigoEntidad, detalleProceso.getIdDetProcesoAdq(), idParticipante);
+    }
+
+    public void nuevo() {
     }
 }

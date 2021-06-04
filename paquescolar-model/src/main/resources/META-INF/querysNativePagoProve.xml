@@ -103,6 +103,7 @@
                     ddp.estado_eliminacion = 0 and
                     dp.estado_eliminacion = 0 and
                     pp.estado_eliminacion = 0 and
+                    dpa.id_rubro_Adq in (4,5) and
                     der.codigo_departamento = ?1 and
                     to_char(dp.fecha_insercion,'mmyyyy') = ?2
                 group by 
