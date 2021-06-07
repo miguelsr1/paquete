@@ -682,6 +682,11 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                                 break;
                         }
 
+                        if (validarItemVacios()) {
+                            validacion = false;
+                            JsfUtil.mensajeAlerta("Por favor, eliminar las registros vacios");
+                        }
+
                         if (validacion) {
                             switch (idRubro.intValue()) {
                                 case 1:
@@ -716,6 +721,13 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
         }
 
         return urlRed;
+    }
+
+    private Boolean validarItemVacios() {
+        if (lstDetalleModificativas.stream().anyMatch(detModif -> (detModif.getNoItem() == null || detModif.getNoItem().trim().isEmpty()))) {
+            return true;
+        }
+        return false;
     }
 
     private Boolean validarCambioDePrecio() {
