@@ -86,7 +86,8 @@
                 id_participante as idParticipante,
                 razon_social    as razonSocial,
                 codigo_entidad  as codigoEntidad,
-                id_det_proceso_adq as idDetProceso_adq
+                id_det_proceso_adq as idDetProceso_adq,
+                id_contrato     as idContrato
             from vw_find_emp_contratos 
             where 
                 codigo_entidad=?1 and id_det_proceso_adq=?2

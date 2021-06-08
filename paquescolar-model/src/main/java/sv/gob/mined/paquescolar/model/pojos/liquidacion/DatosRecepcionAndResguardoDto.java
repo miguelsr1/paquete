@@ -18,8 +18,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @XmlRootElement
 @SqlResultSetMapping(name = "defaultDatosRecepcionDto",
-        entities = @EntityResult(entityClass = DatosRecepcionDto.class))
-public class DatosRecepcionDto implements java.io.Serializable {
+        entities = @EntityResult(entityClass = DatosRecepcionAndResguardoDto.class))
+public class DatosRecepcionAndResguardoDto implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -28,8 +28,9 @@ public class DatosRecepcionDto implements java.io.Serializable {
     private java.math.BigDecimal idContrato;
     private String noItem;
     private BigDecimal cantidadEntregada;
+    private BigDecimal cantidadResguardo;
 
-    public DatosRecepcionDto() {
+    public DatosRecepcionAndResguardoDto() {
     }
 
     public BigDecimal getIdRow() {
@@ -62,6 +63,14 @@ public class DatosRecepcionDto implements java.io.Serializable {
 
     public void setCantidadEntregada(BigDecimal cantidadEntregada) {
         this.cantidadEntregada = cantidadEntregada;
+    }
+
+    public BigDecimal getCantidadResguardo() {
+        return cantidadResguardo;
+    }
+
+    public void setCantidadResguardo(BigDecimal cantidadResguardo) {
+        this.cantidadResguardo = cantidadResguardo;
     }
 
 }

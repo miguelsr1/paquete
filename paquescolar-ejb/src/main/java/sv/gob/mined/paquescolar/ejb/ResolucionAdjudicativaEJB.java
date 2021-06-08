@@ -43,7 +43,7 @@ import sv.gob.mined.paquescolar.model.pojos.contratacion.VwRptContratoJurCabecer
 import sv.gob.mined.paquescolar.model.pojos.contratacion.VwRptPagare;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosContratoDto;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosModificativaDto;
-import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosRecepcionDto;
+import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosRecepcionAndResguardoDto;
 
 /**
  *
@@ -507,8 +507,8 @@ public class ResolucionAdjudicativaEJB {
         return q.getResultList();
     }
     
-    public List<DatosRecepcionDto> getDatosRecepcionDto(BigDecimal idContrato){
-        Query q = em.createNamedQuery("Liquidacion.DatosRecepcionDto", DatosRecepcionDto.class);
+    public List<DatosRecepcionAndResguardoDto> getDatosRecepcionAndResguardoDto(BigDecimal idContrato){
+        Query q = em.createNamedQuery("Liquidacion.DatosRecepcionAndResguardoDto", DatosRecepcionAndResguardoDto.class);
         q.setParameter(1, idContrato);
         return q.getResultList();
     }

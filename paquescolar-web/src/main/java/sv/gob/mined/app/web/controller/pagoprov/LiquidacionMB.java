@@ -38,7 +38,7 @@ import sv.gob.mined.paquescolar.model.pojos.contratacion.ParticipanteConContrato
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosContratoDto;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosLiquidacionDto;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosModificativaDto;
-import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosRecepcionDto;
+import sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosRecepcionAndResguardoDto;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 
 /**
@@ -70,7 +70,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
 
     private List<DatosContratoDto> datosContratoDto;
     private List<DatosModificativaDto> datosModificativaDto;
-    private List<DatosRecepcionDto> datosRecepcionDto;
+    private List<DatosRecepcionAndResguardoDto> datosRecepcionAndResguardoDto;
 
     private List<DatosLiquidacionDto> datosLiquidacionDtos;
 
@@ -303,7 +303,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
             modificativa = true;
         }
 
-        datosRecepcionDto = resolucionAdjudicativaEJB.getDatosRecepcionDto(datosContratoDto.get(0).getIdContrato());
+        datosRecepcionAndResguardoDto = resolucionAdjudicativaEJB.getDatosRecepcionAndResguardoDto(datosContratoDto.get(0).getIdContrato());
 
         switch (detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue()) {
             case 1:
@@ -356,11 +356,12 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
             }
         }
 
-        for (DatosRecepcionDto dato : datosRecepcionDto) {
+        for (DatosRecepcionAndResguardoDto dato : datosRecepcionAndResguardoDto) {
             if (dato.getNoItem().equals(noItem)) {
                 datoLiquidacion.setIdContrato(dato.getIdContrato());
                 datoLiquidacion.setNoItem(noItem);
                 datoLiquidacion.setCantidadRecepcion(dato.getCantidadEntregada());
+                datoLiquidacion.setCantidadResguardo(dato.getCantidadResguardo());
                 noEstaItem = false;
                 break;
             }

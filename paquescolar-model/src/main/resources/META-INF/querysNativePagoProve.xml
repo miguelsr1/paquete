@@ -523,18 +523,28 @@
             ]]>
         </query>
     </named-native-query>
-    <named-native-query name="Liquidacion.DatosRecepcionDto" 
-                        result-class="sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosRecepcionDto">
+    <named-native-query name="Liquidacion.DatosRecepcionAndResguardoDto" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosRecepcionAndResguardoDto">
         <query>
             <![CDATA[
             select 
-                id_row              as idRow,
+                rownum              as idRow,
                 id_contrato         as idContrato,
                 no_item             as noItem,
-                cantidad_entregada  as cantidadEntregada
-            from vw_sub_liq_contrato_recep 
-            where id_contrato = ?1 
-            order by to_number(no_item)
+                cantidad_entregada  as cantidadEntregada,
+                cantidad_resguardo  as cantidadResguardo
+            from (select 
+                vw.id_contrato,
+                vw.no_item,
+                cantidad_entregada,
+                nvl(tb.cantidad,0) cantidad_resguardo
+            from vw_sub_liq_contrato_recep vw
+                left outer join (select res.id_contrato, no_item, cantidad 
+                                from resguardo res
+                                    inner join detalle_resguardo det on res.id_resguardo = det.id_resguardo
+                                where det.estado_eliminacion = 0) tb on vw.id_contrato = tb.id_contrato and vw.no_item = tb.no_item
+            where vw.id_contrato = ?1 
+            order by to_number(vw.no_item)) 
             ]]>
         </query>
     </named-native-query>

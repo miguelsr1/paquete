@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -23,6 +24,7 @@ import sv.gob.mined.paquescolar.ejb.RecepcionEJB;
 import sv.gob.mined.paquescolar.ejb.ResolucionAdjudicativaEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
 import sv.gob.mined.paquescolar.model.CatalogoProducto;
+import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.DetalleResguardo;
 import sv.gob.mined.paquescolar.model.NivelEducativo;
@@ -232,9 +234,11 @@ public class ResguardoMB extends RecuperarProcesoUtil implements Serializable {
     }
 
     public void agregarDetalle() {
+        Optional<ParticipanteConContratoDto> participanteDto = lstParticipantes.stream().parallel().
+                filter(par -> par.getIdParticipante().compareTo(idParticipante) == 0).findAny();
 
         Resguardo res = new Resguardo();
-//        res.setIdContrato(BigDecimal.ZERO);
+        res.setIdContrato(utilEJB.find(ContratosOrdenesCompras.class, participanteDto.get().getIdContrato()));
         res.setEstadoEliminacion((short) 0);
 
         lstDetalle.forEach(detalle -> {

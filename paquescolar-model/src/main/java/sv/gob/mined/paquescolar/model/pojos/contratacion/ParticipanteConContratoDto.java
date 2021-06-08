@@ -20,6 +20,7 @@ public class ParticipanteConContratoDto implements Serializable {
     private String razonSocial;
     private String codigoEntidad;
     private Integer idDetProcesoAdq;
+    private BigDecimal idContrato;
 
     public ParticipanteConContratoDto() {
     }
@@ -54,6 +55,14 @@ public class ParticipanteConContratoDto implements Serializable {
 
     public void setRazonSocial(String razonSocial) {
         this.razonSocial = razonSocial;
+    }
+
+    public BigDecimal getIdContrato() {
+        return idContrato;
+    }
+
+    public void setIdContrato(BigDecimal idContrato) {
+        this.idContrato = idContrato;
     }
 
 }
