@@ -30,10 +30,10 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.primefaces.PrimeFaces;
-import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.FilesUploadEvent;
 import org.primefaces.event.map.OverlaySelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -60,6 +60,7 @@ import sv.gob.mined.cooperacion.model.paquete.Municipio;
 import sv.gob.mined.cooperacion.model.paquete.VwCatalogoEntidadEducativa;
 import sv.gob.mined.cooperacion.util.RC4Crypter;
 import sv.gob.mined.utils.StringUtils;
+import sv.gob.mined.utils.jsf.JsfUtil;
 
 /**
  *
@@ -462,7 +463,7 @@ public class ListadoView implements Serializable {
         }
         proyecto = mantenimientoFacade.find(ProyectoCooperacion.class, idProyecto);
 
-        File folder = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto());
+        File folder = new File(JsfUtil.getPathReportes(RESOURCE_BUNDLE, "path_folder") + File.separator + proyecto.getIdProyecto());
 
         if (folder.exists()) {
             for (File archivo : folder.listFiles()) {
@@ -487,14 +488,14 @@ public class ListadoView implements Serializable {
     public void handleFileUpload(FilesUploadEvent event) {
         //UploadedFile updFile = event.getFile();
 
-        File folderProyecto = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto() + File.separator);
+        File folderProyecto = new File(JsfUtil.getPathReportes(RESOURCE_BUNDLE, "path_folder") + File.separator + proyecto.getIdProyecto() + File.separator);
         if (!folderProyecto.exists()) {
             folderProyecto.mkdir();
         }
 
         try {
             for (UploadedFile updFile : event.getFiles().getFiles()) {
-                Path folder = Paths.get(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto() + File.separator + updFile.getFileName());
+                Path folder = Paths.get(JsfUtil.getPathReportes(RESOURCE_BUNDLE, "path_folder") + File.separator + proyecto.getIdProyecto() + File.separator + updFile.getFileName());
                 Path arc;
                 if (folder.toFile().exists()) {
                     arc = folder;
@@ -506,7 +507,7 @@ public class ListadoView implements Serializable {
                     Files.copy(input, arc, StandardCopyOption.REPLACE_EXISTING);
                 }
             }
-            
+
             notificarAgregacionDeArchivos();
         } catch (IOException ex) {
             Logger.getLogger(RegistrarCooperacionView.class.getName()).log(Level.SEVERE, null, ex);
@@ -516,7 +517,7 @@ public class ListadoView implements Serializable {
     }
 
     public StreamedContent getFile() throws FileNotFoundException {
-        File filePdf = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto() + File.separator + nombreArchivo);
+        File filePdf = new File(JsfUtil.getPathReportes(RESOURCE_BUNDLE, "path_folder") + File.separator + proyecto.getIdProyecto() + File.separator + nombreArchivo);
         FileInputStream fis = new FileInputStream(filePdf);
         StreamedContent file = DefaultStreamedContent.builder()
                 .name(nombreArchivo)
@@ -555,35 +556,46 @@ public class ListadoView implements Serializable {
     }
 
     private void notificarAgregacionDeArchivos() {
-        RC4Crypter seguridad = new RC4Crypter();
-        String mensajeParaUt = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.notificacioDeAdicionDeArchivos.mensaje"),
-                StringUtils.getFecha(new Date()),
-                entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
-                seguridad.encrypt("ha", "".concat(proyecto.getIdProyecto().toString()).concat("::").concat(proyecto.getIdCooperante().getIdCooperante().toString()).concat("::").concat(proyecto.getCodigoEntidad()))
-        );
+        try {
+            RC4Crypter seguridad = new RC4Crypter();
+            String mensajeParaUt = MessageFormat.format(RESOURCE_BUNDLE.getString("correo.notificacioDeAdicionDeArchivos.mensaje"),
+                    StringUtils.getFecha(new Date()),
+                    entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
+                    seguridad.encrypt("ha", "".concat(proyecto.getIdProyecto().toString()).concat("::").concat(proyecto.getIdCooperante().getIdCooperante().toString()).concat("::").concat(proyecto.getCodigoEntidad()))
+            );
 
-        List<Notificacion> lstNotificacion = catalogoFacade.findNotificacionByTipoCooperacion(proyecto.getIdTipoCooperacion().getIdTipoCooperacion());
+            List<Notificacion> lstNotificacion = catalogoFacade.findNotificacionByTipoCooperacion(proyecto.getIdTipoCooperacion().getIdTipoCooperacion());
 
-        String emailsTo = "";
-        String emailsCc = "";
+            String emailsTo = "";
+            String emailsCc = "";
 
-        for (Notificacion notificacion : lstNotificacion) {
-            if (notificacion.getTipoDestinatario() == 1) {
-                emailsTo = notificacion.getCorreo();
-            } else {
-                if (emailsCc.isEmpty()) {
-                    emailsCc = notificacion.getCorreo();
+            for (Notificacion notificacion : lstNotificacion) {
+                if (notificacion.getTipoDestinatario() == 1) {
+                    emailsTo = notificacion.getCorreo();
                 } else {
-                    emailsCc = emailsCc.concat(",").concat(notificacion.getCorreo());
+                    if (emailsCc.isEmpty()) {
+                        emailsCc = notificacion.getCorreo();
+                    } else {
+                        emailsCc = emailsCc.concat(",").concat(notificacion.getCorreo());
+                    }
                 }
             }
+
+            InternetAddress[] to = new InternetAddress[emailsTo.split(",").length];
+            InternetAddress[] cc = new InternetAddress[emailsCc.split(",").length];
+
+            for (int i = 0; i < emailsTo.split(",").length; i++) {
+                to[i] = new InternetAddress(emailsTo.split(",")[i]);
+            }
+            for (int i = 0; i < emailsCc.split(",").length; i++) {
+                cc[i] = new InternetAddress(emailsCc.split(",")[i]);
+            }
+
+            eMailFacade.enviarMail(to, cc, "cooperacion@admin.mined.edu.sv",
+                    RESOURCE_BUNDLE.getString("correo.respuesta.titulo"),
+                    mensajeParaUt, credencialesView.getMailSessionRemitente());
+        } catch (AddressException ex) {
+            Logger.getLogger(ListadoView.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        InternetAddress[] to = new InternetAddress[emailsTo.split(",").length];
-        InternetAddress[] cc = new InternetAddress[emailsCc.split(",").length];
-
-        eMailFacade.enviarMail(to, cc, "cooperacion@admin.mined.edu.sv",
-                RESOURCE_BUNDLE.getString("correo.respuesta.titulo"),
-                mensajeParaUt, credencialesView.getMailSessionRemitente());
     }
 }

@@ -478,14 +478,14 @@ public class RegistrarCooperacionView implements Serializable {
                     default:
                 }
 
-                File folderProyecto = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyectoCooperacion.getIdProyecto() + File.separator);
+                File folderProyecto = new File(JsfUtil.getPathReportes(RESOURCE_BUNDLE, "path_folder") + File.separator + proyectoCooperacion.getIdProyecto() + File.separator);
                 if (!folderProyecto.exists()) {
                     folderProyecto.mkdir();
                 }
 
                 try {
                     for (UploadedFile updFile : archivosDelProyecto) {
-                        Path folder = Paths.get(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyectoCooperacion.getIdProyecto() + File.separator + updFile.getFileName());
+                        Path folder = Paths.get(JsfUtil.getPathReportes(RESOURCE_BUNDLE, "path_folder") + File.separator + proyectoCooperacion.getIdProyecto() + File.separator + updFile.getFileName());
                         Path arc;
                         if (folder.toFile().exists()) {
                             arc = folder;

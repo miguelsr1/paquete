@@ -129,7 +129,7 @@ public class InfodView implements Serializable {
 
         credencialesView.setDominio("2");
     }
-    
+
     public String getNombreArchivo() {
         return nombreArchivo;
     }
@@ -291,8 +291,8 @@ public class InfodView implements Serializable {
                 .build()).forEachOrdered((eventTemp) -> {
             eventModel.addEvent(eventTemp);
         });
-        
-        File folder = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto());
+
+        File folder = new File(JsfUtil.getPathReportes(RESOURCE_BUNDLE, "path_folder") + File.separator + proyecto.getIdProyecto());
 
         if (folder.exists()) {
             for (File archivo : folder.listFiles()) {
@@ -425,9 +425,9 @@ public class InfodView implements Serializable {
 
         eMailFacade.enviarMail(to, null, credencialesView.getRemitenteOficial(), titulo, mensaje, sesion);
     }
-    
+
     public StreamedContent getFile() throws FileNotFoundException {
-        File filePdf = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto() + File.separator + nombreArchivo);
+        File filePdf = new File(JsfUtil.getPathReportes(RESOURCE_BUNDLE, "path_folder") + File.separator + proyecto.getIdProyecto() + File.separator + nombreArchivo);
         FileInputStream fis = new FileInputStream(filePdf);
         StreamedContent file = DefaultStreamedContent.builder()
                 .name(nombreArchivo)

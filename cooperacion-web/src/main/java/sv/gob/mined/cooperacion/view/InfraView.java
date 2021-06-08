@@ -42,6 +42,7 @@ import sv.gob.mined.cooperacion.model.dto.FileInfoDto;
 import sv.gob.mined.cooperacion.model.paquete.VwCatalogoEntidadEducativa;
 import sv.gob.mined.cooperacion.util.RC4Crypter;
 import sv.gob.mined.utils.StringUtils;
+import sv.gob.mined.utils.jsf.JsfUtil;
 
 @Named
 @ViewScoped
@@ -117,7 +118,7 @@ public class InfraView implements Serializable {
 
         lstArchivos.clear();
 
-        File folder = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto());
+        File folder = new File(JsfUtil.getPathReportes(RESOURCE_BUNDLE, "path_folder") + File.separator + proyecto.getIdProyecto());
 
         if (folder.exists()) {
             for (File archivo : folder.listFiles()) {
@@ -206,7 +207,7 @@ public class InfraView implements Serializable {
     }
 
     public StreamedContent getFile() throws FileNotFoundException {
-        File filePdf = new File(RESOURCE_BUNDLE.getString("path_folder") + File.separator + proyecto.getIdProyecto() + File.separator + nombreArchivo);
+        File filePdf = new File(JsfUtil.getPathReportes(RESOURCE_BUNDLE, "path_folder") + File.separator + proyecto.getIdProyecto() + File.separator + nombreArchivo);
         FileInputStream fis = new FileInputStream(filePdf);
         StreamedContent file = DefaultStreamedContent.builder()
                 .name(nombreArchivo)
