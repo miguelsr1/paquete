@@ -9,6 +9,7 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -256,5 +257,17 @@ public class JsfUtil {
         }
         valor = valor + " de " + param[1];
         return valor;
+    }
+
+    public static String getPathReportes(ResourceBundle RESOURCE_BUNDLE, String path) {
+        if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
+            return JsfUtil.getValorFromBundleByKey(RESOURCE_BUNDLE, path + "_win");
+        } else {
+            return JsfUtil.getValorFromBundleByKey(RESOURCE_BUNDLE, path + "linux");
+        }
+    }
+
+    public static String getValorFromBundleByKey(ResourceBundle RESOURCE_BUNDLE, String key) {
+        return RESOURCE_BUNDLE.getString(key);
     }
 }
