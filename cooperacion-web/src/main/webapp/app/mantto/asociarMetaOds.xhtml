@@ -116,7 +116,7 @@
                     <div class="p-field p-grid">
                         <p:outputLabel value="Objetivo de Desarrollo:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
                         <div class="p-col-12 p-md-10">
-                            <p:selectOneMenu id="cboObjetivo" value="#{asociarProyectoMetaView.idObjetivo}">
+                            <p:selectOneMenu id="cboObjetivo" value="#{asociarProyectoMetaView.idObjetivo}" style="width: 100%;">
                                 <f:selectItem itemValue="null" itemLabel="Seleccione un valor"/>
                                 <f:selectItems value="#{asociarProyectoMetaView.objetivosDesarrollo}" var="obj" itemValue="#{obj.idObjetivo}" itemLabel="#{obj.descripcionObjetivo}"/>
                                 <p:ajax update="cboMeta"/>

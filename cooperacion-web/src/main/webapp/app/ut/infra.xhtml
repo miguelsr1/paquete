@@ -79,7 +79,7 @@
         </p:growl>
 
         <div class="card revenue-graph" style="display:#{(infraView.codigoBueno)?'block':'none'}">
-            <div class="p-grid">
+            <div class="p-grid" jsf:id="dvPrincipal">
                 <div class="p-col-12 p-md-7">
                     <h5 class="leyenda">
                         <i class="pi pi-folder"></i>
@@ -248,7 +248,7 @@
                     <br/><br/>
                     <div class="p-field p-grid invoice-to p-jc-center">
                         <p:commandButton id="addButton" value="Guardar" icon="pi pi-check" action="#{infraView.notificarRespuestaCe()}"
-                                         disabled="#{infraView.proyecto.idEstado eq 2}"/>
+                                         disabled="#{infraView.deshabilitarGuardar}" update="dvPrincipal"/>
                     </div>
                 </div>
             </div>

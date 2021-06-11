@@ -13,50 +13,80 @@
         <h:outputScript name="js/nanoscroller.js" library="paradise-layout" />
         <h:outputScript name="js/layout.js" library="paradise-layout" />
         <h:outputScript name="calendar-localization.js" library="js"/>
+
+        <style>
+            body .ui-dialog .ui-dialog-content {
+                background: #ffffff;
+                color: #64686A;
+                border: 0 none;
+                padding: 20px 0rem 1rem 4rem;
+                border: 0 none;
+            }
+            .p-ai-center {
+                align-items: center;
+            }
+
+            .vertical-container {
+                margin: 0;
+                border-radius: 4px;
+            }
+        </style>
     </ui:define>
 
 
     <ui:define name="contenido">
-        <div class="p-grid dashboard p-jc-center p-ai-center vertical-container" style="background-color: white !important; height: 88vh;">
-            <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'datosCe.mined';" style="cursor: pointer;display:#{(userBean.centroEscolar)?'block':'none'};">
-                <div class="card overview-box" style="text-align: center !important; margin-top: -200px;">
-                    <br/><br/>
-                    <p:graphicImage name="editar.png" library="images" style="background-color: white;" width="80" />
-                    <br/><br/>
-                    <h5>Crear nuevo proyecto</h5>
-                    <br/><br/>
+        <div class="p-ai-center vertical-container">
+            <div class="p-grid dashboard p-jc-center" style="background-color: white !important; height: 72vh;">
+                <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'datosCe.mined';PF('dlgMensaje').show();" style="cursor: pointer;display:#{(userBean.centroEscolar)?'block':'none'};">
+                    <div class="card overview-box" style="text-align: center !important; margin-top: -200px;">
+                        <br/><br/>
+                        <p:graphicImage name="editar.png" library="images" style="background-color: white;" width="80" />
+                        <br/><br/>
+                        <h5>Crear nuevo proyecto</h5>
+                        <br/><br/>
+                    </div>
                 </div>
-            </div>
-            <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'listadoProyectos.mined';" style="cursor: pointer;">
-                <div class="card overview-box" style="text-align: center !important; margin-top: -200px;">
-                    <br/><br/>
-                    <p:graphicImage name="lista.png" library="images" style="background-color: white;" width="80"/>
-                    <br/><br/>
-                    <h5>Listado de Proyectos</h5>
-                    <br/><br/>
+                <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'listadoProyectos.mined';PF('dlgMensaje').show();" style="cursor: pointer;">
+                    <div class="card overview-box" style="text-align: center !important; margin-top: -200px;">
+                        <br/><br/>
+                        <p:graphicImage name="lista.png" library="images" style="background-color: white;" width="80"/>
+                        <br/><br/>
+                        <h5>Listado de Proyectos</h5>
+                        <br/><br/>
+                    </div>
                 </div>
-            </div>
-            <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'mantto/inicioManttos.mined';" 
-                 style="cursor: pointer; display:#{(userBean.perfilUsuario eq 'ADMIN')?'block':'none'}">
-                <div class="card overview-box" style="text-align: center !important; margin-top: -200px;">
-                    <br/><br/>
-                    <p:graphicImage name="settings.png" library="images" style="background-color: white;" width="80"/>
-                    <br/><br/>
-                    <h5>Mantenimientos</h5>
-                    <br/><br/>
+                <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'mantto/inicioManttos.mined';PF('dlgMensaje').show();" 
+                     style="cursor: pointer; display:#{(userBean.perfilUsuario eq 'ADMIN')?'block':'none'}">
+                    <div class="card overview-box" style="text-align: center !important; margin-top: -200px;">
+                        <br/><br/>
+                        <p:graphicImage name="settings.png" library="images" style="background-color: white;" width="80"/>
+                        <br/><br/>
+                        <h5>Mantenimientos</h5>
+                        <br/><br/>
+                    </div>
                 </div>
-            </div>
-            <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'reportes.mined';" 
-                 style="cursor: pointer; display:#{(userBean.perfilUsuario eq 'ADMIN')?'block':'none'}">
-                <div class="card overview-box" style="text-align: center !important; margin-top: -200px;">
-                    <br/><br/>
-                    <p:graphicImage name="reporte.png" library="images" style="background-color: white;" width="80"/>
-                    <br/><br/>
-                    <h5>Reportes</h5>
-                    <br/><br/>
+                <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'reportes.mined';PF('dlgMensaje').show();" 
+                     style="cursor: pointer; display:#{(userBean.perfilUsuario eq 'ADMIN')?'block':'none'}">
+                    <div class="card overview-box" style="text-align: center !important; margin-top: -200px;">
+                        <br/><br/>
+                        <p:graphicImage name="reporte.png" library="images" style="background-color: white;" width="80"/>
+                        <br/><br/>
+                        <h5>Reportes</h5>
+                        <br/><br/>
+                    </div>
                 </div>
             </div>
         </div>
+        <p:dialog id="dlgMensaje" widgetVar="dlgMensaje" modal="true" closable="false" showHeader="false" width="250" height="50">
+            <h:panelGrid columns="2" style="top: -10px">
+                <p:outputPanel>
+                    <i class="fa fa-refresh fa-spin ajax-loader" aria-hidden="true" 
+                       style="color: #349ffb; font-size: 36px;transform: translateY(-18%);"></i>
+
+                </p:outputPanel>
+                <p:outputLabel value="Por favor espere"/>
+            </h:panelGrid>
+        </p:dialog>
 
 
         <h:outputStylesheet name="personalizadas.css" library="css"/>

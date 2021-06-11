@@ -52,6 +52,7 @@ public class InfraView implements Serializable {
 
     private int idTipoObservacion;
     private Boolean codigoBueno = true;
+    private Boolean deshabilitarGuardar = false;
     private String observacion = "";
     private String nombreArchivo = "";
 
@@ -87,6 +88,7 @@ public class InfraView implements Serializable {
                 proyecto = mantenimientoFacade.find(ProyectoCooperacion.class, Long.parseLong(cod[0]));
                 datoInfraCe = catalogoFacade.findDatoInfraByCe(proyecto.getCodigoEntidad());
 
+                deshabilitarGuardar = (proyecto.getIdEstado() == 2);
                 cargarArchivos();
             } catch (NumberFormatException e) {
                 codigoBueno = false;
@@ -94,6 +96,14 @@ public class InfraView implements Serializable {
         } else {
             codigoBueno = false;
         }
+    }
+
+    public Boolean getDeshabilitarGuardar() {
+        return deshabilitarGuardar;
+    }
+
+    public void setDeshabilitarGuardar(Boolean deshabilitarGuardar) {
+        this.deshabilitarGuardar = deshabilitarGuardar;
     }
 
     public String getNombreArchivo() {
@@ -168,6 +178,7 @@ public class InfraView implements Serializable {
             switch (proyecto.getIdEstado()) {
                 case 2://aprobado
                     mensajeNotificacionCabecera = RESOURCE_BUNDLE.getString("correo.respuestaAprobacionInfraestructura.mensaje");
+                    deshabilitarGuardar = true;
                     break;
                 case 3://observado
                     switch (idTipoObservacion) {
