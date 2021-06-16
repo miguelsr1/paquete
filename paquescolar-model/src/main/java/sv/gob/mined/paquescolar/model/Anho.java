@@ -29,6 +29,9 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Anho implements Serializable {
 
     @OneToMany(mappedBy = "idAnho", fetch = FetchType.LAZY)
+    private List<ConceptoInconsistencia> conceptoInconsistenciaList;
+
+    @OneToMany(mappedBy = "idAnho", fetch = FetchType.LAZY)
     private List<DetRubroMuestraInteres> detRubroMuestraInteresList;
     @OneToMany(mappedBy = "idAnho", fetch = FetchType.LAZY)
     private List<PreciosRefRubro> preciosRefRubroList;
@@ -120,6 +123,14 @@ public class Anho implements Serializable {
 
     public void setPreciosRefRubroList(List<PreciosRefRubro> preciosRefRubroList) {
         this.preciosRefRubroList = preciosRefRubroList;
+    }
+
+    public List<ConceptoInconsistencia> getConceptoInconsistenciaList() {
+        return conceptoInconsistenciaList;
+    }
+
+    public void setConceptoInconsistenciaList(List<ConceptoInconsistencia> conceptoInconsistenciaList) {
+        this.conceptoInconsistenciaList = conceptoInconsistenciaList;
     }
     
 }

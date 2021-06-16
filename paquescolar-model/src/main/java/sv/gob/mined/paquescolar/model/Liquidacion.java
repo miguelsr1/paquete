@@ -26,6 +26,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -37,6 +38,15 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "LIQUIDACION")
 @XmlRootElement
 public class Liquidacion implements Serializable {
+
+    @Size(max = 500)
+    @Column(name = "OBSERVACION")
+    private String observacion;
+    @Size(max = 1)
+    @Column(name = "ESTADO_LIQUIDACION")
+    private String estadoLiquidacion;
+    @OneToMany(mappedBy = "idLiquidacion", fetch = FetchType.LAZY)
+    private List<DetalleLiquidacionInc> detalleLiquidacionIncList;
 
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -59,8 +69,6 @@ public class Liquidacion implements Serializable {
     private Date fechaLiquidacion;
     @Column(name = "ESTADO_ELIMINACION")
     private Short estadoEliminacion;
-    @Column(name = "ESTADO_LIQUIDACION")
-    private Character estadoLiquidacion;
     @OneToMany(mappedBy = "idLiquidacion", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<DetalleLiquidacion> detalleLiquidacionList;
 
@@ -164,14 +172,6 @@ public class Liquidacion implements Serializable {
         return "sv.gob.mined.paquescolar.model.Liquidacion[ idLiquidacion=" + idLiquidacion + " ]";
     }
 
-    public Character getEstadoLiquidacion() {
-        return estadoLiquidacion;
-    }
-
-    public void setEstadoLiquidacion(Character estadoLiquidacion) {
-        this.estadoLiquidacion = estadoLiquidacion;
-    }
-
     public Boolean getEstadoLiq() {
         if (!detalleLiquidacionList.isEmpty() && detalleLiquidacionList.get(0).getPrecioUnitarioModif() != null) {
             estadoLiq = (getMontoRecepcion().compareTo(getMontoModificativa()) == 0);
@@ -222,7 +222,9 @@ public class Liquidacion implements Serializable {
         montoModificativa = BigDecimal.ZERO;
 
         detalleLiquidacionList.forEach(detalleLiquidacion -> {
-            montoModificativa = montoModificativa.add(detalleLiquidacion.getPrecioUnitarioModif().multiply(new BigDecimal(detalleLiquidacion.getCantidadModificativa())));
+            if (detalleLiquidacion.getCantidadModificativa() != null) {
+                montoModificativa = montoModificativa.add(detalleLiquidacion.getPrecioUnitarioModif().multiply(new BigDecimal(detalleLiquidacion.getCantidadModificativa())));
+            }
         });
 
         return montoModificativa;
@@ -248,6 +250,33 @@ public class Liquidacion implements Serializable {
 
     public void setMontoResguardo(BigDecimal montoResguardo) {
         this.montoResguardo = montoResguardo;
+    }
+
+    public String getObservacion() {
+        return observacion;
+    }
+
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
+    }
+
+    public String getEstadoLiquidacion() {
+        return estadoLiquidacion;
+    }
+
+    public void setEstadoLiquidacion(String estadoLiquidacion) {
+        this.estadoLiquidacion = estadoLiquidacion;
+    }
+
+    public List<DetalleLiquidacionInc> getDetalleLiquidacionIncList() {
+        if (detalleLiquidacionIncList == null) {
+            detalleLiquidacionIncList = new ArrayList();
+        }
+        return detalleLiquidacionIncList;
+    }
+
+    public void setDetalleLiquidacionIncList(List<DetalleLiquidacionInc> detalleLiquidacionIncList) {
+        this.detalleLiquidacionIncList = detalleLiquidacionIncList;
     }
 
 }

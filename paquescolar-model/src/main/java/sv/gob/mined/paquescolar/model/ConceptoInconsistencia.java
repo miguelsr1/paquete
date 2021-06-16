@@ -6,12 +6,17 @@
 package sv.gob.mined.paquescolar.model;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -25,6 +30,12 @@ import javax.validation.constraints.Size;
 @NamedQueries({
     @NamedQuery(name = "ConceptoInconsistencia.findAll", query = "SELECT c FROM ConceptoInconsistencia c")})
 public class ConceptoInconsistencia implements Serializable {
+
+    @JoinColumn(name = "ID_ANHO", referencedColumnName = "ID_ANHO")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Anho idAnho;
+    @OneToMany(mappedBy = "idConcepto", fetch = FetchType.LAZY)
+    private List<DetalleLiquidacionInc> detalleLiquidacionIncList;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -82,6 +93,22 @@ public class ConceptoInconsistencia implements Serializable {
     @Override
     public String toString() {
         return "sv.gob.mined.paquescolar.model.ConceptoInconsistencia[ idConcepto=" + idConcepto + " ]";
+    }
+
+    public Anho getIdAnho() {
+        return idAnho;
+    }
+
+    public void setIdAnho(Anho idAnho) {
+        this.idAnho = idAnho;
+    }
+
+    public List<DetalleLiquidacionInc> getDetalleLiquidacionIncList() {
+        return detalleLiquidacionIncList;
+    }
+
+    public void setDetalleLiquidacionIncList(List<DetalleLiquidacionInc> detalleLiquidacionIncList) {
+        this.detalleLiquidacionIncList = detalleLiquidacionIncList;
     }
     
 }

@@ -24,14 +24,15 @@ import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.LoginEJB;
-import sv.gob.mined.paquescolar.ejb.OfertaBienesServiciosEJB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
 import sv.gob.mined.paquescolar.ejb.ResolucionAdjudicativaEJB;
+import sv.gob.mined.paquescolar.ejb.UtilEJB;
+import sv.gob.mined.paquescolar.model.ConceptoInconsistencia;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.DetalleLiquidacion;
+import sv.gob.mined.paquescolar.model.DetalleLiquidacionInc;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.Liquidacion;
-import sv.gob.mined.paquescolar.model.Participantes;
 import sv.gob.mined.paquescolar.model.RecepcionBienesServicios;
 import sv.gob.mined.paquescolar.model.ResolucionesModificativas;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ParticipanteConContratoDto;
@@ -49,10 +50,12 @@ import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 @ViewScoped
 public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable {
 
+    Boolean existe = false;
     private Boolean modificativa = false;
     private String codigoEntidad;
     private String numeroContrato;
     private String observacion;
+    private Integer idConcepto;
     private BigDecimal cantidadOriginal;
     private BigDecimal montoOriginal;
     private BigDecimal cantidadModificativa;
@@ -64,7 +67,6 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     private ContratosOrdenesCompras contrato = new ContratosOrdenesCompras();
     private DetalleProcesoAdq detalleProceso = new DetalleProcesoAdq();
     private Liquidacion liquidacion = new Liquidacion();
-    //private OfertaBienesServicios oferta = new OfertaBienesServicios();
     private RecepcionBienesServicios recepcion = new RecepcionBienesServicios();
     private ResolucionesModificativas resModificativa;
 
@@ -77,20 +79,38 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     private List<Liquidacion> lstLiquidaciones = new ArrayList();
     private List<ParticipanteConContratoDto> lstParticipantes = new ArrayList();
 
+    private List<ConceptoInconsistencia> lstConcepto = new ArrayList();
+    private List<DetalleLiquidacionInc> lstDetalleLiquidacionIncs = new ArrayList();
     private VwCatalogoEntidadEducativa entidadEducativa = new VwCatalogoEntidadEducativa();
 
     @EJB
     private EntidadEducativaEJB entidadEducativaEJB;
-    @EJB
-    private OfertaBienesServiciosEJB ofertaBienesServiciosEJB;
     @EJB
     private ResolucionAdjudicativaEJB resolucionAdjudicativaEJB;
     @EJB
     private LoginEJB loginEJB;
     @EJB
     private ReportesEJB reportesEJB;
+    @EJB
+    private UtilEJB utilEJB;
 
     public LiquidacionMB() {
+    }
+
+    public Integer getIdConcepto() {
+        return idConcepto;
+    }
+
+    public void setIdConcepto(Integer idConcepto) {
+        this.idConcepto = idConcepto;
+    }
+
+    public List<DetalleLiquidacionInc> getLstDetalleLiquidacionIncs() {
+        return lstDetalleLiquidacionIncs;
+    }
+
+    public List<ConceptoInconsistencia> getLstConcepto() {
+        return lstConcepto;
     }
 
     public List<ParticipanteConContratoDto> getLstParticipantes() {
@@ -145,9 +165,6 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
         this.idParticipante = idParticipante;
     }
 
-    /*public OfertaBienesServicios getOferta() {
-        return oferta;
-    }*/
     public VwCatalogoEntidadEducativa getEntidadEducativa() {
         return entidadEducativa;
     }
@@ -229,6 +246,10 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     }
 
     public void buscarEntidadEducativa() {
+        lstParticipantes.clear();
+        lstLiquidaciones.clear();
+        lstDetalleLiquidacionIncs.clear();
+        
         if (codigoEntidad.length() == 5) {
             /**
              * Fecha: 30/08/2018 Comentario: Validación de seleccion del año y
@@ -292,6 +313,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
 
     public void recuperarLstLiquidacionByCodEntAndIdDetPro() {
         lstLiquidaciones = resolucionAdjudicativaEJB.getLstLiquidacionByCodigoEntAndIdDetProcesoAdqAndIdParticipante(codigoEntidad, detalleProceso.getIdDetProcesoAdq(), idParticipante);
+        lstDetalleLiquidacionIncs.clear();
     }
 
     public void recuperarDatos() {
@@ -388,5 +410,37 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
         param.put("p_nombre_usuario", nombreUsuario);
 
         Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/pagoproveedor/", "rptLiquidacion", "rptLiquidacion");
+    }
+
+    public void recuperarConceptosInconsistencia() {
+        lstConcepto = resolucionAdjudicativaEJB.getLstConceptosInconsistencia(getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getIdAnho());
+        lstDetalleLiquidacionIncs = liquidacion.getDetalleLiquidacionIncList();
+    }
+
+    public void agregarConceptoInc() {
+        existe = false;
+        lstDetalleLiquidacionIncs.forEach(det -> {
+            if (det.getIdConcepto().getIdConcepto().compareTo(idConcepto) == 0) {
+                existe = true;
+            }
+        });
+
+        if (existe) {
+            JsfUtil.mensajeAlerta("Este concepto ya fue agregado");
+        } else {
+            DetalleLiquidacionInc detLiq = new DetalleLiquidacionInc();
+            detLiq.setFechaInsercion(new Date());
+            detLiq.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+            detLiq.setIdLiquidacion(liquidacion);
+            detLiq.setValor((short) 1);
+            detLiq.setIdConcepto(utilEJB.find(ConceptoInconsistencia.class, idConcepto));
+
+            lstDetalleLiquidacionIncs.add(detLiq);
+        }
+    }
+
+    public void guardarDetalleInconsistencias() {
+        resolucionAdjudicativaEJB.guardarDetalleLiquidacionInc(lstDetalleLiquidacionIncs);
+        JsfUtil.mensajeInsert();
     }
 }
