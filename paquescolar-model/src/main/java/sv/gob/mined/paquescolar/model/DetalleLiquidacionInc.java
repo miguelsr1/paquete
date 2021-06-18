@@ -23,6 +23,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.eclipse.persistence.annotations.AdditionalCriteria;
 
 /**
  *
@@ -32,6 +33,7 @@ import javax.persistence.TemporalType;
 @Table(name = "DETALLE_LIQUIDACION_INC")
 @NamedQueries({
     @NamedQuery(name = "DetalleLiquidacionInc.findAll", query = "SELECT d FROM DetalleLiquidacionInc d")})
+@AdditionalCriteria("this.historico = 0")
 public class DetalleLiquidacionInc implements Serializable {
 
     private static final long serialVersionUID = 1L;

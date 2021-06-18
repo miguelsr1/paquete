@@ -120,6 +120,26 @@ public class Reportes {
         }
     }
 
+    public static void generarRptSQLConnection(ReportesEJB reportesEJB,
+            HashMap param,
+            String paqueteRpt,
+            String nombrePdfGenerado, String... nombreRpt) {
+        try {
+            ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+            param.put("ubicacionImagenes", ctx.getRealPath(PATH_IMAGENES));
+
+            List<JasperPrint> jasperPrintList = new ArrayList();
+
+            for (String string : nombreRpt) {
+                jasperPrintList.add(reportesEJB.getRpt(param, Reportes.getPathReporte((paqueteRpt + File.separator + string + ".jasper"))));
+            }
+
+            generarReporte(jasperPrintList, nombrePdfGenerado);
+        } catch (IOException | JRException ex) {
+            Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public static JasperPrint getRptSQLConnection(ReportesEJB reportesEJB, HashMap param, String paqueteRpt, String nombreRpt) {
         ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
         param.put("ubicacionImagenes", ctx.getRealPath(PATH_IMAGENES));
