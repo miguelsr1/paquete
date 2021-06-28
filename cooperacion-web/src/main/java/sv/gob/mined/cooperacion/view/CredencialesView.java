@@ -98,7 +98,7 @@ public class CredencialesView implements Serializable {
     public Session getMailSessionRemitente() {
         if(mailSessionRemitente == null){
             remitenteOficial = "cooperacion@admin.mined.edu.sv";
-            mailSessionRemitente = eMailFacade.getMailSessionOffice(mailSessionRemitente, "cooperacion@admin.mined.edu.sv", "mined2021.*");
+            mailSessionRemitente = eMailFacade.getMailSessionOffice(mailSessionRemitente, "cooperacion@admin.mined.edu.sv", "c00p3r4c10n+*/");
         }
         
         return mailSessionRemitente;
