@@ -111,6 +111,7 @@ public class AprobarCapacitacionView implements Serializable {
                     case 6://infraestructura
                         url = "/app/ut/infra?faces-redirect=true&id=" + codigoEncritado;
                         break;
+                    case 3:
                     case 15:
                         url = "/app/ut/infod?faces-redirect=true&id=" + codigoEncritado;
                         break;

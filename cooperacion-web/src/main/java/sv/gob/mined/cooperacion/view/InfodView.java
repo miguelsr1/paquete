@@ -319,6 +319,7 @@ public class InfodView implements Serializable {
         //validar cambio de estado
         if ((idEstadoOld == 1 && proyecto.getIdEstado() == 2) || (idEstadoOld == 3 && proyecto.getIdEstado() == 2)) {
             //Digitado a Aprobado     o      Observado a Aprobado
+            proyectoAprobado = true;
             cambioValido = true;
         } else if (idEstadoOld == 1 && proyecto.getIdEstado() == 3) {
             //Digitado a Observado
@@ -342,12 +343,12 @@ public class InfodView implements Serializable {
                     case 2:
                         mantenimientoFacade.guardar(historico);
                         mantenimientoFacade.modificar(proyecto);
-                        JsfUtil.mensajeInformacion(observacion);
+                        JsfUtil.mensajeUpdate();
                         break;
                     case 3:
                         mantenimientoFacade.guardar(historico);
                         mantenimientoFacade.modificar(proyecto);
-                        JsfUtil.mensajeInformacion(observacion);
+                        JsfUtil.mensajeUpdate();
                         notificarObservacionProyecto();
                         break;
                 }

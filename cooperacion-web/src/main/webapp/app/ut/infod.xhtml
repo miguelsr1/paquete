@@ -74,15 +74,10 @@
 
 
     <ui:define name="contenido">
-        <p:growl id="messages" escape="false" showDetail="true">
+        <p:growl id="messages" escape="false" showDetail="true" showSummary="true">
             <p:autoUpdate />
         </p:growl>
 
-        <p:breadCrumb style="display:#{(infodView.codigoBueno)?'block':'none'}">
-            <p:menuitem value="Inicio" url="inicio.mined" />
-            <p:menuitem value="Listado de Proyectos" url="#" />
-        </p:breadCrumb>
-        <br/>
         <div class="card revenue-graph" style="display:#{(infodView.codigoBueno)?'block':'none'}">
             <h5 class="leyenda">
                 <i class="pi pi-folder"></i>

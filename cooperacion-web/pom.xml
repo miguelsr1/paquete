@@ -142,7 +142,7 @@
     </dependencies>
     
     <build>
-        <plugins>
+<!--        <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
@@ -170,10 +170,10 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
-        </resources>
+        </resources>-->
     </build>
     
-    <scm>
+<!--    <scm>
         <url>
             https://github.com/erkanerol/versioning_javaee_maven_git
         </url>
@@ -184,7 +184,7 @@
             scm:git:git@github.com:erkanerol/versioning_javaee_maven_git.git
         </developerConnection>
     </scm>
-    
+    -->
     <repositories>
         <repository>
             <url>http://repository.primefaces.org/</url>

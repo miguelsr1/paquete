@@ -53,7 +53,11 @@
                 height: 82px;
                 padding-left: 60px;
             }
-
+            body .ui-widget-overlay {
+                background-color: #424242;
+                opacity: 0.3;
+                filter: alpha(opacity=70);
+            }
         </style>
     </h:head>
 
@@ -73,13 +77,20 @@
             </div>        
         </div>
 
-        <p:ajaxStatus style="width:32px;height:32px;position:fixed;right:7px;bottom:7px">
+        <p:ajaxStatus style="position:fixed;right:60px;bottom:30px">
+            <f:facet name="default">
+
+            </f:facet>
             <f:facet name="start">
-                <i class="pi pi-spin pi-spinner layout-ajax-loader-icon" aria-hidden="true"></i>
+                <div id="div_modal" class="layout-content ui-widget-overlay ui-dialog-mask" ></div>
+                <div id="ajax_gif" class="ui-tooltip-text ui-corner-all " style="z-index: 1000;">
+                    <i class="fa fa-refresh fa-spin ajax-loader" aria-hidden="true" 
+                       style="color: #ffffff; font-size: 30px; position: relative;  bottom: -18%;  transform: translateY(-18%);"></i>
+                </div>
             </f:facet>
 
             <f:facet name="complete">
-                <h:outputText value="" />
+
             </f:facet>
         </p:ajaxStatus>
         <div class="layout-mask modal-in"></div>
