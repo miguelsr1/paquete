@@ -60,20 +60,24 @@ public class CredencialesView implements Serializable {
         return transport;
     }
 
+    public void setRemitente() {
+        if (idDominioCorreo.equals("1")) {
+            remitente = correoRemitente.concat("@").concat("mined.gob.sv");
+            port = "587";
+            server = "svr2k13mail01.mined.gob.sv";
+            mailSession = eMailFacade.getMailSessionMined(mailSession, dominio, password, remitente);
+        } else {
+            remitente = correoRemitente.concat("@").concat("admin.mined.edu.sv");
+            port = "587";
+            server = "smtp.office365.com";
+            mailSession = eMailFacade.getMailSessionOffice(mailSession, remitente, password);
+        }
+    }
+
     public void validarCredencial() {
         try {
-            if (idDominioCorreo.equals("1")) {
-                remitente = correoRemitente.concat("@").concat("mined.gob.sv");
-                port = "587";
-                server = "svr2k13mail01.mined.gob.sv";
-                mailSession = eMailFacade.getMailSessionMined(mailSession, dominio, password, remitente);
-            } else {
-                remitente = correoRemitente.concat("@").concat("admin.mined.edu.sv");
-                port = "587";
-                server = "smtp.office365.com";
-                mailSession = eMailFacade.getMailSessionOffice(mailSession, remitente, password);
-            }
-
+            setRemitente();
+            
             transport = mailSession.getTransport("smtp");
             transport.connect(server, Integer.parseInt(port), remitente, password);
 
@@ -96,11 +100,11 @@ public class CredencialesView implements Serializable {
     }
 
     public Session getMailSessionRemitente() {
-        if(mailSessionRemitente == null){
+        if (mailSessionRemitente == null) {
             remitenteOficial = "cooperacion@admin.mined.edu.sv";
             mailSessionRemitente = eMailFacade.getMailSessionOffice(mailSessionRemitente, "cooperacion@admin.mined.edu.sv", "c00p3r4c10n+*/");
         }
-        
+
         return mailSessionRemitente;
     }
 

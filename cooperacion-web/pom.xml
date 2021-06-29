@@ -109,31 +109,7 @@
             <version>1.3</version>
         </dependency>
         
-        <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>openwebbeans-spi</artifactId>
-            <version>2.0.12</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>openwebbeans-impl</artifactId>
-            <version>2.0.12</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>openwebbeans-web</artifactId>
-            <version>2.0.12</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>openwebbeans-jsf</artifactId>
-            <version>2.0.12</version>
-            <scope>compile</scope>
-        </dependency>
+        
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
@@ -142,7 +118,7 @@
     </dependencies>
     
     <build>
-<!--        <plugins>
+        <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
@@ -170,10 +146,10 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
-        </resources>-->
+        </resources>
     </build>
     
-<!--    <scm>
+    <scm>
         <url>
             https://github.com/erkanerol/versioning_javaee_maven_git
         </url>
@@ -184,7 +160,7 @@
             scm:git:git@github.com:erkanerol/versioning_javaee_maven_git.git
         </developerConnection>
     </scm>
-    -->
+    
     <repositories>
         <repository>
             <url>http://repository.primefaces.org/</url>

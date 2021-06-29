@@ -41,12 +41,12 @@ public class MantenimientoFacade {
     }
 
     public List<ListadoProyectoDto> findAllProyectos() {
-        Query q = emCooperacion.createNativeQuery(QueryNativas.SQL_LISTADO_PROYECTOS + " ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
+        Query q = emCooperacion.createNativeQuery(QueryNativas.SQL_LISTADO_PROYECTOS + " ORDER BY pro.FECHA_INSERCION, mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
         return q.getResultList();
     }
 
     public List<ListadoProyectoDto> findProyectosByWhereCustom(String where) {
-        Query q = emCooperacion.createNativeQuery(QueryNativas.SQL_LISTADO_PROYECTOS + where + " ORDER BY mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
+        Query q = emCooperacion.createNativeQuery(QueryNativas.SQL_LISTADO_PROYECTOS + where + " ORDER BY pro.FECHA_INSERCION, mun.codigo_departamento, mun.codigo_municipio, vw.codigo_entidad", ListadoProyectoDto.class);
         return q.getResultList();
     }
     

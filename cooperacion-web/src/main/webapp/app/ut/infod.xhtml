@@ -285,11 +285,11 @@
                 </div>
                 <div class="p-field">
                     <p:outputLabel for="from" value="Desde" />
-                    <p:datePicker id="from" value="#{infodView.event.startDate}" pattern="dd/MM/yyyy" showTime="true" appendTo="@(body)"  />
+                    <p:datePicker id="from" value="#{infodView.event.startDate}" pattern="dd/MM/yyyy hh:mm a" showTime="true" appendTo="@(body)"  />
                 </div>
                 <div class="p-field">
                     <p:outputLabel for="to" value="Hasta" />
-                    <p:datePicker id="to" value="#{infodView.event.endDate}" pattern="dd/MM/yyyy" showTime="true" appendTo="@(body)" mindate="#{infodView.event.startDate}" />
+                    <p:datePicker id="to" value="#{infodView.event.endDate}" pattern="dd/MM/yyyy hh:mm a" showTime="true" appendTo="@(body)" mindate="#{infodView.event.startDate}" />
                 </div>
                 <div class="p-field">
                     <p:outputLabel for="lugar" value="Lugar" />

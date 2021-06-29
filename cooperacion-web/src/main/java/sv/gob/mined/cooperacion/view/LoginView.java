@@ -88,10 +88,12 @@ public class LoginView implements Serializable {
             credencialesView.setDominio(idDominioCorreo);
             credencialesView.setCorreoRemitente(correoRemitente);
             credencialesView.setPassword(password);
+            credencialesView.setRemitente();
             credencialesView.validarCredencial();
 
             correoValido = credencialesView.isCorreoValido();
 
+            //if (true) {
             if (correoValido) {
                 FacesContext context = FacesContext.getCurrentInstance();
                 Usuario usuario = catalogoFacade.findUsuarioByEmail(credencialesView.getRemitente());
