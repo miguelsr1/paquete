@@ -157,6 +157,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
     private BigDecimal cantidadCe = BigDecimal.ZERO;
     private BigDecimal cantidadPlanilla = BigDecimal.ZERO;
     private BigDecimal montoTotal;
+    private BigDecimal montoTransferido;
     private BigDecimal montoPagado = BigDecimal.ZERO;
     private BigDecimal montoPendiente = BigDecimal.ZERO;
     private BigDecimal montoReintegro = BigDecimal.ZERO;
@@ -700,10 +701,9 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
         this.planilla = planilla;
     }
 
-    public List<RequerimientoFondos> getLstReq() {
-        return lstRequerimientoFondos;
-    }
-
+//    public List<RequerimientoFondos> getLstReq() {
+//        return lstRequerimientoFondos;
+//    }
     public String getCodigoDepartamento() {
         return codigoDepartamento;
     }
@@ -802,6 +802,14 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
 
     public void setMontoTotal(BigDecimal montoTotal) {
         this.montoTotal = montoTotal;
+    }
+
+    public BigDecimal getMontoTransferido() {
+        return montoTransferido;
+    }
+
+    public void setMontoTransferido(BigDecimal montoTransferido) {
+        this.montoTransferido = montoTransferido;
     }
 
     public BigDecimal getMontoPagado() {
@@ -1776,15 +1784,6 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
         showPnlCheques = false;
     }
 
-    public void buscarRequerimientosImp() {
-        detalleProcesoAdq = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
-        if (idRubro != null) {
-            lstRequerimientoFondos = proveedorEJB.getLstRequerimientos(codigoDepartamento, detalleProcesoAdq.getIdDetProcesoAdq());
-        } else {
-            JsfUtil.mensajeAlerta("Debe de seleccionar un rubro de adquisición.");
-        }
-    }
-
     public void generarRptLiquidacion() {
         anho = getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getAnho().substring(2);
         lstEmailProveeCredito = pagoProveedoresEJB.getDatosRptLiquidacion(codigoDepartamento, anho, getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq(), codigoEntidad);
@@ -1884,19 +1883,6 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
 
         if (lstDetalleRequerimiento.isEmpty()) {
             JsfUtil.mensajeAlerta("No se encontrarón resultados.");
-        }
-    }
-
-    public void imprimirRequerimiento() {
-        try {
-            List<JasperPrint> jasperPrintList = new ArrayList();
-
-            jasperPrintList.add(imprimirRpt(requerimientoFondos, JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento), "rptRequerimientoFondos.jasper", "requerimientoFondosDet"));
-            jasperPrintList.add(imprimirRpt(requerimientoFondos, JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento), "rptResumenRequerimiento.jasper", "resumenRequerimientoFondos"));
-
-            Reportes.generarReporte(jasperPrintList, "requerimiento_" + codigoDepartamento.replace(" ", ""));
-        } catch (IOException | JRException ex) {
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, "Error en la generacion del requerimiento {0}", requerimientoFondos.getFormatoRequerimiento());
         }
     }
 
@@ -2217,11 +2203,12 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
             lstResumenPago = serviciosEJB.getResumenPagoJsonByDepaAndDetProcesoAdq(codigoDepartamento, detalleProcesoAdq.getIdDetProcesoAdq());
         }
 
-        cantidadCe = cantidadPlanilla = montoTotal = montoPagado = montoPendiente = montoReintegro = montoSaldo = BigDecimal.ZERO;
+        cantidadCe = cantidadPlanilla = montoTotal = montoPagado = montoTransferido = montoPendiente = montoReintegro = montoSaldo = BigDecimal.ZERO;
         lstResumenPago.forEach((resumenPagoJson) -> {
             cantidadCe = cantidadCe.add(resumenPagoJson.getCantidadCe());
             cantidadPlanilla = cantidadPlanilla.add(resumenPagoJson.getCantidadPlanilla());
             montoTotal = montoTotal.add(resumenPagoJson.getMontoTotal());
+            montoTransferido = montoTransferido.add(resumenPagoJson.getMontoTransferido());
             montoPagado = montoPagado.add(resumenPagoJson.getMontoPagado());
             montoPendiente = montoPendiente.add(resumenPagoJson.getMontoPendiente());
             montoReintegro = montoReintegro.add(resumenPagoJson.getMontoReintegro());
@@ -2381,7 +2368,7 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
             param.put("pMontoRenta", getMontoRenta());
             param.put("pCodigoDepartamento", VarSession.getDepartamentoUsuarioSession());
 
-            Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/pagoproveedor/", "rptConstanciaRetencion", "contacionRentencion" + numeroNit.replace("-", ""));
+            Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/pagoproveedor/", "contacionRentencion" + numeroNit.replace("-", ""), "rptConstanciaRetencion");
         }
     }
 

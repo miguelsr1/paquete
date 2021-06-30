@@ -238,10 +238,11 @@
                 cantidad_planilla                               as cantidadPlanilla,
                 cantidad_ce                                     as cantidadCe,
                 monto_total                                     as montoTotal,
+                monto_transferido                               as montoTransferido,
                 monto_pagado                                    as montoPagado,
                 monto_pendiente                                 as montoPendiente,
                 monto_reintegro                                 as montoReintegro,
-                monto_total - (monto_pagado+monto_reintegro)    as montoSaldo,
+                monto_transferido - (monto_pagado+monto_reintegro)    as montoSaldo,
                 codigo_departamento                             as codigoDepartamento
             from (SELECT 
                   REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,
@@ -249,10 +250,12 @@
                   COUNT(DISTINCT DETALLE_PLANILLA.ID_DETALLE_PLANILLA) CANTIDAD_CE,
                   REQUERIMIENTO_FONDOS.MONTO_TOTAL,
                   NVL(FN_RF_MONTO_PAGADO(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_PAGADO,
+                  sum(distinct nvl(tr.MONTO_TRANSFERIDO,0)) MONTO_TRANSFERIDO,
                   NVL(FN_RF_MONTO_PENDIENTE(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO), 0) MONTO_PENDIENTE,
                   NVL(FN_RF_MONTO_REINTEGRAR(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_REINTEGRO,
                   requerimiento_fondos.codigo_departamento
                 FROM REQUERIMIENTO_FONDOS
+                  left outer join TRANSFERENCIA_REQUERIMIENTO tr on tr.ID_REQUERIMIENTO = REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO
                   left outer JOIN DETALLE_REQUERIMIENTO ON REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO
                   left outer JOIN PLANILLA_PAGO ON PLANILLA_PAGO.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO
                   LEFT OUTER JOIN DETALLE_PLANILLA ON PLANILLA_PAGO.ID_PLANILLA = DETALLE_PLANILLA.ID_PLANILLA
@@ -280,10 +283,11 @@
                 cantidad_planilla                               as cantidadPlanilla,
                 cantidad_ce                                     as cantidadCe,
                 monto_total                                     as montoTotal,
+                monto_transferido                               as montoTransferido,
                 monto_pagado                                    as montoPagado,
                 monto_pendiente                                 as montoPendiente,
                 monto_reintegro                                 as montoReintegro,
-                monto_total - (monto_pagado+monto_reintegro)    as montoSaldo,
+                monto_transferido - (monto_pagado+monto_reintegro)    as montoSaldo,
                 codigo_departamento                             as codigoDepartamento
             from (SELECT 
                   REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,
@@ -291,10 +295,12 @@
                   COUNT(DISTINCT DETALLE_PLANILLA.ID_DETALLE_PLANILLA) CANTIDAD_CE,
                   REQUERIMIENTO_FONDOS.MONTO_TOTAL,
                   NVL(FN_RF_MONTO_PAGADO(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_PAGADO,
+                  sum(distinct nvl(tr.MONTO_TRANSFERIDO,0)) MONTO_TRANSFERIDO,
                   NVL(FN_RF_MONTO_PENDIENTE(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO), 0) MONTO_PENDIENTE,
                   NVL(FN_RF_MONTO_REINTEGRAR(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_REINTEGRO,
                   requerimiento_fondos.codigo_departamento
                 FROM REQUERIMIENTO_FONDOS
+                  left outer join TRANSFERENCIA_REQUERIMIENTO tr on tr.ID_REQUERIMIENTO = REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO
                   left outer JOIN DETALLE_REQUERIMIENTO ON REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO
                   left outer JOIN PLANILLA_PAGO ON PLANILLA_PAGO.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO
                   LEFT OUTER JOIN DETALLE_PLANILLA ON PLANILLA_PAGO.ID_PLANILLA = DETALLE_PLANILLA.ID_PLANILLA
@@ -422,6 +428,7 @@
                 componente              as concepto,
                 formato_requerimiento   as formatoRequerimiento,
                 monto_total             as montoTotal,
+                monto_transferido       as montoTransferido,
                 cantidad_planilla       as cantidadPlanilla,
                 monto_total_planilla    as montoTotalPlanilla,
                 monto_pendiente_pago    as montoPendientePago,
@@ -434,12 +441,14 @@
                     req.monto_total,
                     count(distinct pp.id_planilla) cantidad_planilla,
                     nvl(fn_rf_monto_pagado(req.id_requerimiento),0) monto_total_planilla,
+                    SUM(DISTINCT nvl(tr.monto_transferido,0)) monto_transferido,
                     nvl(fn_rf_monto_pendiente(req.id_requerimiento), 0) monto_pendiente_pago,
                     nvl(fn_rf_monto_reintegrar(req.id_requerimiento),0) monto_reintegrar,
-                    nvl((req.monto_total-fn_rf_monto_pagado(req.id_requerimiento)-fn_rf_monto_reintegrar(req.id_requerimiento)),0) saldo_requerimiento,
+                    nvl((SUM(DISTINCT nvl(tr.monto_transferido,0))-fn_rf_monto_pagado(req.id_requerimiento)-fn_rf_monto_reintegrar(req.id_requerimiento)),0) saldo_requerimiento,
                     req.numero_requerimiento
                 from 
                     requerimiento_fondos req
+                    left outer join transferencia_requerimiento tr on tr.id_requerimiento = req.id_requerimiento
                     left outer join detalle_requerimiento detq  on req.id_requerimiento = detq.id_requerimiento
                     left outer join planilla_pago pp            on pp.id_requerimiento = detq.id_requerimiento and pp.estado_eliminacion = 0
                     left outer join detalle_planilla detp       on pp.id_planilla = detp.id_planilla

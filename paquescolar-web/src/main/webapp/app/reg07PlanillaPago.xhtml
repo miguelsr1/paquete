@@ -83,6 +83,11 @@
                                 <f:convertNumber pattern="#,##0.00"/>
                             </h:outputText>
                         </p:column>
+                        <p:column headerText="Transferido" width="70" styleClass="numero">
+                            <h:outputText value="#{req.montoTransferido}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </h:outputText>
+                        </p:column>
                         <p:column headerText="# Planillas" width="50" styleClass="numero">
                             <h:outputText value="#{req.cantidadPlanilla}"/>
                         </p:column>
@@ -92,7 +97,7 @@
                             </h:outputText>
                         </p:column>
                         <p:column headerText="Pediente($)" width="70" styleClass="numero">
-                            <h:outputText value="#{req.montoTotal - req.montoTotalPlanilla}">
+                            <h:outputText value="#{req.montoTransferido - req.montoTotalPlanilla}">
                                 <f:convertNumber pattern="#,##0.00"/>
                             </h:outputText>
                         </p:column>
@@ -103,7 +108,7 @@
                         </p:column>
 
                         <p:column headerText="Saldo ($)" width="70" styleClass="numero">
-                            <h:outputText value="#{req.montoTotal - req.montoTotalPlanilla - req.montoReintegrar}">
+                            <h:outputText value="#{req.montoTransferido - req.montoTotalPlanilla - req.montoReintegrar}">
                                 <f:convertNumber pattern="#,##0.00"/>
                             </h:outputText>
                         </p:column>

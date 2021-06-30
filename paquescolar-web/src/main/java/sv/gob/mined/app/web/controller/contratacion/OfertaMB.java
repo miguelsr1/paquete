@@ -879,7 +879,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         param.put("pCodigoEntidad", codigoEntidad);
         param.put("pHoraYFecha", entidadEducativa.getCodigoDepartamento().getNombreDepartamento() + ", " + JsfUtil.getFechaString(new Date()));
 
-        Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/contratos/", "rptDetalleDeBienes" + nombreRubroTemp, "rptDetalleDeBienes" + nombreRubroTemp + "_");
+        Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/contratos/", "rptDetalleDeBienes" + nombreRubroTemp + "_", "rptDetalleDeBienes" + nombreRubroTemp);
     }
 
     public BigDecimal porcentajeCapacidad(BigDecimal capacidadDisponible) {

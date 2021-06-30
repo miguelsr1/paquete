@@ -77,7 +77,7 @@ public class Reportes {
      * @param paqueteRpt
      * @param nombreRpt
      * @param nombrePdfGenerado
-     */
+     
     public static void generarRptBeanConnection(List lst, HashMap param, String paqueteRpt, String nombreRpt, String nombrePdfGenerado) {
         try {
             ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
@@ -87,7 +87,7 @@ public class Reportes {
         } catch (IOException | JRException ex) {
             Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+    }*/
 
     public static JasperPrint generarRptBeanConnection(List lst, HashMap param, String paqueteRpt, String nombreRpt) {
         try {
@@ -108,7 +108,7 @@ public class Reportes {
      * @param paqueteRpt
      * @param nombreRpt
      * @param nombrePdfGenerado
-     */
+     
     public static void generarRptSQLConnection(ReportesEJB reportesEJB, HashMap param, String paqueteRpt, String nombreRpt, String nombrePdfGenerado) {
         try {
             ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
@@ -118,7 +118,7 @@ public class Reportes {
         } catch (IOException | JRException ex) {
             Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+    }*/
 
     public static void generarRptSQLConnection(ReportesEJB reportesEJB,
             HashMap param,
@@ -140,7 +140,7 @@ public class Reportes {
         }
     }
 
-    public static JasperPrint getRptSQLConnection(ReportesEJB reportesEJB, HashMap param, String paqueteRpt, String nombreRpt) {
+    private static JasperPrint getRptSQLConnection(ReportesEJB reportesEJB, HashMap param, String paqueteRpt, String nombreRpt) {
         ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
         param.put("ubicacionImagenes", ctx.getRealPath(PATH_IMAGENES));
         return reportesEJB.getRpt(param, Reportes.getPathReporte((paqueteRpt + File.separator + nombreRpt)));
@@ -152,11 +152,11 @@ public class Reportes {
      * @param nombrePdfGenerado
      * @throws JRException
      * @throws IOException
-     */
+     
     private static void responseRptPdf(JasperPrint jp, String nombrePdfGenerado) throws JRException, IOException {
         byte[] content = JasperExportManager.exportReportToPdf(jp);
         UtilFile.downloadFileBytes(content, nombrePdfGenerado, UtilFile.CONTENIDO_PDF, UtilFile.EXTENSION_PDF);
-    }
+    }*/
 
     /**
      *

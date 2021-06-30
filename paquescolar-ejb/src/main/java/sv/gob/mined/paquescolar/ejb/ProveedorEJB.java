@@ -55,6 +55,7 @@ import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.RequerimientoFondos;
 import sv.gob.mined.paquescolar.model.TipoPersoneria;
 import sv.gob.mined.paquescolar.model.TipoUsuario;
+import sv.gob.mined.paquescolar.model.TransferenciaRequerimiento;
 import sv.gob.mined.paquescolar.model.Usuario;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.DetalleAdjudicacionEmpDto;
@@ -1201,6 +1202,20 @@ public class ProveedorEJB {
         q.setParameter("id", idDetProcesoAdq);
         q.setParameter("codDep", codigoDepartamento);
         return q.getResultList();
+    }
+
+    public List<TransferenciaRequerimiento> getLstTransferenciaRequerimientos(RequerimientoFondos idRequerimiento) {
+        Query q = em.createQuery("SELECT t FROM TransferenciaRequerimiento t WHERE t.estadoEliminacion = 0 and t.idRequerimiento=:pIdReq ORDER BY t.fechaTransferencia", TransferenciaRequerimiento.class);
+        q.setParameter("pIdReq", idRequerimiento);
+        return q.getResultList();
+    }
+
+    public void guardarTransferenciaRequerimiento(TransferenciaRequerimiento tr) {
+        if (tr.getIdTransferencia() == null) {
+            em.persist(tr);
+        } else {
+            em.merge(tr);
+        }
     }
 
     public RequerimientoFondos getRequerimientoByNumero(String numeroRequerimiento, String codigoDepartamento, Integer idProcesoAdq) {

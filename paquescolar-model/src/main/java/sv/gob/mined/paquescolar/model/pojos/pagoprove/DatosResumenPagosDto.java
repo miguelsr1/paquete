@@ -31,6 +31,7 @@ public class DatosResumenPagosDto implements Serializable {
     private BigDecimal cantidadPlanilla;
     private BigDecimal cantidadCe;
     private BigDecimal montoTotal;
+    private BigDecimal montoTransferido;
     private BigDecimal montoPagado;
     private BigDecimal montoPendiente;
     private BigDecimal montoReintegro;
@@ -101,6 +102,14 @@ public class DatosResumenPagosDto implements Serializable {
 
     public void setMontoReintegro(BigDecimal montoReintegro) {
         this.montoReintegro = montoReintegro;
+    }
+
+    public BigDecimal getMontoTransferido() {
+        return montoTransferido;
+    }
+
+    public void setMontoTransferido(BigDecimal montoTransferido) {
+        this.montoTransferido = montoTransferido;
     }
 
     public BigDecimal getMontoSaldo() {

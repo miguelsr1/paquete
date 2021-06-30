@@ -94,15 +94,20 @@
                         <p:column headerText="Estado" style="text-align: center;">
                             <p:outputLabel value="#{liq.estadoLiquidacion eq 'L' ?'LIQUIDADO':'EN PROCESO'}"/>
                         </p:column>
-                        <p:column headerText="Imprimir" width="110">
-                            <h:commandLink action="#{liquidacionMB.imprimirReporte}" style="float: right;">
-                                <i class="fa fa-download"></i>
+                        <p:column headerText="Imprimir" width="110" style="text-align: center;">
+                            <h:commandLink action="#{liquidacionMB.imprimirReporteLiq}">
+                                <i class="fa fa-file-text"></i>
+                                <f:setPropertyActionListener value="#{liq}" target="#{liquidacionMB.liquidacion}"/>  
+                            </h:commandLink>
+                            <p:spacer width="10"/>
+                            <h:commandLink action="#{liquidacionMB.imprimirReporteInc}">
+                                <i class="fa fa-list"></i>
                                 <f:setPropertyActionListener value="#{liq}" target="#{liquidacionMB.liquidacion}"/>  
                             </h:commandLink>
                         </p:column>
-                        <p:column headerText="Observación" width="110">
-                            <p:commandLink action="#{liquidacionMB.recuperarConceptosInconsistencia()}" style="float: right;" oncomplete="PF('dlgObservacionLiquidacion').show();" update="outObservacion">
-                                <i class="fa fa-list"></i>
+                        <p:column headerText="Observación" width="110" style="text-align: center;">
+                            <p:commandLink action="#{liquidacionMB.recuperarConceptosInconsistencia()}" oncomplete="PF('dlgObservacionLiquidacion').show();" update="outObservacion">
+                                <i class="fa fa-external-link"></i>
                                 <f:setPropertyActionListener value="#{liq}" target="#{liquidacionMB.liquidacion}"/>  
                             </p:commandLink>
                         </p:column>
@@ -113,11 +118,6 @@
 
         <p:dialog id="dlgLiquidacion" widgetVar="dlgLiquidacion" header="Información del Contrato" width="550" modal="true">
             <p:outputPanel id="detalleLiquidacion" styleClass="ui-fluid">
-                <h:panelGrid columns="1" style="width: 100%;">
-                    <p:outputLabel value="Observaciones"/>
-                    <p:inputTextarea value="#{liquidacionMB.observacion}"/>
-                </h:panelGrid>
-                <br/>
                 <p:dataTable value="#{liquidacionMB.datosLiquidacionDtos}" var="liquidacion">
                     <p:column headerText="NoItem">
                         <p:outputLabel value="#{liquidacion.noItem}"/>
@@ -135,6 +135,14 @@
                         <p:inputNumber value="#{liquidacion.cantidadResguardo}" inputStyle="text-align: right;" decimalPlaces="0"/>
                     </p:column>
                 </p:dataTable>
+                <br/>
+                <br/>
+                <h:panelGrid columns="1" style="width: 100%;">
+                    <p:outputLabel value="Fecha de Liquidación:"/>
+                    <p:calendar pattern="dd/MM/yyyy" value="#{liquidacionMB.liquidacion.fechaLiquidacion}" navigator="true" locale="es"/>
+                    <p:outputLabel value="Observaciones"/>
+                    <p:inputTextarea value="#{liquidacionMB.observacion}"/>
+                </h:panelGrid>
             </p:outputPanel>
 
             <f:facet name="footer">

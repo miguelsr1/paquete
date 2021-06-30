@@ -84,13 +84,14 @@
                                         <p:column rowspan="2" headerText="Requerimiento" width="80"/>
                                         <p:column rowspan="2" headerText="# Planillas" width="35"/>
                                         <p:column rowspan="2" headerText="# C.E. de planillas" width="50"/>
-                                        <p:column colspan="5" headerText="Montos"/>
+                                        <p:column colspan="6" headerText="Montos"/>
                                         <p:column rowspan="2" headerText="Ver detalle" width="35"/>
                                     </p:row>
                                     <p:row>
-                                        
+
                                         <p:column headerText="Del Requerimiento" />
                                         <p:column headerText="Pagado" />
+                                        <p:column headerText="Transferido" />
                                         <p:column headerText="Pendiente" />
                                         <p:column headerText="Para Reintegro" />
                                         <p:column headerText="Saldo" />
@@ -117,6 +118,12 @@
                                         <f:convertNumber pattern="#,##0.00"/>
                                     </p:outputLabel>
                                 </p:column>
+                                <p:column headerText="Transferido" styleClass="numero">
+                                    <p:outputLabel value="#{pago.montoTransferido}">
+                                        <f:convertNumber pattern="#,##0.00"/>
+                                    </p:outputLabel>
+                                </p:column>
+
                                 <p:column headerText="Monto Pendiente" styleClass="numero">
                                     <p:outputLabel value="#{pago.montoPendiente}">
                                         <f:convertNumber pattern="#,##0.00"/>
@@ -155,6 +162,11 @@
                                     </p:column>
                                     <p:column styleClass="numero">
                                         <h:outputText value="#{pagoProveedoresController.montoTotal}" style="text-align: right; font-weight: bold;">
+                                            <f:convertNumber pattern="$ #,##0.00"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column styleClass="numero">
+                                        <h:outputText value="#{pagoProveedoresController.montoTransferido}" style="text-align: right; font-weight: bold;">
                                             <f:convertNumber pattern="$ #,##0.00"/>
                                         </h:outputText>
                                     </p:column>

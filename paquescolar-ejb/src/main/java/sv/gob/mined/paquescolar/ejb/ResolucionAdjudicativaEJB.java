@@ -32,6 +32,7 @@ import sv.gob.mined.paquescolar.model.HistorialCamEstResAdj;
 import sv.gob.mined.paquescolar.model.InfoGeneralContratacion;
 import sv.gob.mined.paquescolar.model.Liquidacion;
 import sv.gob.mined.paquescolar.model.Participantes;
+import sv.gob.mined.paquescolar.model.RecepcionBienesServicios;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.ResolucionesModificativas;
 import sv.gob.mined.paquescolar.model.RptDocumentos;
@@ -178,6 +179,15 @@ public class ResolucionAdjudicativaEJB {
     }
 
     public ContratosOrdenesCompras editContrato(ContratosOrdenesCompras contratosOrdenesCompras) {
+        Query q = em.createQuery("SELECT r FROM RecepcionBienesServicios r WHERE r.idContrato=:pContrato and r.estadoEliminacion=0", RecepcionBienesServicios.class);
+        q.setParameter("pContrato", contratosOrdenesCompras);
+        if (!q.getResultList().isEmpty()) {
+            RecepcionBienesServicios recep = (RecepcionBienesServicios) q.getResultList().get(0);
+            recep.setFechaOrdenInicioEntrega1(contratosOrdenesCompras.getFechaOrdenInicio());
+            
+            em.merge(recep);
+        }
+
         return em.merge(contratosOrdenesCompras);
     }
 

@@ -49,7 +49,7 @@ import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 @ManagedBean
 @ViewScoped
 public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable {
-    
+
     private Boolean existe = false;
     private int rowEdit = 0;
     private Boolean modificativa = false;
@@ -64,27 +64,27 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     private BigDecimal cantidadRecepcion;
     private BigDecimal idRubro;
     private BigDecimal idParticipante = BigDecimal.ZERO;
-    
+
     private ContratosOrdenesCompras contrato = new ContratosOrdenesCompras();
     private DetalleProcesoAdq detalleProceso = new DetalleProcesoAdq();
     private Liquidacion liquidacion = new Liquidacion();
     private DetalleLiquidacionInc detalleLiquidacionInc = new DetalleLiquidacionInc();
     private RecepcionBienesServicios recepcion = new RecepcionBienesServicios();
     private ResolucionesModificativas resModificativa;
-    
+
     private List<DatosContratoDto> datosContratoDto;
     private List<DatosModificativaDto> datosModificativaDto;
     private List<DatosRecepcionAndResguardoDto> datosRecepcionAndResguardoDto;
-    
+
     private List<DatosLiquidacionDto> datosLiquidacionDtos;
-    
+
     private List<Liquidacion> lstLiquidaciones = new ArrayList();
     private List<ParticipanteConContratoDto> lstParticipantes = new ArrayList();
-    
+
     private List<ConceptoInconsistencia> lstConcepto = new ArrayList();
     private List<DetalleLiquidacionInc> lstDetalleLiquidacionIncs = new ArrayList();
     private VwCatalogoEntidadEducativa entidadEducativa = new VwCatalogoEntidadEducativa();
-    
+
     @EJB
     private EntidadEducativaEJB entidadEducativaEJB;
     @EJB
@@ -95,179 +95,179 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     private ReportesEJB reportesEJB;
     @EJB
     private UtilEJB utilEJB;
-    
+
     public LiquidacionMB() {
     }
-    
+
     public int getRowEdit() {
         return rowEdit;
     }
-    
+
     public void setRowEdit(int rowEdit) {
         this.rowEdit = rowEdit;
     }
-    
+
     public DetalleLiquidacionInc getDetalleLiquidacionInc() {
         return detalleLiquidacionInc;
     }
-    
+
     public void setDetalleLiquidacionInc(DetalleLiquidacionInc detalleLiquidacionInc) {
         this.detalleLiquidacionInc = detalleLiquidacionInc;
     }
-    
+
     public Integer getIdConcepto() {
         return idConcepto;
     }
-    
+
     public void setIdConcepto(Integer idConcepto) {
         this.idConcepto = idConcepto;
     }
-    
+
     public List<DetalleLiquidacionInc> getLstDetalleLiquidacionIncs() {
         return lstDetalleLiquidacionIncs;
     }
-    
+
     public List<ConceptoInconsistencia> getLstConcepto() {
         return lstConcepto;
     }
-    
+
     public List<ParticipanteConContratoDto> getLstParticipantes() {
         return lstParticipantes;
     }
-    
+
     public String getObservacion() {
         return observacion;
     }
-    
+
     public void setObservacion(String observacion) {
         this.observacion = observacion;
     }
-    
+
     public String getNumeroContrato() {
         return numeroContrato;
     }
-    
+
     public void setNumeroContrato(String numeroContrato) {
         this.numeroContrato = numeroContrato;
     }
-    
+
     public List<Liquidacion> getLstLiquidaciones() {
         return lstLiquidaciones;
     }
-    
+
     public void setLstLiquidaciones(List<Liquidacion> lstLiquidaciones) {
         this.lstLiquidaciones = lstLiquidaciones;
     }
-    
+
     public String getCodigoEntidad() {
         return codigoEntidad;
     }
-    
+
     public void setCodigoEntidad(String codigoEntidad) {
         this.codigoEntidad = codigoEntidad;
     }
-    
+
     public BigDecimal getIdRubro() {
         return idRubro;
     }
-    
+
     public void setIdRubro(BigDecimal idRubro) {
         this.idRubro = idRubro;
     }
-    
+
     public BigDecimal getIdParticipante() {
         return idParticipante;
     }
-    
+
     public void setIdParticipante(BigDecimal idParticipante) {
         this.idParticipante = idParticipante;
     }
-    
+
     public VwCatalogoEntidadEducativa getEntidadEducativa() {
         return entidadEducativa;
     }
-    
+
     public ContratosOrdenesCompras getContrato() {
         return contrato;
     }
-    
+
     public RecepcionBienesServicios getRecepcion() {
         return recepcion;
     }
-    
+
     public Liquidacion getLiquidacion() {
         return liquidacion;
     }
-    
+
     public void setLiquidacion(Liquidacion liquidacion) {
         this.liquidacion = liquidacion;
     }
-    
+
     public Boolean getModificativa() {
         return modificativa;
     }
-    
+
     public void setModificativa(Boolean modificativa) {
         this.modificativa = modificativa;
     }
-    
+
     public BigDecimal getMontoOriginal() {
         return montoOriginal;
     }
-    
+
     public void setMontoOriginal(BigDecimal montoOriginal) {
         this.montoOriginal = montoOriginal;
     }
-    
+
     public BigDecimal getMontoModificativa() {
         return montoModificativa;
     }
-    
+
     public void setMontoModificativa(BigDecimal montoModificativa) {
         this.montoModificativa = montoModificativa;
     }
-    
+
     public ResolucionesModificativas getResModificativa() {
         return resModificativa;
     }
-    
+
     public void setResModificativa(ResolucionesModificativas resModificativa) {
         this.resModificativa = resModificativa;
     }
-    
+
     public BigDecimal getCantidadOriginal() {
         return cantidadOriginal;
     }
-    
+
     public void setCantidadOriginal(BigDecimal cantidadOriginal) {
         this.cantidadOriginal = cantidadOriginal;
     }
-    
+
     public BigDecimal getCantidadModificativa() {
         return cantidadModificativa;
     }
-    
+
     public void setCantidadModificativa(BigDecimal cantidadModificativa) {
         this.cantidadModificativa = cantidadModificativa;
     }
-    
+
     public BigDecimal getCantidadRecepcion() {
         return cantidadRecepcion;
     }
-    
+
     public void setCantidadRecepcion(BigDecimal cantidadRecepcion) {
         this.cantidadRecepcion = cantidadRecepcion;
     }
-    
+
     public List<DatosLiquidacionDto> getDatosLiquidacionDtos() {
         return datosLiquidacionDtos;
     }
-    
+
     public void buscarEntidadEducativa() {
         lstParticipantes.clear();
         lstLiquidaciones.clear();
         lstDetalleLiquidacionIncs.clear();
-        
+
         if (codigoEntidad.length() == 5) {
             /**
              * Fecha: 30/08/2018 Comentario: Validación de seleccion del año y
@@ -276,7 +276,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
             if (getRecuperarProceso().getProcesoAdquisicion() == null) {
                 JsfUtil.mensajeAlerta("Debe de seleccionar un año y proceso de contratación.");
             } else {
-                
+
                 entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
                 if (entidadEducativa == null) {
                     JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + codigoEntidad);
@@ -289,7 +289,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
             entidadEducativa = null;
         }
     }
-    
+
     public void agregarLista() {
         liquidacion = new Liquidacion();
         liquidacion.setObservacion(observacion == null ? "" : observacion);
@@ -304,16 +304,16 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
          */
         datosLiquidacionDtos.forEach(dato -> {
             DetalleLiquidacion det = new DetalleLiquidacion();
-            
+
             det.setNoItem(dato.getNoItem());
             det.setCantidad(dato.getCantidadContrato().longValue());
             det.setPrecioUnitario(dato.getPrecioUnitarioContrato());
-            
+
             if (modificativa) {
                 det.setCantidadModificativa(dato.getCantidadModificativa().longValue());
                 det.setPrecioUnitarioModif(dato.getPrecioUnitarioModificativa());
             }
-            
+
             det.setCantidadEntregada(dato.getCantidadRecepcion().longValue());
             if (dato.getCantidadResguardo() != null && dato.getCantidadResguardo().intValue() > 0) {
                 det.setCantidadResguardo(dato.getCantidadResguardo().longValue());
@@ -321,33 +321,36 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
                 det.setCantidadResguardo(0l);
             }
             det.setIdLiquidacion(liquidacion);
-            
+
             liquidacion.getDetalleLiquidacionList().add(det);
         });
-        
+
         resolucionAdjudicativaEJB.guardarLiquidacion(liquidacion);
-        
+
         JsfUtil.mensajeInsert();
-        
+
         liquidacion = new Liquidacion();
     }
-    
+
     public void recuperarLstLiquidacionByCodEntAndIdDetPro() {
-        lstLiquidaciones = resolucionAdjudicativaEJB.getLstLiquidacionByCodigoEntAndIdDetProcesoAdqAndIdParticipante(codigoEntidad, detalleProceso.getIdDetProcesoAdq(), idParticipante);
+        lstLiquidaciones.clear();
         lstDetalleLiquidacionIncs.clear();
+        if (idParticipante != null && idParticipante.compareTo(BigDecimal.ZERO) > 0) {
+            lstLiquidaciones = resolucionAdjudicativaEJB.getLstLiquidacionByCodigoEntAndIdDetProcesoAdqAndIdParticipante(codigoEntidad, detalleProceso.getIdDetProcesoAdq(), idParticipante);
+        }
     }
-    
+
     public void recuperarDatos() {
         datosLiquidacionDtos = new ArrayList();
-        
+
         datosContratoDto = resolucionAdjudicativaEJB.getDatosContratoDto(codigoEntidad, detalleProceso.getIdDetProcesoAdq());
         if (datosContratoDto.get(0).getIdEstadoReserva().intValue() == 5) {
             datosModificativaDto = resolucionAdjudicativaEJB.getDatosModificativaDto(datosContratoDto.get(0).getIdContrato());
             modificativa = true;
         }
-        
+
         datosRecepcionAndResguardoDto = resolucionAdjudicativaEJB.getDatosRecepcionAndResguardoDto(datosContratoDto.get(0).getIdContrato());
-        
+
         switch (detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue()) {
             case 1:
             case 4:
@@ -362,7 +365,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
                 break;
         }
     }
-    
+
     private void crearTablaDeCompracion(List<String> listado) {
         listado.forEach(noItem -> {
             DatosLiquidacionDto datoLiquidacion = new DatosLiquidacionDto();
@@ -372,7 +375,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
             }
         });
     }
-    
+
     private DatosLiquidacionDto subCrearTabla(String noItem, DatosLiquidacionDto datoLiquidacion) {
         Boolean noEstaItem = true;
         for (DatosContratoDto dato : datosContratoDto) {
@@ -385,7 +388,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
                 break;
             }
         }
-        
+
         if (modificativa) {
             for (DatosModificativaDto dato : datosModificativaDto) {
                 if (dato.getNoItem().equals(noItem)) {
@@ -398,7 +401,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
                 }
             }
         }
-        
+
         for (DatosRecepcionAndResguardoDto dato : datosRecepcionAndResguardoDto) {
             if (dato.getNoItem().equals(noItem)) {
                 datoLiquidacion.setIdContrato(dato.getIdContrato());
@@ -409,39 +412,51 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
                 break;
             }
         }
-        
+
         if (noEstaItem) {
             return null;
         } else {
             return datoLiquidacion;
         }
     }
-    
-    public void imprimirReporte() {
+
+    public void imprimirReporteLiq() {
         String nombreUsuario = loginEJB.getNombreByUsername(liquidacion.getUsuarioInsercion());
-        
+
         HashMap param = new HashMap();
         ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-        
+
         param.put("pEscudo", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
         param.put("p_id_liquidacion", liquidacion.getIdLiquidacion());
         param.put("p_id_contrato", liquidacion.getIdContrato().getIdContrato());
         param.put("p_nombre_canton", "");
         param.put("p_nombre_cacerio", "");
         param.put("p_nombre_usuario", nombreUsuario);
-        
+
         param.put("pCodigo", codigoEntidad);
         param.put("pIdParticipante", liquidacion.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdParticipante());
         param.put("idLiquidacion", liquidacion.getIdLiquidacion());
-        
-        Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/pagoproveedor/", "rptLiquidacion", "rptLiquidacion", "rptLiqObservacion");
+
+        Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/pagoproveedor/", "rptLiquidacion", "rptLiquidacion");
     }
-    
+
+    public void imprimirReporteInc() {
+        HashMap param = new HashMap();
+        ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+
+        param.put("pEscudo", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
+        param.put("pCodigo", codigoEntidad);
+        param.put("pIdParticipante", liquidacion.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdParticipante());
+        param.put("idLiquidacion", liquidacion.getIdLiquidacion());
+
+        Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/pagoproveedor/", "rptLiqObservacion", "rptLiqObservacion");
+    }
+
     public void recuperarConceptosInconsistencia() {
         lstConcepto = resolucionAdjudicativaEJB.getLstConceptosInconsistencia(getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getIdAnho());
         lstDetalleLiquidacionIncs = liquidacion.getDetalleLiquidacionIncList();
     }
-    
+
     public void agregarConceptoInc() {
         existe = false;
         lstDetalleLiquidacionIncs.forEach(det -> {
@@ -449,7 +464,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
                 existe = true;
             }
         });
-        
+
         if (existe) {
             JsfUtil.mensajeAlerta("Este concepto ya fue agregado");
         } else {
@@ -459,11 +474,11 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
             detLiq.setIdLiquidacion(liquidacion);
             detLiq.setValor((short) 1);
             detLiq.setIdConcepto(utilEJB.find(ConceptoInconsistencia.class, idConcepto));
-            
+
             lstDetalleLiquidacionIncs.add(detLiq);
         }
     }
-    
+
     public void guardarDetalleInconsistencias() {
         resolucionAdjudicativaEJB.guardarDetalleLiquidacionInc(lstDetalleLiquidacionIncs);
         JsfUtil.mensajeInsert();
@@ -480,7 +495,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
             } else {
                 detalleLiquidacionInc.setHistorico((short) 1);
             }
-            
+
             detalleLiquidacionInc = null;
         } else {
             JsfUtil.mensajeAlerta("Debe seleccionar un detalle para poder eliminarlo.");
