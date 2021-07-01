@@ -145,17 +145,17 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="195" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
+						<jr:column width="210" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
 							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 								<staticText>
-									<reportElement x="0" y="0" width="195" height="20" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
+									<reportElement x="0" y="0" width="210" height="20" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<text><![CDATA[Descripción del Ítem]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="20" rowSpan="1">
-								<textField>
-									<reportElement x="2" y="0" width="191" height="20" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
+								<textField isStretchWithOverflow="true">
+									<reportElement x="2" y="0" width="208" height="20" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
 									<textElement verticalAlignment="Middle">
 										<font size="8"/>
 									</textElement>
@@ -290,17 +290,17 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="195" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
+						<jr:column width="210" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
 							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 								<staticText>
-									<reportElement x="0" y="0" width="195" height="20" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
+									<reportElement x="0" y="0" width="210" height="20" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<text><![CDATA[Descripción del Ítem]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="20" rowSpan="1">
-								<textField>
-									<reportElement x="2" y="0" width="191" height="20" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
+								<textField isStretchWithOverflow="true">
+									<reportElement x="2" y="0" width="208" height="20" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
 									<textElement verticalAlignment="Middle">
 										<font size="8"/>
 									</textElement>
@@ -386,17 +386,17 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="195" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
+						<jr:column width="210" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
 							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 								<staticText>
-									<reportElement x="0" y="0" width="195" height="20" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
+									<reportElement x="0" y="0" width="210" height="20" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<text><![CDATA[Descripción del Ítem]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="20" rowSpan="1">
-								<textField>
-									<reportElement x="2" y="0" width="191" height="20" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
+								<textField isStretchWithOverflow="true">
+									<reportElement x="2" y="0" width="208" height="20" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
 									<textElement verticalAlignment="Middle">
 										<font size="8"/>
 									</textElement>

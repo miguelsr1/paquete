@@ -66,7 +66,16 @@ public class EMailEJB {
             List<String> lstCcCorreo = utilEJB.getLstCcPagoByCodDepa(codigoDepartamento);
 
             m.setFrom(from);
-            m.setRecipients(Message.RecipientType.TO, remitente);
+
+            if (remitente.contains(",")) {
+                Address[] lstAddressTo = new Address[remitente.split(",").length];
+                for (i = 0; i < remitente.split(",").length; i++) {
+                    lstAddressTo[i] = new InternetAddress(remitente.split(",")[i]);
+                }
+                m.setRecipients(Message.RecipientType.TO, lstAddressTo);
+            } else {
+                m.setRecipients(Message.RecipientType.TO, remitente);
+            }
 
             Address[] lstAddressBcc = new Address[listaDeCorreosBcc.split(",").length + lstCcCorreo.size()];
             for (i = 0; i < listaDeCorreosBcc.split(",").length; i++) {
@@ -215,7 +224,7 @@ public class EMailEJB {
             multipart.addBodyPart(messageBodyPart1);
 
             archivos.forEach((key, value) -> {
-                
+
                 addAttachment(value, multipart);
             });
 

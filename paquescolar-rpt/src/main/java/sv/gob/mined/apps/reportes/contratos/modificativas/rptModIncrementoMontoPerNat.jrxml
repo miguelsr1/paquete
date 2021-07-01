@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptContratoPersonaJuridicaZapatos" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="07e1e5af-9848-4273-96b4-6595abfd46c0">
 	<property name="ireport.zoom" value="1.210000000000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="192"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -137,7 +137,7 @@
 						<datasetRun subDataset="dsItemsOld" uuid="e6b6297e-5db7-4290-ab6c-54d6ef1708e8">
 							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleOld})]]></dataSourceExpression>
 						</datasetRun>
-						<jr:columnGroup width="372" uuid="4dad25a1-c229-4c5c-900f-fa2d2285d2fa">
+						<jr:columnGroup width="387" uuid="4dad25a1-c229-4c5c-900f-fa2d2285d2fa">
 							<jr:columnFooter height="18" rowSpan="1">
 								<staticText>
 									<reportElement x="0" y="0" width="372" height="16" uuid="1bc83db2-718c-4a49-95a8-c716639203eb"/>
@@ -163,18 +163,20 @@
 									</textField>
 								</jr:detailCell>
 							</jr:column>
-							<jr:column width="195" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
+							<jr:column width="210" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
 								<jr:columnHeader style="table_TD" height="16" rowSpan="1">
 									<staticText>
-										<reportElement x="0" y="0" width="195" height="16" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
+										<reportElement x="0" y="0" width="210" height="16" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle"/>
 										<text><![CDATA[Descripción del Ítem]]></text>
 									</staticText>
 								</jr:columnHeader>
 								<jr:detailCell style="table_TD" height="14" rowSpan="1">
-									<textField>
-										<reportElement x="2" y="0" width="191" height="14" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
-										<textElement verticalAlignment="Middle"/>
+									<textField isStretchWithOverflow="true">
+										<reportElement x="2" y="0" width="208" height="14" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
+										<textElement verticalAlignment="Middle">
+											<font size="10"/>
+										</textElement>
 										<textFieldExpression><![CDATA[$F{consolidadoEspTec}]]></textFieldExpression>
 									</textField>
 								</jr:detailCell>
@@ -381,7 +383,7 @@ $F{descripcionRubro}+" "+$F{anhoContrato}+"\n"+$F{nombreCe}+"\n"+"Fuente Financi
 					<datasetRun subDataset="dsItemsOld" uuid="e6b6297e-5db7-4290-ab6c-54d6ef1708e8">
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleNew})]]></dataSourceExpression>
 					</datasetRun>
-					<jr:columnGroup width="372" uuid="b720aa49-dc4e-4310-ac2e-417373cd8101">
+					<jr:columnGroup width="387" uuid="b720aa49-dc4e-4310-ac2e-417373cd8101">
 						<jr:columnFooter height="16" rowSpan="1">
 							<staticText>
 								<reportElement x="0" y="0" width="372" height="16" uuid="1bc83db2-718c-4a49-95a8-c716639203eb"/>
@@ -407,17 +409,17 @@ $F{descripcionRubro}+" "+$F{anhoContrato}+"\n"+$F{nombreCe}+"\n"+"Fuente Financi
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="195" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
+						<jr:column width="210" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
 							<jr:columnHeader style="table_TD" height="16" rowSpan="1">
 								<staticText>
-									<reportElement x="0" y="0" width="195" height="16" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
+									<reportElement x="0" y="0" width="210" height="16" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<text><![CDATA[Descripción del Ítem]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="14" rowSpan="1">
-								<textField>
-									<reportElement x="2" y="0" width="191" height="14" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
+								<textField isStretchWithOverflow="true">
+									<reportElement x="2" y="0" width="208" height="14" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
 									<textElement verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{consolidadoEspTec}]]></textFieldExpression>
 								</textField>

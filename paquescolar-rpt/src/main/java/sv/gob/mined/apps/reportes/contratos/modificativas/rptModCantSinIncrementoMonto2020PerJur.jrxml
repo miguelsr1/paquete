@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptContratoPersonaJuridicaZapatos" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="07e1e5af-9848-4273-96b4-6595abfd46c0">
 	<property name="ireport.zoom" value="1.3310000000000013"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="96"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -146,17 +146,17 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="195" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
+						<jr:column width="210" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
 							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 								<staticText>
-									<reportElement x="0" y="0" width="195" height="20" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
+									<reportElement x="0" y="0" width="210" height="20" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<text><![CDATA[Descripción del Ítem]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="20" rowSpan="1">
-								<textField>
-									<reportElement x="2" y="0" width="191" height="20" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
+								<textField isStretchWithOverflow="true">
+									<reportElement x="2" y="0" width="208" height="20" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
 									<textElement verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{consolidadoEspTec}]]></textFieldExpression>
 								</textField>
@@ -289,17 +289,17 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="195" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
+						<jr:column width="210" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
 							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 								<staticText>
-									<reportElement x="0" y="0" width="195" height="20" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
+									<reportElement x="0" y="0" width="210" height="20" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<text><![CDATA[Descripción del Ítem]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="20" rowSpan="1">
-								<textField>
-									<reportElement x="2" y="0" width="191" height="20" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
+								<textField isStretchWithOverflow="true">
+									<reportElement x="2" y="0" width="208" height="20" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
 									<textElement verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{consolidadoEspTec}]]></textFieldExpression>
 								</textField>
@@ -383,17 +383,17 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="195" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
+						<jr:column width="210" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
 							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 								<staticText>
-									<reportElement x="0" y="0" width="195" height="20" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
+									<reportElement x="0" y="0" width="210" height="20" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<text><![CDATA[Descripción del Ítem]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table_TD" height="20" rowSpan="1">
-								<textField>
-									<reportElement x="2" y="0" width="191" height="20" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
+								<textField isStretchWithOverflow="true">
+									<reportElement x="2" y="0" width="208" height="20" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
 									<textElement verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{consolidadoEspTec}]]></textFieldExpression>
 								</textField>

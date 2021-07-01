@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptContratoPersonaJuridicaZapatos" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="07e1e5af-9848-4273-96b4-6595abfd46c0">
 	<property name="ireport.zoom" value="1.3310000000000013"/>
-	<property name="ireport.x" value="48"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="82"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -136,7 +136,7 @@
 						<datasetRun subDataset="dsItemsOld" uuid="e6b6297e-5db7-4290-ab6c-54d6ef1708e8">
 							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleOld})]]></dataSourceExpression>
 						</datasetRun>
-						<jr:columnGroup width="372" uuid="cb06e71f-3d7d-47cc-85b4-f7117005be05">
+						<jr:columnGroup width="387" uuid="cb06e71f-3d7d-47cc-85b4-f7117005be05">
 							<jr:columnFooter height="16" rowSpan="1">
 								<staticText>
 									<reportElement x="0" y="0" width="372" height="16" uuid="1bc83db2-718c-4a49-95a8-c716639203eb"/>
@@ -162,17 +162,17 @@
 									</textField>
 								</jr:detailCell>
 							</jr:column>
-							<jr:column width="195" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
+							<jr:column width="210" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
 								<jr:columnHeader style="table_TD" height="16" rowSpan="1">
 									<staticText>
-										<reportElement x="0" y="0" width="195" height="16" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
+										<reportElement x="0" y="0" width="210" height="16" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle"/>
 										<text><![CDATA[Descripción del Ítem]]></text>
 									</staticText>
 								</jr:columnHeader>
 								<jr:detailCell style="table_TD" height="14" rowSpan="1">
-									<textField>
-										<reportElement x="2" y="0" width="191" height="14" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
+									<textField isStretchWithOverflow="true">
+										<reportElement x="2" y="0" width="208" height="14" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
 										<textElement verticalAlignment="Middle"/>
 										<textFieldExpression><![CDATA[$F{consolidadoEspTec}]]></textFieldExpression>
 									</textField>
@@ -298,7 +298,7 @@
 						<datasetRun subDataset="dsItemsOld" uuid="e6b6297e-5db7-4290-ab6c-54d6ef1708e8">
 							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleNew})]]></dataSourceExpression>
 						</datasetRun>
-						<jr:columnGroup width="372" uuid="d6630dc9-3622-41a0-8cac-3a63419beffe">
+						<jr:columnGroup width="387" uuid="d6630dc9-3622-41a0-8cac-3a63419beffe">
 							<jr:columnFooter height="16" rowSpan="1">
 								<staticText>
 									<reportElement x="0" y="0" width="372" height="16" uuid="1bc83db2-718c-4a49-95a8-c716639203eb"/>
@@ -324,17 +324,17 @@
 									</textField>
 								</jr:detailCell>
 							</jr:column>
-							<jr:column width="195" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
+							<jr:column width="210" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
 								<jr:columnHeader style="table_TD" height="16" rowSpan="1">
 									<staticText>
-										<reportElement x="0" y="0" width="195" height="16" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
+										<reportElement x="0" y="0" width="210" height="16" uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee"/>
 										<textElement textAlignment="Center" verticalAlignment="Middle"/>
 										<text><![CDATA[Descripción del Ítem]]></text>
 									</staticText>
 								</jr:columnHeader>
 								<jr:detailCell style="table_TD" height="14" rowSpan="1">
-									<textField>
-										<reportElement x="2" y="0" width="191" height="14" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
+									<textField isStretchWithOverflow="true">
+										<reportElement x="2" y="0" width="208" height="14" uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e"/>
 										<textElement verticalAlignment="Middle"/>
 										<textFieldExpression><![CDATA[$F{consolidadoEspTec}]]></textFieldExpression>
 									</textField>
@@ -451,7 +451,7 @@ $F{descripcionRubro}+" "+$F{anhoContrato}+"\n"+$F{nombreCe}+"\n"+"Fuente Financi
 				</textElement>
 				<textFieldExpression><![CDATA["En la ciudad de ".concat($F{ciudadFirma}).concat(", a las ").concat($F{horaRegistro}).concat(" horas y ").concat($F{minutoRegistro}).concat(" minutos del día ")
 .concat(Herramientas.getNumDia($F{fechaCreacionModif})).concat(" del mes de ").concat(Herramientas.getNomMes($F{fechaCreacionModif})).concat(" de ")
-.concat(Herramientas.getNumAnyo($F{fechaCreacionModif})).concat("\n\n") 
+.concat(Herramientas.getNumAnyo($F{fechaCreacionModif})).concat("\n\n")
 .concat("VISTO:\n").concat("El contrato No ME-").concat($F{numeroContrato}).concat("/").concat($F{anhoContrato}).concat(", referente a ").concat($F{descripcionRubro}+" "+$F{anhoContrato}+"; ")
 .concat($F{nombreCe}+" "+$F{codigoEntidad}).concat(", suscrito entre el ").concat($F{modalidadAdministrativa}).concat(" y el(la) señor(a) ").concat($F{nombreRepresentante})
 .concat(", quien actúa en su calidad de Representante Legal de la Sociedad ").concat($F{razonSocial}).concat(", de fecha ").concat(Herramientas.getNumDia($F{fechaContratoModif})).concat(" del mes de ")
