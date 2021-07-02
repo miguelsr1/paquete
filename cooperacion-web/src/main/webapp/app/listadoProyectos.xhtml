@@ -92,7 +92,10 @@
             }
             .ui-dialog {
                 width: 90% !important;
-                height: 95% !important
+/*                height: 95% !important*/
+            }
+            .ui-fileupload-filename{
+                display: none;
             }
         </style>
     </ui:define>
@@ -250,12 +253,12 @@
             <f:facet name="footer">
                 <p:commandButton value="Aceptar" icon="pi pi-check" onclick="PF('manageProductDialog').hide()" 
                                  styleClass="primary-button text-button" process="@this"/>
-                <p:commandButton value="Guardar" icon="pi pi-save"  action="#{listadoView.guardarCambioDeEtapa}"
+                <p:commandButton value="Guardar" icon="pi pi-save"  action="#{listadoView.guardarCambioDeEtapa}" disabled="#{listadoView.proyecto.idEstado eq 2}"
                                  styleClass="primary-button text-button" process="@this" rendered="#{userBean.perfilUsuario ne 'UT'}"/>
             </f:facet>
         </p:dialog> 
 
-        <p:dialog id="dlgMap" widgetVar="dlgMap" header="Ubicación del Centro Educativo"  modal="true">
+        <p:dialog id="dlgMap" widgetVar="dlgMap" header="Ubicación del Centro Educativo"  modal="true" style="height: 95% !important">
             <h:panelGrid columns="5">
                 <p:outputLabel value="Cooperante: "/>
                 <p:selectOneMenu value="#{listadoView.idCooperante}">

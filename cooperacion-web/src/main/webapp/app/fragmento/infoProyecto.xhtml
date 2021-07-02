@@ -122,7 +122,7 @@
                 </h:panelGrid>
             </div>
             <div class="p-col-12 p-md-5" >
-                <h:panelGrid columns="2" style="width: 100%;">
+                <h:panelGrid columns="3" style="width: 100%;">
                     <p:outputPanel>
                         <h5 class="leyenda">
                             <i class="pi pi-list" style="color: #3984b8"></i>
@@ -130,11 +130,27 @@
                             Listado de Archivos
                         </h5>
                     </p:outputPanel>
+
+                    <p:ajaxStatus >
+                        <f:facet name="default">
+                            <i class="fa fa-refresh fa-spin ajax-loader" aria-hidden="true" 
+                               style="font-size: 30px; "></i>
+                        </f:facet>
+                        <f:facet name="start">
+                            <i class="fa fa-refresh fa-spin ajax-loader" aria-hidden="true" 
+                               style="font-size: 30px; "></i>
+                        </f:facet>
+
+                        <f:facet name="complete">
+                            <h:outputText value=""/>
+                        </f:facet>
+                    </p:ajaxStatus>
                     <p:fileUpload mode="simple" skinSimple="true" style="float: right;" label="Seleccionar" auto="true" 
+                                  disabled="#{listadoView.proyecto.idEstado eq 2}"
                                   listener="#{listadoView.handleFileUpload}" update="tblArchivos" multiple="true"
                                   rendered="#{userBean.centroEscolar}" process="@this" fileLimit="20000000"/>
                 </h:panelGrid>
-                
+
                 <p:dataTable id="tblArchivos" class="invoice-to" value="#{listadoView.lstArchivos}" var="archivo">
                     <p:column headerText="Nombre">
                         <p:outputLabel value="#{archivo.nombreArchivo}"/>
