@@ -132,7 +132,7 @@
                     </p:outputPanel>
                     <p:fileUpload mode="simple" skinSimple="true" style="float: right;" label="Seleccionar" auto="true" 
                                   listener="#{listadoView.handleFileUpload}" update="tblArchivos" multiple="true"
-                                  rendered="#{userBean.centroEscolar}" process="@this"/>
+                                  rendered="#{userBean.centroEscolar}" process="@this" fileLimit="20000000"/>
                 </h:panelGrid>
                 
                 <p:dataTable id="tblArchivos" class="invoice-to" value="#{listadoView.lstArchivos}" var="archivo">

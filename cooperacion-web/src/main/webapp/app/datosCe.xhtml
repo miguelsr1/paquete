@@ -308,7 +308,7 @@
 
                     <p:fileUpload id="updFile" auto="true" widgetVar="updFile" listener="#{registrarCooperacionView.handleFileUpload}"
                                   label="Seleccionar" allowTypes="/(\.|\/)(pdf)$/" invalidFileMessage="Unicamente archivos PDF (PDF)" 
-                                  multiple="true" update="lstArchivosDelProyecto"/>
+                                  multiple="true" update="lstArchivosDelProyecto" fileLimit="20000000"/>
                     <br/>
                     <br/>
                     <p:outputPanel>
