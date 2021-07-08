@@ -6,6 +6,7 @@
 package sv.gob.mined.cooperacion.view;
 
 import java.io.Serializable;
+import java.util.ResourceBundle;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -22,6 +23,8 @@ import sv.gob.mined.cooperacion.facade.EMailFacade;
 @Named
 @SessionScoped
 public class CredencialesView implements Serializable {
+    
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("bundle");
 
     private String correoRemitente;
     private String idDominioCorreo = "2";
@@ -101,8 +104,8 @@ public class CredencialesView implements Serializable {
 
     public Session getMailSessionRemitente() {
         if (mailSessionRemitente == null) {
-            remitenteOficial = "cooperacion@admin.mined.edu.sv";
-            mailSessionRemitente = eMailFacade.getMailSessionOffice(mailSessionRemitente, "cooperacion@admin.mined.edu.sv", "c00p3r4c10n+*/");
+            remitenteOficial = RESOURCE_BUNDLE.getString("remitente_correo");
+            mailSessionRemitente = eMailFacade.getMailSessionOffice(mailSessionRemitente, remitenteOficial, RESOURCE_BUNDLE.getString("remitente_password"));
         }
 
         return mailSessionRemitente;

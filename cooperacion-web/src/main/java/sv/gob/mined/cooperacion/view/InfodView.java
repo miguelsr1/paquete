@@ -339,15 +339,18 @@ public class InfodView implements Serializable {
             historico.setUsuarioCambio(directorCe.getIdDirector());
 
             try {
+                mantenimientoFacade.guardar(historico);
+                mantenimientoFacade.modificar(proyecto);
+
                 switch (proyecto.getIdEstado()) {
                     case 2:
-                        mantenimientoFacade.guardar(historico);
-                        mantenimientoFacade.modificar(proyecto);
                         JsfUtil.mensajeUpdate();
                         break;
                     case 3:
-                        mantenimientoFacade.guardar(historico);
-                        mantenimientoFacade.modificar(proyecto);
+                        JsfUtil.mensajeUpdate();
+                        notificarObservacionProyecto();
+                        break;
+                    case 4:
                         JsfUtil.mensajeUpdate();
                         notificarObservacionProyecto();
                         break;

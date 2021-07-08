@@ -552,16 +552,16 @@ public class RegistrarCooperacionView implements Serializable {
                         
                         
                         //CORREO PARA UNIDAD TÉNICA
-                        eMailFacade.enviarMail(to, cc, "cooperacion@admin.mined.edu.sv", titulo, mensajeParaUt, credencialesView.getMailSessionRemitente());
+                        eMailFacade.enviarMail(to, cc, RESOURCE_BUNDLE.getString("remitente_correo"), titulo, mensajeParaUt, credencialesView.getMailSessionRemitente());
 
                         to = new InternetAddress[emailsTo.split(",").length];
                         to[0] = new InternetAddress(directorCe.getCorreoElectronico());
 
                         //CORREO PARA CENTRO ESCOLAR
-                        eMailFacade.enviarMail(to, cc, "cooperacion@admin.mined.edu.sv", titulo, mensajeParaCe, credencialesView.getMailSessionRemitente());
+                        eMailFacade.enviarMail(to, cc, RESOURCE_BUNDLE.getString("remitente_correo"), titulo, mensajeParaCe, credencialesView.getMailSessionRemitente());
                     } else {
                         //CORREO PARA CENTRO ESCOLAR
-                        eMailFacade.enviarMail(to, cc, "cooperacion@admin.mined.edu.sv", titulo, mensajeParaCe, credencialesView.getMailSessionRemitente());
+                        eMailFacade.enviarMail(to, cc, RESOURCE_BUNDLE.getString("remitente_correo"), titulo, mensajeParaCe, credencialesView.getMailSessionRemitente());
                     }
 
                 } catch (AddressException ex) {
