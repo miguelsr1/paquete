@@ -67,6 +67,9 @@ public class Liquidacion implements Serializable {
     @Column(name = "FECHA_LIQUIDACION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaLiquidacion;
+    @Column(name = "FECHA_RECEPCION")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaRecepcion;
     @Column(name = "ESTADO_ELIMINACION")
     private Short estadoEliminacion;
     @OneToMany(mappedBy = "idLiquidacion", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -92,6 +95,14 @@ public class Liquidacion implements Serializable {
 
     public void setFechaLiquidacion(Date fechaLiquidacion) {
         this.fechaLiquidacion = fechaLiquidacion;
+    }
+
+    public Date getFechaRecepcion() {
+        return fechaRecepcion;
+    }
+
+    public void setFechaRecepcion(Date fechaRecepcion) {
+        this.fechaRecepcion = fechaRecepcion;
     }
 
     public Liquidacion(BigDecimal idLiquidacion) {

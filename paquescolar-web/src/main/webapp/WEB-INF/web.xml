@@ -15,6 +15,10 @@
         <param-name>primefaces.THEME</param-name>
         <param-value>paradise-blue</param-value>
     </context-param>
+     <context-param>
+        <param-name>primefaces.UPLOADER</param-name>
+        <param-value>commons</param-value>
+    </context-param>
     <context-param>
         <param-name>primefaces.FONT_AWESOME</param-name>
         <param-value>true</param-value>

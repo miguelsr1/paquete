@@ -551,7 +551,7 @@ public class ModificativaEJB {
         rptModificacionContrato.setHoraRegistro(resolucionesModificativas.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getHoraApertura().toString());
         rptModificacionContrato.setMinutoRegistro(resolucionesModificativas.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getHoraApertura().toString());
 
-        for (DetalleModificativa detalle : resolucionesModificativas.getDetalleModificativaList()) {
+        for (DetalleModificativa detalle : findDetalleModificativaByFk(resolucionesModificativas.getIdResolucionModif())) {
             DetalleItemDto itemOld = new DetalleItemDto();
             DetalleItemDto itemNew = new DetalleItemDto();
 
@@ -573,6 +573,12 @@ public class ModificativaEJB {
         lstModificacionContratos.add(rptModificacionContrato);
 
         return lstModificacionContratos;
+    }
+    
+    public List<DetalleModificativa> findDetalleModificativaByFk(BigDecimal idResolucion){
+        Query q = em.createQuery("SELECT d FROM DetalleModificativa d WHERE d.estadoEliminacion=0 and d.idResolucionModif.idResolucionModif=:idRes ORDER BY FUNC('TO_NUMBER', d.noItem)", DetalleModificativa.class);
+        q.setParameter("idRes", idResolucion);
+        return q.getResultList();
     }
 
     public List<VwDepartamentoModificativas> lstDetalleModificativasOrderDepa(Integer idDetProcesoAdq) {

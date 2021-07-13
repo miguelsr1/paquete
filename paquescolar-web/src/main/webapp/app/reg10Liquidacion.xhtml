@@ -4,10 +4,11 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:p="http://primefaces.org/ui"
     xmlns:f="http://java.sun.com/jsf/core"
-    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
+    xmlns:jsf="http://xmlns.jcp.org/jsf">
     <ui:define name="content">
         <p:menubar id="menuBar" styleClass="divSticky"> 
-            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" />
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" action="#{liquidacionMB.nuevo()}" id="mtmNuevo" update="pnlFiltro divDetalle"/>
             <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true"/>
             <p:menuitem value="Guardar" icon="fa fa-save" ajax="true" disabled="true"/>
             <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" disabled="true"/>
@@ -32,7 +33,7 @@
                                  style="width: 100%; border:0px none; background-color:transparent;"
                                  styleClass="form-group ui-panelgrid-blank">
                         <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
-                        <p:selectOneMenu id="cboRubro" value="#{liquidacionMB.idRubro}">
+                        <p:selectOneMenu id="cboRubro" value="#{liquidacionMB.idRubro}" disabled="#{liquidacionMB.deshabilitar}">
                             <f:selectItem itemLabel="Seleccione un rubro" itemValue="null" />
                             <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                             <p:ajax update=":frmPrincipal:pnlFiltro"/>
@@ -41,7 +42,7 @@
                         <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
                         <p:outputPanel id="codigoEntidad" >
                             <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{liquidacionMB.codigoEntidad}" size="6" autocomplete="off" 
-                                         requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5">
+                                         requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5" disabled="#{liquidacionMB.deshabilitar}">
                                 <p:ajax event="keyup" update="menuBar nombreCE cboProveedor" listener="#{liquidacionMB.buscarEntidadEducativa}"/>
                             </p:inputText>
                             <p:spacer width="10"/>
@@ -49,7 +50,7 @@
                         </p:outputPanel>
 
                         <p:outputLabel value="Proveedor:" />
-                        <p:selectOneMenu id="cboProveedor" value="#{liquidacionMB.idParticipante}"  onkeydown="setaFoco(this);" >
+                        <p:selectOneMenu id="cboProveedor" value="#{liquidacionMB.idParticipante}"  onkeydown="setaFoco(this);" disabled="#{liquidacionMB.deshabilitar}">
                             <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
                             <f:selectItems value="#{liquidacionMB.lstParticipantes}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{par.razonSocial}"/>
                             <p:ajax listener="#{liquidacionMB.recuperarLstLiquidacionByCodEntAndIdDetPro()}" update="tblLiquidaciones"/>
@@ -58,13 +59,13 @@
                     </p:panelGrid>
                 </div>
 
-                <div class="card clearfix">
+                <div jsf:id="divDetalle" class="card clearfix">
                     <h1>
                         <i class="fa fa-list-ol blue" style="font-size: 16px;"></i>
                         <p:spacer width="10" height="8"/>
                         <p:outputLabel value="Liquidaciones realizadas"/>
 
-                        <p:commandButton value="Agregar" update="detalleLiquidacion" action="#{liquidacionMB.recuperarDatos}" onsuccess="PF('dlgLiquidacion').show();" icon="fa fa-plus" style="float: right; font-size: 12px;"/>
+                        <p:commandButton value="Agregar" update="detalleLiquidacion" action="#{liquidacionMB.recuperarDatos}" onsuccess="PF('dlgLiquidacion').show();" icon="fa fa-plus" style="float: right; font-size: 12px;" disabled="#{liquidacionMB.deshabilitar}"/>
                     </h1>
 
                     <p:dataTable id="tblLiquidaciones" value="#{liquidacionMB.lstLiquidaciones}" var="liq" rowIndexVar="rowId">
@@ -137,16 +138,22 @@
                 </p:dataTable>
                 <br/>
                 <br/>
-                <h:panelGrid columns="1" style="width: 100%;">
+                <h:panelGrid columns="3" style="width: 100%;">
+                    <p:outputLabel value="Fecha de Recepción:"/>
+                    <p:spacer width="10"/>
                     <p:outputLabel value="Fecha de Liquidación:"/>
-                    <p:calendar pattern="dd/MM/yyyy" value="#{liquidacionMB.liquidacion.fechaLiquidacion}" navigator="true" locale="es"/>
+                    <p:calendar id="cblRecepcion" pattern="dd/MM/yyyy" value="#{liquidacionMB.liquidacion.fechaRecepcion}" navigator="true" locale="es"/>
+                    <p:spacer width="10"/>
+                    <p:calendar id="cblLiquidacion" pattern="dd/MM/yyyy" value="#{liquidacionMB.liquidacion.fechaLiquidacion}" navigator="true" locale="es"/>
+                </h:panelGrid>
+                <h:panelGrid columns="1" style="width: 100%;">
                     <p:outputLabel value="Observaciones"/>
-                    <p:inputTextarea value="#{liquidacionMB.observacion}"/>
+                    <p:inputTextarea id="txaObservacion" value="#{liquidacionMB.observacion}"/>
                 </h:panelGrid>
             </p:outputPanel>
 
             <f:facet name="footer">
-                <p:commandButton id="btnGuardar" value="Guardar" action="#{liquidacionMB.agregarLista}" icon="fa fa-check" oncomplete="PF('dlgLiquidacion').hide();" update="tblLiquidaciones"/>
+                <p:commandButton id="btnGuardar" value="Guardar" action="#{liquidacionMB.agregarLista}" process="@this,cblRecepcion,cblLiquidacion,txaObservacion" icon="fa fa-check" oncomplete="PF('dlgLiquidacion').hide();" update="tblLiquidaciones"/>
                 <p:commandButton id="btnCancelar" value="Cancelar" styleClass="secondary-button" icon="fa fa-times" onclick="PF('dlgLiquidacion').hide();"/>
             </f:facet>
         </p:dialog>
