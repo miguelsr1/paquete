@@ -51,6 +51,7 @@ import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable {
 
     private Boolean existe = false;
+    private Boolean deshabilitar = true;
     private int rowEdit = 0;
     private Boolean modificativa = false;
     private String codigoEntidad;
@@ -263,6 +264,19 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
         return datosLiquidacionDtos;
     }
 
+    public Boolean getDeshabilitar() {
+        return deshabilitar;
+    }
+
+    public void setDeshabilitar(Boolean deshabilitar) {
+        this.deshabilitar = deshabilitar;
+    }
+
+    public void nuevo() {
+        liquidacion = new Liquidacion();
+        deshabilitar = false;
+    }
+
     public void buscarEntidadEducativa() {
         lstParticipantes.clear();
         lstLiquidaciones.clear();
@@ -291,7 +305,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     }
 
     public void agregarLista() {
-        liquidacion = new Liquidacion();
+        //liquidacion = new Liquidacion();
         liquidacion.setObservacion(observacion == null ? "" : observacion);
         liquidacion.setFechaInsercion(new Date());
         liquidacion.setEstadoEliminacion((short) 0);
@@ -330,6 +344,8 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
         JsfUtil.mensajeInsert();
 
         liquidacion = new Liquidacion();
+
+        lstLiquidaciones = resolucionAdjudicativaEJB.getLstLiquidacionByCodigoEntAndIdDetProcesoAdqAndIdParticipante(codigoEntidad, detalleProceso.getIdDetProcesoAdq(), idParticipante);
     }
 
     public void recuperarLstLiquidacionByCodEntAndIdDetPro() {
