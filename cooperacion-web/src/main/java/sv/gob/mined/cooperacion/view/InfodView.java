@@ -346,13 +346,22 @@ public class InfodView implements Serializable {
                     case 2:
                         JsfUtil.mensajeUpdate();
                         break;
-                    case 3:
+                    case 3: //OBSERVADO
                         JsfUtil.mensajeUpdate();
-                        notificarObservacionProyecto();
+                        notificarPorCorreo(RESOURCE_BUNDLE.getString("correo.respuesta.titulo"),
+                                RESOURCE_BUNDLE.getString("correo.respuestaProyectoObservado.mensaje"),
+                                StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
+                                entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
+                                proyecto.getNombreProyecto(), proyecto.getObjetivos(), observacion);
                         break;
-                    case 4:
+                    case 4: //DENEGADO
                         JsfUtil.mensajeUpdate();
-                        notificarObservacionProyecto();
+                        notificarPorCorreo(RESOURCE_BUNDLE.getString("correo.respuesta.titulo"),
+                                RESOURCE_BUNDLE.getString("correo.respuesaDenegacion"),
+                                StringUtils.getFecha(new Date()), directorCe.getNombreDirector(),
+                                entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
+                                proyecto.getNombreProyecto(), proyecto.getObjetivos(), observacion,
+                                "Instituto Nacional de Formación Docente<br/>INFOD");
                         break;
                 }
             } catch (AddressException ex) {
@@ -361,7 +370,17 @@ public class InfodView implements Serializable {
         }
     }
 
-    private void notificarObservacionProyecto() throws AddressException {
+    private void notificarPorCorreo(String titulo, String mensaje, Object... valores) throws AddressException {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(MessageFormat.format(mensaje,
+                valores
+        ));
+
+        enviarCorreo(directorCe.getCorreoElectronico(), titulo, sb.toString());
+    }
+
+    /*private void notificarObservacionProyecto() throws AddressException {
         String titulo = RESOURCE_BUNDLE.getString("correo.respuesta.titulo");
         String mensaje = RESOURCE_BUNDLE.getString("correo.respuestaProyectoObservado.mensaje");
 
@@ -374,8 +393,7 @@ public class InfodView implements Serializable {
         ));
 
         enviarCorreo(directorCe.getCorreoElectronico(), titulo, sb.toString());
-    }
-
+    }*/
     public void notificarAprobacionCe() {
         //Validar fechas
         if (proyecto.getFechaCapacitacionList().isEmpty()) {
@@ -409,10 +427,16 @@ public class InfodView implements Serializable {
         ));
 
         sb.append(tblInicio);
+
         lstFechasProyecto.forEach((fechaCapa) -> {
-            sb.append(MessageFormat.format(tblDetalle,
-                    sdf.format(fechaCapa.getFechaInicio()), sdfHora.format(fechaCapa.getFechaInicio()),
-                    sdfHora.format(fechaCapa.getFechaFin()), fechaCapa.getLugar()));
+
+            if (StringUtils.getFechaFormat(fechaCapa.getFechaInicio()).equals(StringUtils.getFechaFormat(fechaCapa.getFechaFin()))) {
+                sb.append(MessageFormat.format(tblDetalle,
+                        sdf.format(fechaCapa.getFechaInicio()), sdfHora.format(fechaCapa.getFechaInicio()),
+                        sdfHora.format(fechaCapa.getFechaFin()), fechaCapa.getLugar()));
+            } else {
+                
+            }
         });
         sb.append(tblFin);
 
