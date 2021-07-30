@@ -52,6 +52,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
 
     private Boolean existe = false;
     private Boolean deshabilitar = true;
+    private Boolean deshabilitarAgregar = true;
     private int rowEdit = 0;
     private Boolean modificativa = false;
     private String codigoEntidad;
@@ -272,6 +273,14 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
         this.deshabilitar = deshabilitar;
     }
 
+    public Boolean getDeshabilitarAgregar() {
+        return deshabilitarAgregar;
+    }
+
+    public void setDeshabilitarAgregar(Boolean deshabilitarAgregar) {
+        this.deshabilitarAgregar = deshabilitarAgregar;
+    }
+
     public void nuevo() {
         liquidacion = new Liquidacion();
         deshabilitar = false;
@@ -307,6 +316,7 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
     public void agregarLista() {
         //liquidacion = new Liquidacion();
         liquidacion.setObservacion(observacion == null ? "" : observacion);
+        liquidacion.setEstadoLiquidacion("E");
         liquidacion.setFechaInsercion(new Date());
         liquidacion.setEstadoEliminacion((short) 0);
         liquidacion.setIdContrato(resolucionAdjudicativaEJB.findContratoByPk(datosContratoDto.get(0).getIdContrato()));
@@ -353,6 +363,11 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
         lstDetalleLiquidacionIncs.clear();
         if (idParticipante != null && idParticipante.compareTo(BigDecimal.ZERO) > 0) {
             lstLiquidaciones = resolucionAdjudicativaEJB.getLstLiquidacionByCodigoEntAndIdDetProcesoAdqAndIdParticipante(codigoEntidad, detalleProceso.getIdDetProcesoAdq(), idParticipante);
+            if (!lstLiquidaciones.isEmpty()) {
+                deshabilitarAgregar = lstLiquidaciones.get(lstLiquidaciones.size() - 1).getEstadoLiquidacion().equals("L");
+            } else {
+                deshabilitarAgregar = false;
+            }
         }
     }
 
@@ -468,9 +483,21 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
         Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/pagoproveedor/", "rptLiqObservacion", "rptLiqObservacion");
     }
 
-    public void recuperarConceptosInconsistencia() {
+    public void recuperarConceptosInconsistencia(Liquidacion liq) {
         lstConcepto = resolucionAdjudicativaEJB.getLstConceptosInconsistencia(getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getIdAnho());
-        lstDetalleLiquidacionIncs = liquidacion.getDetalleLiquidacionIncList();
+        liquidacion = liq;
+        lstDetalleLiquidacionIncs = liq.getDetalleLiquidacionIncList();
+    }
+
+    public void carmbiarEstadoLiquidacion(Liquidacion liq) {
+        liquidacion = liq;
+    }
+
+    public void guardarCambioEstado() {
+        liquidacion.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
+        liquidacion.setFechaModificacion(new Date());
+        resolucionAdjudicativaEJB.guardarLiquidacion(liquidacion);
+        JsfUtil.mensajeUpdate();
     }
 
     public void agregarConceptoInc() {
@@ -517,4 +544,5 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
             JsfUtil.mensajeAlerta("Debe seleccionar un detalle para poder eliminarlo.");
         }
     }
+
 }

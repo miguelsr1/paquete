@@ -53,7 +53,7 @@
                         <p:selectOneMenu id="cboProveedor" value="#{liquidacionMB.idParticipante}"  onkeydown="setaFoco(this);" disabled="#{liquidacionMB.deshabilitar}">
                             <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
                             <f:selectItems value="#{liquidacionMB.lstParticipantes}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{par.razonSocial}"/>
-                            <p:ajax listener="#{liquidacionMB.recuperarLstLiquidacionByCodEntAndIdDetPro()}" update="tblLiquidaciones"/>
+                            <p:ajax listener="#{liquidacionMB.recuperarLstLiquidacionByCodEntAndIdDetPro()}" update="divDetalle"/>
                         </p:selectOneMenu>
 
                     </p:panelGrid>
@@ -65,7 +65,8 @@
                         <p:spacer width="10" height="8"/>
                         <p:outputLabel value="Liquidaciones realizadas"/>
 
-                        <p:commandButton value="Agregar" update="detalleLiquidacion" action="#{liquidacionMB.recuperarDatos}" onsuccess="PF('dlgLiquidacion').show();" icon="fa fa-plus" style="float: right; font-size: 12px;" disabled="#{liquidacionMB.deshabilitar}"/>
+                        <p:commandButton value="Agregar" update="detalleLiquidacion" action="#{liquidacionMB.recuperarDatos}" onsuccess="PF('dlgLiquidacion').show();"
+                                         icon="fa fa-plus" style="float: right; font-size: 12px;" disabled="#{liquidacionMB.deshabilitarAgregar}"/>
                     </h1>
 
                     <p:dataTable id="tblLiquidaciones" value="#{liquidacionMB.lstLiquidaciones}" var="liq" rowIndexVar="rowId">
@@ -107,10 +108,18 @@
                             </h:commandLink>
                         </p:column>
                         <p:column headerText="Observación" width="110" style="text-align: center;">
-                            <p:commandLink action="#{liquidacionMB.recuperarConceptosInconsistencia()}" oncomplete="PF('dlgObservacionLiquidacion').show();" update="outObservacion">
-                                <i class="fa fa-external-link"></i>
-                                <f:setPropertyActionListener value="#{liq}" target="#{liquidacionMB.liquidacion}"/>  
-                            </p:commandLink>
+                            <!--                            <p:commandLink action="" />                                           >
+                                                            <i class="fa fa-external-link"></i>
+                                                            <f:setPropertyActionListener value="{liq}" target="{liquidacionMB.liquidacion}"/>  
+                                                        </p:commandLink>-->
+                            <p:commandButton id="dynaButton" icon="fa fa-bars" type="button"/>
+                            <p:menu overlay="true" trigger="dynaButton" my="left top" at="left bottom">
+                                <p:menuitem value="Observación" action="#{liquidacionMB.recuperarConceptosInconsistencia(liq)}" update="outObservacion" 
+                                            oncomplete="PF('dlgObservacionLiquidacion').show();"  icon="fa fa-commenting-o"/>
+                                <p:menuitem value="Cambiar estado" action="#{liquidacionMB.carmbiarEstadoLiquidacion(liq)}" update="outCambioEstado" 
+                                            oncomplete="PF('dlgCambiarEstadoLiquidacion').show();"  icon="fa fa-refresh" disabled="#{liq.estadoLiquidacion eq 'L'}"/>
+                            </p:menu>
+
                         </p:column>
                     </p:dataTable>
                 </div>
@@ -198,6 +207,26 @@
             <f:facet name="footer">
                 <p:commandButton id="btnGuardarDet" value="Guardar" action="#{liquidacionMB.guardarDetalleInconsistencias()}" icon="fa fa-check" oncomplete="PF('dlgObservacionLiquidacion').hide();" update="tblLiquidaciones"/>
                 <p:commandButton id="btnCancelarDet" value="Cancelar" styleClass="secondary-button" icon="fa fa-times" onclick="PF('dlgObservacionLiquidacion').hide();"/>
+            </f:facet>
+        </p:dialog>
+
+        <p:dialog id="dlgCambiarEstadoLiquidacion" widgetVar="dlgCambiarEstadoLiquidacion" header="Carmbiar estado" modal="true" width="280">    
+            <p:outputPanel id="outCambioEstado" styleClass="ui-fluid">
+                <div class="ui-g-12">
+                    <div class="ui-g-3">
+                        <p:outputLabel value="Estado: "/>
+                    </div>
+                    <div class="ui-g-9">
+                        <p:selectOneMenu style="width: 100%;" value="#{liquidacionMB.liquidacion.estadoLiquidacion}">
+                            <f:selectItem itemValue="E" itemLabel="EN PROCESO"/>
+                            <f:selectItem itemValue="L" itemLabel="LIQUIDADO"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </p:outputPanel>
+            <f:facet name="footer">
+                <p:commandButton id="btnGuardarCe" value="Guardar" action="#{liquidacionMB.guardarCambioEstado()}" icon="fa fa-check" oncomplete="PF('dlgCambiarEstadoLiquidacion').hide();" update="tblLiquidaciones"/>
+                <p:commandButton id="btnCancelarCe" value="Cancelar" styleClass="secondary-button" icon="fa fa-times" onclick="PF('dlgCambiarEstadoLiquidacion').hide();"/>
             </f:facet>
         </p:dialog>
     </ui:define>

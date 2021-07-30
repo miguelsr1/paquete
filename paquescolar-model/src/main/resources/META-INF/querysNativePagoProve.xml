@@ -244,31 +244,37 @@
                 monto_reintegro                                 as montoReintegro,
                 monto_transferido - (monto_pagado+monto_reintegro)    as montoSaldo,
                 codigo_departamento                             as codigoDepartamento
-            from (SELECT 
-                  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,
-                  COUNT(DISTINCT PLANILLA_PAGO.ID_PLANILLA) CANTIDAD_PLANILLA,
-                  COUNT(DISTINCT DETALLE_PLANILLA.ID_DETALLE_PLANILLA) CANTIDAD_CE,
-                  REQUERIMIENTO_FONDOS.MONTO_TOTAL,
-                  NVL(FN_RF_MONTO_PAGADO(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_PAGADO,
-                  sum(distinct nvl(tr.MONTO_TRANSFERIDO,0)) MONTO_TRANSFERIDO,
-                  NVL(FN_RF_MONTO_PENDIENTE(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO), 0) MONTO_PENDIENTE,
-                  NVL(FN_RF_MONTO_REINTEGRAR(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_REINTEGRO,
-                  requerimiento_fondos.codigo_departamento
-                FROM REQUERIMIENTO_FONDOS
-                  left outer join TRANSFERENCIA_REQUERIMIENTO tr on tr.ID_REQUERIMIENTO = REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO
-                  left outer JOIN DETALLE_REQUERIMIENTO ON REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO
-                  left outer JOIN PLANILLA_PAGO ON PLANILLA_PAGO.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO
-                  LEFT OUTER JOIN DETALLE_PLANILLA ON PLANILLA_PAGO.ID_PLANILLA = DETALLE_PLANILLA.ID_PLANILLA
-                WHERE
-                  REQUERIMIENTO_FONDOS.CODIGO_DEPARTAMENTO = ?1 AND
-                  REQUERIMIENTO_FONDOS.ID_DET_PROCESO_ADQ = ?2 AND
-                  requerimiento_fondos.estado_eliminacion = 0 and
-                  (DETALLE_PLANILLA.ESTADO_ELIMINACION = 0 OR DETALLE_PLANILLA.ESTADO_ELIMINACION IS NULL)
+            from (select 
+                    rf.formato_requerimiento,
+                    count(distinct pp.id_planilla) cantidad_planilla,
+                    count(distinct dp.id_detalle_planilla) cantidad_ce,
+                    rf.monto_total,
+                    nvl(fn_rf_monto_pagado(rf.id_requerimiento),0) monto_pagado,
+                    nvl(fn_rf_monto_pendiente(rf.id_requerimiento), 0) monto_pendiente,
+                    nvl(fn_rf_monto_reintegrar(rf.id_requerimiento),0) monto_reintegro,
+                    rf.codigo_departamento,
+                    rf.id_requerimiento
+                from requerimiento_fondos rf
+                    left outer join detalle_requerimiento dr    on rf.id_requerimiento = dr.id_requerimiento
+                    left outer join planilla_pago pp            on pp.id_requerimiento = dr.id_requerimiento
+                    left outer join detalle_planilla dp         on pp.id_planilla = dp.id_planilla
+                where
+                    rf.codigo_departamento = ?1 and
+                    rf.id_det_proceso_adq = ?2 and
+                    rf.estado_eliminacion = 0 and
+                    (dp.estado_eliminacion = 0 or dp.estado_eliminacion is null)
                 group by 
-                  REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO,
-                  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,
-                  REQUERIMIENTO_FONDOS.MONTO_TOTAL,
-                  requerimiento_fondos.codigo_departamento) tb
+                    rf.id_requerimiento,
+                    rf.formato_requerimiento,
+                    rf.monto_total,
+                    rf.codigo_departamento) tb
+                inner join (select rf.id_requerimiento, sum(nvl(tr.monto_transferido,0)) monto_transferido
+                            from requerimiento_fondos rf
+                                left outer join transferencia_requerimiento tr on tr.id_requerimiento = rf.id_requerimiento
+                            group by rf.id_requerimiento) tb2 on tb.id_requerimiento = tb2.id_requerimiento
+                order by 
+                    codigo_departamento, 
+                    formato_requerimiento
             ]]>
         </query>
     </named-native-query>
@@ -289,32 +295,36 @@
                 monto_reintegro                                 as montoReintegro,
                 monto_transferido - (monto_pagado+monto_reintegro)    as montoSaldo,
                 codigo_departamento                             as codigoDepartamento
-            from (SELECT 
-                  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,
-                  COUNT(DISTINCT PLANILLA_PAGO.ID_PLANILLA) CANTIDAD_PLANILLA,
-                  COUNT(DISTINCT DETALLE_PLANILLA.ID_DETALLE_PLANILLA) CANTIDAD_CE,
-                  REQUERIMIENTO_FONDOS.MONTO_TOTAL,
-                  NVL(FN_RF_MONTO_PAGADO(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_PAGADO,
-                  sum(distinct nvl(tr.MONTO_TRANSFERIDO,0)) MONTO_TRANSFERIDO,
-                  NVL(FN_RF_MONTO_PENDIENTE(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO), 0) MONTO_PENDIENTE,
-                  NVL(FN_RF_MONTO_REINTEGRAR(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_REINTEGRO,
-                  requerimiento_fondos.codigo_departamento
-                FROM REQUERIMIENTO_FONDOS
-                  left outer join TRANSFERENCIA_REQUERIMIENTO tr on tr.ID_REQUERIMIENTO = REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO
-                  left outer JOIN DETALLE_REQUERIMIENTO ON REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO
-                  left outer JOIN PLANILLA_PAGO ON PLANILLA_PAGO.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO
-                  LEFT OUTER JOIN DETALLE_PLANILLA ON PLANILLA_PAGO.ID_PLANILLA = DETALLE_PLANILLA.ID_PLANILLA
-                WHERE
-                  REQUERIMIENTO_FONDOS.ID_DET_PROCESO_ADQ = ?1 AND
-                  requerimiento_fondos.estado_eliminacion = 0 and
-                  (DETALLE_PLANILLA.ESTADO_ELIMINACION = 0 OR DETALLE_PLANILLA.ESTADO_ELIMINACION IS NULL)
+            from (select 
+                    rf.formato_requerimiento,
+                    count(distinct pp.id_planilla) cantidad_planilla,
+                    count(distinct dp.id_detalle_planilla) cantidad_ce,
+                    rf.monto_total,
+                    nvl(fn_rf_monto_pagado(rf.id_requerimiento),0) monto_pagado,
+                    nvl(fn_rf_monto_pendiente(rf.id_requerimiento), 0) monto_pendiente,
+                    nvl(fn_rf_monto_reintegrar(rf.id_requerimiento),0) monto_reintegro,
+                    rf.codigo_departamento,
+                    rf.id_requerimiento
+                from requerimiento_fondos rf
+                    left outer join detalle_requerimiento dr    on rf.id_requerimiento = dr.id_requerimiento
+                    left outer join planilla_pago pp            on pp.id_requerimiento = dr.id_requerimiento
+                    left outer join detalle_planilla dp         on pp.id_planilla = dp.id_planilla
+                where
+                    rf.id_det_proceso_adq = ?1 and
+                    rf.estado_eliminacion = 0 and
+                    (dp.estado_eliminacion = 0 or dp.estado_eliminacion is null)
                 group by 
-                  REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO,
-                  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,
-                  REQUERIMIENTO_FONDOS.MONTO_TOTAL,
-                  requerimiento_fondos.codigo_departamento) tb
+                    rf.id_requerimiento,
+                    rf.formato_requerimiento,
+                    rf.monto_total,
+                    rf.codigo_departamento) tb
+                inner join (select rf.id_requerimiento, sum(nvl(tr.monto_transferido,0)) monto_transferido
+                            from requerimiento_fondos rf
+                                left outer join transferencia_requerimiento tr on tr.id_requerimiento = rf.id_requerimiento
+                            group by rf.id_requerimiento) tb2 on tb.id_requerimiento = tb2.id_requerimiento
                 order by 
-                    codigo_departamento, formato_requerimiento
+                    codigo_departamento, 
+                    formato_requerimiento
             ]]>
         </query>
     </named-native-query>

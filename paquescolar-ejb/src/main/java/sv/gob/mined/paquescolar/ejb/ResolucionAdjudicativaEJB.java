@@ -491,6 +491,8 @@ public class ResolucionAdjudicativaEJB {
     public void guardarLiquidacion(Liquidacion liquidacion) {
         if (liquidacion.getIdLiquidacion() == null) {
             em.persist(liquidacion);
+        }else{
+            em.merge(liquidacion);
         }
     }
 

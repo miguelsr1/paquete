@@ -72,6 +72,12 @@ public class Liquidacion implements Serializable {
     private Date fechaRecepcion;
     @Column(name = "ESTADO_ELIMINACION")
     private Short estadoEliminacion;
+    @Column(name = "USUARIO_MODIFICACION")
+    private String usuarioModificacion;
+    @Column(name = "FECHA_MODIFICACION")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaModificacion;
+
     @OneToMany(mappedBy = "idLiquidacion", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<DetalleLiquidacion> detalleLiquidacionList;
 
@@ -83,8 +89,6 @@ public class Liquidacion implements Serializable {
     private BigDecimal montoModificativa;
     @Transient
     private BigDecimal montoResguardo;
-    @Transient
-    private Boolean estadoLiq;
 
     public Liquidacion() {
     }
@@ -149,6 +153,22 @@ public class Liquidacion implements Serializable {
         this.estadoEliminacion = estadoEliminacion;
     }
 
+    public String getUsuarioModificacion() {
+        return usuarioModificacion;
+    }
+
+    public void setUsuarioModificacion(String usuarioModificacion) {
+        this.usuarioModificacion = usuarioModificacion;
+    }
+
+    public Date getFechaModificacion() {
+        return fechaModificacion;
+    }
+
+    public void setFechaModificacion(Date fechaModificacion) {
+        this.fechaModificacion = fechaModificacion;
+    }
+
     @XmlTransient
     public List<DetalleLiquidacion> getDetalleLiquidacionList() {
         if (detalleLiquidacionList == null) {
@@ -181,19 +201,6 @@ public class Liquidacion implements Serializable {
     @Override
     public String toString() {
         return "sv.gob.mined.paquescolar.model.Liquidacion[ idLiquidacion=" + idLiquidacion + " ]";
-    }
-
-    public Boolean getEstadoLiq() {
-        if (!detalleLiquidacionList.isEmpty() && detalleLiquidacionList.get(0).getPrecioUnitarioModif() != null) {
-            estadoLiq = (getMontoRecepcion().compareTo(getMontoModificativa()) == 0);
-        } else {
-            estadoLiq = (getMontoRecepcion().compareTo(getMontoContratado()) == 0);
-        }
-        return estadoLiq;
-    }
-
-    public void setEstadoLiq(Boolean estadoLiquidacion) {
-        this.estadoLiq = estadoLiquidacion;
     }
 
     public BigDecimal getMontoRecepcion() {
