@@ -1666,7 +1666,13 @@ public class PagoProveedoresController extends RecuperarProcesoUtil implements S
     //docPago
     public void showDlgEdtDetDocPago() {
         contratoSinActaRecepcion = true;
-        if (getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getIdAnho().intValue() > 8) {
+        if (getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getIdAnho().intValue() >= 8) {
+            /**
+             * Modificación
+             * 
+             * 16/08/2021
+             * Validar que exista acta de recepción a partir del año 2020
+             */
             contratoSinActaRecepcion = pagoProveedoresEJB.contratoConActaDeRecepcion(new BigDecimal(detalleRequerimiento.getIdContrato()));
         }
         if (contratoSinActaRecepcion) {

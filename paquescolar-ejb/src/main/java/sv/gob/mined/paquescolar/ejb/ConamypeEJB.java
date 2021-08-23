@@ -187,7 +187,7 @@ public class ConamypeEJB {
                             }
                             //DetalleProcesoAdq detalleProceso = anhoProcesoEJB.getDetProcesoAdq(String.valueOf(Integer.parseInt(js.get("anho").toString()) + 1), rubro);
 
-                            DetRubroMuestraInteres detRubro = getDetRubroMuestraInteres(rubro, anho, empresa);
+                            DetRubroMuestraInteres detRubro = getDetRubroMuestraInteres(rubro, String.valueOf(Integer.parseInt(anho) + 1), empresa);
                             if (detRubro == null) {
                                 //nuevo registro de calificacion
                                 detRubro = new DetRubroMuestraInteres();

@@ -78,7 +78,7 @@
                     SUBSTR(FN_GET_NOMBRE_EMP_F14(der.numero_nit),0, 100) as colC,
                     replace(numero_nit,'-','')  as colD,
                     '11'                        as colE,
-                    to_char(sum(dp.monto_actual))        as colF,
+                    to_char(sum(DECODE(DDP.ID_TIPO_DOC_PAGO, 1, ROUND(((case ddp.CONTRATO_MODIF when 1 then DDP.MONTO_ACTUAL when 0 then DP.MONTO_ACTUAL end)/1.13),2), 2, (case ddp.CONTRATO_MODIF when 1 then DDP.MONTO_ACTUAL when 0 then DP.MONTO_ACTUAL end))))     as colF,
                     '0'                         as colG,
                     to_char(sum(ddp.monto_Renta))        as colH,
                     0                           as colI,
