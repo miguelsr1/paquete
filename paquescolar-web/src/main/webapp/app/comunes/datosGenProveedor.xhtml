@@ -29,9 +29,8 @@
                     <p:outputLabel styleClass="negrita" value="#{proveedorController.nombreRubroProveedor}" />
                 </p:panelGrid>
                 <p:commandLink id="foto" action="#{proveedorController.dlgFotografia}" disabled="#{proveedorController.capacidadInst eq null}">
-                    <p:ajax event="dialogReturn" listener="#{proveedorController.updateFrm}" update="foto"/>
-                    <p:graphicImage rendered="#{proveedorController.showFoto}" value="/DynamicImageServlet?file=#{bundle['path_images']}#{proveedorController.fileName}"/>
-                    <p:graphicImage rendered="#{not proveedorController.showFoto}" url="#{pageContext.servletContext.contextPath}/resources/images/temp/#{proveedorController.fotoProveedor}"/>
+                    <p:ajax event="dialogReturn" listener="#{proveedorController.updateFrm}" update="pnlFoto"/>
+                    <p:graphicImage rendered="#{proveedorController.showFoto}" value="/DynamicImageServlet?file=#{proveedorController.empresa.idPersona.urlImagen}" width="120"/>
                 </p:commandLink>
             </p:panelGrid>
         </p:tab>

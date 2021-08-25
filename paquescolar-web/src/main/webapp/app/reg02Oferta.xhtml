@@ -197,7 +197,7 @@
                             </h:panelGrid>
                             <h:panelGroup>
                                 <p:galleria value="#{ofertaMB.images}" var="image" panelHeight="400" style="width: auto;" autoPlay="false">
-                                    <p:graphicImage value="/DynamicImageServlet?file=#{bundle['path_images']}#{image}" />
+                                    <p:graphicImage value="/DynamicImageServlet?file=#{image}" />
                                 </p:galleria>
                             </h:panelGroup>
                         </p:outputPanel>

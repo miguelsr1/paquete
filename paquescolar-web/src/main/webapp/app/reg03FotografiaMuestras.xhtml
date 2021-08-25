@@ -54,7 +54,7 @@
                                 </p:commandButton>
                             </h:panelGrid>
                             <p:galleria id="galZapato" value="#{proveedorController.images}" var="image" panelHeight="500" style="width: auto;" autoPlay="false">
-                                <p:graphicImage value="/DynamicImageServlet?file=#{bundle['path_images']}#{image}" style="max-height: 500px; width: auto;"/>
+                                <p:graphicImage value="/DynamicImageServlet?file=#{image}" style="width: auto;" width="100"/>
                             </p:galleria>
                         </h:panelGrid>
                     </h:panelGrid>

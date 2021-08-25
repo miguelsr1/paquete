@@ -41,27 +41,27 @@ public class JsfUtil {
     }
 
     public static void mensajeUpdate() {
-        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "<big>Información</big>", "<big>Actualización exitosa.</big>");
+        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Información</big>", "Actualización exitosa.</big>");
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
     public static void mensajeInsert() {
-        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "<big>Información</big>", "<big>Registro almacenado satisfactoriamente</big>");
+        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Información</big>", "Registro almacenado satisfactoriamente</big>");
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
     public static void mensajeAlerta(String mensaje) {
-        msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "<big>Alerta</big>", "<big>" + mensaje + "</big>");
+        msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Alerta</big>", "" + mensaje + "</big>");
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
     public static void mensajeError(String mensaje) {
-        msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "<big>Error</big>", "<big>" + mensaje + "</big>");
+        msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error</big>", "" + mensaje + "</big>");
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
     public static void mensajeInformacion(String mensaje) {
-        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "<big>Información</big>", "<big>" + mensaje + "</big>");
+        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Información</big>", "" + mensaje + "</big>");
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
@@ -263,7 +263,7 @@ public class JsfUtil {
         if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
             return JsfUtil.getValorFromBundleByKey(RESOURCE_BUNDLE, path + "_win");
         } else {
-            return JsfUtil.getValorFromBundleByKey(RESOURCE_BUNDLE, path + "linux");
+            return JsfUtil.getValorFromBundleByKey(RESOURCE_BUNDLE, path + "_linux");
         }
     }
 

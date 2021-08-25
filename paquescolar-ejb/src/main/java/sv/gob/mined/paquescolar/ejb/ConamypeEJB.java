@@ -196,7 +196,7 @@ public class ConamypeEJB {
                                 detRubro.setEstadoEliminacion(BigInteger.ZERO);
                                 detRubro.setIdEmpresa(empresa);
                                 detRubro.setIdRubroInteres(utilEJB.find(RubrosAmostrarInteres.class, rubro));
-                                detRubro.setIdAnho(anhoProcesoEJB.getAnhoByAnho(anho));
+                                detRubro.setIdAnho(anhoProcesoEJB.getAnhoByAnho(String.valueOf(Integer.parseInt(anho) + 1)));
                                 empresa.getDetRubroMuestraInteresList().add(detRubro);
 
                                 CapaDistribucionAcre capaDistribucion = new CapaDistribucionAcre();
