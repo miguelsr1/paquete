@@ -30,8 +30,15 @@ public class DynamicImageServlet extends HttpServlet {
     private void cargarImagen(HttpServletResponse response, String file) {
         try {
             byte[] bytes;
+            String pathImg;
+            
+             if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
+                 pathImg = RESOURCE_BUNDLE.getString("path_images_win");
+             }else{
+                 pathImg = RESOURCE_BUNDLE.getString("path_images_linux");
+             }
             // Get image contents.
-            try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(RESOURCE_BUNDLE.getString("path_images") + File.separator + file))) {
+            try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(pathImg + File.separator + file))) {
                 // Get image contents.
                 bytes = new byte[in.available()];
                 in.read(bytes);
