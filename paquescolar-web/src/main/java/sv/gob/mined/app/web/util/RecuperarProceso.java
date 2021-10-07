@@ -10,6 +10,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import sv.gob.mined.app.web.controller.ParametrosMB;
+import sv.gob.mined.app.web.controller.pagoprov.modulo.ProveedorMB;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 
 /**
@@ -30,8 +31,19 @@ public class RecuperarProceso implements Serializable {
     }
 
     public void recuperarProcesoAdq() {
-        procesoAdquisicion = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getProceso();
+        if (VarSession.isVariableSession("idEmpresa")) {
+            ProveedorMB proveedorMB = ((ProveedorMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                    getValue(FacesContext.getCurrentInstance().getELContext(), null, "proveedorMB"));
+            procesoAdquisicion = proveedorMB.getAnho().getProcesoAdquisicionList().get(0);
+            ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                    getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).setProceso(procesoAdquisicion);
+            
+        } else {
+            procesoAdquisicion = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                    getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getProceso();
+        }
+        
+        
         if (procesoAdquisicion == null || procesoAdquisicion.getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de adquisición.");
         }

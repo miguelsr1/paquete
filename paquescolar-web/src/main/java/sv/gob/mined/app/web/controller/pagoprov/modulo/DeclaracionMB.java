@@ -221,10 +221,10 @@ public class DeclaracionMB implements Serializable {
 
         SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm");
 
-        cc.add("carlos.villegas@mined.gob.sv");
+        cc.add("carlos.enrique.villegas@admin.mined.edu.sv");
         cc.add("rene.brizuela@mined.gob.sv");
 
-        bcc.add("rafael.arias@mined.gob.sv");
+        bcc.add(JsfUtil.getValorFromBundleByKey("cuenta1.name"));
         to.add(empresa.getIdPersona().getEmail());
 
         titulo = MessageFormat.format(UTIL_CORREO.getString("prov_notif_inscripcion.email.titulo"), capacidadInst.getIdMuestraInteres().getIdAnho().getAnho());
@@ -235,6 +235,9 @@ public class DeclaracionMB implements Serializable {
                 sdfHora.format(fecha).split(":")[0], sdfHora.format(fecha).split(":")[1],
                 Herramientas.getNumDia(fecha), Herramientas.getNomMes(fecha), Herramientas.getNumAnyo(fecha));
 
-        proveedorEJB.enviarNotificacionModProv("carlos.villegas@mined.gob.sv", titulo, mensaje, to, cc, bcc);
+        proveedorEJB.enviarNotificacionModProv(titulo, 
+                mensaje, 
+                to, cc, bcc, 
+                JsfUtil.getSessionMailG("3"));
     }
 }

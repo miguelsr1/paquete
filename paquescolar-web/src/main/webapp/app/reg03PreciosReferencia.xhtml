@@ -36,66 +36,89 @@
                         <p:commandButton id="btoAgregarProveedor" value=" Agregar" icon="fa fa-plus-circle" style="float: right; font-size: 12px;"
                                          action="#{proveedorController.agregarNewPrecio}" update="tblDetallePrecio"/>
                     </h1>
-                    <p:dataTable id="tblDetallePrecio" widgetVar="tblDetallePrecio" value="#{proveedorController.lstPreciosReferencia}" var="precio" 
-                                 editMode="cell" rowIndexVar="idRow" rowKey="#{precio.idPrecioRefEmp}"
-                                 editable="true" rowStyleClass="#{precio.estadoEliminacion eq 1 ? 'filaEliminada' : null}" style="width: 570px !important"
-                                 selection="#{proveedorController.precioRef}" emptyMessage="No se han registrado precios a este proveedor">
+                    <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col6,col6" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <p:outputLabel value="Precios de Referencia"/>
+                        <p:outputLabel value="Precios Máximos"/>
+                        <p:dataTable id="tblDetallePrecio" widgetVar="tblDetallePrecio" value="#{proveedorController.lstPreciosReferencia}" var="precio" 
+                                     editMode="cell" rowIndexVar="idRow" rowKey="#{precio.idPrecioRefEmp}"
+                                     editable="true" rowStyleClass="#{precio.estadoEliminacion eq 1 ? 'filaEliminada' : null}" style="width: 570px !important"
+                                     selection="#{proveedorController.precioRef}" emptyMessage="No se han registrado precios a este proveedor">
 
-                        <p:ajax event="cellEdit"  listener="#{proveedorController.onCellEdit}" onsuccess="updatePrecioRef();" />
+                            <p:ajax event="cellEdit"  listener="#{proveedorController.onCellEdit}" onsuccess="updatePrecioRef();" />
 
-                        <p:column headerText="Id" width="40">
-                            <p:outputLabel value="#{precio.idPrecioRefEmp}" />
-                        </p:column>
+                            <p:column headerText="Id" width="40">
+                                <p:outputLabel value="#{precio.idPrecioRefEmp}" />
+                            </p:column>
 
-                        <p:column headerText="Item" width="30" id="item" style="text-align: center;">
-                            <p:cellEditor>  
-                                <f:facet name="output"><p:outputLabel value="#{precio.noItem}" /></f:facet>
-                                <f:facet name="input">
+                            <p:column headerText="Item" width="30" id="item" style="text-align: center;">
+                                <p:cellEditor>  
+                                    <f:facet name="output"><p:outputLabel value="#{precio.noItem}" /></f:facet>
                                     <f:facet name="input">
-                                        <p:inputText value="#{precio.noItem}" size="10" disabled="#{precio.estadoEliminacion eq 1}" />
+                                        <f:facet name="input">
+                                            <p:inputText value="#{precio.noItem}" size="10" disabled="#{precio.estadoEliminacion eq 1}" />
+                                        </f:facet>
                                     </f:facet>
-                                </f:facet>
-                            </p:cellEditor>
-                        </p:column>
+                                </p:cellEditor>
+                            </p:column>
 
-                        <p:column headerText="Descripción Item" width="120">
-                            <p:outputLabel value="#{precio.idProducto.nombreProducto}" id="descripcionItem" />
-                        </p:column>
+                            <p:column headerText="Descripción Item" width="120">
+                                <p:outputLabel value="#{precio.idProducto.nombreProducto}" id="descripcionItem" />
+                            </p:column>
 
-                        <p:column headerText="Nivel Educativo" width="150">
-                            <p:outputLabel value="#{precio.idNivelEducativo.descripcionNivel}" id="nivelEducativo"/>
-                        </p:column>
+                            <p:column headerText="Nivel Educativo" width="150">
+                                <p:outputLabel value="#{precio.idNivelEducativo.descripcionNivel}" id="nivelEducativo"/>
+                            </p:column>
 
-                        <p:column headerText="Precio U." width="50" styleClass="numero" id="precio">
-                            <p:cellEditor>  
-                                <f:facet name="output">
-                                    <h:outputText value="#{precio.precioReferencia}" id="precio2">
-                                        <f:convertNumber pattern="###0.00"/>
-                                    </h:outputText>
-                                </f:facet>
-                                <f:facet name="input">
-                                    <p:inputNumber minValue="0" maxValue="16.00" decimalPlaces="2" value="#{precio.precioReferencia}" size="5" disabled="#{precio.estadoEliminacion eq 1}" onkeypress="soloNumeros(event);"/>
-                                </f:facet>
-                            </p:cellEditor>
-                        </p:column>
+                            <p:column headerText="Precio U." width="50" styleClass="numero" id="precio">
+                                <p:cellEditor>  
+                                    <f:facet name="output">
+                                        <h:outputText value="#{precio.precioReferencia}" id="precio2">
+                                            <f:convertNumber pattern="###0.00"/>
+                                        </h:outputText>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputNumber minValue="0" maxValue="16.00" decimalPlaces="2" value="#{precio.precioReferencia}" size="5" disabled="#{precio.estadoEliminacion eq 1}" onkeypress="soloNumeros(event);"/>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
 
-                        <p:column headerText="Editar" width="25" style="text-align: center" rendered="false">
-                            <p:commandLink disabled="#{precio.estadoEliminacion eq 1}">
-                                <i class="fa fa-hand-o-right blue" style="font-size: 17px;"></i>
-                            </p:commandLink>
-                        </p:column>
+                            <p:column headerText="Editar" width="25" style="text-align: center" rendered="false">
+                                <p:commandLink disabled="#{precio.estadoEliminacion eq 1}">
+                                    <i class="fa fa-hand-o-right blue" style="font-size: 17px;"></i>
+                                </p:commandLink>
+                            </p:column>
 
-                        <p:column headerText="Borrar" width="25" style="text-align: center">
-                            <p:commandLink action="#{proveedorController.eliminarDetalle}" update="tblDetallePrecio">
-                                <p:outputLabel rendered="#{precio.estadoEliminacion eq 0}"> <i class="fa fa-check-circle"></i></p:outputLabel>
-                                <p:outputLabel rendered="#{precio.estadoEliminacion eq 1}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
+                            <p:column headerText="Borrar" width="25" style="text-align: center">
+                                <p:commandLink action="#{proveedorController.eliminarDetalle}" update="tblDetallePrecio">
+                                    <p:outputLabel rendered="#{precio.estadoEliminacion eq 0}"> <i class="fa fa-check-circle"></i></p:outputLabel>
+                                    <p:outputLabel rendered="#{precio.estadoEliminacion eq 1}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
 
-                                <f:setPropertyActionListener value="#{precio}" target="#{proveedorController.precioRef}"/>  
-                                <f:setPropertyActionListener value="#{idRow}" target="#{proveedorController.idRow}"/>  
-                            </p:commandLink>
-                        </p:column>
-                    </p:dataTable>
+                                    <f:setPropertyActionListener value="#{precio}" target="#{proveedorController.precioRef}"/>  
+                                    <f:setPropertyActionListener value="#{idRow}" target="#{proveedorController.idRow}"/>  
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
 
+
+                        <p:dataTable id="tblDetallePrecioMax" widgetVar="tblDetallePrecioMax" value="#{preciosReferenciaMB.lstPreciosMaximos}" var="precioMax" 
+                                     rowIndexVar="idRow" emptyMessage="No hay registros">
+                            <p:column headerText="Item" width="30" style="text-align: center;" rendered="false">
+                                <p:outputLabel value="#{precioMax.noItem}"/>
+                            </p:column>
+
+                            <p:column headerText="Descripción" width="120">
+                                <p:outputLabel value="#{precioMax.consolidadoEspTec}"/>
+                            </p:column>
+
+                            <p:column headerText="Precio U." width="50" styleClass="numero">
+                                <h:outputText value="#{precioMax.precioUnitario}" >
+                                    <f:convertNumber pattern="###0.00"/>
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panelGrid>
                     <p:remoteCommand name="updatePrecioRef"   action="#{proveedorController.updateFilaDetalle}" />
                 </div>
             </div>

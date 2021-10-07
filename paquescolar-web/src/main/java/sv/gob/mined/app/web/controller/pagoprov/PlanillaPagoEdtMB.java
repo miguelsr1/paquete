@@ -811,14 +811,21 @@ public class PlanillaPagoEdtMB extends RecuperarProcesoUtil implements Serializa
                 case 3:
                     //envio de notificacion a Entidad/Proveedor
                     //eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", "miguel.sanchez@mined.gob.sv", getMensajeDeNotificacion(planillaPago, planillaPago.getDetallePlanillaList(), false));
-                    eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", emailUnico, getMensajeDeNotificacion(planillaPago, planillaPago.getDetallePlanillaList(), false), codigoDepartamento);
+                    eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ",
+                            emailUnico,
+                            getMensajeDeNotificacion(planillaPago, planillaPago.getDetallePlanillaList(), false),
+                            codigoDepartamento,
+                            JsfUtil.getSessionMailG("2"));
 
                     //Si es planilla tipo credito, enviar notificacion a proveedores incluidos en la planilla de pago
                     if (planillaPago.getIdTipoPlanilla() == 3) {
                         for (DatosProveDto datosProveDto : lstEmailProveeCredito) {
                             if (datosProveDto.getCorreoElectronico() != null && !datosProveDto.getCorreoElectronico().isEmpty()) {
                                 //eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", "miguel.sanchez@mined.gob.sv", getMensajeDeNotificacion(planillaPago, pagoProveedoresEJB.getLstDetallePlanillaByIdPlanillaAndNit(planillaPago.getIdPlanilla(), datosProveDto.getNumeroNit()), true));
-                                eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", datosProveDto.getCorreoElectronico(), getMensajeDeNotificacion(planillaPago, pagoProveedoresEJB.getLstDetallePlanillaByIdPlanillaAndNit(planillaPago.getIdPlanilla(), datosProveDto.getNumeroNit()), true), codigoDepartamento);
+                                eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ",
+                                        datosProveDto.getCorreoElectronico(), getMensajeDeNotificacion(planillaPago, pagoProveedoresEJB.getLstDetallePlanillaByIdPlanillaAndNit(planillaPago.getIdPlanilla(), datosProveDto.getNumeroNit()), true),
+                                        codigoDepartamento,
+                                        JsfUtil.getSessionMailG("2"));
                             }
                         }
                     }
@@ -854,9 +861,9 @@ public class PlanillaPagoEdtMB extends RecuperarProcesoUtil implements Serializa
             sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.cabeceraMensaje"), planillaPago.getIdRequerimiento().getFormatoRequerimiento(), JsfUtil.getFormatoNum(planillaPago.getMontoTotal(), false)));
         }
         sb.append(RESOURCE_BUNDLE.getString("pagoprov.email.tablaDetalle.header"));
-        for (DetallePlanilla detalle : lstDetallePlanilla) {
+        lstDetallePlanilla.forEach(detalle -> {
             sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.tablaDetalle.detalle"), detalle.getCodigoEntidad().getCodigoEntidad(), detalle.getCodigoEntidad().getNombre(), detalle.getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit(), detalle.getIdDetalleDocPago().getIdDetRequerimiento().getRazonSocial(), JsfUtil.getFormatoNum(detalle.getMontoActual(), false)));
-        }
+        });
         //agregando fila de totales (unicamente si la planilla de pago contiene más de 1 contrato)
         if (lstDetallePlanilla.size() > 1) {
             sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.tablaDetalle.footer"),

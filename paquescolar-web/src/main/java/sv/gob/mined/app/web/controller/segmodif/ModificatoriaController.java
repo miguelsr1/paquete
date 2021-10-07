@@ -75,6 +75,7 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
     private Boolean deshabilitarCantidad = false;
     private Boolean negativo = false;
     private Boolean positivo = false;
+    private Boolean contratoPreCarga = false;
     /*
     ayuda a determinar la fila que se debe de actualizar en una datatable
      */
@@ -151,6 +152,10 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
         }
     }
 
+    public Boolean getContratoPreCarga() {
+        return contratoPreCarga;
+    }
+
     public BigDecimal getIdContratoTemp() {
         return idContratoTemp;
     }
@@ -197,12 +202,14 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
 
     public void prepararCreacion() {
         VarSession.setVariableSession("op", 1);
+        contratoPreCarga = false;
         resolucionesModificativas = new ResolucionesModificativas();
         lstDetalleModificativas.clear();
     }
 
     public void prepararEdicion() {
         VarSession.setVariableSession("op", 2);
+        contratoPreCarga = false;
     }
 
     public boolean getEENuevo() {
@@ -843,8 +850,11 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
                 idRubro = contratoOriginal.getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres();
                 detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
 
+                /*contratoPreCarga = resolucionAdjudicativaEJB.contratoIsReservaFondos(vwContratoModificatoria.getIdResolucionAdj());
+                if (contratoPreCarga) {
+                    JsfUtil.mensajeAlerta("Este contrato no puede ser modificado por estar incluido en una PRE-CARGA de Fondos");
+                }*/
                 if (vwContratoModificatoria.getIdResolucionAdj() == null) {//modificación de una modificatoria
-                    //for (DetalleModificativa detalle : utilEJB.find(ResolucionesModificativas.class, vwContratoModificatoria.getIdResolucionModif()).getDetalleModificativaList()) {
                     for (DetalleModificativa detalle : resolucionAdjudicativaEJB.findDetalleModificativa(vwContratoModificatoria.getIdResolucionModif())) {
                         if (detalle.getEstadoEliminacion() == 0) {
                             DetalleModificativa detalleModificativa = new DetalleModificativa();

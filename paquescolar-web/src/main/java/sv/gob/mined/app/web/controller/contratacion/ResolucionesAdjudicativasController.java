@@ -39,6 +39,7 @@ public class ResolucionesAdjudicativasController implements Serializable {
     private Boolean deshabilitar = true;
     private Boolean negativo = false;
     private Boolean positivo = false;
+    private Boolean contratoPreCarga = false;
     private BigInteger saldoAdjudicacion;
     private BigDecimal saldoActual = BigDecimal.ZERO;
     private BigDecimal idParticipante = BigDecimal.ZERO;
@@ -87,6 +88,10 @@ public class ResolucionesAdjudicativasController implements Serializable {
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public Boolean getContratoPreCarga() {
+        return contratoPreCarga;
+    }
+
     public SaldoProveedorDto getSaldoPro() {
         return saldoPro;
     }
@@ -191,6 +196,7 @@ public class ResolucionesAdjudicativasController implements Serializable {
         idParticipante = BigDecimal.ZERO;
         idEstadoReserva = null;
         techoCE = null;
+        contratoPreCarga = false;
         if (lstCapaInstalada != null) {
             lstCapaInstalada.clear();
         }
@@ -336,6 +342,14 @@ public class ResolucionesAdjudicativasController implements Serializable {
             } else {
                 idEstadoReserva = current.getIdEstadoReserva().getIdEstadoReserva();
                 saldoPro = resolucionAdjudicativaEJB.getSaldoProveedor(current);
+
+                /**
+                 * 29/09/2021 Verificar que el contrato no este en preCarga
+                 */
+                contratoPreCarga = resolucionAdjudicativaEJB.contratoIsReservaFondos(current.getIdResolucionAdj());
+                if(contratoPreCarga){
+                    JsfUtil.mensajeAlerta("Este contrato no puede ser modificado por estar incluido en una PRE-CARGA de Fondos");
+                }
             }
         } else {
             limpiarDatos();

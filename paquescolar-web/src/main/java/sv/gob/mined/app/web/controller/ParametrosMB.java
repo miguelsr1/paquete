@@ -119,11 +119,23 @@ public class ParametrosMB implements Serializable {
     }
 
     public Anho getAnho() {
-        return anho;
+        if (anho == null) {
+            if (proceso == null) {
+                return null;
+            } else {
+                return proceso.getIdAnho();
+            }
+        } else {
+            return anho;
+        }
     }
 
     public ProcesoAdquisicion getProceso() {
         return proceso;
+    }
+
+    public void setProceso(ProcesoAdquisicion proceso) {
+        this.proceso = proceso;
     }
 
     public String ubicacion() {

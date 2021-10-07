@@ -418,7 +418,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
 
         if (lst.size() > 1) {
             JsfUtil.mensajeError("Existe un problema con el contrato seleccionado, por favor reportarlo al administrador del sistema.");
-            resolucionAdjudicativaEJB.enviarCorreoDeError(resolucionAdj.getIdResolucionAdj());
+            resolucionAdjudicativaEJB.enviarCorreoDeError(resolucionAdj.getIdResolucionAdj(), JsfUtil.getSessionMailG("2"));
         } else {
             ContratosOrdenesCompras contratoOrd = null;
 
@@ -673,7 +673,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
 
                 if (lst.size() > 1) {
                     JsfUtil.mensajeError("Existe un problema con el contrato seleccionado, por favor reportarlo al administrador del sistema.");
-                    resolucionAdjudicativaEJB.enviarCorreoDeError(resolucionAdj.getIdResolucionAdj());
+                    resolucionAdjudicativaEJB.enviarCorreoDeError(resolucionAdj.getIdResolucionAdj(), JsfUtil.getSessionMailG("2"));
                 } else {
                     ContratosOrdenesCompras contratoOrd = null;
 
@@ -823,18 +823,57 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                         case 2://Solicitud de Cotizacion
 
                             String anho = "";
-                            for (Participantes par : current.getIdResolucionAdj().getIdParticipante().getIdOferta().getParticipantesList()) {
-                                List<VwCotizacion> lst = ofertaBienesServiciosEJB.getLstCotizacion(VarSession.getNombreMunicipioSession(), codigoEntidad, detalleProceso, par);
+                            /**
+                             * modificacion 01/sep2021 apartir de proceso 2022,
+                             * se evaluará el monto del contrato para determinar
+                             * si supera los $7,300 se imprimira las
+                             * cotizaciones de todos los proveedores Si el
+                             * contrato no supera el monto, solo se imprimirá la
+                             * cotización del proveedor actual.
+                             */
 
-                                //Para contratos antes de 2016, se tomara los formatos de rpt que no incluyen el año en el nombre del archivo jasper
-                                if (Integer.parseInt(detalleProceso.getIdProcesoAdq().getIdAnho().getAnho()) > 2016) {
-                                    anho = detalleProceso.getIdProcesoAdq().getIdAnho().getAnho();
+                            if (detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 9) {
+                                if (current.getIdResolucionAdj().getIdParticipante().getMonto().compareTo(new BigDecimal("7300")) == 1) {
+                                    for (Participantes par : current.getIdResolucionAdj().getIdParticipante().getIdOferta().getParticipantesList()) {
+                                        List<VwCotizacion> lst = ofertaBienesServiciosEJB.getLstCotizacion(VarSession.getNombreMunicipioSession(), codigoEntidad, detalleProceso, par);
+
+                                        //Para contratos antes de 2016, se tomara los formatos de rpt que no incluyen el año en el nombre del archivo jasper
+                                        if (Integer.parseInt(detalleProceso.getIdProcesoAdq().getIdAnho().getAnho()) > 2016) {
+                                            anho = detalleProceso.getIdProcesoAdq().getIdAnho().getAnho();
+                                        }
+
+                                        param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda);
+                                        rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + anho + ".jasper"), lst);
+                                        lstRptAImprimir.add(rptTemp);
+                                    }
+                                } else {
+                                    Participantes par = current.getIdResolucionAdj().getIdParticipante();
+                                    List<VwCotizacion> lst = ofertaBienesServiciosEJB.getLstCotizacion(VarSession.getNombreMunicipioSession(), codigoEntidad, detalleProceso, par);
+
+                                    //Para contratos antes de 2016, se tomara los formatos de rpt que no incluyen el año en el nombre del archivo jasper
+                                    if (Integer.parseInt(detalleProceso.getIdProcesoAdq().getIdAnho().getAnho()) > 2016) {
+                                        anho = detalleProceso.getIdProcesoAdq().getIdAnho().getAnho();
+                                    }
+
+                                    param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda);
+                                    rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + anho + ".jasper"), lst);
+                                    lstRptAImprimir.add(rptTemp);
                                 }
+                            } else {
+                                for (Participantes par : current.getIdResolucionAdj().getIdParticipante().getIdOferta().getParticipantesList()) {
+                                    List<VwCotizacion> lst = ofertaBienesServiciosEJB.getLstCotizacion(VarSession.getNombreMunicipioSession(), codigoEntidad, detalleProceso, par);
 
-                                param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda);
-                                rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + anho + ".jasper"), lst);
-                                lstRptAImprimir.add(rptTemp);
+                                    //Para contratos antes de 2016, se tomara los formatos de rpt que no incluyen el año en el nombre del archivo jasper
+                                    if (Integer.parseInt(detalleProceso.getIdProcesoAdq().getIdAnho().getAnho()) > 2016) {
+                                        anho = detalleProceso.getIdProcesoAdq().getIdAnho().getAnho();
+                                    }
+
+                                    param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda);
+                                    rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + anho + ".jasper"), lst);
+                                    lstRptAImprimir.add(rptTemp);
+                                }
                             }
+
                             break;
                         case 3://Acta Adjudicacion
                             if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
@@ -891,7 +930,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                             break;
                         case 11: //oferta Global
                             Empresa emp = resolucionAdj.getIdParticipante().getIdEmpresa();
-                            CapaInstPorRubro capacidadInst = proveedorEJB.findDetProveedor(detalleProceso.getIdRubroAdq().getIdRubroInteres(), 
+                            CapaInstPorRubro capacidadInst = proveedorEJB.findDetProveedor(detalleProceso.getIdRubroAdq().getIdRubroInteres(),
                                     detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho(), emp, CapaInstPorRubro.class);
 
                             lstRptAImprimir.addAll(Reportes.getReporteOfertaDeProveedor(capacidadInst, resolucionAdj.getIdParticipante().getIdEmpresa(), detalleProceso,

@@ -406,8 +406,7 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
         ProcesoAdquisicion proceso = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
                 getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getProceso();
 
-        idAnho = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getAnho().getIdAnho();
+        idAnho = proceso.getIdAnho().getIdAnho();
         if (proceso == null || proceso.getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe seleccionar un proceso de contratación");
         } else {
@@ -1460,6 +1459,10 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
         } catch (IOException | JRException ex) {
             Logger.getLogger(ProveedorController.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void notificarOfertaProv(){
+        
     }
 
 }

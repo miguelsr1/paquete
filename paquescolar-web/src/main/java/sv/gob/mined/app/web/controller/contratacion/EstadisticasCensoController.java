@@ -1616,7 +1616,13 @@ public class EstadisticasCensoController implements Serializable {
             List<String> lista = new ArrayList();
             lista.add(string);
 
-            eMailEJB.enviarMail("rafael.arias@mined.gob.sv", titulo, mensaje, lista, cc, new ArrayList(), archivos);
+            eMailEJB.enviarMail(titulo,
+                    mensaje, 
+                    lista, 
+                    cc, 
+                    new ArrayList(), 
+                    archivos,
+                    JsfUtil.getSessionMailG("1"));
             Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, "Correo enviado a: {0}", string);
         });
     }

@@ -26,11 +26,13 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.mail.Session;
 import sv.gob.mined.app.web.controller.CatalogosGeneralesController;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.MunicipioAledanho;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ProveedorDisponibleDto;
+import sv.gob.mined.utils.mail.MailSession;
 
 public class JsfUtil {
 
@@ -307,7 +309,7 @@ public class JsfUtil {
             return null;
         }
     }
-    
+
     public static DetalleProcesoAdq findDetalle(ProcesoAdquisicion procesoAdquisicion, BigDecimal idRubro) {
         Optional<DetalleProcesoAdq> detalle = procesoAdquisicion.getDetalleProcesoAdqList().stream().parallel().
                 filter(det -> det.getIdRubroAdq().getIdRubroInteres().compareTo(idRubro) == 0).findAny();
@@ -342,5 +344,9 @@ public class JsfUtil {
         } catch (IOException ex) {
             Logger.getLogger(JsfUtil.class.getName()).log(Level.INFO, "Error redireccionando al Index", ex);
         }
+    }
+
+    public static Session getSessionMailG(String numero) {
+        return MailSession.getMailSessionOffice(JsfUtil.getValorFromBundleByKey("cuenta" + numero + ".name"), JsfUtil.getValorFromBundleByKey("cuenta" + numero + ".pass"));
     }
 }

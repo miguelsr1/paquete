@@ -38,6 +38,7 @@ public class PersonaController implements Serializable {
     private Usuario usuarioObj = new Usuario();
     private TipoUsuario idTipoUsuario = new TipoUsuario();
     private String nit;
+    private String emailPer;
     private String usuario;
     private String password;
     private String password2;
@@ -71,6 +72,14 @@ public class PersonaController implements Serializable {
         edicion.setPrimerApellido("");
         edicion.setSegundoApellido("");
         edicion.setAcasada("");
+    }
+
+    public String getEmailPer() {
+        return emailPer;
+    }
+
+    public void setEmailPer(String emailPer) {
+        this.emailPer = emailPer;
     }
 
     public BigDecimal getIdGenero() {
@@ -134,6 +143,7 @@ public class PersonaController implements Serializable {
     }
 
     public void guardarUsuario() {
+        edicion.setEmail(emailPer);
         edicion.setUsuario(usuario1);
         edicion.setIdGenero(utilEJB.find(Genero.class, idGenero));
 
@@ -162,6 +172,7 @@ public class PersonaController implements Serializable {
                             usuarioObj.setIdTipoUsuario(idTipoUsuario);
                             usuarioObj.setCodigoDepartamento(departamento.getCodigoDepartamento());
                             usuarioObj.setFechaVencimientoClave(fechaVencimientoClave);
+                            usuarioObj.setCambiarClave((short) 0);
 
                             usuarioObj.setActivo(usuarioActivo ? (short) 1 : 0);
 
@@ -365,6 +376,7 @@ public class PersonaController implements Serializable {
         Comentario: validar la existencia de un objeto de tipo Persona
          */
         if (edicion != null) {
+            emailPer = edicion.getEmail();
             if (edicion.getIdPersona() != null) {
                 cargarDatosPersonaEdicion();
             } else {

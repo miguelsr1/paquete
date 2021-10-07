@@ -116,7 +116,7 @@ public class ValidarProveedorMB implements Serializable {
         String tituloEmail = UTIL_CORREO.getString("prov.email.titulo");
         String cuerpoEmail = UTIL_CORREO.getString("prov.email.mensaje");
 
-        int validar = proveedorEJB.validarCodigoSegEmpresa(codigo, nit, dui, tituloEmail, cuerpoEmail);
+        int validar = proveedorEJB.validarCodigoSegEmpresa(codigo, nit, dui, tituloEmail, cuerpoEmail, JsfUtil.getSessionMailG("1"));
         Empresa emp;
         switch (validar) {
             case 1:

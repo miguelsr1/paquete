@@ -79,7 +79,7 @@
                         <p:column headerText="Total en Resguardo">
                             <p:outputLabel value="#{resguardo.totalCantidad}"/>
                         </p:column>
-                        <p:column headerText="Editar" width="40" styleClass="centrado">
+                        <p:column headerText="Editar" width="40" styleClass="centrado" rendered="false">
                             <p:commandLink action="#{resguardoMB.eliminarDetalle}" update="tblDetalleOferta">
                                 <p:outputLabel><i class="fa fa-pencil"></i></p:outputLabel>
                                 <f:setPropertyActionListener value="#{resguardo}" target="#{resguardoMB.resguardoBienes}"/>  

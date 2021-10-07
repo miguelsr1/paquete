@@ -14,7 +14,8 @@
                         action="#{modificatoriaController.validarProcesoAdquisicion}" 
                         actionListener="#{modificatoriaController.prepararEdicion}"
                         update="pnlFiltro"/>
-            <p:menuitem value="Guardar" icon="fa fa-save" action="#{modificatoriaController.guardar}" ajax="true"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" action="#{modificatoriaController.guardar}" ajax="true"
+                        disabled="#{modificatoriaController.contratoPreCarga}"/>
             <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{ofertaMB.imprimirAnalisisEconomico}" />
             <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
@@ -25,7 +26,7 @@
 
         <p:panel header="Seleccionar Contrato" visible="false">
             <p:commandButton id="btoBuscarC" actionListener="#{modificatoriaController.mostrarFiltroContrato(false)}">
-                <p:ajax event="dialogReturn" listener="#{modificatoriaController.onContratoModifChosen}" update="pnlFiltro pnlDatos"/>
+                <p:ajax event="dialogReturn" listener="#{modificatoriaController.onContratoModifChosen}" update="pnlFiltro pnlDatos menuBar"/>
             </p:commandButton>
         </p:panel>
 

@@ -185,14 +185,16 @@
                                         <li><p:outputLabel value="Su maquinaria disponible para producción (no cuentan maquinas en des uso);"/><br/></li>
                                         <li><p:outputLabel value="Personal a contratar para la producción;"/><br/></li>
                                         <li><p:outputLabel value="Durante los primeros días de ejecución debe coordinarse y realizarse la toma de tallas a los estudiantes;"/><br/></li>
-                                        <li><p:outputLabel value="El período de ejecución de los contratos es de 60 días y deben cubrirse, sin falta, en ese período (incluye la coordinación de entrega y posibles arreglos a los bienes)."/><br/></li>
+                                        <li><p:outputLabel value="El período de ejecución de los contratos es de 40 días hábiles y deben cubrirse, sin falta, en ese período (incluye la coordinación de entrega y posibles arreglos a los bienes)."/><br/></li>
                                         <li><p:outputLabel value="Considere también que puede resultar adjudicado por varios centros educativos, lo que supone que deberá coordinar y hacer la toma de tallas con cada uno sin que eso signifique una justificación a incumplir con lo considerado en el literal anterior."/><br/></li>
                                     </ul>
 
-                                    <p:outputLabel value="Habiendo leído y tomado en cuenta los literales que antecenden considero que mi Capacidad de Producción es:"/>
+                                    <p:outputLabel value="Habiendo leído y tomado en cuenta los literales que anteceden considero que mi Capacidad de Producción es:"/>
                                     <p:spacer width="10"/>
                                     <p:inputNumber id="txtCapacidadPro" value="#{datosGeneralesMB.capacidadInst.capacidadPropuesta}" decimalPlaces="0" size="10"
                                                    inputStyle="text-align: right;" minValue="0"/>
+				    <p:spacer width="5"/>
+				    <p:outputLabel value="piezas"/>
                                 </div>
                                 <p:panelGrid columns="2" columnClasses="col3_label,col9" 
                                              styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
@@ -205,7 +207,7 @@
                                 <br/>
                                 <p:panelGrid columns="2" columnClasses="col3_label,col9"  styleClass="ui-panelgrid-blank form-group form-elements" 
                                              style="border:0px none; background-color:transparent;" rendered="#{datosGeneralesMB.rubroUniforme}">
-                                    <h:outputText value="¿Esta inscrito al IVA?"/>
+                                    <h:outputText value="¿Esta inscrito al IVA si sus ventas han sido superiores a $ 5,714.29?"/>
                                     <p:selectBooleanCheckbox value="#{datosGeneralesMB.inscritoIva}">
                                         <p:ajax update="chDesea" />
                                     </p:selectBooleanCheckbox>

@@ -10,11 +10,13 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -28,7 +30,9 @@ import javax.faces.convert.FacesConverter;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.primefaces.PrimeFaces;
@@ -43,10 +47,12 @@ import sv.gob.mined.app.web.util.RptExcel;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.CreditosEJB;
 import sv.gob.mined.paquescolar.ejb.DatosGeograficosEJB;
+import sv.gob.mined.paquescolar.ejb.EMailEJB;
 import sv.gob.mined.paquescolar.ejb.PreciosReferenciaEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
+import sv.gob.mined.paquescolar.model.Canton;
 import sv.gob.mined.paquescolar.model.CapaDistribucionAcre;
 import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.CatalogoProducto;
@@ -56,6 +62,7 @@ import sv.gob.mined.paquescolar.model.DetRubroMuestraInteres;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.DisMunicipioInteres;
 import sv.gob.mined.paquescolar.model.Empresa;
+import sv.gob.mined.paquescolar.model.EmpresaCodigoSeg;
 import sv.gob.mined.paquescolar.model.EntidadFinanciera;
 import sv.gob.mined.paquescolar.model.Municipio;
 import sv.gob.mined.paquescolar.model.NivelEducativo;
@@ -63,8 +70,11 @@ import sv.gob.mined.paquescolar.model.PreciosRefRubro;
 import sv.gob.mined.paquescolar.model.PreciosRefRubroEmp;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.RubrosAmostrarInteres;
+import sv.gob.mined.paquescolar.model.pojos.OfertaGlobal;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.DetalleAdjudicacionEmpDto;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.MunicipioDto;
+import sv.gob.mined.paquescolar.model.pojos.proveedor.NotificacionOfertaProvDto;
+import sv.gob.mined.paquescolar.util.RC4Crypter;
 
 /**
  *
@@ -82,6 +92,12 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     private Boolean showFoto = true;
     private Boolean showCapacidadAdjudicada = false;
     private Boolean showUpdateEmpresa = false;
+    private Boolean mismaDireccion = false;
+    private Boolean personaNatural = false;
+    private Boolean rubroUniforme = false;
+    private Boolean inscritoIva = false;
+    private Boolean deseaInscribirseIva = false;
+
     private String nit;
 
     private String numeroNit;
@@ -97,11 +113,13 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     private String msjError = "";
     private String codigoDepartamento = "";
     private String codigoDepartamentoLocal = "";
-    private BigDecimal idMunicipioLocal = BigDecimal.ZERO;
+    private String idCanton;
+    private String idCantonLocal;
 
     private BigDecimal idAnho = BigDecimal.ZERO;
     private BigDecimal rubro = BigDecimal.ZERO;
     private BigDecimal idMunicipio = BigDecimal.ZERO;
+    private BigDecimal idMunicipioLocal = BigDecimal.ZERO;
     private BigDecimal totalItems = BigDecimal.ZERO;
     private BigDecimal totalMonto = BigDecimal.ZERO;
     private File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/");
@@ -153,6 +171,10 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     private CreditosEJB creditosEJB;
     @EJB
     private PreciosReferenciaEJB preciosReferenciaEJB;
+    @EJB
+    private EMailEJB eMailEJB;
+
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("Bundle");
 
     /**
      * Creates a new instance of ProveedorController
@@ -167,7 +189,8 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
 
         if (VarSession.isVariableSession("idEmpresa")) {
             empresa = proveedorEJB.findEmpresaByPk((BigDecimal) VarSession.getVariableSession("idEmpresa"));
-            showUpdateEmpresa = ((Integer) VarSession.getVariableSession("idTipoUsuario") == 1);
+
+            //showUpdateEmpresa = ((Integer) VarSession.getVariableSession("idTipoUsuario") == 1 || (Integer) VarSession.getVariableSession("idTipoUsuario") == 2);
             cargarDetalleCalificacion();
             if (url.contains("DatosGenerales")) {
                 idMunicipio = empresa.getIdPersona().getIdMunicipio().getIdMunicipio();
@@ -186,6 +209,64 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public Boolean getInscritoIva() {
+        return inscritoIva;
+    }
+
+    public void setInscritoIva(Boolean inscritoIva) {
+        this.inscritoIva = inscritoIva;
+    }
+
+    public Boolean getDeseaInscribirseIva() {
+        return deseaInscribirseIva;
+    }
+
+    public void setDeseaInscribirseIva(Boolean deseaInscribirseIva) {
+        this.deseaInscribirseIva = deseaInscribirseIva;
+    }
+
+    public Boolean getMismaDireccion() {
+        return mismaDireccion;
+    }
+
+    public void setMismaDireccion(Boolean mismaDireccion) {
+        this.mismaDireccion = mismaDireccion;
+    }
+
+    public Boolean getRubroUniforme() {
+        return rubroUniforme;
+    }
+
+    public void setRubroUniforme(Boolean rubroUniforme) {
+        this.rubroUniforme = rubroUniforme;
+    }
+
+    public Boolean getPersonaNatural() {
+        return personaNatural;
+    }
+
+    public void setPersonaNatural(Boolean personaNatural) {
+        this.personaNatural = personaNatural;
+    }
+
+    public String getIdCanton() {
+        return idCanton;
+    }
+
+    public void setIdCanton(String idCanton) {
+        this.idCanton = idCanton;
+    }
+
+    public String getIdCantonLocal() {
+        return idCantonLocal;
+    }
+
+    public void setIdCantonLocal(String idCantonLocal) {
+        if (idCantonLocal != null) {
+            this.idCantonLocal = idCantonLocal;
+        }
+    }
+
     public Boolean getResetUsuario() {
         return resetUsuario;
     }
@@ -439,7 +520,24 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         return datosGeograficosEJB.getLstMunicipiosByDepartamento(codigoDepartamentoLocal);
     }
 
+    public List<Canton> getLstCantones() {
+        return datosGeograficosEJB.getLstCantonByMunicipio(idMunicipio);
+    }
+
+    public List<Canton> getLstCantonesLocal() {
+        return datosGeograficosEJB.getLstCantonByMunicipio(idMunicipioLocal);
+    }
+
     public Boolean getShowUpdateEmpresa() {
+        switch ((Integer) VarSession.getVariableSession("idTipoUsuario")) {
+            case 1:
+            case 2:
+                showUpdateEmpresa = true;
+                break;
+            default:
+                showUpdateEmpresa = false;
+                break;
+        }
         return showUpdateEmpresa;
     }
 
@@ -572,32 +670,48 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                 proceso = proceso.getPadreIdProcesoAdq();
             }
             DetRubroMuestraInteres detRubro = proveedorEJB.findDetRubroByAnhoAndRubro(idAnho, empresa.getIdEmpresa());
-            capacidadInst = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), idAnho, empresa, CapaInstPorRubro.class);
-            if (capacidadInst == null) {
+            if (detRubro == null) {
                 JsfUtil.mensajeAlerta("No se han cargado los datos de este proveedor para el proceso de contratación del año " + proceso.getIdAnho().getAnho());
             } else {
-                detalleProcesoAdq = JsfUtil.findDetalleByRubroAndAnho(proceso,
-                        capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres(),
-                        capacidadInst.getIdMuestraInteres().getIdAnho().getIdAnho());
-                departamentoCalif = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), idAnho, empresa, CapaDistribucionAcre.class);
-                /**
-                 * Fecha: 30/08/2018 Comentario: Adición de validación de
-                 * departamento calificado para proveedor
-                 */
-
-                if (departamentoCalif == null || departamentoCalif.getCodigoDepartamento() == null) {
-                    JsfUtil.mensajeAlerta("Este proveedor no posee departamento de calificación " + proceso.getIdAnho().getAnho());
+                capacidadInst = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), idAnho, empresa, CapaInstPorRubro.class);
+                if (capacidadInst == null) {
+                    JsfUtil.mensajeAlerta("No se han cargado los datos de este proveedor para el proceso de contratación del año " + proceso.getIdAnho().getAnho());
                 } else {
-                    codigoDepartamentoCalificado = departamentoCalif.getCodigoDepartamento().getCodigoDepartamento();
+                    detalleProcesoAdq = JsfUtil.findDetalleByRubroAndAnho(proceso,
+                            capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres(),
+                            capacidadInst.getIdMuestraInteres().getIdAnho().getIdAnho());
+                    departamentoCalif = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), idAnho, empresa, CapaDistribucionAcre.class);
+                    personaNatural = (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1);
+                    if (personaNatural) {
+                        mismaDireccion = (empresa.getIdMunicipio().getIdMunicipio().intValue() == empresa.getIdPersona().getIdMunicipio().getIdMunicipio().intValue()
+                                && empresa.getDireccionCompleta().equals(empresa.getIdPersona().getDomicilio()));
+                    }
 
-                    idMunicipioLocal = empresa.getIdMunicipio().getIdMunicipio();
-                    codigoDepartamentoLocal = empresa.getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
-
-                    deshabiliar = false;
-                    if (empresa.getIdPersona().getUrlImagen() == null) {
-                        fileName = "fotoProveedores/profile.png";
+                    /**
+                     * Fecha: 30/08/2018 Comentario: Adición de validación de
+                     * departamento calificado para proveedor
+                     */
+                    if (departamentoCalif == null || departamentoCalif.getCodigoDepartamento() == null) {
+                        JsfUtil.mensajeAlerta("Este proveedor no posee departamento de calificación " + proceso.getIdAnho().getAnho());
                     } else {
-                        fileName = "fotoProveedores/" + empresa.getIdPersona().getUrlImagen();
+                        codigoDepartamentoCalificado = departamentoCalif.getCodigoDepartamento().getCodigoDepartamento();
+
+                        idMunicipioLocal = empresa.getIdMunicipio().getIdMunicipio();
+                        codigoDepartamentoLocal = empresa.getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
+
+                        rubroUniforme = (departamentoCalif.getIdMuestraInteres().getIdRubroInteres().getIdRubroUniforme().intValue() == 1);
+
+                        if (rubroUniforme) {
+                            idCanton = empresa.getIdPersona().getCodigoCanton();
+                            idCantonLocal = empresa.getCodigoCanton();
+                        }
+
+                        deshabiliar = false;
+                        if (empresa.getIdPersona().getUrlImagen() == null) {
+                            fileName = "fotoProveedores/profile.png";
+                        } else {
+                            fileName = "fotoProveedores/" + empresa.getIdPersona().getUrlImagen();
+                        }
                     }
                 }
             }
@@ -686,21 +800,14 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                     getDetalleProcesoAdq().getIdRubroAdq().getIdRubroInteres(),
                     getDetalleProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
             switch (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue()) {
-                case 9://año 2021
-                    if (detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue() != 1) { //utiles y zapatos
-                        preMaxRefPar = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(22), detalleProcesoAdq);
-                    }
-                    preMaxRefCi = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(3), detalleProcesoAdq);
-                    preMaxRefCii = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(4), detalleProcesoAdq);
-                    preMaxRefCiii = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(5), detalleProcesoAdq);
-                    preMaxRefBac = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(6), detalleProcesoAdq);
-
-                    if (detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue() == 2) { //utiles
-                        preMaxRefCiiiMf = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(23), detalleProcesoAdq);
-                        preMaxRefBacMf = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(24), detalleProcesoAdq);
-                    }
-                    break;
-                default:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
                     preMaxRefPar = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(BigDecimal.ONE, detalleProcesoAdq);
                     preMaxRefCi = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(3), detalleProcesoAdq);
                     preMaxRefCii = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(4), detalleProcesoAdq);
@@ -722,6 +829,20 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                         preMaxRefB2 = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(17), detalleProcesoAdq);
                     }
                     break;
+                default: //año 2021 año 2022
+                    if (detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue() != 1) { //utiles y zapatos
+                        preMaxRefPar = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(22), detalleProcesoAdq);
+                    }
+                    preMaxRefCi = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(3), detalleProcesoAdq);
+                    preMaxRefCii = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(4), detalleProcesoAdq);
+                    preMaxRefCiii = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(5), detalleProcesoAdq);
+                    preMaxRefBac = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(6), detalleProcesoAdq);
+
+                    if (detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue() == 2) { //utiles
+                        preMaxRefCiiiMf = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(23), detalleProcesoAdq);
+                        preMaxRefBacMf = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(new BigDecimal(24), detalleProcesoAdq);
+                    }
+                    break;
             }
         }
         PrimeFaces.current().ajax().update("frmPrincipal");
@@ -731,17 +852,50 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         if (showUpdateEmpresa) {
             if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
                 empresa.setRazonSocial(empresa.getIdPersona().getNombreCompletoProveedor());
-                empresa.setIdMunicipio(utilEJB.find(Municipio.class, idMunicipioLocal));
-                empresa.setDireccionCompleta(empresa.getIdPersona().getDomicilio());
                 empresa.setTelefonos(empresa.getIdPersona().getNumeroTelefono());
                 empresa.setNumeroCelular(empresa.getIdPersona().getNumeroCelular());
                 empresa.setNumeroNit(empresa.getIdPersona().getNumeroNit());
-            }
-            if (empresa.getIdPersona().getIdMunicipio().getIdMunicipio().intValue() != idMunicipio.intValue()) {
+
+                if (mismaDireccion) {
+                    idMunicipioLocal = idMunicipio;
+                    idCantonLocal = idCanton;
+                    empresa.setDireccionCompleta(empresa.getIdPersona().getDomicilio());
+
+                    empresa.getIdPersona().setIdMunicipio(new Municipio(idMunicipio));
+                    empresa.setIdMunicipio(new Municipio(idMunicipioLocal));
+                    if (rubroUniforme) {
+                        empresa.setCodigoCanton(idCantonLocal);
+                        empresa.getIdPersona().setCodigoCanton(idCanton);
+                    } else {
+                        empresa.setCodigoCanton(null);
+                        empresa.getIdPersona().setCodigoCanton(null);
+                    }
+                } else {
+                    empresa.getIdPersona().setIdMunicipio(new Municipio(idMunicipio));
+                    empresa.getIdPersona().setCodigoCanton(idCanton);
+                }
+
+            } else if (rubroUniforme) {
+                empresa.setCodigoCanton(idCantonLocal);
+                empresa.setIdMunicipio(new Municipio(idMunicipioLocal));
                 empresa.getIdPersona().setIdMunicipio(new Municipio(idMunicipio));
+                empresa.getIdPersona().setCodigoCanton(idCanton);
+            }
+
+            //proveedorEJB.guardar(empresa);
+            if (rubroUniforme) {
+                empresa.setEsContribuyente(inscritoIva ? (short) 1 : 0);
+                empresa.setDeseaInscribirse(deseaInscribirseIva ? (short) 1 : 0);
             }
 
             proveedorEJB.guardar(empresa);
+
+            departamentoCalif.setCodigoDepartamento(utilEJB.find(Departamento.class,
+                    codigoDepartamentoCalificado));
+
+            if (proveedorEJB.guardarCapaInst(departamentoCalif, capacidadInst)) {
+                JsfUtil.mensajeUpdate();
+            }
 
         }
 
@@ -1251,7 +1405,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                                         break;
                                 }
                                 break;
-                            case 9:
+                            default:
                                 //procesos mayor o igual a la contratacion de 2021
                                 switch (numItem) {
                                     case "1":
@@ -1472,9 +1626,57 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
 
     public void impOfertaGlobal() {
         try {
-            List<JasperPrint> jasperPrintList = Reportes.getReporteOfertaDeProveedor(capacidadInst, empresa, detalleProcesoAdq,
+            String idGestion = proveedorEJB.datosConfirmados(capacidadInst.getIdMuestraInteres().getIdMuestraInteres(),
+                    empresa.getIdEmpresa(),
+                    VarSession.getVariableSessionUsuario());
+
+            String lugar = empresa.getIdMunicipio().getNombreMunicipio().concat(", ").concat(empresa.getIdMunicipio().getCodigoDepartamento().getNombreDepartamento());
+            if (idGestion.isEmpty()) {
+                idGestion = proveedorEJB.datosConfirmados(capacidadInst.getIdMuestraInteres().getIdMuestraInteres(),
+                        empresa.getIdEmpresa(),
+                        VarSession.getVariableSessionUsuario());
+            }
+
+            ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+            HashMap param = new HashMap();
+            param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
+            param.put("pEscudo", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
+            param.put("usuarioInsercion", VarSession.getVariableSessionUsuario());
+            param.put("pLugar", lugar);
+            param.put("pRubro", JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres()));
+            param.put("pIdRubro", capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres().intValue());
+            param.put("pCorreoPersona", capacidadInst.getIdMuestraInteres().getIdEmpresa().getIdPersona().getEmail());
+            param.put("pIdGestion", idGestion);
+
+            List<OfertaGlobal> lstDatos = reportesEJB.getLstOfertaGlobal(empresa.getNumeroNit(), detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres(), detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho());
+            lstDatos.get(0).setRubro(JsfUtil.getNombreRubroById(capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres()));
+            if (lstDatos.get(0).getDepartamento().contains("TODO EL PAIS")) {
+                param.put("productor", Boolean.TRUE);
+            } else {
+                param.put("productor", Boolean.FALSE);
+            }
+
+            List<JasperPrint> jasperPrintList = new ArrayList();
+
+            jasperPrintList.add(JasperFillManager.fillReport(
+                    Reportes.getPathReporte("sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobalProv" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"),
+                    param, new JRBeanCollectionDataSource(lstDatos)));
+
+            String muni = VarSession.getNombreMunicipioSession();
+
+            param.put("pLugar", empresa.getIdMunicipio().getCodigoDepartamento().getNombreDepartamento());
+
+            if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
+                jasperPrintList.add(Reportes.getReporteAImprimir("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerProvNat" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho(), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
+
+            } else {
+                jasperPrintList.add(Reportes.getReporteAImprimir("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerProvJur" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho(), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
+
+            }
+
+            /*jasperPrintList.addAll(Reportes.getReporteOfertaDeProveedor(capacidadInst, empresa, detalleProcesoAdq,
                     reportesEJB.getLstOfertaGlobal(empresa.getNumeroNit(), detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres(), detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho()),
-                    reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, VarSession.getNombreMunicipioSession()));
+                    reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, VarSession.getNombreMunicipioSession())));*/
             if (!jasperPrintList.isEmpty()) {
                 Reportes.generarReporte(jasperPrintList, "oferta_global_" + getEmpresa().getNumeroNit());
             }
@@ -1632,21 +1834,94 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                 continuar = true;
             }
         }
-
-        if (resetAceptacion && continuar) {
-            if (rubro != null) {
-                proveedorEJB.resetAceptacion(numeroNit, JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq());
-            } else {
-                JsfUtil.mensajeAlerta("Debe de seleccionar un Rubro de Adquisición");
+        if (rubro != null) {
+            if (resetAceptacion && continuar) {
+                proveedorEJB.resetAceptacion(numeroNit, getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getIdAnho());
             }
-        }
-
-        if (resetUsuario && continuar) {
-            proveedorEJB.resetActivacion(numeroNit);
+            if (resetUsuario && continuar) {
+                proveedorEJB.resetActivacion(numeroNit);
+            }
+        } else {
+            JsfUtil.mensajeAlerta("Debe de seleccionar un Rubro de Adquisición");
         }
     }
 
     public void generarCodigoSeguridad() {
-        //proveedorEJB.generarCodigoSeguridad(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq());
+        proveedorEJB.generarCodigoSeguridad(JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro).getIdDetProcesoAdq());
+    }
+
+    public void generarCodigo() {
+        String nits = "0308-080792-101-5,0315-240453-002-8,0614-080552-008-0,1412-260958-001-1,0101-220786-103-2,0609-110777-102-3,0311-111067-101-3,1010-060566-101-0,0708-280476-102-2,0210-200559-006-4,0210-180478-104-6,0427-091191-101-0,0308-300393-101-7,0207-150396-101-8,0614-241068-119-7,0316-080692-101-5,1404-291058-101-2,0610-030881-101-4,1217-180481-103-0,1309-280689-101-1,0210-180692-102-3,0614-291264-112-1,0103-091175-102-0,0619-270790-102-9,0502-160991-103-0,0802-020778-102-9,0111-010197-101-9,0213-040275-102-7,0207-231078-101-9,0105-180563-101-2,1324-120172-102-0,1123-240766-101-0,1405-051176-101-8,0821-120866-101-9,0612-180658-001-0,0614-010567-120-0,1215-160177-101-6,0201-110890-101-1,0204-011069-101-6,0608-140974-102-0,0210-160778-101-8,0805-240674-102-7,0509-100990-103-9,0520-220477-103-0,0614-070673-114-6,1416-110588-102-5,1109-021055-101-9,0610-200782-101-7,0821-071285-105-1,1404-250582-102-2,1217-110380-102-2,0210-250576-118-3,0520-030884-102-0,0819-220383-101-9,0101-060464-104-6,1405-040289-101-7,1213-141085-101-9,0608-050384-101-6,1206-071283-101-2,0405-031056-101-2,0809-130284-101-7,0819-061278-101-2,0821-080301-103-0,0203-250579-101-7,0816-160381-102-2,1408-090862-101-4,0307-021284-102-0,0106-030785-101-2,1212-140878-102-4,0203-020772-102-0,0614-300371-124-0,0614-080686-116-0,1416-181076-101-2,0702-190565-001-5,1405-030182-102-6,1010-200184-103-9,0617-301186-104-4,0610-230686-101-7,0210-280275-111-1,1208-280477-102-8,0302-150468-103-1,0422-260880-101-1,1102-221247-001-5,1010-160993-103-4,1319-140285-101-4,0614-150970-004-5,1212-070296-101-8,0101-080673-105-5,0203-300857-101-8,0103-251174-102-8,0312-240782-102-4,1303-071080-101-6,0313-270277-101-8,1319-141096-101-5,1105-010276-101-3,0207-290595-101-5,0309-020466-101-4,0614-050785-142-6,1209-281088-105-1,0422-200461-101-0,0203-220148-101-1,1010-240466-102-2,0610-291165-102-4,1217-180366-104-3,0819-180779-101-9,0315-151091-106-6,0308-050678-101-3,1312-200273-103-4,0210-050678-116-9,0805-110456-101-5,0213-250370-102-3,0402-240652-101-8,0610-140485-102-3,1319-260776-101-4,1107-230180-101-0,1418-191182-101-7,0614-300170-115-8,0802-040966-101-7,0602-121293-105-4,1123-211194-105-0,0618-071184-101-6,0716-230960-101-2,0511-220388-104-6,0204-110981-101-2,0901-121269-101-6,0306-150878-105-9,0702-110959-101-0,0605-080769-102-2,0617-150762-101-6,0412-300888-102-1,0614-080689-132-9,0422-230694-101-9,0111-010380-104-8,0210-121077-110-5,0816-190499-101-8,0202-130673-101-1,0210-040573-104-7,0210-130864-101-3,1010-230951-001-8,0703-050373-101-2,0302-080577-102-1,0416-020992-101-6,0306-070882-101-6,0210-070267-101-3,0821-250880-102-1,0614-170260-007-7,0101-070967-101-3,0821-300877-104-1,0210-180775-101-6,0308-241290-102-6,0430-230170-101-3,0906-180380-103-9,0503-260468-101-1,0402-110877-101-3,0203-060267-103-1,0614-160174-118-5,0111-230993-102-1,0614-190471-138-6,1311-260777-102-4,0203-140181-102-8,0905-110991-101-8,1217-081077-111-7,0301-051174-102-1,0816-041280-101-2";
+        RC4Crypter rc4 = new RC4Crypter();
+
+        for (String nit : nits.split(",")) {
+            Empresa emp = proveedorEJB.findEmpresaByNit(nit, true);
+            EmpresaCodigoSeg ecs = new EmpresaCodigoSeg();
+
+            ecs.setIdEmpresa(emp.getIdEmpresa());
+            ecs.setCodigoSeguridad(rc4.encrypt("ha", emp.getIdEmpresa().toString().concat(emp.getNumeroNit())).substring(0, 10));
+            ecs.setUsuarioActivado((short) 0);
+
+            proveedorEJB.generarCodigoSeguridad(ecs);
+        }
+    }
+
+    public void generarNotificacionUniformes() {
+        StringBuilder sb = new StringBuilder();
+        String nombreCanton = "";
+
+        for (Canton canton : getLstCantones()) {
+            if (canton.getCodigoCanton().equals(idCantonLocal) && canton.getIdMunicipio().intValue() == empresa.getIdMunicipio().getIdMunicipio().intValue()) {
+                nombreCanton = canton.getNombreCanton();
+                break;
+            }
+        }
+
+        NotificacionOfertaProvDto nopd = proveedorEJB.getNotificacionOfertaProv(empresa.getIdEmpresa(), idAnho, detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres());
+
+        sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("prov_notif_inscripcion_uniforme.email.mensaje"),
+                nopd.getRazonSocial(),
+                nopd.getNumeroNit(),
+                nopd.getDescripcionRubro(),
+                nopd.getPrograma(),
+                rubroUniforme ? nombreCanton.concat(",").concat(nopd.getUbicacionPer()) : nopd.getUbicacionPer(),
+                nopd.getDomicilio(),
+                nopd.getTelefonoPer(),
+                nopd.getDireccionCompleta(),
+                nopd.getTelefonoLocal(),
+                rubroUniforme ? "Cantón, Municipio y Departamento" : "Municipio y Departamento"));
+
+        sb.append(RESOURCE_BUNDLE.getString("prov_notif_inscripcion_uniforme.email.mensaje.tbl_precios.header"));
+        nopd.getLstDetItemOfertaGlobal().forEach((detalle) -> {
+            sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("prov_notif_inscripcion_uniforme.email.mensaje.tbl_precios.detalle"), detalle.getDescripcionItem(), detalle.getPrecioMaxReferencia(), detalle.getPrecioUnitario()));
+        });
+        sb.append(RESOURCE_BUNDLE.getString("prov_notif_inscripcion_uniforme.email.mensaje.tbl_precios.fin"));
+
+        sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("prov_notif_inscripcion_uniforme.email.mensaje.middle"), departamentoCalif.getCodigoDepartamento().getNombreDepartamento()));
+
+        sb.append(RESOURCE_BUNDLE.getString("prov_notif_inscripcion_uniforme.email.mensaje.tbl_municipio.header"));
+        nopd.getLstMunIntOfertaGlobal().forEach((detalle) -> {
+            sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("prov_notif_inscripcion_uniforme.email.mensaje.tbl_municipio.detalle"), detalle.getNombreDepartamento(), detalle.getNombreMunicipio()));
+        });
+        sb.append(RESOURCE_BUNDLE.getString("prov_notif_inscripcion_uniforme.email.mensaje.tbl_municipio.fin"));
+
+        List<String> to = new ArrayList();
+        List<String> cc = new ArrayList();
+        List<String> bcc = new ArrayList();
+
+        to.add(empresa.getIdPersona().getEmail());
+
+        cc.add(VarSession.getUsuarioSession().getIdPersona().getEmail());
+        cc.add("rafael.jose.arias@admin.mined.edu.sv");
+        cc.add("carlos.enrique.villegas@admin.mined.edu.sv");
+
+        bcc.add("miguelsr1@gmail.com");
+
+        eMailEJB.enviarMail("Notificación de Recepción de Oferta Global " + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho(),
+                sb.toString(),
+                to,
+                cc,
+                bcc,
+                JsfUtil.getSessionMailG("2"));
     }
 }

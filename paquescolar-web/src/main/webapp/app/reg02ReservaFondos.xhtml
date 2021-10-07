@@ -4,24 +4,27 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:p="http://primefaces.org/ui"
     xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:jsf="http://xmlns.jcp.org/jsf"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
-        <p:menubar id="mbMenu"> 
-            <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"
-                        update="pnlFiltro pnlProveedores"/>
-            <p:menuitem value="Modificar" icon="fa fa-edit" 
-                        action="#{resolucionesAdjudicativasController.prepareEdit}" 
-                        update="pnlFiltro pnlProveedores pnlFondosCE"/>
-            <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" 
-                        action="#{resolucionesAdjudicativasController.update}" disabled="#{menuController.usuarioSoloLectura}" update="pnlIdResolucion"/>
-            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
-            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+        <div jsf:id="dvMenu">
+            <p:menubar id="mbMenu"> 
+                <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"
+                            update="pnlFiltro pnlProveedores"/>
+                <p:menuitem value="Modificar" icon="fa fa-edit" 
+                            action="#{resolucionesAdjudicativasController.prepareEdit}" 
+                            update="pnlFiltro pnlProveedores pnlFondosCE"/>
+                <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" 
+                            action="#{resolucionesAdjudicativasController.update}" disabled="#{menuController.usuarioSoloLectura or resolucionesAdjudicativasController.contratoPreCarga}" update="pnlIdResolucion"/>
+                <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
+                <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
-            <f:facet  name="options">  
-                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
-            </f:facet> 
-        </p:menubar>        
-        <p:blockUI block="mbMenu" trigger="mGuardar" />
+                <f:facet  name="options">  
+                    <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+                </f:facet> 
+            </p:menubar>        
+            <p:blockUI block="mbMenu" trigger="mGuardar" />
+        </div>
         <p:panel visible="false" id="pnlIdResolucion">
             <f:viewParam name="idResolucion" value="#{resolucionesAdjudicativasController.idResolucionAdj}"/>
         </p:panel>
@@ -57,7 +60,7 @@
                         <p:selectOneMenu id="cboProveedor" value="#{resolucionesAdjudicativasController.idParticipante}" disabled="#{resolucionesAdjudicativasController.deshabilitar}" >
                             <f:selectItem itemLabel="Seleccione un proveedor" />  
                             <f:selectItems value="#{ofertaMB.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idParticipante)):par.idEmpresa.razonSocial}"/>
-                            <p:ajax update="cboEstado pnlProveedores pnlSaldos idParticipante" listener="#{resolucionesAdjudicativasController.buscarResolucionAdjudicativa}" />
+                            <p:ajax update="cboEstado pnlProveedores pnlSaldos idParticipante dvMenu" listener="#{resolucionesAdjudicativasController.buscarResolucionAdjudicativa}" />
                         </p:selectOneMenu>
 
                         <p:outputLabel value="Estado de la Reserva:" />

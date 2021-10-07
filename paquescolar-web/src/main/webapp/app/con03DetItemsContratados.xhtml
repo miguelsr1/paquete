@@ -53,7 +53,7 @@
                                 <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                             </p:selectOneMenu>
 
-                            <p:commandButton action="#{reportesWebController.generarRptProveedoresHacienda}" value="Buscar" id="ingresar" update="pnlDatos"/>
+                            <p:commandButton action="#{reportesWebController.generarRptProveedoresHacienda}" value="Buscar" id="ingresar" />
                         </p:panelGrid>
                     </div>
                     <p:poll interval="30" listener="#{consultasContratacionMB.buscarAvance}" update="pnlGraficos"/>

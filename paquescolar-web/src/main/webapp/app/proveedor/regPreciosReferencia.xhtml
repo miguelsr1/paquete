@@ -81,7 +81,7 @@
                                 </p:cellEditor>
                             </p:column>
 
-                            <p:column headerText="Borrar" width="25" style="text-align: center">
+                            <p:column headerText="Borrar" width="25" style="text-align: center" rendered="false">
                                 <p:commandLink action="#{preciosReferenciaMB.eliminarDetalle}" update="tblDetallePrecio">
                                     <p:outputLabel rendered="#{precio.estadoEliminacion eq 0}"> <i class="fa fa-check-circle"></i></p:outputLabel>
                                     <p:outputLabel rendered="#{precio.estadoEliminacion eq 1}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
