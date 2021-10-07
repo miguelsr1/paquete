@@ -23,12 +23,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
-import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.EstadoReserva;
 import sv.gob.mined.paquescolar.model.HistorialCamEstResAdj;
 import sv.gob.mined.paquescolar.model.InfoGeneralContratacion;
 import sv.gob.mined.paquescolar.model.Participantes;
-import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.TechoRubroEntEdu;
 

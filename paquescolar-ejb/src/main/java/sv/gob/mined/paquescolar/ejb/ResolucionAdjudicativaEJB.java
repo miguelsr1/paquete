@@ -19,6 +19,7 @@ import javax.ejb.LockType;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.mail.Session;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -184,7 +185,7 @@ public class ResolucionAdjudicativaEJB {
         if (!q.getResultList().isEmpty()) {
             RecepcionBienesServicios recep = (RecepcionBienesServicios) q.getResultList().get(0);
             recep.setFechaOrdenInicioEntrega1(contratosOrdenesCompras.getFechaOrdenInicio());
-            
+
             em.merge(recep);
         }
 
@@ -387,8 +388,8 @@ public class ResolucionAdjudicativaEJB {
         return q.getResultList();
     }
 
-    public void enviarCorreoDeError(BigDecimal idResolucionAdj) {
-        eMailEJB.enviarMailDeError("Contratos Múltiple", "Duplicidad de contratos para idResolucionAdj: " + idResolucionAdj, null);
+    public void enviarCorreoDeError(BigDecimal idResolucionAdj, Session sesionMail) {
+        eMailEJB.enviarMailDeError("Contratos Múltiple", "Duplicidad de contratos para idResolucionAdj: " + idResolucionAdj, null, sesionMail);
     }
 
     private void agregarDatosAResumen(ContratosOrdenesCompras contrato) {
@@ -442,6 +443,16 @@ public class ResolucionAdjudicativaEJB {
         return param;
     }
 
+    public Boolean contratoIsReservaFondos(BigDecimal idResolucionAdj) {
+        Query q = em.createNativeQuery("select count(*) "
+                + "from detalle_pre_carga dpc inner join contratos_ordenes_compras con on dpc.id_contrato = con.id_contrato\n"
+                + "    inner join resoluciones_adjudicativas res on res.id_resolucion_adj = con.id_Resolucion_adj\n"
+                + "where dpc.id_contrato = ?1");
+        q.setParameter(1, idResolucionAdj);
+
+        return (((BigDecimal) q.getSingleResult()).intValue() > 0);
+    }
+
     public void reversionMasiva() {
         Query q = em.createNativeQuery("SELECT id_resolucion_adj, id_det_proceso_adq, codigo_entidad FROM TEMP");
         List lst = q.getResultList();
@@ -491,7 +502,7 @@ public class ResolucionAdjudicativaEJB {
     public void guardarLiquidacion(Liquidacion liquidacion) {
         if (liquidacion.getIdLiquidacion() == null) {
             em.persist(liquidacion);
-        }else{
+        } else {
             em.merge(liquidacion);
         }
     }

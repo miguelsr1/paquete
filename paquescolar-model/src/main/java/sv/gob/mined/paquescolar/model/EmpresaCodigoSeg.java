@@ -41,7 +41,7 @@ import org.eclipse.persistence.annotations.StoredProcedureParameter;
             returnsResultSet = false,
             parameters = {
                 @StoredProcedureParameter(queryParameter = "P_NUMERO_NIT", name = "P_NUMERO_NIT", direction = Direction.IN, type = String.class),
-                @StoredProcedureParameter(queryParameter = "P_ID_DET_PROCESO_ADQ", name = "P_ID_DET_PROCESO_ADQ", direction = Direction.IN, type = Integer.class)
+                @StoredProcedureParameter(queryParameter = "P_ID_ANHO", name = "P_ID_ANHO", direction = Direction.IN, type = BigDecimal.class)
             }
     ),
     @NamedStoredProcedureQuery(
@@ -64,7 +64,7 @@ public class EmpresaCodigoSeg implements Serializable {
     private Long idEmpCodSeg;
     @Column(name = "ID_EMPRESA")
     private BigDecimal idEmpresa;
-   
+
     @Basic(optional = false)
     @Column(name = "CODIGO_SEGURIDAD")
     private String codigoSeguridad;
@@ -162,5 +162,5 @@ public class EmpresaCodigoSeg implements Serializable {
     public String toString() {
         return "sv.gob.mined.paquescolar.model.EmpresaCodigoSeg[ idEmpCodSeg=" + idEmpCodSeg + " ]";
     }
-    
+
 }

@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
+import javax.mail.Session;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -50,6 +51,7 @@ import sv.gob.mined.paquescolar.model.Persona;
 import sv.gob.mined.paquescolar.model.PlanillaPago;
 import sv.gob.mined.paquescolar.model.PlanillaPagoCheque;
 import sv.gob.mined.paquescolar.model.PorcentajeEvaluacion;
+import sv.gob.mined.paquescolar.model.PreciosRefRubro;
 import sv.gob.mined.paquescolar.model.PreciosRefRubroEmp;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.RequerimientoFondos;
@@ -57,6 +59,8 @@ import sv.gob.mined.paquescolar.model.TipoPersoneria;
 import sv.gob.mined.paquescolar.model.TipoUsuario;
 import sv.gob.mined.paquescolar.model.TransferenciaRequerimiento;
 import sv.gob.mined.paquescolar.model.Usuario;
+import sv.gob.mined.paquescolar.model.pojos.DetItemOfertaGlobal;
+import sv.gob.mined.paquescolar.model.pojos.DetMunIntOfertaGlobal;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.DetalleAdjudicacionEmpDto;
 import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
@@ -64,6 +68,7 @@ import sv.gob.mined.paquescolar.model.pojos.contratacion.CantidadPorNivelDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleContratacionPorItemDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.PrecioReferenciaEmpresaDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ProveedorDisponibleDto;
+import sv.gob.mined.paquescolar.model.pojos.proveedor.NotificacionOfertaProvDto;
 import sv.gob.mined.paquescolar.model.view.DatosPreliminarRequerimiento;
 import sv.gob.mined.paquescolar.util.Constantes;
 import sv.gob.mined.paquescolar.util.RC4Crypter;
@@ -78,6 +83,8 @@ public class ProveedorEJB {
 
     @EJB
     private EMailEJB eMailEJB;
+    @EJB
+    private ReportesEJB reportesEJB;
 
     @PersistenceContext(unitName = "paquescolarUP")
     private EntityManager em;
@@ -1942,7 +1949,7 @@ public class ProveedorEJB {
      * @param cuerpoEmail
      * @return 1. Todo bien, 2. Datos no encontrados, 3. Error en el correo
      */
-    public int validarCodigoSegEmpresa(String codigoSeg, String nit, String dui, String tituloEmail, String cuerpoEmail) {
+    public int validarCodigoSegEmpresa(String codigoSeg, String nit, String dui, String tituloEmail, String cuerpoEmail, Session sesionMail) {
         int codigoOperacion = 1;
         Empresa emp = findEmpresaByCodSeg(codigoSeg);
 
@@ -1960,7 +1967,7 @@ public class ProveedorEJB {
 
             String cuerpo = MessageFormat.format(cuerpoEmail, codigoGenerado);
 
-            if (eMailEJB.enviarMail(emp.getIdPersona().getEmail(), tituloEmail, cuerpo)) {
+            if (eMailEJB.enviarMail(emp.getIdPersona().getEmail(), tituloEmail, cuerpo, sesionMail)) {
                 updateCodigoValidacionProveedor(emp.getIdEmpresa(), codigoGenerado, false);
             } else {
                 codigoOperacion = 3;
@@ -2042,10 +2049,10 @@ public class ProveedorEJB {
         return (String) q.getOutputParameterValue(3);
     }
 
-    public void resetAceptacion(String numeroNit, Integer idDetProcesoAdq) {
+    public void resetAceptacion(String numeroNit, BigDecimal idAnho) {
         StoredProcedureQuery q = em.createNamedStoredProcedureQuery("SP_RESET_ACEPTACION");
         q.setParameter("P_NUMERO_NIT", numeroNit);
-        q.setParameter("P_ID_DET_PROCESO_ADQ", idDetProcesoAdq);
+        q.setParameter("P_ID_ANHO", idAnho);
         q.execute();
     }
 
@@ -2055,8 +2062,8 @@ public class ProveedorEJB {
         q.execute();
     }
 
-    public void enviarNotificacionModProv(String remitente, String titulo, String mensaje, List<String> to, List<String> cc, List<String> bcc) {
-        eMailEJB.enviarMail(remitente, titulo, mensaje, to, cc, bcc);
+    public void enviarNotificacionModProv(String titulo, String mensaje, List<String> to, List<String> cc, List<String> bcc, Session mailSession) {
+        eMailEJB.enviarMail(titulo, mensaje, to, cc, bcc, mailSession);
     }
 
     public Boolean tokenUsuarioValido(String token) {
@@ -2081,7 +2088,26 @@ public class ProveedorEJB {
 
             em.persist(ecs);
         }
-
     }
 
+    public void generarCodigoSeguridad(EmpresaCodigoSeg ecs) {
+        em.persist(ecs);
+    }
+
+    public NotificacionOfertaProvDto getNotificacionOfertaProv(BigDecimal idEmpresa, BigDecimal idAnho, BigDecimal idRubroInteres) {
+        NotificacionOfertaProvDto notificacionOfertaProvDto;
+
+        Query q = em.createNamedQuery("Proveedor.NotificacionOfertaProv", NotificacionOfertaProvDto.class);
+        q.setParameter(1, idEmpresa);
+        q.setParameter(2, idAnho);
+        q.setParameter(3, idRubroInteres);
+
+        notificacionOfertaProvDto = q.getResultList().isEmpty() ? null : (NotificacionOfertaProvDto) q.getResultList().get(0);
+
+        if (notificacionOfertaProvDto != null) {
+            notificacionOfertaProvDto.setLstDetItemOfertaGlobal(reportesEJB.getLstItemOfertaGlobal(notificacionOfertaProvDto.getNumeroNit(), idRubroInteres, idAnho));
+            notificacionOfertaProvDto.setLstMunIntOfertaGlobal(reportesEJB.getLstMunIntOfertaGlobal(notificacionOfertaProvDto.getNumeroNit(), idRubroInteres, idAnho));
+        }
+        return notificacionOfertaProvDto;
+    }
 }

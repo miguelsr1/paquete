@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
-import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -41,40 +40,41 @@ public class EMailEJB {
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-    @Resource(mappedName = "java:/MailService365")
-    private Session mailSession;
-    @Resource(mappedName = "java:/MailPaqueteRA")
-    private Session mailSessionRa;
-    @Resource(mappedName = "java:/MailPaqueteProv")
-    private Session mailSessionProv;
+    //@Resource(mappedName = "java:/MailService365")
+    //private Session mailSession;
+    //@Resource(mappedName = "java:/MailPaqueteProv")
+    //private Session mailSessionProv;
+
+    //private Session mailSessionRa;
 
     /**
      * Este método envía un mail
      *
      * @param subject asunto del mail
-     * @param remitente - destinatarios.
+     * @param destinatario - destinatarios.
      * @param message - contenido del mensaje.
      * @param codigoDepartamento
+     * @param mailSessionG
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void enviarMail(String subject, String remitente, String message, String codigoDepartamento) {
+    public void enviarMail(String subject, String destinatario, String message, String codigoDepartamento, Session mailSessionG) {
         try {
             int i;
             String listaDeCorreosBcc = utilEJB.getValorDeParametro("PAGO_CORREO_NOTIFICACION_COPIA");
-            MimeMessage m = new MimeMessage(mailSession);
-            Address from = new InternetAddress(utilEJB.getValorDeParametro("PAGO_CORREO_NOTIFICACION"));
+            MimeMessage m = new MimeMessage(mailSessionG);
+            Address from = new InternetAddress(mailSessionG.getProperty("mail.from"));
             List<String> lstCcCorreo = utilEJB.getLstCcPagoByCodDepa(codigoDepartamento);
 
             m.setFrom(from);
 
-            if (remitente.contains(",")) {
-                Address[] lstAddressTo = new Address[remitente.split(",").length];
-                for (i = 0; i < remitente.split(",").length; i++) {
-                    lstAddressTo[i] = new InternetAddress(remitente.split(",")[i]);
+            if (destinatario.contains(",")) {
+                Address[] lstAddressTo = new Address[destinatario.split(",").length];
+                for (i = 0; i < destinatario.split(",").length; i++) {
+                    lstAddressTo[i] = new InternetAddress(destinatario.split(",")[i]);
                 }
                 m.setRecipients(Message.RecipientType.TO, lstAddressTo);
             } else {
-                m.setRecipients(Message.RecipientType.TO, remitente);
+                m.setRecipients(Message.RecipientType.TO, destinatario);
             }
 
             Address[] lstAddressBcc = new Address[listaDeCorreosBcc.split(",").length + lstCcCorreo.size()];
@@ -101,17 +101,18 @@ public class EMailEJB {
      * @param subject
      * @param message
      * @param e
+     * @param mailSessionG
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void enviarMailDeError(String subject, String message, Exception e) {
+    public void enviarMailDeError(String subject, String message, Exception e, Session mailSessionG) {
         try {
             sb = new StringBuilder();
             if (e != null) {
                 sb.append(message).append("<br/><br/>").append(ExceptionUtils.getStackTrace(e));
             }
 
-            MimeMessage m = new MimeMessage(mailSession);
-            Address from = new InternetAddress(utilEJB.getValorDeParametro("PAGO_CORREO_NOTIFICACION"));
+            MimeMessage m = new MimeMessage(mailSessionG);
+            Address from = new InternetAddress(mailSessionG.getProperty("mail.from"));
 
             m.setFrom(from);
             m.setRecipients(Message.RecipientType.TO, "miguel.sanchez@mined.gob.sv");
@@ -125,18 +126,18 @@ public class EMailEJB {
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public Boolean enviarMail(String remitente, String titulo, String cuerpo) {
+    public Boolean enviarMail(String destinatario ,String titulo, String cuerpo, Session mailSessionG) {
         try {
-            MimeMessage m = new MimeMessage(mailSession);
-            Address from = new InternetAddress(utilEJB.getValorDeParametro("PAGO_CORREO_NOTIFICACION"));
+            MimeMessage m = new MimeMessage(mailSessionG);
+            Address from = new InternetAddress(mailSessionG.getProperty("mail.from"));
 
             m.setFrom(from);
-            m.setRecipients(Message.RecipientType.TO, remitente);
+            m.setRecipients(Message.RecipientType.TO, destinatario);
             m.setSubject(titulo, "UTF-8");
             m.setSentDate(new java.util.Date());
             m.setText(cuerpo, "UTF-8", "html");
             Transport.send(m);
-            Logger.getLogger(EMailEJB.class.getName()).log(Level.INFO, "Modulo Proveedores: Se envio el correo a.{0}", remitente);
+            Logger.getLogger(EMailEJB.class.getName()).log(Level.INFO, "Modulo Proveedores: Se envio el correo a.{0}", destinatario);
             return true;
         } catch (MessagingException ex) {
             Logger.getLogger(EMailEJB.class.getName()).log(Level.WARNING, "El correo registrado para el proveedor no existe.", ex);
@@ -145,11 +146,10 @@ public class EMailEJB {
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public Boolean enviarMail(String remitente,
-            String titulo, String mensaje, List<String> to, List<String> cc, List<String> bcc) {
+    public Boolean enviarMail(String titulo, String mensaje, List<String> to, List<String> cc, List<String> bcc, Session mailSessionG) {
         try {
-            MimeMessage m = new MimeMessage(mailSessionProv);
-            Address from = new InternetAddress(remitente);
+            MimeMessage m = new MimeMessage(mailSessionG);
+            Address from = new InternetAddress(mailSessionG.getProperty("mail.from"));
 
             Address[] destinatarios = new Address[to.size()];
             Address[] copia = new Address[cc.size()];
@@ -190,12 +190,12 @@ public class EMailEJB {
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public Boolean enviarMail(String remitente, String titulo, String mensaje,
+    public Boolean enviarMail(String titulo, String mensaje,
             List<String> to, List<String> cc, List<String> bcc,
-            Map<String, String> archivos) {
+            Map<String, String> archivos, Session mailSessionG) {
         try {
-            MimeMessage m = new MimeMessage(mailSessionRa);
-            Address from = new InternetAddress(remitente);
+            MimeMessage m = new MimeMessage(mailSessionG);
+            Address from = new InternetAddress(mailSessionG.getProperty("mail.from"));
 
             Address[] destinatarios = new Address[to.size()];
             Address[] copia = new Address[cc.size()];

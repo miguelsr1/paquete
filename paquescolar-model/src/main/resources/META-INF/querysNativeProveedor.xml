@@ -95,4 +95,29 @@
             ]]>
         </query>
     </named-native-query>
+    
+    <named-native-query name="Proveedor.NotificacionOfertaProv" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.proveedor.NotificacionOfertaProvDto">
+        <query>
+            <![CDATA[
+            select 
+                id_empresa as idEmpresa,
+                razon_social        as razonSocial,
+                numero_nit          as numeroNit,
+                descripcion_rubro   as descripcionRubro,
+                programa,
+                ubicacion_per       as ubicacionPer,
+                domicilio,
+                telefono_per        as telefonoPer,
+                direccion_completa  as direccionCompleta,
+                telefono_local      as telefonoLocal,
+                nombre_departamento as nombreDepartamento
+            from vw_prov_notificacion_cabecera 
+            where 
+                id_empresa=?1 and 
+                id_anho=?2 and
+                id_rubro_interes=?3
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>

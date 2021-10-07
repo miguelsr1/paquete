@@ -371,7 +371,7 @@ public class ConamypeEJB {
             } catch (NumberFormatException | ParseException ex) {
                 Logger.getLogger(ConamypeEJB.class.getName()).log(Level.SEVERE, "Error en el json\n: json: {0}", jsonString);
 
-                eMailEJB.enviarMailDeError("Error - WS CONAMYPE - MINED", "Ah ocurrido el sigueinte error en el proceso de exportación de proveedores.", ex);
+                //eMailEJB.enviarMailDeError("Error - WS CONAMYPE - MINED", "Ah ocurrido el sigueinte error en el proceso de exportación de proveedores.", ex, null);
             }
         }
     }
@@ -530,9 +530,9 @@ public class ConamypeEJB {
     }
 
     @WebMethod(operationName = "generarCodigoSeguridadByNit")
-    public void generarCodigoSeguridadByNit(Integer idDetProcesoAdq, String nit) {
-        Query q = em.createQuery("SELECT d.idEmpresa FROM DetRubroMuestraInteres d WHERE d.idDetProcesoAdq.idDetProcesoAdq=:id and d.idEmpresa.idPersona.numeroNit=:nit", Empresa.class);
-        q.setParameter("id", idDetProcesoAdq);
+    public void generarCodigoSeguridadByNit(String anho, String nit) {
+        Query q = em.createQuery("SELECT d.idEmpresa FROM DetRubroMuestraInteres d WHERE d.idAnho.anho=:id and d.idEmpresa.idPersona.numeroNit=:nit", Empresa.class);
+        q.setParameter("id", anho);
         q.setParameter("nit", nit);
         List<Empresa> lst = q.getResultList();
 

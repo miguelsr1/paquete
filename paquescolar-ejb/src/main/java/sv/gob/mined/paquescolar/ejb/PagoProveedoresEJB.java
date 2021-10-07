@@ -59,10 +59,10 @@ public class PagoProveedoresEJB {
             q.setParameter(3, codigoDepartamento);
             return q.getResultList();
         } catch (NumberFormatException e) {
-            eMailEJB.enviarMailDeError("Paquete Escolar - Error - Modulo de pago",
+            /*eMailEJB.enviarMailDeError("Paquete Escolar - Error - Modulo de pago",
                     "Error en generacion de constancia de renta.\n"
                     + "Anho " + anhoPago + "; NIT " + numeroNit + "; codigoDepartamento " + codigoDepartamento + "; usuario " + usuario,
-                    e);
+                    e);*/
             Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, "Error en generacion de constancia de renta.");
             Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, "Anho {0} NIT {1} codigoDepartamento {2}", new Object[]{anhoPago, numeroNit, codigoDepartamento});
             return new ArrayList();
@@ -91,10 +91,10 @@ public class PagoProveedoresEJB {
             q.setParameter(3, anhoPago);
             return q.getResultList();
         } catch (Exception e) {
-            eMailEJB.enviarMailDeError("Paquete Escolar - Error - Modulo de pago",
+            /*eMailEJB.enviarMailDeError("Paquete Escolar - Error - Modulo de pago",
                     "Error en generacion de constancia de renta mensual.\n"
                     + "Anho " + anhoPago + "; idMesPago " + idMesPago + "; codigoDepartamento " + codigoDepartamento + "; usuario " + usuario,
-                    e);
+                    e);*/
             Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, String.format("Error generando el reporte de renta mensual: %s - %d - %d", codigoDepartamento, idMesPago, anhoPago));
 
             return new ArrayList();

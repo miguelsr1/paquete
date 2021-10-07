@@ -92,7 +92,7 @@ public class ReportesEJB {
     }
 
     public List<OfertaGlobal> getLstOfertaGlobal(String nit, BigDecimal idRubro, BigDecimal idAnho) {
-        PreciosRefRubroEmp preTem;
+
         List<OfertaGlobal> lstRpt;
         Anho anho = em.find(Anho.class, idAnho);
         Query q = em.createNamedQuery("DatosProveDto.ofertaGlobal", OfertaGlobal.class);
@@ -103,8 +103,16 @@ public class ReportesEJB {
         lstRpt = q.getResultList();
 
         lstRpt.get(0).setAnho(anho.getAnho());
+        lstRpt.get(0).setLstDetItemOfertaGlobal(getLstItemOfertaGlobal(nit, idRubro, idAnho));
+        lstRpt.get(0).setLstMunIntOfertaGlobal(getLstMunIntOfertaGlobal(nit, idRubro, idAnho));
 
-        q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion=0 and p.idMuestraInteres.idEmpresa.numeroNit=:nit and p.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro AND p.idMuestraInteres.idAnho.idAnho=:pIdAnho and p.idProducto.idProducto not in (1) ORDER BY  FUNC('TO_NUMBER', p.noItem)", PreciosRefRubroEmp.class);
+        return lstRpt;
+    }
+
+    public List<DetItemOfertaGlobal> getLstItemOfertaGlobal(String nit, BigDecimal idRubro, BigDecimal idAnho) {
+        PreciosRefRubroEmp preTem;
+        List<DetItemOfertaGlobal> lst = new ArrayList();
+        Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion=0 and p.idMuestraInteres.idEmpresa.numeroNit=:nit and p.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro AND p.idMuestraInteres.idAnho.idAnho=:pIdAnho and p.idProducto.idProducto not in (1) ORDER BY  FUNC('TO_NUMBER', p.noItem)", PreciosRefRubroEmp.class);
         q.setParameter("nit", nit);
         q.setParameter("pIdRubro", idRubro);
         q.setParameter("pIdAnho", idAnho);
@@ -182,7 +190,7 @@ public class ReportesEJB {
                             break;
                         }
                     }
-                    lstRpt.get(0).getLstDetItemOfertaGlobal().add(det);
+                    lst.add(det);
                 }
                 break;
             case 2:
@@ -224,7 +232,7 @@ public class ReportesEJB {
                     if (preTem != null) {
                         det.setPrecioUnitario(preTem.getPrecioReferencia());
                     }
-                    lstRpt.get(0).getLstDetItemOfertaGlobal().add(det);
+                    lst.add(det);
                 }
                 break;
             case 3:
@@ -280,12 +288,16 @@ public class ReportesEJB {
                             break;
                         }
                     }
-                    lstRpt.get(0).getLstDetItemOfertaGlobal().add(det);
+                    lst.add(det);
                 }
                 break;
         }
+        return lst;
+    }
 
-        q = em.createQuery("SELECT d FROM DisMunicipioInteres d WHERE d.estadoEliminacion=0 and d.idCapaDistribucion.idMuestraInteres.idEmpresa.numeroNit=:nit and d.idCapaDistribucion.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and d.idCapaDistribucion.idMuestraInteres.idAnho.idAnho=:pIdAnho ORDER BY d.idMunicipio.codigoDepartamento.codigoDepartamento, d.idMunicipio.codigoMunicipio ASC", DisMunicipioInteres.class);
+    public List<DetMunIntOfertaGlobal> getLstMunIntOfertaGlobal(String nit, BigDecimal idRubro, BigDecimal idAnho) {
+        List<DetMunIntOfertaGlobal> lst = new ArrayList();
+        Query q = em.createQuery("SELECT d FROM DisMunicipioInteres d WHERE d.estadoEliminacion=0 and d.idCapaDistribucion.idMuestraInteres.idEmpresa.numeroNit=:nit and d.idCapaDistribucion.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and d.idCapaDistribucion.idMuestraInteres.idAnho.idAnho=:pIdAnho ORDER BY d.idMunicipio.codigoDepartamento.codigoDepartamento, d.idMunicipio.codigoMunicipio ASC", DisMunicipioInteres.class);
         q.setParameter("nit", nit);
         q.setParameter("pIdRubro", idRubro);
         q.setParameter("pIdAnho", idAnho);
@@ -298,10 +310,9 @@ public class ReportesEJB {
             detMun.setCodigoMunicipio(disMunicipioInteres.getIdMunicipio().getCodigoMunicipio());
             detMun.setNombreMunicipio(disMunicipioInteres.getIdMunicipio().getNombreMunicipio());
 
-            lstRpt.get(0).getLstMunIntOfertaGlobal().add(detMun);
+            lst.add(detMun);
         }
-
-        return lstRpt;
+        return lst;
     }
 
     public PreciosRefRubroEmp getPrecioMax(List<PreciosRefRubroEmp> lstPrecioMax, final String noItem) {

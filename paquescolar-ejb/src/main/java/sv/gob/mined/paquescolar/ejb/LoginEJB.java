@@ -54,7 +54,7 @@ public class LoginEJB {
     public Usuario isUsuarioProveedorValido(String usuario, String clave) {
         Usuario usu = null;
         try {
-            Query q = em.createQuery("SELECT u FROM Usuario u WHERE u.idPersona.usuario=:usuario and u.idPersona.claveAcceso=:clave and u.estadoEliminacion=0", Usuario.class);
+            Query q = em.createQuery("SELECT u FROM Usuario u WHERE u.idPersona.usuario=:usuario and u.idPersona.claveAcceso=:clave and u.estadoEliminacion=0 and u.idPersona.estadoEliminacion=0", Usuario.class);
             q.setParameter("usuario", usuario);
             q.setParameter("clave", (new RC4Crypter()).encrypt("ha", clave));
 
