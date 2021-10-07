@@ -882,7 +882,6 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                 empresa.getIdPersona().setCodigoCanton(idCanton);
             }
 
-            //proveedorEJB.guardar(empresa);
             if (rubroUniforme) {
                 empresa.setEsContribuyente(inscritoIva ? (short) 1 : 0);
                 empresa.setDeseaInscribirse(deseaInscribirseIva ? (short) 1 : 0);

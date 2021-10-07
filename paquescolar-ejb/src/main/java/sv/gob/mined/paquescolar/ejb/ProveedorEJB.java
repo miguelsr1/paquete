@@ -51,7 +51,6 @@ import sv.gob.mined.paquescolar.model.Persona;
 import sv.gob.mined.paquescolar.model.PlanillaPago;
 import sv.gob.mined.paquescolar.model.PlanillaPagoCheque;
 import sv.gob.mined.paquescolar.model.PorcentajeEvaluacion;
-import sv.gob.mined.paquescolar.model.PreciosRefRubro;
 import sv.gob.mined.paquescolar.model.PreciosRefRubroEmp;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.RequerimientoFondos;
@@ -59,8 +58,6 @@ import sv.gob.mined.paquescolar.model.TipoPersoneria;
 import sv.gob.mined.paquescolar.model.TipoUsuario;
 import sv.gob.mined.paquescolar.model.TransferenciaRequerimiento;
 import sv.gob.mined.paquescolar.model.Usuario;
-import sv.gob.mined.paquescolar.model.pojos.DetItemOfertaGlobal;
-import sv.gob.mined.paquescolar.model.pojos.DetMunIntOfertaGlobal;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.DetalleAdjudicacionEmpDto;
 import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
@@ -69,6 +66,7 @@ import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleContratacionPorI
 import sv.gob.mined.paquescolar.model.pojos.contratacion.PrecioReferenciaEmpresaDto;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ProveedorDisponibleDto;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.NotificacionOfertaProvDto;
+import sv.gob.mined.paquescolar.model.pojos.proveedor.SeguimientoIngresoProveDto;
 import sv.gob.mined.paquescolar.model.view.DatosPreliminarRequerimiento;
 import sv.gob.mined.paquescolar.util.Constantes;
 import sv.gob.mined.paquescolar.util.RC4Crypter;
@@ -2109,5 +2107,14 @@ public class ProveedorEJB {
             notificacionOfertaProvDto.setLstMunIntOfertaGlobal(reportesEJB.getLstMunIntOfertaGlobal(notificacionOfertaProvDto.getNumeroNit(), idRubroInteres, idAnho));
         }
         return notificacionOfertaProvDto;
+    }
+
+    public List<SeguimientoIngresoProveDto> findSeguimiento(BigDecimal idRubro, BigDecimal idAnho, String fecha) {
+        Query q = em.createNamedQuery("Proveedor.SeguimientoIngresoProveDto", SeguimientoIngresoProveDto.class);
+        q.setParameter(1, idAnho);
+        q.setParameter(2, idRubro);
+        q.setParameter(3, fecha);
+
+        return q.getResultList();
     }
 }

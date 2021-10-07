@@ -120,4 +120,30 @@
             ]]>
         </query>
     </named-native-query>
+    
+    <named-native-query name="Proveedor.SeguimientoIngresoProveDto" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.proveedor.SeguimientoIngresoProveDto">
+        <query>
+            <![CDATA[
+            select distinct
+                emp.numero_nit          as numeroNit,
+                emp.razon_social        as razonSocial,
+                rub.descripcion_rubro   as descripcionRubro,
+                per.PRIMER_NOMBRE || ' ' || NVL(per.SEGUNDO_NOMBRE, '') || ' ' || NVL(per.PRIMER_APELLIDO, '') || ' ' || NVL(per.SEGUNDO_APELLIDO, '') || ' ' || NVL(per.ACASADA, '') AS usuario,
+                dis.fecha_insercion as fecha
+            from det_rubro_muestra_interes det
+                inner join rubros_amostrar_interes rub on det.id_rubro_interes = rub.id_rubro_interes
+                inner join empresa emp on det.id_empresa = emp.id_empresa
+                inner join capa_distribucion_Acre cap on det.id_muestra_interes = cap.id_muestra_interes
+                inner join dis_municipio_interes dis on dis.id_capa_distribucion = cap.id_capa_distribucion
+                inner join persona per on dis.usuario_insercion = per.usuario
+            where 
+                det.id_anho = ?1 and 
+                det.id_rubro_interes = ?2 and
+                to_char(dis.fecha_insercion, 'dd/MM/yyyy') = ?3
+            order by 
+                dis.fecha_insercion desc
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>
