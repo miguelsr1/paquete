@@ -1915,7 +1915,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         cc.add("rafael.jose.arias@admin.mined.edu.sv");
         cc.add("carlos.enrique.villegas@admin.mined.edu.sv");
 
-        bcc.add("miguelsr1@gmail.com");
+        //bcc.add("miguelsr1@gmail.com");
 
         eMailEJB.enviarMail("Notificación de Recepción de Oferta Global " + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho(),
                 sb.toString(),
