@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptLiqObservacion" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="171a817f-2b9f-4ccc-a5f4-0babf9a17c2e">
 	<property name="ireport.zoom" value="1.771561000000001"/>
-	<property name="ireport.x" value="69"/>
-	<property name="ireport.y" value="96"/>
+	<property name="ireport.x" value="31"/>
+	<property name="ireport.y" value="379"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -106,9 +106,9 @@ WHERE obs.CODIGO_ENTIDAD = $P{pCodigo} AND
 		</band>
 	</title>
 	<pageHeader>
-		<band height="150" splitType="Stretch">
+		<band height="137" splitType="Stretch">
 			<staticText>
-				<reportElement x="21" y="133" width="517" height="15" uuid="f80acd18-74f6-4643-9d1c-3e8c7dbf460b"/>
+				<reportElement x="21" y="122" width="517" height="15" uuid="f80acd18-74f6-4643-9d1c-3e8c7dbf460b"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial" size="8" isBold="true"/>
 				</textElement>
@@ -148,7 +148,7 @@ WHERE obs.CODIGO_ENTIDAD = $P{pCodigo} AND
 							<staticText>
 								<reportElement x="0" y="0" width="29" height="13" uuid="71fd677f-ef71-4a2f-b4c8-ced2dd0c9af5"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial"/>
+									<font fontName="Arial" size="8"/>
 								</textElement>
 								<text><![CDATA[Id]]></text>
 							</staticText>
@@ -157,7 +157,7 @@ WHERE obs.CODIGO_ENTIDAD = $P{pCodigo} AND
 							<textField>
 								<reportElement x="0" y="0" width="29" height="12" uuid="3a5e2215-0266-4503-9bf0-e143e349708b"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial"/>
+									<font fontName="Arial" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{ROWNUM}]]></textFieldExpression>
 							</textField>
@@ -168,7 +168,7 @@ WHERE obs.CODIGO_ENTIDAD = $P{pCodigo} AND
 							<staticText>
 								<reportElement x="0" y="0" width="330" height="13" uuid="4d19ef28-7aea-4991-932d-513f1a89c75f"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial"/>
+									<font fontName="Arial" size="8"/>
 								</textElement>
 								<text><![CDATA[Concepto]]></text>
 							</staticText>
@@ -177,7 +177,7 @@ WHERE obs.CODIGO_ENTIDAD = $P{pCodigo} AND
 							<textField isStretchWithOverflow="true">
 								<reportElement x="2" y="0" width="328" height="12" uuid="f30fa492-84e1-42c1-a5e2-9e4b2c80731f"/>
 								<textElement>
-									<font fontName="Arial"/>
+									<font fontName="Arial" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
 							</textField>
@@ -188,7 +188,7 @@ WHERE obs.CODIGO_ENTIDAD = $P{pCodigo} AND
 							<staticText>
 								<reportElement x="0" y="0" width="90" height="13" uuid="b5ba168b-9e92-4513-b2d2-3c6b234e7486"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial"/>
+									<font fontName="Arial" size="8"/>
 								</textElement>
 								<text><![CDATA[Observación]]></text>
 							</staticText>
@@ -197,7 +197,7 @@ WHERE obs.CODIGO_ENTIDAD = $P{pCodigo} AND
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 								<reportElement x="0" y="0" width="90" height="12" uuid="86120045-22fe-4173-ac6f-3aacc4b9733a"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial"/>
+									<font fontName="Arial" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{OBSERVACION}]]></textFieldExpression>
 							</textField>
@@ -208,25 +208,27 @@ WHERE obs.CODIGO_ENTIDAD = $P{pCodigo} AND
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="128" splitType="Stretch">
+		<band height="153" splitType="Stretch">
 			<textField>
-				<reportElement x="21" y="11" width="517" height="42" uuid="b59885f3-ae7e-4b4c-98d4-81067c913a93"/>
+				<reportElement x="21" y="4" width="517" height="91" uuid="b59885f3-ae7e-4b4c-98d4-81067c913a93"/>
 				<textElement markup="none">
 					<font fontName="Arial" size="8"/>
+					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Fecha límite para superar las observaciones: _______________________\n\n"+
 "OTRAS OBSERVACIONES: \n"+
+"___________________________________________________________________________________________________________________\n\n"+
 "___________________________________________________________________________________________________________________"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="21" y="64" width="517" height="20" uuid="511f2104-001e-43c7-b35d-b3a274ce4181"/>
+				<reportElement x="21" y="97" width="517" height="20" uuid="511f2104-001e-43c7-b35d-b3a274ce4181"/>
 				<textElement>
 					<font fontName="Arial" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Por este medio hago constar que verifiqué la documentación administrativa del Programa Dotación de Paquetes Escolares, la cual fue revisada de acuerdo a Normativas y Lineamientos emimitidos por el MINEDUCYT, de lo cual doy fe.]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="21" y="94" width="517" height="34" uuid="2ea34103-350f-4f1a-b27b-e83a0bed6fba"/>
+				<reportElement x="21" y="118" width="517" height="34" uuid="2ea34103-350f-4f1a-b27b-e83a0bed6fba"/>
 				<textElement markup="none">
 					<font fontName="Arial" size="8" isBold="false"/>
 					<paragraph lineSpacing="Double"/>
@@ -237,12 +239,12 @@ WHERE obs.CODIGO_ENTIDAD = $P{pCodigo} AND
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="45" splitType="Stretch"/>
+		<band height="19" splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="54" splitType="Stretch"/>
+		<band height="24" splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="42" splitType="Stretch"/>
+		<band height="7" splitType="Stretch"/>
 	</summary>
 </jasperReport>

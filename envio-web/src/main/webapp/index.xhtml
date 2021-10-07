@@ -1,8 +1,9 @@
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:jsf="http://xmlns.jcp.org/jsf">
 
     <h:head>
         <f:facet name="first">
@@ -10,103 +11,98 @@
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
             <meta name="apple-mobile-web-app-capable" content="yes" />
+            <link href="#{request.contextPath}/resources/images/favicon.png" rel="shortcut icon"/>
         </f:facet>
-        <title>MINEDUCYT - Envío de correo masivos</title>
-
-        <ui:insert name="head"/>
-
-        <script type="text/javascript">
-        </script>
-
-        <h:outputScript name="funciones.js" library="js" />
+        <title>Cooperación a Centros Educativos</title>
     </h:head>
 
-    <h:body styleClass="landing-body" >
+    <h:body styleClass="login-body">
+        <h:form prependId="false">
+            <p:messages id="growl" closable="true" escape="false" showDetail="true">
+                <p:autoUpdate />
+            </p:messages>
 
-        <div class="landing-wrapper">
-            <div id="header">
-                <div class="header-top">
-                    <h:panelGrid columns="2" style="width: 100%" columnClasses="col4,col8_left">
-                        <h:graphicImage name="images/mined-logo.svg" style="height:100px; margin-right: 20px; font-family: Bembo Std;"/>
-                        <h1 style="font-family: Bembo Std !important;">Envío de Correos Masivos</h1>
-                    </h:panelGrid>
+            <div class="login-panel ui-fluid" jsf:id="outPrincipal">
+                <div class="card" style="margin: auto;">
+                    <div class="p-grid p-nogutter">
+                        <div class="p-col-12 logo-container">
+                            <h:panelGrid columns="2" width="100%">
+                                <p:graphicImage name="images/mined-logo.svg" styleClass="login-icon" style="float: right !important;"/>
+                                <p:outputLabel style="font-size: 16px;">Envío de Correos Masivos</p:outputLabel>                                
+                            </h:panelGrid>
+                        </div>
+                        <div class="p-col-12">
+                            <p:outputLabel value="Tipo de cuenta a utilizar"/>
+                            <div class="input-wrapper">
+                                <p:selectOneMenu id="rdTipo" value="#{loginView.idDominioCorreo}" style="width: 100%;">
+                                    <f:selectItem itemLabel="Office 365" itemValue="2"/>
+                                    <f:selectItem itemLabel="Correo Institucional" itemValue="1"/>
+                                    <p:ajax update="lblDominio divDominio"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="p-col-12">
+                            <p:outputLabel for="txtUsuario" value="Correo" />
+                            <div class="p-grid">
+                                <div class="p-col-8">
+                                    <p:inputText id="txtUsuario" placeholder="Usuario" style="width: 100%;" required="true" value="#{loginView.correoRemitente}"/>
+                                </div>
+                                <div class="p-col-4" >
+                                    <p:outputLabel id="lblDominio" value="#{loginView.idDominioCorreo eq '1' ? '@mined.gob.sv':'@admin.mined.edu.sv'}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div jsf:id="divDominio" class="p-col-12" style="display:#{(loginView.idDominioCorreo eq '1')?'block':'none'}">
+                            <p:outputLabel for="txtDominio" value="Usuario WINDOWS" />
+                            <div class="input-wrapper">
+                                <p:inputText id="txtDominio" widgetVar="txtDominio" value="#{loginView.dominio}" rendered="#{loginView.idDominioCorreo eq '1'}" />
+                            </div>
+                        </div>
+                        <div class="p-col-12">
+                            <p:outputLabel for="passwordEmp" value="Clave de acceso"  />
+                            <div class="input-wrapper">
+                                <p:password id="passwordEmp" placeholder="Clave de acceso" feedback="false" value="#{loginView.password}" />
+                                <p:graphicImage name="images/login/lock.png" library="paradise-layout"
+                                                styleClass="lock-icon"/>
+                            </div>
+                        </div>
+                        <div class="p-col-12">
+                            <br/>
+                        </div>
+                        <div class="p-col-12 " >
+                            <div class="p-grid">
+                                <div class="p-col-6">
+                                    <p:commandButton id="btnValidar" widgetVar="btnValidar" value="Validar" style="width: 110px;" 
+                                                     action="#{loginView.validarCrendecialesDelCorreo()}" 
+                                                     onclick="PF('btnValidar').disable();" 
+                                                     oncomplete="PF('btnValidar').enable();" update="outPrincipal"/> 
+                                </div>
+                                <div class="p-col-6">
+                                    <p:ajaxStatus style="float: right;">
+                                        <f:facet name="default">
+                                        </f:facet>
 
-                    <div id="pricing" class="header-top">
-                        <div class="ui-g ui-fluid">
-                            <h:form prependId="false">
-                                <p:messages id="growl" closable="true" escape="false" showDetail="true">
-                                    <p:autoUpdate />
-                                </p:messages>
+                                        <f:facet name="start">
+                                            <h:outputText value="Espere por favor" style="font-size: 14px;" />
+                                            <i class="fa fa-spinner fa-spin" style="font-size: 20px;"></i>
+                                        </f:facet>
 
-                                <p:outputPanel id="outPrincipal" style="width: 900px;">
-                                    <p:outputPanel style="width: 900px;" rendered="#{not loginView.correoValido}">
-                                        <p:panelGrid columns="1" columnClasses="ui-g-12"
-                                                     style="margin: 0 auto; width: 360px; text-align: center;"
-                                                     styleClass="form-group ui-panelgrid-blank" layout="grid">
-                                            <p:outputLabel value="Tipo de cuenta a utilizar"/>
-                                            <p:selectOneRadio id="rdTipo" unselectable="false" value="#{loginView.idDominioCorreo}" style="font-size: 16px; margin: auto;">
-                                                <f:selectItem itemLabel="Office 365" itemValue="2"/>
-                                                <f:selectItem itemLabel="Correo Institucional" itemValue="1"/>
-                                                <p:ajax update="pngCredenciales" event="change" />
-                                            </p:selectOneRadio>
-                                        </p:panelGrid>
-                                        <br/>
-
-                                        <p:panelGrid id="pngCredenciales" columns="1" columnClasses="ui-g-12"
-                                                     style="margin: 0 auto; width: 360px;" styleClass="form-group ui-panelgrid-blank" layout="grid">
-                                            <p:outputLabel for="txtCorreoRemitente" value="Correo remitente "/>
-                                            <p:outputPanel>
-                                                <p:inputText id="txtCorreoRemitente" widgetVar="txtCorreoRemitente" value="#{loginView.correoRemitente}" style="width: 200px" required="true"/>
-                                                <p:spacer width="15"/>
-                                                <p:outputLabel value="#{loginView.idDominioCorreo eq '1' ? '@mined.gob.sv':'@admin.mined.edu.sv'}"/>
-                                            </p:outputPanel>
-
-                                            <p:outputLabel value="Usuario Windows" rendered="#{loginView.idDominioCorreo eq '1'}"/>
-                                            <p:outputPanel>
-                                                <p:outputLabel value="MINED\\" rendered="#{loginView.idDominioCorreo eq '1'}"/>
-                                                <p:spacer width="15"/>
-                                                <p:inputText id="txtDominio" widgetVar="txtDominio" value="#{loginView.dominio}" rendered="#{loginView.idDominioCorreo eq '1'}" style="width: 285px;"/>
-                                            </p:outputPanel>
-
-                                            <p:outputLabel for="txtClaveRemitente" value="Contraseña"/>
-                                            <p:password id="txtClaveRemitente" widgetVar="txtClaveRemitente" value="#{loginView.password}" placeholder="Password" required="true"/>
-                                        </p:panelGrid>
-
-                                        <p:panelGrid id="pngValidar" columns="1" columnClasses="ui-g-12"
-                                                     style="margin: 0 auto; text-align: center; width: 360px;" styleClass="form-group ui-panelgrid-blank" layout="grid">
-                                            <p:commandButton id="btnValidar" widgetVar="btnValidar" value="Validar" style="width: 110px;" action="#{loginView.validarCrendecialesDelCorreo()}" 
-                                                             onclick="PF('btnValidar').disable();" 
-                                                             oncomplete="PF('btnValidar').enable();" update="outPrincipal"/> 
-
-                                            <p:ajaxStatus>
-                                                <f:facet name="default">
-                                                </f:facet>
-
-                                                <f:facet name="start">
-                                                    <h:outputText value="Espere por favor" style="font-size: 14px; font-family: 'Bembo Std'" />
-                                                    <i class="fa fa-spinner fa-spin" style="font-size: 20px;"></i>
-                                                </f:facet>
-
-                                                <f:facet name="complete">
-                                                    <h:outputText value="" />
-                                                </f:facet>
-                                            </p:ajaxStatus>
-                                        </p:panelGrid>
-                                    </p:outputPanel>
-                                </p:outputPanel>
-                            </h:form>
+                                        <f:facet name="complete">
+                                            <h:outputText value="" />
+                                        </f:facet>
+                                    </p:ajaxStatus>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-
-
-        <h:outputStylesheet name="main.css" library="css" />
-        <h:outputStylesheet name="css/animate.css" library="paradise-layout" />
-        <h:outputStylesheet name="css/components.css" library="paradise-layout" />
-        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout" />
+        </h:form>
     </h:body>
+
+    <h:outputStylesheet name="css/primeicons.css" library="paradise-layout" />
+    <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout" />
+    <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout" />
+
 
 </html>      

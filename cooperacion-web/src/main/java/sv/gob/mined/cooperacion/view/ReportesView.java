@@ -43,6 +43,7 @@ import org.apache.poi.ss.util.DateFormatConverter;
 import sv.gob.mined.cooperacion.facade.CatalogoFacade;
 import sv.gob.mined.cooperacion.model.dto.MatrizProyectoDto;
 import sv.gob.mined.utils.StringUtils;
+import sv.gob.mined.utils.jsf.JsfUtil;
 
 @Named
 @ViewScoped
@@ -61,94 +62,105 @@ public class ReportesView implements Serializable {
     private CatalogoFacade catalogoFacade;
 
     public void generarMatrizProyecto() {
-        anho = "2020";
-        int row = 8;
-        Date date = new Date();
+        //anho = "2020";
 
-        List<MatrizProyectoDto> lstDatos = catalogoFacade.getMatrizProyectosByAnho(anho);
-        HSSFCellStyle style;
-        try (InputStream ins = ReportesView.class.getClassLoader().getResourceAsStream("sv/gob/mined/rpt/excel/matrizProyecto.xls")) {
-            wb = (HSSFWorkbook) WorkbookFactory.create(ins);
-            FORMATO_DATA = wb.createDataFormat();
-            style = wb.createCellStyle();
-            style.setBorderBottom(BorderStyle.THIN);
-            style.setBorderTop(BorderStyle.THIN);
-            style.setBorderRight(BorderStyle.THIN);
-            style.setBorderLeft(BorderStyle.THIN);
-            style.setWrapText(true);
-            style.setVerticalAlignment(VerticalAlignment.TOP);
-            style.setAlignment(HorizontalAlignment.JUSTIFY);
+        if (anho.equals("0")) {
+            JsfUtil.mensajeAlerta("Debe de selecionar un año valido!");
+        } else {
+            int row = 8;
+            Date date = new Date();
 
-            HSSFCellStyle styleFecha = wb.createCellStyle();
-            styleFecha.setBorderBottom(BorderStyle.THIN);
-            styleFecha.setBorderTop(BorderStyle.THIN);
-            styleFecha.setBorderRight(BorderStyle.THIN);
-            styleFecha.setBorderLeft(BorderStyle.THIN);
-            styleFecha.setVerticalAlignment(VerticalAlignment.TOP);
-            styleFecha.setAlignment(HorizontalAlignment.JUSTIFY);
-            String excelFormatPattern = DateFormatConverter.convert(Locale.ENGLISH, "dd/MM/yyyy");
-            styleFecha.setDataFormat(wb.createDataFormat().getFormat(excelFormatPattern));
+            List<MatrizProyectoDto> lstDatos = catalogoFacade.getMatrizProyectosByAnho(anho);
+            HSSFCellStyle style;
+            try (InputStream ins = ReportesView.class.getClassLoader().getResourceAsStream("sv/gob/mined/rpt/excel/matrizProyecto.xls")) {
+                wb = (HSSFWorkbook) WorkbookFactory.create(ins);
+                FORMATO_DATA = wb.createDataFormat();
+                style = wb.createCellStyle();
+                style.setBorderBottom(BorderStyle.THIN);
+                style.setBorderTop(BorderStyle.THIN);
+                style.setBorderRight(BorderStyle.THIN);
+                style.setBorderLeft(BorderStyle.THIN);
+                style.setWrapText(true);
+                style.setVerticalAlignment(VerticalAlignment.TOP);
+                style.setAlignment(HorizontalAlignment.JUSTIFY);
 
-            HSSFCellStyle styleEntero = wb.createCellStyle();
-            styleEntero.setBorderBottom(BorderStyle.THIN);
-            styleEntero.setBorderTop(BorderStyle.THIN);
-            styleEntero.setBorderRight(BorderStyle.THIN);
-            styleEntero.setBorderLeft(BorderStyle.THIN);
-            styleEntero.setVerticalAlignment(VerticalAlignment.TOP);
-            styleEntero.setAlignment(HorizontalAlignment.JUSTIFY);
-            styleEntero.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0"));
+                HSSFCellStyle styleFecha = wb.createCellStyle();
+                styleFecha.setBorderBottom(BorderStyle.THIN);
+                styleFecha.setBorderTop(BorderStyle.THIN);
+                styleFecha.setBorderRight(BorderStyle.THIN);
+                styleFecha.setBorderLeft(BorderStyle.THIN);
+                styleFecha.setVerticalAlignment(VerticalAlignment.TOP);
+                styleFecha.setAlignment(HorizontalAlignment.JUSTIFY);
+                String excelFormatPattern = DateFormatConverter.convert(Locale.ENGLISH, "dd/MM/yyyy");
+                styleFecha.setDataFormat(wb.createDataFormat().getFormat(excelFormatPattern));
 
-            HSSFCellStyle styleDecimal = wb.createCellStyle();
-            styleDecimal.setBorderBottom(BorderStyle.THIN);
-            styleDecimal.setBorderTop(BorderStyle.THIN);
-            styleDecimal.setBorderRight(BorderStyle.THIN);
-            styleDecimal.setBorderLeft(BorderStyle.THIN);
-            styleDecimal.setVerticalAlignment(VerticalAlignment.TOP);
-            styleDecimal.setAlignment(HorizontalAlignment.JUSTIFY);
-            styleDecimal.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0.00"));
+                HSSFCellStyle styleEntero = wb.createCellStyle();
+                styleEntero.setBorderBottom(BorderStyle.THIN);
+                styleEntero.setBorderTop(BorderStyle.THIN);
+                styleEntero.setBorderRight(BorderStyle.THIN);
+                styleEntero.setBorderLeft(BorderStyle.THIN);
+                styleEntero.setVerticalAlignment(VerticalAlignment.TOP);
+                styleEntero.setAlignment(HorizontalAlignment.JUSTIFY);
+                styleEntero.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0"));
 
-            HSSFSheet s1 = wb.getSheetAt(0);   //sheet by index
+                HSSFCellStyle styleDecimal = wb.createCellStyle();
+                styleDecimal.setBorderBottom(BorderStyle.THIN);
+                styleDecimal.setBorderTop(BorderStyle.THIN);
+                styleDecimal.setBorderRight(BorderStyle.THIN);
+                styleDecimal.setBorderLeft(BorderStyle.THIN);
+                styleDecimal.setVerticalAlignment(VerticalAlignment.TOP);
+                styleDecimal.setAlignment(HorizontalAlignment.JUSTIFY);
+                styleDecimal.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0.00"));
 
-            HSSFRow hrow = s1.getRow(3);
-            HSSFCell cell = hrow.getCell(2);
-            cell.setCellValue("Matriz de Proyectos en Ejecución - " + anho);
+                HSSFSheet s1 = wb.getSheetAt(0);   //sheet by index
 
-            
+                HSSFRow hrow = s1.getRow(3);
+                HSSFCell cell = hrow.getCell(2);
+                cell.setCellValue("Matriz de Proyectos en Ejecución - " + anho);
 
-            hrow = s1.getRow(4);
-            cell = hrow.getCell(2);
-            cell.setCellValue("Resumen por Unidad Técnica al  " + StringUtils.getNumDia(date) + " de " + StringUtils.getNomMes(date) + " de " + anho);
+                hrow = s1.getRow(4);
+                cell = hrow.getCell(2);
+                cell.setCellValue("Resumen por Unidad Técnica al  " + StringUtils.getNumDia(date) + " de " + StringUtils.getNomMes(date) + " de " + anho);
 
-            for (MatrizProyectoDto dato : lstDatos) {
-                hrow = s1.createRow(row);
+                for (MatrizProyectoDto dato : lstDatos) {
+                    hrow = s1.createRow(row);
 
-                escribirNumeroEntero(dato.getIdProyecto().toString(), hrow, 0, styleEntero);
-                escribirTexto(dato.getNombreProyecto(), hrow, 1, style);
-                escribirTexto(dato.getDescripcion(), hrow, 2, style);
-                escribirTexto(dato.getInstitucion(), hrow, 3, style);
-                escribirTexto(dato.getSectorIntervencion(), hrow, 4, style);
-                escribirTexto(dato.getDescripcionCooperacion(), hrow, 5, style);
-                escribirTexto(dato.getDescripcionModalidad(), hrow, 6, style);
-                escribirTexto(dato.getDescripcionObjetivo(), hrow, 7, style);
-                escribirTexto(dato.getDescripcionMeta(), hrow, 8, style);
-                escribirFecha(dato.getFechaEstimadaInicio(), hrow, 9, styleFecha);
-                escribirFecha(dato.getFechaEstimadaFin(), hrow, 10, styleFecha);
-                escribirTexto(dato.getNombreCooperante(), hrow, 11, style);
+                    escribirNumeroEntero(dato.getIdProyecto().toString(), hrow, 0, styleEntero);
+                    escribirTexto(dato.getNombreProyecto(), hrow, 1, style);
+                    escribirTexto(dato.getDescripcion(), hrow, 2, style);
+                    escribirTexto(dato.getInstitucion(), hrow, 3, style);
+                    escribirTexto(dato.getSectorIntervencion(), hrow, 4, style);
+                    escribirTexto(dato.getDescripcionCooperacion(), hrow, 5, style);
+                    escribirTexto(dato.getDescripcionModalidad(), hrow, 6, style);
+                    escribirTexto(dato.getDescripcionObjetivo(), hrow, 7, style);
+                    escribirTexto(dato.getDescripcionMeta(), hrow, 8, style);
+                    escribirFecha(dato.getFechaEstimadaInicio(), hrow, 9, styleFecha);
+                    escribirFecha(dato.getFechaEstimadaFin(), hrow, 10, styleFecha);
+                    escribirTexto(dato.getNombreCooperante(), hrow, 11, style);
 
-                escribirNumeroDecimal((dato.getMontoInversion() == null ? "" : dato.getMontoInversion().toString()), hrow, 12, styleDecimal);
-                escribirTexto("", hrow, 13, style);
-                escribirTexto("", hrow, 14, style);
-                escribirTexto("", hrow, 15, style);
-                escribirTexto("", hrow, 16, style);
-                row++;
+                    escribirNumeroDecimal((dato.getMontoInversion() == null ? "" : dato.getMontoInversion().toString()), hrow, 12, styleDecimal);
+                    escribirTexto("", hrow, 13, style);
+                    escribirTexto("", hrow, 14, style);
+                    escribirTexto("", hrow, 15, style);
+                    escribirTexto("", hrow, 16, style);
+                    row++;
 
-                hrow.setHeight((short) -1);
+                    hrow.setHeight((short) -1);
+                }
+
+                generarArchivo(wb, "rptMatrizProyecto");
+            } catch (IOException | InvalidFormatException ex) {
+                Logger.getLogger(ReportesView.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-            generarArchivo(wb, "rptMatrizProyecto");
-        } catch (IOException | InvalidFormatException ex) {
-            Logger.getLogger(ReportesView.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public String getAnho() {
+        return anho;
+    }
+
+    public void setAnho(String anho) {
+        this.anho = anho;
     }
 
     private void escribirTexto(String text, HSSFRow hrow, Integer col, CellStyle style) {

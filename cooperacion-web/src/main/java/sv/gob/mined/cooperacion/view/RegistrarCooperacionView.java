@@ -13,7 +13,9 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -328,7 +330,7 @@ public class RegistrarCooperacionView implements Serializable {
                 if (datoInfraCe == null) {
                     PrimeFaces.current().executeScript("PF('dlgDatoInfra').show();");
                     continuar = false;
-                }else{
+                } else {
                     continuar = true;
                 }
                 break;
@@ -341,6 +343,8 @@ public class RegistrarCooperacionView implements Serializable {
             calendar.setTime(proyectoCooperacion.getFechaEstimadaInicio());
             proyectoCooperacion.setAnho(String.valueOf(calendar.get(java.util.Calendar.YEAR)));
             proyectoCooperacion.setIdEtapaEjecucion((short) 1);
+            proyectoCooperacion.setIdMeta(0);
+
             guardar();
         }
     }
@@ -503,7 +507,7 @@ public class RegistrarCooperacionView implements Serializable {
                 }
 
                 PrimeFaces.current().executeScript("PF('dlgAceptar').show()");
-                
+
                 guardarHistoricoCambioEstado(tmpFecha, null, (short) 1, null);
                 List<Notificacion> lstNotificacion = catalogoFacade.findNotificacionByTipoCooperacion(proyectoCooperacion.getIdTipoCooperacion().getIdTipoCooperacion());
 
@@ -548,9 +552,8 @@ public class RegistrarCooperacionView implements Serializable {
                                 StringUtils.getFecha(new Date()),
                                 entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(),
                                 seguridad.encrypt("ha", "".concat(proyectoCooperacion.getIdProyecto().toString()).concat("::").concat(proyectoCooperacion.getIdCooperante().getIdCooperante().toString()).concat("::").concat(proyectoCooperacion.getCodigoEntidad()))
-                        );                    
-                        
-                        
+                        );
+
                         //CORREO PARA UNIDAD TÉNICA
                         eMailFacade.enviarMail(to, cc, RESOURCE_BUNDLE.getString("remitente_correo"), titulo, mensajeParaUt, credencialesView.getMailSessionRemitente());
 
@@ -607,5 +610,19 @@ public class RegistrarCooperacionView implements Serializable {
     }
 
     public void prueba() {
+    }
+
+    public void addCooperanteFromDialog() {
+        Map<String, Object> options = new HashMap<>();
+        options.put("resizable", false);
+        options.put("draggable", false);
+        options.put("modal", true);
+        options.put("height", 560);
+        options.put("width", "57%");
+        options.put("contentHeight", "100%");
+        options.put("contentWidth", "100%");
+        options.put("modal", true);
+
+        PrimeFaces.current().dialog().openDynamic("/app/dialog/dlgCooperante", options, null);
     }
 }

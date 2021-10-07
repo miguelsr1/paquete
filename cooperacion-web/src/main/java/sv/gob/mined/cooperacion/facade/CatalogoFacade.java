@@ -38,7 +38,7 @@ public class CatalogoFacade {
     private EntityManager emCooperacion;
 
     public List<Cooperante> findAllCooperante() {
-        Query q = emCooperacion.createQuery("SELECT c FROM Cooperante c ORDER BY c.idCooperante", Cooperante.class);
+        Query q = emCooperacion.createQuery("SELECT c FROM Cooperante c ORDER BY c.nombreCooperante", Cooperante.class);
         return q.getResultList();
     }
 

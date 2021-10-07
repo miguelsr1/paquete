@@ -493,7 +493,7 @@ public class ProcesoFacade {
             List<DetalleEnvio> lstDetalle,
             Transport transport, Session mailSession,
             String server, String port) {
-        envio(remitente, password, mensaje, titulo, lstDetalle, transport, mailSession, server, port, lstDetalle.get(0).getIdEnvio().getArchivo());
+        envio(remitente, password, titulo, mensaje, lstDetalle, transport, mailSession, server, port, lstDetalle.get(0).getIdEnvio().getArchivo());
     }
 
     private HashMap<String, String> getRemitentes(String pathArchivo,
@@ -622,17 +622,19 @@ public class ProcesoFacade {
 
             transport.sendMessage(message, message.getAllRecipients());
 
+            detalleEnvio.setEnviado((short) 1);
+
         } catch (AddressException ex) {
-            System.out.println("Error 1");
+            System.out.println("Error AddressException correo: " + detalleEnvio.getCorreoDestinatario());
             if (transport.isConnected()) {
                 transport.close();
 
                 transport = mailSession.getTransport("smtp");
                 transport.connect(server, Integer.parseInt(port), remitente, password);
             }
-            Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MessagingException ex) {
-            System.out.println("Error 2");
+            System.out.println("Error MessagingException correo: " + detalleEnvio.getCorreoDestinatario());
             if (transport.isConnected()) {
                 transport.close();
 
@@ -642,7 +644,7 @@ public class ProcesoFacade {
                 transport = mailSession.getTransport("smtp");
                 transport.connect(server, Integer.parseInt(port), remitente, password);
             }
-            Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(ProcesoFacade.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

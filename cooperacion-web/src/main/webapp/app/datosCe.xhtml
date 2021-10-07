@@ -179,12 +179,19 @@
                             </div>
                             <div class="p-field p-grid">
                                 <p:outputLabel for="cboCooperante" value="Cooperante:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                                <div class="p-col-12 p-md-10">
-                                    <p:selectOneMenu id="cboCooperante" value="#{registrarCooperacionView.idCooperante}" required="true" label="Cooperante">
+                                <div class="p-col-12 p-md-9">
+                                    <p:selectOneMenu id="cboCooperante" value="#{registrarCooperacionView.idCooperante}" required="true" label="Cooperante"
+                                                     filter="true" filterMatchMode="contains">
                                         <f:selectItem itemValue="null" itemLabel="Seleccione un valor" noSelectionOption="true"/>
                                         <f:selectItems value="#{registrarCooperacionView.lstCooperantes}" var="coo" itemValue="#{coo.idCooperante}" itemLabel="#{coo.nombreCooperante}"/>
                                     </p:selectOneMenu>
                                 </div>
+
+                                <p:commandButton icon="pi pi-plus" value="Agregar" style="width: 25px; height: 25px;" process="@this"
+                                                 action="#{registrarCooperacionView.addCooperanteFromDialog}" styleClass="p-col-12 p-mb-1 p-md-1 p-mb-md-0">
+                                    <p:ajax event="dialogReturn" update="cboCooperante"/>
+                                </p:commandButton>
+
                             </div>
                             <div class="p-field p-grid">
                                 <p:outputLabel value="Modalidad de Ejec.:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>

@@ -6,6 +6,7 @@ PrimeFaces.widget.Paradise = PrimeFaces.widget.BaseWidget.extend({
     init: function(cfg) {
         this._super(cfg);
         this.wrapper = $(document.body).children('.layout-wrapper');
+        this.menuContainer = this.wrapper.children('.layout-menu-container');
         this.topbar = this.wrapper.children('.topbar');
         this.menuWrapper = this.wrapper.find('> .layout-main > .layout-menu-wrapper');
         this.menuButton = $('#menu-button');
@@ -14,8 +15,11 @@ PrimeFaces.widget.Paradise = PrimeFaces.widget.BaseWidget.extend({
         this.topbarLinks = this.topbarMenu.find('a');
         this.menu = this.menuWrapper.find('ul.layout-menu');
         this.menulinks = this.menu.find('a');
-        this.expandedMenuitems = this.expandedMenuitems || [];     
-        this.nano = this.menuWrapper.children('.nano');
+        this.expandedMenuitems = this.expandedMenuitems || [];
+
+        this.configButton = $('#layout-config-button');
+        this.configMenu = $('#layout-config');
+        this.configMenuClose = this.configMenu.find('> .layout-config-content > .layout-config-close');
         
         this.bindEvents();
         
@@ -27,15 +31,11 @@ PrimeFaces.widget.Paradise = PrimeFaces.widget.BaseWidget.extend({
     bindEvents: function() {
         var $this = this;
         
-        if(!this.wrapper.hasClass('layout-menu-slim')) {
-            this.nano.nanoScroller();
-        }
-        
-        this.menuWrapper.on('click', function(e) {
+        this.menuWrapper.off('click.menu').on('click.menu', function(e) {
             $this.menuClick = true;
         });
         
-        this.menuButton.on('click', function(e) {
+        this.menuButton.off('click.menu').on('click.menu', function(e) {
             if($this.isMobile()) {
                 $this.wrapper.toggleClass('layout-menu-active');
                 
@@ -52,8 +52,6 @@ PrimeFaces.widget.Paradise = PrimeFaces.widget.BaseWidget.extend({
                     $this.wrapper.toggleClass('layout-menu-static-inactive');
             }
             
-            $this.nano.nanoScroller();
-            
             $this.menuButtonClick = true;
             e.preventDefault();
             setTimeout(function() {
@@ -61,7 +59,7 @@ PrimeFaces.widget.Paradise = PrimeFaces.widget.BaseWidget.extend({
             }, 320);
         });
         
-        this.menulinks.off('click').on('click', function(e) {
+        this.menulinks.off('click.menu mouseenter.menu').on('click.menu', function(e) {
             var link = $(this),
             item = link.parent(),
             submenu = item.children('ul');
@@ -72,6 +70,7 @@ PrimeFaces.widget.Paradise = PrimeFaces.widget.BaseWidget.extend({
                         $this.removeMenuitem(item.attr('id'));
                         item.removeClass('active-menuitem');
                         submenu.hide();
+                        $this.menuHoverActive = false;
                     }
                 }
                 else {
@@ -79,6 +78,7 @@ PrimeFaces.widget.Paradise = PrimeFaces.widget.BaseWidget.extend({
                     $this.addMenuitem(item.attr('id'));
                     $this.deactivateItems(item.siblings(), false);
                     submenu.show();
+                    $this.menuHoverActive = true;
                 }
             }
             else {
@@ -93,21 +93,52 @@ PrimeFaces.widget.Paradise = PrimeFaces.widget.BaseWidget.extend({
                     $this.addMenuitem(item.attr('id'));
                     $this.deactivateItems(item.siblings(), true);
                     $this.activate(item);
+                    $.cookie('paradise_menu_scroll_state', link.attr('href') + ',' + $this.menuContainer.scrollTop(), { path: '/' });
                 }
             }
-
-            setTimeout(function() {
-                if(!$this.isSlim()) {
-                    $this.nano.nanoScroller();
-                }
-            }, 500);
                                     
             if(submenu.length) {
                 e.preventDefault();
             }
+        }).on('mouseenter.menu', function(e) {
+            var link = $(this),
+            item = link.parent(),
+            submenu = item.children('ul');
+    
+            if($this.isSlim() && item.parent().hasClass('layout-menu') && $this.menuHoverActive && !item.hasClass('active-menuitem')) {
+                $this.deactivateItems($this.menu.children('.active-menuitem'), false);
+                item.addClass('active-menuitem');
+                submenu.show();
+            }
+        });
+
+        this.configButton.off('click.config').on('click.config', function(e) {
+            $this.configMenuClicked = true;
+
+            if ($this.configMenu.hasClass('layout-config-active')) {
+                $this.configMenu.removeClass('layout-config-active');
+                $(document.body).removeClass('blocked-scroll');
+            }
+            else {
+                $this.configMenu.addClass('layout-config-active');
+                $(document.body).addClass('blocked-scroll');
+            }
+            
+            e.preventDefault();
+        });
+
+        this.configMenuClose.off('click.config').on('click.config', function(e) {
+            $this.configMenu.removeClass('layout-config-active');
+            $this.configMenuClicked = true;
+            $(document.body).removeClass('blocked-scroll');
+            e.preventDefault();
         });
         
-        this.userDisplay.on('click', function(e) {
+        this.configMenu.off('click.configMenu').on('click.configMenu', function() {
+            $this.configMenuClicked = true;
+        });
+        
+        this.userDisplay.off('click.topbar').on('click.topbar', function(e) {
             $this.topbarMenuButtonClick = true;
 
             if($this.topbarMenu.hasClass('topbar-menu-visible')) {
@@ -120,7 +151,7 @@ PrimeFaces.widget.Paradise = PrimeFaces.widget.BaseWidget.extend({
             e.preventDefault();
         });
         
-        this.topbarLinks.on('click', function(e) {
+        this.topbarLinks.off('click.topbar').on('click.topbar', function(e) {
             var link = $(this),
             item = link.parent(),
             submenu = link.next();
@@ -142,24 +173,32 @@ PrimeFaces.widget.Paradise = PrimeFaces.widget.BaseWidget.extend({
             }
         });
         
-        $(document.body).off('click').on('click', function() {                   
+        $(document.body).off('click.layoutBody').on('click.layoutBody', function() {                   
             if(!$this.topbarMenuButtonClick && !$this.topbarLinkClick) {
                 $this.hideTopBar();
             }
             
             if(!$this.menuClick && $this.isSlim()) {
                 $this.deactivateItems($this.menu.children('.active-menuitem'), false);
+                $this.menuHoverActive = false;
             }
             
             if(($this.wrapper.hasClass('layout-menu-overlay-active') || $this.wrapper.hasClass('layout-menu-active')) && (!$this.menuClick && !$this.menuButtonClick)) {
                 $this.wrapper.removeClass('layout-menu-overlay-active layout-menu-active');
                 $this.wrapper.children('.layout-mask').remove();
             }
-            
+            if (!$this.configMenuClicked && $this.configMenu.hasClass('layout-config-active')) {
+                if (!$this.wrapper.hasClass('layout-mobile-active') && !$this.wrapper.hasClass('layout-menu-overlay-active')) {
+                    $(document.body).removeClass('blocked-scroll');
+                }
+                $this.configMenu.removeClass('layout-config-active');
+            }
+
             $this.topbarLinkClick = false;
             $this.topbarMenuButtonClick = false;
             $this.menuClick = false;
             $this.menuButtonClick = false;
+            $this.configMenuClicked = false;
         });
         
     },
@@ -236,6 +275,7 @@ PrimeFaces.widget.Paradise = PrimeFaces.widget.BaseWidget.extend({
     },
     
     addMenuitem: function (id) {
+        this.expandedMenuitems = [];
         if ($.inArray(id, this.expandedMenuitems) === -1) {
             this.expandedMenuitems.push(id);
         }
@@ -251,6 +291,7 @@ PrimeFaces.widget.Paradise = PrimeFaces.widget.BaseWidget.extend({
     },
     
     restoreMenuState: function() {
+        var $this = this;
         var menucookie = $.cookie('paradise_expandeditems');
         if (menucookie) {
             this.expandedMenuitems = menucookie.split(',');
@@ -266,7 +307,43 @@ PrimeFaces.widget.Paradise = PrimeFaces.widget.BaseWidget.extend({
                     }
                 }
             }
+
+            setTimeout(function() {
+                $this.restoreScrollState(menuitem);
+            }, 100)
         }
+    },
+
+    restoreScrollState: function(menuitem) {
+        var scrollState = $.cookie('paradise_menu_scroll_state');
+        if (scrollState) {
+            var state = scrollState.split(',');
+            if (state[0].startsWith(this.cfg.pathname) || this.isScrolledIntoView(menuitem, state[1])) {
+                this.menuContainer.scrollTop(parseInt(state[1], 10));
+            }
+            else {
+                this.scrollIntoView(menuitem.get(0));
+                $.removeCookie('paradise_menu_scroll_state', { path: '/' });
+            }
+        }
+        else if (!this.isScrolledIntoView(menuitem, menuitem.scrollTop())){
+            this.scrollIntoView(menuitem.get(0));
+        }
+    },
+
+    scrollIntoView: function(elem) {
+        if (document.documentElement.scrollIntoView) {
+            elem.scrollIntoView();
+        }
+    },
+
+    isScrolledIntoView: function(elem, scrollTop) {
+        var viewBottom = parseInt(scrollTop, 10) + this.menuContainer.height();
+
+        var elemTop = elem.position().top;
+        var elemBottom = elemTop + elem.height();
+
+        return ((elemBottom <= viewBottom) && (elemTop >= scrollTop));
     },
     
     hideTopBar: function() {
@@ -279,13 +356,112 @@ PrimeFaces.widget.Paradise = PrimeFaces.widget.BaseWidget.extend({
     },
     
     isMobile: function() {
-        return window.innerWidth <= 640;
+        return window.innerWidth <= 991;
     },
     
     isSlim: function() {
         return !this.isMobile() && this.wrapper.hasClass('layout-menu-slim');
     }
 });
+
+PrimeFaces.ParadiseConfigurator = {
+
+    changePrimaryColor: function(newColor) {
+        var linkElement = $('link[href*="layout-"]');
+        var href = linkElement.attr('href');
+        var startIndexOf = href.indexOf('layout-') + 7;
+        var endIndexOf = href.indexOf('.css');
+        var currentColor = href.substring(startIndexOf, endIndexOf);
+        
+        this.replaceLink(linkElement, href.replace(currentColor, newColor));
+    },
+
+    beforeResourceChange: function() {
+        PrimeFaces.ajax.RESOURCE = null;    //prevent resource append
+    },
+
+    changeComponentsTheme: function(theme) {
+        var library = 'primefaces-paradise';
+        var linkElement = $('link[href*="theme.css"]');
+        var href = linkElement.attr('href');
+        var index = href.indexOf(library) + 1;
+        var currentTheme = href.substring(index + library.length);
+        
+        this.replaceLink(linkElement, href.replace(currentTheme, theme));
+    },
+    
+
+    changeMenuMode: function(menuMode) {
+        var wrapper = $(document.body).children('.layout-wrapper');
+        switch (menuMode) {
+            case 'layout-menu-static ':
+                wrapper.addClass('layout-menu-static ').removeClass('layout-menu-overlay layout-menu-slim ');
+                this.clearLayoutState();
+            break;
+
+            case 'layout-menu-overlay':
+                wrapper.addClass('layout-menu-overlay').removeClass('layout-menu-static layout-menu-slim  ');
+                this.clearLayoutState();
+            break;
+
+            case 'layout-menu-slim':
+                wrapper.addClass('layout-menu-slim').removeClass('layout-menu-static layout-menu-overlay  ');
+                this.clearLayoutState();
+            break;
+
+            default:
+                wrapper.addClass('layout-menu-static').removeClass('layout-menu-overlay layout-menu-slim  ');
+                this.clearLayoutState();
+            break;
+        }
+    },
+
+    changeMenuToDark: function() {
+        $('.layout-menu-wrapper').toggleClass('layout-menu-dark');
+       
+        this.clearLayoutState();
+    },
+    
+    replaceLink: function(linkElement, href) {
+        PrimeFaces.ajax.RESOURCE = 'javax.faces.Resource';
+        
+        var isIE = this.isIE();
+
+        if (isIE) {
+            linkElement.attr('href', href);
+        }
+        else {
+            var cloneLinkElement = linkElement.clone(false);
+
+            cloneLinkElement.attr('href', href);
+            linkElement.after(cloneLinkElement);
+            
+            cloneLinkElement.off('load').on('load', function() {
+                linkElement.remove();
+            });
+        }
+    },
+    
+    isIE: function() {
+        return /(MSIE|Trident\/|Edge\/)/i.test(navigator.userAgent);
+    },
+    
+
+    clearLayoutState: function() {
+        var menu = PF('ParadiseMenuWidget');
+
+        if (menu) {
+            menu.clearLayoutState();
+        }
+    },
+
+    updateInputStyle: function(value) {
+        if (value === 'filled')
+            $(document.body).addClass('ui-input-filled');
+        else
+            $(document.body).removeClass('ui-input-filled');
+    }
+};
 
 /*!
  * jQuery Cookie Plugin v1.4.1

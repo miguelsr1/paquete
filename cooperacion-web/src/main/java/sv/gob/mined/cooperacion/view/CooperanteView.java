@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.cooperacion.facade.CatalogoFacade;
 import sv.gob.mined.cooperacion.facade.MantenimientoFacade;
@@ -64,6 +65,11 @@ public class CooperanteView implements Serializable {
 
         JsfUtil.mensajeInformacion("Datos almacenados satisfactoriamente");
     }
+    
+    public void guardarCooperanteDlg() {
+        guardarCooperante();
+        cancelAddCooperanteDlg();
+    }
 
     public List<Cooperante> getLstCooperantes() {
         return lstCooperantes;
@@ -71,5 +77,9 @@ public class CooperanteView implements Serializable {
     
     public void onRowSelect(SelectEvent<Cooperante> event) {
         idTipoCooperante = cooperante.getIdTipoCooperante().getIdTipoCooperante();
+    }
+    
+    public void cancelAddCooperanteDlg() {
+        PrimeFaces.current().dialog().closeDynamic(null);
     }
 }

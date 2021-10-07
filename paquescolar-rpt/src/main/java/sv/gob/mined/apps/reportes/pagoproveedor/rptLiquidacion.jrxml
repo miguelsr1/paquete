@@ -65,7 +65,8 @@ where org.cargo in ('PRESIDENTE','TESORERO','CONSEJAL') and
     SUM(cantidad_resguardo) cantidad_resguardo,
     SUM(monto_resguardo) monto_resguardo,
     FECHA_INSERCION,
-    FECHA_LIQUIDACION
+    FECHA_LIQUIDACION,
+    fecha_recepcion
 FROM (SELECT
         rai.DESCRIPCION_RUBRO,
         vw.INICIALES_MODALIDAD,
@@ -87,6 +88,7 @@ FROM (SELECT
         CASE when dl.CANTIDAD_MODIFICATIVA IS NULL THEN (dl.CANTIDAD_RESGUARDO * dl.PRECIO_UNITARIO) ELSE (dl.CANTIDAD_RESGUARDO * dl.PRECIO_UNITARIO_MODIF) END monto_resguardo,
         liq.FECHA_INSERCION,
         liq.FECHA_LIQUIDACION,
+        liq.fecha_recepcion,
         liq.id_liquidacion
     FROM
         LIQUIDACION liq
@@ -120,7 +122,8 @@ GROUP BY DESCRIPCION_RUBRO,
 	MIEMBRO_FIRMA,
 	observacion,
 	FECHA_INSERCION,
-	FECHA_LIQUIDACION]]>
+	FECHA_LIQUIDACION,
+	fecha_recepcion]]>
 	</queryString>
 	<field name="DESCRIPCION_RUBRO" class="java.lang.String"/>
 	<field name="INICIALES_MODALIDAD" class="java.lang.String"/>
@@ -142,6 +145,7 @@ GROUP BY DESCRIPCION_RUBRO,
 	<field name="MONTO_RESGUARDO" class="java.math.BigDecimal"/>
 	<field name="FECHA_INSERCION" class="java.sql.Timestamp"/>
 	<field name="FECHA_LIQUIDACION" class="java.sql.Timestamp"/>
+	<field name="FECHA_RECEPCION" class="java.sql.Timestamp"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -194,7 +198,7 @@ GROUP BY DESCRIPCION_RUBRO,
 				<textElement>
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["1.1.  TIPO DE ORGANISMO: "+$F{DESCRIPCION_RUBRO}+"\n"+
+				<textFieldExpression><![CDATA["1.1.  TIPO DE ORGANISMO: "+$F{INICIALES_MODALIDAD}+"\n"+
 "1.2.  CÓDIGO DEL CENTRO EDUCATIVO: "+$F{CODIGO_ENTIDAD}+"\n"+
 "        NOMBRE DEL CENTRO EDUCATIVO: "+$F{NOMBRE}]]></textFieldExpression>
 			</textField>
@@ -488,7 +492,7 @@ GROUP BY DESCRIPCION_RUBRO,
 				</textElement>
 				<textFieldExpression><![CDATA["5.1. RECIBIDA POR: _____________________________________________ Firma: _______________\n" +
 "5.2. DEPARTAMENTO QUE RECIBE LA LIQUIDACIÓN: "+ $F{NOMBRE_DEPARTAMENTO} +"\n"+
-"5.3. FECHA DE RECIBIDA LA LIQUIDACIÓN: " + (new SimpleDateFormat("dd/MM/yyyy")).format($F{FECHA_LIQUIDACION})]]></textFieldExpression>
+"5.3. FECHA DE RECIBIDA LA LIQUIDACIÓN: " + (new SimpleDateFormat("dd/MM/yyyy")).format($F{FECHA_RECEPCION})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="30" y="63" width="463" height="33" uuid="3e87ac54-e86f-45e7-a5bb-11ffee3e83b4"/>
@@ -497,7 +501,7 @@ GROUP BY DESCRIPCION_RUBRO,
 				</textElement>
 				<textFieldExpression><![CDATA["Observaciones: "+$F{OBSERVACION}+"\n\n"+
 "FECHA DE LIQUIDACIÓN: "+(new SimpleDateFormat("dd/MM/yyyy")).format($F{FECHA_LIQUIDACION})+"\n\n"+
-"4.1. ELABORÓ: "+$P{p_nombre_usuario}]]></textFieldExpression>
+"4.1. ELABORÓ: _____________________________________________"]]></textFieldExpression>
 			</textField>
 			<componentElement>
 				<reportElement key="table" style="table_TD" x="43" y="14" width="450" height="40" uuid="42999f84-f40b-459a-8838-c7239d9afa49"/>
