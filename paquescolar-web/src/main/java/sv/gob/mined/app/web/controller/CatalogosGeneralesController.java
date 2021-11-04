@@ -25,6 +25,7 @@ import sv.gob.mined.app.web.util.UtilFile;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.DatosGeograficosEJB;
+import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.PagoProveedoresEJB;
 import sv.gob.mined.paquescolar.ejb.ResolucionAdjudicativaEJB;
 import sv.gob.mined.paquescolar.model.Anho;
@@ -32,6 +33,7 @@ import sv.gob.mined.paquescolar.model.Departamento;
 import sv.gob.mined.paquescolar.model.EstadoReserva;
 import sv.gob.mined.paquescolar.model.MunicipioAledanho;
 import sv.gob.mined.paquescolar.model.TipoDocPago;
+import sv.gob.mined.paquescolar.ws.TechoCE;
 
 /**
  *
@@ -52,6 +54,8 @@ public class CatalogosGeneralesController implements Serializable {
     private ResolucionAdjudicativaEJB resolucionAdjudicativaEJB;
     @EJB
     private PagoProveedoresEJB pagoProveedoresEJB;
+    @EJB
+    private EntidadEducativaEJB entidadEjb;
 
     public CatalogosGeneralesController() {
     }
@@ -151,5 +155,9 @@ public class CatalogosGeneralesController implements Serializable {
     }
     public Boolean isUsuarioRafa() {
         return VarSession.getVariableSessionUsuario().equals("RAFAARIAS");
+    }
+    
+    public void cargarMatricula(){
+        entidadEjb.cargarMatricula(null, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 }

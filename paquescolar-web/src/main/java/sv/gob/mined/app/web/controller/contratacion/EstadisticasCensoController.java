@@ -954,7 +954,6 @@ public class EstadisticasCensoController implements Serializable {
             }
             techoUti = getTecho(lstTechos, detProAdqUti);
             techoZap = getTecho(lstTechos, detProAdqZap);
-            //techoMascarilla = getTecho(lstTechos, detProAdqMascarilla);
         }
     }
 
@@ -962,7 +961,7 @@ public class EstadisticasCensoController implements Serializable {
         List<EstadisticaCenso> lstEstadistica = entidadEducativaEJB.getLstEstadisticaByCodEntAndProceso(codigoEntidad, procesoAdquisicion.getIdProcesoAdq());
 
         if (lstEstadistica.isEmpty()) {
-            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() == 9) {
+            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() >= 9) {
                 estInicial1grado = crearEstadistica(new BigDecimal(25));
                 estInicial2grado = crearEstadistica(new BigDecimal(26));
                 estaditicaIniPar = crearEstadistica(new BigDecimal(22));
@@ -988,7 +987,7 @@ public class EstadisticasCensoController implements Serializable {
             est2media = crearEstadistica(new BigDecimal(17));
             est3media = crearEstadistica(new BigDecimal(18));
         } else {
-            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() == 9) {
+            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() >= 9) {
                 estInicial1grado = getEstadisticaCenso(lstEstadistica, 25);
                 estInicial2grado = getEstadisticaCenso(lstEstadistica, 26);
                 estaditicaIniPar = getEstadisticaCenso(lstEstadistica, 22);
