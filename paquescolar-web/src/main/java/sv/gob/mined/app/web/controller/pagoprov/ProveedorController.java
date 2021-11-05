@@ -95,6 +95,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     private Boolean mismaDireccion = false;
     private Boolean personaNatural = false;
     private Boolean rubroUniforme = false;
+    private Boolean mostrarNotificacion = false;
     private Boolean inscritoIva = false;
     private Boolean deseaInscribirseIva = false;
 
@@ -201,6 +202,8 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                 cargarPrecioRef();
             } else if (url.contains("FotografiaMuestras") && getRecuperarProceso().getProcesoAdquisicion() != null && getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq() != null) {
             }
+        } else {
+            mostrarNotificacion = false;
         }
 
         if (VarSession.getVariableSessionUsuario().equals("MSANCHEZ")) {
@@ -209,6 +212,10 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public Boolean getMostrarNotificacion() {
+        return mostrarNotificacion;
+    }
+
     public Boolean getInscritoIva() {
         return inscritoIva;
     }
@@ -700,6 +707,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                         codigoDepartamentoLocal = empresa.getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
 
                         rubroUniforme = (departamentoCalif.getIdMuestraInteres().getIdRubroInteres().getIdRubroUniforme().intValue() == 1);
+                        mostrarNotificacion = (departamentoCalif.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres().intValue() != 2);
 
                         if (rubroUniforme) {
                             idCanton = empresa.getIdPersona().getCodigoCanton();
@@ -1625,16 +1633,14 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
 
     public void impOfertaGlobal() {
         try {
-            String idGestion = proveedorEJB.datosConfirmados(capacidadInst.getIdMuestraInteres().getIdMuestraInteres(),
-                    empresa.getIdEmpresa(),
-                    VarSession.getVariableSessionUsuario());
+            String idGestion = ""; //proveedorEJB.datosConfirmados(capacidadInst.getIdMuestraInteres().getIdMuestraInteres(),empresa.getIdEmpresa(),VarSession.getVariableSessionUsuario());
 
             String lugar = empresa.getIdMunicipio().getNombreMunicipio().concat(", ").concat(empresa.getIdMunicipio().getCodigoDepartamento().getNombreDepartamento());
-            if (idGestion.isEmpty()) {
+            /*if (idGestion.isEmpty()) {
                 idGestion = proveedorEJB.datosConfirmados(capacidadInst.getIdMuestraInteres().getIdMuestraInteres(),
                         empresa.getIdEmpresa(),
                         VarSession.getVariableSessionUsuario());
-            }
+            }*/
 
             ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
             HashMap param = new HashMap();
@@ -1673,9 +1679,6 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
 
             }
 
-            /*jasperPrintList.addAll(Reportes.getReporteOfertaDeProveedor(capacidadInst, empresa, detalleProcesoAdq,
-                    reportesEJB.getLstOfertaGlobal(empresa.getNumeroNit(), detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres(), detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho()),
-                    reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, VarSession.getNombreMunicipioSession())));*/
             if (!jasperPrintList.isEmpty()) {
                 Reportes.generarReporte(jasperPrintList, "oferta_global_" + getEmpresa().getNumeroNit());
             }
@@ -1865,14 +1868,16 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         }
     }
 
-    public void generarNotificacionUniformes() {
+    public void generarNotificacion() {
         StringBuilder sb = new StringBuilder();
         String nombreCanton = "";
 
-        for (Canton canton : getLstCantones()) {
-            if (canton.getCodigoCanton().equals(idCantonLocal) && canton.getIdMunicipio().intValue() == empresa.getIdMunicipio().getIdMunicipio().intValue()) {
-                nombreCanton = canton.getNombreCanton();
-                break;
+        if (rubroUniforme) {
+            for (Canton canton : getLstCantones()) {
+                if (canton.getCodigoCanton().equals(idCantonLocal) && canton.getIdMunicipio().intValue() == empresa.getIdMunicipio().getIdMunicipio().intValue()) {
+                    nombreCanton = canton.getNombreCanton();
+                    break;
+                }
             }
         }
 
@@ -1915,7 +1920,6 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         cc.add("carlos.enrique.villegas@admin.mined.edu.sv");
 
         //bcc.add("miguelsr1@gmail.com");
-
         eMailEJB.enviarMail("Notificación de Recepción de Oferta Global " + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho(),
                 sb.toString(),
                 to,

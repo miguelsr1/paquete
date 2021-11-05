@@ -241,43 +241,43 @@ public class ReportesEJB {
 
                     switch ((i + 1)) {
                         case 1:
-                            det.setDescripcionItem("Zapatos para niña, incial y parvularia");
-                            det.setPrecioMaxReferencia(new BigDecimal("14.60"));
-                            break;
-                        case 2:
                             det.setDescripcionItem("Zapatos para niño, incial y parvularia");
                             det.setPrecioMaxReferencia(new BigDecimal("14.60"));
                             break;
-                        case 3:
-                            det.setDescripcionItem("Zapatos para niña, primer ciclo");
+                        case 2:
+                            det.setDescripcionItem("Zapatos para niña, incial y parvularia");
                             det.setPrecioMaxReferencia(new BigDecimal("14.60"));
                             break;
-                        case 4:
+                        case 3:
                             det.setDescripcionItem("Zapatos para niño, primer ciclo");
                             det.setPrecioMaxReferencia(new BigDecimal("14.60"));
                             break;
-                        case 5:
-                            det.setDescripcionItem("Zapatos para niña, segundo ciclo");
+                        case 4:
+                            det.setDescripcionItem("Zapatos para niña, primer ciclo");
                             det.setPrecioMaxReferencia(new BigDecimal("14.60"));
                             break;
-                        case 6:
+                        case 5:
                             det.setDescripcionItem("Zapatos para niño, segundo ciclo");
                             det.setPrecioMaxReferencia(new BigDecimal("14.60"));
                             break;
-                        case 7:
-                            det.setDescripcionItem("Zapatos para niña, tercer ciclo");
+                        case 6:
+                            det.setDescripcionItem("Zapatos para niña, segundo ciclo");
                             det.setPrecioMaxReferencia(new BigDecimal("14.60"));
                             break;
-                        case 8:
+                        case 7:
                             det.setDescripcionItem("Zapatos para niño, tercer ciclo");
                             det.setPrecioMaxReferencia(new BigDecimal("14.60"));
                             break;
+                        case 8:
+                            det.setDescripcionItem("Zapatos para niña, tercer ciclo");
+                            det.setPrecioMaxReferencia(new BigDecimal("14.60"));
+                            break;
                         case 9:
-                            det.setDescripcionItem("Zapatos para niña, bachillerato");
+                            det.setDescripcionItem("Zapatos para niño, bachillerato");
                             det.setPrecioMaxReferencia(new BigDecimal("16.00"));
                             break;
                         case 10:
-                            det.setDescripcionItem("Zapatos para niño, bachillerato");
+                            det.setDescripcionItem("Zapatos para niña, bachillerato");
                             det.setPrecioMaxReferencia(new BigDecimal("16.00"));
                             break;
                     }

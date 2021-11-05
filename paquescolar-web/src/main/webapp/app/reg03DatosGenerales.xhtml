@@ -12,8 +12,8 @@
             <p:menuitem value="Guardar" icon="fa fa-save" disabled="#{menuController.usuarioSoloLectura || proveedorController.deshabiliar}" action="#{proveedorController.guardarDatosGenerales}" />
             <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
             <p:menuitem value="Principal" icon="fa fa-home" action="#{parametrosMB.limpiarVariables}" url="#{request.contextPath}/app/inicial.mined"/>
-            <p:menuitem value="Notificar" icon="fa fa-envelope" action="#{proveedorController.generarNotificacionUniformes()}"
-                        rendered="#{proveedorController.rubroUniforme}"/>
+            <p:menuitem value="Notificar" icon="fa fa-envelope" action="#{proveedorController.generarNotificacion()}"
+                        rendered="#{proveedorController.mostrarNotificacion}"/>
 
             <f:facet  name="options">  
                 <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>

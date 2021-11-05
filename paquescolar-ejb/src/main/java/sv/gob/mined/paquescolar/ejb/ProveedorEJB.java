@@ -1602,8 +1602,14 @@ public class ProveedorEJB {
                 case "4":
                     emp.setItem4("4");
                     break;
+                case "4.4":
+                    emp.setItem44("44");
+                    break;
                 case "5":
                     emp.setItem5("5");
+                    break;
+                case "5.1":
+                    emp.setItem51("51");
                     break;
                 case "6":
                     emp.setItem6("6");
@@ -1689,7 +1695,7 @@ public class ProveedorEJB {
                     emp.setItem4("4");
                     break;
                 case "5":
-                    emp.setItem5("5");
+                    emp.setItem5 ("5");
                     break;
                 case "6":
                     emp.setItem6("6");
