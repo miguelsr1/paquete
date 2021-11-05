@@ -52,6 +52,10 @@ public class UtilEJB {
         em.merge(obj);
     }
 
+    public void createEntity(Object obj) {
+        em.persist(obj);
+    }
+
     public Municipio getMunicipioPrimerByDepartamento(String departamento) {
         Query q = em.createQuery("SELECT  m FROM Municipio m WHERE m.codigoDepartamento.codigoDepartamento=:depa", Municipio.class);
         q.setParameter("depa", departamento);

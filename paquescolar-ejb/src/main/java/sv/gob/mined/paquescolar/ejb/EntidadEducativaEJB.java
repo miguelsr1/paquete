@@ -4,19 +4,29 @@
  */
 package sv.gob.mined.paquescolar.ejb;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
+import javax.jws.WebParam;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.EstadisticaCenso;
 import sv.gob.mined.paquescolar.model.NivelEducativo;
@@ -25,6 +35,7 @@ import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.TechoRubroEntEdu;
 import sv.gob.mined.paquescolar.model.pojos.VwRptCertificacionPresupuestaria;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
+import sv.gob.mined.paquescolar.ws.TechoCE;
 
 /**
  *
@@ -36,6 +47,11 @@ public class EntidadEducativaEJB {
 
     @PersistenceContext(unitName = "paquescolarUP")
     private EntityManager em;
+
+    @EJB
+    private AnhoProcesoEJB anhoProcesoEJB;
+    @EJB
+    private UtilEJB utilEJB;
 
     public VwCatalogoEntidadEducativa getEntidadEducativa(String codigoEntidad) {
         Query q = em.createQuery("SELECT v FROM VwCatalogoEntidadEducativa v WHERE v.codigoEntidad=:codigoEntidad", VwCatalogoEntidadEducativa.class);
@@ -326,11 +342,11 @@ public class EntidadEducativaEJB {
     public OrganizacionEducativa edit(OrganizacionEducativa organizacionEducativa) {
         return em.merge(organizacionEducativa);
     }
-    
-    public void guardar(OrganizacionEducativa org){
-        if(org.getIdOrganizacionEducativa() == null){
+
+    public void guardar(OrganizacionEducativa org) {
+        if (org.getIdOrganizacionEducativa() == null) {
             create(org);
-        }else{
+        } else {
             edit(org);
         }
     }
@@ -587,5 +603,277 @@ public class EntidadEducativaEJB {
     public List<OrganizacionEducativa> lstCorreosDirectores() {
         Query q = em.createQuery("SELECT o FROM OrganizacionEducativa o WHERE o.firmaContrato=1 and o.correoElectronico is not null", OrganizacionEducativa.class);
         return q.getResultList();
+    }
+
+    public void cargarMatricula(String codigoEntidad, int idProceso,
+            int parMas, int parFem,
+            int grado1mas, int grado1fem, int grado2mas, int grado2fem, int grado3mas, @WebParam(name = "grado3fem") int grado3fem,
+            int grado4mas, int grado4fem, int grado5mas, int grado5fem,
+            int grado6mas, int grado6fem, int grado7mas, int grado7fem,
+            int grado8mas, int grado8fem, int grado9mas, int grado9fem,
+            int b1mas, int b1fem, int b2mas, int b2fem,
+            int b3mas, int b3fem) {
+
+        FileInputStream file = null;
+        try {
+            int ini2Fem = 0;
+            int ini2Mas = 0;
+            int ini3Fem = 0;
+            int ini3Mas = 0;
+
+            file = new FileInputStream(new File("C:\\Users\\Desarrollo\\Documents\\MINED\\paquete\\sigesmatpaqesc-2022.xls"));
+            HSSFWorkbook workbook = new HSSFWorkbook(file);
+            /*
+            * Obtenemos la primera pestaña a la que se quiera procesar indicando el indice.
+            * Una vez obtenida la hoja excel con las filas que se quieren leer obtenemos el iterator
+            * que nos permite recorrer cada una de las filas que contiene.
+             */
+            HSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+            Row row;
+            // Recorremos todas las filas para mostrar el contenido de cada celda
+            while (rowIterator.hasNext()) {
+                row = rowIterator.next();
+                if (row.getRowNum() != 0) {
+
+                    codigoEntidad = String.valueOf((int) row.getCell(0).getNumericCellValue());
+                    ini2Fem = (int) row.getCell(1).getNumericCellValue();
+                    ini2Mas = (int) row.getCell(2).getNumericCellValue();
+                    ini3Fem = (int) row.getCell(3).getNumericCellValue();
+                    ini3Mas = (int) row.getCell(4).getNumericCellValue();
+                    parFem = (int) row.getCell(5).getNumericCellValue();
+                    parMas = (int) row.getCell(6).getNumericCellValue();
+                    grado1fem = (int) row.getCell(7).getNumericCellValue();
+                    grado1mas = (int) row.getCell(8).getNumericCellValue();
+                    grado2fem = (int) row.getCell(9).getNumericCellValue();
+                    grado2mas = (int) row.getCell(10).getNumericCellValue();
+                    grado3fem = (int) row.getCell(11).getNumericCellValue();
+                    grado3mas = (int) row.getCell(12).getNumericCellValue();
+                    grado4fem = (int) row.getCell(13).getNumericCellValue();
+                    grado4mas = (int) row.getCell(14).getNumericCellValue();
+                    grado5fem = (int) row.getCell(15).getNumericCellValue();
+                    grado5mas = (int) row.getCell(16).getNumericCellValue();
+                    grado6fem = (int) row.getCell(17).getNumericCellValue();
+                    grado6mas = (int) row.getCell(18).getNumericCellValue();
+                    grado7fem = (int) row.getCell(19).getNumericCellValue();
+                    grado7mas = (int) row.getCell(20).getNumericCellValue();
+                    grado8fem = (int) row.getCell(21).getNumericCellValue();
+                    grado8mas = (int) row.getCell(22).getNumericCellValue();
+                    grado9fem = (int) row.getCell(23).getNumericCellValue();
+                    grado9mas = (int) row.getCell(24).getNumericCellValue();
+                    b1fem = (int) row.getCell(25).getNumericCellValue();
+                    b1mas = (int) row.getCell(26).getNumericCellValue();
+                    b2fem = (int) row.getCell(27).getNumericCellValue();
+                    b2mas = (int) row.getCell(28).getNumericCellValue();
+                    b3fem = (int) row.getCell(29).getNumericCellValue();
+                    b3mas = (int) row.getCell(30).getNumericCellValue();
+
+                    DetalleProcesoAdq detProAdqUni;
+                    DetalleProcesoAdq detProAdqUni2;
+                    DetalleProcesoAdq detProAdqUti;
+                    DetalleProcesoAdq detProAdqZap;
+                    EstadisticaCenso estIni2;
+                    EstadisticaCenso estIni3;
+                    EstadisticaCenso estPar;
+                    EstadisticaCenso estCiclo1;
+                    EstadisticaCenso estCiclo2;
+                    EstadisticaCenso estCiclo3;
+                    EstadisticaCenso estGrado1;
+                    EstadisticaCenso estGrado2;
+                    EstadisticaCenso estGrado3;
+                    EstadisticaCenso estGrado4;
+                    EstadisticaCenso estGrado5;
+                    EstadisticaCenso estGrado6;
+                    EstadisticaCenso estGrado7;
+                    EstadisticaCenso estGrado8;
+                    EstadisticaCenso estGrado9;
+                    EstadisticaCenso estB1;
+                    EstadisticaCenso estB2;
+                    EstadisticaCenso estB3;
+                    EstadisticaCenso estBac;
+                    TechoRubroEntEdu techoUni;
+                    TechoRubroEntEdu techoUni2 = new TechoRubroEntEdu();
+                    TechoRubroEntEdu techoUti;
+                    TechoRubroEntEdu techoZap;
+
+                    ProcesoAdquisicion procesoAdquisicion = utilEJB.find(ProcesoAdquisicion.class, 21);
+
+                    detProAdqUni = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion.getIdProcesoAdq(), new BigDecimal(4));
+                    detProAdqUni2 = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion.getIdProcesoAdq(), new BigDecimal(5));
+                    detProAdqUti = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion.getIdProcesoAdq(), new BigDecimal(2));
+                    detProAdqZap = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion.getIdProcesoAdq(), new BigDecimal(3));
+
+                    estIni2 = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("25"), procesoAdquisicion);
+                    estIni3 = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("26"), procesoAdquisicion);
+                    estPar = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("22"), procesoAdquisicion);
+                    estCiclo1 = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("3"), procesoAdquisicion);
+                    estCiclo2 = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("4"), procesoAdquisicion);
+                    estCiclo3 = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("5"), procesoAdquisicion);
+                    estBac = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("6"), procesoAdquisicion);
+                    estGrado7 = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("7"), procesoAdquisicion);
+                    estGrado8 = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("8"), procesoAdquisicion);
+                    estGrado9 = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("9"), procesoAdquisicion);
+                    estGrado1 = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("10"), procesoAdquisicion);
+                    estGrado2 = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("11"), procesoAdquisicion);
+                    estGrado3 = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("12"), procesoAdquisicion);
+                    estGrado4 = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("13"), procesoAdquisicion);
+                    estGrado5 = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("14"), procesoAdquisicion);
+                    estGrado6 = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("15"), procesoAdquisicion);
+                    estB1 = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("16"), procesoAdquisicion);
+                    estB2 = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("17"), procesoAdquisicion);
+                    estB3 = getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("18"), procesoAdquisicion);
+
+                    if (estPar.getIdEstadistica() == null) {
+                        //try {
+                        estIni2.setCodigoEntidad(codigoEntidad);
+                        estIni2.setFemenimo(new BigInteger(String.valueOf(ini2Fem)));
+                        estIni2.setMasculino(new BigInteger(String.valueOf(ini2Mas)));
+                        estIni2.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("25")));
+                        estIni2.setIdProcesoAdq(procesoAdquisicion);
+
+                        estIni3.setCodigoEntidad(codigoEntidad);
+                        estIni3.setFemenimo(new BigInteger(String.valueOf(ini3Fem)));
+                        estIni3.setMasculino(new BigInteger(String.valueOf(ini3Mas)));
+                        estIni3.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("26")));
+                        estIni3.setIdProcesoAdq(procesoAdquisicion);
+
+                        estPar.setCodigoEntidad(codigoEntidad);
+                        estPar.setFemenimo(new BigInteger(String.valueOf(parFem)));
+                        estPar.setMasculino(new BigInteger(String.valueOf(parMas)));
+                        estPar.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("22")));
+                        estPar.setIdProcesoAdq(procesoAdquisicion);
+
+                        estCiclo1.setCodigoEntidad(codigoEntidad);
+                        estCiclo1.setFemenimo(new BigInteger(String.valueOf(grado1fem + grado2fem + grado3fem)));
+                        estCiclo1.setMasculino(new BigInteger(String.valueOf(grado1mas + grado2mas + grado3mas)));
+                        estCiclo1.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("3")));
+                        estCiclo1.setIdProcesoAdq(procesoAdquisicion);
+
+                        estCiclo2.setCodigoEntidad(codigoEntidad);
+                        estCiclo2.setFemenimo(new BigInteger(String.valueOf(grado4fem + grado5fem + grado6fem)));
+                        estCiclo2.setMasculino(new BigInteger(String.valueOf(grado4mas + grado5mas + grado6mas)));
+                        estCiclo2.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("4")));
+                        estCiclo2.setIdProcesoAdq(procesoAdquisicion);
+
+                        estCiclo3.setCodigoEntidad(codigoEntidad);
+                        estCiclo3.setFemenimo(new BigInteger(String.valueOf(grado7fem + grado8fem + grado9fem)));
+                        estCiclo3.setMasculino(new BigInteger(String.valueOf(grado7fem + grado8fem + grado9fem)));
+                        estCiclo3.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("5")));
+                        estCiclo3.setIdProcesoAdq(procesoAdquisicion);
+
+                        estBac.setCodigoEntidad(codigoEntidad);
+                        estBac.setFemenimo(new BigInteger(String.valueOf(b1fem + b2fem + b3fem)));
+                        estBac.setMasculino(new BigInteger(String.valueOf(b1mas + b2mas + b3mas)));
+                        estBac.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("6")));
+                        estBac.setIdProcesoAdq(procesoAdquisicion);
+
+                        estGrado7.setCodigoEntidad(codigoEntidad);
+                        estGrado7.setFemenimo(new BigInteger(String.valueOf(grado7fem)));
+                        estGrado7.setMasculino(new BigInteger(String.valueOf(grado7mas)));
+                        estGrado7.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("7")));
+                        estGrado7.setIdProcesoAdq(procesoAdquisicion);
+
+                        estGrado8.setCodigoEntidad(codigoEntidad);
+                        estGrado8.setFemenimo(new BigInteger(String.valueOf(grado8fem)));
+                        estGrado8.setMasculino(new BigInteger(String.valueOf(grado8mas)));
+                        estGrado8.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("8")));
+                        estGrado8.setIdProcesoAdq(procesoAdquisicion);
+
+                        estGrado9.setCodigoEntidad(codigoEntidad);
+                        estGrado9.setFemenimo(new BigInteger(String.valueOf(grado9fem)));
+                        estGrado9.setMasculino(new BigInteger(String.valueOf(grado9mas)));
+                        estGrado9.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("9")));
+                        estGrado9.setIdProcesoAdq(procesoAdquisicion);
+
+                        estGrado1.setCodigoEntidad(codigoEntidad);
+                        estGrado1.setFemenimo(new BigInteger(String.valueOf(grado1fem)));
+                        estGrado1.setMasculino(new BigInteger(String.valueOf(grado1mas)));
+                        estGrado1.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("10")));
+                        estGrado1.setIdProcesoAdq(procesoAdquisicion);
+
+                        estGrado2.setCodigoEntidad(codigoEntidad);
+                        estGrado2.setFemenimo(new BigInteger(String.valueOf(grado2fem)));
+                        estGrado2.setMasculino(new BigInteger(String.valueOf(grado2mas)));
+                        estGrado2.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("11")));
+                        estGrado2.setIdProcesoAdq(procesoAdquisicion);
+
+                        estGrado3.setCodigoEntidad(codigoEntidad);
+                        estGrado3.setFemenimo(new BigInteger(String.valueOf(grado3fem)));
+                        estGrado3.setMasculino(new BigInteger(String.valueOf(grado3mas)));
+                        estGrado3.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("12")));
+                        estGrado3.setIdProcesoAdq(procesoAdquisicion);
+
+                        estGrado4.setCodigoEntidad(codigoEntidad);
+                        estGrado4.setFemenimo(new BigInteger(String.valueOf(grado4fem)));
+                        estGrado4.setMasculino(new BigInteger(String.valueOf(grado4mas)));
+                        estGrado4.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("13")));
+                        estGrado4.setIdProcesoAdq(procesoAdquisicion);
+
+                        estGrado5.setCodigoEntidad(codigoEntidad);
+                        estGrado5.setFemenimo(new BigInteger(String.valueOf(grado5fem)));
+                        estGrado5.setMasculino(new BigInteger(String.valueOf(grado5mas)));
+                        estGrado5.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("14")));
+                        estGrado5.setIdProcesoAdq(procesoAdquisicion);
+
+                        estGrado6.setCodigoEntidad(codigoEntidad);
+                        estGrado6.setFemenimo(new BigInteger(String.valueOf(grado6fem)));
+                        estGrado6.setMasculino(new BigInteger(String.valueOf(grado6mas)));
+                        estGrado6.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("15")));
+                        estGrado6.setIdProcesoAdq(procesoAdquisicion);
+
+                        estB1.setCodigoEntidad(codigoEntidad);
+                        estB1.setFemenimo(new BigInteger(String.valueOf(b1fem)));
+                        estB1.setMasculino(new BigInteger(String.valueOf(b1mas)));
+                        estB1.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("16")));
+                        estB1.setIdProcesoAdq(procesoAdquisicion);
+
+                        estB2.setCodigoEntidad(codigoEntidad);
+                        estB2.setFemenimo(new BigInteger(String.valueOf(b2fem)));
+                        estB2.setMasculino(new BigInteger(String.valueOf(b2mas)));
+                        estB2.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("17")));
+                        estB2.setIdProcesoAdq(procesoAdquisicion);
+
+                        estB3.setCodigoEntidad(codigoEntidad);
+                        estB3.setFemenimo(new BigInteger(String.valueOf(b3fem)));
+                        estB3.setMasculino(new BigInteger(String.valueOf(b3mas)));
+                        estB3.setIdNivelEducativo(utilEJB.find(NivelEducativo.class, new BigDecimal("18")));
+                        estB3.setIdProcesoAdq(procesoAdquisicion);
+
+                        asignarTechoCe(estIni2, idProceso);
+                        asignarTechoCe(estIni3, idProceso);
+                        asignarTechoCe(estPar, idProceso);
+                        asignarTechoCe(estCiclo1, idProceso);
+                        asignarTechoCe(estCiclo2, idProceso);
+                        asignarTechoCe(estCiclo3, idProceso);
+                        asignarTechoCe(estBac, idProceso);
+                        asignarTechoCe(estGrado7, idProceso);
+                        asignarTechoCe(estGrado8, idProceso);
+                        asignarTechoCe(estGrado9, idProceso);
+                        asignarTechoCe(estGrado1, idProceso);
+                        asignarTechoCe(estGrado2, idProceso);
+                        asignarTechoCe(estGrado3, idProceso);
+                        asignarTechoCe(estGrado4, idProceso);
+                        asignarTechoCe(estGrado5, idProceso);
+                        asignarTechoCe(estGrado6, idProceso);
+                        asignarTechoCe(estB1, idProceso);
+                        asignarTechoCe(estB2, idProceso);
+                        asignarTechoCe(estB3, idProceso);
+
+                        Logger.getLogger(TechoCE.class.getName()).log(Level.INFO, "codigo:{0}", codigoEntidad);
+                    }
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(TechoCE.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(TechoCE.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                file.close();
+            } catch (IOException ex) {
+                Logger.getLogger(TechoCE.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
     }
 }

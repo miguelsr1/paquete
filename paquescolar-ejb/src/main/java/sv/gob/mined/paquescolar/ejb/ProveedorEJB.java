@@ -2117,4 +2117,13 @@ public class ProveedorEJB {
 
         return q.getResultList();
     }
+
+    public DetRubroMuestraInteres findDetByNitAndIdAnho(String nit, String anho) {
+        Query q = em.createQuery("SELECT d FROM DetRubroMuestraInteres d WHERE d.idEmpresa.numeroNit=:nit and d.idAnho.anho=:anho", DetRubroMuestraInteres.class);
+        q.setParameter("nit", nit);
+        q.setParameter("anho", anho);
+
+        return q.getResultList().isEmpty() ? null : (DetRubroMuestraInteres) q.getResultList().get(0);
+
+    }
 }

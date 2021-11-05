@@ -62,6 +62,9 @@ public class DetRubroMuestraInteres implements Serializable {
 
     @OneToMany(mappedBy = "idMuestraInteres", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProveedorEmpresa> proveedorEmpresaList;
+    @OneToMany(mappedBy = "idMuestraInteres", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<NotaPruebasZapatero> notaPruebasZapateroList;
+    
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -283,5 +286,13 @@ public class DetRubroMuestraInteres implements Serializable {
 
     public void setIdRubroInteres(RubrosAmostrarInteres idRubroInteres) {
         this.idRubroInteres = idRubroInteres;
+    }
+
+    public List<NotaPruebasZapatero> getNotaPruebasZapateroList() {
+        return notaPruebasZapateroList;
+    }
+
+    public void setNotaPruebasZapateroList(List<NotaPruebasZapatero> notaPruebasZapateroList) {
+        this.notaPruebasZapateroList = notaPruebasZapateroList;
     }
 }

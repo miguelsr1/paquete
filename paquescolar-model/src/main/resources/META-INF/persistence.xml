@@ -136,6 +136,7 @@
     <class>sv.gob.mined.paquescolar.model.DetalleLiquidacionInc</class>
     <class>sv.gob.mined.paquescolar.model.pojos.proveedor.NotificacionOfertaProvDto</class>
     <class>sv.gob.mined.paquescolar.model.pojos.proveedor.SeguimientoIngresoProveDto</class>
+    <class>sv.gob.mined.paquescolar.model.NotaPruebasZapatero</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>
