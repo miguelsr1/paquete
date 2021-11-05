@@ -746,12 +746,16 @@ public class ProveedorEJB {
             Boolean municipioIgual, Integer cantidad, String noItemSeparados, String noItems, BigDecimal idAnho) {
 
         List<PorcentajeEvaluacion> lstPorcentajes = getPorcentajesEvaluacionByAnho(idAnho, new BigInteger(idRubro.toString()));
+        BigDecimal porPrecio = BigDecimal.ZERO;
         BigDecimal porUbicacionLocal = BigDecimal.ZERO;
         BigDecimal porMunAledanhos = BigDecimal.ZERO;
         BigDecimal porUbicacionOtros = BigDecimal.ZERO;
 
         BigDecimal porCapacidadCompleta = BigDecimal.ZERO;
         BigDecimal porCapacidadParcial = BigDecimal.ZERO;
+
+        BigDecimal porZapatoNina = BigDecimal.ZERO;
+        BigDecimal porZapatoNino = BigDecimal.ZERO;
 
         for (PorcentajeEvaluacion lstPorcentaje : lstPorcentajes) {
             switch (idRubro) {
@@ -760,6 +764,8 @@ public class ProveedorEJB {
                     break;
                 case 2:
                     switch (lstPorcentaje.getIdCriterio().intValue()) {
+                        case 1:
+                            porPrecio = lstPorcentaje.getPorcentaje();
                         case 3:
                             porUbicacionLocal = lstPorcentaje.getPorcentaje();
                             break;
@@ -779,6 +785,8 @@ public class ProveedorEJB {
                     break;
                 case 3:
                     switch (lstPorcentaje.getIdCriterio().intValue()) {
+                        case 1:
+                            porPrecio = lstPorcentaje.getPorcentaje();
                         case 3:
                             porUbicacionLocal = lstPorcentaje.getPorcentaje();
                             break;
@@ -790,6 +798,12 @@ public class ProveedorEJB {
                             break;
                         case 7:
                             porCapacidadParcial = lstPorcentaje.getPorcentaje();
+                            break;
+                        case 9:
+                            porZapatoNina = lstPorcentaje.getPorcentaje();
+                            break;
+                        case 10:
+                            porZapatoNino = lstPorcentaje.getPorcentaje();
                             break;
                     }
                     break;
@@ -820,7 +834,7 @@ public class ProveedorEJB {
                 + "        mun_e.nombre_municipio,\n"
                 + "        dep_e.nombre_departamento,\n"
                 + "        tbl.precio_promedio,\n"
-                + "        round((((min( distinct tbl.precio_promedio) OVER (order by tbl.precio_promedio))*100)/tbl.precio_promedio)*0.4,2) as porcentaje_precio,\n"
+                + "        round((((min( distinct tbl.precio_promedio) OVER (order by tbl.precio_promedio))*100)/tbl.precio_promedio)*" + (idAnho.intValue() > 9 ? "0.4" : (porPrecio.intValue() / 100)) + ",2) as porcentaje_precio,\n"
                 + "        mun_e.id_municipio,\n"
                 + "        mun_e.codigo_departamento,\n"
                 + "        emp.codigo_canton,\n"
@@ -837,7 +851,7 @@ public class ProveedorEJB {
                 + "                        inner join det_rubro_muestra_interes det on emp.id_muestra_interes = det.id_muestra_interes\n"
                 + "                    where " + (municipioIgual ? " (" + noItemSeparados + ") and " : "") + "\n"
                 + "                        no_item in (" + noItems + ") and pre.estado_eliminacion = 0 and\n"
-                + "                        det.id_rubro_interes =  " + idRubro + " and det.id_anho = " + idAnho + " \n"
+                + "                        det.id_rubro_interes =  " + idRubro + " and det.id_anho = " + idAnho + " and pre.precio_referencia > 0 \n"
                 + "                    group by pre.id_muestra_interes, pre.id_empresa) tbl on det.id_muestra_interes = tbl.id_muestra_interes\n"
                 + "    where \n"
                 + "        cda.estado_eliminacion = 0 and\n"
@@ -1695,7 +1709,7 @@ public class ProveedorEJB {
                     emp.setItem4("4");
                     break;
                 case "5":
-                    emp.setItem5 ("5");
+                    emp.setItem5("5");
                     break;
                 case "6":
                     emp.setItem6("6");

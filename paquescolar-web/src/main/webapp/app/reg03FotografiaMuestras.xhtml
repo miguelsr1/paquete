@@ -42,10 +42,10 @@
                                 <h:outputText value="Seleccione un estilo"/>
                                 <p:selectOneMenu value="#{proveedorController.estiloZapato}">
                                     <f:selectItem itemLabel="----" itemValue="0"/>
-                                    <f:selectItem itemLabel="F-01" itemValue="F1"/>
-                                    <f:selectItem itemLabel="F-02" itemValue="F2"/>
-                                    <f:selectItem itemLabel="M-01" itemValue="M1"/>
-                                    <f:selectItem itemLabel="M-02" itemValue="M2"/>
+                                    <f:selectItem itemLabel="F01" itemValue="F1"/>
+                                    <f:selectItem itemLabel="F02" itemValue="F2"/>
+                                    <f:selectItem itemLabel="M01" itemValue="M1"/>
+                                    <f:selectItem itemLabel="M02" itemValue="M2"/>
                                     <p:ajax listener="#{proveedorController.cargarFotografias}" update="galZapato"/>
                                 </p:selectOneMenu>
                                 <p:spacer width="50" height="8"/>

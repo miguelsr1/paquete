@@ -207,6 +207,8 @@
                                              styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
                                     <p:outputLabel value="Capacidad Adjudicada: " />
                                     <p:inputNumber id="txtCapacidadAdj" value="#{proveedorController.capacidadInst.capacidadAdjudicada}" decimalPlaces="0" size="10" readonly="true"/>
+                                    <p:outputLabel value="Capacidad Calificada: "/>
+                                    <p:inputText id="txtCapacidad" value="#{proveedorController.capacidadInst.capacidadAcreditada}" styleClass="solo-numeros numero" size="10"/>
                                 </p:panelGrid>
 
                                 <br/>
