@@ -79,7 +79,7 @@
 		<band height="58" splitType="Stretch">
 			<textField>
 				<reportElement x="22" y="0" width="533" height="58" uuid="19876f79-7df9-4794-a033-eb3746e7c7dd"/>
-				<textFieldExpression><![CDATA["DECLARACIÓN JURADA GLOBAL SOBRE LA INCORPORACIÓN DE LA OFERTA GOLBAL A LA BASE DE COMPRASAL, LA ACEPTACIÓN DE LAS ADJUDICACIONES Y EL CUMPLIMIENTO DE LAS ESPECIFICACIONES TÉCNICAS, PLAZO Y LUGAR DE ENTREGA, DE: " + $P{pRubro} + "(AÑO "+$F{anho}+ ")"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["DECLARACIÓN JURADA SOBRE LA INCORPORACIÓN DE LA OFERTA GLOBAL A LA BASE DE COMPRASAL, LA ACEPTACIÓN DE LAS ADJUDICACIONES Y EL CUMPLIMIENTO DE LAS ESPECIFICACIONES TÉCNICAS, PLAZO Y LUGAR DE ENTREGA, DE: " + $P{pRubro} + "(AÑO "+$F{anho}+ ")"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

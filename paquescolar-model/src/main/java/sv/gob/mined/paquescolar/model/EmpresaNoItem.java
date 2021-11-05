@@ -45,8 +45,12 @@ public class EmpresaNoItem implements Serializable {
     private String item3;
     @Column(name = "ITEM_4")
     private String item4;
+    @Column(name = "ITEM_4_4")
+    private String item44;
     @Column(name = "ITEM_5")
     private String item5;
+    @Column(name = "ITEM_5_1")
+    private String item51;
     @Column(name = "ITEM_6")
     private String item6;
     @Column(name = "ITEM_7")
@@ -109,6 +113,22 @@ public class EmpresaNoItem implements Serializable {
 
     public String getItem3() {
         return item3;
+    }
+
+    public String getItem44() {
+        return item44;
+    }
+
+    public void setItem44(String item44) {
+        this.item44 = item44;
+    }
+
+    public String getItem51() {
+        return item51;
+    }
+
+    public void setItem51(String item51) {
+        this.item51 = item51;
     }
 
     public void setItem3(String item3) {
