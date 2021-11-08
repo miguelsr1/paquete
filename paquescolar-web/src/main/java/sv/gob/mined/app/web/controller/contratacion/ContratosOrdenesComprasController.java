@@ -883,6 +883,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                             param.put("SUBREPORT_DIR", JsfUtil.getPathReportes().concat(Reportes.PATH_REPORTES + "notasactas") + File.separator);
                             param.put("pPorcentajeCapa", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "25" : "35");
                             param.put("pPorcentajeGeo", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "35" : "25");
+                            param.put("pPorcentajePrecio", detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 2 ? "45" : "40");
                             rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptActaAdjudicacion(current.getIdResolucionAdj().getIdResolucionAdj()));
 
                             lstRptAImprimir.add(rptTemp);

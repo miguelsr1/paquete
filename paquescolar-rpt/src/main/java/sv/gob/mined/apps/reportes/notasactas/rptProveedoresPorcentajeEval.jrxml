@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptActaAdjudicacion" pageWidth="612" pageHeight="792" columnWidth="528" leftMargin="42" rightMargin="42" topMargin="39" bottomMargin="39" uuid="244b56df-7b1c-4fca-9e9d-dde2f9b172eb">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="689"/>
+	<property name="ireport.y" value="124"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -88,6 +88,8 @@
 	<parameter name="pPorcentajeCapa" class="java.lang.String"/>
 	<parameter name="pPorcentajeGeo" class="java.lang.String"/>
 	<parameter name="pEncargadoDeCompras" class="java.lang.String"/>
+	<parameter name="pPorcentajePrecio" class="java.lang.String"/>
+	<parameter name="pAnho" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -187,7 +189,7 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 						<subreportParameterExpression><![CDATA[$P{pPorcentajeGeo}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstParticipantes})]]></dataSourceExpression>
-					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subRptActaRecomendacion2020.jasper"]]></subreportExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"subRptActaRecomendacion"+$P{pAnho}+".jasper"]]></subreportExpression>
 				</subreport>
 			</band>
 		</groupHeader>

@@ -824,8 +824,9 @@ public class ProveedorEJB {
                 + "    porcentaje_geo          as porcentajeGeo,\n"
                 + "    porcentaje_capacidad_i  as porcentajeCapacidadItem,\n"
                 + "    porcentaje_capacidad    as porcentajeCapacidad,\n"
-                + "    porcentaje_precio+porcentaje_geo+porcentaje_capacidad_i+porcentaje_capacidad as porcentajeEvaluacion,\n"
+                + "    porcentaje_precio+porcentaje_geo+porcentaje_capacidad_i+porcentaje_capacidad" + ((idAnho.intValue() == 10) ? "+porcentaje_nota" : "") + " as porcentajeEvaluacion,\n"
                 + "    ((capacidad_adjudicada*100)/capacidad_acreditada) porcentajeAdjudicacion\n"
+                + ((idAnho.intValue() == 10) ? " ,porcentaje_nota as porcentajeNota " : "")
                 + "from (select \n"
                 + "        emp.id_empresa,\n"
                 + "        det.id_muestra_interes,\n"
@@ -840,8 +841,10 @@ public class ProveedorEJB {
                 + "        emp.codigo_canton,\n"
                 + "        " + (idAnho.intValue() > 8 ? "0" : "tbl.porcentaje_capacidad") + " as porcentaje_capacidad_i,\n"
                 + "        " + getParteSelectUbicacion(idRubro, codCanton, idMunicipio, codDep, idMunicipios, porUbicacionLocal, porMunAledanhos, porUbicacionOtros) + "\n"
+                + ((idAnho.intValue() == 10) ? " ,(nota.nota_zapato_nino+nota.nota_zapato_nina) porcentaje_nota " : "")
                 + "    from det_rubro_muestra_interes det\n"
                 + "        inner join empresa emp                  on emp.id_empresa = det.id_empresa\n"
+                + ((idAnho.intValue() == 10) ? " inner join nota_pruebas_zapatero nota on nota.id_muestra_interes = det.id_muestra_interes " : "")
                 + "        inner join municipio mun_e              on mun_e.id_municipio = emp.id_municipio\n"
                 + "        inner join departamento dep_e           on mun_e.codigo_departamento = dep_e.codigo_departamento\n"
                 + "        inner join capa_distribucion_acre cda   on det.id_muestra_interes = cda.id_muestra_interes \n"
@@ -873,7 +876,7 @@ public class ProveedorEJB {
                 + "    id_municipio " + (municipioIgual ? "=" : "<>") + " (select id_municipio from municipio where codigo_municipio = '" + codMun + "' and codigo_departamento = '" + codDep + "') \n"
                 + "    " + (idRubro == 2 ? " and codigo_departamento = '" + codDep + "' " : "")
                 + "order by\n"
-                + "    (porcentaje_precio+porcentaje_geo+porcentaje_capacidad_i+porcentaje_capacidad) desc,((capacidad_adjudicada*100)/capacidad_acreditada) asc";
+                + "    (porcentaje_precio+porcentaje_geo+porcentaje_capacidad_i+porcentaje_capacidad" + ((idAnho.intValue() == 10) ? "+porcentaje_nota" : "") + ") desc,((capacidad_adjudicada*100)/capacidad_acreditada) asc";
 
         return sql;
     }
