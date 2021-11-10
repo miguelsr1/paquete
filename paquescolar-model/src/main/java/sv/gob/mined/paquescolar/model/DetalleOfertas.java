@@ -100,6 +100,9 @@ public class DetalleOfertas implements Serializable {
     private Boolean eliminar = false;
     @Transient
     private Integer noItemInt;
+    
+    @Transient
+    private BigInteger cantidadResguardo;
 
     public DetalleOfertas() {
     }
@@ -300,5 +303,13 @@ public class DetalleOfertas implements Serializable {
 
     public Boolean getEliminar() {
         return estadoEliminacion.compareTo(BigInteger.ONE) == 0;
+    }
+
+    public BigInteger getCantidadResguardo() {
+        return cantidadResguardo;
+    }
+
+    public void setCantidadResguardo(BigInteger cantidadResguardo) {
+        this.cantidadResguardo = cantidadResguardo;
     }
 }

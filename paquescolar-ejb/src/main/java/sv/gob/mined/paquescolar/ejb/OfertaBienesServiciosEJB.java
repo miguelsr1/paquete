@@ -237,7 +237,7 @@ public class OfertaBienesServiciosEJB {
                     break;
             }
 
-            q = em.createNativeQuery("select distinct * FROM " + nombreVista + " WHERE id_empresa=?1 and codigo_entidad=?2 and id_proceso_estadistica=?3 and (id_proceso_precio=?4 or id_proceso_precio=?5) order by to_number(no_item), id_nivel_educativo");
+            q = em.createNativeQuery("select distinct * FROM " + nombreVista + " WHERE id_empresa=?1 and codigo_entidad=?2 and id_proceso_estadistica=?3 and (id_proceso_precio=?4 or id_proceso_precio=?5) and num_alumno is not null order by to_number(no_item), id_nivel_educativo");
             q.setParameter(1, participante.getIdEmpresa().getIdEmpresa());
             q.setParameter(2, codigoEntidad);
             q.setParameter(3, idProceso.getIdProcesoAdq().getIdProcesoAdq());

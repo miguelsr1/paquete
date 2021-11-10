@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptActaAdjudicacion" pageWidth="612" pageHeight="792" columnWidth="528" leftMargin="42" rightMargin="42" topMargin="39" bottomMargin="39" uuid="244b56df-7b1c-4fca-9e9d-dde2f9b172eb">
-	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.zoom" value="1.1289478601075547"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="124"/>
+	<property name="ireport.y" value="0"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -142,7 +142,7 @@
 					<imageExpression><![CDATA[$P{ubicacionImagenes} +File.separator+ "logo_mined_rpt.png"]]></imageExpression>
 				</image>
 				<textField isBlankWhenNull="false">
-					<reportElement key="textField-1" x="0" y="66" width="528" height="74" uuid="c89610dd-e8b5-4071-a79e-c44be59352dc"/>
+					<reportElement key="textField-1" x="1" y="66" width="528" height="74" uuid="c89610dd-e8b5-4071-a79e-c44be59352dc"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -182,11 +182,17 @@ concat("a) Las solicitudes de cotizaciones se entregaron en fecha ").concat($F{f
 				</image>
 				<subreport isUsingCache="true">
 					<reportElement key="subreport-3" x="0" y="145" width="528" height="45" uuid="263910dc-3ced-4c00-8594-5c09f8bce4e9"/>
+					<subreportParameter name="pPorcentajeGeo">
+						<subreportParameterExpression><![CDATA[$P{pPorcentajeGeo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="pAnho">
+						<subreportParameterExpression><![CDATA[$P{pAnho}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="pPorcentajeCapa">
 						<subreportParameterExpression><![CDATA[$P{pPorcentajeCapa}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="pPorcentajeGeo">
-						<subreportParameterExpression><![CDATA[$P{pPorcentajeGeo}]]></subreportParameterExpression>
+					<subreportParameter name="pPorcentajePrecio">
+						<subreportParameterExpression><![CDATA[$P{pPorcentajePrecio}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstParticipantes})]]></dataSourceExpression>
 					<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"subRptActaRecomendacion"+$P{pAnho}+".jasper"]]></subreportExpression>

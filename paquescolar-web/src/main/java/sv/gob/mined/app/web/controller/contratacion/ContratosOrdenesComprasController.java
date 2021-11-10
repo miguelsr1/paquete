@@ -941,6 +941,8 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                         case 13://Acta de recomendacion
                             param.put("pPorcentajeCapa", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "25" : "35");
                             param.put("pPorcentajeGeo", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "35" : "25");
+                            param.put("pPorcentajePrecio", detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 2 ? "45" : "40");
+                            param.put("pAnho", detalleProceso.getIdProcesoAdq().getIdAnho().getAnho());
                             param.put("SUBREPORT_DIR", JsfUtil.getPathReportes().concat(Reportes.PATH_REPORTES + "notasactas") + File.separator);
 
                             rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptActaRecomendacion(current.getIdResolucionAdj().getIdResolucionAdj()));

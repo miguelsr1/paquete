@@ -754,9 +754,6 @@ public class ProveedorEJB {
         BigDecimal porCapacidadCompleta = BigDecimal.ZERO;
         BigDecimal porCapacidadParcial = BigDecimal.ZERO;
 
-        BigDecimal porZapatoNina = BigDecimal.ZERO;
-        BigDecimal porZapatoNino = BigDecimal.ZERO;
-
         for (PorcentajeEvaluacion lstPorcentaje : lstPorcentajes) {
             switch (idRubro) {
                 case 4:
@@ -799,12 +796,6 @@ public class ProveedorEJB {
                         case 7:
                             porCapacidadParcial = lstPorcentaje.getPorcentaje();
                             break;
-                        case 9:
-                            porZapatoNina = lstPorcentaje.getPorcentaje();
-                            break;
-                        case 10:
-                            porZapatoNino = lstPorcentaje.getPorcentaje();
-                            break;
                     }
                     break;
             }
@@ -824,9 +815,9 @@ public class ProveedorEJB {
                 + "    porcentaje_geo          as porcentajeGeo,\n"
                 + "    porcentaje_capacidad_i  as porcentajeCapacidadItem,\n"
                 + "    porcentaje_capacidad    as porcentajeCapacidad,\n"
-                + "    porcentaje_precio+porcentaje_geo+porcentaje_capacidad_i+porcentaje_capacidad" + ((idAnho.intValue() == 10) ? "+porcentaje_nota" : "") + " as porcentajeEvaluacion,\n"
+                + "    porcentaje_precio+porcentaje_geo+porcentaje_capacidad_i+porcentaje_capacidad" + ((idAnho.intValue() == 10 && idRubro == 3) ? "+porcentaje_nota" : "") + " as porcentajeEvaluacion,\n"
                 + "    ((capacidad_adjudicada*100)/capacidad_acreditada) porcentajeAdjudicacion\n"
-                + ((idAnho.intValue() == 10) ? " ,porcentaje_nota as porcentajeNota " : "")
+                + ((idAnho.intValue() == 10 && idRubro == 3) ? " ,porcentaje_nota as porcentajeNota " : "")
                 + "from (select \n"
                 + "        emp.id_empresa,\n"
                 + "        det.id_muestra_interes,\n"
@@ -841,10 +832,10 @@ public class ProveedorEJB {
                 + "        emp.codigo_canton,\n"
                 + "        " + (idAnho.intValue() > 8 ? "0" : "tbl.porcentaje_capacidad") + " as porcentaje_capacidad_i,\n"
                 + "        " + getParteSelectUbicacion(idRubro, codCanton, idMunicipio, codDep, idMunicipios, porUbicacionLocal, porMunAledanhos, porUbicacionOtros) + "\n"
-                + ((idAnho.intValue() == 10) ? " ,(nota.nota_zapato_nino+nota.nota_zapato_nina) porcentaje_nota " : "")
+                + ((idAnho.intValue() == 10 && idRubro == 3) ? " ,(nota.nota_zapato_nino+nota.nota_zapato_nina) porcentaje_nota " : "")
                 + "    from det_rubro_muestra_interes det\n"
                 + "        inner join empresa emp                  on emp.id_empresa = det.id_empresa\n"
-                + ((idAnho.intValue() == 10) ? " inner join nota_pruebas_zapatero nota on nota.id_muestra_interes = det.id_muestra_interes " : "")
+                + ((idAnho.intValue() == 10 && idRubro == 3) ? " inner join nota_pruebas_zapatero nota on nota.id_muestra_interes = det.id_muestra_interes " : "")
                 + "        inner join municipio mun_e              on mun_e.id_municipio = emp.id_municipio\n"
                 + "        inner join departamento dep_e           on mun_e.codigo_departamento = dep_e.codigo_departamento\n"
                 + "        inner join capa_distribucion_acre cda   on det.id_muestra_interes = cda.id_muestra_interes \n"
@@ -871,12 +862,12 @@ public class ProveedorEJB {
                 + "                    inner join capa_distribucion_acre cda on cda.id_muestra_interes = det.id_muestra_interes and cda.id_capa_distribucion in (select id_capa_distribucion from dis_municipio_interes dis inner join municipio mun on mun.id_municipio = dis.id_municipio where dis.estado_eliminacion = 0 and dis.id_municipio = " + idMunicipio + " and  dis.id_capa_distribucion = cda.id_capa_distribucion and " + (municipioIgual ? "mun.codigo_municipio ='" + codMun + "'and mun.codigo_departamento = '" + codDep + "'" : "mun.id_municipio in (" + (idMunicipios.isEmpty() ? idMunicipio : idMunicipios + "," + idMunicipio) + ")") + ")\n"
                 + "                    inner join dis_municipio_interes mun on mun.id_capa_distribucion = cda.id_capa_distribucion and mun.id_municipio =  " + idMunicipio + "\n"
                 + "                where \n"
-                + "                    det.estado_eliminacion = 0) tb2 on tb1.id_muestra_interes = tb2.id_muestra_interes\n"
+                + "                    det.estado_eliminacion = 0 and cip.capacidad_acreditada>0) tb2 on tb1.id_muestra_interes = tb2.id_muestra_interes\n"
                 + "where \n"
                 + "    id_municipio " + (municipioIgual ? "=" : "<>") + " (select id_municipio from municipio where codigo_municipio = '" + codMun + "' and codigo_departamento = '" + codDep + "') \n"
                 + "    " + (idRubro == 2 ? " and codigo_departamento = '" + codDep + "' " : "")
                 + "order by\n"
-                + "    (porcentaje_precio+porcentaje_geo+porcentaje_capacidad_i+porcentaje_capacidad" + ((idAnho.intValue() == 10) ? "+porcentaje_nota" : "") + ") desc,((capacidad_adjudicada*100)/capacidad_acreditada) asc";
+                + "    (porcentaje_precio+porcentaje_geo+porcentaje_capacidad_i+porcentaje_capacidad" + ((idAnho.intValue() == 10 && idRubro == 3) ? "+porcentaje_nota" : "") + ") desc,((capacidad_adjudicada*100)/capacidad_acreditada) asc";
 
         return sql;
     }

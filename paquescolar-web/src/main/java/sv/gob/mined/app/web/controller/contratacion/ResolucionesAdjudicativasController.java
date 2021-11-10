@@ -346,7 +346,7 @@ public class ResolucionesAdjudicativasController implements Serializable {
                 /**
                  * 29/09/2021 Verificar que el contrato no este en preCarga
                  */
-                contratoPreCarga = resolucionAdjudicativaEJB.contratoIsReservaFondos(current.getIdResolucionAdj());
+                contratoPreCarga = false; //resolucionAdjudicativaEJB.contratoIsReservaFondos(current.getIdResolucionAdj());
                 if(contratoPreCarga){
                     JsfUtil.mensajeAlerta("Este contrato no puede ser modificado por estar incluido en una PRE-CARGA de Fondos");
                 }

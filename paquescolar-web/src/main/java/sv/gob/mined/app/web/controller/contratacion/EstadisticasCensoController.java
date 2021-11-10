@@ -1520,9 +1520,22 @@ public class EstadisticasCensoController implements Serializable {
                     presupuesto = presupuesto.add(new BigDecimal(estaditicaBacMF.getMasculino().add(estaditicaBacMF.getFemenimo())).multiply(preBacMFUti.getPrecioMaxMas()));
                     break;
             }
-        } else if (idRubro == 3 && procesoAdquisicion.getIdAnho().getIdAnho().intValue() >= 9) { //mayor o igual de anho 2018
-            presupuesto = presupuesto.add(new BigDecimal(estInicial1grado.getMasculino().add(estInicial1grado.getFemenimo())).multiply(preParZap.getPrecioMaxMas()));
-            presupuesto = presupuesto.add(new BigDecimal(estInicial2grado.getMasculino().add(estInicial2grado.getFemenimo())).multiply(preParZap.getPrecioMaxMas()));
+        } else if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() >= 9) { //mayor o igual de anho 2018
+            switch (idRubro) {
+                case 4:
+                case 5:
+                    presupuesto = presupuesto.add(new BigDecimal(estInicial1grado.getMasculino()).multiply(preParUni.getPrecioMaxMas()).add(new BigDecimal(estInicial1grado.getFemenimo()).multiply(preParUni.getPrecioMaxFem())));
+                    presupuesto = presupuesto.add(new BigDecimal(estInicial2grado.getMasculino()).multiply(preParUni.getPrecioMaxMas()).add(new BigDecimal(estInicial2grado.getFemenimo()).multiply(preParUni.getPrecioMaxFem())));
+                    break;
+                case 2:
+                    presupuesto = presupuesto.add(new BigDecimal(estInicial1grado.getMasculino().add(estInicial1grado.getFemenimo())).multiply(preParUti.getPrecioMaxMas()));
+                    presupuesto = presupuesto.add(new BigDecimal(estInicial2grado.getMasculino().add(estInicial2grado.getFemenimo())).multiply(preParUti.getPrecioMaxMas()));
+                    break;
+                case 3:
+                    presupuesto = presupuesto.add(new BigDecimal(estInicial1grado.getMasculino().add(estInicial1grado.getFemenimo())).multiply(preParZap.getPrecioMaxMas()));
+                    presupuesto = presupuesto.add(new BigDecimal(estInicial2grado.getMasculino().add(estInicial2grado.getFemenimo())).multiply(preParZap.getPrecioMaxMas()));
+                    break;
+            }
         }
 
         return presupuesto;
@@ -1542,7 +1555,11 @@ public class EstadisticasCensoController implements Serializable {
                 lst.add(vw);
 
                 if (uniformes) {
-                    reportes = "rptCertUni.jasper";
+                    if (detProAdqUti.getIdProcesoAdq().getIdProcesoAdq() > 20) {
+                        reportes = "rptCertUni" + detProAdqUni.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper";
+                    } else {
+                        reportes = "rptCertUni.jasper";
+                    }
                 }
                 if (utiles) {
                     if (detProAdqUti.getIdDetProcesoAdq() >= 32) {
@@ -1616,10 +1633,10 @@ public class EstadisticasCensoController implements Serializable {
             lista.add(string);
 
             eMailEJB.enviarMail(titulo,
-                    mensaje, 
-                    lista, 
-                    cc, 
-                    new ArrayList(), 
+                    mensaje,
+                    lista,
+                    cc,
+                    new ArrayList(),
                     archivos,
                     JsfUtil.getSessionMailG("1"));
             Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, "Correo enviado a: {0}", string);
