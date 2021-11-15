@@ -62,14 +62,16 @@ public class UtilEJB {
         return (Municipio) q.getResultList().get(0);
     }
 
-    public List<SelectItem> getLstDocumentosImp(Boolean uniforme) {
+    public List<SelectItem> getLstDocumentosImp(Boolean uniforme, Integer idAnho) {
         if (lstDocumentosImp.isEmpty()) {
             //Id son los mismos que estan el la tabla TIPO_RPT
-            lstDocumentosImp.add(new SelectItem(12, "Orden de Inicio"));
             lstDocumentosImp.add(new SelectItem(7, "Contrato"));
             lstDocumentosImp.add(new SelectItem(5, "Garantía Contrato"));
             lstDocumentosImp.add(new SelectItem(4, "Nota Adjudicación"));
             lstDocumentosImp.add(new SelectItem(3, "Acta Adjudicación"));
+            if (idAnho != 10) {
+                lstDocumentosImp.add(new SelectItem(12, "Orden de Inicio"));
+            }
             lstDocumentosImp.add(new SelectItem(10, "Declaración Adjudicatorio"));
             lstDocumentosImp.add(new SelectItem(13, "Acta de Recomendación"));
             lstDocumentosImp.add(new SelectItem(2, "Cotización"));

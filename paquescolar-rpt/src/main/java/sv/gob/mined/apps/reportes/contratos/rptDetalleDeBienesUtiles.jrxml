@@ -33,7 +33,7 @@
 		<queryString>
 			<![CDATA[select 
     case 
-        when tb.id_nivel in (1) and tb.id_producto in (54) then 1
+        when tb.id_nivel in (1,22) and tb.id_producto in (54) then 1
         when tb.id_nivel in (3) and tb.id_producto in (54) then 3
         when tb.id_nivel in (4) and tb.id_producto in (54) then 4
         when tb.id_nivel in (5) and tb.id_producto in (54) then 5
@@ -58,7 +58,7 @@ from (select
                 from estadistica_censo est 
                 where est.codigo_Entidad = $P{pCodEnt} and
                     est.id_proceso_adq = $P{pProceso} and
-                    est.id_nivel_educativo in (1,3,4,5,6) and
+                    est.id_nivel_educativo in (22,3,4,5,6) and
                     (masculino is not null and femenimo is not null and masculino <>0 and femenimo <> 0)
                 order by est.id_nivel_educativo) tbl,
                 catalogo_producto cat
@@ -67,7 +67,7 @@ from (select
     left outer join resguardo_bienes res on res.id_nivel_educativo = tb.id_nivel and res.codigo_entidad = tb.codigo_entidad and res.id_producto = tb.id_producto
     inner join nivel_educativo niv on tb.id_nivel = niv.id_nivel_educativo
 where (tb.id_niv_pro <>  33 and tb.id_niv_pro <> 37) and
-    (res.id_det_proceso_adq = 42 or res.id_det_proceso_adq is null)
+    (res.id_det_proceso_adq = 58 or res.id_det_proceso_adq is null)
 order by tb.id_nivel, codigo_producto]]>
 		</queryString>
 		<field name="NO_ITEM" class="java.math.BigDecimal"/>
@@ -108,105 +108,105 @@ where vw.codigo_entidad = $P{pCodigoEntidad}]]>
 	<pageHeader>
 		<band height="180" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="6b0c93af-ba30-4e11-98fd-48fa68e1b0a6" x="0" y="19" width="555" height="20"/>
+				<reportElement x="0" y="19" width="555" height="20" uuid="6b0c93af-ba30-4e11-98fd-48fa68e1b0a6"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="14"/>
 				</textElement>
 				<text><![CDATA[Detalle de Bienes y Servicios a Contratar]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="27e62627-bb44-4272-a6dc-2a236d78e28b" x="32" y="68" width="143" height="14"/>
+				<reportElement x="32" y="68" width="143" height="14" uuid="27e62627-bb44-4272-a6dc-2a236d78e28b"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>
 				<text><![CDATA[Departamento:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="27e62627-bb44-4272-a6dc-2a236d78e28b" x="32" y="82" width="143" height="14"/>
+				<reportElement x="32" y="82" width="143" height="14" uuid="27e62627-bb44-4272-a6dc-2a236d78e28b"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>
 				<text><![CDATA[Municipio:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="27e62627-bb44-4272-a6dc-2a236d78e28b" x="32" y="96" width="143" height="14"/>
+				<reportElement x="32" y="96" width="143" height="14" uuid="27e62627-bb44-4272-a6dc-2a236d78e28b"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>
 				<text><![CDATA[Código del centro educativo:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="27e62627-bb44-4272-a6dc-2a236d78e28b" x="32" y="110" width="143" height="14"/>
+				<reportElement x="32" y="110" width="143" height="14" uuid="27e62627-bb44-4272-a6dc-2a236d78e28b"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>
 				<text><![CDATA[Nombre:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="27e62627-bb44-4272-a6dc-2a236d78e28b" x="32" y="124" width="143" height="14"/>
+				<reportElement x="32" y="124" width="143" height="14" uuid="27e62627-bb44-4272-a6dc-2a236d78e28b"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>
 				<text><![CDATA[Organismo de Administración:]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="547fe434-f915-44e0-a09d-1f89d2bf06c6" x="175" y="68" width="176" height="14"/>
+				<reportElement x="175" y="68" width="176" height="14" uuid="547fe434-f915-44e0-a09d-1f89d2bf06c6"/>
 				<textElement>
 					<font fontName="Arial"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{NOMBRE_DEPARTAMENTO}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="547fe434-f915-44e0-a09d-1f89d2bf06c6" x="175" y="82" width="176" height="14"/>
+				<reportElement x="175" y="82" width="176" height="14" uuid="547fe434-f915-44e0-a09d-1f89d2bf06c6"/>
 				<textElement>
 					<font fontName="Arial"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{NOMBRE_MUNICIPIO}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="547fe434-f915-44e0-a09d-1f89d2bf06c6" x="175" y="96" width="165" height="14"/>
+				<reportElement x="175" y="96" width="165" height="14" uuid="547fe434-f915-44e0-a09d-1f89d2bf06c6"/>
 				<textElement>
 					<font fontName="Arial"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{CODIGO_ENTIDAD}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="547fe434-f915-44e0-a09d-1f89d2bf06c6" x="175" y="110" width="351" height="14"/>
+				<reportElement x="175" y="110" width="351" height="14" uuid="547fe434-f915-44e0-a09d-1f89d2bf06c6"/>
 				<textElement>
 					<font fontName="Arial"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="547fe434-f915-44e0-a09d-1f89d2bf06c6" x="175" y="124" width="165" height="14"/>
+				<reportElement x="175" y="124" width="165" height="14" uuid="547fe434-f915-44e0-a09d-1f89d2bf06c6"/>
 				<textElement>
 					<font fontName="Arial"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{INICIALES_MODALIDAD}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="27e62627-bb44-4272-a6dc-2a236d78e28b" x="32" y="148" width="143" height="14"/>
+				<reportElement x="32" y="148" width="143" height="14" uuid="27e62627-bb44-4272-a6dc-2a236d78e28b"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>
 				<text><![CDATA[Rubro de Contratación:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="27e62627-bb44-4272-a6dc-2a236d78e28b" x="32" y="162" width="143" height="14"/>
+				<reportElement x="32" y="162" width="143" height="14" uuid="27e62627-bb44-4272-a6dc-2a236d78e28b"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>
 				<text><![CDATA[Año:]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="82a34d2d-9507-49a9-b057-5c74755d1ec8" x="175" y="148" width="351" height="14"/>
+				<reportElement x="175" y="148" width="351" height="14" uuid="82a34d2d-9507-49a9-b057-5c74755d1ec8"/>
 				<textElement>
 					<font fontName="Arial"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{pRubro}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="85201673-d7e0-4a71-812f-ff1bf2becf9a" x="175" y="162" width="100" height="14"/>
+				<reportElement x="175" y="162" width="100" height="14" uuid="85201673-d7e0-4a71-812f-ff1bf2becf9a"/>
 				<textElement>
 					<font fontName="Arial"/>
 				</textElement>
@@ -220,7 +220,7 @@ where vw.codigo_entidad = $P{pCodigoEntidad}]]>
 	<detail>
 		<band height="61" splitType="Stretch">
 			<componentElement>
-				<reportElement uuid="e89a0720-e708-4b9f-a6d9-26c71eb1790e" key="table" style="table" x="72" y="0" width="405" height="61"/>
+				<reportElement key="table" style="table" x="72" y="0" width="405" height="61" uuid="e89a0720-e708-4b9f-a6d9-26c71eb1790e"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="dsDetalle" uuid="6b03be29-d179-426e-b282-4ba236642f90">
 						<datasetParameter name="pCodEnt">
@@ -234,7 +234,7 @@ where vw.codigo_entidad = $P{pCodigoEntidad}]]>
 					<jr:column width="31" uuid="24be0e9a-bc63-4da7-8bda-48827479dc9c">
 						<jr:columnHeader style="table_TD" height="30" rowSpan="1">
 							<staticText>
-								<reportElement uuid="de0f74ac-c961-4bb4-99bc-1be882189d6f" x="0" y="0" width="31" height="30"/>
+								<reportElement x="0" y="0" width="31" height="30" uuid="de0f74ac-c961-4bb4-99bc-1be882189d6f"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial"/>
 								</textElement>
@@ -243,7 +243,7 @@ where vw.codigo_entidad = $P{pCodigoEntidad}]]>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField>
-								<reportElement uuid="3cfee980-23a5-4033-a3af-e0a02c665ed7" x="0" y="0" width="31" height="20"/>
+								<reportElement x="0" y="0" width="31" height="20" uuid="3cfee980-23a5-4033-a3af-e0a02c665ed7"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial"/>
 								</textElement>
@@ -254,7 +254,7 @@ where vw.codigo_entidad = $P{pCodigoEntidad}]]>
 					<jr:column width="195" uuid="259d891d-acfc-46dd-8532-a27bd1df5b40">
 						<jr:columnHeader style="table_TD" height="30" rowSpan="1">
 							<staticText>
-								<reportElement uuid="d3b81de9-acb2-4c27-86cc-019574809eb9" x="0" y="0" width="195" height="30"/>
+								<reportElement x="0" y="0" width="195" height="30" uuid="d3b81de9-acb2-4c27-86cc-019574809eb9"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial"/>
 								</textElement>
@@ -263,7 +263,7 @@ where vw.codigo_entidad = $P{pCodigoEntidad}]]>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField>
-								<reportElement uuid="9f99f3ed-cc2d-445f-bdd9-dc732c0c3e6b" x="2" y="0" width="192" height="20"/>
+								<reportElement x="2" y="0" width="192" height="20" uuid="9f99f3ed-cc2d-445f-bdd9-dc732c0c3e6b"/>
 								<textElement verticalAlignment="Middle">
 									<font fontName="Arial"/>
 								</textElement>
@@ -274,7 +274,7 @@ where vw.codigo_entidad = $P{pCodigoEntidad}]]>
 					<jr:column width="60" uuid="5aa9fd19-d826-4b7a-ba63-7013d86fc20a">
 						<jr:columnHeader style="table_TD" height="30" rowSpan="1">
 							<staticText>
-								<reportElement uuid="95006a02-a8bf-43d7-a9f0-6685baba122c" x="0" y="0" width="60" height="30"/>
+								<reportElement x="0" y="0" width="60" height="30" uuid="95006a02-a8bf-43d7-a9f0-6685baba122c"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial"/>
 								</textElement>
@@ -283,7 +283,7 @@ where vw.codigo_entidad = $P{pCodigoEntidad}]]>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField>
-								<reportElement uuid="290a2f4a-3368-4dd6-a292-b77e14553a56" x="0" y="0" width="57" height="20"/>
+								<reportElement x="0" y="0" width="57" height="20" uuid="290a2f4a-3368-4dd6-a292-b77e14553a56"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="Arial"/>
 								</textElement>
@@ -294,7 +294,7 @@ where vw.codigo_entidad = $P{pCodigoEntidad}]]>
 					<jr:column width="60" uuid="2e0026c4-e41f-45ea-b7c8-e067d0a1333f">
 						<jr:columnHeader style="table_TD" height="30" rowSpan="1">
 							<staticText>
-								<reportElement uuid="a01d20e8-82df-4680-9a06-11b6f9ecc523" x="0" y="0" width="60" height="30"/>
+								<reportElement x="0" y="0" width="60" height="30" uuid="a01d20e8-82df-4680-9a06-11b6f9ecc523"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial"/>
 								</textElement>
@@ -303,7 +303,7 @@ where vw.codigo_entidad = $P{pCodigoEntidad}]]>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField>
-								<reportElement uuid="994f1e86-3e00-44ae-b8e7-d81f0de0c6b6" x="0" y="0" width="57" height="20"/>
+								<reportElement x="0" y="0" width="57" height="20" uuid="994f1e86-3e00-44ae-b8e7-d81f0de0c6b6"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="Arial"/>
 								</textElement>
@@ -314,7 +314,7 @@ where vw.codigo_entidad = $P{pCodigoEntidad}]]>
 					<jr:column width="60" uuid="00d29e7a-6929-4747-b6df-9624fd5890b4">
 						<jr:columnHeader style="table_TD" height="30" rowSpan="1">
 							<staticText>
-								<reportElement uuid="a01d20e8-82df-4680-9a06-11b6f9ecc523" x="0" y="0" width="60" height="30"/>
+								<reportElement x="0" y="0" width="60" height="30" uuid="a01d20e8-82df-4680-9a06-11b6f9ecc523"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial"/>
 								</textElement>
@@ -323,7 +323,7 @@ where vw.codigo_entidad = $P{pCodigoEntidad}]]>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="20" rowSpan="1">
 							<textField>
-								<reportElement uuid="994f1e86-3e00-44ae-b8e7-d81f0de0c6b6" x="0" y="0" width="57" height="20"/>
+								<reportElement x="0" y="0" width="57" height="20" uuid="994f1e86-3e00-44ae-b8e7-d81f0de0c6b6"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="Arial"/>
 								</textElement>
@@ -338,7 +338,7 @@ where vw.codigo_entidad = $P{pCodigoEntidad}]]>
 	<columnFooter>
 		<band height="45" splitType="Stretch">
 			<textField>
-				<reportElement uuid="6823bac1-6e0f-40d4-992e-095d874193f2" x="32" y="14" width="494" height="20"/>
+				<reportElement x="32" y="14" width="494" height="20" uuid="6823bac1-6e0f-40d4-992e-095d874193f2"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>

@@ -137,7 +137,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
             VarSession.setVariableSessionED("2");
             if (detalleProceso != null) {
                 cargaInicialDeDatos(params);
-                lstDocumentosImp = utilEJB.getLstDocumentosImp(rubro.intValueExact() == 1 || rubro.intValueExact() == 4 || rubro.intValueExact() == 5);
+                lstDocumentosImp = utilEJB.getLstDocumentosImp(rubro.intValueExact() == 1 || rubro.intValueExact() == 4 || rubro.intValueExact() == 5, detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue());
                 seleccionarDocumentosAImprimir();
             }
         } else {
@@ -682,7 +682,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                     }
 
                     showGarantiaUsoTela = (rubro.intValue() == 1 || rubro.intValue() == 4 || rubro.intValue() == 5);
-                    lstDocumentosImp = utilEJB.getLstDocumentosImp(showGarantiaUsoTela);
+                    lstDocumentosImp = utilEJB.getLstDocumentosImp(showGarantiaUsoTela, detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue());
                     showFechaOrdenInicio = !showGarantiaUsoTela;
 
                     switch (estadoEdicion) {
@@ -751,17 +751,16 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
     private void seleccionarDocumentosAImprimir() {
         if (detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 8) {
             lstSelectDocumentosImp.add(12);
+            lstSelectDocumentosImp.add(11);
         }
+        
+        lstSelectDocumentosImp.add(10);
         lstSelectDocumentosImp.add(7);
         lstSelectDocumentosImp.add(5);
         lstSelectDocumentosImp.add(4);
         lstSelectDocumentosImp.add(3);
-        lstSelectDocumentosImp.add(10);
         lstSelectDocumentosImp.add(13);
         lstSelectDocumentosImp.add(2);
-        if (detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 8) {
-            lstSelectDocumentosImp.add(11);
-        }
 
         if (showGarantiaUsoTela) {
             lstSelectDocumentosImp.add(6);

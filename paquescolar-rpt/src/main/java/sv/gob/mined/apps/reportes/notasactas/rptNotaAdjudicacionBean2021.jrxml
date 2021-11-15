@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptNotaAdjudicacion" pageWidth="612" pageHeight="792" columnWidth="528" leftMargin="42" rightMargin="42" topMargin="39" bottomMargin="39" uuid="ad17c64a-0600-4c9a-b23f-e00788b53d02">
 	<property name="ireport.zoom" value="1.210000000000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="310"/>
+	<property name="ireport.y" value="234"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -231,7 +231,7 @@ concat("; notifica a la persona proveedora " ).concat($F{razonSocial}).concat(",
 					<textElement>
 						<font fontName="Arial" size="10"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Nombre de la Proveedora: ".concat($F{nombreRepresentante}).
+					<textFieldExpression><![CDATA["Nombre de la Persona Proveedora: ".concat($F{nombreRepresentante}).
 concat("\nDUI: ").concat((($F{numeroDui}==null)?"":$F{numeroDui})).
 concat("\nSello (aplica para Sociedades)")]]></textFieldExpression>
 				</textField>
