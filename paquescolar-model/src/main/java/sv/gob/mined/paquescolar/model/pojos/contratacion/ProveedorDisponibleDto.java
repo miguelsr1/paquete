@@ -38,6 +38,7 @@ public class ProveedorDisponibleDto implements Serializable {
     private Double porcentajeCapacidad = 0d;
     private Double porcentajeCapacidadItem = 0d;
     private Double porcentajeEvaluacion;
+    private Double porcentajeCalificacion;
     private Double porcentajeAdjudicacion;
     private Double porcentajeNota = 0d;
 
@@ -170,6 +171,14 @@ public class ProveedorDisponibleDto implements Serializable {
 
     public void setPorcentajeNota(Double porcentajeNota) {
         this.porcentajeNota = porcentajeNota;
+    }
+
+    public Double getPorcentajeCalificacion() {
+        return porcentajeCalificacion;
+    }
+
+    public void setPorcentajeCalificacion(Double porcentajeCalificacion) {
+        this.porcentajeCalificacion = porcentajeCalificacion;
     }
 
 }

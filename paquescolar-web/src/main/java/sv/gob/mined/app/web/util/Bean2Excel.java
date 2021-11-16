@@ -200,7 +200,7 @@ public class Bean2Excel {
                 // Get the header text from the bean and write it to the cell
                 HSSFCell cell = row.createCell(m + 3 + (l * 3));
                 cell.setCellStyle(myNormalStyle);
-                cell.setCellValue(proveedoresAMostrar[l]);
+                cell.setCellValue("");//proveedoresAMostrar[l]);
                 cell.setCellType(CellType.STRING);
             }
             sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 3 + (l * 3), 5 + (l * 3)));
@@ -457,7 +457,7 @@ public class Bean2Excel {
         for (String prov : proveedoresAMostrar) {
             cell1 = row.createCell(cellIndex);
             cell1.setCellStyle(myNormalStyle);
-            cell1.setCellValue(prov);
+            cell1.setCellValue("");//prov);
             sheet.addMergedRegion(new CellRangeAddress(currentRow,
                     currentRow, cellIndex, cellIndex + 1));
             cellIndex += 2;

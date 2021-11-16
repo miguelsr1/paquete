@@ -46,6 +46,7 @@ import sv.gob.mined.paquescolar.model.EmpresaNoItem;
 import sv.gob.mined.paquescolar.model.EmpresaPreciosRef;
 import sv.gob.mined.paquescolar.model.EntidadFinanciera;
 import sv.gob.mined.paquescolar.model.NivelEducativo;
+import sv.gob.mined.paquescolar.model.OfertaBienesServicios;
 import sv.gob.mined.paquescolar.model.Participantes;
 import sv.gob.mined.paquescolar.model.Persona;
 import sv.gob.mined.paquescolar.model.PlanillaPago;
@@ -928,23 +929,28 @@ public class ProveedorEJB {
         return sql;
     }
 
-    public List<ProveedorDisponibleDto> getLstProveedorPorcentajeEval(BigDecimal idOferta) {
+    public List<ProveedorDisponibleDto> getLstProveedorPorcentajeEval(OfertaBienesServicios oferta) {
         String sql = "select \n"
                 + "    rownum                   as idRow,\n"
                 + "    emp.razon_social         as razonSocial,\n"
                 + "    par.porcentaje_precio    as porcentajePrecio,\n"
                 + "    par.porcentaje_geo       as porcentajeGeo,\n"
                 + "    par.porcentaje_capacidad as porcentajeCapacidad,\n"
-                + "    par.porcentaje_precio+par.porcentaje_geo+par.porcentaje_capacidad as porcentajeEvaluacion\n"
+                + "    par.porcentaje_precio+par.porcentaje_geo+par.porcentaje_capacidad+nvl((npz.nota_zapato_nina + npz.nota_zapato_nino),0) as porcentajeEvaluacion,\n"
+                + "    nvl((npz.nota_zapato_nina + npz.nota_zapato_nino),0) as porcentajeCalificacion \n"
                 + "from participantes par \n"
                 + "    inner join empresa emp on par.id_empresa = emp.id_empresa\n"
                 + "    inner join oferta_bienes_servicios ofe on par.id_oferta = ofe.id_oferta\n"
+                + "    inner join det_rubro_muestra_interes det on emp.id_empresa = det.id_empresa\n"
+                + "    left join nota_pruebas_zapatero npz on npz.id_muestra_interes = det.id_muestra_interes\n"
                 + "where \n"
                 + "    par.estado_eliminacion = 0 and\n"
                 + "    ofe.estado_eliminacion = 0 and\n"
-                + "    ofe.id_oferta =" + idOferta + "\n"
+                + "    ofe.id_oferta =" + oferta.getIdOferta() + " and\n"
+                + "    det.id_anho = " + oferta.getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho() + " and\n"
+                + "    det.id_rubro_interes = " + oferta.getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres() + "\n"
                 + "order by\n"
-                + "    (par.porcentaje_precio+par.porcentaje_geo+par.porcentaje_capacidad) asc";
+                + "    (par.porcentaje_precio+par.porcentaje_geo+par.porcentaje_capacidad+nvl((npz.nota_zapato_nina + npz.nota_zapato_nino),0)) asc";
         Query q = em.createNativeQuery(sql, ProveedorDisponibleDto.class);
         return q.getResultList();
     }

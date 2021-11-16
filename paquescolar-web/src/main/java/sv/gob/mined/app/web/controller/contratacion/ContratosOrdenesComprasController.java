@@ -753,7 +753,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
             lstSelectDocumentosImp.add(12);
             lstSelectDocumentosImp.add(11);
         }
-        
+
         lstSelectDocumentosImp.add(10);
         lstSelectDocumentosImp.add(7);
         lstSelectDocumentosImp.add(5);
@@ -944,7 +944,12 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                             param.put("pAnho", detalleProceso.getIdProcesoAdq().getIdAnho().getAnho());
                             param.put("SUBREPORT_DIR", JsfUtil.getPathReportes().concat(Reportes.PATH_REPORTES + "notasactas") + File.separator);
 
-                            rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptActaRecomendacion(current.getIdResolucionAdj().getIdResolucionAdj()));
+                            if (detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() >= 10
+                                    && detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 3) {
+                                rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + "Zap.jasper"), resolucionAdjudicativaEJB.generarRptActaRecomendacion(current.getIdResolucionAdj().getIdResolucionAdj()));
+                            } else {
+                                rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptActaRecomendacion(current.getIdResolucionAdj().getIdResolucionAdj()));
+                            }
 
                             lstRptAImprimir.add(rptTemp);
                             break;

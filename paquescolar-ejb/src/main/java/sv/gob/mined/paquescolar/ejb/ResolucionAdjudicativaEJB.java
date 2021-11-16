@@ -238,7 +238,7 @@ public class ResolucionAdjudicativaEJB {
             query.setParameter(1, res.getIdParticipante().getIdOferta().getIdOferta());
             lst.get(0).setLstDetalleItem(query.getResultList());
 
-            lst.get(0).setLstPorcentajeEval(proveedorEJB.getLstProveedorPorcentajeEval(res.getIdParticipante().getIdOferta().getIdOferta()));
+            lst.get(0).setLstPorcentajeEval(proveedorEJB.getLstProveedorPorcentajeEval(res.getIdParticipante().getIdOferta()));
         }
         return lst;
     }
