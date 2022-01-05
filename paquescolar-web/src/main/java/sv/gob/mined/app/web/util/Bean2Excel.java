@@ -200,7 +200,7 @@ public class Bean2Excel {
                 // Get the header text from the bean and write it to the cell
                 HSSFCell cell = row.createCell(m + 3 + (l * 3));
                 cell.setCellStyle(myNormalStyle);
-                cell.setCellValue("");//proveedoresAMostrar[l]);
+                cell.setCellValue(proveedoresAMostrar[l]);
                 cell.setCellType(CellType.STRING);
             }
             sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 3 + (l * 3), 5 + (l * 3)));
@@ -274,8 +274,8 @@ public class Bean2Excel {
         currentRow++;
         currentRow++;
         row = sheet.createRow(currentRow);
-        HSSFCell cell = row.createCell(0);
-        cell.setCellValue("F._____________________________________");
+        HSSFCell cell;// = row.createCell(0);
+        /*cell.setCellValue("F._____________________________________");
         currentRow++;
         row = sheet.createRow(currentRow);
         cell = row.createCell(0);
@@ -300,7 +300,7 @@ public class Bean2Excel {
         currentRow++;
         row = sheet.createRow(currentRow);
         cell = row.createCell(0);
-        cell.setCellValue("Encargado de Compra");
+        cell.setCellValue("Encargado de Compra");*/
 
         row = sheet.getRow(3);
         cell = row.getCell(0);
@@ -457,7 +457,7 @@ public class Bean2Excel {
         for (String prov : proveedoresAMostrar) {
             cell1 = row.createCell(cellIndex);
             cell1.setCellStyle(myNormalStyle);
-            cell1.setCellValue("");//prov);
+            cell1.setCellValue(prov);
             sheet.addMergedRegion(new CellRangeAddress(currentRow,
                     currentRow, cellIndex, cellIndex + 1));
             cellIndex += 2;
@@ -507,7 +507,7 @@ public class Bean2Excel {
         currentRow++;
         currentRow++;
         row = sheet.createRow(currentRow);
-        HSSFCell cell = row.createCell(0);
+        HSSFCell cell;/* = row.createCell(0);
         cell.setCellValue("F._____________________________________");
         currentRow++;
         row = sheet.createRow(currentRow);
@@ -536,7 +536,7 @@ public class Bean2Excel {
         currentRow++;
         row = sheet.createRow(currentRow);
         cell = row.createCell(0);
-        cell.setCellValue("Encargado de Compra");
+        cell.setCellValue("Encargado de Compra");*/
 
         String leyenda = HSSFHeader.font("Arial", "Bold")
                 + HSSFHeader.fontSize((short) 8) + "ANALISIS TÉCNICO RUBRO : " + rubro

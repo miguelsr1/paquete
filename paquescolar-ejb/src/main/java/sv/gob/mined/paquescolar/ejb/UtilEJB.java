@@ -125,4 +125,65 @@ public class UtilEJB {
         q.setParameter("codDepa", codigoDepartamento);
         return q.getResultList();
     }
+
+    /*public void iniciar() {
+
+        Query q = em.createQuery("SELECT DISTINCT c.idResolucionAdj.idParticipante.idEmpresa FROM ContratosOrdenesCompras c WHERE c.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq.idDetProcesoAdq=64 and c.idResolucionAdj.idEstadoReserva.idEstadoReserva=2", Empresa.class);
+        List<Empresa> lst = q.getResultList();
+
+        //String rubro = "SERVICIOS DE CONFECCION DE 1er UNIFORMES";
+        //String rubro = "PRODUCCION DE ZAPATOS";
+        String rubro = "SUMINISTRO DE PAQUETES DE UTILES ESCOLARES";
+
+        DetalleProcesoAdq detalleProceso = em.find(DetalleProcesoAdq.class, 64);
+
+        for (Empresa emp : lst) {
+            try {
+                List<JasperPrint> lstRptAImprimir = new ArrayList<>();
+
+                CapaInstPorRubro capacidadInst = proveedorEJB.findDetProveedor(detalleProceso.getIdRubroAdq().getIdRubroInteres(),
+                        detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho(), emp, CapaInstPorRubro.class);
+
+                /*lstRptAImprimir = Reportes.getReporteOfertaDeProveedor(capacidadInst, contrato.getIdResolucionAdj().getIdParticipante().getIdEmpresa(), detalleProceso,
+                getLstOfertaGlobal(contrato.getIdResolucionAdj().getIdParticipante().getIdEmpresa().getNumeroNit(), detalleProceso.getIdRubroAdq().getIdRubroInteres(), detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho()),
+                getDeclaracionJurada(contrato.getIdResolucionAdj().getIdParticipante().getIdEmpresa(), detalleProceso, emp.getIdMunicipio().getNombreMunicipio()));/
+                HashMap param = new HashMap();
+                param.put("ubicacionImagenes", "/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/");
+                param.put("pEscudo", "/media/misanchez/Datos/git_paquete/paquete/paquescolar-web/src/main/webapp/resources/images/");
+                param.put("usuarioInsercion", "ADMIN");
+                param.put("pLugar", emp.getIdMunicipio().getNombreMunicipio().concat(", ").concat(emp.getIdMunicipio().getCodigoDepartamento().getNombreDepartamento()));
+                param.put("pRubro", rubro);
+                param.put("pIdRubro", capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres().intValue());
+                param.put("pCorreoPersona", capacidadInst.getIdMuestraInteres().getIdEmpresa().getIdPersona().getEmail());
+                param.put("pIdGestion", "");
+
+                List<OfertaGlobal> lstDatos = reportesEJB.getLstOfertaGlobal(emp.getNumeroNit(), detalleProceso.getIdRubroAdq().getIdRubroInteres(), detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho());
+                lstDatos.get(0).setRubro(rubro);
+                if (lstDatos.get(0).getDepartamento().contains("TODO EL PAIS")) {
+                    param.put("productor", Boolean.TRUE);
+                } else {
+                    param.put("productor", Boolean.FALSE);
+                }
+
+                lstRptAImprimir.add(JasperFillManager.fillReport(
+                        new FileInputStream("/opt/soporte/paquete/archivos/reportes/sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobalProv" + detalleProceso.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"),
+                        param, new JRBeanCollectionDataSource(lstDatos)));
+
+                OutputStream output = new FileOutputStream(new File("/home/misanchez/Escritorio/Temp/utiles/" + emp.getNumeroNit() + ".pdf"));
+                JasperExportManager.exportReportToPdfStream(lstRptAImprimir.get(0), output);
+
+                JRPdfExporter exporter = new JRPdfExporter();
+                exporter.setParameter(JRPdfExporterParameter.JASPER_PRINT_LIST, lstRptAImprimir);
+                exporter.setParameter(JRPdfExporterParameter.IS_CREATING_BATCH_MODE_BOOKMARKS, Boolean.FALSE);
+                exporter.setParameter(JRPdfExporterParameter.OUTPUT_STREAM, output);
+                exporter.exportReport();
+                output.close();
+            } catch (JRException | FileNotFoundException ex) {
+                Logger.getLogger(UtilEJB.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(UtilEJB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }*/
 }

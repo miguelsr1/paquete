@@ -36,6 +36,7 @@ public class OfertaGlobal implements Serializable {
     private String razonSocial;
     @Transient
     private String anho;
+    @Transient
     private String rubro;
     private String lugarFecha;
     private String nombreRepresentante;

@@ -1927,4 +1927,8 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                 bcc,
                 JsfUtil.getSessionMailG("2"));
     }
+    
+    /*public void generarOfertaGlobal(){
+        utilEJB.iniciar();
+    }*/
 }

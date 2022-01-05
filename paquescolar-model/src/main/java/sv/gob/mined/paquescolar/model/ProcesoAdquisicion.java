@@ -53,6 +53,9 @@ public class ProcesoAdquisicion implements Serializable {
     @OneToMany(mappedBy = "idProcesoAdq", fetch = FetchType.LAZY)
     @XmlTransient
     private List<EstadisticaCenso> estadisticaCensoList;
+    @OneToMany(mappedBy = "idProcesoAdq", fetch = FetchType.LAZY)
+    @XmlTransient
+    private List<CapaInstPorRubro> capaInstPorRubroList;
 
     public ProcesoAdquisicion() {
     }
@@ -137,5 +140,13 @@ public class ProcesoAdquisicion implements Serializable {
 
     public void setEstadisticaCensoList(List<EstadisticaCenso> estadisticaCensoList) {
         this.estadisticaCensoList = estadisticaCensoList;
+    }
+
+    public List<CapaInstPorRubro> getCapaInstPorRubroList() {
+        return capaInstPorRubroList;
+    }
+
+    public void setCapaInstPorRubroList(List<CapaInstPorRubro> capaInstPorRubroList) {
+        this.capaInstPorRubroList = capaInstPorRubroList;
     }
 }

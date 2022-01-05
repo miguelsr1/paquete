@@ -85,12 +85,6 @@
     </dependencies>
 
     <repositories>
-        <repository> 
-            <id>prime-repo</id> 
-            <name>PrimeFaces Maven Repository</name> 
-            <url>http://repository.primefaces.org</url> 
-            <layout>default</layout> 
-        </repository>
         <repository>
             <id>maven.repository.redhat.com</id>
             <name>JBOSS EAP 6.X.X Repository for Maven</name>

@@ -69,6 +69,10 @@ public class CapaInstPorRubro implements Serializable {
     @JoinColumn(name = "ID_MUESTRA_INTERES", referencedColumnName = "ID_MUESTRA_INTERES")
     @ManyToOne(fetch = FetchType.EAGER)
     private DetRubroMuestraInteres idMuestraInteres;
+    
+    @JoinColumn(name = "ID_PROCESO_ADQ", referencedColumnName = "ID_PROCESO_ADQ")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private ProcesoAdquisicion idProcesoAdq;
 
     public CapaInstPorRubro() {
     }
@@ -195,5 +199,13 @@ public class CapaInstPorRubro implements Serializable {
     @Override
     public String toString() {
         return "sv.gob.mined.paquescolar.model.CapaInstPorRubro[ idCapInstRubro=" + idCapInstRubro + " ]";
+    }
+
+    public ProcesoAdquisicion getIdProcesoAdq() {
+        return idProcesoAdq;
+    }
+
+    public void setIdProcesoAdq(ProcesoAdquisicion idProcesoAdq) {
+        this.idProcesoAdq = idProcesoAdq;
     }
 }
