@@ -70,7 +70,7 @@ public class MunicipioInteresMB implements Serializable {
             JsfUtil.mensajeAlerta("Debe seleccionar un proceso de contratación");
         } else {
             DetRubroMuestraInteres detRubro = proveedorEJB.findDetRubroByAnhoAndRubro(anho.getIdAnho(), empresa.getIdEmpresa());
-            capacidadInst = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), anho.getIdAnho(), empresa, CapaInstPorRubro.class);
+            capacidadInst = proveedorEJB.findDetProveedor(detRubro, proceso.getIdProcesoAdq(), CapaInstPorRubro.class);
             if (capacidadInst == null) {
                 JsfUtil.mensajeAlerta("No se han cargado los datos de este proveedor para el proceso de contratación del año " + anho.getAnho());
             } else {
@@ -78,7 +78,7 @@ public class MunicipioInteresMB implements Serializable {
                         && capacidadInst.getIdMuestraInteres().getDatosVerificados() == 1) {
                     datosVerificados = true;
                 }
-                departamentoCalif = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), anho.getIdAnho(), empresa, CapaDistribucionAcre.class);
+                departamentoCalif = proveedorEJB.findDetProveedor(detRubro, null, CapaDistribucionAcre.class);
 
                 if (departamentoCalif != null && departamentoCalif.getCodigoDepartamento() != null) {
                     lstMunSource = datosGeograficosEJB.getLstMunicipiosDisponiblesDeInteres(departamentoCalif.getIdCapaDistribucion(), departamentoCalif.getCodigoDepartamento().getCodigoDepartamento());

@@ -410,18 +410,20 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
         if (proceso == null || proceso.getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe seleccionar un proceso de contratación");
         } else {
+            /*Integer idProceso = 0;
             if (proceso.getPadreIdProcesoAdq() != null) {
+                idProceso = proceso.getIdProcesoAdq();
                 proceso = proceso.getPadreIdProcesoAdq();
-            }
+            }*/
             DetRubroMuestraInteres detRubro = proveedorEJB.findDetRubroByAnhoAndRubro(idAnho, empresa.getIdEmpresa());
-            capacidadInst = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), idAnho, empresa, CapaInstPorRubro.class);
+            capacidadInst = proveedorEJB.findDetProveedor(detRubro, proceso.getIdProcesoAdq(), CapaInstPorRubro.class);
             if (capacidadInst == null) {
                 JsfUtil.mensajeAlerta("No se han cargado los datos de este proveedor para el proceso de contratación del año " + proceso.getIdAnho().getAnho());
             } else {
                 detalleProcesoAdq = JsfUtil.findDetalleByRubroAndAnho(proceso,
                         capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres(),
                         capacidadInst.getIdMuestraInteres().getIdAnho().getIdAnho());
-                departamentoCalif = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), idAnho, empresa, CapaDistribucionAcre.class);
+                departamentoCalif = proveedorEJB.findDetProveedor(detRubro, null, CapaDistribucionAcre.class);
 
                 if (departamentoCalif == null || departamentoCalif.getCodigoDepartamento() == null) {
                     JsfUtil.mensajeAlerta("Este proveedor no posee departamento de calificación " + proceso.getIdAnho().getAnho());
@@ -1460,9 +1462,9 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
             Logger.getLogger(ProveedorController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void notificarOfertaProv(){
-        
+
+    public void notificarOfertaProv() {
+
     }
 
 }

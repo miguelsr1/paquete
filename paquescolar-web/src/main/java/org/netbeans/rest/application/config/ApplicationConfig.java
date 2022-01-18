@@ -27,6 +27,7 @@ public class ApplicationConfig extends Application {
      * given list with all resources defined in the project.
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(sv.gob.mined.app.web.ws.ServiciosWs.class);
     }
     
 }

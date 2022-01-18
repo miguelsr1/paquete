@@ -673,21 +673,23 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         if (proceso == null || proceso.getIdProcesoAdq() == null) {
             JsfUtil.mensajeAlerta("Debe seleccionar un proceso de contratación");
         } else {
+            /*Integer idProceso = 0;
             if (proceso.getPadreIdProcesoAdq() != null) {
+                idProceso = proceso.getIdProcesoAdq();
                 proceso = proceso.getPadreIdProcesoAdq();
-            }
+            }*/
             DetRubroMuestraInteres detRubro = proveedorEJB.findDetRubroByAnhoAndRubro(idAnho, empresa.getIdEmpresa());
             if (detRubro == null) {
                 JsfUtil.mensajeAlerta("No se han cargado los datos de este proveedor para el proceso de contratación del año " + proceso.getIdAnho().getAnho());
             } else {
-                capacidadInst = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), idAnho, empresa, CapaInstPorRubro.class);
+                capacidadInst = proveedorEJB.findDetProveedor(detRubro, proceso.getIdProcesoAdq(), CapaInstPorRubro.class);
                 if (capacidadInst == null) {
                     JsfUtil.mensajeAlerta("No se han cargado los datos de este proveedor para el proceso de contratación del año " + proceso.getIdAnho().getAnho());
                 } else {
                     detalleProcesoAdq = JsfUtil.findDetalleByRubroAndAnho(proceso,
                             capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres(),
                             capacidadInst.getIdMuestraInteres().getIdAnho().getIdAnho());
-                    departamentoCalif = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), idAnho, empresa, CapaDistribucionAcre.class);
+                    departamentoCalif = proveedorEJB.findDetProveedor(detRubro, null, CapaDistribucionAcre.class);
                     personaNatural = (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1);
                     if (personaNatural) {
                         mismaDireccion = (empresa.getIdMunicipio().getIdMunicipio().intValue() == empresa.getIdPersona().getIdMunicipio().getIdMunicipio().intValue()
@@ -1927,7 +1929,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                 bcc,
                 JsfUtil.getSessionMailG("2"));
     }
-    
+
     /*public void generarOfertaGlobal(){
         utilEJB.iniciar();
     }*/

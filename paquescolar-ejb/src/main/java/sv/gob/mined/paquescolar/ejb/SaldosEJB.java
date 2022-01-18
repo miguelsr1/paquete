@@ -168,11 +168,12 @@ public class SaldosEJB {
     }
 
     private List getSaldoParticipante(ResolucionesAdjudicativas res) {
-        String sql = String.format("SELECT NVL(FN_VERIFICAR_SALDO_PROVEEDOR(%d, %d, %d, %d), 0) FROM DUAL",
+        String sql = String.format("SELECT NVL(FN_VERIFICAR_SALDO_PROVEEDOR(%d, %d, %d, %d, %d), 0) FROM DUAL",
                 res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho().intValue(),
                 res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue(),
                 res.getIdParticipante().getIdEmpresa().getIdEmpresa().intValue(),
-                res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq());
+                res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq(),
+                res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq());
 
         Query q = em.createNativeQuery(sql);
         return q.getResultList();
@@ -193,10 +194,11 @@ public class SaldosEJB {
             //no devuelve nada cuando no hay registros
             Query query;
             //if (res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho().equals("2018")) {
-            query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idAnho.idAnho=:pIdAnho and c.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
+            query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idAnho.idAnho=:pIdAnho and c.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0 and c.idProcesoAdq=:pIdPro", CapaInstPorRubro.class);
             query.setParameter("idEmpresa", res.getIdParticipante().getIdEmpresa());
             query.setParameter("pIdAnho", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
             query.setParameter("pIdRubro", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres());
+            query.setParameter("pIdPro", res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq());
             /*} else if(res.getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getDescripcionProcesoAdq().contains("SOBREDEMANDA")){
                 query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq=:idDetProcesoAdq and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
                 query.setParameter("idEmpresa", res.getIdParticipante().getIdEmpresa());

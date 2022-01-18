@@ -457,10 +457,11 @@ public class ModificativaEJB {
     }
 
     public List getSaldoParticipante(ResolucionesModificativas resModif) {
-        String sql = String.format("SELECT NVL(FN_GETSALDOPROVEEDOR(%d, %d, %d), 0) FROM DUAL",
+        String sql = String.format("SELECT NVL(FN_GETSALDOPROVEEDOR(%d, %d, %d, %d), 0) FROM DUAL",
                 resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho().intValue(),
                 resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue(),
-                resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdEmpresa().intValue());
+                resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdEmpresa().intValue(),
+                resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq());
 
         Query q = em.createNativeQuery(sql);
         return q.getResultList();

@@ -367,11 +367,15 @@ public class ProveedorEJB {
         }
     }
 
-    public <T extends Object> T findDetProveedor(BigDecimal idRubro, BigDecimal idAnho, Empresa idEmpresa, Class clase) {
-        Query q = em.createQuery("SELECT d FROM " + clase.getSimpleName() + " d WHERE d.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and d.idMuestraInteres.idAnho.idAnho=:pIdAnho and d.idMuestraInteres.idEmpresa=:idEmpresa and d.estadoEliminacion=0 and d.idMuestraInteres.estadoEliminacion=0 ORDER BY d.idMuestraInteres", clase);
-        q.setParameter("pIdRubro", idRubro);
-        q.setParameter("pIdAnho", idAnho);
-        q.setParameter("idEmpresa", idEmpresa);
+    public <T extends Object> T findDetProveedor(DetRubroMuestraInteres detRubro, Integer idPro, Class clase) {
+        Query q = em.createQuery("SELECT d FROM " + clase.getSimpleName() + " d WHERE d.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and d.idMuestraInteres.idAnho.idAnho=:pIdAnho and d.idMuestraInteres.idEmpresa=:idEmpresa and d.estadoEliminacion=0 and d.idMuestraInteres.estadoEliminacion=0 " + (clase.equals(CapaInstPorRubro.class) ? " and d.idProcesoAdq.idProcesoAdq=:pIdPro " : "") + " ORDER BY d.idMuestraInteres", clase);
+        q.setParameter("pIdRubro", detRubro.getIdRubroInteres().getIdRubroInteres());
+        q.setParameter("pIdAnho", detRubro.getIdAnho().getIdAnho());
+        q.setParameter("idEmpresa", detRubro.getIdEmpresa());
+        if (clase.equals(CapaInstPorRubro.class)) {
+            q.setParameter("pIdPro", idPro);
+        }
+
         if (q.getResultList().isEmpty()) {
             return null;
         } else {
@@ -643,8 +647,8 @@ public class ProveedorEJB {
             idDetTemp = 40;
         }
 
-        Query q = em.createNativeQuery(findLstIdEmpresa(codDepartamento, codMunicipio, codCanton, idMunicipio, idMunicipios, detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue(), idDetT1, idDetTemp,
-                municipioIgual, cantidad.intValue(), mapItems.get("noItemSeparados"), mapItems.get("noItems"), detProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho()), ProveedorDisponibleDto.class);
+        Query q = em.createNativeQuery(findLstIdEmpresa(codDepartamento, codMunicipio, codCanton, idMunicipio, idMunicipios, detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue(), detProcesoAdq, idDetTemp,
+                municipioIgual, cantidad.intValue(), mapItems.get("noItemSeparados"), mapItems.get("noItems")), ProveedorDisponibleDto.class);
 
         lstCapa.addAll(q.getResultList());
 
@@ -743,8 +747,9 @@ public class ProveedorEJB {
      * @param noItems
      * @return -
      */
-    private String findLstIdEmpresa(String codDep, String codMun, String codCanton, Integer idMunicipio, String idMunicipios, Integer idRubro, Integer idDetProcesoAdq, Integer idDetProcesoAdqPrecio,
-            Boolean municipioIgual, Integer cantidad, String noItemSeparados, String noItems, BigDecimal idAnho) {
+    private String findLstIdEmpresa(String codDep, String codMun, String codCanton, Integer idMunicipio, String idMunicipios, Integer idRubro, DetalleProcesoAdq idDetProcesoAdq, Integer idDetProcesoAdqPrecio,
+            Boolean municipioIgual, Integer cantidad, String noItemSeparados, String noItems) {
+        BigDecimal idAnho = idDetProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho();
 
         List<PorcentajeEvaluacion> lstPorcentajes = getPorcentajesEvaluacionByAnho(idAnho, new BigInteger(idRubro.toString()));
         BigDecimal porPrecio = BigDecimal.ZERO;
@@ -860,10 +865,10 @@ public class ProveedorEJB {
                 + "                    end porcentaje_capacidad\n"
                 + "                from det_rubro_muestra_interes det\n"
                 + "                    inner join capa_inst_por_rubro cip      on det.id_muestra_interes = cip.id_muestra_interes\n"
-                + "                    inner join capa_distribucion_acre cda on cda.id_muestra_interes = det.id_muestra_interes and cda.id_capa_distribucion in (select id_capa_distribucion from dis_municipio_interes dis inner join municipio mun on mun.id_municipio = dis.id_municipio where dis.estado_eliminacion = 0 and dis.id_municipio = " + idMunicipio + " and  dis.id_capa_distribucion = cda.id_capa_distribucion and " + (municipioIgual ? "mun.codigo_municipio ='" + codMun + "'and mun.codigo_departamento = '" + codDep + "'" : "mun.id_municipio in (" + (idMunicipios.isEmpty() ? idMunicipio : idMunicipios + "," + idMunicipio) + ")") + ")\n"
+                + "                    inner join capa_distribucion_acre cda on cda.id_muestra_interes = det.id_muestra_interes and cda.id_capa_distribucion in (select id_capa_distribucion from dis_municipio_interes dis inner join municipio mun on mun.id_municipio = dis.id_municipio where dis.estado_eliminacion = 0 and dis.id_municipio = " + idMunicipio + " and  dis.id_capa_distribucion = cda.id_capa_distribucion and " + (municipioIgual ? "mun.codigo_municipio ='" + codMun + "' and mun.codigo_departamento = '" + codDep + "'" : " mun.id_municipio in (" + (idMunicipios.isEmpty() ? idMunicipio : idMunicipios + "," + idMunicipio) + ")") + ")\n"
                 + "                    inner join dis_municipio_interes mun on mun.id_capa_distribucion = cda.id_capa_distribucion and mun.id_municipio =  " + idMunicipio + "\n"
                 + "                where \n"
-                + "                    det.estado_eliminacion = 0 and cip.capacidad_acreditada>0) tb2 on tb1.id_muestra_interes = tb2.id_muestra_interes\n"
+                + "                    det.estado_eliminacion = 0 and cip.capacidad_acreditada>0 and cip.id_proceso_adq = " + idDetProcesoAdq.getIdProcesoAdq().getIdProcesoAdq() + ") tb2 on tb1.id_muestra_interes = tb2.id_muestra_interes\n"
                 + "where \n"
                 + "    id_municipio " + (municipioIgual ? "=" : "<>") + " (select id_municipio from municipio where codigo_municipio = '" + codMun + "' and codigo_departamento = '" + codDep + "') \n"
                 + "    " + (idRubro == 2 ? " and codigo_departamento = '" + codDep + "' " : "")
@@ -1021,11 +1026,12 @@ public class ProveedorEJB {
     }
 
     public List<CapaInstPorRubro> findCapaInstPorRubro(Participantes participante) {
-        Query query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idAnho.idAnho=:pIdAnho and c.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and c.estadoEliminacion=0 and c.idMuestraInteres.estadoEliminacion=0", CapaInstPorRubro.class);
+        Query query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idAnho.idAnho=:pIdAnho and c.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and c.estadoEliminacion=0 and c.idMuestraInteres.estadoEliminacion=0 and c.idProcesoAdq=:pIdPro", CapaInstPorRubro.class);
 
         query.setParameter("idEmpresa", participante.getIdEmpresa());
         query.setParameter("pIdAnho", participante.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
         query.setParameter("pIdRubro", participante.getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres());
+        query.setParameter("pIdPro", participante.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq());
         List<CapaInstPorRubro> lstCapa = query.getResultList();
 
         return lstCapa;

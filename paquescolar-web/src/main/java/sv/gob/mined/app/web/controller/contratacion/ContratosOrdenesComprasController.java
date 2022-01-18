@@ -42,6 +42,7 @@ import sv.gob.mined.paquescolar.ejb.ResolucionAdjudicativaEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
 import sv.gob.mined.paquescolar.model.CapaInstPorRubro;
 import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
+import sv.gob.mined.paquescolar.model.DetRubroMuestraInteres;
 import sv.gob.mined.paquescolar.model.DetalleOfertas;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.Empresa;
@@ -930,8 +931,8 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                             break;
                         case 11: //oferta Global
                             Empresa emp = resolucionAdj.getIdParticipante().getIdEmpresa();
-                            CapaInstPorRubro capacidadInst = proveedorEJB.findDetProveedor(detalleProceso.getIdRubroAdq().getIdRubroInteres(),
-                                    detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho(), emp, CapaInstPorRubro.class);
+                            DetRubroMuestraInteres detRubro = proveedorEJB.findDetByNitAndIdAnho(emp.getNumeroNit(), detalleProceso.getIdProcesoAdq().getIdAnho().getAnho());
+                            CapaInstPorRubro capacidadInst = proveedorEJB.findDetProveedor(detRubro, detalleProceso.getIdProcesoAdq().getIdProcesoAdq(), CapaInstPorRubro.class);
 
                             lstRptAImprimir.addAll(Reportes.getReporteOfertaDeProveedor(capacidadInst, resolucionAdj.getIdParticipante().getIdEmpresa(), detalleProceso,
                                     reportesEJB.getLstOfertaGlobal(resolucionAdj.getIdParticipante().getIdEmpresa().getNumeroNit(), detalleProceso.getIdRubroAdq().getIdRubroInteres(), detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho()),

@@ -82,7 +82,7 @@ public class DeclaracionMB implements Serializable {
                     proceso = proceso.getPadreIdProcesoAdq();
                 }
                 DetRubroMuestraInteres detRubro = proveedorEJB.findDetRubroByAnhoAndRubro(anho.getIdAnho(), empresa.getIdEmpresa());
-                capacidadInst = proveedorEJB.findDetProveedor(detRubro.getIdRubroInteres().getIdRubroInteres(), anho.getIdAnho(), empresa, CapaInstPorRubro.class);
+                capacidadInst = proveedorEJB.findDetProveedor(detRubro, proceso.getIdProcesoAdq(), CapaInstPorRubro.class);
                 if (capacidadInst != null) {
                     detalleProcesoAdq = JsfUtil.findDetalleByRubroAndAnho(proceso,
                             capacidadInst.getIdMuestraInteres().getIdRubroInteres().getIdRubroInteres(),
