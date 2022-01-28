@@ -56,7 +56,7 @@
                     </div>
                 </div>
                 <div class="p-col-6 p-md-4 p-xl-3" onclick="location.href = 'mantto/inicioManttos.mined';PF('dlgMensaje').show();" 
-                     style="cursor: pointer; display:#{(userBean.perfilUsuario eq 'ADMIN')?'block':'none'}">
+                     style="cursor: pointer; display:#{(userBean.perfilUsuario eq 'ADMIN')?'block':((userBean.perfilUsuario eq 'CE')?'block':'none')}">
                     <div class="card overview-box" style="text-align: center !important;">
                         <br/><br/>
                         <p:graphicImage name="settings.png" library="images" style="background-color: white;" width="80"/>

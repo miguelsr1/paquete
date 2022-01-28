@@ -50,9 +50,8 @@
                             </p:selectOneMenu>
                             <p:spacer width="5"/>
                             <p:selectOneMenu value="#{boletaMB.anho}">
-                                <f:selectItem itemLabel="2019" itemValue="2019"/>
-                                <f:selectItem itemLabel="2020" itemValue="2020"/>
                                 <f:selectItem itemLabel="2021" itemValue="2021"/>
+                                <f:selectItem itemLabel="2022" itemValue="2022"/>
                                 <p:ajax listener="#{boletaMB.cargarArchivos()}" update="tblPendiente tblProcesado pngResumen updFile"/>
                             </p:selectOneMenu>
                         </p:outputPanel>
