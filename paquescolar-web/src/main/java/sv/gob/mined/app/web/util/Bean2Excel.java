@@ -24,6 +24,7 @@ import org.apache.poi.hssf.usermodel.HeaderFooter;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -31,9 +32,8 @@ import sv.gob.mined.paquescolar.model.pojos.Bean;
 
 /**
  *
- * @author oamartinez
- * Modificación: 11octubre2018
- * Comentario: Ordenamiento de código y estandarización de generación de archivo a generar
+ * @author oamartinez Modificación: 11octubre2018 Comentario: Ordenamiento de
+ * código y estandarización de generación de archivo a generar
  */
 public class Bean2Excel {
 
@@ -131,8 +131,8 @@ public class Bean2Excel {
         HSSFCellStyle myBoldStyle = workbook.createCellStyle();
         myBoldStyle.setFont(this.boldFont);
 
-        HSSFCellStyle myNoParticipateStyle = workbook.createCellStyle(); 
-        myNoParticipateStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        HSSFCellStyle myNoParticipateStyle = workbook.createCellStyle();
+        myNoParticipateStyle.setAlignment(HorizontalAlignment.CENTER);
         myNoParticipateStyle.setBorderBottom(BorderStyle.THIN);
         myNoParticipateStyle.setBorderTop(BorderStyle.THIN);
         myNoParticipateStyle.setBorderRight(BorderStyle.THIN);
@@ -143,14 +143,14 @@ public class Bean2Excel {
         HSSFCellStyle myNormalStyle = workbook.createCellStyle();
         myNormalStyle.setFont(hSSFFont);
         myNormalStyle.setWrapText(true);
-        myNormalStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        myNormalStyle.setAlignment(HorizontalAlignment.CENTER);
         myNormalStyle.setBorderBottom(BorderStyle.THIN);
         myNormalStyle.setBorderTop(BorderStyle.THIN);
         myNormalStyle.setBorderRight(BorderStyle.THIN);
         myNormalStyle.setBorderLeft(BorderStyle.THIN);
 
         HSSFCellStyle myParticularStyle = workbook.createCellStyle();
-        myParticularStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        myParticularStyle.setAlignment(HorizontalAlignment.CENTER);
         myParticularStyle.setBorderBottom(BorderStyle.NONE);
         myParticularStyle.setBorderTop(BorderStyle.NONE);
         myParticularStyle.setBorderRight(BorderStyle.NONE);
@@ -372,13 +372,13 @@ public class Bean2Excel {
         HSSFCellStyle myBoldStyle = workbook.createCellStyle();
         myBoldStyle.setFont(this.boldFont);
         myBoldStyle.setWrapText(true);
-        myBoldStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        myBoldStyle.setAlignment(HorizontalAlignment.CENTER);
         myBoldStyle.setVerticalAlignment(VerticalAlignment.TOP);
 
         HSSFCellStyle myNormalStyle = workbook.createCellStyle();
         myNormalStyle.setFont(hSSFFont);
         myNormalStyle.setWrapText(true);
-        myNormalStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        myNormalStyle.setAlignment(HorizontalAlignment.CENTER);
         myNormalStyle.setVerticalAlignment(VerticalAlignment.TOP);
         myNormalStyle.setBorderBottom(BorderStyle.THIN);
         myNormalStyle.setBorderTop(BorderStyle.THIN);
@@ -386,7 +386,7 @@ public class Bean2Excel {
         myNormalStyle.setBorderLeft(BorderStyle.THIN);
 
         HSSFCellStyle myParticularStyle = workbook.createCellStyle();
-        myParticularStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        myParticularStyle.setAlignment(HorizontalAlignment.CENTER);
         myParticularStyle.setBorderBottom(BorderStyle.NONE);
         myParticularStyle.setBorderTop(BorderStyle.NONE);
         myParticularStyle.setBorderRight(BorderStyle.NONE);
@@ -423,14 +423,12 @@ public class Bean2Excel {
         row = sheet.createRow(0);
         HSSFCell cell1 = row.createCell(0);
         cell1.setCellStyle(myBoldTitleStyle);
-        cell1.setCellValue(
-                "MODELO DE FORMATO PARA ANALISIS TÉCNICO RUBRO " + rubro);
+        cell1.setCellValue("MODELO DE FORMATO PARA ANALISIS TÉCNICO RUBRO " + rubro);
         currentRow++;
         row = sheet.createRow(1);
         cell1 = row.createCell(0);
         cell1.setCellStyle(myBoldTitleStyle);
-        cell1.setCellValue("NOMBRE DEL CENTRO EDUCATIVO : "
-                + nombreCentroEducativo + " CODIGO : " + codigoCentroEducativo);
+        cell1.setCellValue("NOMBRE DEL CENTRO EDUCATIVO : " + nombreCentroEducativo + " CODIGO : " + codigoCentroEducativo);
         currentRow++;
         row = sheet.createRow(2);
         cell1 = row.createCell(0);

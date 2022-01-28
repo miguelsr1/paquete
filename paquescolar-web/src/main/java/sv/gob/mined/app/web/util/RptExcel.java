@@ -33,6 +33,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -92,7 +93,7 @@ public class RptExcel {
             }
 
             generarArchivo(wb1, nombreExcel);
-        } catch (IOException | InvalidFormatException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -137,7 +138,7 @@ public class RptExcel {
             }
 
             generarArchivo(wb1, "proveedoresHacienda");
-        } catch (IOException | InvalidFormatException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -163,7 +164,7 @@ public class RptExcel {
             }
 
             generarArchivo(wb1, "rptRentaAnual");
-        } catch (IOException | InvalidFormatException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -247,7 +248,7 @@ public class RptExcel {
                 row++;
             }
             generarArchivo(wb1, "Paquete-RentaMensual");
-        } catch (IOException | InvalidFormatException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -366,7 +367,7 @@ public class RptExcel {
             celda8.setCellStyle(style);
 
             generarArchivo(wb1, "Paquete" + anho + "-ResumenGeneralCreditos");
-        } catch (IOException | InvalidFormatException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -376,10 +377,12 @@ public class RptExcel {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             HSSFSheet hoja = wb1.getSheetAt(0);
+            
+            
 
             HSSFFont font = (HSSFFont) wb1.createFont();
             font.setBold(true);
-            font.setColor(HSSFColor.BLACK.index);
+            font.setColor(IndexedColors.BLACK.index);
             font.setFontName(HSSFFont.FONT_ARIAL);
 
             HSSFCellStyle style = (HSSFCellStyle) wb1.createCellStyle();
@@ -395,7 +398,7 @@ public class RptExcel {
             style2.setBorderRight(BorderStyle.THIN);
             style2.setBorderLeft(BorderStyle.THIN);
             style2.setFont(font);
-            style2.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+            style2.setAlignment(HorizontalAlignment.CENTER);
 
             HSSFRow fila = hoja.createRow(0);
             HSSFCell celda0 = fila.createCell(0);
@@ -493,7 +496,7 @@ public class RptExcel {
             celda5.setCellFormula(StrFormula2);
 
             generarArchivo(wb1, "Paquete" + anho + "-ResumenPorRubroYFinanciera");
-        } catch (IOException | InvalidFormatException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

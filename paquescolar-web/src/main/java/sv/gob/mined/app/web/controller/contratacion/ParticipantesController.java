@@ -4,7 +4,6 @@
  */
 package sv.gob.mined.app.web.controller.contratacion;
 
-import java.io.File;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -395,7 +394,7 @@ public class ParticipantesController implements Serializable {
         mostrarMsj = false;
         showEstilo = false;
         mostraTblLibros = false;
-       // lstEstilos = new SelectItem[0];
+        // lstEstilos = new SelectItem[0];
         lstDetalleOferta.clear();
         if (idParticipante != null && idParticipante.compareTo(BigDecimal.ZERO) != 0) {
             participante = utilEJB.find(Participantes.class, idParticipante);
@@ -431,7 +430,6 @@ public class ParticipantesController implements Serializable {
                             lstDetalleOfertaLibros = proveedorEJB.findDetalleOfertas(participante, true);
                         }
                     }*/
-
                     //verificar el estado de la resersolucion adjudicativa
                     ResolucionesAdjudicativas res = resolucionAdjudicativaEJB.findResolucionesAdjudicativasByIdParticipante(idParticipante);
                     int idResolucion;
@@ -810,4 +808,35 @@ public class ParticipantesController implements Serializable {
         }
         return false;
     }
+
+    /*public void impPrueba() throws JarException, IOException, JRException {
+        HashMap param = new HashMap();
+        param.put("listado", participante.getDetalleOfertasList());
+
+        List<JasperPrint> rpt = new ArrayList();
+
+        rpt.add(JasperFillManager.fillReport(Reportes.getPathReporte("sv/gob/mined/apps/sispaqescolar/reporte/rptPrueba.jasper"), param,  new JREmptyDataSource(1)));
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        JRPdfExporter exporter = new JRPdfExporter();
+
+        exporter.setParameter(JRExporterParameter.JASPER_PRINT_LIST, rpt);
+        exporter.setParameter(JRPdfExporterParameter.IS_CREATING_BATCH_MODE_BOOKMARKS, Boolean.FALSE);
+        exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
+        exporter.exportReport();
+        
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = facesContext.getExternalContext();
+        HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+
+        response.setContentType("application/pdf");
+        response.setContentLength(baos.toByteArray().length);
+        response.setHeader("Content-disposition", "attachment; filename=prueba.pdf");
+        OutputStream outStream = response.getOutputStream();
+        outStream.write(baos.toByteArray());
+        outStream.flush();
+        outStream.close();
+        facesContext.responseComplete();
+        facesContext.renderResponse();
+    }*/
 }

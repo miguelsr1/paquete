@@ -30,7 +30,6 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -38,6 +37,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -427,7 +427,7 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
         HSSFSheet sheet = wb.getSheetAt(0);
 
         HSSFCellStyle cellStyle = wb.createCellStyle();
-        cellStyle.setFillForegroundColor(HSSFColor.GREEN.index);
+        cellStyle.setFillForegroundColor(IndexedColors.GREEN.index);
         cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         for (int j = 1; j <= sheet.getLastRowNum(); j++) {
@@ -490,7 +490,7 @@ public class GraficoController extends RecuperarProcesoUtil implements Serializa
                 i++;
             }
             generarArchivo(wb1, "REPORTE_DEPARTAMENTO");
-        } catch (IOException | InvalidFormatException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(GraficoController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
