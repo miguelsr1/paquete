@@ -108,7 +108,7 @@ public class LeerArchivoFacade {
 
                 if (row.getRowNum() == 0) {
                     for (int i = 1; i < row.getPhysicalNumberOfCells(); i++) {
-                        titulos = titulos.isEmpty() ? row.getCell(i).getStringCellValue() : (titulos.concat(",").concat(row.getCell(i).getStringCellValue()));
+                        titulos = titulos.isEmpty() ? row.getCell(i).getStringCellValue() : (titulos.concat("||").concat(row.getCell(i).getStringCellValue()));
                     }
                 } else {
                     if (row.getCell(0) != null) {
@@ -119,14 +119,14 @@ public class LeerArchivoFacade {
                         }
 
                         valores = "";
-                        for (int i = 1; i <= titulos.split(",").length; i++) {
-                            valores = valores.isEmpty() ? getValueOfCell(row.getCell(i)) : (valores.concat(",").concat(getValueOfCell(row.getCell(i))));
+                        for (int i = 1; i <= titulos.split("\\|\\|").length; i++) {
+                            valores = valores.isEmpty() ? getValueOfCell(row.getCell(i)) : (valores.concat("||").concat(getValueOfCell(row.getCell(i))));
                         }
 
                         String valorFinal = "";
-                        for (int i = 0; i < titulos.split(",").length; i++) {
-                            valorFinal = valorFinal.isEmpty() ? titulos.split(",")[i].concat("::").concat(valores.split(",")[i])
-                                    : (valorFinal.concat("&&").concat(titulos.split(",")[i].concat("::").concat(valores.split(",")[i])));
+                        for (int i = 0; i < titulos.split("\\|\\|").length; i++) {
+                            valorFinal = valorFinal.isEmpty() ? titulos.split("\\|\\|")[i].concat("::").concat(valores.split("\\|\\|")[i])
+                                    : (valorFinal.concat("&&").concat(titulos.split("\\|\\|")[i].concat("::").concat(valores.split("\\|\\|")[i])));
                         }
 
                         DetalleEnvio de = new DetalleEnvio();
@@ -241,21 +241,23 @@ public class LeerArchivoFacade {
     }
 
     private String getValueOfCell(Cell cell) {
-        String valor;
-        switch (cell.getCellType()) {
-            case STRING:
-                valor = cell.getStringCellValue();
-                break;
-            case NUMERIC:
-                if (cell.getNumericCellValue() % 1 == 0) {
-                    valor = String.format("%d", (long) cell.getNumericCellValue());
-                } else {
-                    valor = String.format("%.2f", cell.getNumericCellValue());
-                }
-                break;
-            default:
-                valor = "";
-                break;
+        String valor = "";
+        if (cell != null) {
+            switch (cell.getCellType()) {
+                case STRING:
+                    valor = cell.getStringCellValue();
+                    break;
+                case NUMERIC:
+                    if (cell.getNumericCellValue() % 1 == 0) {
+                        valor = String.format("%d", (long) cell.getNumericCellValue());
+                    } else {
+                        valor = String.format("%.2f", cell.getNumericCellValue());
+                    }
+                    break;
+                default:
+                    valor = "";
+                    break;
+            }
         }
         return valor;
     }
