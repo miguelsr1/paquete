@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application version="5"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_5.xsd">
+    ....
+    <module>
+        <java>lib/javamelody.jar</java>
+    </module>
+    <module>
+        <java>lib/jrobin-1.5.9.jar</java>
+    </module>
+    <module>
+        <java>lib/itext-2.1.7.jar</java>
+    </module>
+    <module>
+        <web>
+            <web-uri>paquescolar-web-3.2.war</web-uri>
+            <context-root>paquescolar-web</context-root>
+        </web>
+    </module>
+</application>

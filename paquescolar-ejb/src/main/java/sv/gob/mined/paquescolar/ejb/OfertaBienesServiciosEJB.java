@@ -10,8 +10,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,11 +28,13 @@ import sv.gob.mined.paquescolar.model.DetalleOfertas;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.OfertaBienesServicios;
 import sv.gob.mined.paquescolar.model.Participantes;
+import sv.gob.mined.paquescolar.model.Resguardo;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
 import sv.gob.mined.paquescolar.model.pojos.Bean;
 import sv.gob.mined.paquescolar.model.pojos.ReportPOIBean;
-import sv.gob.mined.paquescolar.model.view.VwCotizacion;
-import sv.gob.mined.paquescolar.util.StringUtils;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleContratadoPorComponenteDto;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.VwCotizacion;
+import sv.gob.mined.paquescolar.util.Constantes;
 
 /**
  *
@@ -45,8 +49,44 @@ public class OfertaBienesServiciosEJB {
     @PersistenceContext
     private EntityManager em;
 
-    public void create(OfertaBienesServicios ofertaBienesServicios) {
-        em.persist(ofertaBienesServicios);
+    public HashMap<String, Object> create(OfertaBienesServicios current, String usuario) {
+        HashMap<String, Object> mapDeRetorno = new HashMap();
+
+        try {
+            OfertaBienesServicios oferta = getOfertaByProcesoCodigoEntidad(current.getCodigoEntidad().getCodigoEntidad(), current.getIdDetProcesoAdq());
+            if (oferta != null) {
+                if (oferta.getUsuarioInsercion().equals(usuario)) {
+                } else {
+                    mapDeRetorno.put(Constantes.ERROR, true);
+                    mapDeRetorno.put(Constantes.MSJ_ERROR, "Otro usuario ya creo una oferta para este centro escolar y proceso de contratación.");
+                }
+            } else {
+                if (current.getParticipantesList() == null || current.getParticipantesList().isEmpty()) {
+                    mapDeRetorno.put(Constantes.WARNING, true);
+                    mapDeRetorno.put(Constantes.MSJ_WARNING, "Primero debe de agregar por lo menos un proveedor a esta oferta.");
+                } else {
+                    SimpleDateFormat sdf = new SimpleDateFormat("hh");
+
+                    current.setEstadoEliminacion(BigInteger.ZERO);
+                    current.setFechaInsercion(new Date());
+                    current.setUsuarioInsercion(usuario);
+                    current.setHoraApertura(new BigInteger(sdf.format(new Date())));
+
+                    sdf = new SimpleDateFormat("mm");
+                    current.setMinutoApertura(new BigInteger(sdf.format(new Date())));
+
+                    em.persist(current);
+
+                    mapDeRetorno.put(Constantes.ERROR, false);
+                    mapDeRetorno.put(Constantes.WARNING, false);
+                }
+            }
+        } catch (Exception e) {
+            mapDeRetorno.put(Constantes.ERROR, true);
+            mapDeRetorno.put(Constantes.MSJ_ERROR, "Error en el registro de la oferta. Comunicarse con el Administrador del Sistema.");
+            Logger.getLogger(OfertaBienesServiciosEJB.class.getName()).log(Level.WARNING, "Error al intentar registrar una oferta para el CE: " + current.getCodigoEntidad().getCodigoEntidad(), e);
+        }
+        return mapDeRetorno;
     }
 
     public OfertaBienesServicios edit(OfertaBienesServicios ofertaBienesServicios) {
@@ -57,22 +97,8 @@ public class OfertaBienesServiciosEJB {
         Query q = em.createQuery("SELECT o FROM OfertaBienesServicios o WHERE o.codigoEntidad.codigoEntidad=:codigoEntidad and o.idDetProcesoAdq=:proceso and o.estadoEliminacion = 0", OfertaBienesServicios.class);
         q.setParameter("codigoEntidad", codigoEntidad);
         q.setParameter("proceso", proceso);
-        if (q.getResultList() != null && !q.getResultList().isEmpty()) {
-            OfertaBienesServicios oferta = (OfertaBienesServicios) q.getSingleResult();
-            for (int i = oferta.getParticipantesList().size() - 1; i >= 0; i--) {
-                if (oferta.getParticipantesList().get(i).getEstadoEliminacion().compareTo(BigInteger.ONE) == 0) {
-                    oferta.getParticipantesList().remove(oferta.getParticipantesList().get(i));
-                }
-            }
-
-            for (Participantes par : oferta.getParticipantesList()) {
-                for (int i = par.getDetalleOfertasList().size() - 1; i >= 0; i--) {
-                    if (par.getDetalleOfertasList().get(i).getEstadoEliminacion().compareTo(BigInteger.ONE) == 0) {
-                        par.getDetalleOfertasList().remove(par.getDetalleOfertasList().get(i));
-                    }
-                }
-            }
-            return oferta;
+        if (!q.getResultList().isEmpty()) {
+            return (OfertaBienesServicios) q.getSingleResult();
         } else {
             return null;
         }
@@ -86,6 +112,27 @@ public class OfertaBienesServiciosEJB {
         return !query.getResultList().isEmpty();
     }
 
+    private String getIdDetalleProcesoPadre(DetalleProcesoAdq idDetProceso) {
+        String ids = "";
+        Query q = em.createNativeQuery("select det.id_det_proceso_adq \n"
+                + "from detalle_proceso_Adq det\n"
+                + "    inner join proceso_adquisicion pro on pro.id_proceso_adq = det.id_proceso_adq\n"
+                + "    inner join anho     on pro.id_anho = anho.id_anho\n"
+                + "where anho.anho = ?1 and det.id_rubro_adq = ?2");
+        q.setParameter(1, idDetProceso.getIdProcesoAdq().getIdAnho().getAnho());
+        q.setParameter(2, idDetProceso.getIdRubroAdq().getIdRubroInteres());
+        List<BigDecimal> lst = q.getResultList();
+        for (BigDecimal id : lst) {
+            if (ids.isEmpty()) {
+                ids = id.toString();
+            } else {
+                ids = ids + "," + id.toString();
+            }
+        }
+
+        return ids;
+    }
+
     public List<Object> getDatosRptAnalisisEconomico(String codigoEntidad, DetalleProcesoAdq idDetProceso) {
         String query = "";
         ReportPOIBean reportPOIBean = null;
@@ -97,23 +144,15 @@ public class OfertaBienesServiciosEJB {
                 case 1:
                 case 4:
                 case 5:
-                    String idProcesos = "";
-                    for (DetalleProcesoAdq detalleProcesoAdq : idDetProceso.getIdProcesoAdq().getDetalleProcesoAdqList()) {
-                        if(detalleProcesoAdq.getIdRubroAdq().getIdRubroUniforme().intValue() == 1)
-                        if (idProcesos.isEmpty()) {
-                            idProcesos = detalleProcesoAdq.getIdDetProcesoAdq() + "";
-                        } else {
-                            idProcesos += "," + detalleProcesoAdq.getIdDetProcesoAdq();
-                        }
-                    }
+                    String idDetProcesos = getIdDetalleProcesoPadre(idDetProceso);
 
-                    query = String.format(StringUtils.QUERY_CONTRATACION_ANALISIS_ECONOMICO_UNIFORME, idProcesos, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
+                    query = String.format(Constantes.QUERY_CONTRATACION_ANALISIS_ECONOMICO_UNIFORME, idDetProcesos, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
                     break;
                 case 2:
-                    query = String.format(StringUtils.QUERY_CONTRATACION_ANALISIS_ECONOMICO_UTILES, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
+                    query = String.format(Constantes.QUERY_CONTRATACION_ANALISIS_ECONOMICO_UTILES, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
                     break;
                 case 3:
-                    query = String.format(StringUtils.QUERY_CONTRATACION_ANALISIS_ECONOMICO_ZAPATOS, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
+                    query = String.format(Constantes.QUERY_CONTRATACION_ANALISIS_ECONOMICO_ZAPATOS, codigoEntidad, idDetProceso.getIdDetProcesoAdq());
                     break;
             }
             Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -161,35 +200,26 @@ public class OfertaBienesServiciosEJB {
             return listadoAExportar;
         } catch (SQLException ex) {
             Logger.getLogger(OfertaBienesServiciosEJB.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return listadoAExportar;
         }
+
+        return listadoAExportar;
     }
 
     public List<VwCotizacion> getLstCotizacion(String municipio, String codigoEntidad, DetalleProcesoAdq idProceso, Participantes participante) {
-        List<VwCotizacion> lstCotizacion = new ArrayList<>();
-        Query q = em.createNativeQuery("select * from vw_cabecera_cotizacion where codigo_entidad=?1 and ID_DET_PROCESO_ADQ=?2 and id_participante=?3");
-        q.setParameter(1, codigoEntidad);
-        q.setParameter(2, idProceso.getIdDetProcesoAdq());
-        q.setParameter(3, participante.getIdParticipante());
+        List<VwCotizacion> lstCotizacion= new ArrayList();
+        try {
+            Query q = em.createNamedQuery("Contratacion.VwCotizacion", VwCotizacion.class);
+            q.setParameter(1, codigoEntidad);
+            q.setParameter(2, idProceso.getIdDetProcesoAdq());
+            q.setParameter(3, participante.getIdParticipante());
 
-        List lst = q.getResultList();
+            lstCotizacion = q.getResultList();
 
-        for (Object object : lst) {
-            Object[] datos = (Object[]) object;
-            VwCotizacion v = new VwCotizacion();
-            v.setLstDetalleOferta(new ArrayList<DetalleOfertas>());
-            v.setLstDetalleOfertaLibros(new ArrayList<DetalleOfertas>());
-            v.setFechaApertura(datos[0].toString());
-            v.setRazonSocial(datos[1].toString());
-            v.setModalidadAdministrativa(datos[2].toString());
-            v.setNombreCe(datos[3].toString());
-            v.setCodigoEntidad(datos[4].toString());
-            v.setDireccionCe(datos[5].toString());
-            v.setNombreRespresenanteEmp(datos[6].toString());
-            v.setNombreRepresentanteCe(datos[7].toString());
+            VwCotizacion v = lstCotizacion.get(0);
+
+            v.setLstDetalleOferta(new ArrayList());
+            v.setLstDetalleOfertaLibros(new ArrayList());
             v.setLugarFecha(municipio.concat(",").concat(v.getFechaApertura()));
-            v.setUsuarioInsercion(datos[10].toString());
 
             String nombreVista = "";
 
@@ -207,7 +237,7 @@ public class OfertaBienesServiciosEJB {
                     break;
             }
 
-            q = em.createNativeQuery("select distinct * FROM " + nombreVista + " WHERE id_empresa=?1 and codigo_entidad=?2 and id_proceso_estadistica=?3 and (id_proceso_precio=?4 or id_proceso_precio=?5) order by to_number(no_item), id_nivel_educativo");
+            q = em.createNativeQuery("select distinct * FROM " + nombreVista + " WHERE id_empresa=?1 and codigo_entidad=?2 and id_proceso_estadistica=?3 and (id_proceso_precio=?4 or id_proceso_precio=?5) and num_alumno is not null order by to_number(no_item), id_nivel_educativo");
             q.setParameter(1, participante.getIdEmpresa().getIdEmpresa());
             q.setParameter(2, codigoEntidad);
             q.setParameter(3, idProceso.getIdProcesoAdq().getIdProcesoAdq());
@@ -215,7 +245,8 @@ public class OfertaBienesServiciosEJB {
             q.setParameter(5, idProceso.getIdProcesoAdq().getPadreIdProcesoAdq() == null ? null : idProceso.getIdProcesoAdq().getPadreIdProcesoAdq().getIdProcesoAdq());
 
             List lst2 = q.getResultList();
-            for (Object object1 : lst2) {
+
+            lst2.forEach((object1) -> {
                 Object[] datos1 = (Object[]) object1;
                 DetalleOfertas det = new DetalleOfertas();
                 det.setNoItem(datos1[9].toString());
@@ -228,9 +259,9 @@ public class OfertaBienesServiciosEJB {
                 } else {
                     v.getLstDetalleOferta().add(det);
                 }
-            }
-
-            lstCotizacion.add(v);
+            });
+        } catch (Exception e) {
+            Logger.getLogger(OfertaBienesServiciosEJB.class.getName()).log(Level.WARNING, "Error en la generacion de la cotizacion {0} {1} {2}", new Object[]{codigoEntidad, participante, idProceso});
         }
 
         return lstCotizacion;
@@ -247,11 +278,38 @@ public class OfertaBienesServiciosEJB {
             return lstResoluciones.get(0);
         }
     }
-
+    
     public ResolucionesAdjudicativas editResolucion(ResolucionesAdjudicativas resolucionesAdjudicativas, String usuarioModif) {
         resolucionesAdjudicativas.setFechaModificacion(new Date());
         resolucionesAdjudicativas.setUsuarioModificacion(usuarioModif);
 
         return em.merge(resolucionesAdjudicativas);
+    }
+
+    public List<Resguardo> getLstResguardoBienesByCodEntAndIdDetPro(String codigoEntidad, Integer idDetProcesoAdq, BigDecimal idParticipante) {
+        Query q = em.createQuery("SELECT r FROM Resguardo r WHERE r.idContrato.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoEntidad=:codEnt and r.idContrato.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq.idDetProcesoAdq=:idDet and r.idContrato.idResolucionAdj.idParticipante.idParticipante=:idParticipante and r.estadoEliminacion = 0 ORDER BY r.idResguardo", Resguardo.class);
+        q.setParameter("codEnt", codigoEntidad);
+        q.setParameter("idDet", idDetProcesoAdq);
+        q.setParameter("idParticipante", idParticipante);
+        return q.getResultList();
+    }
+
+    public List<DetalleContratadoPorComponenteDto> getLstDetalleContratado(String codigoEntidad, Integer idDetProcesoAdq) {
+        Query q = em.createNamedQuery("Contratacion.DetalleContratadoPorComponenteDto", DetalleContratadoPorComponenteDto.class);
+        q.setParameter(1, codigoEntidad);
+        q.setParameter(2, idDetProcesoAdq);
+        return q.getResultList();
+    }
+
+    public void guardarResguardo(Resguardo resguardoBienes, String usuario) {
+        if (resguardoBienes.getIdResguardo() == null) {
+            resguardoBienes.setFechaInsercion(new Date());
+            resguardoBienes.setUsuarioInsercion(usuario);
+            em.persist(resguardoBienes);
+        } else {
+            resguardoBienes.setFechaModificacion(new Date());
+            resguardoBienes.setUsuarioModificacion(usuario);
+            em.merge(resguardoBienes);
+        }
     }
 }

@@ -1,0 +1,233 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
+    xmlns:jsf="http://xmlns.jcp.org/jsf">
+    <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" action="#{liquidacionMB.nuevo()}" id="mtmNuevo" update="pnlFiltro divDetalle"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" ajax="true" disabled="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" disabled="true"/>
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options" class="centradoVertical">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+
+
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <h1>
+                        <i class="fa fa-file-text-o blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro"/>
+                    </h1>
+
+                    <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
+                        <p:selectOneMenu id="cboRubro" value="#{liquidacionMB.idRubro}" disabled="#{liquidacionMB.deshabilitar}">
+                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="null" />
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <p:ajax update=":frmPrincipal:pnlFiltro"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
+                        <p:outputPanel id="codigoEntidad" >
+                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{liquidacionMB.codigoEntidad}" size="6" autocomplete="off" 
+                                         requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5" disabled="#{liquidacionMB.deshabilitar}">
+                                <p:ajax event="keyup" update="menuBar nombreCE cboProveedor" listener="#{liquidacionMB.buscarEntidadEducativa}"/>
+                            </p:inputText>
+                            <p:spacer width="10"/>
+                            <p:outputLabel id="nombreCE" value="#{liquidacionMB.entidadEducativa.nombre}" style="font-weight: bold"/>
+                        </p:outputPanel>
+
+                        <p:outputLabel value="Proveedor:" />
+                        <p:selectOneMenu id="cboProveedor" value="#{liquidacionMB.idParticipante}"  onkeydown="setaFoco(this);" disabled="#{liquidacionMB.deshabilitar}">
+                            <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
+                            <f:selectItems value="#{liquidacionMB.lstParticipantes}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{par.razonSocial}"/>
+                            <p:ajax listener="#{liquidacionMB.recuperarLstLiquidacionByCodEntAndIdDetPro()}" update="divDetalle"/>
+                        </p:selectOneMenu>
+
+                    </p:panelGrid>
+                </div>
+
+                <div jsf:id="divDetalle" class="card clearfix">
+                    <h1>
+                        <i class="fa fa-list-ol blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Liquidaciones realizadas"/>
+
+                        <p:commandButton value="Agregar" update="detalleLiquidacion" action="#{liquidacionMB.recuperarDatos}" onsuccess="PF('dlgLiquidacion').show();"
+                                         icon="fa fa-plus" style="float: right; font-size: 12px;" disabled="#{liquidacionMB.deshabilitarAgregar}"/>
+                    </h1>
+
+                    <p:dataTable id="tblLiquidaciones" value="#{liquidacionMB.lstLiquidaciones}" var="liq" rowIndexVar="rowId">
+                        <p:column headerText="#" width="50">
+                            <h:outputText value="#{rowId + 1}"/>
+                        </p:column>
+                        <p:column headerText="Contratado" styleClass="numero">
+                            <p:outputLabel value="#{liq.montoContratado}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Modificativa" styleClass="numero">
+                            <p:outputLabel value="#{liq.montoModificativa}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Recepción" styleClass="numero">
+                            <p:outputLabel value="#{liq.montoRecepcion}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Resguardo" styleClass="numero">
+                            <p:outputLabel value="#{liq.montoResguardo}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Estado" style="text-align: center;">
+                            <p:outputLabel value="#{liq.estadoLiquidacion eq 'L' ?'LIQUIDADO':'EN PROCESO'}"/>
+                        </p:column>
+                        <p:column headerText="Imprimir" width="110" style="text-align: center;">
+                            <h:commandLink action="#{liquidacionMB.imprimirReporteLiq}">
+                                <i class="fa fa-file-text"></i>
+                                <f:setPropertyActionListener value="#{liq}" target="#{liquidacionMB.liquidacion}"/>  
+                            </h:commandLink>
+                            <p:spacer width="10"/>
+                            <h:commandLink action="#{liquidacionMB.imprimirReporteInc}">
+                                <i class="fa fa-list"></i>
+                                <f:setPropertyActionListener value="#{liq}" target="#{liquidacionMB.liquidacion}"/>  
+                            </h:commandLink>
+                        </p:column>
+                        <p:column headerText="Observación" width="110" style="text-align: center;">
+                            <!--                            <p:commandLink action="" />                                           >
+                                                            <i class="fa fa-external-link"></i>
+                                                            <f:setPropertyActionListener value="{liq}" target="{liquidacionMB.liquidacion}"/>  
+                                                        </p:commandLink>-->
+                            <p:commandButton id="dynaButton" icon="fa fa-bars" type="button"/>
+                            <p:menu overlay="true" trigger="dynaButton" my="left top" at="left bottom">
+                                <p:menuitem value="Observación" action="#{liquidacionMB.recuperarConceptosInconsistencia(liq)}" update="outObservacion" 
+                                            oncomplete="PF('dlgObservacionLiquidacion').show();"  icon="fa fa-commenting-o"/>
+                                <p:menuitem value="Cambiar estado" action="#{liquidacionMB.carmbiarEstadoLiquidacion(liq)}" update="outCambioEstado" 
+                                            oncomplete="PF('dlgCambiarEstadoLiquidacion').show();"  icon="fa fa-refresh" disabled="#{liq.estadoLiquidacion eq 'L'}"/>
+                            </p:menu>
+
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+        </div>
+
+        <p:dialog id="dlgLiquidacion" widgetVar="dlgLiquidacion" header="Información del Contrato" width="550" modal="true">
+            <p:outputPanel id="detalleLiquidacion" styleClass="ui-fluid">
+                <p:dataTable value="#{liquidacionMB.datosLiquidacionDtos}" var="liquidacion">
+                    <p:column headerText="NoItem">
+                        <p:outputLabel value="#{liquidacion.noItem}"/>
+                    </p:column>
+                    <p:column headerText="Contratado" styleClass="numero">
+                        <p:outputLabel value="#{liquidacion.cantidadContrato}"/>
+                    </p:column>
+                    <p:column headerText="Modificado" styleClass="numero">
+                        <p:outputLabel value="#{liquidacion.cantidadModificativa}"/>
+                    </p:column>
+                    <p:column headerText="Recepción" styleClass="numero">
+                        <p:outputLabel value="#{liquidacion.cantidadRecepcion}" />
+                    </p:column>
+                    <p:column headerText="Resguardo">
+                        <p:inputNumber value="#{liquidacion.cantidadResguardo}" inputStyle="text-align: right;" decimalPlaces="0"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <br/>
+                <h:panelGrid columns="3" style="width: 100%;">
+                    <p:outputLabel value="Fecha de Recepción:"/>
+                    <p:spacer width="10"/>
+                    <p:outputLabel value="Fecha de Liquidación:"/>
+                    <p:calendar id="cblRecepcion" pattern="dd/MM/yyyy" value="#{liquidacionMB.liquidacion.fechaRecepcion}" navigator="true" locale="es"/>
+                    <p:spacer width="10"/>
+                    <p:calendar id="cblLiquidacion" pattern="dd/MM/yyyy" value="#{liquidacionMB.liquidacion.fechaLiquidacion}" navigator="true" locale="es"/>
+                </h:panelGrid>
+                <h:panelGrid columns="1" style="width: 100%;">
+                    <p:outputLabel value="Observaciones"/>
+                    <p:inputTextarea id="txaObservacion" value="#{liquidacionMB.observacion}"/>
+                </h:panelGrid>
+            </p:outputPanel>
+
+            <f:facet name="footer">
+                <p:commandButton id="btnGuardar" value="Guardar" action="#{liquidacionMB.agregarLista}" process="@this,cblRecepcion,cblLiquidacion,txaObservacion" icon="fa fa-check" oncomplete="PF('dlgLiquidacion').hide();" update="tblLiquidaciones"/>
+                <p:commandButton id="btnCancelar" value="Cancelar" styleClass="secondary-button" icon="fa fa-times" onclick="PF('dlgLiquidacion').hide();"/>
+            </f:facet>
+        </p:dialog>
+
+        <p:dialog id="dlgObservacionLiquidacion" widgetVar="dlgObservacionLiquidacion" header="Información del Contrato" width="1150" modal="true">    
+            <p:outputPanel id="outObservacion" styleClass="ui-fluid">
+                <div class="ui-g-12">
+                    <div class="ui-g-2">
+                        <p:outputLabel value="Tipo de observación"/>
+                    </div>
+                    <div class="ui-g-9">
+                        <p:selectOneMenu style="width: 100%;" value="#{liquidacionMB.idConcepto}">
+                            <f:selectItem itemLabel="Seleccione un concepto" itemValue="" />  
+                            <f:selectItems value="#{liquidacionMB.lstConcepto}" var="con" itemValue="#{con.idConcepto}" itemLabel="#{con.descripcion}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="ui-g-1">
+                        <p:commandButton value="Agregar" action="#{liquidacionMB.agregarConceptoInc}" icon="fa fa-plus" update="tblDetalleLiqInc"/>
+                    </div>
+                </div>
+                <div class="ui-g-12">
+                    <p:dataTable id="tblDetalleLiqInc" value="#{liquidacionMB.lstDetalleLiquidacionIncs}" var="det" rowIndexVar="rowId"
+                                 rowKey="#{det.idDetLiqInc}" rowStyleClass="#{det.historico eq 1 ? 'filaEliminada' : null}">
+                        <p:column headerText="Id" style="text-align: center;" width="40">
+                            #{rowId+1}
+                        </p:column>
+                        <p:column headerText="Nombre">
+                            <p:outputLabel value="#{det.idConcepto.descripcion}"/>
+                        </p:column>
+                        <p:column headerText="Borrar" style="text-align: center;" width="40">
+                            <p:commandLink action="#{liquidacionMB.eliminarObservacion()}" update="tblDetalleLiqInc">
+                                <p:outputLabel rendered="#{det.historico eq 1}"> <i class="fa fa-check-circle"></i></p:outputLabel>
+                                <p:outputLabel rendered="#{det.historico ne 1}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
+                                <f:setPropertyActionListener value="#{det}" target="#{liquidacionMB.detalleLiquidacionInc}"/>  
+                                <f:setPropertyActionListener value="#{rowId}" target="#{liquidacionMB.rowEdit}"/>  
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+
+            </p:outputPanel>
+            <f:facet name="footer">
+                <p:commandButton id="btnGuardarDet" value="Guardar" action="#{liquidacionMB.guardarDetalleInconsistencias()}" icon="fa fa-check" oncomplete="PF('dlgObservacionLiquidacion').hide();" update="tblLiquidaciones"/>
+                <p:commandButton id="btnCancelarDet" value="Cancelar" styleClass="secondary-button" icon="fa fa-times" onclick="PF('dlgObservacionLiquidacion').hide();"/>
+            </f:facet>
+        </p:dialog>
+
+        <p:dialog id="dlgCambiarEstadoLiquidacion" widgetVar="dlgCambiarEstadoLiquidacion" header="Carmbiar estado" modal="true" width="280">    
+            <p:outputPanel id="outCambioEstado" styleClass="ui-fluid">
+                <div class="ui-g-12">
+                    <div class="ui-g-3">
+                        <p:outputLabel value="Estado: "/>
+                    </div>
+                    <div class="ui-g-9">
+                        <p:selectOneMenu style="width: 100%;" value="#{liquidacionMB.liquidacion.estadoLiquidacion}">
+                            <f:selectItem itemValue="E" itemLabel="EN PROCESO"/>
+                            <f:selectItem itemValue="L" itemLabel="LIQUIDADO"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </p:outputPanel>
+            <f:facet name="footer">
+                <p:commandButton id="btnGuardarCe" value="Guardar" action="#{liquidacionMB.guardarCambioEstado()}" icon="fa fa-check" oncomplete="PF('dlgCambiarEstadoLiquidacion').hide();" update="tblLiquidaciones"/>
+                <p:commandButton id="btnCancelarCe" value="Cancelar" styleClass="secondary-button" icon="fa fa-times" onclick="PF('dlgCambiarEstadoLiquidacion').hide();"/>
+            </f:facet>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

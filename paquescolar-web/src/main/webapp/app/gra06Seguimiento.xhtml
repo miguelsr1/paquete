@@ -14,10 +14,10 @@
                         <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
                         <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
                         <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>  
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>  
 
                         <f:facet  name="options">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
                         </f:facet>  
                     </p:menubar>
                     <p:panel id="pnlFiltro" header="Avance de la ejecución del Seguimiento a Contratos" toggleable="true" >
@@ -28,14 +28,14 @@
                         </f:facet>
                         <h:panelGrid columns="5">
                             <p:outputLabel value="1. Departamento: "/>
-                            <p:selectOneMenu id="codigoDepartamento" value="#{graficoController.departamento}"  required="true" >
+                            <p:selectOneMenu id="codigoDepartamento" value="#{graficoController.codigoDepartamento}"  required="true" >
                                 <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
                                 <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />/>
                             </p:selectOneMenu>
                             <p:outputLabel value="2. Rubro de adquisición:" />  
                             <p:selectOneMenu id="idRubro" value="#{graficoController.rubroSeg}" effect="fade">
                                 <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
-                                <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}"/>
+                                <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}"/>
                             </p:selectOneMenu>
                             <p:spacer width="8" height="8"/>
                             <p:commandButton action="#{graficoController.buscarAvanceSeguimiento}"  update="pnlGrafico pnlGrafico1 pnlGrafico2" value="Buscar" ajax="true" id="ingresar" icon="ui-icon-search"/>

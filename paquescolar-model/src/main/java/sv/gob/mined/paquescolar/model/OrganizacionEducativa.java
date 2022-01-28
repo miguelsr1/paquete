@@ -20,6 +20,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.eclipse.persistence.annotations.Direction;
+import org.eclipse.persistence.annotations.NamedStoredProcedureQueries;
+import org.eclipse.persistence.annotations.NamedStoredProcedureQuery;
+import org.eclipse.persistence.annotations.StoredProcedureParameter;
 
 /**
  *
@@ -29,6 +33,18 @@ import javax.persistence.TemporalType;
 @Table(name = "ORGANIZACION_EDUCATIVA")
 @NamedQueries({
     @NamedQuery(name = "OrganizacionEducativa.findAll", query = "SELECT o FROM OrganizacionEducativa o")})
+
+@NamedStoredProcedureQueries({
+    @NamedStoredProcedureQuery(
+            name = "SP_UPD_NOMBRE_DIRECTOR",
+            procedureName = "SP_UPD_NOMBRE_DIRECTOR",
+            returnsResultSet = false,
+            parameters = {
+                @StoredProcedureParameter(queryParameter = "P_COD_ENT", name = "P_COD_ENT", direction = Direction.IN, type = Integer.class),
+                @StoredProcedureParameter(queryParameter = "P_ID_ANHO", name = "P_ID_ANHO", direction = Direction.IN, type = Integer.class),
+                @StoredProcedureParameter(queryParameter = "P_NOMBRE", name = "P_NOMBRE", direction = Direction.IN, type = String.class)
+            }
+    )})
 public class OrganizacionEducativa implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -55,6 +71,10 @@ public class OrganizacionEducativa implements Serializable {
     private String usuarioModificacion;
     @Column(name = "TEL_DIRECTOR")
     private String telDirector;
+    @Column(name = "TEL_DIRECTOR2")
+    private String telDirector2;
+    @Column(name = "NUMERO_DUI")
+    private String numeroDui;
     @Column(name = "FECHA_MODIFICACION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
@@ -63,6 +83,8 @@ public class OrganizacionEducativa implements Serializable {
     private Date fechaEliminacion;
     @Column(name = "ESTADO_ELIMINACION")
     private BigInteger estadoEliminacion;
+    @Column(name = "CORREO_ELECTRONICO")
+    private String correoElectronico;
 
     public OrganizacionEducativa() {
     }
@@ -173,10 +195,7 @@ public class OrganizacionEducativa implements Serializable {
             return false;
         }
         OrganizacionEducativa other = (OrganizacionEducativa) object;
-        if ((this.idOrganizacionEducativa == null && other.idOrganizacionEducativa != null) || (this.idOrganizacionEducativa != null && !this.idOrganizacionEducativa.equals(other.idOrganizacionEducativa))) {
-            return false;
-        }
-        return true;
+        return !((this.idOrganizacionEducativa == null && other.idOrganizacionEducativa != null) || (this.idOrganizacionEducativa != null && !this.idOrganizacionEducativa.equals(other.idOrganizacionEducativa)));
     }
 
     @Override
@@ -190,5 +209,29 @@ public class OrganizacionEducativa implements Serializable {
 
     public void setTelDirector(String telDirector) {
         this.telDirector = telDirector;
+    }
+
+    public String getTelDirector2() {
+        return telDirector2;
+    }
+
+    public void setTelDirector2(String telDirector2) {
+        this.telDirector2 = telDirector2;
+    }
+
+    public String getNumeroDui() {
+        return numeroDui;
+    }
+
+    public void setNumeroDui(String numeroDui) {
+        this.numeroDui = numeroDui;
+    }
+
+    public String getCorreoElectronico() {
+        return correoElectronico;
+    }
+
+    public void setCorreoElectronico(String correoElectronico) {
+        this.correoElectronico = correoElectronico;
     }
 }

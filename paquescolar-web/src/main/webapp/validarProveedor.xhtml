@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:jsf="http://xmlns.jcp.org/jsf">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+            <link href="#{request.contextPath}/resources/images/favicon.png" rel="shortcut icon"/>
+        </f:facet>
+        <title>Sistema de Paquetes Escolares</title>
+        <h:outputScript name="funciones-1.js" library="js"/>
+
+        <style>
+            body .ui-tabs .ui-tabs-panel {
+                padding: 6px 0px !important;
+            }
+        </style>
+    </h:head>
+
+    <h:body styleClass="login-body">
+        <h:form>
+            <p:growl id="growl" showDetail="true" escape="false">
+                <p:autoUpdate />
+            </p:growl>
+            <div class="login-panel ui-fluid" style="background-color: #1d1d4c;">
+                <div class="ui-g" jsf:id="divPrincipal">
+                    <div class="ui-g-12">
+                        <div class="ui-g-6" style="margin-top: 70px; background-color: #1d1d4c;">
+                            <p:graphicImage name="logo_login.png" library="images" width="380" />
+                        </div>
+
+                        <div class="ui-g-6" style="background-color: #ffffff; border-radius: 2%;">
+                            <div class="ui-g-12">
+                                <p:outputLabel value="Sistema de Paquetes Escolares" style="font-size: 30px; padding-top: 25px; font-family: 'Bembo Std' !important"/>
+                            </div>
+                            <p:outputPanel rendered="#{! validarProveedorMB.showPanel}">
+                                <div class="ui-g-12">
+
+                                    <div class="ui-g-12">
+                                        <p:outputLabel for="txtCodigo" value="Código" style="font-size: 18px; font-family: 'Bembo Std' !important"/>
+                                        <p:inputText id="txtCodigo" styleClass="textMayuscula" onkeyup="return cUpper(this);" placeholder="CÓDIGO" value="#{validarProveedorMB.codigo}"/>
+                                    </div>
+                                    <div class="ui-g-12">
+                                        <p:outputLabel for="nit" value="N.I.T." style="font-size: 18px; font-family: 'Bembo Std' !important"/>
+                                        <p:inputMask id="nit" mask="9999-999999-999-9" onkeyup="return cUpper(this);" value="#{validarProveedorMB.nit}"/>
+                                    </div>
+                                    <div class="ui-g-12">
+                                        <p:outputLabel for="txtDui" value="D.U.I." style="font-size: 18px; font-family: Bembo Std !important" />
+                                        <p:inputMask id="txtDui" mask="99999999-9" onkeyup="return cUpper(this);" value="#{validarProveedorMB.dui}"/>
+                                    </div>
+                                    <div class="ui-g-12 button-container">
+                                        <p:commandButton id="btnValidar" value="Validar" styleClass="blue-btn raised-btn" action="#{validarProveedorMB.validarProveedor()}" update="divPrincipal"/>
+                                        <p:blockUI block="btnValidar" trigger="btnValidar"  />
+                                        <h:outputText value="."/>
+                                    </div>
+                                </div>
+
+                            </p:outputPanel>
+
+                            <p:outputPanel rendered="#{validarProveedorMB.showPanel}">
+                                <div class="ui-g-12">
+
+                                    <div class="ui-g-12">
+                                        <p:outputLabel value="Regresar a la pagina de inicio" style="font-size: 18px; font-family: 'Bembo Std' !important"/>
+                                    </div>
+                                    <div class="ui-g-12 button-container">
+                                        <p:commandButton value="Regresar" styleClass="blue-btn raised-btn" action="index"/>
+                                    </div>
+                                </div>
+
+                            </p:outputPanel>
+
+                            <div class="ui-g-12">
+                                <div class="ui-g-4" style="height: 50px;">
+                                    <h:outputText value="versión #{catalogosGeneralesController.version}" style="font-size: 14px; font-family: 'Bembo Std'"/>
+                                </div>
+                                <div class="ui-g-8" style="text-align: right;">
+                                    <p:ajaxStatus>
+                                        <f:facet name="default">
+                                        </f:facet>
+
+                                        <f:facet name="start">
+                                            <h:outputText value="Espere por favor" style="font-size: 14px; font-family: 'Bembo Std'" />
+                                            <i class="fa fa-spinner fa-spin" style="font-size: 20px;"></i>
+                                        </f:facet>
+
+                                        <f:facet name="complete">
+                                            <h:outputText value="" />
+                                        </f:facet>
+                                    </p:ajaxStatus>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <h:outputStylesheet name="css/layout-blue.css" library="paradise-layout" />
+                    <h:outputStylesheet name="css/personalizadas.css" library="paradise-layout" />
+                </div>
+            </div>
+        </h:form>
+    </h:body>
+
+</html>

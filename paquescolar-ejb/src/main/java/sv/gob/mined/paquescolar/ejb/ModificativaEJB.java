@@ -53,6 +53,16 @@ public class ModificativaEJB {
     @EJB
     ResolucionAdjudicativaEJB resolucionAdjudicativaEJB;
 
+    public VwBusquedaContratos getVwBusquedaContratoByIdContrato(BigDecimal idContrato) {
+        Query q = em.createNamedQuery("Modificativa.BusquedaContratoById", VwBusquedaContratos.class);
+        q.setParameter(1, idContrato);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (VwBusquedaContratos) q.getSingleResult();
+        }
+    }
+
     public List<VwBusquedaContratos> getLstBusquedaContrato(DetalleProcesoAdq proceso, String codigoEntidad, String codigoDepartamento, String numeroNit, Date fecha1, Date fecha2, String numeroContrato, int op) {
         List<VwBusquedaContratos> lstContratos = new ArrayList();
         String where = "";
@@ -65,7 +75,7 @@ public class ModificativaEJB {
         if (codigoDepartamento != null && !codigoDepartamento.equals("00")) {
             where += (where.isEmpty() ? "" : " AND ").concat(" codigo_departamento='" + codigoDepartamento + "'");
         }
-        if (!numeroNit.isEmpty()) {
+        if (numeroNit != null && !numeroNit.isEmpty()) {
             where += (where.isEmpty() ? "" : " AND ").concat(" numero_nit='" + numeroNit + "'");
         }
         if (fecha1 != null) {
@@ -74,7 +84,7 @@ public class ModificativaEJB {
         if (fecha2 != null) {
             where += (where.isEmpty() ? "" : " AND ").concat(" fecha_insercion < ?");
         }
-        if (!numeroContrato.isEmpty()) {
+        if (numeroContrato != null && !numeroContrato.isEmpty()) {
             where += (where.isEmpty() ? "" : " AND ").concat(" numero_contrato='" + numeroContrato + "'");
         }
 
@@ -89,6 +99,7 @@ public class ModificativaEJB {
         }
 
         try {
+            //Logger.getLogger(ModificativaEJB.class.getName()).log(Level.INFO, "SELECT * FROM VW_BUSQUEDA_CONTRATO WHERE {0}", where);
             Query q = em.createNativeQuery("SELECT * FROM VW_BUSQUEDA_CONTRATO WHERE " + where);
             if (fecha1 != null && fecha2 == null) {
                 q.setParameter(1, fecha1);
@@ -216,14 +227,15 @@ public class ModificativaEJB {
         }
     }
 
-    public BigDecimal getMontoContrato(BigDecimal idContrato, Boolean contratoOriginal) {
-        Query query;
-        if (contratoOriginal) {
-            query = em.createNativeQuery("select monto FROM vw_MO_Busqueda_contrato WHERE id_contrato = ?1 and ID_RESOLUCION_ADJ > 0");
-        }else{
-            query = em.createNativeQuery("select monto FROM vw_MO_Busqueda_contrato WHERE id_contrato = ?1 and ID_RESOLUCION_ADJ > 0");
-        }
-        query.setParameter(1, idContrato);
+    /**
+     * Obtiene el monto original de la modificativa que recibe como parametro.
+     *
+     * @param idResModif
+     * @return
+     */
+    public BigDecimal getMontoOldContrato(BigDecimal idResModif) {
+        Query query = em.createNativeQuery("SELECT FN_MO_GET_MONTO_CONTRATO_OLD(?1) FROM DUAL");
+        query.setParameter(1, idResModif);
         if (query.getResultList().isEmpty()) {
             return BigDecimal.ZERO;
         } else {
@@ -259,6 +271,16 @@ public class ModificativaEJB {
         return q.getResultList();
     }
 
+    public VwContratoModificatoria getContratoModificatorioEnDigitacion(BigDecimal idContrato) {
+        Query q = em.createNamedQuery("Modificativa.BusquedaContratoModifDigitada", VwContratoModificatoria.class);
+        q.setParameter(1, idContrato);
+        if (q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (VwContratoModificatoria) q.getResultList().get(0);
+        }
+    }
+
     public Boolean validarCambioEstado(ResolucionesModificativas resAdj, BigDecimal idEstadoReserva) {
         Boolean resultado = false;
         if ((resAdj.getIdEstadoReserva().intValue() == 1 && idEstadoReserva.intValue() == 2) || (resAdj.getIdEstadoReserva().intValue() == 3 && idEstadoReserva.intValue() == 2)) {
@@ -284,10 +306,13 @@ public class ModificativaEJB {
         try {
             BigDecimal cantidadAdjudicada = new BigDecimal(getCantidadAdjudicadaActual(res));
 
-            //no devuelve nada cuando no hay registros
-            Query query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idDetProcesoAdq =:idProceso and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
+            //no devuelve nada cuando no hay registros            
+            Query query;
+
+            query = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa=:idEmpresa and c.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and c.idMuestraInteres.idAnho.idAnho=:pIdAnho and c.estadoEliminacion = 0 and c.idMuestraInteres.estadoEliminacion=0 and c.idMuestraInteres.idEmpresa.estadoEliminacion=0", CapaInstPorRubro.class);
             query.setParameter("idEmpresa", res.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdEmpresa());
-            query.setParameter("idProceso", res.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq());
+            query.setParameter("pIdRubro", res.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres());
+            query.setParameter("pIdAnho", res.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
 
             List<CapaInstPorRubro> lst = query.getResultList();
 
@@ -323,12 +348,12 @@ public class ModificativaEJB {
                 res.setFechaModificacion(new Date());
 
                 em.merge(techoCE);
-                res = em.merge(res);
+                em.merge(res);
             }
+            return param;
         } catch (Exception e) {
             Logger.getLogger(RecepcionEJB.class.getName()).log(Level.SEVERE, null, e);
             param.put("error", "Se ha generado un error en la aplicación de fondos.");
-        } finally {
             return param;
         }
     }
@@ -402,10 +427,11 @@ public class ModificativaEJB {
 
     private HashMap<String, Object> existeDisponibilidadesCE(TechoRubroEntEdu techoCE, BigDecimal valorReserva, HashMap<String, Object> param) {
 
-        if (techoCE.getMontoDisponible().intValue() - valorReserva.intValue() < 0) {
-        } else {
-            param.put("error", "El centro escolar " + techoCE.getCodigoEntidad() + " no posee disponibilidad presupuestaria!"
+        if (techoCE.getMontoDisponible().add(valorReserva).compareTo(BigDecimal.ZERO) == -1) {
+            param.put("error", "El centro escolar " + techoCE.getCodigoEntidad() + " no posee disponibilidad presupuestaria!\n"
                     + "Monto Disponible: " + techoCE.getMontoDisponible() + " Monto Adjudicado: " + valorReserva);
+        } else {
+
         }
         return param;
     }
@@ -417,10 +443,12 @@ public class ModificativaEJB {
         lista = getSaldoParticipante(resModif);
         if (lista != null && !lista.isEmpty()) {
             disponibilidadProveedor = ((BigDecimal) lista.get(0)).toBigInteger();
-            if (disponibilidadProveedor.compareTo(cantidadAdjudicada) != -1) {
-            } else {
-                param.put("error", "El proveedor no posee disponibilidad para este rubro! Cantidad disponible:" + disponibilidadProveedor.intValue()
-                        + " Cantidad de Adjudicada: " + cantidadAdjudicada.intValue());
+            if (cantidadAdjudicada.intValue() > 0) {
+                if (disponibilidadProveedor.compareTo(cantidadAdjudicada) != -1) {
+                } else {
+                    param.put("error", "El proveedor no posee disponibilidad para este rubro! Cantidad disponible:" + disponibilidadProveedor.intValue()
+                            + " Cantidad de Adjudicada: " + cantidadAdjudicada.intValue());
+                }
             }
         } else {
             param.put("error", "El proveedor no posee disponibilidad para este rubro!");
@@ -429,11 +457,11 @@ public class ModificativaEJB {
     }
 
     public List getSaldoParticipante(ResolucionesModificativas resModif) {
-        String sql = String.format("SELECT NVL(FN_GETSALDOPROVEEDOR(%d, %d, %d), 0) FROM EMPRESA WHERE id_empresa=%d",
-                resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq(),
-                resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdDetProcesoAdq(),
+        String sql = String.format("SELECT NVL(FN_GETSALDOPROVEEDOR(%d, %d, %d, %d), 0) FROM DUAL",
+                resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho().intValue(),
+                resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue(),
                 resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdEmpresa().intValue(),
-                resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdEmpresa().getIdEmpresa().intValue());
+                resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdProcesoAdq());
 
         Query q = em.createNativeQuery(sql);
         return q.getResultList();
@@ -524,7 +552,7 @@ public class ModificativaEJB {
         rptModificacionContrato.setHoraRegistro(resolucionesModificativas.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getHoraApertura().toString());
         rptModificacionContrato.setMinutoRegistro(resolucionesModificativas.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getHoraApertura().toString());
 
-        for (DetalleModificativa detalle : resolucionesModificativas.getDetalleModificativaList()) {
+        for (DetalleModificativa detalle : findDetalleModificativaByFk(resolucionesModificativas.getIdResolucionModif())) {
             DetalleItemDto itemOld = new DetalleItemDto();
             DetalleItemDto itemNew = new DetalleItemDto();
 
@@ -546,6 +574,12 @@ public class ModificativaEJB {
         lstModificacionContratos.add(rptModificacionContrato);
 
         return lstModificacionContratos;
+    }
+    
+    public List<DetalleModificativa> findDetalleModificativaByFk(BigDecimal idResolucion){
+        Query q = em.createQuery("SELECT d FROM DetalleModificativa d WHERE d.estadoEliminacion=0 and d.idResolucionModif.idResolucionModif=:idRes ORDER BY FUNC('TO_NUMBER', d.noItem)", DetalleModificativa.class);
+        q.setParameter("idRes", idResolucion);
+        return q.getResultList();
     }
 
     public List<VwDepartamentoModificativas> lstDetalleModificativasOrderDepa(Integer idDetProcesoAdq) {
@@ -684,5 +718,17 @@ public class ModificativaEJB {
         Query q = em.createNativeQuery("SELECT count(*) FROM RECEPCION_BIENES_SERVICIOS where id_contrato = ?1 and ESTADO_ELIMINACION=0");
         q.setParameter(1, idContrato);
         return (((BigDecimal) q.getSingleResult()).intValue() > 0);
+    }
+
+    public List<TipoModifContrato> getLstTipoModifByTipoUsuario(BigDecimal idTipoUsuario) {
+        String ids = "";
+        if (idTipoUsuario.intValue() == 1) {
+            ids = "1,3,4,5,6,13";
+        } else {
+            ids = "3,4,13";
+        }
+        Query q = em.createQuery("SELECT t FROM TipoModifContrato t WHERE t.idModifContrato in (" + ids + ") ORDER by t.idModifContrato", TipoModifContrato.class);
+
+        return q.getResultList();
     }
 }

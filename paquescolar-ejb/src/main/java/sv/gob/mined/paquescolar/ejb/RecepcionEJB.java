@@ -28,9 +28,10 @@ import sv.gob.mined.paquescolar.model.pojos.ReporteProveedorDTO;
 import sv.gob.mined.paquescolar.model.pojos.recepcion.DetalleItems;
 import sv.gob.mined.paquescolar.model.pojos.recepcion.ReportePorDepartamentoDto;
 import sv.gob.mined.paquescolar.model.pojos.modificativa.VwBusquedaContratos;
+import sv.gob.mined.paquescolar.model.pojos.recepcion.RptEntregasGeneralPorDepartamentoDto;
 import sv.gob.mined.paquescolar.model.view.VwBusquedaSeguimientos;
 import sv.gob.mined.paquescolar.model.view.VwSeguimientoRptCentroEscolar;
-import sv.gob.mined.paquescolar.util.StringUtils;
+import sv.gob.mined.paquescolar.util.Constantes;
 
 /**
  *
@@ -44,7 +45,7 @@ public class RecepcionEJB {
     // "Insert Code > Add Business Method")
     @PersistenceContext(unitName = "paquescolarUP")
     private EntityManager em;
-
+    
     public ContratosOrdenesCompras getContratoOrdenCompra(BigDecimal idContrato) {
         if (idContrato != null) {
             return em.find(ContratosOrdenesCompras.class, idContrato);
@@ -52,7 +53,7 @@ public class RecepcionEJB {
             return new ContratosOrdenesCompras();
         }
     }
-
+    
     public VwBusquedaContratos getContratosById(BigDecimal idContrato) {
         Query query = em.createNamedQuery("Modificativa.BusquedaContratoById", VwBusquedaContratos.class);
         query.setParameter(1, idContrato);
@@ -62,25 +63,25 @@ public class RecepcionEJB {
             return (VwBusquedaContratos) query.getResultList().get(0);
         }
     }
-
+    
     public List<VwBusquedaContratos> getLstBusquedaContratosFisico(DetalleProcesoAdq proceso, String codigoEntidad, String codigoDepartamento, String numeroNit, String numeroContrato, String nombreProveedor) {
-        String cadenaWhere = StringUtils.addCampoToWhere("", "ID_DET_PROCESO_ADQ", proceso.getIdDetProcesoAdq());
-        cadenaWhere = StringUtils.addCampoToWhere(cadenaWhere, "codigo_entidad", codigoEntidad);
+        String cadenaWhere = Constantes.addCampoToWhere("", "ID_DET_PROCESO_ADQ", proceso.getIdDetProcesoAdq());
+        cadenaWhere = Constantes.addCampoToWhere(cadenaWhere, "codigo_entidad", codigoEntidad);
         if (codigoDepartamento != null && !codigoDepartamento.equals("00")) {
-            cadenaWhere = StringUtils.addCampoToWhere(cadenaWhere, "codigo_departamento", codigoDepartamento);
+            cadenaWhere = Constantes.addCampoToWhere(cadenaWhere, "codigo_departamento", codigoDepartamento);
         }
-        cadenaWhere = StringUtils.addCampoToWhere(cadenaWhere, "numero_nit", numeroNit);
-
+        cadenaWhere = Constantes.addCampoToWhere(cadenaWhere, "numero_nit", numeroNit);
+        
         if (!nombreProveedor.isEmpty() && nombreProveedor.length() > 0) {
             nombreProveedor = nombreProveedor.toUpperCase();
             cadenaWhere += (cadenaWhere.isEmpty() ? "" : " AND ").concat(" razon_social like'%" + nombreProveedor + "%'");
         }
-        cadenaWhere = StringUtils.addCampoToWhere(cadenaWhere, "numero_contrato", numeroContrato);
-
-        Query query = em.createNativeQuery(StringUtils.QUERY_RECEPCION_FIND_CONTRATOS_FISICOS + cadenaWhere, VwBusquedaContratos.class);
+        cadenaWhere = Constantes.addCampoToWhere(cadenaWhere, "numero_contrato", numeroContrato);
+        
+        Query query = em.createNativeQuery(Constantes.QUERY_RECEPCION_FIND_CONTRATOS_FISICOS + cadenaWhere, VwBusquedaContratos.class);
         return query.getResultList();
     }
-
+    
     public List<ReporteProveedorDTO> getLstReporteProveedores(ProcesoAdquisicion proceso, String codigoDepartamento, BigDecimal rubroSeg) {
         DetalleProcesoAdq procesos = getDepProcesosAdqProveedor(proceso, rubroSeg);
         List<ReporteProveedorDTO> lstContratos = new ArrayList();
@@ -179,12 +180,12 @@ public class RecepcionEJB {
                 + "    ) TBL2 ON TBL1.CODIGO_DEPARTAMENTO = TBL2.CODIGO_DEPARTAMENTO "
                 + "  AND TBL1.numero_nit                  = TBL2.numero_nit "
                 + "  ) ";
-
+        
         String where = "";
         if (codigoDepartamento != null && !codigoDepartamento.equals("00")) {
             where += " where codigo_departamento='" + codigoDepartamento + "'";
         }
-
+        
         try {
             Query query = em.createNativeQuery(sql + where);
             List lst = query.getResultList();
@@ -199,7 +200,7 @@ public class RecepcionEJB {
                 } else {
                     contrato.setTOTAL_UNIFORMES(Integer.parseInt(datos[4].toString()));
                 }
-
+                
                 if (datos[5] == null) {
                     contrato.setTOTAL_ENTREGADOS(0);
                 } else {
@@ -212,27 +213,27 @@ public class RecepcionEJB {
                     String valor = String.format("%.2f", num);
                     contrato.setAVANCE(valor + "%");
                 }
-
+                
                 lstContratos.add(contrato);
             }
         } finally {
             return lstContratos;
         }
     }
-
+    
     private List<DetalleProcesoAdq> getDepProcesosAdq(ProcesoAdquisicion proceso) {
         Query q = em.createQuery("SELECT t FROM DetalleProcesoAdq t where t.idProcesoAdq.idProcesoAdq=:idProcesoAdq ORDER BY t.idRubroAdq.idRubroInteres", DetalleProcesoAdq.class);
         q.setParameter("idProcesoAdq", proceso.getIdProcesoAdq());
         return q.getResultList();
     }
-
+    
     private DetalleProcesoAdq getDepProcesosAdqProveedor(ProcesoAdquisicion proceso, BigDecimal rubro) {
         Query q = em.createQuery("SELECT t FROM DetalleProcesoAdq t where t.idProcesoAdq.idProcesoAdq=:idProcesoAdq and t.idRubroAdq.idRubroInteres =:idRubroInteres", DetalleProcesoAdq.class);
         q.setParameter("idProcesoAdq", proceso.getIdProcesoAdq());
         q.setParameter("idRubroInteres", rubro);
         return (DetalleProcesoAdq) q.getSingleResult();
     }
-
+    
     public List<VwSeguimientoRptCentroEscolar> getLstSeguimientoRptCE(Integer proceso, String codigoDepartamento) {
         List<VwSeguimientoRptCentroEscolar> lst = new ArrayList();
         List datos;
@@ -259,7 +260,7 @@ public class RecepcionEJB {
                 setParameter(1, proceso).
                 setParameter(2, codigoDepartamento);
         datos = q.getResultList();
-
+        
         for (Object dato : datos) {
             Object[] objDato = (Object[]) dato;
             VwSeguimientoRptCentroEscolar vw = new VwSeguimientoRptCentroEscolar();
@@ -282,7 +283,7 @@ public class RecepcionEJB {
         }
         return lst;
     }
-
+    
     public List<ReportePorDepartamentoDto> getLstReporteGeneralDepartamento(Integer idDetProcesoUniformes, Integer idDetProcesoUtiles, Integer idDetProcesoZapatos) {
         Query query = em.createNamedQuery("Recepcion.RptGeneralDeEntregas", ReportePorDepartamentoDto.class);
         query.setParameter(1, idDetProcesoUniformes);
@@ -290,7 +291,20 @@ public class RecepcionEJB {
         query.setParameter(3, idDetProcesoZapatos);
         return query.getResultList();
     }
-
+    
+    public List<RptEntregasGeneralPorDepartamentoDto> getLstRpteGeneral(Integer idDetProceso) {
+        Query query = em.createNamedQuery("Recepcion.RptGeneral", RptEntregasGeneralPorDepartamentoDto.class);
+        query.setParameter(1, idDetProceso);
+        return query.getResultList();
+    }
+    
+    public List<RptEntregasGeneralPorDepartamentoDto> getLstRpteGeneralDepartamento(Integer idDetProceso, String codigoDepartamento) {
+        Query query = em.createNamedQuery("Recepcion.RptGeneralPorDepartamento", RptEntregasGeneralPorDepartamentoDto.class);
+        query.setParameter(1, idDetProceso);
+        query.setParameter(2, codigoDepartamento);
+        return query.getResultList();
+    }
+    
     public List<ReporteGeneralDTO> getLstReporteGeneral(ProcesoAdquisicion proceso, String codigoDepartamento) {
         List<DetalleProcesoAdq> procesos = getDepProcesosAdq(proceso);
         List<ReporteGeneralDTO> lstContratos = new ArrayList<>();
@@ -598,12 +612,12 @@ public class RecepcionEJB {
                 + "    ) TBL6 ON TBL5.CODIGO_DEPARTAMENTO = TBL6.CODIGO_DEPARTAMENTO "
                 + "  AND TBL5.CODIGO_ENTIDAD              = TBL6.CODIGO_ENTIDAD "
                 + "  ) tb)";
-
+        
         String where = "";
         if (codigoDepartamento != null && !codigoDepartamento.equals("00")) {
             where += " where CODIGO_DEPARTAMENTO='" + codigoDepartamento + "'";
         }
-
+        
         try {
             Query query = em.createNativeQuery(sql + where);
             List lst = query.getResultList();
@@ -617,7 +631,7 @@ public class RecepcionEJB {
                 } else {
                     contrato.setTOTAL_UNIFORME(Integer.parseInt(datos[2].toString()));
                 }
-
+                
                 if (datos[3] == null) {
                     contrato.setENTREGADO_UNIFORME(0);
                 } else {
@@ -661,14 +675,14 @@ public class RecepcionEJB {
                     String valor = String.format("%.2f", num);
                     contrato.setPORCENTAJEAVAN(valor + "%");
                 }
-
+                
                 lstContratos.add(contrato);
             }
         } finally {
             return lstContratos;
         }
     }
-
+    
     public DetalleRecepcion getDetalleRecepcionById(BigDecimal idDetalleRecepcion) {
         DetalleRecepcion detalle = new DetalleRecepcion();
         Query q = em.createQuery("SELECT d FROM DetalleRecepcion d WHERE d.idDetalleRecepcion=:idDetalleRecepcion", DetalleRecepcion.class);
@@ -676,16 +690,16 @@ public class RecepcionEJB {
         if (!q.getResultList().isEmpty()) {
             detalle = (DetalleRecepcion) q.getResultList().get(0);
         }
-
+        
         return detalle;
     }
-
+    
     public List<DetalleRecepcion> getLstDetalleRecepcionByFk(BigDecimal idRecepcion) {
         Query q = em.createQuery("SELECT d FROM DetalleRecepcion d WHERE d.idRecepcion.idRecepcion=:idRecep and d.estadoEliminacion=0 ORDER BY d.fechaRecepcion, FUNC('TO_NUMBER',d.noItem) ASC", DetalleRecepcion.class);
         q.setParameter("idRecep", idRecepcion);
         return q.getResultList();
     }
-
+    
     public RecepcionBienesServicios getRecepcion(BigDecimal idcontrato) {
         Query q = em.createQuery("SELECT r FROM RecepcionBienesServicios r WHERE r.idContrato.idContrato=:idContrato and r.estadoEliminacion=0", RecepcionBienesServicios.class);
         q.setParameter("idContrato", idcontrato);
@@ -700,11 +714,11 @@ public class RecepcionEJB {
             return recepcion;
         }
     }
-
+    
     public boolean ifExisteRecepcion(BigDecimal idcontrato) {
         return (getRecepcion(idcontrato).getIdRecepcion() != null);
     }
-
+    
     public List<VwBusquedaSeguimientos> getLstBusquedaSeguimientos(Integer idDetProcesoAdq, String codigoEntidad, String codigoDepartamento, String numeroNit, String numeroContrato, String nombreProveedor) {
         List<VwBusquedaSeguimientos> lstSeguimientos = new ArrayList();
         String where = "";
@@ -724,7 +738,7 @@ public class RecepcionEJB {
             nombreProveedor = nombreProveedor.toUpperCase();
             where += (where.isEmpty() ? "" : " AND ").concat(" razon_social like'%" + nombreProveedor + "%'");
         }
-
+        
         if (numeroContrato != null && !numeroContrato.isEmpty()) {
             where += (where.isEmpty() ? "" : " AND ").concat(" numero_contrato='" + numeroContrato + "'");
         }
@@ -746,12 +760,12 @@ public class RecepcionEJB {
             contrato.setEstado(datos[12].toString());
             contrato.setEstadoEliminacion(false);
             contrato.setIdRecepcion(new BigDecimal(datos[13].toString()));
-
+            
             lstSeguimientos.add(contrato);
         }
         return lstSeguimientos;
     }
-
+    
     public void guardarRecepcion(RecepcionBienesServicios recepcion) {
         if (recepcion.getIdRecepcion() == null) {
             em.persist(recepcion);
@@ -759,7 +773,7 @@ public class RecepcionEJB {
             em.merge(recepcion);
         }
     }
-
+    
     public void guardarDetalleRecepcion(DetalleRecepcion detalle, Boolean cambioEstado) {
         if (cambioEstado) {
             Query q = em.createNativeQuery("update recepcion_bienes_servicios set id_estado_seguimiento=2 where id_recepcion=" + detalle.getIdRecepcion().getIdRecepcion());
@@ -774,7 +788,7 @@ public class RecepcionEJB {
             em.merge(detalle);
         }
     }
-
+    
     public void updateDetalleRecepcion(DetalleRecepcion detalle) {
         Query q = em.createQuery("UPDATE DetalleRecepcion det SET DET.observaciones=:observaciones,DET.cantidadEntregada=:cantidadEntregada WHERE DET.idDetalleRecepcion=:idDetalleRecepcion", DetalleRecepcion.class);
         q.setParameter("observaciones", detalle.getObservaciones());
@@ -782,20 +796,20 @@ public class RecepcionEJB {
         q.setParameter("idDetalleRecepcion", detalle.getIdDetalleRecepcion());
         int valor = q.executeUpdate();
     }
-
+    
     public List<DetalleItems> getLstItemsPendienteEntrega(BigDecimal idContrato) {
         Query q = em.createNamedQuery("Recepcion.ItemsPendienteDeEntrega", DetalleItems.class);
         q.setParameter(1, idContrato);
         return q.getResultList();
     }
-
+    
     public List<DetalleItems> getLstItemsPendienteEntrega(BigDecimal idContrato, String noItem) {
         Query q = em.createNamedQuery("Recepcion.ItemsPendienteDeEntregaByNoItem", DetalleItems.class);
         q.setParameter(1, idContrato);
         q.setParameter(2, noItem);
         return q.getResultList();
     }
-
+    
     public void eliminarRecepcion(BigDecimal idRecepcion, String usuario) {
         Query q = em.createQuery("UPDATE RecepcionBienesServicios r SET r.estadoEliminacion=1, r.fechaEliminacion=:fecha, r.usuarioModificacion=:usu WHERE r.idRecepcion=:idRecep");
         q.setParameter("fecha", new Date());
@@ -803,27 +817,40 @@ public class RecepcionEJB {
         q.setParameter("idRecep", idRecepcion);
         q.executeUpdate();
     }
-
+    
     public List<DetalleOfertas> getItemDeContratoVigente(BigDecimal idContrato) {
         List<DetalleOfertas> lstDetalleOferta = new ArrayList<>();
         ContratosOrdenesCompras con = em.find(ContratosOrdenesCompras.class, idContrato);
         if (con.getModificativa() == 1) {
-            Query q = em.createNativeQuery("SELECT * FROM resoluciones_modificativas WHERE id_contrato = ?1 and id_res_modif_padre is null and estado_eliminacion = 0", ResolucionesModificativas.class);
+            Query q = em.createNativeQuery("SELECT * FROM resoluciones_modificativas WHERE id_contrato = ?1 and id_estado_reserva = 2 and estado_eliminacion = 0", ResolucionesModificativas.class);
             q.setParameter(1, idContrato);
             ResolucionesModificativas res = (ResolucionesModificativas) q.getSingleResult();
             for (DetalleModificativa detModif : res.getDetalleModificativaList()) {
                 DetalleOfertas det = new DetalleOfertas();
-
+                
                 det.setIdDetalleOfe(new BigDecimal(detModif.getIdDetalleModif()));
                 det.setCantidad(new BigInteger(detModif.getCantidadNew().toString()));
                 det.setConsolidadoEspTec(detModif.getConsolidadoEspTec());
                 det.setNoItem(detModif.getNoItem());
-
+                
                 lstDetalleOferta.add(det);
             }
             return lstDetalleOferta;
         } else {
             return con.getIdResolucionAdj().getIdParticipante().getDetalleOfertasList();
         }
+    }
+    
+    public Boolean existeModificativaByIdContrato(BigDecimal idContrato) {
+        Query q = em.createQuery("SELECT r FROM ResolucionesModificativas r WHERE r.estadoEliminacion = 0 and r.idEstadoReserva = 1 and r.idResModifPadre is null and r.idContrato.idContrato=:idContrato", ResolucionesModificativas.class);
+        q.setParameter("idContrato", idContrato);
+        return q.getResultList().size() > 0;
+    }
+    
+    public RecepcionBienesServicios findRecepcionByIdContrato(BigDecimal idContrato) {
+        Query q = em.createQuery("SELECT r FROM RecepcionBienesServicios r WHERE r.idContrato.idContrato=:idContrato and r.estadoEliminacion = 0", RecepcionBienesServicios.class);
+        q.setParameter("idContrato", idContrato);
+        
+        return q.getResultList().isEmpty() ? null : (RecepcionBienesServicios) q.getResultList().get(0);
     }
 }

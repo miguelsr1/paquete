@@ -25,7 +25,8 @@
                 VW_RPT_RENTA.CODIGO_DEPARTAMENTO as codigoDepartamento, 
                 VW_RPT_RENTA.ID_ANHO             as idAnho, 
                 VW_RPT_RENTA.MES_REGISTRO        as mesRegistro,
-                formato_requerimiento            as formatoRequerimiento
+                formato_requerimiento            as formatoRequerimiento,
+                VW_RPT_RENTA.id_planilla         as idPlanilla
             from 
                 VW_RPT_RENTA
                 inner join DATOS_DEPA_PAGADURIA on VW_RPT_RENTA.CODIGO_DEPARTAMENTO = DATOS_DEPA_PAGADURIA.CODIGO_DEPARTAMENTO
@@ -61,16 +62,70 @@
         </query>
     </named-native-query>
     
+    <named-native-query name="PagoProve.FileF14v15" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.InformeF14Dto">
+        <query>
+            <![CDATA[
+            select 
+                rownum as idRow,
+                colA, colB, colC, colD, colE,
+                colF, colG, colH, colI, colJ,
+                colK, colL, colLl, colM, colN, colO,
+                colP,colQ
+            from (select 
+                    '1'                         as colA,
+                    '9300'                      as colB,
+                    SUBSTR(FN_GET_NOMBRE_EMP_F14(der.numero_nit),0, 100) as colC,
+                    replace(numero_nit,'-','')  as colD,
+                    '11'                        as colE,
+                    to_char(sum(DECODE(DDP.ID_TIPO_DOC_PAGO, 1, ROUND(((case ddp.CONTRATO_MODIF when 1 then DDP.MONTO_ACTUAL when 0 then DP.MONTO_ACTUAL end)/1.13),2), 2, (case ddp.CONTRATO_MODIF when 1 then DDP.MONTO_ACTUAL when 0 then DP.MONTO_ACTUAL end))))     as colF,
+                    '0'                         as colG,
+                    to_char(sum(ddp.monto_Renta))        as colH,
+                    0                           as colI,
+                    0                           as colJ,
+                    0                           as colK,
+                    0                           as colL,
+                    0                           as colLl,
+                    0                           as colM,
+                    0                           as colN,
+                    0                           as colO,
+                    0                           as colP,
+                    to_char(dp.fecha_insercion,'mmyyyy') as colQ
+                from requerimiento_fondos req
+                    inner join detalle_proceso_adq dpa      on req.id_det_proceso_adq = dpa.id_det_proceso_adq
+                    inner join proceso_adquisicion pa       on pa.id_proceso_Adq = dpa.id_proceso_Adq
+                    inner join detalle_Requerimiento der    on req.id_requerimiento = der.id_requerimiento
+                    inner join detalle_doc_pago ddp         on der.id_det_requerimiento = ddp.id_det_requerimiento
+                    inner join detalle_planilla dp          on dp.id_detalle_doc_pago = ddp.id_detalle_doc_pago
+                    inner join planilla_pago pp             on pp.id_planilla = dp.id_planilla
+                where
+                    der.activo = 0 and
+                    ddp.estado_eliminacion = 0 and
+                    dp.estado_eliminacion = 0 and
+                    pp.estado_eliminacion = 0 and
+                    dpa.id_rubro_Adq in (4,5) and
+                    der.codigo_departamento = ?1 and
+                    to_char(dp.fecha_insercion,'mmyyyy') = ?2
+                group by 
+                    razon_social,
+                    numero_nit,
+                    id_anho,
+                    dp.fecha_insercion
+                order by dp.fecha_insercion)
+            ]]>
+        </query>
+    </named-native-query>
+    
     <named-native-query name="PagoProve.FileF910" 
                         result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto">
         <query>
             <![CDATA[
             select 
-                ROWNUM          as idRow, 
-                NOMBRE          as razonSocial,
-                NUMERO_NIT      as numeroNit,
-                MONTO_RETENCION as montoRetencion,
-                MONTO_RENTA     as montoRenta
+                ROWNUM                      as idRow, 
+                replace(NOMBRE, '  ',' ')   as razonSocial,
+                NUMERO_NIT                  as numeroNit,
+                MONTO_RETENCION             as montoRetencion,
+                MONTO_RENTA                 as montoRenta
             from
                 (select 
                     NOMBRE, NUMERO_NIT,
@@ -123,7 +178,7 @@
                 numero_nit      as numeroNit
             FROM (SELECT distinct razon_social, numero_nit    
                 FROM detalle_requerimiento 
-                WHERE id_requerimiento = ?1 and  
+                WHERE id_requerimiento = ?1 and  activo = 0 and
                     id_contrato NOT IN (SELECT dr.id_contrato
                                     FROM detalle_planilla dp 
                                         inner join detalle_doc_pago ddp on dp.ID_DETALLE_DOC_PAGO = ddp.ID_DETALLE_DOC_PAGO 
@@ -183,34 +238,43 @@
                 cantidad_planilla                               as cantidadPlanilla,
                 cantidad_ce                                     as cantidadCe,
                 monto_total                                     as montoTotal,
+                monto_transferido                               as montoTransferido,
                 monto_pagado                                    as montoPagado,
                 monto_pendiente                                 as montoPendiente,
                 monto_reintegro                                 as montoReintegro,
-                monto_total - (monto_pagado+monto_reintegro)    as montoSaldo,
+                monto_transferido - (monto_pagado+monto_reintegro)    as montoSaldo,
                 codigo_departamento                             as codigoDepartamento
-            from (SELECT 
-                  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,
-                  COUNT(DISTINCT PLANILLA_PAGO.ID_PLANILLA) CANTIDAD_PLANILLA,
-                  COUNT(DISTINCT DETALLE_PLANILLA.ID_DETALLE_PLANILLA) CANTIDAD_CE,
-                  REQUERIMIENTO_FONDOS.MONTO_TOTAL,
-                  NVL(FN_RF_MONTO_PAGADO(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_PAGADO,
-                  NVL(FN_RF_MONTO_PENDIENTE(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO), 0) MONTO_PENDIENTE,
-                  NVL(FN_RF_MONTO_REINTEGRAR(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_REINTEGRO,
-                  requerimiento_fondos.codigo_departamento
-                FROM REQUERIMIENTO_FONDOS
-                  left outer JOIN DETALLE_REQUERIMIENTO ON REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO
-                  left outer JOIN PLANILLA_PAGO ON PLANILLA_PAGO.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO
-                  LEFT OUTER JOIN DETALLE_PLANILLA ON PLANILLA_PAGO.ID_PLANILLA = DETALLE_PLANILLA.ID_PLANILLA
-                WHERE
-                  REQUERIMIENTO_FONDOS.CODIGO_DEPARTAMENTO = ?1 AND
-                  REQUERIMIENTO_FONDOS.ID_DET_PROCESO_ADQ = ?2 AND
-                  requerimiento_fondos.estado_eliminacion = 0 and
-                  (DETALLE_PLANILLA.ESTADO_ELIMINACION = 0 OR DETALLE_PLANILLA.ESTADO_ELIMINACION IS NULL)
+            from (select 
+                    rf.formato_requerimiento,
+                    count(distinct pp.id_planilla) cantidad_planilla,
+                    count(distinct dp.id_detalle_planilla) cantidad_ce,
+                    rf.monto_total,
+                    nvl(fn_rf_monto_pagado(rf.id_requerimiento),0) monto_pagado,
+                    nvl(fn_rf_monto_pendiente(rf.id_requerimiento), 0) monto_pendiente,
+                    nvl(fn_rf_monto_reintegrar(rf.id_requerimiento),0) monto_reintegro,
+                    rf.codigo_departamento,
+                    rf.id_requerimiento
+                from requerimiento_fondos rf
+                    left outer join detalle_requerimiento dr    on rf.id_requerimiento = dr.id_requerimiento
+                    left outer join planilla_pago pp            on pp.id_requerimiento = dr.id_requerimiento
+                    left outer join detalle_planilla dp         on pp.id_planilla = dp.id_planilla
+                where
+                    rf.codigo_departamento = ?1 and
+                    rf.id_det_proceso_adq = ?2 and
+                    rf.estado_eliminacion = 0 and
+                    (dp.estado_eliminacion = 0 or dp.estado_eliminacion is null)
                 group by 
-                  REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO,
-                  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,
-                  REQUERIMIENTO_FONDOS.MONTO_TOTAL,
-                  requerimiento_fondos.codigo_departamento) tb
+                    rf.id_requerimiento,
+                    rf.formato_requerimiento,
+                    rf.monto_total,
+                    rf.codigo_departamento) tb
+                inner join (select rf.id_requerimiento, sum(nvl(tr.monto_transferido,0)) monto_transferido
+                            from requerimiento_fondos rf
+                                left outer join transferencia_requerimiento tr on tr.id_requerimiento = rf.id_requerimiento
+                            group by rf.id_requerimiento) tb2 on tb.id_requerimiento = tb2.id_requerimiento
+                order by 
+                    codigo_departamento, 
+                    formato_requerimiento
             ]]>
         </query>
     </named-native-query>
@@ -225,38 +289,101 @@
                 cantidad_planilla                               as cantidadPlanilla,
                 cantidad_ce                                     as cantidadCe,
                 monto_total                                     as montoTotal,
+                monto_transferido                               as montoTransferido,
                 monto_pagado                                    as montoPagado,
                 monto_pendiente                                 as montoPendiente,
                 monto_reintegro                                 as montoReintegro,
-                monto_total - (monto_pagado+monto_reintegro)    as montoSaldo,
+                monto_transferido - (monto_pagado+monto_reintegro)    as montoSaldo,
                 codigo_departamento                             as codigoDepartamento
-            from (SELECT 
-                  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,
-                  COUNT(DISTINCT PLANILLA_PAGO.ID_PLANILLA) CANTIDAD_PLANILLA,
-                  COUNT(DISTINCT DETALLE_PLANILLA.ID_DETALLE_PLANILLA) CANTIDAD_CE,
-                  REQUERIMIENTO_FONDOS.MONTO_TOTAL,
-                  NVL(FN_RF_MONTO_PAGADO(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_PAGADO,
-                  NVL(FN_RF_MONTO_PENDIENTE(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO), 0) MONTO_PENDIENTE,
-                  NVL(FN_RF_MONTO_REINTEGRAR(REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO),0) MONTO_REINTEGRO,
-                  requerimiento_fondos.codigo_departamento
-                FROM REQUERIMIENTO_FONDOS
-                  left outer JOIN DETALLE_REQUERIMIENTO ON REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO
-                  left outer JOIN PLANILLA_PAGO ON PLANILLA_PAGO.ID_REQUERIMIENTO = DETALLE_REQUERIMIENTO.ID_REQUERIMIENTO
-                  LEFT OUTER JOIN DETALLE_PLANILLA ON PLANILLA_PAGO.ID_PLANILLA = DETALLE_PLANILLA.ID_PLANILLA
-                WHERE
-                  REQUERIMIENTO_FONDOS.ID_DET_PROCESO_ADQ = ?1 AND
-                  requerimiento_fondos.estado_eliminacion = 0 and
-                  (DETALLE_PLANILLA.ESTADO_ELIMINACION = 0 OR DETALLE_PLANILLA.ESTADO_ELIMINACION IS NULL)
+            from (select 
+                    rf.formato_requerimiento,
+                    count(distinct pp.id_planilla) cantidad_planilla,
+                    count(distinct dp.id_detalle_planilla) cantidad_ce,
+                    rf.monto_total,
+                    nvl(fn_rf_monto_pagado(rf.id_requerimiento),0) monto_pagado,
+                    nvl(fn_rf_monto_pendiente(rf.id_requerimiento), 0) monto_pendiente,
+                    nvl(fn_rf_monto_reintegrar(rf.id_requerimiento),0) monto_reintegro,
+                    rf.codigo_departamento,
+                    rf.id_requerimiento
+                from requerimiento_fondos rf
+                    left outer join detalle_requerimiento dr    on rf.id_requerimiento = dr.id_requerimiento
+                    left outer join planilla_pago pp            on pp.id_requerimiento = dr.id_requerimiento
+                    left outer join detalle_planilla dp         on pp.id_planilla = dp.id_planilla
+                where
+                    rf.id_det_proceso_adq = ?1 and
+                    rf.estado_eliminacion = 0 and
+                    (dp.estado_eliminacion = 0 or dp.estado_eliminacion is null)
                 group by 
-                  REQUERIMIENTO_FONDOS.ID_REQUERIMIENTO,
-                  REQUERIMIENTO_FONDOS.FORMATO_REQUERIMIENTO,
-                  REQUERIMIENTO_FONDOS.MONTO_TOTAL,
-                  requerimiento_fondos.codigo_departamento) tb
+                    rf.id_requerimiento,
+                    rf.formato_requerimiento,
+                    rf.monto_total,
+                    rf.codigo_departamento) tb
+                inner join (select rf.id_requerimiento, sum(nvl(tr.monto_transferido,0)) monto_transferido
+                            from requerimiento_fondos rf
+                                left outer join transferencia_requerimiento tr on tr.id_requerimiento = rf.id_requerimiento
+                            group by rf.id_requerimiento) tb2 on tb.id_requerimiento = tb2.id_requerimiento
                 order by 
-                    codigo_departamento, formato_requerimiento
+                    codigo_departamento, 
+                    formato_requerimiento
             ]]>
         </query>
     </named-native-query>
+    
+    <named-native-query name="PagoProve.ResumenPagoByDetProcesoAdqAndRequerimiento"
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosResumenPagosPorReqYProveedorDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum as idRow,
+                formatoRequerimiento,codigoDepartamento, descripcionRubro,numeroNit,razonSocial,cantidadTotalContratos,montoTotalContratado,montoTotalPagado,
+                montoTotalPendiente,montoTotalReintegrar
+            from (
+                select 
+
+                    formato_requerimiento                           as formatoRequerimiento,
+                    codigo_departamento                             as codigoDepartamento,
+                    descripcion_rubro                               as descripcionRubro,
+                    numero_nit                                      as numeroNit,
+                    razon_social                                    as razonSocial,
+                    count(id_contrato)                              as cantidadTotalContratos,
+                    sum(monto_total)                                as montoTotalContratado,
+                    sum(monto_pagado)                               as montoTotalPagado,
+                    sum(monto_total-monto_pagado-monto_reintegrar)  as montoTotalPendiente,
+                    sum(monto_reintegrar)                           as montoTotalReintegrar
+                from
+                    (select 
+                        req.formato_requerimiento,
+                        dr.codigo_departamento,
+                        dr.descripcion_rubro,
+                        dr.numero_nit,
+                        dr.razon_social,
+                        dr.id_contrato,
+                        dr.monto_total,
+                        nvl(dp.MONTO_ACTUAL,0) monto_pagado,
+                        case nvl(ddp.contrato_modif,0) when 1 then nvl(dp.MONTO_ORIGINAL,0) - nvl(dp.monto_actual,0) else 0 end monto_reintegrar
+                    from 
+                        requerimiento_fondos req
+                        inner join detalle_requerimiento dr   on req.id_requerimiento = dr.id_requerimiento
+                        left outer join detalle_doc_pago ddp    on dr.id_det_requerimiento = ddp.id_det_requerimiento
+                        left outer join detalle_planilla dp   on dp.id_detalle_doc_pago = ddp.id_detalle_doc_pago
+                        left outer join planilla_pago pp        on pp.id_planilla = dp.id_planilla
+                    where
+                        req.id_det_proceso_adq = ?1 and
+                        req.estado_eliminacion = 0 and
+                        req.formato_requerimiento = ?2 and
+                        dr.activo = 0 
+                        ) tbl
+                group by 
+                    formato_requerimiento,
+                    codigo_departamento,
+                    descripcion_rubro,
+                    numero_nit,
+                    razon_social)
+            ]]>
+        </query>
+    </named-native-query>
+    
+    
     <named-native-query name="PagoProve.RptLiquidacionDePagos" 
                         result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto">
         <query>
@@ -307,43 +434,137 @@
             <![CDATA[
             select 
                 rownum                  as idRow,
-                id_requerimiento        as idRequerimiento,
-                componente              as concepto,
+                tb1.id_requerimiento    as idRequerimiento,
+                componente,
                 formato_requerimiento   as formatoRequerimiento,
                 monto_total             as montoTotal,
+                nvl(monto_transferido,0)       as montoTransferido,
                 cantidad_planilla       as cantidadPlanilla,
                 monto_total_planilla    as montoTotalPlanilla,
                 monto_pendiente_pago    as montoPendientePago,
                 monto_reintegrar        as montoReintegrar,
-                saldo_requerimiento     as saldoRequerimiento
+                (nvl(monto_transferido,0) - saldo_ejecutado) saldoRequerimiento,
+                numero_requerimiento    as numeroRequerimiento
             from (select 
-                    req.id_requerimiento,
-                    req.componente,
-                    req.formato_requerimiento,
-                    req.monto_total,
-                    count(distinct pp.id_planilla) cantidad_planilla,
-                    nvl(fn_rf_monto_pagado(req.id_requerimiento),0) monto_total_planilla,
-                    nvl(fn_rf_monto_pendiente(req.id_requerimiento), 0) monto_pendiente_pago,
-                    nvl(fn_rf_monto_reintegrar(req.id_requerimiento),0) monto_reintegrar,
-                    nvl((req.monto_total-fn_rf_monto_pagado(req.id_requerimiento)-fn_rf_monto_reintegrar(req.id_requerimiento)),0) saldo_requerimiento,
-                    req.numero_requerimiento
-                from 
-                    requerimiento_fondos req
-                    left outer join detalle_requerimiento detq  on req.id_requerimiento = detq.id_requerimiento
-                    left outer join planilla_pago pp            on pp.id_requerimiento = detq.id_requerimiento
-                    left outer join detalle_planilla detp       on pp.id_planilla = detp.id_planilla
-                where
-                    req.codigo_departamento = ?1 and
-                    req.id_det_proceso_adq = ?2 and 
-                    req.estado_eliminacion = 0 
-                group by 
-                    req.numero_requerimiento,
-                    req.id_requerimiento,
-                    req.componente,
-                    req.formato_requerimiento,
-                    req.monto_total) tbl
-            order by 
-                tbl.numero_requerimiento
+                        req.id_requerimiento,
+                        req.componente,
+                        req.formato_requerimiento,
+                        req.monto_total,
+                        count(distinct pp.id_planilla) cantidad_planilla,
+                        nvl(fn_rf_monto_pagado(req.id_requerimiento),0) monto_total_planilla,
+                        nvl(fn_rf_monto_pendiente(req.id_requerimiento), 0) monto_pendiente_pago,
+                        nvl(fn_rf_monto_reintegrar(req.id_requerimiento),0) monto_reintegrar,
+                        nvl(fn_rf_monto_pagado(req.id_requerimiento)-fn_rf_monto_reintegrar(req.id_requerimiento),0) saldo_ejecutado,
+                        req.numero_requerimiento
+                    from 
+                        requerimiento_fondos req
+                        left outer join detalle_requerimiento detq  on req.id_requerimiento = detq.id_requerimiento
+                        left outer join planilla_pago pp            on pp.id_requerimiento = detq.id_requerimiento and pp.estado_eliminacion = 0
+                        left outer join detalle_planilla detp       on pp.id_planilla = detp.id_planilla
+                    where
+                        req.codigo_departamento = ?1 and
+                        req.id_det_proceso_adq = ?2 and 
+                        req.estado_eliminacion = 0 
+                    group by 
+                        req.numero_requerimiento,
+                        req.id_requerimiento,
+                        req.componente,
+                        req.formato_requerimiento,
+                        req.monto_total) tb1
+                left outer join (select req.id_requerimiento, sum(monto_transferido) monto_transferido
+                            from requerimiento_fondos req
+                                inner join transferencia_requerimiento tr on tr.id_requerimiento = req.id_requerimiento
+                            group by req.id_requerimiento) tb2 on tb1.id_requerimiento = tb2.id_requerimiento
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="PagoProve.RptPreCargaByIdDetProcesoAdq" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.PreCargaDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                  as idRow,
+                codigo_entidad          as codigoEntidad,
+                nombre                  as nombre,
+                codigo_departamento     as codigoDepartamento,
+                nombre_departamento     as nombreDepartamento,
+                codigo_municipio        as codigoMunicipio,
+                nombre_municipio        as nombreMunicipio,
+                descripcion_rubro       as descripcionRubro,
+                cantidad_total          as cantidadTotal,
+                cantidad_total_libros   as cantidadTotalLibros,
+                monto_total             as montoTotal,
+                numero_nit              as numeroNit,
+                razon_social            as razonSocial
+            from vw_formato_pre_carga 
+            where id_det_proceso_adq = ?1 and 
+                id_contrato not in (select id_contrato 
+                                    from detalle_requerimiento dr inner join requerimiento_fondos req on req.id_requerimiento = dr.id_requerimiento 
+                                    where req.id_det_proceso_adq = ?1 and dr.activo = 0)
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Liquidacion.DatosContratoDto" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosContratoDto">
+        <query>
+            <![CDATA[
+            select 
+                id_row             as idRow,
+                id_oferta          as idOferta,
+                no_item            as noItem,
+                cantidad           as cantidad,
+                precio_unitario    as precioUnitario,
+                id_contrato        as idContrato,
+                id_estado_reserva  as idEstadoReserva,
+                codigo_entidad     as codigoEntidad,
+                id_det_proceso_adq as idDetProcesoAdq
+            from vw_sub_liq_contrato_orig 
+            where codigo_entidad = ?1 and 
+                id_det_proceso_adq = ?2
+            order by to_number(no_item)
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Liquidacion.DatosModificativaDto" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosModificativaDto">
+        <query>
+            <![CDATA[
+            select 
+                id_row              as idRow,
+                id_contrato         as idContrato,
+                no_item             as noItem,
+                cantidad_new        as cantidadNew,
+                precio_unitario_new as precioUnitarioNew,
+                id_estado_reserva   as idEstadoReserva
+            from vw_sub_liq_contrato_modif
+            where id_contrato = ?1 and 
+                id_estado_reserva = 2
+            order by to_number(no_item)
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Liquidacion.DatosRecepcionAndResguardoDto" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.liquidacion.DatosRecepcionAndResguardoDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum              as idRow,
+                id_contrato         as idContrato,
+                no_item             as noItem,
+                cantidad_entregada  as cantidadEntregada,
+                cantidad_resguardo  as cantidadResguardo
+            from (select 
+                vw.id_contrato,
+                vw.no_item,
+                cantidad_entregada,
+                nvl(tb.cantidad,0) cantidad_resguardo
+            from vw_sub_liq_contrato_recep vw
+                left outer join (select res.id_contrato, no_item, cantidad 
+                                from resguardo res
+                                    inner join detalle_resguardo det on res.id_resguardo = det.id_resguardo
+                                where det.estado_eliminacion = 0) tb on vw.id_contrato = tb.id_contrato and vw.no_item = tb.no_item
+            where vw.id_contrato = ?1 
+            order by to_number(vw.no_item)) 
             ]]>
         </query>
     </named-native-query>

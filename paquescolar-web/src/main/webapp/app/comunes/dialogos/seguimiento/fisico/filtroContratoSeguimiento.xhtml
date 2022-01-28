@@ -14,8 +14,7 @@
                 height:auto; vertical-align: middle; width: 300px;
             }
         </style>
-        <link href="#{request.contextPath}/resources/css/dialog.css" rel="stylesheet" type="text/css" />
-        <link href="#{request.contextPath}/resources/css/iconos.css" rel="stylesheet" type="text/css" />
+        <h:outputStylesheet name="css/layout-default.css" library="paradise-layout" />
         <h:outputScript name="funciones-1.js" library="js"/>
     </h:head>
     <h:body>
@@ -40,7 +39,7 @@
                     <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />  
                     <p:selectOneMenu id="idRubro" value="#{segFisicoController.rubro}" effect="fade">
                         <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
-                        <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                        <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                     </p:selectOneMenu>
 
                     <p:outputLabel value="N.I.T.:" rendered="false"/>

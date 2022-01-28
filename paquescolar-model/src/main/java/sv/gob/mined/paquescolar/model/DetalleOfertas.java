@@ -82,9 +82,14 @@ public class DetalleOfertas implements Serializable {
     private BigInteger modificativa;
     @Column(name = "CANTIDAD_OFERTADA")
     private BigInteger cantidadOfertada;
+    
+    
     @JoinColumn(name = "ID_PARTICIPANTE", referencedColumnName = "ID_PARTICIPANTE")
     @ManyToOne(fetch = FetchType.EAGER)
     private Participantes idParticipante;
+    
+    
+    
     @JoinColumn(name = "ID_NIVEL_EDUCATIVO", referencedColumnName = "ID_NIVEL_EDUCATIVO")
     @ManyToOne(fetch = FetchType.EAGER)
     private NivelEducativo idNivelEducativo;
@@ -95,6 +100,9 @@ public class DetalleOfertas implements Serializable {
     private Boolean eliminar = false;
     @Transient
     private Integer noItemInt;
+    
+    @Transient
+    private BigInteger cantidadResguardo;
 
     public DetalleOfertas() {
     }
@@ -295,5 +303,13 @@ public class DetalleOfertas implements Serializable {
 
     public Boolean getEliminar() {
         return estadoEliminacion.compareTo(BigInteger.ONE) == 0;
+    }
+
+    public BigInteger getCantidadResguardo() {
+        return cantidadResguardo;
+    }
+
+    public void setCantidadResguardo(BigInteger cantidadResguardo) {
+        this.cantidadResguardo = cantidadResguardo;
     }
 }

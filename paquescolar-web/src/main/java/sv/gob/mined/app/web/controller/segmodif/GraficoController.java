@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,6 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -37,25 +37,25 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.primefaces.model.chart.PieChartModel;
 import sv.gob.mined.app.web.util.JsfUtil;
-import sv.gob.mined.app.web.util.RecuperarProceso;
+import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
+import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.RptExcel;
 import sv.gob.mined.app.web.util.UtilFile;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.RecepcionEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
-import sv.gob.mined.paquescolar.ejb.UtilEJB;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.pojos.DetalleContratacionDto;
 import sv.gob.mined.paquescolar.model.pojos.GraficoTipoEmpresaDTO;
 import sv.gob.mined.paquescolar.model.pojos.ReporteGeneralDTO;
 import sv.gob.mined.paquescolar.model.pojos.ReporteProveedorDTO;
-import sv.gob.mined.paquescolar.model.pojos.recepcion.ReportePorDepartamentoDto;
+import sv.gob.mined.paquescolar.model.pojos.recepcion.RptEntregasGeneralPorDepartamentoDto;
 import sv.gob.mined.paquescolar.model.view.VwSeguimientoRptCentroEscolar;
 
 /**
@@ -64,16 +64,12 @@ import sv.gob.mined.paquescolar.model.view.VwSeguimientoRptCentroEscolar;
  */
 @ManagedBean
 @ViewScoped
-public class GraficoController extends RecuperarProceso implements Serializable {
+public class GraficoController extends RecuperarProcesoUtil implements Serializable {
 
     @EJB
     public ProveedorEJB proveedorEJB;
     @EJB
     public EntidadEducativaEJB entidadEducativaEJB;
-    @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
-    @EJB
-    private UtilEJB utilEJB;
     @EJB
     private RecepcionEJB recepcionEJB;
 
@@ -91,6 +87,7 @@ public class GraficoController extends RecuperarProceso implements Serializable 
     private Integer totalmunicipios = 0;
     private Integer uniformes = 0;
     private Integer zapatos = 0;
+    private Integer idDetProcesoAdq = 0;
     private String porcentajeAvance;
     private String tipoEmp1 = "";
     private String totaltipoEmp1 = "";
@@ -120,6 +117,7 @@ public class GraficoController extends RecuperarProceso implements Serializable 
     private HSSFWorkbook wb1;
     private Boolean mostrarGraficoCentroEducativo;
     private static DataFormat FORMATO_DATA;
+    private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     public GraficoController() {
     }
@@ -127,9 +125,18 @@ public class GraficoController extends RecuperarProceso implements Serializable 
     @PostConstruct
     public void ini() {
         mostrarGrafico = false;
+        codigoDepartamento = getRecuperarProceso().getDepartamento();
     }
 
-    // <editor-fold defaultstate="collapsed" desc="getter-setter">    
+    // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public Integer getIdDetProcesoAdq() {
+        return idDetProcesoAdq;
+    }
+
+    public void setIdDetProcesoAdq(Integer idDetProcesoAdq) {
+        this.idDetProcesoAdq = idDetProcesoAdq;
+    }
+
     public Boolean getMostrarGraficoCentroEducativo() {
         return mostrarGraficoCentroEducativo;
     }
@@ -299,8 +306,16 @@ public class GraficoController extends RecuperarProceso implements Serializable 
     public void setDetalleCotizaciones(List<DetalleContratacionDto> detalleCotizaciones) {
         this.detalleCotizaciones = detalleCotizaciones;
     }
-    // </editor-fold>
 
+    public List<GraficoTipoEmpresaDTO> getListaCapacidad() {
+        return listaCapacidad;
+    }
+
+    public void setListaCapacidad(List<GraficoTipoEmpresaDTO> listaCapacidad) {
+        this.listaCapacidad = listaCapacidad;
+    }
+
+    // </editor-fold>
     public PieChartModel getPieModelSeguimientoProveedor() {
         createPieModelSeguimientoProveedor();
         return pieModelSeguimientoProveedor;
@@ -341,19 +356,19 @@ public class GraficoController extends RecuperarProceso implements Serializable 
     }
 
     public void buscarProcesoSeg() {
-        detalleProcesoSeg = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubroSeg);
+        detalleProcesoSeg = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubroSeg);
     }
 
     public void generarReportesExcel() throws FileNotFoundException, IOException, InvalidFormatException, URISyntaxException {
-        if (super.getProcesoAdquisicion().getIdProcesoAdq() != null) {
-            List<ReporteProveedorDTO> lista = recepcionEJB.getLstReporteProveedores(super.getProcesoAdquisicion(), codigoDepartamento, rubroSeg);
+        if (getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq() != null) {
+            List<ReporteProveedorDTO> lista = recepcionEJB.getLstReporteProveedores(getRecuperarProceso().getProcesoAdquisicion(), codigoDepartamento, rubroSeg);
             dowloadProveedoresFile(lista);
         }
     }
 
     public void dowloadProveedoresFile(List<ReporteProveedorDTO> lista) throws FileNotFoundException, IOException, InvalidFormatException, URISyntaxException {
         CellStyle style;
-        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/sispaqescolar/reporte/cuadro_seguimiento_proveedor.xls")) {
+        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/sispaqescolar/reporte/cuadro_seguimiento_proveedor.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             style = wb1.createCellStyle();
             style.setWrapText(true);
@@ -412,7 +427,7 @@ public class GraficoController extends RecuperarProceso implements Serializable 
         HSSFSheet sheet = wb.getSheetAt(0);
 
         HSSFCellStyle cellStyle = wb.createCellStyle();
-        cellStyle.setFillForegroundColor(HSSFColor.GREEN.index);
+        cellStyle.setFillForegroundColor(IndexedColors.GREEN.index);
         cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         for (int j = 1; j <= sheet.getLastRowNum(); j++) {
@@ -439,9 +454,9 @@ public class GraficoController extends RecuperarProceso implements Serializable 
         }
     }
 
-    public void dowloadDepartamentoFile(List<ReportePorDepartamentoDto> lista) {
+    public void dowloadDepartamentoFile(List<RptEntregasGeneralPorDepartamentoDto> lista) {
         HSSFCellStyle style;
-        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/sispaqescolar/reporte/cuadro_seguimiento_departamento.xls")) {
+        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptSegEntregaPorDepartamento.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             style = wb1.createCellStyle();
@@ -452,39 +467,39 @@ public class GraficoController extends RecuperarProceso implements Serializable 
             style.setBorderLeft(BorderStyle.THIN);
 
             s1 = wb1.getSheetAt(0);   //sheet by index
-            Integer B = 1;
-            Integer C = 2;
-            Integer D = 3;
-            Integer E = 4;
-            Integer F = 5;
-            Integer G = 6;
-            Integer H = 7;
-            Integer I = 8;
-            Integer J = 9;
-            Integer K = 10;
-            Integer i = 6;
-            for (ReportePorDepartamentoDto row : lista) {
-                escribirValor(row.getNombreDepartamento(), i, B, style);
-                escribirValor(row.getTotalContratosUtiles().toString(), i, C, style);
-                escribirValor(row.getTotalEntregasUtiles().toString(), i, D, style);
-                escribirValor(row.getTotalContratosZapatos().toString(), i, E, style);
-                escribirValor(row.getTotalEntregasZapatos().toString(), i, F, style);
-                escribirValor(row.getTotalContratosUniforme().toString(), i, G, style);
-                escribirValor(row.getTotalEntregasUniforme().toString(), i, H, style);
-                escribirValor(row.getTotalContratos().toString(), i, I, style);
-                escribirValor(row.getTotalEntregas().toString(), i, J, style);
 
-                escribirNumero(row.getPorcentajeDeAvance(), i, K, style, false);
+            Integer i = 1;
+            for (RptEntregasGeneralPorDepartamentoDto row : lista) {
+                escribirNumero(row.getRownum(), i, 0, style, true);
+                escribirValor(row.getNombreDepartamento(), i, 1, style);
+                escribirValor(row.getNombreMunicipio(), i, 2, style);
+                escribirValor(row.getCodigoEntidad(), i, 3, style);
+                escribirValor(row.getNombre(), i, 4, style);
+                escribirValor(row.getDescripcionRubro(), i, 5, style);
+                escribirValor(row.getNumeroNit(), i, 6, style);
+                escribirValor(row.getRazonSocial(), i, 7, style);
+                escribirNumero(row.getCantidadTotal(), i, 8, style, false);
+                escribirNumero(row.getMontoTotal(), i, 9, style, false);
+                escribirValor(row.getEstadoReserva(), i, 10, style);
+                escribirValor(row.getObservacion(), i, 11, style);
+                escribirValor(row.getFormatoRequerimiento(), i, 12, style);
+                if (row.getFechaRecepcion() != null) {
+                    escribirValor(dateFormat.format(row.getFechaRecepcion()), i, 13, style);
+                }
+
                 i++;
             }
             generarArchivo(wb1, "REPORTE_DEPARTAMENTO");
-        } catch (IOException | InvalidFormatException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(GraficoController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     private void escribirNumero(String text, Integer row, Integer col, CellStyle style, Boolean entero) {
         HSSFRow hrow = s1.getRow(row);
+        if (hrow == null) {
+            hrow = s1.createRow(row);
+        }
         HSSFCell cell = hrow.getCell(col);
         if (cell == null) {
             hrow.createCell(col);
@@ -493,12 +508,38 @@ public class GraficoController extends RecuperarProceso implements Serializable 
         cell.setCellType(CellType.NUMERIC);
         style.setDataFormat(entero ? FORMATO_DATA.getFormat("#,##0") : FORMATO_DATA.getFormat("#,##0.00"));
         cell.setCellStyle(style);
-        cell.setCellValue(entero ? Integer.parseInt(text) : Double.parseDouble(text));
+        cell.setCellValue(entero ? Integer.parseInt(text.replace(".00", "")) : Double.parseDouble(text));
+    }
+
+    private void escribirNumero(BigDecimal text, Integer row, Integer col, CellStyle style, Boolean entero) {
+        HSSFRow hrow = s1.getRow(row);
+        if (hrow == null) {
+            hrow = s1.createRow(row);
+        }
+        HSSFCell cell = hrow.getCell(col);
+        if (cell == null) {
+            hrow.createCell(col);
+            cell = hrow.getCell(col);
+        }
+
+        if (text == null) {
+            cell.setCellValue(0);
+        } else {
+            if (entero) {
+                cell.setCellValue(text.intValue());
+            } else {
+                cell.setCellType(CellType.NUMERIC);
+                style.setDataFormat(FORMATO_DATA.getFormat("#,##0.00"));
+                cell.setCellStyle(style);
+
+                cell.setCellValue(text.doubleValue());
+            }
+        }
     }
 
     public void dowloadFile(List<ReporteGeneralDTO> lista) throws FileNotFoundException, IOException, InvalidFormatException, URISyntaxException {
         CellStyle style;
-        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/sispaqescolar/reporte/cuadro_seguimiento_CE.xls")) {
+        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/sispaqescolar/reporte/cuadro_seguimiento_CE.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             style = wb1.createCellStyle();
             style.setWrapText(true);
@@ -647,29 +688,34 @@ public class GraficoController extends RecuperarProceso implements Serializable 
     }
 
     public void updateDetProcesoAdq() {
-        detalleProcesoSeg = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubroSeg);
+        detalleProcesoSeg = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubroSeg);
     }
 
     public void generarReportesDepartamentoExcel() {
-        if (super.getProcesoAdquisicion().getIdProcesoAdq() != null) {
-            List<ReportePorDepartamentoDto> lista = recepcionEJB.getLstReporteGeneralDepartamento(super.getProcesoAdquisicion().getDetalleProcesoAdqList().get(0).getIdDetProcesoAdq(), super.getProcesoAdquisicion().getDetalleProcesoAdqList().get(1).getIdDetProcesoAdq(), super.getProcesoAdquisicion().getDetalleProcesoAdqList().get(2).getIdDetProcesoAdq());
+        if (getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq() != null) {
+            List<RptEntregasGeneralPorDepartamentoDto> lista;
+            if (codigoDepartamento.equals("00")) {
+                lista = recepcionEJB.getLstRpteGeneral(idDetProcesoAdq);
+            } else {
+                lista = recepcionEJB.getLstRpteGeneralDepartamento(idDetProcesoAdq, codigoDepartamento);
+            }
             dowloadDepartamentoFile(lista);
         }
     }
 
     public void generarReportesProveedoresExcel() throws FileNotFoundException, IOException, InvalidFormatException, URISyntaxException {
-        if (super.getProcesoAdquisicion().getIdProcesoAdq() != null) {
-            List<ReporteGeneralDTO> lista = recepcionEJB.getLstReporteGeneral(super.getProcesoAdquisicion(), codigoDepartamento);
+        if (getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq() != null) {
+            List<ReporteGeneralDTO> lista = recepcionEJB.getLstReporteGeneral(getRecuperarProceso().getProcesoAdquisicion(), codigoDepartamento);
             dowloadFile(lista);
         }
     }
 
     public void generarReportesCEExcel() throws FileNotFoundException, IOException, InvalidFormatException, URISyntaxException {
-        if (super.getProcesoAdquisicion().getIdProcesoAdq() != null) {
+        if (getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq() != null) {
             List<VwSeguimientoRptCentroEscolar> lista = recepcionEJB.getLstSeguimientoRptCE(detalleProcesoSeg.getIdDetProcesoAdq(), codigoDepartamento);
 
             HSSFCellStyle style;
-            try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/sispaqescolar/reporte/cuadro_seguimiento_CE2.xls")) {
+            try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/sispaqescolar/reporte/cuadro_seguimiento_CE2.xls")) {
                 wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
                 style = wb1.createCellStyle();
                 style.setWrapText(true);
@@ -745,7 +791,7 @@ public class GraficoController extends RecuperarProceso implements Serializable 
     }
 
     public void obtenerDatos() {
-        detalleProcesoSeg = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), rubroSeg);
+        detalleProcesoSeg = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubroSeg);
         List<Object> lista = proveedorEJB.findAvanceContratacionByDepartamento(detalleProcesoSeg, codigoDepartamento);
         listaCapacidad = new ArrayList(0);
         BigDecimal total1 = BigDecimal.ZERO;

@@ -5,9 +5,13 @@
 package sv.gob.mined.app.web.controller;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
@@ -17,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.primefaces.PrimeFaces;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.VarSession;
+import sv.gob.mined.paquescolar.ejb.EMailEJB;
 import sv.gob.mined.paquescolar.ejb.LoginEJB;
 import sv.gob.mined.paquescolar.model.Usuario;
 
@@ -29,13 +34,15 @@ import sv.gob.mined.paquescolar.model.Usuario;
 public class LoginController implements Serializable {
 
     private String usuario;
-    //private String tipoUsuario;
     private String clave;
-    //private Boolean usuarioActivo;
-    //private Boolean usuarioSoloLectura = false;
-    //private Persona persona;
+    private String usuarioEmp;
+    private String claveEmp;
     @EJB
-    private LoginEJB loginEJBLocal;
+    private LoginEJB loginEJB;
+    @EJB
+    private EMailEJB eMailEJB;
+
+    private static final ResourceBundle UTIL_CORREO = ResourceBundle.getBundle("Bundle");
 
     /**
      * Creates a new instance of LoginController
@@ -65,6 +72,22 @@ public class LoginController implements Serializable {
         this.clave = clave;
     }
 
+    public String getUsuarioEmp() {
+        return usuarioEmp;
+    }
+
+    public void setUsuarioEmp(String usuarioEmp) {
+        this.usuarioEmp = usuarioEmp;
+    }
+
+    public String getClaveEmp() {
+        return claveEmp;
+    }
+
+    public void setClaveEmp(String claveEmp) {
+        this.claveEmp = claveEmp;
+    }
+
     public void dialogReasignarClave() {
         Map<String, Object> options = new HashMap();
         options.put("modal", true);
@@ -77,34 +100,99 @@ public class LoginController implements Serializable {
     }
 
     public String isUsuarioValido() {
-        Usuario usu = loginEJBLocal.isUsuarioValido(usuario, clave);
+        return validar(usuario, clave, false);
+    }
+
+    public String isUsuarioProveedorValido() {
+        return validar(usuarioEmp, claveEmp, true);
+    }
+
+    private String validar(String usuString, String cla, Boolean proveedor) {
+        Usuario usu;
+
+        if (proveedor) {
+            usu = loginEJB.isUsuarioProveedorValido(usuString, cla);
+        } else {
+            usu = loginEJB.isUsuarioValido(usuString, cla);
+        }
 
         if (usu == null) {
-            JsfUtil.mensajeError("Clave y/o Usuario incorrectos.");
+            JsfUtil.mensajeError("Se estan presentando problemas de comunicación con la base de datos. NOTIFICAR AL ADMINISTRADOR.");
             return "";
-        } else {
-            if (usu.getActivo().intValue() == 1) {
-                if (usu.getRangoFechaLogin().intValue() == 0) {
-                    return usuarioOkRedireccionar(usu);
-                } else {
-                    if (!((new Date()).after(usu.getFechaInicioLogin()) && (new Date()).before(usu.getFechaFinLogin()))) {
-                        JsfUtil.mensajeError("Ha concluido su periodo de actividad en el sistema. No posee derechos de acceso");
-                        return "";
-                    } else {
-                        return usuarioOkRedireccionar(usu);
-                    }
-                }
-            } else {
+        } else if (usu.getIdUsuario() == null) {
+            JsfUtil.mensajeAlerta("Clave y/o Usuario incorrectos.");
+            return "";
+        } else if (usu.getIdTipoUsuario().getIdTipoUsuario().intValue() == 9) {
+            if (usu.getActivo() == 0) {
                 JsfUtil.mensajeError("Usuario INACTIVO. No posee derechos de acceso");
                 return "";
+            } else {
+                return usuarioOkRedireccionar(usu);
+            }
+        } else {
+            switch (usu.getActivo().intValue()) {
+                case 1:
+                    if (usu.getRangoFechaLogin().intValue() == 0) {
+                        return usuarioOkRedireccionar(usu);
+                    } else {
+                        if (!((new Date()).after(usu.getFechaInicioLogin()) && (new Date()).before(usu.getFechaFinLogin()))) {
+                            JsfUtil.mensajeError("Ha concluido su periodo de actividad en el sistema. No posee derechos de acceso");
+                            return "";
+                        } else {
+                            return usuarioOkRedireccionar(usu);
+                        }
+                    }
+                case 2:
+                    JsfUtil.mensajeError("Se envió un correo con un link para reestablecer su clave de acceso, por favor realizar este paso antes de iniciar sesión");
+                    return "";
+                default:
+                    JsfUtil.mensajeError("Usuario INACTIVO. No posee derechos de acceso");
+                    return "";
             }
         }
     }
 
     private String usuarioOkRedireccionar(Usuario usu) {
         VarSession.setVariableSession("Usuario", usu.getIdPersona().getUsuario());
-        ((MenuController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "menuController")).init();
-        return "/app/inicial?faces-redirect=true";
+        MenuController mc = ((MenuController) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "menuController"));
+
+        if (usu.getIdTipoUsuario().getIdTipoUsuario().intValue() == 9) {
+            VarSession.setVariableSession("idEmpresa", usu.getIdPersona().getEmpresaList().get(0).getIdEmpresa());
+            return "/app/proveedor/regDatosGenerales?faces-redirect=true";
+        } else {
+            if (usu.getCambiarClave().compareTo((short) 1) == 0) {
+                VarSession.setVariableSession("cambioClave", true);
+                return "/actualizarClave?faces-redirect=true";
+            } else {
+                return "/app/inicial?faces-redirect=true";
+            }
+        }
+    }
+
+    public void asignarNuevaClave() {
+        HashMap<String, String> valor = loginEJB.solicitarEnlaceNuevaClave(usuario);
+
+        if (valor.isEmpty()) {
+            JsfUtil.mensajeAlerta("Este NIT no existe en la base.");
+        } else {
+            String titulo = "Paquete Escolar On Line - Cambiar Clave de Acceso";
+            String mensaje = UTIL_CORREO.getString("prov.recordarcontrasenha");
+
+            mensaje = MessageFormat.format(mensaje, valor.get("nombreCompleto"), valor.get("token"));
+
+            List<String> to = new ArrayList();
+            List<String> cc = new ArrayList();
+
+            to.add(valor.get("correo"));
+
+            if (eMailEJB.enviarMail(titulo,
+                    mensaje,
+                    to, cc, new ArrayList(), new HashMap<>(),
+                    JsfUtil.getSessionMailG("1"))) {
+                JsfUtil.mensajeInformacion("Por favor revisar su correo para poder cambiar la clave de acceso");
+            }
+
+        }
     }
 }

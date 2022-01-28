@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -68,9 +70,8 @@ public class FilterWeb implements Filter {
                 String uri = res.encodeRedirectURL(req.getContextPath() + OUTCOME_FALLO);
                 res.sendRedirect(uri);
             }
-        } catch (Throwable t) {
-            problem = t;
-            t.printStackTrace();
+        } catch (Exception ex) {
+            Logger.getLogger(FilterWeb.class.getName()).log(Level.WARNING, "Ah ocurrido un error: {0} peticion de {1}", new Object[]{ex.getMessage(), req.getContextPath()});
         }
         doAfterProcessing(request, response);
         if (problem != null) {
@@ -177,7 +178,7 @@ public class FilterWeb implements Filter {
         filterConfig.getServletContext().log(msg);
     }
 
-   /* public Boolean verificarOpcion(String user, String urlPag) throws NamingException {
+    /* public Boolean verificarOpcion(String user, String urlPag) throws NamingException {
         Boolean autorizado = false;
         String query = "SELECT OPCION_MENU.NOMBRE_PANEL,PERSONA.USUARIO FROM OPCION_MENU "
                 + "INNER JOIN USUARIO_OPC_MENU ON OPCION_MENU.ID_OPC_MENU = USUARIO_OPC_MENU.ID_OPC_MENU "
@@ -188,11 +189,10 @@ public class FilterWeb implements Filter {
          PreparedStatement pstm = null;
          Context ctx = new InitialContext();
          Connection conn = null;*/
-        //EntityManager em = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
-
-        //DataSource origendatos = (DataSource) ctx.lookup(recurso);
-        //try {
-            /*synchronized (origendatos) {
+    //EntityManager em = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
+    //DataSource origendatos = (DataSource) ctx.lookup(recurso);
+    //try {
+    /*synchronized (origendatos) {
              conn = origendatos.getConnection();
              }
              if (conn != null) {
@@ -206,7 +206,7 @@ public class FilterWeb implements Filter {
              } else {
              System.out.println("Error al obtener la conexion");
              }*/
-           /* Query q = em.createNativeQuery(query);
+ /* Query q = em.createNativeQuery(query);
             q.setParameter(1, user);
             q.setParameter(2, urlPag);
 

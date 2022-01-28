@@ -16,10 +16,10 @@
                                     update="pnlFiltro" disabled="true"/>
                         <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
                         <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
                         <f:facet  name="options" class="centradoVertical">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
                         </f:facet>  
                     </p:menubar>
 
@@ -33,7 +33,7 @@
                             <p:outputLabel value="Rubro de adquisicion:" />
                             <p:selectOneMenu id="cboRubro" value="#{modificatoriaController.idRubro}">
                                 <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />
-                                <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                                 <p:ajax update="pnlFiltro" listener="#{modificatoriaController.buscarProceso}" />
                             </p:selectOneMenu>
                             <p:commandButton value="Buscar" action="#{modificatoriaController.buscarTerminacionesContratos}" update="pnlDetDepartamento"/>

@@ -27,6 +27,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import org.eclipse.persistence.annotations.AdditionalCriteria;
 
 /**
  *
@@ -36,6 +37,7 @@ import javax.persistence.Transient;
 @Table(name = "RESOLUCIONES_MODIFICATIVAS")
 @NamedQueries({
     @NamedQuery(name = "ResolucionesModificativas.findAll", query = "SELECT r FROM ResolucionesModificativas r")})
+@AdditionalCriteria("this.estadoEliminacion = 0")
 public class ResolucionesModificativas implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idResModifPadre", fetch = FetchType.LAZY)

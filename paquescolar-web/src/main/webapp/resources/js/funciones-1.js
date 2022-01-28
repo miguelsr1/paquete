@@ -97,6 +97,22 @@ function queryEntidad(value) {
     }
 }
 
+function queryEmpresa(value) {
+    if (value.length == 5) {
+        findEmpresa();
+    }else if(value.length == 0){
+        findEmpresaReiniciar();
+    }
+}
+
+function queryEmpresaOtros(value) {
+    if (value.length == 5) {
+        findEmpresaOtros();
+    }else if(value.length == 0){
+        findEmpresaReiniciar();
+    }
+}
+
 function calcular(fem, mas, lbl) {
     var fem = $("#" + fem).val();
     var mas = $("#" + mas).val();
@@ -111,3 +127,13 @@ function calcularCiclo3(fem, mas, lbl, gra7, gra8, gra9, lblCiclo3) {
     $("#" + lbl).text(Number(fem) + Number(mas));
     $("#" + lblCiclo3).text(Number(grado7) + Number(grado8) + Number(grado9));
 }
+$(document).ready(function () {
+    $(window).scroll(function () {
+        var scroll = $(window).scrollTop();
+        if (scroll > 1) {
+            $("#menuBar").css("-webkit-box-shadow", "0px 2px 4px 0px rgba(0,0,0,0.75)");
+        } else {
+            $("#menuBar").css("-webkit-box-shadow", "0px 0px 0px 0px rgba(0,0,0,0.75)");
+        }
+    })
+})

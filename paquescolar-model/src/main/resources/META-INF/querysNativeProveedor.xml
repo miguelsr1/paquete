@@ -52,4 +52,98 @@
             ]]>
         </query>
     </named-native-query>
+    
+    <named-native-query name="Proveedor.DeclaracionJurada" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.DeclaracionJurada">
+        <query>
+            <![CDATA[
+            select 
+                rownum              as idRow,
+                descripcion_rubro   as rubro,
+                anho                as anho,
+                razon_social        as razonSocial,
+                nombre_presentante  as representanteLegal,
+                nit_empresa         as nitEmpresa,
+                direccion_completa  as direccionEmpresa,
+                numero_nit          as nitRepre,
+                numero_dui          as duiRepre,
+                domicilio           as direccionRepre,
+                fecha_modificacion  as fechaModificacion
+            from VW_RPT_DECLARACION_JURADA2 
+            where 
+                nit_empresa=?1 and 
+                id_rubro_interes=?2 and
+                id_anho=?3
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="Proveedor.ContratoActivo" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.ParticipanteConContratoDto">
+        <query>
+            <![CDATA[
+            select 
+                id_participante as idParticipante,
+                razon_social    as razonSocial,
+                codigo_entidad  as codigoEntidad,
+                id_det_proceso_adq as idDetProceso_adq,
+                id_contrato     as idContrato
+            from vw_find_emp_contratos 
+            where 
+                codigo_entidad=?1 and id_det_proceso_adq=?2
+            order by razon_social asc
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="Proveedor.NotificacionOfertaProv" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.proveedor.NotificacionOfertaProvDto">
+        <query>
+            <![CDATA[
+            select 
+                id_empresa as idEmpresa,
+                razon_social        as razonSocial,
+                numero_nit          as numeroNit,
+                descripcion_rubro   as descripcionRubro,
+                programa,
+                ubicacion_per       as ubicacionPer,
+                domicilio,
+                telefono_per        as telefonoPer,
+                direccion_completa  as direccionCompleta,
+                telefono_local      as telefonoLocal,
+                nombre_departamento as nombreDepartamento
+            from vw_prov_notificacion_cabecera 
+            where 
+                id_empresa=?1 and 
+                id_anho=?2 and
+                id_rubro_interes=?3
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="Proveedor.SeguimientoIngresoProveDto" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.proveedor.SeguimientoIngresoProveDto">
+        <query>
+            <![CDATA[
+            select distinct
+                emp.numero_nit          as numeroNit,
+                emp.razon_social        as razonSocial,
+                rub.descripcion_rubro   as descripcionRubro,
+                per.PRIMER_NOMBRE || ' ' || NVL(per.SEGUNDO_NOMBRE, '') || ' ' || NVL(per.PRIMER_APELLIDO, '') || ' ' || NVL(per.SEGUNDO_APELLIDO, '') || ' ' || NVL(per.ACASADA, '') AS usuario,
+                dis.fecha_insercion as fecha
+            from det_rubro_muestra_interes det
+                inner join rubros_amostrar_interes rub on det.id_rubro_interes = rub.id_rubro_interes
+                inner join empresa emp on det.id_empresa = emp.id_empresa
+                inner join capa_distribucion_Acre cap on det.id_muestra_interes = cap.id_muestra_interes
+                inner join dis_municipio_interes dis on dis.id_capa_distribucion = cap.id_capa_distribucion
+                inner join persona per on dis.usuario_insercion = per.usuario
+            where 
+                det.id_anho = ?1 and 
+                det.id_rubro_interes = ?2 and
+                to_char(dis.fecha_insercion, 'dd/MM/yyyy') = ?3
+            order by 
+                dis.fecha_insercion desc
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>

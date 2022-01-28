@@ -23,10 +23,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.ParameterMode;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.eclipse.persistence.annotations.NamedStoredProcedureQuery;
+import org.eclipse.persistence.annotations.StoredProcedureParameter;
 
 /**
  *
@@ -36,10 +39,32 @@ import javax.persistence.TemporalType;
 @Table(name = "DET_RUBRO_MUESTRA_INTERES")
 @NamedQueries({
     @NamedQuery(name = "DetRubroMuestraInteres.findAll", query = "SELECT d FROM DetRubroMuestraInteres d")})
+@NamedStoredProcedureQuery(
+        name = "SP_GET_ID_GESTION",
+        procedureName = "SP_GET_ID_GESTION",
+        returnsResultSet = false,
+        parameters = {
+            @StoredProcedureParameter(mode =  ParameterMode.IN, type = BigDecimal.class, name = "P_ID_EMPRESA", queryParameter = "P_ID_EMPRESA"),
+            @StoredProcedureParameter(mode =  ParameterMode.IN, type = Integer.class, name = "P_ID_MUESTRA_INTERES", queryParameter = "P_ID_MUESTRA_INTERES"),
+            @StoredProcedureParameter(mode =  ParameterMode.OUT, type = String.class, name = "P_ID_GESTION", queryParameter = "P_ID_GESTION")
+        }
+)
 public class DetRubroMuestraInteres implements Serializable {
+
+    @OneToMany(mappedBy = "idMuestraInteres", fetch = FetchType.LAZY)
+    private List<PreciosRefRubroEmp> preciosRefRubroEmpList;
+    @JoinColumn(name = "ID_ANHO", referencedColumnName = "ID_ANHO")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Anho idAnho;
+    @JoinColumn(name = "ID_RUBRO_INTERES", referencedColumnName = "ID_RUBRO_INTERES")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private RubrosAmostrarInteres idRubroInteres;
 
     @OneToMany(mappedBy = "idMuestraInteres", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProveedorEmpresa> proveedorEmpresaList;
+    @OneToMany(mappedBy = "idMuestraInteres", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<NotaPruebasZapatero> notaPruebasZapateroList;
+    
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -75,9 +100,13 @@ public class DetRubroMuestraInteres implements Serializable {
     private List<CapaDistribucionAcre> capaDistribucionAcreList = new ArrayList<CapaDistribucionAcre>();
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMuestraInteres", fetch = FetchType.LAZY)
     private List<CapaInstPorRubro> capaInstPorRubroList = new ArrayList<CapaInstPorRubro>();
-    @JoinColumn(name = "ID_DET_PROCESO_ADQ", referencedColumnName = "ID_DET_PROCESO_ADQ")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private DetalleProcesoAdq idDetProcesoAdq;
+    
+    @Column(name = "DATOS_VERIFICADOS")
+    private Short datosVerificados;
+    @Column(name = "ACEPTACION_TERMINOS")
+    private Short aceptacionTerminos;
+    @Column(name = "ID_GESTION")
+    private String idGestion;
 
     public DetRubroMuestraInteres() {
     }
@@ -91,6 +120,22 @@ public class DetRubroMuestraInteres implements Serializable {
         this.usuarioInsercion = usuarioInsercion;
         this.fechaInsercion = fechaInsercion;
         this.estadoEliminacion = estadoEliminacion;
+    }
+
+    public Short getAceptacionTerminos() {
+        return aceptacionTerminos;
+    }
+
+    public void setAceptacionTerminos(Short aceptacionTerminos) {
+        this.aceptacionTerminos = aceptacionTerminos;
+    }
+
+    public String getIdGestion() {
+        return idGestion;
+    }
+
+    public void setIdGestion(String idGestion) {
+        this.idGestion = idGestion;
     }
 
     public BigDecimal getIdMuestraInteres() {
@@ -187,10 +232,7 @@ public class DetRubroMuestraInteres implements Serializable {
             return false;
         }
         DetRubroMuestraInteres other = (DetRubroMuestraInteres) object;
-        if ((this.idMuestraInteres == null && other.idMuestraInteres != null) || (this.idMuestraInteres != null && !this.idMuestraInteres.equals(other.idMuestraInteres))) {
-            return false;
-        }
-        return true;
+        return !((this.idMuestraInteres == null && other.idMuestraInteres != null) || (this.idMuestraInteres != null && !this.idMuestraInteres.equals(other.idMuestraInteres)));
     }
 
     @Override
@@ -206,19 +248,51 @@ public class DetRubroMuestraInteres implements Serializable {
         this.capaInstPorRubroList = capaInstPorRubroList;
     }
 
-    public DetalleProcesoAdq getIdDetProcesoAdq() {
-        return idDetProcesoAdq;
-    }
-
-    public void setIdDetProcesoAdq(DetalleProcesoAdq idDetProcesoAdq) {
-        this.idDetProcesoAdq = idDetProcesoAdq;
-    }
-
     public List<ProveedorEmpresa> getProveedorEmpresaList() {
         return proveedorEmpresaList;
     }
 
     public void setProveedorEmpresaList(List<ProveedorEmpresa> proveedorEmpresaList) {
         this.proveedorEmpresaList = proveedorEmpresaList;
+    }
+
+    public Short getDatosVerificados() {
+        return datosVerificados;
+    }
+
+    public void setDatosVerificados(Short datosVerificados) {
+        this.datosVerificados = datosVerificados;
+    }
+
+    public List<PreciosRefRubroEmp> getPreciosRefRubroEmpList() {
+        return preciosRefRubroEmpList;
+    }
+
+    public void setPreciosRefRubroEmpList(List<PreciosRefRubroEmp> preciosRefRubroEmpList) {
+        this.preciosRefRubroEmpList = preciosRefRubroEmpList;
+    }
+
+    public Anho getIdAnho() {
+        return idAnho;
+    }
+
+    public void setIdAnho(Anho idAnho) {
+        this.idAnho = idAnho;
+    }
+
+    public RubrosAmostrarInteres getIdRubroInteres() {
+        return idRubroInteres;
+    }
+
+    public void setIdRubroInteres(RubrosAmostrarInteres idRubroInteres) {
+        this.idRubroInteres = idRubroInteres;
+    }
+
+    public List<NotaPruebasZapatero> getNotaPruebasZapateroList() {
+        return notaPruebasZapateroList;
+    }
+
+    public void setNotaPruebasZapateroList(List<NotaPruebasZapatero> notaPruebasZapateroList) {
+        this.notaPruebasZapateroList = notaPruebasZapateroList;
     }
 }

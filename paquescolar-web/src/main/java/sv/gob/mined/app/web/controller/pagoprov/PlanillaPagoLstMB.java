@@ -15,9 +15,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import org.primefaces.PrimeFaces;
 import sv.gob.mined.app.web.util.JsfUtil;
-import sv.gob.mined.app.web.util.RecuperarProceso;
+import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.VarSession;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.CreditosEJB;
 import sv.gob.mined.paquescolar.ejb.PagoProveedoresEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
@@ -35,10 +34,8 @@ import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
  */
 @ManagedBean
 @ViewScoped
-public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable {
+public class PlanillaPagoLstMB extends RecuperarProcesoUtil implements Serializable {
 
-    @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
     @EJB
     private PagoProveedoresEJB pagoProveedoresEJB;
     @EJB
@@ -82,7 +79,7 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
 
     @PostConstruct
     public void ini() {
-        codigoDepartamento = super.getDepartamento();
+        codigoDepartamento = getRecuperarProceso().getDepartamento();
         if (JsfUtil.isExisteParametroUrl("javax.faces.source")) {
             switch (JsfUtil.getParametroUrl("javax.faces.source")) {
                 case "mtmNuevo":
@@ -264,7 +261,7 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
     }
 
     public void recuperarRequerimientos() {
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        idDetProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
         lstRequerimientoFondos = proveedorEJB.getLstRequerimientos(codigoDepartamento, idDetProceso);
     }
 
@@ -294,7 +291,7 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
     }
 
     private void buscarReuerimientoqOrPlanilla() {
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        idDetProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
     }
 
     public void selectRequerimiento() {
@@ -384,7 +381,7 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
                 showDlgSeleccionProveedor();
                 break;
             case 2: //Planilla con más de 2 proveedores
-                url = "planillaPagoEdt.mined";
+                url = "planillaPagoEdt.mined?faces-redirect=true&includeViewParams=true&idTipoPlanilla=" + idTipoPlanilla + "&cboRubro_input=" + idRubro + "&idReq=" + idReq;
                 break;
         }
         return url;
@@ -395,7 +392,7 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
             JsfUtil.mensajeAlerta("Debe de seleccionar un proveedor");
             return "";
         } else {
-            return "planillaPagoEdt.mined?faces-redirect=true&includeViewParams=true&idReq=" + idReq + "&nit=" + proveedor.getNumeroNit() + "&idTipoPlanilla=" + idTipoPlanilla+"&cboRubro_input="+idRubro;
+            return "planillaPagoEdt.mined?faces-redirect=true&includeViewParams=true&idReq=" + idReq + "&nit=" + proveedor.getNumeroNit() + "&idTipoPlanilla=" + idTipoPlanilla + "&cboRubro_input=" + idRubro;
         }
     }
 
@@ -405,10 +402,10 @@ public class PlanillaPagoLstMB extends RecuperarProceso implements Serializable 
             JsfUtil.mensajeAlerta("Debe de seleccionar una entidad financiera");
             return "";
         } else {
-            return "planillaPagoEdt.mined?faces-redirect=true&includeViewParams=true&idReq=" + idReq + "&nombreEntFinan=" + entidadFinanciera.getNombreEntFinan() + "&idTipoPlanilla=3&cboRubro_input="+idRubro;
+            return "planillaPagoEdt.mined?faces-redirect=true&includeViewParams=true&idReq=" + idReq + "&nombreEntFinan=" + entidadFinanciera.getNombreEntFinan() + "&idTipoPlanilla=3&cboRubro_input=" + idRubro;
         }
     }
-    
+
     public void eliminarPlanilla() {
         pagoProveedoresEJB.eliminarPlanilla(planillaPago.getIdPlanilla(), VarSession.getVariableSessionUsuario());
         buscarPlanillas();

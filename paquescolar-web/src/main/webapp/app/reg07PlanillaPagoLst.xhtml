@@ -16,10 +16,10 @@
                         <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" action="#{planillaPagoLstMB.editarPlanilla}" update="pnlFiltro pnlDatos"/>
                         <p:menuitem value="Guardar" icon="fa fa-save"   id="mGuardar" disabled="true"/>
                         <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
                         <f:facet  name="options" class="centradoVertical">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
                         </f:facet>  
                     </p:menubar>
                     <p:blockUI block="mbMenu" trigger="mGuardar" />
@@ -34,7 +34,7 @@
                         <p:panelGrid columns="2" columnClasses="col3_label,col9" 
                                      styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
                             <h:outputText value="Departamento"/>
-                            <p:selectOneMenu id="codigoDepartamento" value="#{planillaPagoLstMB.codigoDepartamento}" disabled="#{datosGeograficosController.usuarioDepartamental}" >
+                            <p:selectOneMenu id="codigoDepartamento" value="#{planillaPagoLstMB.codigoDepartamento}" disabled="#{parametrosMB.usuarioDepartamental}" >
                                 <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
                                 <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
                                 <p:ajax listener="#{planillaPagoLstMB.clearRubroAndRequerimiento}"  update="codigoDepartamento cboRubro cboRequerimiento"/>
@@ -43,7 +43,7 @@
                             <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
                             <p:selectOneMenu id="cboRubro" value="#{planillaPagoLstMB.idRubro}">
                                 <f:selectItem itemLabel="Seleccione un rubro" itemValue="0" />
-                                <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                                 <p:ajax listener="#{planillaPagoLstMB.recuperarRequerimientos}" update="cboRequerimiento"/>
                             </p:selectOneMenu>
 
@@ -181,18 +181,16 @@
                             <h:outputText value="Un proveedor" style="font-size: 12px;"/>
                         </h:panelGrid>
                         <f:setPropertyActionListener target="#{planillaPagoLstMB.idTipoPlanilla}" value="1" />
-
                     </p:commandLink>
                     <br/>
                     <h:outputText value="Se crea un solo cheque por planilla para el proveedor seleccionado"/>
                 </div>
                 <div class="subItem2">
-                    <p:commandLink action="#{planillaPagoLstMB.cerrarDlgTipoPlanilla}" styleClass="secciones" update="pnlFiltro pnlDatos">
+                    <p:commandLink action="#{planillaPagoLstMB.cerrarDlgTipoPlanilla}" styleClass="secciones" update="pnlFiltro pnlDatos" >
                         <h:panelGrid columns="1" style="width: 100%;">
                             <i class="fa fa-users" style="font-size: 38px; color: #00DD00;"></i>
                             <h:outputText value ="Más de un Proveedor" style="font-size: 12px;"/>
                         </h:panelGrid>
-                        <f:viewParam name="idTipoPlanilla" value="2"/>
                         <f:setPropertyActionListener target="#{planillaPagoLstMB.idTipoPlanilla}" value="2" />
                     </p:commandLink>
                     <br/>

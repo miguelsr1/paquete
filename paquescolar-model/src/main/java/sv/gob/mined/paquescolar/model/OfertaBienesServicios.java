@@ -27,6 +27,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 
 /**
@@ -38,19 +39,20 @@ import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 @NamedQueries({
     @NamedQuery(name = "OfertaBienesServicios.findAll", query = "SELECT o FROM OfertaBienesServicios o")})
 public class OfertaBienesServicios implements Serializable {
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
     @Column(name = "ID_OFERTA")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "oferta")
-    @SequenceGenerator(name="oferta", sequenceName = "SEQ_OFERTA_BS", allocationSize=1, initialValue=1)
+    @SequenceGenerator(name = "oferta", sequenceName = "SEQ_OFERTA_BS", allocationSize = 1, initialValue = 1)
     private BigDecimal idOferta;
-    
+
     @JoinColumn(name = "CODIGO_ENTIDAD", referencedColumnName = "CODIGO_ENTIDAD")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private VwCatalogoEntidadEducativa codigoEntidad;
-    
+
     @Column(name = "FECHA_APERTURA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaApertura;
@@ -84,7 +86,9 @@ public class OfertaBienesServicios implements Serializable {
     @OneToMany(mappedBy = "idOferta", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("idParticipante ASC")
     private List<Participantes> participantesList;
-    
+
+    @Transient
+    private String idEmpresas;
 
     public OfertaBienesServicios() {
     }
@@ -102,7 +106,7 @@ public class OfertaBienesServicios implements Serializable {
     }
 
     public VwCatalogoEntidadEducativa getCodigoEntidad() {
-        if(codigoEntidad == null){
+        if (codigoEntidad == null) {
             codigoEntidad = new VwCatalogoEntidadEducativa();
         }
         return codigoEntidad;
@@ -232,4 +236,17 @@ public class OfertaBienesServicios implements Serializable {
     public String toString() {
         return "sv.gob.mined.paquescolar.model.OfertaBienesServicios[ idOferta=" + idOferta + " ]";
     }
+
+    public String getIdEmpresas() {
+        idEmpresas = "";
+        for (Participantes participantes : participantesList) {
+            if (idEmpresas.isEmpty()) {
+                idEmpresas = participantes.getIdEmpresa().getIdEmpresa().toString();
+            } else {
+                idEmpresas += "," + participantes.getIdEmpresa().getIdEmpresa().toString();
+            }
+        }
+        return idEmpresas;
+    }
+
 }

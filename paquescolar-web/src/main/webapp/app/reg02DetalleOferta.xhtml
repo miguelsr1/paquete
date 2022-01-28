@@ -5,54 +5,58 @@
     xmlns:p="http://primefaces.org/ui"
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
-    xmlns:jsf="http://xmlns.jcp.org/jsf">
+    xmlns:jsf="http://xmlns.jcp.org/jsf">    
     <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" action="#{participantesController.prepareEdit}" actionListener="#{ofertaMB.limpiarCampos}" update="pnlFiltro dvDetalle"/>
+            <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" action="#{participantesController.update}" includeViewParams="true"
+                        disabled="#{menuController.usuarioSoloLectura || participantesController.modifDesac}">
+                <f:param name="idParticipante" value="#{participantesController.idParticipante}"/>
+            </p:menuitem>
+            <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" disabled="true"/>
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+        <p:blockUI block="menuBar" trigger="mGuardar" />
+
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar id="mbMenu"> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
-                        <p:menuitem value="Modificar" icon="fa fa-edit" action="#{participantesController.prepareEdit}" actionListener="#{ofertaBienesServiciosController.limpiarCampos}" update="pnlFiltro dvDetalle"/>
-                        <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" action="#{participantesController.update}" includeViewParams="true"
-                                    disabled="#{menuController.usuarioSoloLectura || participantesController.modifDesac}">
-                            <f:param name="idParticipante" value="#{participantesController.idParticipante}"/>
-                        </p:menuitem>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" disabled="true"/>
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
-
-                        <f:facet  name="options">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-                    <p:blockUI block="mbMenu" trigger="mGuardar" />
-
-                    <h3>
+                    <h1>
                         <i class="fa fa-filter blue" style="font-size: 16px;"></i>
                         <p:spacer width="10" height="8"/>
                         <p:outputLabel value="Filtro de busqueda"/>
-                    </h3>
+                    </h1>
 
                     <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10"
                                  style="width: 100%; border:0px none; background-color:transparent;"
                                  styleClass="form-group ui-panelgrid-blank">
                         <p:outputLabel value="Rubro de adquisicion:" />
-                        <p:selectOneMenu id="cboRubro" value="#{ofertaBienesServiciosController.rubro}" disabled="#{participantesController.deshabilitado}" onkeydown="setaFoco(this);">
+                        <p:selectOneMenu id="cboRubro" value="#{ofertaMB.rubro}" disabled="#{participantesController.deshabilitado}" onkeydown="setaFoco(this);">
                             <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
-                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
-                            <p:ajax update="pnlFiltro dvDetalle" listener="#{ofertaBienesServiciosController.limpiarFiltros}"/>
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <p:ajax update="pnlFiltro dvDetalle" listener="#{ofertaMB.limpiarFiltros}"/>
                         </p:selectOneMenu>
 
                         <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
-                        <h:panelGrid columns="3" id="codigoEntidad" >
-                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaBienesServiciosController.codigoEntidad}" size="6" disabled="#{participantesController.deshabilitado}" autocomplete="off" requiredMessage="Código de infraestructura" onkeyup="queryEntidad(this.value);"/>
-                            <p:outputLabel id="nombreCE" value="#{ofertaBienesServiciosController.entidadEducativa.nombre}" style="font-weight: bold"/>
-                        </h:panelGrid>
+                        <p:outputPanel id="codigoEntidad" >
+                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaMB.codigoEntidad}" size="6" disabled="#{participantesController.deshabilitado}" autocomplete="off" 
+                                         requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5">
+                                <p:ajax event="keyup" update="nombreCE cboProveedor tblDetalleOferta" listener="#{ofertaMB.buscarEntidadEducativa}"/>
+                            </p:inputText>
+                            <p:spacer width="10"/>
+                            <p:outputLabel id="nombreCE" value="#{ofertaMB.entidadEducativa.nombre}" style="font-weight: bold"/>
+                        </p:outputPanel>
 
                         <p:outputLabel value="Proveedor:" />
                         <p:selectOneMenu id="cboProveedor" value="#{participantesController.idParticipante}" disabled="#{participantesController.deshabilitado}" onkeydown="setaFoco(this);" >
                             <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
-                            <f:selectItems value="#{ofertaBienesServiciosController.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{par.idEmpresa.razonSocial}" />
-                            <p:ajax update="mbMenu dvDetalle btnAgregar" listener="#{participantesController.buscarItemsProveedor}" />
+                            <f:selectItems value="#{ofertaMB.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idParticipante)):par.idEmpresa.razonSocial}"/>
+                            <p:ajax update="menuBar dvDetalle btnAgregar" listener="#{participantesController.buscarItemsProveedor}" />
                         </p:selectOneMenu>
                     </p:panelGrid>
                 </div>
@@ -73,23 +77,24 @@
                         <p:dataTable id="tblDetalleOferta" value="#{participantesController.lstDetalleOferta}" var="detalle" 
                                      editable="true" editMode="cell" emptyMessage="No hay registros" sortBy="#{detalle.estadoEliminacion}"
                                      rowKey="#{detalle.idDetalleOfe}" widgetVar="tblDetalleOferta" rowIndexVar="rowId"
-                                     rowStyleClass="#{detalle.estadoEliminacion eq 1 ? 'filaEliminada' : null}">
+                                     rowStyleClass="#{detalle.estadoEliminacion eq 1 ? 'filaEliminada' : null}"
+                                     styleClass="ui-datatable-borderless ui-datatable-reflow">
 
                             <p:ajax id="event" event="cellEdit" listener="#{participantesController.onCellEdit}" onsuccess="updDetalleOferta();"/>
-                            
+
                             <p:blockUI block="dvDetalle" trigger="event" />
 
                             <p:column headerText="Id" width="45" style="text-align: center;">
                                 <p:outputLabel value="#{detalle.idDetalleOfe}" />
                             </p:column>
 
-                            <p:column headerText="No Item" width="30" id="item">
+                            <p:column headerText="No Item" width="30" id="item" style="text-align: right;">
                                 <p:cellEditor>  
                                     <f:facet name="output">
-                                        <p:inputNumber inputStyle="text-align: right;" size="2" minValue="0" maxValue="13" decimalPlaces="0" value="#{detalle.noItem}" disabled="#{detalle.estadoEliminacion eq 1}" readonly="#{participantesController.modifDesac}" />
+                                        <h:outputText value="#{detalle.noItem}"/>
                                     </f:facet>
                                     <f:facet name="input">
-                                        <p:inputNumber inputStyle="text-align: right;" minValue="0" maxValue="13" decimalPlaces="0" value="#{detalle.noItem}" disabled="#{detalle.estadoEliminacion eq 1}" readonly="#{participantesController.modifDesac}" />
+                                        <p:inputNumber inputStyle="text-align: right;" minValue="0" maxValue="13" decimalPlaces="1" value="#{detalle.noItem}" disabled="#{detalle.estadoEliminacion eq 1}" readonly="#{participantesController.modifDesac}" />
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
@@ -106,8 +111,8 @@
                                         </h:outputText>
                                     </f:facet>
                                     <f:facet name="input">
-                                        <p:inputText value="#{detalle.cantidad}" disabled="#{detalle.estadoEliminacion eq 1}" size="8"
-                                                     style="text-align: right" readonly="#{participantesController.modifDesac}" />
+                                        <p:inputNumber value="#{detalle.cantidad}" disabled="#{detalle.estadoEliminacion eq 1}" size="8" 
+                                                       inputStyle="text-align: right" readonly="#{participantesController.modifDesac}" decimalPlaces="0"/>
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
@@ -118,7 +123,7 @@
                                 </h:outputText>
                             </p:column>
 
-                            <p:column headerText="Estilo" style="text-align: center" width="50" rendered="#{participantesController.showEstilo}">
+                            <p:column headerText="Estilo" style="text-align: center" width="50" rendered="false">
                                 <p:cellEditor>  
                                     <f:facet name="output">
                                         <h:outputText value="#{detalle.estiloZapato}" />
@@ -165,7 +170,7 @@
                             </p:summaryRow>
                         </p:dataTable>
 
-                        <p:spacer width="10" height="50" style="display:#{(participantesController.mostraTblLibros)?'block':'none'}"/>
+                        <p:spacer width="10" height="25" style="display:#{(participantesController.mostraTblLibros)?'block':'none'}"/>
                         <h3 style="display:#{(participantesController.mostraTblLibros)?'block':'none'}">
                             <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
                             <p:spacer width="10" />
@@ -282,6 +287,6 @@
 
         <p:remoteCommand name="updDetalleOferta" action="#{participantesController.updateFilaDetalle('tblDetalleOferta')}"/>
         <p:remoteCommand name="updDetalleOfertaLibros" action="#{participantesController.updateFilaDetalle('tblDetalleOfertaLibros')}"/>
-        <p:remoteCommand name="findEntidad" update="nombreCE cboProveedor tblDetalleOferta" actionListener="#{ofertaBienesServiciosController.buscarEntidadEducativa}"/>
+        <p:remoteCommand name="findEntidad" update="nombreCE cboProveedor tblDetalleOferta" actionListener="#{ofertaMB.buscarEntidadEducativa}"/>
     </ui:define>
 </ui:composition>

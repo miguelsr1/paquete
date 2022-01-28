@@ -15,7 +15,7 @@
                         <p:menuitem value="Guardar" icon="fa fa-save" action="#{usuarioEntidadFinancieraController.guardar}"
                                     disabled="#{menuController.usuarioSoloLectura}"/>
                         <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
                     </p:menubar>
 
                     <h3>

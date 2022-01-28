@@ -35,9 +35,11 @@ import org.eclipse.persistence.annotations.AdditionalCriteria;
     @NamedQuery(name = "PreciosRefRubroEmp.findAll", query = "SELECT p FROM PreciosRefRubroEmp p")})
 @AdditionalCriteria("this.estadoEliminacion = 0")
 public class PreciosRefRubroEmp implements Serializable {
-    @JoinColumn(name = "ID_DET_PROCESO_ADQ", referencedColumnName = "ID_DET_PROCESO_ADQ")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private DetalleProcesoAdq idDetProcesoAdq;
+
+    @JoinColumn(name = "ID_MUESTRA_INTERES", referencedColumnName = "ID_MUESTRA_INTERES")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DetRubroMuestraInteres idMuestraInteres;
+
     @JoinColumn(name = "ID_EMPRESA", referencedColumnName = "ID_EMPRESA")
     @ManyToOne(fetch = FetchType.EAGER)
     private Empresa idEmpresa;
@@ -184,10 +186,7 @@ public class PreciosRefRubroEmp implements Serializable {
             return false;
         }
         PreciosRefRubroEmp other = (PreciosRefRubroEmp) object;
-        if ((this.idPrecioRefEmp == null && other.idPrecioRefEmp != null) || (this.idPrecioRefEmp != null && !this.idPrecioRefEmp.equals(other.idPrecioRefEmp))) {
-            return false;
-        }
-        return true;
+        return !((this.idPrecioRefEmp == null && other.idPrecioRefEmp != null) || (this.idPrecioRefEmp != null && !this.idPrecioRefEmp.equals(other.idPrecioRefEmp)));
     }
 
     @Override
@@ -203,12 +202,11 @@ public class PreciosRefRubroEmp implements Serializable {
         this.idEmpresa = idEmpresa;
     }
 
-    public DetalleProcesoAdq getIdDetProcesoAdq() {
-        return idDetProcesoAdq;
+    public DetRubroMuestraInteres getIdMuestraInteres() {
+        return idMuestraInteres;
     }
 
-    public void setIdDetProcesoAdq(DetalleProcesoAdq idDetProcesoAdq) {
-        this.idDetProcesoAdq = idDetProcesoAdq;
+    public void setIdMuestraInteres(DetRubroMuestraInteres idMuestraInteres) {
+        this.idMuestraInteres = idMuestraInteres;
     }
-    
 }

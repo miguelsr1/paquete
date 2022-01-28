@@ -1,0 +1,95 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="1C37AE4D-D21B-554B-95D1-A1266BE3B306" name="candidato">
+<createdBy>misanchez</createdBy>
+<createdTime>2019-07-12 19:54:36 UTC</createdTime>
+<ownerDesignName>votacion</ownerDesignName>
+<ordsAlias>table_1</ordsAlias>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="id_candidato" id="208B3510-6824-2C6D-5869-612CFA824149">
+<createdBy>misanchez</createdBy>
+<createdTime>2019-07-12 19:57:18 UTC</createdTime>
+<ownerDesignName>votacion</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="dui" id="D4E1508F-4BEC-728F-3104-DA30B02C3F8A">
+<createdBy>misanchez</createdBy>
+<createdTime>2019-07-12 19:57:18 UTC</createdTime>
+<ownerDesignName>votacion</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT037</logicalDatatype>
+<dataTypeSize>10 CHAR</dataTypeSize>
+<ownDataTypeParameters>10 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="nombres" id="6E91C06D-82AC-A03F-B6D8-BFD8C4310EA4">
+<createdBy>misanchez</createdBy>
+<createdTime>2019-07-12 19:57:18 UTC</createdTime>
+<ownerDesignName>votacion</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT037</logicalDatatype>
+<dataTypeSize>150</dataTypeSize>
+<ownDataTypeParameters>150,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="apellidos" id="41E6700D-4079-F3C4-E6D1-ADEC5C68CA87">
+<createdBy>misanchez</createdBy>
+<createdTime>2019-07-12 19:57:18 UTC</createdTime>
+<ownerDesignName>votacion</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT037</logicalDatatype>
+<dataTypeSize>150</dataTypeSize>
+<ownDataTypeParameters>150,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="codigo_departamento" id="5318FC3F-0666-D0E7-0CD5-A33728EA9948">
+<createdBy>misanchez</createdBy>
+<createdTime>2019-07-12 19:57:18 UTC</createdTime>
+<ownerDesignName>votacion</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT037</logicalDatatype>
+<dataTypeSize>2</dataTypeSize>
+<ownDataTypeParameters>2,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="resumen_cv" id="24E36242-0FE3-A76D-DCEC-56DB4C2FD65A">
+<createdBy>misanchez</createdBy>
+<createdTime>2019-07-12 20:04:48 UTC</createdTime>
+<ownerDesignName>votacion</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT037</logicalDatatype>
+<dataTypeSize>200</dataTypeSize>
+<ownDataTypeParameters>200,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="741EEFC8-58A1-27BB-69F9-B580D51E07BA" name="candidato_PK">
+<createdBy>misanchez</createdBy>
+<createdTime>2019-07-12 19:57:28 UTC</createdTime>
+<ownerDesignName>votacion</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="208B3510-6824-2C6D-5869-612CFA824149"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

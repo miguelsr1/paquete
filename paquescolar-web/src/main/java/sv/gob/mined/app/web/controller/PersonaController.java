@@ -4,21 +4,15 @@
  */
 package sv.gob.mined.app.web.controller;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.servlet.ServletContext;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.VarSession;
@@ -44,6 +38,7 @@ public class PersonaController implements Serializable {
     private Usuario usuarioObj = new Usuario();
     private TipoUsuario idTipoUsuario = new TipoUsuario();
     private String nit;
+    private String emailPer;
     private String usuario;
     private String password;
     private String password2;
@@ -77,6 +72,14 @@ public class PersonaController implements Serializable {
         edicion.setPrimerApellido("");
         edicion.setSegundoApellido("");
         edicion.setAcasada("");
+    }
+
+    public String getEmailPer() {
+        return emailPer;
+    }
+
+    public void setEmailPer(String emailPer) {
+        this.emailPer = emailPer;
     }
 
     public BigDecimal getIdGenero() {
@@ -140,6 +143,7 @@ public class PersonaController implements Serializable {
     }
 
     public void guardarUsuario() {
+        edicion.setEmail(emailPer);
         edicion.setUsuario(usuario1);
         edicion.setIdGenero(utilEJB.find(Genero.class, idGenero));
 
@@ -168,6 +172,7 @@ public class PersonaController implements Serializable {
                             usuarioObj.setIdTipoUsuario(idTipoUsuario);
                             usuarioObj.setCodigoDepartamento(departamento.getCodigoDepartamento());
                             usuarioObj.setFechaVencimientoClave(fechaVencimientoClave);
+                            usuarioObj.setCambiarClave((short) 0);
 
                             usuarioObj.setActivo(usuarioActivo ? (short) 1 : 0);
 
@@ -371,6 +376,7 @@ public class PersonaController implements Serializable {
         Comentario: validar la existencia de un objeto de tipo Persona
          */
         if (edicion != null) {
+            emailPer = edicion.getEmail();
             if (edicion.getIdPersona() != null) {
                 cargarDatosPersonaEdicion();
             } else {
@@ -412,19 +418,6 @@ public class PersonaController implements Serializable {
 
     public List<Genero> getLstGenero() {
         return personaEJB.getLstGenero();
-    }
-
-    public void logout() {
-        try {
-            VarSession.limpiarVariableSession();
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.getExternalContext().getSessionMap().clear();
-            ExternalContext externalContext = context.getExternalContext();
-            externalContext.redirect(((ServletContext) externalContext.getContext()).getContextPath() + "/index.mined");
-            System.gc();
-        } catch (IOException ex) {
-            Logger.getLogger(PersonaController.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     public Date getFechaVencimientoClave() {

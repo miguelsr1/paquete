@@ -1,0 +1,45 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/templateProveedor.xhtml">
+    <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Guardar" icon="fa fa-save"  action="#{municipioInteresMB.guardarMunicipioInteres}" disabled="#{municipioInteresMB.datosVerificados}"/>
+            <p:menuitem value="Imprimir" disabled="true"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-id-card-o" style="font-size: 16px;" aria-hidden="true"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel id="lblNombreEmpresa" value="Datos de #{municipioInteresMB.empresa.razonSocial}"/>
+                    </h1>
+                    <p:outputPanel>
+                        <h3>
+                            <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                            <p:spacer width="10"/>
+                            <h:outputText value="Municipios de Interes :: Departamento: #{municipioInteresMB.departamentoCalif.codigoDepartamento.nombreDepartamento}"/>
+                        </h3>
+                        <p:outputLabel value="Seleccione los municipios en los que tiene interes de participar"/><br/>
+                        <h:panelGrid columns="2">
+                            <p:pickList id="pickList" value="#{municipioInteresMB.lstMunicipiosInteres}" converter="muniConverter" var="municipio" 
+                                        showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains"
+                                        itemLabel=" #{municipio.nombreMunicipio}" itemValue="#{municipio}">
+                                <f:facet name="sourceCaption">Municipios Disponibles</f:facet>
+                                <f:facet name="targetCaption">Municipios Ofertados</f:facet>
+                            </p:pickList>
+                        </h:panelGrid>
+                    </p:outputPanel>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -250,4 +250,528 @@
             ]]>
         </query>
     </named-native-query>
+    <named-native-query name="Contratacion.VwCotizacion" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.VwCotizacion">
+        <query>
+            <![CDATA[
+            select 
+                rownum              as idRow,
+                fecha_apertura      as fechaApertura,
+                razon_social        as razonSocial,
+                iniciales_modalidad as modalidadAdministrativa,
+                nombre              as nombreCe,
+                codigo_entidad      as codigoEntidad,
+                direccion_ce        as direccionCe,
+                nombre_presentante  as nombreRespresenanteEmp,
+                nombre_miembro      as nombreRepresentanteCe,
+                usuario_insercion   as usuarioInsercion 
+            from 
+                vw_cabecera_cotizacion 
+            where 
+                codigo_entidad = ?1 and 
+                id_det_proceso_adq = ?2 and 
+                id_participante = ?3
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Contratacion.VwCotizacionDetUniforme" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                                    as idRow,
+                no_item                                   as noItem,
+                nombre_producto ||', '||descripcion_nivel as consolidadoEspTec,
+                num_alumno                                as cantidad,
+                Precio_Referencia                         as precioUnitario
+            from 
+                vw_cotizacion_uniforme 
+            where 
+                id_empresa = ?1 and 
+                codigo_entidad = ?2 and 
+                id_proceso_estadistica = ?3 and 
+                (id_proceso_precio = ?3 or id_proceso_precio = ?3) 
+            order by 
+                to_number(no_item), 
+                id_nivel_educativo
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Contratacion.VwCotizacionDetUtiles" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                                    as idRow,
+                no_item                                   as noItem,
+                nombre_producto ||', '||descripcion_nivel as consolidadoEspTec,
+                num_alumno                                as cantidad,
+                Precio_Referencia                         as precioUnitario
+            from 
+                VW_COTIZACION_UTILES 
+            where 
+                id_empresa = ?1 and 
+                codigo_entidad = ?2 and 
+                id_proceso_estadistica = ?3 and 
+                (id_proceso_precio = ?3 or id_proceso_precio = ?3) 
+            order by 
+                to_number(no_item), 
+                id_nivel_educativo
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Contratacion.VwCotizacionDetZapatos" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                                    as idRow,
+                no_item                                   as noItem,
+                nombre_producto ||', '||descripcion_nivel as consolidadoEspTec,
+                num_alumno                                as cantidad,
+                Precio_Referencia                         as precioUnitario
+            from 
+                VW_COTIZACION_ZAPATOS 
+            where 
+                id_empresa = ?1 and 
+                codigo_entidad = ?2 and 
+                id_proceso_estadistica = ?3 and 
+                (id_proceso_precio = ?3 or id_proceso_precio = ?4) 
+            order by 
+                to_number(no_item), 
+                id_nivel_educativo
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Contratacion.DetalleContratacionPorItemDto" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleContratacionPorItemDto">
+        <query>
+            <![CDATA[
+            select 
+                id_contrato         as idContrato,
+                codigo_entidad      as codigoEntidad,
+                nombre              as nombre,
+                codigo_departamento as codigoDepartamento,
+                nombre_departamento as nombreDepartamento,
+                codigo_municipio    as codigoMunicipio,
+                nombre_municipio    as nombreMunicipio,
+                sum(cantidad)       as cantidadContratada,
+                sum(monto)          as montoContratado,
+                numero_nit          as numeroNit,
+                razon_social        as razonSocial,
+                sum(item_1)         as item1,
+                sum(item_2)         as item2,
+                sum(item_3)         as item3,
+                sum(item_4)         as item4,
+                sum(item_5)         as item5,
+                sum(item_6)         as item6,
+                sum(item_7)         as item7,
+                sum(item_8)         as item8,
+                sum(item_9)         as item9,
+                sum(item_10)        as item10,
+                sum(item_11)        as item11,
+                sum(item_12)        as item12,
+                sum(item_13)        as item13,
+                sum(item_2_1)       as item21,
+                sum(item_2_2)       as item22,
+                sum(item_2_3)       as item23,
+                sum(item_3_1)       as item31,
+                sum(item_3_2)       as item32,
+                sum(item_3_3)       as item33,
+                sum(item_4_1)       as item41,
+                sum(item_4_2)       as item42,
+                sum(item_4_3)       as item43,
+                sum(item_5_1)       as item51,
+                sum(item_5_2)       as item52
+            from 
+                (select 
+                    con.id_contrato,
+                    OFE.CODIGO_ENTIDAD,
+                    VW.NOMBRE,
+                    DEP.codigo_DEPARTAMENTO,
+                    DEP.NOMBRE_DEPARTAMENTO,
+                    MUN.codigo_MUNICIPIO,
+                    MUN.NOMBRE_MUNICIPIO,
+                    case when det.id_producto not in (1)  then det.cantidad else 0 end cantidad,
+                    case when det.id_producto not in (1)  then det.cantidad*DET.PRECIO_UNITARIO else 0 end monto,
+                    EMP.NUMERO_NIT,
+                    EMP.RAZON_SOCIAL,
+                    case to_number(det.no_item) when 1 then (case when det.id_producto in (54) and det.id_nivel_educativo in (1) then det.cantidad when det.id_producto in (21) and det.id_nivel_educativo in (1) then det.cantidad when det.id_producto in (30) and det.id_nivel_educativo in (1) then det.cantidad else 0 end) else 0 end item_1,
+                    case to_number(det.no_item) when 2 then (case when det.id_producto in (54) and det.id_nivel_educativo in (3) then det.cantidad when det.id_producto in (43) and det.id_nivel_educativo in (1) then det.cantidad when det.id_producto in (44) and det.id_nivel_educativo in (1) then det.cantidad else 0 end) else 0 end item_2,
+                    case to_number(det.no_item) when 3 then (case when det.id_producto in (54) and det.id_nivel_educativo in (4) then det.cantidad when det.id_producto in (21) and det.id_nivel_educativo in (3) then det.cantidad when det.id_producto in (29) and det.id_nivel_educativo in (1) then det.cantidad else 0 end) else 0 end item_3,
+                    case to_number(det.no_item) when 4 then (case when det.id_producto in (54) and det.id_nivel_educativo in (5) then det.cantidad when det.id_producto in (43) and det.id_nivel_educativo in (3) then det.cantidad when det.id_producto in (31) and det.id_nivel_educativo in (1) then det.cantidad else 0 end) else 0 end item_4,
+                    case to_number(det.no_item) when 5 then (case when det.id_producto in (54) and det.id_nivel_educativo in (6) then det.cantidad when det.id_producto in (21) and det.id_nivel_educativo in (4) then det.cantidad when det.id_producto in (34) and det.id_nivel_educativo in (1) then det.cantidad else 0 end) else 0 end item_5,
+                    case to_number(det.no_item) when 6 then (case when det.id_producto in (43) and det.id_nivel_educativo in (4) then det.cantidad when det.id_producto in (30) and det.id_nivel_educativo in (2) then det.cantidad else 0 end) else 0 end item_6,
+                    case to_number(det.no_item) when 7 then (case when det.id_producto in (21) and det.id_nivel_educativo in (5) then det.cantidad when det.id_producto in (44) and det.id_nivel_educativo in (2) then det.cantidad else 0 end) else 0 end item_7,
+                    case to_number(det.no_item) when 8 then (case when det.id_producto in (43) and det.id_nivel_educativo in (5) then det.cantidad when det.id_producto in (29) and det.id_nivel_educativo in (2) then det.cantidad else 0 end) else 0 end item_8,
+                    case to_number(det.no_item) when 9 then (case when det.id_producto in (21) and det.id_nivel_educativo in (6) then det.cantidad when det.id_producto in (34) and det.id_nivel_educativo in (2) then det.cantidad else 0 end) else 0 end item_9,
+                    case to_number(det.no_item) when 10 then (case when det.id_producto in (43) and det.id_nivel_educativo in (6) then det.cantidad when det.id_producto in (30) and det.id_nivel_educativo in (6) then det.cantidad else 0 end) else 0 end item_10,
+                    case to_number(det.no_item) when 11 then (case when det.id_producto in (44) and det.id_nivel_educativo in (6) then det.cantidad else 0 end) else 0 end item_11,
+                    case to_number(det.no_item) when 12 then (case when det.id_producto in (29) and det.id_nivel_educativo in (6) then det.cantidad else 0 end) else 0 end item_12,
+                    case to_number(det.no_item) when 13 then (case when det.id_producto in (34) and det.id_nivel_educativo in (6) then det.cantidad else 0 end) else 0 end item_13,
+                    case to_number(det.no_item) when 2.1 then (case when det.id_producto in (1) and det.id_nivel_educativo in (10) then det.cantidad else 0 end) else 0 end item_2_1,
+                    case to_number(det.no_item) when 2.2 then (case when det.id_producto in (1) and det.id_nivel_educativo in (11) then det.cantidad else 0 end) else 0 end item_2_2,
+                    case to_number(det.no_item) when 2.3 then (case when det.id_producto in (1) and det.id_nivel_educativo in (12) then det.cantidad else 0 end) else 0 end item_2_3,
+                    case to_number(det.no_item) when 3.1 then (case when det.id_producto in (1) and det.id_nivel_educativo in (13) then det.cantidad else 0 end) else 0 end item_3_1,
+                    case to_number(det.no_item) when 3.2 then (case when det.id_producto in (1) and det.id_nivel_educativo in (14) then det.cantidad else 0 end) else 0 end item_3_2,
+                    case to_number(det.no_item) when 3.3 then (case when det.id_producto in (1) and det.id_nivel_educativo in (15) then det.cantidad else 0 end) else 0 end item_3_3,
+                    case to_number(det.no_item) when 4.1 then (case when det.id_producto in (1) and det.id_nivel_educativo in (7) then det.cantidad else 0 end) else 0 end item_4_1,
+                    case to_number(det.no_item) when 4.2 then (case when det.id_producto in (1) and det.id_nivel_educativo in (8) then det.cantidad else 0 end) else 0 end item_4_2,
+                    case to_number(det.no_item) when 4.3 then (case when det.id_producto in (1) and det.id_nivel_educativo in (9) then det.cantidad else 0 end) else 0 end item_4_3,
+                    case to_number(det.no_item) when 5.1 then (case when det.id_producto in (1) and det.id_nivel_educativo in (16) then det.cantidad else 0 end) else 0 end item_5_1,
+                    case to_number(det.no_item) when 5.2 then (case when det.id_producto in (1) and det.id_nivel_educativo in (17) then det.cantidad else 0 end) else 0 end item_5_2
+                from 
+                    CONTRATOS_ORDENES_COMPRAS con
+                    inner join RESOLUCIONES_ADJUDICATIVAS res   on res.id_resolucion_adj = con.ID_RESOLUCION_ADJ
+                    inner join PARTICIPANTES par                on res.id_participante = PAR.ID_PARTICIPANTE
+                    inner join empresa emp                      on par.id_empresa = EMP.ID_EMPRESA
+                    inner join DETALLE_OFERTAS det              on par.id_participante = DET.ID_PARTICIPANTE
+                    inner join NIVEL_EDUCATIVO niv              on niv.id_nivel_educativo = DET.ID_NIVEL_EDUCATIVO
+                    inner join CATALOGO_PRODUCTO cat            on det.id_producto = CAT.ID_PRODUCTO
+                    inner join OFERTA_BIENES_SERVICIOS ofe      on par.id_oferta = OFE.ID_OFERTA
+                    inner join detalle_proceso_adq dpa          on ofe.id_det_proceso_adq = dpa.id_det_proceso_adq
+                    inner join proceso_adquisicion pa           on pa.id_proceso_adq = dpa.id_proceso_adq
+                    inner join VW_CATALOGO_ENTIDAD_EDUCATIVA vw on vw.codigo_entidad = OFE.CODIGO_ENTIDAD
+                    inner join departamento dep                 on vw.codigo_departamento = DEP.CODIGO_DEPARTAMENTO
+                    inner join municipio mun                    on vw.codigo_municipio = MUN.CODIGO_MUNICIPIO
+                                                                and mun.codigo_departamento = DEP.CODIGO_DEPARTAMENTO
+                where 
+                    con.ESTADO_ELIMINACION = 0 and
+                    res.ESTADO_ELIMINACION  = 0 and
+                    RES.ID_ESTADO_RESERVA = 2 and
+                    PAR.ESTADO_ELIMINACION = 0 and
+                    DET.ESTADO_ELIMINACION = 0 and
+                    ofe.estado_eliminacion = 0 and
+                    OFE.ID_DET_PROCESO_ADQ = ?1)
+            group by 
+                id_contrato,
+                codigo_entidad,
+                nombre,
+                codigo_departamento,
+                nombre_departamento,
+                codigo_municipio,
+                nombre_municipio,
+                numero_nit,
+                razon_social
+            order by 
+                codigo_departamento,
+                codigo_municipio,
+                codigo_entidad
+            ]]>
+        </query>
+    </named-native-query>
+    
+    <named-native-query name="Contratacion.DetalleContratadoPorComponenteDto" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleContratadoPorComponenteDto">
+        <query>
+            <![CDATA[
+            select
+                rownum                  as idRow,
+                vw.codigo_Entidad       as codigoEntidad,
+                vw.id_nivel_educativo   as idNivelEducativo,
+                vw.id_producto          as idProducto,
+                vw.descripcion_nivel    as descripcionNivel,
+                vw.nombre_producto      as nombreProducto,
+                vw.no_item              as noItem,
+                0 cantidad          
+            from 
+                vw_detalle_contratacion vw
+                left outer join resguardo res on vw.id_contrato = res.id_contrato
+            where 
+                vw.codigo_entidad = ?1 and
+                vw.id_det_proceso_adq = ?2 and
+                (res.id_resguardo is null or res.estado_eliminacion = 1)
+            order by vw.no_item
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Contratacion.VwRptPagare" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.VwRptPagare">
+        <query>
+            <![CDATA[
+            SELECT 
+                rownum              as idRow,
+                CIUDAD_FIRMA        as ciudadFirma,
+                FECHA_EMISION       as fechaEmision,
+                ID_CONTRATO         as idContrato,
+                INICIALES_MODALIDAD as inicialesModalidad,
+                VALOR               as valor,
+                DESCRIPCION_RUBRO   as descripcionRubro,
+                NUMERO_CONTRATO     as numeroContrato,
+                NOMBRE              as nombre,
+                NOMBRE_REPRESENTANTE    as nombreRepresentante,
+                DOMICILIO_REPRESENTANTE as domicilioRepresentante,
+                NUMERO_TELEFONO         as numeroTelefono,
+                NUMERO_DUI              as numeroDui,
+                NUMERO_NIT              as numeroNit,
+                USUARIO_INSERCION       as usuarioInsercion,
+                ID_RESOLUCION_ADJ       as idResolucionAdj,
+                RAZON_SOCIAL            as razonSocial,
+                ANHO_CONTRATO           as anhoContrato,
+                ID_PERSONERIA
+            FROM 
+                vw_rpt_pagare 
+            WHERE 
+                id_resolucion_adj=?1 and id_contrato=?2
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Contratacion.VwRptContratoJurCabecera" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.VwRptContratoJurCabecera">
+        <query>
+            <![CDATA[
+            SELECT 
+                rownum                  as idRow,
+                VALOR                   as valor,
+                NUMERO_CONTRATO         as numeroContrato,
+                RAZON_SOCIAL            as razonSocial,
+                DESCRIPCION_RUBRO       as descripcionRubro,
+                NOMBRE_MIEMBRO          as nombreMiembro,
+                INICIALES_MODALIDAD     as inicialesModalidad,
+                NOMBRE                  as nombre,
+                PLAZO_PREVISTO_ENTREGA  as plazoPrevistoEntrega,
+                CIUDAD_FIRMA            as ciudadFirma,
+                DIRECCION_CE            as direccionCe,
+                TELEFONO_CE             as telefonoCe,
+                FAX_CE                  as faxCe,
+                DIRECCION_EMP           as direccionEmp,
+                TELEFONO_EMP            as telefonoEmp,
+                CELULAR_EMP             as celularEmp,
+                FAX_EMP                 as faxEmp,
+                NUMERO_NIT              as numeroNit,
+                USUARIO_INSERCION       as usuarioInsercion,
+                ANHO_CONTRATO           as anhoContrato,
+                FECHA_EMISION           as fechaEmision,
+                NOMBRE_PRESENTANTE      as nombreePresentante,
+                CODIGO_ENTIDAD          as codigoEntidad,
+                ID_CONTRATO             as idContrato,
+                DISTRIBUIDOR            as distribuidor,
+                MOSTRAR_LEYENDA         as mostrarLeyenda,
+                NOMBRE_DEPARTAMENTO     as nombreDepartamento,
+                NOMBRE_MUNICIPIO        as nombreMunicipio,
+                NUMERO_DUI              as numeroDui
+            FROM 
+                VW_RPT_CONTRATO_JUR_CABECERA  
+            WHERE ID_CONTRATO=?1
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Contratacion.AvanceContratosCeDto" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.AvanceContratosDto">
+        <query>
+            <![CDATA[
+                select 
+                    rownum              as idRow,
+                    codigo_departamento as codigoDepartamento,
+                    nombre_departamento as nombreDepartamento,
+                    cantidad_ce         as cantidadCe,
+                    monto               as montoContrato
+                from 
+                    (select 
+                        codigo_departamento,
+                        nombre_departamento,
+                        count(distinct codigo_entidad) cantidad_ce,
+                        sum(monto_contrato) monto
+                    from info_general_contratacion 
+                    where id_det_proceso_adq = ?1
+                    group by codigo_departamento,
+                        nombre_departamento
+                    order by codigo_departamento)
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Contratacion.AvanceContratosProvDto" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.AvanceContratosDto">
+        <query>
+            <![CDATA[
+                select 
+                    rownum              as idRow,
+                    codigo_departamento as codigoDepartamento,
+                    nombre_departamento as nombreDepartamento,
+                    descripcion_personeria as descripcionPersoneria,
+                    cantidad_empresa       as cantidadEmpresa,
+                    monto               as montoContrato
+                from 
+                    (select codigo_departamento,
+                        nombre_departamento,
+                        descripcion_personeria,
+                        count(distinct emp.id_empresa) cantidad_empresa,
+                        sum(monto_contrato) monto
+                    from info_general_contratacion  inf
+                        inner join empresa emp on inf.id_empresa = emp.id_empresa
+                        inner join tipo_personeria tip on tip.id_personeria = emp.id_personeria
+                    where id_det_proceso_adq = ?1
+                    group by codigo_departamento,
+                        nombre_departamento,
+                        descripcion_personeria
+                    order by codigo_departamento)
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Contratacion.Matricula" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.CantidadPorNivelDto">
+        <query>
+            <![CDATA[
+                select 
+                    rownum              as idRow, 
+                    codigo_entidad      as codigoEntidad,
+                    nombre              as nombreCe,
+                    nombre_departamento as nombreDepartamento,
+                    nombre_municipio    as nombreMunicipio,
+                    inicial_2_fem       as inicial2Fem,
+                    inicial_2_mas       as inicial2Mas,
+                    inicial_3_fem       as inicial3Fem,
+                    inicial_3_mas       as inicial4Fem,
+                    par_fem             as parFem,
+                    par_mas             as parMas,
+                    grado_1_fem         as grado1Fem,
+                    grado_1_mas         as grado1Mas,
+                    grado_2_fem         as grado2Fem,
+                    grado_2_mas         as grado2Mas,
+                    grado_3_fem         as grado3Fem,
+                    grado_3_mas         as grado3Mas,
+                    grado_4_fem         as grado4Fem,
+                    grado_4_mas         as grado4Mas,
+                    grado_5_fem         as grado5Fem,
+                    grado_5_mas         as grado5Mas,
+                    grado_6_fem         as grado6Fem,
+                    grado_6_mas         as grado6Mas,
+                    grado_7_fem         as grado7Fem,
+                    grado_7_mas         as grado7Mas,
+                    grado_8_fem         as grado8Fem,
+                    grado_8_mas         as grado8Mas,
+                    grado_9_fem         as grado9Fem,
+                    grado_9_mas         as grado9Mas,
+                    fle_ciclo_3_fem     as fleCiclo3Fem,
+                    fle_ciclo_3_mas     as fleCiclo3Mas,
+                    media_1_fem         as media1Fem,
+                    media_1_mas         as media1Mas,
+                    media_2_fem         as media2Fem,
+                    media_2_mas         as media2Mas,
+                    media_3_fem         as media3Fem,
+                    media_3_mas         as media3Mas,
+                    fle_media_fem       as fleMediaFem,
+                    fle_media_mas       as fleMediaMas    
+                from (select 
+                            codigo_entidad,
+                            nombre,
+                            nombre_departamento,
+                            nombre_municipio,
+                            sum(inicial_2_fem) inicial_2_fem,
+                            sum(inicial_2_mas) inicial_2_mas,
+                            sum(inicial_3_fem) inicial_3_fem,
+                            sum(inicial_3_mas) inicial_3_mas,
+                            sum(par_fem) par_fem,
+                            sum(par_mas) par_mas,
+                            sum(grado_1_fem) grado_1_fem,
+                            sum(grado_1_mas) grado_1_mas,
+                            sum(grado_2_fem) grado_2_fem,
+                            sum(grado_2_mas) grado_2_mas,
+                            sum(grado_3_fem) grado_3_fem,
+                            sum(grado_3_mas) grado_3_mas,
+                            sum(grado_4_fem) grado_4_fem,
+                            sum(grado_4_mas) grado_4_mas,
+                            sum(grado_5_fem) grado_5_fem,
+                            sum(grado_5_mas) grado_5_mas,
+                            sum(grado_6_fem) grado_6_fem,
+                            sum(grado_6_mas) grado_6_mas,
+                            sum(grado_7_fem) grado_7_fem,
+                            sum(grado_7_mas) grado_7_mas,
+                            sum(grado_8_fem) grado_8_fem,
+                            sum(grado_8_mas) grado_8_mas,
+                            sum(grado_9_fem) grado_9_fem,
+                            sum(grado_9_mas) grado_9_mas,
+                            sum(fle_ciclo_3_fem) fle_ciclo_3_fem,
+                            sum(fle_ciclo_3_mas) fle_ciclo_3_mas,
+                            sum(media_1_fem) media_1_fem,
+                            sum(media_1_mas) media_1_mas,
+                            sum(media_2_fem) media_2_fem,
+                            sum(media_2_mas) media_2_mas,
+                            sum(media_3_fem) media_3_fem,
+                            sum(media_3_mas) media_3_mas,
+                            sum(fle_media_fem) fle_media_fem,
+                            sum(fle_media_mas) fle_media_mas
+                        from
+                            (select 
+                                est.codigo_entidad,
+                                vw.nombre,
+                                dep.nombre_Departamento,
+                                mun.nombre_municipio,
+                                case est.id_nivel_educativo when 25 then nvl(femenimo,0) else 0 end inicial_2_fem,
+                                case est.id_nivel_educativo when 25 then nvl(masculino,0) else 0 end inicial_2_mas,
+                                case est.id_nivel_educativo when 26 then nvl(femenimo,0) else 0 end inicial_3_fem,
+                                case est.id_nivel_educativo when 26 then nvl(masculino,0) else 0 end inicial_3_mas,
+                                case est.id_nivel_educativo when 22 then nvl(femenimo,0) else 0 end par_fem,
+                                case est.id_nivel_educativo when 22 then nvl(masculino,0) else 0 end par_mas,
+                                case est.id_nivel_educativo when 10 then nvl(femenimo,0) else 0 end grado_1_fem,
+                                case est.id_nivel_educativo when 10 then nvl(masculino,0) else 0 end grado_1_mas,
+                                case est.id_nivel_educativo when 11 then nvl(femenimo,0) else 0 end grado_2_fem,
+                                case est.id_nivel_educativo when 11 then nvl(masculino,0) else 0 end grado_2_mas,
+                                case est.id_nivel_educativo when 12 then nvl(femenimo,0) else 0 end grado_3_fem,
+                                case est.id_nivel_educativo when 12 then nvl(masculino,0) else 0 end grado_3_mas,
+                                case est.id_nivel_educativo when 13 then nvl(femenimo,0) else 0 end grado_4_fem,
+                                case est.id_nivel_educativo when 13 then nvl(masculino,0) else 0 end grado_4_mas,
+                                case est.id_nivel_educativo when 14 then nvl(femenimo,0) else 0 end grado_5_fem,
+                                case est.id_nivel_educativo when 14 then nvl(masculino,0) else 0 end grado_5_mas,
+                                case est.id_nivel_educativo when 15 then nvl(femenimo,0) else 0 end grado_6_fem,
+                                case est.id_nivel_educativo when 15 then nvl(masculino,0) else 0 end grado_6_mas,
+                                case est.id_nivel_educativo when 7 then nvl(femenimo,0) else 0 end grado_7_fem,
+                                case est.id_nivel_educativo when 7 then nvl(masculino,0) else 0 end grado_7_mas,
+                                case est.id_nivel_educativo when 8 then nvl(femenimo,0) else 0 end grado_8_fem,
+                                case est.id_nivel_educativo when 8 then nvl(masculino,0) else 0 end grado_8_mas,
+                                case est.id_nivel_educativo when 9 then nvl(femenimo,0) else 0 end grado_9_fem,
+                                case est.id_nivel_educativo when 9 then nvl(masculino,0) else 0 end grado_9_mas,
+
+                                case est.id_nivel_educativo when 23 then nvl(femenimo,0) else 0 end fle_ciclo_3_fem,
+                                case est.id_nivel_educativo when 23 then nvl(masculino,0) else 0 end fle_ciclo_3_mas,
+
+                                case est.id_nivel_educativo when 16 then nvl(femenimo,0) else 0 end media_1_fem,
+                                case est.id_nivel_educativo when 16 then nvl(masculino,0) else 0 end media_1_mas,
+                                case est.id_nivel_educativo when 17 then nvl(femenimo,0) else 0 end media_2_fem,
+                                case est.id_nivel_educativo when 17 then nvl(masculino,0) else 0 end media_2_mas,
+                                case est.id_nivel_educativo when 18 then nvl(femenimo,0) else 0 end media_3_fem,
+                                case est.id_nivel_educativo when 18 then nvl(masculino,0) else 0 end media_3_mas,
+
+                                case est.id_nivel_educativo when 24 then nvl(femenimo,0) else 0 end fle_media_fem,
+                                case est.id_nivel_educativo when 24 then nvl(masculino,0) else 0 end fle_media_mas
+                            from 
+                                estadistica_censo est
+                                inner join vw_catalogo_entidad_educativa vw on est.codigo_entidad = vw.codigo_entidad
+                                inner join departamento dep on dep.codigo_departamento = vw.codigo_departamento
+                                inner join municipio mun on dep.codigo_departamento = mun.codigo_departamento and mun.codigo_municipio = vw.codigo_municipio
+                            where
+                                id_proceso_adq = ?)
+                        group by 
+                            codigo_entidad,
+                            nombre,
+                            nombre_departamento,
+                            nombre_municipio
+                        order by 
+                            nombre_departamento, 
+                            nombre_municipio, 
+                            codigo_entidad)
+            ]]>
+        </query>
+    </named-native-query>
+   
+    <named-native-query name="Contratacion.EstadoReserva" 
+                        result-class="sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas">
+        <query>
+            <![CDATA[
+                select res.*
+                from 
+                    contratos_ordenes_compras con
+                    inner join resoluciones_adjudicativas res on res.id_resolucion_adj = con.id_resolucion_adj
+                    inner join participantes par on res.id_participante = par.id_participante
+                    inner join oferta_bienes_servicios ofe on par.id_oferta = ofe.id_oferta
+                where
+                    con.estado_eliminacion = 0 and
+                    res.estado_eliminacion = 0 and
+                    par.estado_eliminacion = 0 and
+                    ofe.estado_eliminacion = 0 and
+                    ofe.codigo_entidad = ?1 and
+                    ofe.id_det_proceso_adq = ?2
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>

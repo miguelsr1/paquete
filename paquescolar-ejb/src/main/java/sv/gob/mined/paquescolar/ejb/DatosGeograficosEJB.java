@@ -5,16 +5,19 @@
 package sv.gob.mined.paquescolar.ejb;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import sv.gob.mined.paquescolar.model.Canton;
 import sv.gob.mined.paquescolar.model.Departamento;
 import sv.gob.mined.paquescolar.model.Municipio;
+import sv.gob.mined.paquescolar.model.MunicipioAledanho;
 import sv.gob.mined.paquescolar.model.pojos.proveedor.MunicipioDto;
-import sv.gob.mined.paquescolar.util.StringUtils;
+import sv.gob.mined.paquescolar.util.Constantes;
 
 /**
  *
@@ -52,9 +55,15 @@ public class DatosGeograficosEJB {
         }
         return query.getResultList();
     }
+    
+    public List<Canton> getLstCantonByMunicipio(BigDecimal idMunicipio){
+        Query q = em.createQuery("SELECT c FROM Canton c WHERE c.idMunicipio=:id ORDER BY c.codigoCanton", Canton.class);
+        q.setParameter("id", idMunicipio);
+        return q.getResultList();
+    }
 
     public List<MunicipioDto> getLstMunicipiosDisponiblesDeInteres(BigDecimal idCapaDistribucion, String codigoDepartamento) {
-        String sql = StringUtils.QUERY_PROVEEDOR_MUNICIPIOS_DISPONIBLES_DE_INTERES;
+        String sql = Constantes.QUERY_PROVEEDOR_MUNICIPIOS_DISPONIBLES_DE_INTERES;
         sql = codigoDepartamento.equals("00") ? sql.replace("COMODIN_DEPARTAMENTO", "")
                 : sql.replace("COMODIN_DEPARTAMENTO", "and depa.codigo_departamento = '" + codigoDepartamento + "'");
         Query q = em.createNativeQuery(sql, MunicipioDto.class);
@@ -69,15 +78,24 @@ public class DatosGeograficosEJB {
     }
 
     public String findNombreMunicipioCe(String codigoEntidad) {
-        Query q = em.createNativeQuery("select nombre_municipio "
-                + "from vw_catalogo_entidad_educativa "
-                + "inner join municipio on vw_catalogo_entidad_educativa.codigo_municipio = municipio.codigo_municipio "
-                + "inner join departamento on municipio.codigo_departamento = departamento.codigo_departamento "
-                + "  and departamento.codigo_departamento = vw_catalogo_entidad_educativa.codigo_departamento "
-                + "WHERE codigo_entidad = '" + codigoEntidad + "'");
+        Query q = em.createNativeQuery("select mun.nombre_municipio || case when vw.nombre_canton is null then null end || case when vw.nombre_canton is not null then ', Cantón: '||vw.nombre_canton end nombre_canton "
+                + "from vw_catalogo_entidad_educativa vw "
+                + "inner join municipio mun on vw.codigo_municipio = mun.codigo_municipio "
+                + "inner join departamento dep on mun.codigo_departamento = dep.codigo_departamento and dep.codigo_departamento = vw.codigo_departamento "
+                + "WHERE vw.codigo_entidad = '" + codigoEntidad + "'");
         List lst = q.getResultList();
         String codMunicipio = lst.get(0).toString();
 
         return codMunicipio;
+    }
+
+    public List<MunicipioAledanho> getLstMunicipiosAledanhos() {
+        try {
+            Query q = em.createQuery("SELECT m FROM MunicipioAledanho m", MunicipioAledanho.class);
+            return q.getResultList();
+        } catch (Throwable e) {
+            return new ArrayList();
+        }
+
     }
 }

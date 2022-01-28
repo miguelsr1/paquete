@@ -74,7 +74,7 @@ public class PersonaEJB {
                 setOpcionesUsuario("31,32,34,39,42,50,55,56,58,59", usuarioObj.getIdUsuario());
                 break;
             case 3: //DIGITADOR DEPARTAMENTAL
-                setOpcionesUsuario("31,32,34,39,42,43,45,50,61,62,68", usuarioObj.getIdUsuario());
+                setOpcionesUsuario("31,32,34,39,42,43,45,50,61,62,68,54,73,74", usuarioObj.getIdUsuario());
                 break;
             case 4: //ENTIDAD FINANCIERA
                 setOpcionesUsuario("23,26", usuarioObj.getIdUsuario());
@@ -82,7 +82,7 @@ public class PersonaEJB {
             case 5: // PAGADOR DEPARTAMENTAL
                 setOpcionesUsuario("24,31,32,34,39,42,43,45,50,61,62,67,68", usuarioObj.getIdUsuario());
             case 6: // REFERENTE DEPARTAMENTAL
-                setOpcionesUsuario("31,32,34,39,42,43,45,50,61,62,68", usuarioObj.getIdUsuario());
+                setOpcionesUsuario("31,32,34,39,42,43,45,50,61,62,68,54,73,74", usuarioObj.getIdUsuario());
                 break;
         }
     }

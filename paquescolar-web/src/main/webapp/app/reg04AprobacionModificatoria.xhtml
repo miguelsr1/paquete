@@ -6,31 +6,30 @@
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo"
+                        update="pnlFiltro" disabled="true"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" 
+                        oncomplete="onClick('btoBuscarC');" action="#{modificatoriaController.prepararEdicion}" 
+                        update="pnlFiltro"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" action="#{modificatoriaController.aprobarModificatoria}" 
+                        ajax="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{modificatoriaController.imprimirDocumentos}" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options" class="centradoVertical">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+
         <div class="ui-g">
             <div class="ui-g-12">
-                <div class="card">
-                    <p:menubar> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo"
-                                    update="pnlFiltro" disabled="true"/>
-                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" 
-                                    oncomplete="onClick('btoBuscarC');" action="#{modificatoriaController.prepararEdicion}" 
-                                    update="pnlFiltro"/>
-                        <p:menuitem value="Guardar" icon="fa fa-save" action="#{modificatoriaController.aprobarModificatoria}" 
-                                    ajax="true"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{modificatoriaController.imprimirDocumentos}" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
 
-                        <f:facet  name="options" class="centradoVertical">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-
-                    <p:panel header="Seleccionar Contrato" visible="false">
-                        <p:commandButton id="btoBuscarC" action="#{modificatoriaController.mostrarFiltroContrato(true)}">
-                            <p:ajax event="dialogReturn" listener="#{modificatoriaController.onCargarModificativa}" update="pnlFiltro pnlDatos pnlFondosCE"/>
-                        </p:commandButton>
-                    </p:panel>
-                </div>
+                <p:panel header="Seleccionar Contrato" visible="false">
+                    <p:commandButton id="btoBuscarC" action="#{modificatoriaController.mostrarFiltroContrato(true)}">
+                        <p:ajax event="dialogReturn" listener="#{modificatoriaController.onCargarModificativa}" update="pnlFiltro pnlDatos pnlFondosCE"/>
+                    </p:commandButton>
+                </p:panel>
                 <div class="card clearfix ui-g-12 " style="width: 64%;">
                     <h1>
                         <i class="fa fa-file-text-o blue" style="font-size: 16px;"></i>
@@ -212,5 +211,16 @@
             </div>
         </div>
 
+
+        <p:dialog header="Información" modal="true" id="dlgPregunta" widgetVar="dlgPregunta">
+            <h:panelGrid columns="2" style="margin-bottom: 10px; margin-top: 10px;">
+                <i class="fa fa-question-circle" aria-hidden="true" style="font-size: 24px;"></i>
+                <p:outputLabel value="¿Desea registra entregas para este contrato?"/>
+            </h:panelGrid>
+            <f:facet name="footer">
+                <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{modificatoriaController.redirigirAModEntregas()}"/>
+                <p:commandButton value="Cancelar" onclick="PF('dlgPregunta').hide();" icon="fa fa-times-circle" />
+            </f:facet>
+        </p:dialog>
     </ui:define>
 </ui:composition>

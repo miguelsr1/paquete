@@ -27,6 +27,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.eclipse.persistence.annotations.AdditionalCriteria;
 
 /**
  *
@@ -36,6 +37,7 @@ import javax.persistence.TemporalType;
 @Table(name = "CREDITO_BANCARIO")
 @NamedQueries({
     @NamedQuery(name = "CreditoBancario.findAll", query = "SELECT c FROM CreditoBancario c")})
+@AdditionalCriteria("this.estadoEliminacion = 0")
 public class CreditoBancario implements Serializable {
     @JoinColumn(name = "ID_DET_PROCESO_ADQ", referencedColumnName = "ID_DET_PROCESO_ADQ")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)

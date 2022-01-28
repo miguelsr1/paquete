@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -19,16 +22,18 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import org.primefaces.PrimeFaces;
-import sv.gob.mined.app.web.controller.AnhoProcesoController;
+import sv.gob.mined.app.web.controller.ParametrosMB;
+//import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.VarSession;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
+import sv.gob.mined.paquescolar.ejb.EMailEJB;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.PreciosReferenciaEJB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.EstadisticaCenso;
+import sv.gob.mined.paquescolar.model.NivelEducativo;
 import sv.gob.mined.paquescolar.model.OrganizacionEducativa;
 import sv.gob.mined.paquescolar.model.PreciosRefRubro;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
@@ -44,12 +49,24 @@ import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 @ViewScoped
 public class EstadisticasCensoController implements Serializable {
 
+    private String nombreEncargadoCompras;
     private String codigoEntidad;
+    private String nombre;
+    private String nombreTesorero;
+    private String nombreConsejal;
+    private String telefono1;
+    private String telefono2;
+    private String numeroDui;
+
     private Boolean deshabilitado = true;
     private Boolean isProcesoAdq = true;
+    private Boolean mostrarInicial = false;
+    private Boolean mostrarModFlex = false;
     private Boolean uniformes = true;
     private Boolean utiles = true;
     private Boolean zapatos = true;
+    private Boolean declaracion = true;
+    private Boolean editDirector = false;
     private BigInteger totalAlumnosMas = BigInteger.ZERO;
     private BigInteger totalAlumnosFem = BigInteger.ZERO;
     private BigInteger totalMatricula = BigInteger.ZERO;
@@ -74,14 +91,22 @@ public class EstadisticasCensoController implements Serializable {
     private VwCatalogoEntidadEducativa entidadEducativa;
     private ProcesoAdquisicion procesoAdquisicion = new ProcesoAdquisicion();
     private OrganizacionEducativa organizacionEducativa;
+    private OrganizacionEducativa organizacionEducativaEncargadoCompra;
+    private OrganizacionEducativa orgTesorero;
+    private OrganizacionEducativa orgConsejal;
     private DetalleProcesoAdq detProAdqUni;
     private DetalleProcesoAdq detProAdqUni2;
     private DetalleProcesoAdq detProAdqUti;
     private DetalleProcesoAdq detProAdqZap;
+    //private DetalleProcesoAdq detProAdqMascarilla;
     private EstadisticaCenso estaditicaPar = new EstadisticaCenso();
+    private EstadisticaCenso estaditicaIniPar = new EstadisticaCenso();
     private EstadisticaCenso estaditicaCiclo1 = new EstadisticaCenso();
     private EstadisticaCenso estaditicaCiclo2 = new EstadisticaCenso();
     private EstadisticaCenso estaditicaCiclo3 = new EstadisticaCenso();
+    private EstadisticaCenso estaditicaCiclo3MF = new EstadisticaCenso();
+    private EstadisticaCenso estInicial1grado = new EstadisticaCenso();
+    private EstadisticaCenso estInicial2grado = new EstadisticaCenso();
     private EstadisticaCenso est1grado = new EstadisticaCenso();
     private EstadisticaCenso est2grado = new EstadisticaCenso();
     private EstadisticaCenso est3grado = new EstadisticaCenso();
@@ -95,6 +120,7 @@ public class EstadisticasCensoController implements Serializable {
     private EstadisticaCenso est2media = new EstadisticaCenso();
     private EstadisticaCenso est3media = new EstadisticaCenso();
     private EstadisticaCenso estaditicaBac = new EstadisticaCenso();
+    private EstadisticaCenso estaditicaBacMF = new EstadisticaCenso();
     private PreciosRefRubro preParUni = new PreciosRefRubro();
     private PreciosRefRubro preCicloIUni = new PreciosRefRubro();
     private PreciosRefRubro preCicloIIUni = new PreciosRefRubro();
@@ -105,7 +131,9 @@ public class EstadisticasCensoController implements Serializable {
     private PreciosRefRubro preCicloIUti = new PreciosRefRubro();
     private PreciosRefRubro preCicloIIUti = new PreciosRefRubro();
     private PreciosRefRubro preCicloIIIUti = new PreciosRefRubro();
+    private PreciosRefRubro preCicloIIIMFUti = new PreciosRefRubro();
     private PreciosRefRubro preBacUti = new PreciosRefRubro();
+    private PreciosRefRubro preBacMFUti = new PreciosRefRubro();
 
     private PreciosRefRubro preParZap = new PreciosRefRubro();
     private PreciosRefRubro preCicloIZap = new PreciosRefRubro();
@@ -129,14 +157,17 @@ public class EstadisticasCensoController implements Serializable {
     private TechoRubroEntEdu techoUni2 = new TechoRubroEntEdu();
     private TechoRubroEntEdu techoUti = new TechoRubroEntEdu();
     private TechoRubroEntEdu techoZap = new TechoRubroEntEdu();
+
     @EJB
     private EntidadEducativaEJB entidadEducativaEJB;
     @EJB
     private PreciosReferenciaEJB preciosReferenciaEJB;
     @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
-    @EJB
     private ReportesEJB reportesEJB;
+    @EJB
+    private EMailEJB eMailEJB;
+
+    private static final ResourceBundle UTIL_CORREO = ResourceBundle.getBundle("Bundle");
 
     /**
      * Creates a new instance of EstadisticaCensoController
@@ -148,6 +179,151 @@ public class EstadisticasCensoController implements Serializable {
     public void init() {
         VarSession.setVariableSessionED("0");
         prepareEdit();
+        procesoAdquisicion = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getProceso();
+        if (procesoAdquisicion == null || procesoAdquisicion.getIdProcesoAdq() == null) {
+            JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de adquisición.");
+        } else {
+            mostrarInicial = (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 8);
+            mostrarModFlex = (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 8);
+        }
+    }
+
+    public String getNombreTesorero() {
+        return nombreTesorero;
+    }
+
+    public void setNombreTesorero(String nombreTesorero) {
+        this.nombreTesorero = nombreTesorero;
+    }
+
+    public String getNombreConsejal() {
+        return nombreConsejal;
+    }
+
+    public void setNombreConsejal(String nombreConsejal) {
+        this.nombreConsejal = nombreConsejal;
+    }
+
+    public String getNombreEncargadoCompras() {
+        return nombreEncargadoCompras;
+    }
+
+    public void setNombreEncargadoCompras(String nombreEncargadoCompras) {
+        this.nombreEncargadoCompras = nombreEncargadoCompras;
+    }
+
+    public EstadisticaCenso getEstaditicaIniPar() {
+        return estaditicaIniPar;
+    }
+
+    public void setEstaditicaIniPar(EstadisticaCenso estaditicaIniPar) {
+        this.estaditicaIniPar = estaditicaIniPar;
+    }
+
+    public EstadisticaCenso getEstaditicaCiclo3MF() {
+        return estaditicaCiclo3MF;
+    }
+
+    public void setEstaditicaCiclo3MF(EstadisticaCenso estaditicaCiclo3MF) {
+        this.estaditicaCiclo3MF = estaditicaCiclo3MF;
+    }
+
+    public EstadisticaCenso getEstInicial1grado() {
+        return estInicial1grado;
+    }
+
+    public void setEstInicial1grado(EstadisticaCenso estInicial1grado) {
+        this.estInicial1grado = estInicial1grado;
+    }
+
+    public EstadisticaCenso getEstInicial2grado() {
+        return estInicial2grado;
+    }
+
+    public void setEstInicial2grado(EstadisticaCenso estInicial2grado) {
+        this.estInicial2grado = estInicial2grado;
+    }
+
+    public EstadisticaCenso getEstaditicaBacMF() {
+        return estaditicaBacMF;
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public void setEstaditicaBacMF(EstadisticaCenso estaditicaBacMF) {
+        this.estaditicaBacMF = estaditicaBacMF;
+    }
+
+    public PreciosRefRubro getPreCicloIIIMFUti() {
+        return preCicloIIIMFUti;
+    }
+
+    public void setPreCicloIIIMFUti(PreciosRefRubro preCicloIIIMFUti) {
+        this.preCicloIIIMFUti = preCicloIIIMFUti;
+    }
+
+    public PreciosRefRubro getPreBacMFUti() {
+        return preBacMFUti;
+    }
+
+    public void setPreBacMFUti(PreciosRefRubro preBacMFUti) {
+        this.preBacMFUti = preBacMFUti;
+    }
+
+    public Boolean getMostrarInicial() {
+        return mostrarInicial;
+    }
+
+    public Boolean getMostrarModFlex() {
+        return mostrarModFlex;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getTelefono1() {
+        return telefono1;
+    }
+
+    public void setTelefono1(String telefono1) {
+        this.telefono1 = telefono1;
+    }
+
+    public String getTelefono2() {
+        return telefono2;
+    }
+
+    public void setTelefono2(String telefono2) {
+        this.telefono2 = telefono2;
+    }
+
+    public String getNumeroDui() {
+        return numeroDui;
+    }
+
+    public void setNumeroDui(String numeroDui) {
+        this.numeroDui = numeroDui;
+    }
+
+    public Boolean getEditDirector() {
+        return editDirector;
+    }
+
+    public void setEditDirector(Boolean editDirector) {
+        this.editDirector = editDirector;
+    }
+
+    public Boolean getDeclaracion() {
+        return declaracion;
+    }
+
+    public void setDeclaracion(Boolean declaracion) {
+        this.declaracion = declaracion;
     }
 
     public Boolean getUniformes() {
@@ -370,32 +546,6 @@ public class EstadisticasCensoController implements Serializable {
         this.organizacionEducativa = organizacionEducativa;
     }
 
-    public boolean getEENuevo() {
-        return VarSession.getVariableSessionED() == 1;
-    }
-
-    public boolean getEEModificar() {
-        return VarSession.getVariableSessionED() == 2;
-    }
-
-    public void prepareCreate() {
-        VarSession.setVariableSessionED("1");
-        deshabilitado = false;
-    }
-
-    public void prepareEdit() {
-        VarSession.setVariableSessionED("0");
-        deshabilitado = false;
-        codigoEntidad = "";
-        entidadEducativa = new VwCatalogoEntidadEducativa();
-        organizacionEducativa = new OrganizacionEducativa();
-        estaditicaPar = new EstadisticaCenso();
-        estaditicaCiclo1 = new EstadisticaCenso();
-        estaditicaCiclo2 = new EstadisticaCenso();
-        estaditicaCiclo3 = new EstadisticaCenso();
-        estaditicaBac = new EstadisticaCenso();
-    }
-
     public EstadisticaCenso getEstaditicaPar() {
         return estaditicaPar;
     }
@@ -434,108 +584,6 @@ public class EstadisticasCensoController implements Serializable {
 
     public void setEstaditicaBac(EstadisticaCenso estaditicaBac) {
         this.estaditicaBac = estaditicaBac;
-    }
-
-    private void recuperarProcesoAdq() {
-        procesoAdquisicion = ((AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController")).getProceso();
-        if (procesoAdquisicion == null || procesoAdquisicion.getIdProcesoAdq() == null) {
-            JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de adquisición.");
-        }
-    }
-
-    public void buscarEntidadEducativa() {
-        if (codigoEntidad != null && codigoEntidad.length() == 5) {
-            recuperarProcesoAdq();
-
-            if (procesoAdquisicion != null) {
-                organizacionEducativa = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
-
-                if (organizacionEducativa.getIdOrganizacionEducativa() == null) {
-                    organizacionEducativa.setCargo("Presidente Propietario, Director");
-                    organizacionEducativa.setCodigoEntidad(codigoEntidad);
-                    organizacionEducativa.setEstadoEliminacion(BigInteger.ZERO);
-                    organizacionEducativa.setFechaInsercion(new Date());
-                    organizacionEducativa.setFirmaContrato(BigInteger.ONE);
-                    organizacionEducativa.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-                }
-
-                isProcesoAdq = false;
-                entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
-
-                if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() < 6) {//menor a 2018
-                    detProAdqUni = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, BigDecimal.ONE);
-                } else {
-                    detProAdqUni = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(4));
-                    detProAdqUni2 = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(5));
-                }
-
-                detProAdqUti = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(2));
-                detProAdqZap = anhoProcesoEJB.getDetProcesoAdq(procesoAdquisicion, new BigDecimal(3));
-
-                setEstaditicaPar(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, BigDecimal.ONE, procesoAdquisicion));
-                setEstaditicaCiclo1(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("3"), procesoAdquisicion));
-                setEstaditicaCiclo2(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("4"), procesoAdquisicion));
-                setEstaditicaCiclo3(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("5"), procesoAdquisicion));
-                setEstaditicaBac(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("6"), procesoAdquisicion));
-                setEst7grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("7"), procesoAdquisicion));
-                setEst8grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("8"), procesoAdquisicion));
-                setEst9grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("9"), procesoAdquisicion));
-
-                preParUni = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaPar.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUni);
-                preCicloIUni = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo1.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUni);
-                preCicloIIUni = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo2.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUni);
-                preCicloIIIUni = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo3.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUni);
-                preBacUni = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaBac.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUni);
-
-                preParUti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaPar.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preCicloIUti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo1.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preCicloIIUti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo2.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preCicloIIIUti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo3.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preBacUti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaBac.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-
-                setEst1grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("10"), procesoAdquisicion));
-                setEst2grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("11"), procesoAdquisicion));
-                setEst3grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("12"), procesoAdquisicion));
-                setEst4grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("13"), procesoAdquisicion));
-                setEst5grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("14"), procesoAdquisicion));
-                setEst6grado(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("15"), procesoAdquisicion));
-                setEst1media(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("16"), procesoAdquisicion));
-                setEst2media(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("17"), procesoAdquisicion));
-                setEst3media(entidadEducativaEJB.getEstadisticaByCodEntAndNivelAndProceso(codigoEntidad, new BigDecimal("18"), procesoAdquisicion));
-                preGrado1Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est1grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preGrado2Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est2grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preGrado3Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est3grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preGrado4Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est4grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preGrado5Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est5grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preGrado6Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est6grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preBachi1Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est1media.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preBachi2Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est2media.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-
-                preGrado7Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est7grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preGrado8Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est8grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-                preGrado9Uti = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(est9grado.getIdNivelEducativo().getIdNivelEducativo(), detProAdqUti);
-
-                preParZap = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaPar.getIdNivelEducativo().getIdNivelEducativo(), detProAdqZap);
-                preCicloIZap = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo1.getIdNivelEducativo().getIdNivelEducativo(), detProAdqZap);
-                preCicloIIZap = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo2.getIdNivelEducativo().getIdNivelEducativo(), detProAdqZap);
-                preCicloIIIZap = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaCiclo3.getIdNivelEducativo().getIdNivelEducativo(), detProAdqZap);
-                preBacZap = preciosReferenciaEJB.findPreciosRefRubroByNivelEduAndRubro(estaditicaBac.getIdNivelEducativo().getIdNivelEducativo(), detProAdqZap);
-
-                techoUni = entidadEducativaEJB.findTechoByProceso(detProAdqUni, codigoEntidad, VarSession.getVariableSessionUsuario());
-                if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 5) {
-                    techoUni2 = entidadEducativaEJB.findTechoByProceso(detProAdqUni2, codigoEntidad, VarSession.getVariableSessionUsuario());
-                }
-                techoUti = entidadEducativaEJB.findTechoByProceso(detProAdqUti, codigoEntidad, VarSession.getVariableSessionUsuario());
-                techoZap = entidadEducativaEJB.findTechoByProceso(detProAdqZap, codigoEntidad, VarSession.getVariableSessionUsuario());
-            } else {
-                JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de adquisición.");
-            }
-
-            PrimeFaces.current().executeScript("actualizarDatos();");
-        } else {
-            isProcesoAdq = true;
-        }
     }
 
     public PreciosRefRubro getPreParUni() {
@@ -656,323 +704,6 @@ public class EstadisticasCensoController implements Serializable {
 
     public void setPreBacZap(PreciosRefRubro preBacZap) {
         this.preBacZap = preBacZap;
-    }
-
-    public void updateFilaTotal() {
-        PrimeFaces.current().ajax().update("lblUni6");
-        PrimeFaces.current().ajax().update("lblUti6");
-        PrimeFaces.current().ajax().update("lblZap6");
-    }
-
-    public void guardar() {
-        Boolean error;
-
-        estaditicaCiclo1.setFemenimo(est1grado.getFemenimo().add(est2grado.getFemenimo()).add(est3grado.getFemenimo()));
-        estaditicaCiclo1.setMasculino(est1grado.getMasculino().add(est2grado.getMasculino()).add(est3grado.getMasculino()));
-
-        estaditicaCiclo2.setFemenimo(est4grado.getFemenimo().add(est5grado.getFemenimo()).add(est6grado.getFemenimo()));
-        estaditicaCiclo2.setMasculino(est4grado.getMasculino().add(est5grado.getMasculino()).add(est6grado.getMasculino()));
-
-        estaditicaCiclo3.setFemenimo(est7grado.getFemenimo().add(est8grado.getFemenimo()).add(est9grado.getFemenimo()));
-        estaditicaCiclo3.setMasculino(est7grado.getMasculino().add(est8grado.getMasculino()).add(est9grado.getMasculino()));
-
-        estaditicaBac.setFemenimo(est1media.getFemenimo().add(est2media.getFemenimo()).add(est3media.getFemenimo()));
-        estaditicaBac.setMasculino(est1media.getMasculino().add(est2media.getMasculino()).add(est3media.getMasculino()));
-
-        if (procesoAdquisicion == null || procesoAdquisicion.getIdProcesoAdq() == null) {
-            JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de adquisición.");
-            return;
-        }
-
-        if (entidadEducativa == null || entidadEducativa.getCodigoEntidad() == null || entidadEducativa.getCodigoEntidad().isEmpty()) {
-            JsfUtil.mensajeAlerta("Debe de ingresar un código válido de un Centro Educativo");
-        } else {
-            String msjError = "Hubo error en los niveles: ";
-            String msjInfo = "Se guardaron los niveles: ";
-            if (entidadEducativaEJB.guardarEstadistica(estaditicaPar, VarSession.getVariableSessionUsuario())) {
-                msjError += "Parvularia, ";
-            } else {
-                msjInfo += "Parvularia, ";
-            }
-            if (entidadEducativaEJB.guardarEstadistica(estaditicaCiclo1, VarSession.getVariableSessionUsuario())) {
-                msjError += "1er Ciclo, ";
-            } else {
-                msjInfo += "1er Ciclo, ";
-            }
-            if (entidadEducativaEJB.guardarEstadistica(estaditicaCiclo2, VarSession.getVariableSessionUsuario())) {
-                msjError += "2do Ciclo, ";
-            } else {
-                msjInfo += "2do Ciclo, ";
-            }
-            if (entidadEducativaEJB.guardarEstadistica(estaditicaCiclo3, VarSession.getVariableSessionUsuario())) {
-                msjError += "3er Ciclo, ";
-            } else {
-                msjInfo += "3er Ciclo, ";
-            }
-            if (entidadEducativaEJB.guardarEstadistica(est1grado, VarSession.getVariableSessionUsuario())) {
-                msjError += "1er Grado, ";
-            } else {
-                msjInfo += "1er Grado, ";
-            }
-            if (entidadEducativaEJB.guardarEstadistica(est2grado, VarSession.getVariableSessionUsuario())) {
-                msjError += "2do Grado, ";
-            } else {
-                msjInfo += "2do Grado, ";
-            }
-            if (entidadEducativaEJB.guardarEstadistica(est3grado, VarSession.getVariableSessionUsuario())) {
-                msjError += "3er Grado, ";
-            } else {
-                msjInfo += "3er Grado, ";
-            }
-            if (entidadEducativaEJB.guardarEstadistica(est4grado, VarSession.getVariableSessionUsuario())) {
-                msjError += "4to Grado, ";
-            } else {
-                msjInfo += "4to Grado, ";
-            }
-            if (entidadEducativaEJB.guardarEstadistica(est5grado, VarSession.getVariableSessionUsuario())) {
-                msjError += "5to Grado, ";
-            } else {
-                msjInfo += "5to Grado, ";
-            }
-            if (entidadEducativaEJB.guardarEstadistica(est6grado, VarSession.getVariableSessionUsuario())) {
-                msjError += "6to Grado, ";
-            } else {
-                msjInfo += "6to Grado, ";
-            }
-            if (entidadEducativaEJB.guardarEstadistica(est7grado, VarSession.getVariableSessionUsuario())) {
-                msjError += "7mo Grado, ";
-            } else {
-                msjInfo += "7mo Grado, ";
-            }
-            if (entidadEducativaEJB.guardarEstadistica(est8grado, VarSession.getVariableSessionUsuario())) {
-                msjError += "8vo Grado, ";
-            } else {
-                msjInfo += "8vo Grado, ";
-            }
-            if (entidadEducativaEJB.guardarEstadistica(est9grado, VarSession.getVariableSessionUsuario())) {
-                msjError += "9no Grado, ";
-            } else {
-                msjInfo += "9no Grado, ";
-            }
-            if (entidadEducativaEJB.guardarEstadistica(estaditicaBac, VarSession.getVariableSessionUsuario())) {
-                msjError += "Bachillerato";
-            } else {
-                msjInfo += "Bachillerato";
-            }
-            if (entidadEducativaEJB.guardarEstadistica(est1media, VarSession.getVariableSessionUsuario())) {
-                msjError += "1er año de Bachillerato";
-            } else {
-                msjInfo += "1er año de Bachillerato";
-            }
-            if (entidadEducativaEJB.guardarEstadistica(est2media, VarSession.getVariableSessionUsuario())) {
-                msjError += "2do año de Bachillerato";
-            } else {
-                msjInfo += "2do año de Bachillerato";
-            }
-            if (entidadEducativaEJB.guardarEstadistica(est3media, VarSession.getVariableSessionUsuario())) {
-                msjError += "3er año de Bachillerato";
-            } else {
-                msjInfo += "3er año de Bachillerato";
-            }
-
-            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() < 6) {//menor a 2018
-                techoUni.setMontoPresupuestado(calcularPresupuesto(1));
-            } else {
-                techoUni.setMontoPresupuestado(calcularPresupuesto(4));
-
-                techoUni2.setMontoPresupuestado(calcularPresupuesto(5));
-                if (techoUni2.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
-                    techoUni2.setMontoDisponible(techoUni2.getMontoPresupuestado());
-                } else {
-                    techoUni2.setMontoDisponible(techoUni2.getMontoPresupuestado().add(techoUni2.getMontoAdjudicado().negate()));
-                }
-            }
-
-            if (techoUni.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
-                techoUni.setMontoDisponible(techoUni.getMontoPresupuestado());
-            } else {
-                techoUni.setMontoDisponible(techoUni.getMontoPresupuestado().add(techoUni.getMontoAdjudicado().negate()));
-            }
-
-            techoUti.setMontoPresupuestado(calcularPresupuesto(2));
-            if (techoUti.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
-                techoUti.setMontoDisponible(techoUti.getMontoPresupuestado());
-            } else {
-                techoUti.setMontoDisponible(techoUti.getMontoPresupuestado().add(techoUti.getMontoAdjudicado().negate()));
-            }
-            techoZap.setMontoPresupuestado(calcularPresupuesto(3));
-            if (techoZap.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
-                techoZap.setMontoDisponible(techoZap.getMontoPresupuestado());
-            } else {
-                techoZap.setMontoDisponible(techoZap.getMontoPresupuestado().add(techoZap.getMontoAdjudicado().negate()));
-            }
-
-            if (!msjInfo.replace("Se guardaron los niveles: ", "").isEmpty()) {
-                JsfUtil.mensajeInformacion(msjInfo);
-            }
-
-            if (!msjError.replace("Hubo error en los niveles: ", "").isEmpty()) {
-                JsfUtil.mensajeError(msjError);
-            }
-
-            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() < 6) {
-                error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUti, techoZap);
-            } else {
-                error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUni2, techoUti, techoZap);
-            }
-
-            if (error) {
-                JsfUtil.mensajeError("No se ha podido crear el presupuesto del C.E.");
-            }
-
-            if (organizacionEducativa.getIdOrganizacionEducativa() == null) {
-                entidadEducativaEJB.create(organizacionEducativa);
-            } else {
-                entidadEducativaEJB.edit(organizacionEducativa);
-            }
-        }
-    }
-
-    public BigDecimal getPreUniformes() {
-        return preUniformes;
-    }
-
-    public void setPreUniformes(BigDecimal preUniformes) {
-        this.preUniformes = preUniformes;
-    }
-
-    public BigDecimal getPreUtiles() {
-        return preUtiles;
-    }
-
-    public void setPreUtiles(BigDecimal preUtiles) {
-        this.preUtiles = preUtiles;
-    }
-
-    public BigDecimal getPreZapatos() {
-        return preZapatos;
-    }
-
-    public void setPreZapatos(BigDecimal preZapatos) {
-        this.preZapatos = preZapatos;
-    }
-
-    private BigDecimal calcularPresupuesto(int idRubro) {
-        BigDecimal num = BigDecimal.ONE;
-        BigDecimal presupuesto = BigDecimal.ZERO;
-        PreciosRefRubro preParTemp, preCiclo1Temp, preCiclo2Temp, preCiclo3Temp, preBacTemp;
-
-        switch (idRubro) {
-            case 1:
-                preParTemp = preParUni;
-                preCiclo1Temp = preCicloIUni;
-                preCiclo2Temp = preCicloIIUni;
-                preCiclo3Temp = preCicloIIIUni;
-                preBacTemp = preBacUni;
-                num = new BigDecimal(2);
-                break;
-            case 2:
-                preParTemp = preParUti;
-                preCiclo1Temp = preCicloIUti;
-                preCiclo2Temp = preCicloIIUti;
-                preCiclo3Temp = preCicloIIIUti;
-                preBacTemp = preBacUti;
-                break;
-            case 3:
-                preParTemp = preParZap;
-                preCiclo1Temp = preCicloIZap;
-                preCiclo2Temp = preCicloIIZap;
-                preCiclo3Temp = preCicloIIIZap;
-                preBacTemp = preBacZap;
-                break;
-            default://para rubro 4 y 5, 1er y 2do uniforme respectivamente
-                preParTemp = preParUni;
-                preCiclo1Temp = preCicloIUni;
-                preCiclo2Temp = preCicloIIUni;
-                preCiclo3Temp = preCicloIIIUni;
-                preBacTemp = preBacUni;
-                num = BigDecimal.ONE;
-                break;
-        }
-
-        presupuesto = presupuesto.add(preParTemp.getPrecioMaxMas().multiply(new BigDecimal(estaditicaPar.getMasculino())).multiply(num));
-        presupuesto = presupuesto.add(preParTemp.getPrecioMaxFem().multiply(new BigDecimal(estaditicaPar.getFemenimo())).multiply(num));
-
-        presupuesto = presupuesto.add(preCiclo1Temp.getPrecioMaxMas().multiply(new BigDecimal(estaditicaCiclo1.getMasculino())).multiply(num));
-        presupuesto = presupuesto.add(preCiclo1Temp.getPrecioMaxFem().multiply(new BigDecimal(estaditicaCiclo1.getFemenimo())).multiply(num));
-
-        presupuesto = presupuesto.add(preCiclo2Temp.getPrecioMaxMas().multiply(new BigDecimal(estaditicaCiclo2.getMasculino())).multiply(num));
-        presupuesto = presupuesto.add(preCiclo2Temp.getPrecioMaxFem().multiply(new BigDecimal(estaditicaCiclo2.getFemenimo())).multiply(num));
-
-        presupuesto = presupuesto.add(preCiclo3Temp.getPrecioMaxMas().multiply(new BigDecimal(estaditicaCiclo3.getMasculino())).multiply(num));
-        presupuesto = presupuesto.add(preCiclo3Temp.getPrecioMaxFem().multiply(new BigDecimal(estaditicaCiclo3.getFemenimo())).multiply(num));
-
-        presupuesto = presupuesto.add(preBacTemp.getPrecioMaxFem().multiply(new BigDecimal(estaditicaBac.getFemenimo())).multiply(num));
-        presupuesto = presupuesto.add(preBacTemp.getPrecioMaxMas().multiply(new BigDecimal(estaditicaBac.getMasculino())).multiply(num));
-
-        //Presupuesto de libros
-        if (idRubro == 2 && detProAdqUti.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() >= 6) { //mayor o igual de anho 2018
-
-            //este calculo es comun para años 2018 y 2019
-            presupuesto = presupuesto.add(new BigDecimal(est7grado.getMasculino().add(est7grado.getFemenimo())).multiply(preGrado7Uti.getPrecioMaxMas()));
-            presupuesto = presupuesto.add(new BigDecimal(est8grado.getMasculino().add(est8grado.getFemenimo())).multiply(preGrado8Uti.getPrecioMaxMas()));
-            presupuesto = presupuesto.add(new BigDecimal(est9grado.getMasculino().add(est9grado.getFemenimo())).multiply(preGrado9Uti.getPrecioMaxMas()));
-
-            switch (detProAdqUti.getIdProcesoAdq().getIdAnho().getIdAnho().intValue()) {
-                case 7://2019 libros desde 1 grado a 2 año de bachillerato
-                    presupuesto = presupuesto.add(new BigDecimal(est1grado.getMasculino().add(est1grado.getFemenimo())).multiply(preGrado1Uti.getPrecioMaxMas()));
-                    presupuesto = presupuesto.add(new BigDecimal(est2grado.getMasculino().add(est2grado.getFemenimo())).multiply(preGrado2Uti.getPrecioMaxMas()));
-                    presupuesto = presupuesto.add(new BigDecimal(est3grado.getMasculino().add(est3grado.getFemenimo())).multiply(preGrado3Uti.getPrecioMaxMas()));
-                    presupuesto = presupuesto.add(new BigDecimal(est4grado.getMasculino().add(est4grado.getFemenimo())).multiply(preGrado4Uti.getPrecioMaxMas()));
-                    presupuesto = presupuesto.add(new BigDecimal(est5grado.getMasculino().add(est5grado.getFemenimo())).multiply(preGrado5Uti.getPrecioMaxMas()));
-                    presupuesto = presupuesto.add(new BigDecimal(est6grado.getMasculino().add(est6grado.getFemenimo())).multiply(preGrado6Uti.getPrecioMaxMas()));
-
-                    presupuesto = presupuesto.add(new BigDecimal(est1media.getMasculino().add(est1media.getFemenimo())).multiply(preBachi1Uti.getPrecioMaxMas()));
-                    presupuesto = presupuesto.add(new BigDecimal(est2media.getMasculino().add(est2media.getFemenimo())).multiply(preBachi2Uti.getPrecioMaxMas()));
-                    break;
-            }
-
-        }
-
-        return presupuesto;
-    }
-
-    public void imprimir() {
-        try {
-            if (entidadEducativa == null || entidadEducativa.getCodigoEntidad() == null) {
-                JsfUtil.mensajeAlerta("Debe de ingresar un código de centro escolar válido!");
-            } else {
-                List<VwRptCertificacionPresupuestaria> lst = new ArrayList();
-                HashMap param = new HashMap();
-                String reportes = "";
-
-                VwRptCertificacionPresupuestaria vw = entidadEducativaEJB.getCertificacion(codigoEntidad, procesoAdquisicion, (detProAdqUti.getIdProcesoAdq().getIdProcesoAdq() >= 12));
-                vw.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-                lst.add(vw);
-
-                if (uniformes) {
-                    reportes = "rptCertUni.jasper";
-                }
-                if (utiles) {
-                    if (detProAdqUti.getIdDetProcesoAdq() == 32) {
-                        reportes += (reportes.isEmpty() ? "" : ",") + "rptCertUti2018.jasper";
-                    } else if (detProAdqUti.getIdDetProcesoAdq() == 42) {
-                        reportes += (reportes.isEmpty() ? "" : ",") + "rptCertUti2019.jasper";
-                    }
-                }
-                if (zapatos) {
-                    reportes += (reportes.isEmpty() ? "" : ",") + "rptCertZap.jasper";
-                }
-                Reportes.generarRptsContractuales(lst, param, codigoEntidad, procesoAdquisicion.getDescripcionProcesoAdq().contains("SOBREDEMANDA"), reportesEJB, procesoAdquisicion.getIdAnho().getAnho(), reportes.split(","));
-            }
-        } catch (Exception e) {
-            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, null, "=============================================================");
-            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, null, "Error en la impresion de reporte de la certificación presupuestaria");
-            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, null, "Código Entidad: " + codigoEntidad);
-            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, null, "Rubros uniformes: " + uniformes + " - útiles: " + utiles + " - zapatos: " + zapatos);
-            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, null, "Error: " + e.getMessage());
-            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, null, "=====================================================");
-        }
     }
 
     public EstadisticaCenso getEst7grado() {
@@ -1115,8 +846,801 @@ public class EstadisticasCensoController implements Serializable {
         return preBachi2Uti;
     }
 
+    // </editor-fold>
+    public boolean getEENuevo() {
+        return VarSession.getVariableSessionED() == 1;
+    }
+
+    public boolean getEEModificar() {
+        return VarSession.getVariableSessionED() == 2;
+    }
+
+    public void prepareCreate() {
+        VarSession.setVariableSessionED("1");
+        deshabilitado = false;
+    }
+
+    public void prepareEdit() {
+        VarSession.setVariableSessionED("0");
+        deshabilitado = false;
+        codigoEntidad = "";
+        entidadEducativa = new VwCatalogoEntidadEducativa();
+        organizacionEducativa = new OrganizacionEducativa();
+        estaditicaPar = new EstadisticaCenso();
+        estaditicaCiclo1 = new EstadisticaCenso();
+        estaditicaCiclo2 = new EstadisticaCenso();
+        estaditicaCiclo3 = new EstadisticaCenso();
+        estaditicaBac = new EstadisticaCenso();
+    }
+
+    public void buscarEntidadEducativa() {
+        if (codigoEntidad != null && codigoEntidad.length() == 5) {
+
+            if (procesoAdquisicion != null) {
+                organizacionEducativa = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
+                organizacionEducativaEncargadoCompra = entidadEducativaEJB.getMiembro(codigoEntidad, "ENCARGADO_COMPRA");
+                orgTesorero = entidadEducativaEJB.getMiembro(codigoEntidad, "TESORERO");
+                orgConsejal = entidadEducativaEJB.getMiembro(codigoEntidad, "CONSEJAL");
+
+                if (organizacionEducativa.getIdOrganizacionEducativa() == null) {
+                    organizacionEducativa.setCargo("Presidente Propietario, Director");
+                    organizacionEducativa.setCodigoEntidad(codigoEntidad);
+                    organizacionEducativa.setEstadoEliminacion(BigInteger.ZERO);
+                    organizacionEducativa.setFechaInsercion(new Date());
+                    organizacionEducativa.setFirmaContrato(BigInteger.ONE);
+                    organizacionEducativa.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+                } else {
+                    nombre = organizacionEducativa.getNombreMiembro();
+                    telefono1 = organizacionEducativa.getTelDirector();
+                    telefono2 = organizacionEducativa.getTelDirector2();
+                    numeroDui = organizacionEducativa.getNumeroDui();
+                    nombreTesorero = orgTesorero.getNombreMiembro();
+                    nombreConsejal = orgConsejal.getNombreMiembro();
+                }
+
+                if (organizacionEducativaEncargadoCompra.getIdOrganizacionEducativa() == null) {
+                    organizacionEducativaEncargadoCompra.setCargo("ENCARGADO_COMPRA");
+                    organizacionEducativaEncargadoCompra.setCodigoEntidad(codigoEntidad);
+                    organizacionEducativaEncargadoCompra.setEstadoEliminacion(BigInteger.ZERO);
+                    organizacionEducativaEncargadoCompra.setFechaInsercion(new Date());
+                    organizacionEducativaEncargadoCompra.setFirmaContrato(BigInteger.ZERO);
+                    organizacionEducativaEncargadoCompra.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+                } else {
+                    nombreEncargadoCompras = organizacionEducativaEncargadoCompra.getNombreMiembro();
+                }
+
+                isProcesoAdq = false;
+                entidadEducativa = entidadEducativaEJB.getEntidadEducativaEstadistica(codigoEntidad);
+
+                if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() < 6) {//menor a 2018
+                    detProAdqUni = JsfUtil.findDetalle(procesoAdquisicion, BigDecimal.ONE);
+                } else {
+                    detProAdqUni = JsfUtil.findDetalle(procesoAdquisicion, new BigDecimal(4));
+                    detProAdqUni2 = JsfUtil.findDetalle(procesoAdquisicion, new BigDecimal(5));
+                }
+
+                detProAdqUti = JsfUtil.findDetalle(procesoAdquisicion, new BigDecimal(2));
+                detProAdqZap = JsfUtil.findDetalle(procesoAdquisicion, new BigDecimal(3));
+
+                recuperarEstadisticas();
+                recuperarPreciosMaxRef();
+                recuperarTechos();
+            } else {
+                JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de adquisición.");
+            }
+
+            PrimeFaces.current().executeScript("actualizarDatos();");
+        } else {
+            isProcesoAdq = true;
+        }
+    }
+
+    private void recuperarTechos() {
+        if (detProAdqUni == null) {
+            JsfUtil.mensajeError("Error en el proceso de adquisicion.");
+        } else {
+            List<TechoRubroEntEdu> lstTechos = entidadEducativaEJB.getLstTechosByProceso(procesoAdquisicion.getIdProcesoAdq(), codigoEntidad);
+
+            techoUni = getTecho(lstTechos, detProAdqUni);
+            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 5) {
+                for (DetalleProcesoAdq detProcesoAdq : procesoAdquisicion.getDetalleProcesoAdqList()) {
+                    switch (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
+                        case 5:
+                            techoUni2 = getTecho(lstTechos, detProAdqUni2);
+                            break;
+                    }
+                }
+
+            }
+            techoUti = getTecho(lstTechos, detProAdqUti);
+            techoZap = getTecho(lstTechos, detProAdqZap);
+        }
+    }
+
+    private void recuperarEstadisticas() {
+        List<EstadisticaCenso> lstEstadistica = entidadEducativaEJB.getLstEstadisticaByCodEntAndProceso(codigoEntidad, procesoAdquisicion.getIdProcesoAdq());
+
+        if (lstEstadistica.isEmpty()) {
+            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() >= 9) {
+                estInicial1grado = crearEstadistica(new BigDecimal(25));
+                estInicial2grado = crearEstadistica(new BigDecimal(26));
+                estaditicaIniPar = crearEstadistica(new BigDecimal(22));
+                estaditicaCiclo3MF = crearEstadistica(new BigDecimal(23));
+                estaditicaBacMF = crearEstadistica(new BigDecimal(24));
+            }
+            estaditicaPar = crearEstadistica(BigDecimal.ONE);
+            estaditicaCiclo1 = crearEstadistica(new BigDecimal(3));
+            estaditicaCiclo2 = crearEstadistica(new BigDecimal(4));
+            estaditicaCiclo3 = crearEstadistica(new BigDecimal(5));
+            estaditicaBac = crearEstadistica(new BigDecimal(6));
+
+            est7grado = crearEstadistica(new BigDecimal(7));
+            est8grado = crearEstadistica(new BigDecimal(8));
+            est9grado = crearEstadistica(new BigDecimal(9));
+            est1grado = crearEstadistica(new BigDecimal(10));
+            est2grado = crearEstadistica(new BigDecimal(11));
+            est3grado = crearEstadistica(new BigDecimal(12));
+            est4grado = crearEstadistica(new BigDecimal(13));
+            est5grado = crearEstadistica(new BigDecimal(14));
+            est6grado = crearEstadistica(new BigDecimal(15));
+            est1media = crearEstadistica(new BigDecimal(16));
+            est2media = crearEstadistica(new BigDecimal(17));
+            est3media = crearEstadistica(new BigDecimal(18));
+        } else {
+            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() >= 9) {
+                estInicial1grado = getEstadisticaCenso(lstEstadistica, 25);
+                estInicial2grado = getEstadisticaCenso(lstEstadistica, 26);
+                estaditicaIniPar = getEstadisticaCenso(lstEstadistica, 22);
+                estaditicaCiclo3MF = getEstadisticaCenso(lstEstadistica, 23);
+                estaditicaBacMF = getEstadisticaCenso(lstEstadistica, 24);
+            }
+            estaditicaPar = getEstadisticaCenso(lstEstadistica, 1);
+            estaditicaCiclo1 = getEstadisticaCenso(lstEstadistica, 3);
+            estaditicaCiclo2 = getEstadisticaCenso(lstEstadistica, 4);
+            estaditicaCiclo3 = getEstadisticaCenso(lstEstadistica, 5);
+            estaditicaBac = getEstadisticaCenso(lstEstadistica, 6);
+            est7grado = getEstadisticaCenso(lstEstadistica, 7);
+            est8grado = getEstadisticaCenso(lstEstadistica, 8);
+            est9grado = getEstadisticaCenso(lstEstadistica, 9);
+            est1grado = getEstadisticaCenso(lstEstadistica, 10);
+            est2grado = getEstadisticaCenso(lstEstadistica, 11);
+            est3grado = getEstadisticaCenso(lstEstadistica, 12);
+            est4grado = getEstadisticaCenso(lstEstadistica, 13);
+            est5grado = getEstadisticaCenso(lstEstadistica, 14);
+            est6grado = getEstadisticaCenso(lstEstadistica, 15);
+            est1media = getEstadisticaCenso(lstEstadistica, 16);
+            est2media = getEstadisticaCenso(lstEstadistica, 17);
+            est3media = getEstadisticaCenso(lstEstadistica, 18);
+        }
+    }
+
+    private void recuperarPreciosMaxRef() {
+        if (detProAdqUni == null) {
+            JsfUtil.mensajeError("Error en el proceso de adquisicion.");
+        } else {
+            List<PreciosRefRubro> lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqUni);
+
+            if (lstPrecios.isEmpty()) {
+                JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
+            } else {
+                preParUni = getPrecioMax(lstPrecios, 1);
+                preCicloIUni = getPrecioMax(lstPrecios, 3);
+                preCicloIIUni = getPrecioMax(lstPrecios, 4);
+                preCicloIIIUni = getPrecioMax(lstPrecios, 5);
+                preBacUni = getPrecioMax(lstPrecios, 6);
+            }
+
+            lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqUti);
+
+            if (lstPrecios.isEmpty()) {
+                JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
+            } else {
+                preParUti = getPrecioMax(lstPrecios, ((procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 8) ? 22 : 1));
+                preCicloIUti = getPrecioMax(lstPrecios, 3);
+                preCicloIIUti = getPrecioMax(lstPrecios, 4);
+                preCicloIIIUti = getPrecioMax(lstPrecios, 5);
+                if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 8) {
+                    preCicloIIIMFUti = getPrecioMax(lstPrecios, 23);
+                    preBacMFUti = getPrecioMax(lstPrecios, 24);
+                }
+                preBacUti = getPrecioMax(lstPrecios, 6);
+            }
+
+            lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqZap);
+            if (lstPrecios.isEmpty()) {
+                JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
+            } else {
+                preParZap = getPrecioMax(lstPrecios, ((procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 8) ? 22 : 1));
+                preCicloIZap = getPrecioMax(lstPrecios, 3);
+                preCicloIIZap = getPrecioMax(lstPrecios, 4);
+                preCicloIIIZap = getPrecioMax(lstPrecios, 5);
+                preBacZap = getPrecioMax(lstPrecios, 6);
+            }
+
+            /*if (detProAdqMascarilla != null) {
+                lstPrecios = preciosReferenciaEJB.getLstPreciosRefRubroByRubro(detProAdqMascarilla);
+
+                if (lstPrecios.isEmpty()) {
+                    JsfUtil.mensajeError("Se deben de registrar los precios máximos de referencia.");
+                } else {
+                    if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() == 9) {
+                        preParMascarilla = getPrecioMax(lstPrecios, 22);
+                    } else {
+                        preParMascarilla = getPrecioMax(lstPrecios, 1);
+                    }
+
+                    preCicloIMascarilla = getPrecioMax(lstPrecios, 3);
+                    preCicloIIMascarilla = getPrecioMax(lstPrecios, 4);
+                    preCicloIIIMascarilla = getPrecioMax(lstPrecios, 5);
+                    preBacMascarilla = getPrecioMax(lstPrecios, 6);
+                }
+            }*/
+        }
+    }
+
+    private EstadisticaCenso crearEstadistica(BigDecimal idNivel) {
+        EstadisticaCenso est = new EstadisticaCenso();
+        est.setCodigoEntidad(codigoEntidad);
+        est.setEstadoEliminacion((short) 0);
+        est.setFechaInsercion(new Date());
+        est.setFemenimo(BigInteger.ZERO);
+        est.setIdNivelEducativo(new NivelEducativo(idNivel));
+        est.setIdProcesoAdq(procesoAdquisicion);
+        est.setMasculino(BigInteger.ZERO);
+        est.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+        return est;
+    }
+
+    private EstadisticaCenso getEstadisticaCenso(List<EstadisticaCenso> lstEstadistica, int idNivel) {
+        EstadisticaCenso estC;
+        try {
+            estC = lstEstadistica.stream()
+                    .filter(est -> est.getIdNivelEducativo().getIdNivelEducativo().intValue() == idNivel).findAny().get();
+        } catch (NoSuchElementException e) {
+            estC = null;
+        }
+        if (estC == null) {
+            estC = crearEstadistica(new BigDecimal(idNivel));
+        }
+        return estC;
+    }
+
+    private TechoRubroEntEdu getTecho(List<TechoRubroEntEdu> lstTechos, DetalleProcesoAdq detProcesoAdq) {
+        TechoRubroEntEdu techo = null;
+
+        if (detProcesoAdq != null) {
+            Optional<TechoRubroEntEdu> techoOptional = lstTechos.stream()
+                    .filter(te -> te.getIdDetProcesoAdq().getIdDetProcesoAdq().compareTo(detProcesoAdq.getIdDetProcesoAdq()) == 0).findAny();
+            if (techoOptional.isPresent()) {
+                techo = techoOptional.get();
+            }
+        }
+
+        if (techo == null) {
+            techo = new TechoRubroEntEdu();
+
+            techo.setCodigoEntidad(codigoEntidad);
+            techo.setEstadoEliminacion(BigInteger.ZERO);
+            techo.setFechaInsercion(new Date());
+            techo.setIdDetProcesoAdq(detProcesoAdq);
+            techo.setMontoAdjudicado(BigDecimal.ZERO);
+            techo.setMontoDisponible(BigDecimal.ZERO);
+            techo.setMontoPresupuestado(BigDecimal.ZERO);
+            techo.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+        }
+        return techo;
+    }
+
+    private PreciosRefRubro getPrecioMax(List<PreciosRefRubro> lstPrecios, int idDet) {
+        Optional<PreciosRefRubro> precioOptional = lstPrecios.stream()
+                .filter(p -> p.getIdNivelEducativo().getIdNivelEducativo().intValue() == idDet).findAny();
+        if (precioOptional.isPresent()) {
+            return precioOptional.get();
+        } else {
+            return null;
+        }
+    }
+
+    public void updateFilaTotal() {
+        PrimeFaces.current().ajax().update("lblUni6");
+        PrimeFaces.current().ajax().update("lblUti6");
+        PrimeFaces.current().ajax().update("lblZap6");
+    }
+
+    public void guardar() {
+        Boolean error;
+        Boolean isSegundoUniforme = false;
+
+        if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 8) {
+            estaditicaIniPar.setFemenimo(estInicial1grado.getFemenimo().add(estInicial2grado.getFemenimo()).add(estaditicaPar.getFemenimo()));
+            estaditicaIniPar.setMasculino(estInicial1grado.getMasculino().add(estInicial2grado.getMasculino()).add(estaditicaPar.getMasculino()));
+        }
+
+        estaditicaCiclo1.setFemenimo(est1grado.getFemenimo().add(est2grado.getFemenimo()).add(est3grado.getFemenimo()));
+        estaditicaCiclo1.setMasculino(est1grado.getMasculino().add(est2grado.getMasculino()).add(est3grado.getMasculino()));
+
+        estaditicaCiclo2.setFemenimo(est4grado.getFemenimo().add(est5grado.getFemenimo()).add(est6grado.getFemenimo()));
+        estaditicaCiclo2.setMasculino(est4grado.getMasculino().add(est5grado.getMasculino()).add(est6grado.getMasculino()));
+
+        estaditicaCiclo3.setFemenimo(est7grado.getFemenimo().add(est8grado.getFemenimo()).add(est9grado.getFemenimo()));
+        estaditicaCiclo3.setMasculino(est7grado.getMasculino().add(est8grado.getMasculino()).add(est9grado.getMasculino()));
+
+        estaditicaBac.setFemenimo(est1media.getFemenimo().add(est2media.getFemenimo()).add(est3media.getFemenimo()));
+        estaditicaBac.setMasculino(est1media.getMasculino().add(est2media.getMasculino()).add(est3media.getMasculino()));
+
+        if (procesoAdquisicion == null || procesoAdquisicion.getIdProcesoAdq() == null) {
+            JsfUtil.mensajeAlerta("Debe de seleccionar un proceso de adquisición.");
+            return;
+        }
+
+        if (entidadEducativa == null || entidadEducativa.getCodigoEntidad() == null || entidadEducativa.getCodigoEntidad().isEmpty()) {
+            JsfUtil.mensajeAlerta("Debe de ingresar un código válido de un Centro Educativo");
+        } else {
+            String msjError = "Hubo error en los niveles: ";
+            String msjInfo = "Se guardaron los niveles:<br/>";
+
+            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 8) {
+                if (entidadEducativaEJB.guardarEstadistica(estInicial1grado, VarSession.getVariableSessionUsuario())) {
+                    msjError += "Inicial 1, ";
+                } else {
+                    msjInfo += "Inicial 1, ";
+                }
+
+                if (entidadEducativaEJB.guardarEstadistica(estInicial2grado, VarSession.getVariableSessionUsuario())) {
+                    msjError += "Inicial 2, ";
+                } else {
+                    msjInfo += "Inicial 2, ";
+                }
+            }
+
+            if (entidadEducativaEJB.guardarEstadistica(estaditicaPar, VarSession.getVariableSessionUsuario())) {
+                msjError += "Parvularia, ";
+            } else {
+                msjInfo += "Parvularia<br/>";
+            }
+            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 8) {
+                if (entidadEducativaEJB.guardarEstadistica(estaditicaIniPar, VarSession.getVariableSessionUsuario())) {
+                    msjError += "Edu. Inicial y Parvularia, ";
+                } else {
+                    msjInfo += "<b>Edu. Inicial y Parvularia</b><br/>";
+                }
+            }
+
+            if (entidadEducativaEJB.guardarEstadistica(est1grado, VarSession.getVariableSessionUsuario())) {
+                msjError += "1er Grado, ";
+            } else {
+                msjInfo += "1er Grado, ";
+            }
+            if (entidadEducativaEJB.guardarEstadistica(est2grado, VarSession.getVariableSessionUsuario())) {
+                msjError += "2do Grado, ";
+            } else {
+                msjInfo += "2do Grado, ";
+            }
+            if (entidadEducativaEJB.guardarEstadistica(est3grado, VarSession.getVariableSessionUsuario())) {
+                msjError += "3er Grado, ";
+            } else {
+                msjInfo += "3er Grado<br/>";
+            }
+            if (entidadEducativaEJB.guardarEstadistica(estaditicaCiclo1, VarSession.getVariableSessionUsuario())) {
+                msjError += "1er Ciclo, ";
+            } else {
+                msjInfo += "<b>1er Ciclo</b><br/>";
+            }
+            if (entidadEducativaEJB.guardarEstadistica(est4grado, VarSession.getVariableSessionUsuario())) {
+                msjError += "4to Grado, ";
+            } else {
+                msjInfo += "4to Grado, ";
+            }
+            if (entidadEducativaEJB.guardarEstadistica(est5grado, VarSession.getVariableSessionUsuario())) {
+                msjError += "5to Grado, ";
+            } else {
+                msjInfo += "5to Grado, ";
+            }
+            if (entidadEducativaEJB.guardarEstadistica(est6grado, VarSession.getVariableSessionUsuario())) {
+                msjError += "6to Grado, ";
+            } else {
+                msjInfo += "6to Grado<br/>";
+            }
+            if (entidadEducativaEJB.guardarEstadistica(estaditicaCiclo2, VarSession.getVariableSessionUsuario())) {
+                msjError += "2do Ciclo, ";
+            } else {
+                msjInfo += "<b>2do Ciclo</b><br/>";
+            }
+
+            if (entidadEducativaEJB.guardarEstadistica(est7grado, VarSession.getVariableSessionUsuario())) {
+                msjError += "7mo Grado, ";
+            } else {
+                msjInfo += "7mo Grado, ";
+            }
+            if (entidadEducativaEJB.guardarEstadistica(est8grado, VarSession.getVariableSessionUsuario())) {
+                msjError += "8vo Grado, ";
+            } else {
+                msjInfo += "8vo Grado, ";
+            }
+            if (entidadEducativaEJB.guardarEstadistica(est9grado, VarSession.getVariableSessionUsuario())) {
+                msjError += "9no Grado, ";
+            } else {
+                msjInfo += "9no Grado<br/>";
+            }
+            if (entidadEducativaEJB.guardarEstadistica(estaditicaCiclo3, VarSession.getVariableSessionUsuario())) {
+                msjError += "3er Ciclo, ";
+            } else {
+                msjInfo += "<b>3er Ciclo</b><br/>";
+            }
+            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 8) {
+                if (entidadEducativaEJB.guardarEstadistica(estaditicaCiclo3MF, VarSession.getVariableSessionUsuario())) {
+                    msjError += "3er Ciclo - Mod. Flexible, ";
+                } else {
+                    msjInfo += "<b>3er Ciclo - Mod. Flexible</b><br/>";
+                }
+            }
+
+            if (entidadEducativaEJB.guardarEstadistica(est1media, VarSession.getVariableSessionUsuario())) {
+                msjError += "1er año de Bachillerato,";
+            } else {
+                msjInfo += "1er año de Bachillerato, ";
+            }
+            if (entidadEducativaEJB.guardarEstadistica(est2media, VarSession.getVariableSessionUsuario())) {
+                msjError += "2do año de Bachillerato";
+            } else {
+                msjInfo += "2do año de Bachillerato, ";
+            }
+            if (entidadEducativaEJB.guardarEstadistica(est3media, VarSession.getVariableSessionUsuario())) {
+                msjError += "3er año de Bachillerato";
+            } else {
+                msjInfo += "3er año de Bachillerato<br/>";
+            }
+
+            if (entidadEducativaEJB.guardarEstadistica(estaditicaBac, VarSession.getVariableSessionUsuario())) {
+                msjError += "Bachillerato,";
+            } else {
+                msjInfo += "<b>Bachillerato</b><br/>";
+            }
+
+            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 8) {
+                if (entidadEducativaEJB.guardarEstadistica(estaditicaBacMF, VarSession.getVariableSessionUsuario())) {
+                    msjError += "Media - Mod. Flexible, ";
+                } else {
+                    msjInfo += "<b>Media - Mod. Flexible</b>";
+                }
+            }
+
+            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() < 6) {//menor a 2018
+                techoUni.setMontoPresupuestado(calcularPresupuesto(1));
+            } else {
+                for (DetalleProcesoAdq detProcesoAdq : procesoAdquisicion.getDetalleProcesoAdqList()) {
+                    switch (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
+                        case 4:
+                            techoUni.setMontoPresupuestado(calcularPresupuesto(4));
+                            break;
+                        case 5:
+                            isSegundoUniforme = true;
+                            techoUni2.setMontoPresupuestado(calcularPresupuesto(5));
+                            if (techoUni2.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
+                                techoUni2.setMontoDisponible(techoUni2.getMontoPresupuestado());
+                            } else {
+                                techoUni2.setMontoDisponible(techoUni2.getMontoPresupuestado().add(techoUni2.getMontoAdjudicado().negate()));
+                            }
+                            break;
+                    }
+                }
+            }
+
+            if (techoUni != null) {
+                if (techoUni.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
+                    techoUni.setMontoDisponible(techoUni.getMontoPresupuestado());
+                } else {
+                    techoUni.setMontoDisponible(techoUni.getMontoPresupuestado().add(techoUni.getMontoAdjudicado().negate()));
+                }
+            }
+            if (techoUti != null) {
+                techoUti.setMontoPresupuestado(calcularPresupuesto(2));
+                if (techoUti.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
+                    techoUti.setMontoDisponible(techoUti.getMontoPresupuestado());
+                } else {
+                    techoUti.setMontoDisponible(techoUti.getMontoPresupuestado().add(techoUti.getMontoAdjudicado().negate()));
+                }
+            }
+            if (techoZap != null) {
+                techoZap.setMontoPresupuestado(calcularPresupuesto(3));
+                if (techoZap.getMontoAdjudicado().compareTo(BigDecimal.ZERO) == 0) {
+                    techoZap.setMontoDisponible(techoZap.getMontoPresupuestado());
+                } else {
+                    techoZap.setMontoDisponible(techoZap.getMontoPresupuestado().add(techoZap.getMontoAdjudicado().negate()));
+                }
+            }
+
+            if (!msjInfo.replace("Se guardaron los niveles: ", "").isEmpty()) {
+                JsfUtil.mensajeInformacion(msjInfo);
+            }
+
+            if (!msjError.replace("Hubo error en los niveles: ", "").isEmpty()) {
+                JsfUtil.mensajeError(msjError);
+            }
+
+            if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() < 6) {
+                error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUti, techoZap);
+            } else if (procesoAdquisicion.getDescripcionProcesoAdq().contains("SOBREDEMANDA")) {
+                if (isSegundoUniforme) {
+                    error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUni2, techoUti, techoZap);
+                } else {
+                    error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUti, techoZap);
+                }
+            } else {
+                error = entidadEducativaEJB.guardarPresupuesto(VarSession.getVariableSessionUsuario(), techoUni, techoUni2, techoUti, techoZap);
+            }
+
+            if (error) {
+                JsfUtil.mensajeError("No se ha podido crear el presupuesto del C.E.");
+            }
+
+            if (organizacionEducativa.getIdOrganizacionEducativa() == null) {
+                entidadEducativaEJB.create(organizacionEducativa);
+            } else {
+                if (editDirector) {
+                    organizacionEducativa.setNombreMiembro(nombre);
+                    organizacionEducativa.setTelDirector(telefono1);
+                    organizacionEducativa.setTelDirector2(telefono2);
+                    organizacionEducativa.setNumeroDui(numeroDui);
+
+                    entidadEducativaEJB.edit(organizacionEducativa);
+                    entidadEducativaEJB.updateNombreDirectorContratoYPago(codigoEntidad, procesoAdquisicion.getIdAnho().getIdAnho().intValue(), nombre);
+                }
+            }
+
+            organizacionEducativaEncargadoCompra.setNombreMiembro(nombreEncargadoCompras);
+            initOrg(orgTesorero, "TESORERO", nombreTesorero);
+            initOrg(orgConsejal, "CONSEJAL", nombreConsejal);
+
+            entidadEducativaEJB.guardar(organizacionEducativaEncargadoCompra);
+            entidadEducativaEJB.guardar(orgTesorero);
+            entidadEducativaEJB.guardar(orgConsejal);
+        }
+    }
+
+    private void initOrg(OrganizacionEducativa org, String cargo, String nombre) {
+        org.setNombreMiembro(nombre);
+        org.setCodigoEntidad(codigoEntidad);
+        if (org.getIdOrganizacionEducativa() == null) {
+            org.setFechaInsercion(new Date());
+            org.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+            org.setCargo(cargo);
+            org.setFirmaContrato(BigInteger.ZERO);
+            org.setEstadoEliminacion(BigInteger.ZERO);
+        } else {
+            org.setFechaModificacion(new Date());
+            org.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
+        }
+    }
+
+    public BigDecimal getPreUniformes() {
+        return preUniformes;
+    }
+
+    public void setPreUniformes(BigDecimal preUniformes) {
+        this.preUniformes = preUniformes;
+    }
+
+    public BigDecimal getPreUtiles() {
+        return preUtiles;
+    }
+
+    public void setPreUtiles(BigDecimal preUtiles) {
+        this.preUtiles = preUtiles;
+    }
+
+    public BigDecimal getPreZapatos() {
+        return preZapatos;
+    }
+
+    public void setPreZapatos(BigDecimal preZapatos) {
+        this.preZapatos = preZapatos;
+    }
+
+    private BigDecimal calcularPresupuesto(int idRubro) {
+        BigDecimal num = BigDecimal.ONE;
+        BigDecimal presupuesto = BigDecimal.ZERO;
+        PreciosRefRubro preParTemp, preCiclo1Temp, preCiclo2Temp, preCiclo3Temp, preBacTemp;
+
+        switch (idRubro) {
+            case 1:
+                preParTemp = preParUni;
+                preCiclo1Temp = preCicloIUni;
+                preCiclo2Temp = preCicloIIUni;
+                preCiclo3Temp = preCicloIIIUni;
+                preBacTemp = preBacUni;
+                num = new BigDecimal(2);
+                break;
+            case 2:
+                preParTemp = preParUti;
+                preCiclo1Temp = preCicloIUti;
+                preCiclo2Temp = preCicloIIUti;
+                preCiclo3Temp = preCicloIIIUti;
+                preBacTemp = preBacUti;
+                break;
+            case 3:
+                preParTemp = preParZap;
+                preCiclo1Temp = preCicloIZap;
+                preCiclo2Temp = preCicloIIZap;
+                preCiclo3Temp = preCicloIIIZap;
+                preBacTemp = preBacZap;
+                break;
+            default://para rubro 4 y 5, 1er y 2do uniforme respectivamente
+                preParTemp = preParUni;
+                preCiclo1Temp = preCicloIUni;
+                preCiclo2Temp = preCicloIIUni;
+                preCiclo3Temp = preCicloIIIUni;
+                preBacTemp = preBacUni;
+                num = BigDecimal.ONE;
+                break;
+        }
+
+        presupuesto = presupuesto.add(preParTemp.getPrecioMaxMas().multiply(new BigDecimal(estaditicaPar.getMasculino())).multiply(num));
+        presupuesto = presupuesto.add(preParTemp.getPrecioMaxFem().multiply(new BigDecimal(estaditicaPar.getFemenimo())).multiply(num));
+
+        presupuesto = presupuesto.add(preCiclo1Temp.getPrecioMaxMas().multiply(new BigDecimal(estaditicaCiclo1.getMasculino())).multiply(num));
+        presupuesto = presupuesto.add(preCiclo1Temp.getPrecioMaxFem().multiply(new BigDecimal(estaditicaCiclo1.getFemenimo())).multiply(num));
+
+        presupuesto = presupuesto.add(preCiclo2Temp.getPrecioMaxMas().multiply(new BigDecimal(estaditicaCiclo2.getMasculino())).multiply(num));
+        presupuesto = presupuesto.add(preCiclo2Temp.getPrecioMaxFem().multiply(new BigDecimal(estaditicaCiclo2.getFemenimo())).multiply(num));
+
+        presupuesto = presupuesto.add(preCiclo3Temp.getPrecioMaxMas().multiply(new BigDecimal(estaditicaCiclo3.getMasculino())).multiply(num));
+        presupuesto = presupuesto.add(preCiclo3Temp.getPrecioMaxFem().multiply(new BigDecimal(estaditicaCiclo3.getFemenimo())).multiply(num));
+
+        presupuesto = presupuesto.add(preBacTemp.getPrecioMaxFem().multiply(new BigDecimal(estaditicaBac.getFemenimo())).multiply(num));
+        presupuesto = presupuesto.add(preBacTemp.getPrecioMaxMas().multiply(new BigDecimal(estaditicaBac.getMasculino())).multiply(num));
+
+        //Presupuesto de libros
+        if (idRubro == 2 && procesoAdquisicion.getIdAnho().getIdAnho().intValue() >= 6) { //mayor o igual de anho 2018
+
+            switch (procesoAdquisicion.getIdAnho().getIdAnho().intValue()) {
+                case 6:
+                case 7:
+                    //este calculo es comun para años 2018 y 2019
+                    presupuesto = presupuesto.add(new BigDecimal(est7grado.getMasculino().add(est7grado.getFemenimo())).multiply(preGrado7Uti.getPrecioMaxMas()));
+                    presupuesto = presupuesto.add(new BigDecimal(est8grado.getMasculino().add(est8grado.getFemenimo())).multiply(preGrado8Uti.getPrecioMaxMas()));
+                    presupuesto = presupuesto.add(new BigDecimal(est9grado.getMasculino().add(est9grado.getFemenimo())).multiply(preGrado9Uti.getPrecioMaxMas()));
+
+                    if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() == 7) {//2019 libros desde 1 grado a 2 año de bachillerato
+                        presupuesto = presupuesto.add(new BigDecimal(est1grado.getMasculino().add(est1grado.getFemenimo())).multiply(preGrado1Uti.getPrecioMaxMas()));
+                        presupuesto = presupuesto.add(new BigDecimal(est2grado.getMasculino().add(est2grado.getFemenimo())).multiply(preGrado2Uti.getPrecioMaxMas()));
+                        presupuesto = presupuesto.add(new BigDecimal(est3grado.getMasculino().add(est3grado.getFemenimo())).multiply(preGrado3Uti.getPrecioMaxMas()));
+                        presupuesto = presupuesto.add(new BigDecimal(est4grado.getMasculino().add(est4grado.getFemenimo())).multiply(preGrado4Uti.getPrecioMaxMas()));
+                        presupuesto = presupuesto.add(new BigDecimal(est5grado.getMasculino().add(est5grado.getFemenimo())).multiply(preGrado5Uti.getPrecioMaxMas()));
+                        presupuesto = presupuesto.add(new BigDecimal(est6grado.getMasculino().add(est6grado.getFemenimo())).multiply(preGrado6Uti.getPrecioMaxMas()));
+
+                        presupuesto = presupuesto.add(new BigDecimal(est1media.getMasculino().add(est1media.getFemenimo())).multiply(preBachi1Uti.getPrecioMaxMas()));
+                        presupuesto = presupuesto.add(new BigDecimal(est2media.getMasculino().add(est2media.getFemenimo())).multiply(preBachi2Uti.getPrecioMaxMas()));
+                    }
+                    break;
+                case 9: //incluye inicial 1, 2 y modalidades flexibles en los niveles de 3er ciclo y media
+                    presupuesto = presupuesto.add(new BigDecimal(estInicial1grado.getMasculino().add(estInicial1grado.getFemenimo())).multiply(preParUti.getPrecioMaxMas()));
+                    presupuesto = presupuesto.add(new BigDecimal(estInicial2grado.getMasculino().add(estInicial2grado.getFemenimo())).multiply(preParUti.getPrecioMaxMas()));
+                    presupuesto = presupuesto.add(new BigDecimal(estaditicaCiclo3MF.getMasculino().add(estaditicaCiclo3MF.getFemenimo())).multiply(preCicloIIIMFUti.getPrecioMaxMas()));
+                    presupuesto = presupuesto.add(new BigDecimal(estaditicaBacMF.getMasculino().add(estaditicaBacMF.getFemenimo())).multiply(preBacMFUti.getPrecioMaxMas()));
+                    break;
+            }
+        } else if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() >= 9) { //mayor o igual de anho 2018
+            switch (idRubro) {
+                case 4:
+                case 5:
+                    presupuesto = presupuesto.add(new BigDecimal(estInicial1grado.getMasculino()).multiply(preParUni.getPrecioMaxMas()).add(new BigDecimal(estInicial1grado.getFemenimo()).multiply(preParUni.getPrecioMaxFem())));
+                    presupuesto = presupuesto.add(new BigDecimal(estInicial2grado.getMasculino()).multiply(preParUni.getPrecioMaxMas()).add(new BigDecimal(estInicial2grado.getFemenimo()).multiply(preParUni.getPrecioMaxFem())));
+                    break;
+                case 2:
+                    presupuesto = presupuesto.add(new BigDecimal(estInicial1grado.getMasculino().add(estInicial1grado.getFemenimo())).multiply(preParUti.getPrecioMaxMas()));
+                    presupuesto = presupuesto.add(new BigDecimal(estInicial2grado.getMasculino().add(estInicial2grado.getFemenimo())).multiply(preParUti.getPrecioMaxMas()));
+                    break;
+                case 3:
+                    presupuesto = presupuesto.add(new BigDecimal(estInicial1grado.getMasculino().add(estInicial1grado.getFemenimo())).multiply(preParZap.getPrecioMaxMas()));
+                    presupuesto = presupuesto.add(new BigDecimal(estInicial2grado.getMasculino().add(estInicial2grado.getFemenimo())).multiply(preParZap.getPrecioMaxMas()));
+                    break;
+            }
+        }
+
+        return presupuesto;
+    }
+
+    public void imprimir() {
+        try {
+            if (entidadEducativa == null || entidadEducativa.getCodigoEntidad() == null) {
+                JsfUtil.mensajeAlerta("Debe de ingresar un código de centro escolar válido!");
+            } else {
+                List<VwRptCertificacionPresupuestaria> lst = new ArrayList();
+                HashMap param = new HashMap();
+                String reportes = "";
+
+                VwRptCertificacionPresupuestaria vw = entidadEducativaEJB.getCertificacion(codigoEntidad, procesoAdquisicion, (detProAdqUti.getIdProcesoAdq().getIdProcesoAdq() >= 12));
+                vw.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+                lst.add(vw);
+
+                if (uniformes) {
+                    if (detProAdqUti.getIdProcesoAdq().getIdProcesoAdq() > 20) {
+                        reportes = "rptCertUni" + detProAdqUni.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper";
+                    } else {
+                        reportes = "rptCertUni.jasper";
+                    }
+                }
+                if (utiles) {
+                    if (detProAdqUti.getIdDetProcesoAdq() >= 32) {
+                        reportes += (reportes.isEmpty() ? "" : ",") + "rptCertUti" + procesoAdquisicion.getIdAnho().getAnho() + ".jasper";
+                    } else {
+                        reportes += (reportes.isEmpty() ? "" : ",") + "rptCertUti2017.jasper";
+                    }
+                }
+                if (zapatos) {
+                    reportes += (reportes.isEmpty() ? "" : ",") + "rptCertZap.jasper";
+                }
+                if (declaracion && procesoAdquisicion.getIdAnho().getIdAnho().intValue() >= 7) {
+                    param.put("descripcionProcesoAdq", detProAdqUni.getIdProcesoAdq().getDescripcionProcesoAdq());
+                    param.put("pAnho", detProAdqUni.getIdProcesoAdq().getIdAnho().getAnho());
+                    reportes += (reportes.isEmpty() ? "" : ",") + "rptDeclaracionJuradaMatricula" + procesoAdquisicion.getIdAnho().getAnho() + ".jasper";
+                }
+                param.put("codigoEntidad", entidadEducativa.getCodigoEntidad());
+                param.put("pIdProceso", procesoAdquisicion.getIdProcesoAdq());
+                param.put("pInicial", (procesoAdquisicion.getIdAnho().getIdAnho().intValue() > 8));
+                param.put("pUsuarioInsercion", VarSession.getVariableSessionUsuario());
+                Reportes.generarRptsContractuales(lst, param, codigoEntidad, procesoAdquisicion.getDescripcionProcesoAdq().contains("SOBREDEMANDA"), reportesEJB, procesoAdquisicion.getIdAnho().getAnho(), reportes.split(","));
+            }
+        } catch (Exception e) {
+            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.WARNING, "=============================================================");
+            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.WARNING, "Error en la impresion de reporte de la certificación presupuestaria");
+            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.WARNING, "C\u00f3digo Entidad: {0}", codigoEntidad);
+            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.WARNING, "Rubros uniformes: {0} - \u00fatiles: {1} - zapatos: {2}", new Object[]{uniformes, utiles, zapatos});
+            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.WARNING, "Error: {0}", e.getMessage());
+            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.WARNING, "=====================================================");
+        }
+    }
+
     public void updateCantidadesCiclo3() {
         getEstaditicaCiclo3().setFemenimo(getEst7grado().getFemenimo().add(getEst8grado().getFemenimo()).add(getEst9grado().getFemenimo()));
         getEstaditicaCiclo3().setMasculino(getEst7grado().getMasculino().add(getEst8grado().getMasculino()).add(getEst9grado().getMasculino()));
     }
+
+    public void editNombre() {
+        if (editDirector) {
+
+        } else {
+            nombre = organizacionEducativa.getNombreMiembro();
+            telefono1 = organizacionEducativa.getTelDirector();
+            telefono2 = organizacionEducativa.getTelDirector2();
+            numeroDui = organizacionEducativa.getNumeroDui();
+        }
+    }
+
+    public void enviarCorreos() {
+        String titulo = "Validacion de matricula y resguardo de bienes";
+        String mensaje = UTIL_CORREO.getString("contratacion.estadistica.correo.cuerpo");
+
+        List<OrganizacionEducativa> lst = entidadEducativaEJB.lstCorreosDirectores();
+        HashMap<String, String> archivos = new HashMap<>();
+        archivos.put("PDF", "DeclaraciónJuradaDirectores.pdf");
+        archivos.put("XLXS", "FormatoValidación.xlsx");
+
+        List<String> to = new ArrayList();
+        List<String> cc = new ArrayList();
+
+        to.add("miguel.sanchez@mined.gob.sv");
+
+        lst.forEach((org) -> {
+            to.add(org.getCorreoElectronico());
+        });
+
+        to.add("rafael.arias@mined.gob.sv");
+
+        to.forEach((string) -> {
+            List<String> lista = new ArrayList();
+            lista.add(string);
+
+            eMailEJB.enviarMail(titulo,
+                    mensaje,
+                    lista,
+                    cc,
+                    new ArrayList(),
+                    archivos,
+                    JsfUtil.getSessionMailG("1"));
+            Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.INFO, "Correo enviado a: {0}", string);
+        });
+    }
+
 }

@@ -18,9 +18,9 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.ToggleEvent;
 import sv.gob.mined.app.web.util.JsfUtil;
-import sv.gob.mined.app.web.util.RecuperarProceso;
+import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.VarSession;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
+import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.ModificativaEJB;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.pojos.modificativa.VwBusquedaContratos;
@@ -33,7 +33,7 @@ import sv.gob.mined.paquescolar.model.pojos.modificativa.VwContratoModificatoria
  */
 @ManagedBean
 @ViewScoped
-public class FiltroContratoModificativaMB extends RecuperarProceso implements Serializable {
+public class FiltroContratoModificativaMB extends RecuperarProcesoUtil implements Serializable {
 
     private int op = 0;
     private Boolean deshabilitar = true;
@@ -52,9 +52,9 @@ public class FiltroContratoModificativaMB extends RecuperarProceso implements Se
     private List<VwContratoModificatoria> lstContratoModificatorias = new ArrayList();
 
     @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
-    @EJB
     private ModificativaEJB modificativaEJB;
+    @EJB
+    private EntidadEducativaEJB entidadEducativaEJB;
 
     /**
      * Creates a new instance of FiltroContratoModificativaMB
@@ -176,17 +176,17 @@ public class FiltroContratoModificativaMB extends RecuperarProceso implements Se
     // </editor-fold>
 
     public void buscarProceso() {
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
+        detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
     }
 
     public void buscarContratos() {
-        detalleProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
+        detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
         if (idRubro == null) {
             JsfUtil.mensajeAlerta("El campo Rubro de adquisicion es obligatorio");
         } else if (idRubro == null || idRubro.compareTo(BigDecimal.ZERO) == 0) {
             JsfUtil.mensajeAlerta("El campo Rubro de adquisicion es obligatorio");
         } else {
-            lstContratos = modificativaEJB.getLstBusquedaContrato(detalleProceso, codigoEntidad, codigoDepartamento, numeroNit, fecha1, fecha2, numeroContrato, op);
+            lstContratos = modificativaEJB.getLstBusquedaContrato(detalleProceso, codigoEntidad, null, null, null, null, null, op);
             if (lstContratos.isEmpty()) {
                 JsfUtil.mensajeInformacion("No se encontrarón coincidencias.");
             }
@@ -206,10 +206,18 @@ public class FiltroContratoModificativaMB extends RecuperarProceso implements Se
                     }
                     break;
                 case 2:
-                    if (vwContratoModificatoria.getIdEstadoReserva().intValue() == 1 || vwContratoModificatoria.getIdEstadoReserva().intValue() == 2 || vwContratoModificatoria.getIdEstadoReserva().intValue() == 5) {
-                        PrimeFaces.current().dialog().closeDynamic(vwContratoModificatoria);
+                    if (VarSession.getVariableSessionUsuario().equals("MSANCHEZ")) {
+                        if (vwContratoModificatoria.getIdEstadoReserva().intValue() == 1 || vwContratoModificatoria.getIdEstadoReserva().intValue() == 2 || vwContratoModificatoria.getIdEstadoReserva().intValue() == 5 || vwContratoModificatoria.getIdEstadoReserva().intValue() == 3) {
+                            PrimeFaces.current().dialog().closeDynamic(vwContratoModificatoria);
+                        } else {
+                            JsfUtil.mensajeAlerta("El contrato seleccionado no tiene la RESERVA DE FONDOS en estado DIGITADA");
+                        }
                     } else {
-                        JsfUtil.mensajeAlerta("El contrato seleccionado no tiene la RESERVA DE FONDOS en estado DIGITADA");
+                        if (vwContratoModificatoria.getIdEstadoReserva().intValue() == 1 || vwContratoModificatoria.getIdEstadoReserva().intValue() == 2 || vwContratoModificatoria.getIdEstadoReserva().intValue() == 5) {
+                            PrimeFaces.current().dialog().closeDynamic(vwContratoModificatoria);
+                        } else {
+                            JsfUtil.mensajeAlerta("El contrato seleccionado no tiene la RESERVA DE FONDOS en estado DIGITADA");
+                        }
                     }
                     break;
                 case 3:
@@ -240,6 +248,20 @@ public class FiltroContratoModificativaMB extends RecuperarProceso implements Se
             } else {
                 vwContratoModificatoria = (VwContratoModificatoria) event.getObject();
             }
+        }
+    }
+
+    public void onSelectedContrato(SelectEvent event) {
+        onContratoChosen(event);
+        if (vwContratoModificatoria != null) {
+            selectContrato();
+        }
+    }
+
+    public void buscarEntidadEducativa() {
+        entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
+        if (entidadEducativa == null) {
+            JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + codigoEntidad);
         }
     }
 }

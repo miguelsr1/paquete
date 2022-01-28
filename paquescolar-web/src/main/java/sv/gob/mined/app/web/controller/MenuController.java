@@ -4,6 +4,7 @@
  */
 package sv.gob.mined.app.web.controller;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.logging.Level;
@@ -13,6 +14,7 @@ import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSubMenu;
@@ -28,14 +30,10 @@ import sv.gob.mined.paquescolar.model.Usuario;
  */
 @ManagedBean
 @SessionScoped
-public class MenuController {
+public class MenuController implements Serializable {
 
     private Boolean usuarioSoloLectura = false;
-    private String app;
-    private String codigoPantalla;
     private String codigoDepartamento;
-    private String query;
-    private String llavePrimaria;
     private String tipoUsuario;
 
     private DefaultMenuModel model;
@@ -61,9 +59,9 @@ public class MenuController {
 
             VarSession.setVariableSession("Usuario", usuario.getIdPersona().getUsuario());
             VarSession.setVariableSession("idTipoUsuario", usuario.getIdTipoUsuario().getIdTipoUsuario().intValue());
-            if (!usuario.getCodigoDepartamento().equals("00")) {
-                codigoDepartamento = usuario.getCodigoDepartamento();
-            }
+            //if (!usuario.getCodigoDepartamento().equals("00")) {
+            codigoDepartamento = usuario.getCodigoDepartamento();
+            //}
             armarMenu();
         }
     }
@@ -100,39 +98,7 @@ public class MenuController {
     public void setModel(DefaultMenuModel model) {
         this.model = model;
     }
-
-    public String getApp() {
-        return app;
-    }
-
-    public void setApp(String app) {
-        this.app = app;
-    }
-
-    public String getCodigoPantalla() {
-        return codigoPantalla;
-    }
-
-    public void setCodigoPantalla(String codigoPantalla) {
-        this.codigoPantalla = codigoPantalla;
-    }
-
-    public String getQuery() {
-        return query;
-    }
-
-    public void setQuery(String query) {
-        this.query = query;
-    }
-
-    public String getLlavePrimaria() {
-        return llavePrimaria;
-    }
-
-    public void setLlavePrimaria(String llavePrimaria) {
-        this.llavePrimaria = llavePrimaria;
-    }
-    // </editor-fold>    
+    // </editor-fold>
 
     public void armarMenu() {
         lstOpciones = menuEJB.getOpciones(usuario.getIdUsuario().intValue(), null, false);
@@ -153,12 +119,23 @@ public class MenuController {
 
             for (Object opc : lstOpciones) {
                 Object[] datos = (Object[]) opc;
-                DefaultSubMenu subMenu = new DefaultSubMenu();
-                subMenu.setIcon(datos[4] != null ? datos[4].toString() : null);
-                subMenu.setLabel(datos[2].toString());
-                subMenu.setId("sub" + datos[0].toString());
-                getHijo(subMenu, (BigDecimal) datos[0]);
-                menu.addElement(subMenu);
+                if (datos[1] == null && ((BigDecimal) datos[7]).intValue() == 0) {
+                    itemMenu = new DefaultMenuItem();
+
+                    itemMenu.setValue(" " + datos[2]);
+                    itemMenu.setOutcome(datos[3].toString());
+                    itemMenu.setIcon(datos[4] != null ? datos[4].toString() : null);
+                    itemMenu.setAjax(false);
+                    itemMenu.setId("item" + datos[0].toString());
+                    menu.addElement(itemMenu);
+                } else {
+                    DefaultSubMenu subMenu = new DefaultSubMenu();
+                    subMenu.setIcon(datos[4] != null ? datos[4].toString() : null);
+                    subMenu.setLabel(datos[2].toString());
+                    subMenu.setId("sub" + datos[0].toString());
+                    getHijo(subMenu, (BigDecimal) datos[0]);
+                    menu.addElement(subMenu);
+                }
             }
             model = menu;
 
@@ -200,36 +177,6 @@ public class MenuController {
         }
     }
 
-    @Deprecated
-    public String selectOpcion() {
-        String url = "";
-        if (VarSession.getUsuarioSession() == null) {
-            ((PersonaController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                    getValue(FacesContext.getCurrentInstance().getELContext(), null, "personaController")).logout();
-        } else {
-            int idPersona = usuario.getIdPersona().getIdPersona().intValue();
-            int appModulo = Integer.parseInt(app);
-            lstOpciones = menuEJB.getListaOpcionesByIdPersonaAndModulo(idPersona, appModulo);
-
-            if (lstOpciones.isEmpty()) {
-                JsfUtil.mensajeError("No tiene derechos para ingresar a este modulo");
-            } else {
-                Character tipoAcceso = menuEJB.getTipoAcceso(idPersona, appModulo);
-                if (tipoAcceso != null) {
-                    VarSession.setVariableSession("tipoAcceso", tipoAcceso);
-                }
-                url = ((Object[]) lstOpciones.get(0))[3].toString() + "?faces-redirect=true";
-                armarMenu();
-            }
-        }
-        return url;
-    }
-
-    public void refreshEntidad() {
-        utilEJB.executeSql(query);
-        JsfUtil.mensajeInformacion("Entidad refrescada");
-    }
-
     public String verResumenGeneralContrataciones() {
         if ((Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {
             return "dashboard";
@@ -237,5 +184,32 @@ public class MenuController {
             JsfUtil.mensajeAlerta("No posee los privilegios para ver esta información");
         }
         return "";
+    }
+
+    public Boolean getIsUsuarioDigitador() {
+        ParametrosMB param = (ParametrosMB) JsfUtil.getControllerByName("parametrosMB");
+        if (param.getProceso().getDescripcionProcesoAdq().contains("SOBREDEMANDA")) {
+            switch (usuario.getIdTipoUsuario().getIdTipoUsuario().intValue()) {
+                case 1:
+                case 2:
+                case 6:
+                    return false;
+                default:
+                    return true;
+
+            }
+        } else {
+
+            return (usuario.getIdTipoUsuario().getIdTipoUsuario().intValue() != 1);
+        }
+    }
+
+    public Boolean getIsUsuarioAdmin() {
+        return (usuario.getIdTipoUsuario().getIdTipoUsuario().intValue() == 1);
+    }
+
+    public void cerrarSession() {
+        ((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false)).invalidate();
+        JsfUtil.redirectToIndex();
     }
 }

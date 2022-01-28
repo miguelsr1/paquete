@@ -4,6 +4,7 @@
  */
 package sv.gob.mined.paquescolar.ejb;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -24,6 +25,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import sv.gob.mined.paquescolar.model.Anho;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.DisMunicipioInteres;
 import sv.gob.mined.paquescolar.model.Empresa;
@@ -57,8 +59,10 @@ public class ReportesEJB {
             JasperPrint jp;
             Connection conn = em.unwrap(java.sql.Connection.class);
             jp = JasperFillManager.fillReport(input, map, conn);
+
+            input.close();
             return jp;
-        } catch (JRException ex) {
+        } catch (JRException | IOException ex) {
             Logger.getLogger(ReportesEJB.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
@@ -79,45 +83,47 @@ public class ReportesEJB {
             JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(lst);
 
             jp = JasperFillManager.fillReport(input, map, ds);
+            input.close();
             return jp;
-        } catch (JRException ex) {
+        } catch (JRException | IOException ex) {
             Logger.getLogger(ReportesEJB.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-
     }
 
-    public List<OfertaGlobal> getLstOfertaGlobal(String nit, Integer idDetProcesoAdq, int idRubro) {
-        PreciosRefRubroEmp preTem;
+    public List<OfertaGlobal> getLstOfertaGlobal(String nit, BigDecimal idRubro, BigDecimal idAnho) {
+
         List<OfertaGlobal> lstRpt;
-        //Query q = em.createNativeQuery("SELECT * FROM VW_RPT_CABECERA_OFERTA_GLOBAL WHERE nit_empresa=?1 and id_det_proceso_adq=?2");
+        Anho anho = em.find(Anho.class, idAnho);
         Query q = em.createNamedQuery("DatosProveDto.ofertaGlobal", OfertaGlobal.class);
         q.setParameter(1, nit);
-        q.setParameter(2, idDetProcesoAdq);
+        q.setParameter(2, idRubro);
+        q.setParameter(3, idAnho);
 
         lstRpt = q.getResultList();
-        //for (Object object : lst) {
-        //Object[] datos = (Object[]) object;
-        //OfertaGlobal oferta = new OfertaGlobal();
 
-        lstRpt.get(0).setAnho(em.find(DetalleProcesoAdq.class, idDetProcesoAdq).getIdProcesoAdq().getIdAnho().getAnho());
+        lstRpt.get(0).setAnho(anho.getAnho());
+        lstRpt.get(0).setLstDetItemOfertaGlobal(getLstItemOfertaGlobal(nit, idRubro, idAnho));
+        lstRpt.get(0).setLstMunIntOfertaGlobal(getLstMunIntOfertaGlobal(nit, idRubro, idAnho));
 
-        q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion=0 and p.idEmpresa.numeroNit=:nit and p.idDetProcesoAdq.idDetProcesoAdq=:idDetProcesoAdq AND p.idProducto.codigoProducto not in (1) ORDER BY  FUNC('TO_NUMBER', p.noItem)", PreciosRefRubroEmp.class);
+        return lstRpt;
+    }
+
+    public List<DetItemOfertaGlobal> getLstItemOfertaGlobal(String nit, BigDecimal idRubro, BigDecimal idAnho) {
+        PreciosRefRubroEmp preTem;
+        List<DetItemOfertaGlobal> lst = new ArrayList();
+        Query q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion=0 and p.idMuestraInteres.idEmpresa.numeroNit=:nit and p.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro AND p.idMuestraInteres.idAnho.idAnho=:pIdAnho and p.idProducto.idProducto not in (1) ORDER BY  FUNC('TO_NUMBER', p.noItem)", PreciosRefRubroEmp.class);
         q.setParameter("nit", nit);
-        q.setParameter("idDetProcesoAdq", idDetProcesoAdq);
+        q.setParameter("pIdRubro", idRubro);
+        q.setParameter("pIdAnho", idAnho);
         List<PreciosRefRubroEmp> lstPrecios = q.getResultList();
 
-        q = em.createQuery("SELECT p FROM PreciosRefRubroEmp p WHERE p.estadoEliminacion=0 and p.idEmpresa.numeroNit=:nit and p.idDetProcesoAdq.idDetProcesoAdq=:idDetProcesoAdq AND p.idProducto.codigoProducto in (1) ORDER BY p.noItem", PreciosRefRubroEmp.class);
-        q.setParameter("nit", nit);
-        q.setParameter("idDetProcesoAdq", idDetProcesoAdq);
-        List<PreciosRefRubroEmp> lstPreciosLibros = q.getResultList();
-
-        //q = em.createQuery("select p from PreciosRefRubroEmp p where p.idDetProcesoAdq.idDetProcesoAdq = ?1 order by p.idNivelEducativo", PreciosRefRubro.class);
-        q = em.createNativeQuery("select prr.* from PRECIOS_REF_RUBRO prr inner join NIVEL_EDUCATIVO niv on niv.ID_NIVEL_EDUCATIVO = prr.ID_NIVEL_EDUCATIVO where ID_DET_PROCESO_ADQ = ?1 order by niv.ORDEN2", PreciosRefRubro.class);
-        q.setParameter(1, idDetProcesoAdq);
+        q = em.createNativeQuery("select prr.* from PRECIOS_REF_RUBRO prr inner join NIVEL_EDUCATIVO niv on niv.ID_NIVEL_EDUCATIVO = prr.ID_NIVEL_EDUCATIVO where prr.id_rubro_interes = ?1 and prr.id_anho = ?2 order by niv.ORDEN2", PreciosRefRubro.class);
+        q.setParameter(1, idRubro);
+        q.setParameter(2, idAnho);
         List<PreciosRefRubro> lstPrecioMax = q.getResultList();
 
-        switch (idRubro) {
+        switch (idRubro.intValue()) {
             case 1:
             case 4:
                 for (int i = 0; i < 13; i++) {
@@ -184,98 +190,49 @@ public class ReportesEJB {
                             break;
                         }
                     }
-                    lstRpt.get(0).getLstDetItemOfertaGlobal().add(det);
+                    lst.add(det);
                 }
                 break;
             case 2:
-                for (int i = 0; i < 5; i++) {
+                for (PreciosRefRubroEmp preciosRefRubroEmp : lstPrecios) {
                     DetItemOfertaGlobal det = new DetItemOfertaGlobal();
 
-                    switch ((i + 1)) {
-                        case 1:
-                            det.setDescripcionItem("Paquete de útiles escolares parvularia");
+                    switch (preciosRefRubroEmp.getNoItem()) {
+                        case "1":
+                            det.setDescripcionItem("Paquete de útiles escolares para inicial y parvularia");
                             det.setPrecioMaxReferencia(lstPrecioMax.get(0).getPrecioMaxMas());
                             break;
-                        case 2:
+                        case "2":
                             det.setDescripcionItem("Paquete de útiles escolares primer ciclo");
                             det.setPrecioMaxReferencia(lstPrecioMax.get(1).getPrecioMaxMas());
                             break;
-                        case 3:
+                        case "3":
                             det.setDescripcionItem("Paquete de útiles escolares segundo ciclo");
                             det.setPrecioMaxReferencia(lstPrecioMax.get(2).getPrecioMaxMas());
                             break;
-                        case 4:
+                        case "4":
                             det.setDescripcionItem("Paquete de útiles escolares tercer ciclo");
                             det.setPrecioMaxReferencia(lstPrecioMax.get(3).getPrecioMaxMas());
                             break;
-                        case 5:
-                            det.setDescripcionItem("Paquete de útiles escolares bachillerato");
+                        case "4.4":
+                            det.setDescripcionItem("Paquete de útiles escolares modalidad flexible - tercer ciclo");
                             det.setPrecioMaxReferencia(lstPrecioMax.get(4).getPrecioMaxMas());
                             break;
-                    }
-
-                    preTem = getPrecioMax(lstPrecios, String.valueOf(i + 1));
-                    if (preTem != null) {
-                        det.setPrecioUnitario(preTem.getPrecioReferencia());
-                    }
-                    lstRpt.get(0).getLstDetItemOfertaGlobal().add(det);
-                }
-
-                for (PreciosRefRubroEmp lstPreciosLibro : lstPreciosLibros) {
-                    DetItemOfertaGlobal det = new DetItemOfertaGlobal();
-                    switch (lstPreciosLibro.getNoItem()) {
-                        case "2.1":
-                            det.setDescripcionItem("Libros de Matemáticas 1er Grado (2 Tomos)");
+                        case "5":
+                            det.setDescripcionItem("Paquete de útiles escolares bachillerato");
                             det.setPrecioMaxReferencia(lstPrecioMax.get(5).getPrecioMaxMas());
                             break;
-                        case "2.2":
-                            det.setDescripcionItem("Libros de Matemáticas 2do Grado (2 Tomos)");
+                        case "5.1":
+                            det.setDescripcionItem("Paquete de útiles escolares modalidad flexible - bachillerato");
                             det.setPrecioMaxReferencia(lstPrecioMax.get(6).getPrecioMaxMas());
                             break;
-                        case "2.3":
-                            det.setDescripcionItem("Libros de Matemáticas 3er Grado (Texto y Trabajo)");
-                            det.setPrecioMaxReferencia(lstPrecioMax.get(7).getPrecioMaxMas());
-                            break;
-                        case "3.1":
-                            det.setDescripcionItem("Libros de Matemáticas 4to Grado (Texto y Trabajo)");
-                            det.setPrecioMaxReferencia(lstPrecioMax.get(8).getPrecioMaxMas());
-                            break;
-                        case "3.2":
-                            det.setDescripcionItem("Libros de Matemáticas 5to Grado (Texto y Trabajo)");
-                            det.setPrecioMaxReferencia(lstPrecioMax.get(9).getPrecioMaxMas());
-                            break;
-                        case "3.3":
-                            det.setDescripcionItem("Libros de Matemáticas 6to Grado (Texto y Trabajo)");
-                            det.setPrecioMaxReferencia(lstPrecioMax.get(10).getPrecioMaxMas());
-                            break;
-                        case "4.1":
-                            det.setDescripcionItem("Libros de Matemáticas 7mo Grado (Texto y Trabajo)");
-                            det.setPrecioMaxReferencia(lstPrecioMax.get(11).getPrecioMaxMas());
-                            break;
-                        case "4.2":
-                            det.setDescripcionItem("Libros de Matemáticas 8vo Grado (Texto y Trabajo)");
-                            det.setPrecioMaxReferencia(lstPrecioMax.get(12).getPrecioMaxMas());
-                            break;
-                        case "4.3":
-                            det.setDescripcionItem("Libros de Matemáticas 9no Grado (Texto y Trabajo)");
-                            det.setPrecioMaxReferencia(lstPrecioMax.get(13).getPrecioMaxMas());
-                            break;
-                        case "5.1":
-                            det.setDescripcionItem("Libros de Matemáticas 1er Año de Bachillerato (Texto)");
-                            det.setPrecioMaxReferencia(lstPrecioMax.get(14).getPrecioMaxMas());
-                            break;
-                        case "5.2":
-                            det.setDescripcionItem("Libros de Matemáticas 2do Año de Bachillerato (Texto)");
-                            det.setPrecioMaxReferencia(lstPrecioMax.get(15).getPrecioMaxMas());
-                            break;
                     }
-                    
-                    preTem = getPrecioMax(lstPreciosLibros, lstPreciosLibro.getNoItem());
+
+                    preTem = getPrecioMax(lstPrecios, preciosRefRubroEmp.getNoItem());
                     if (preTem != null) {
                         det.setPrecioUnitario(preTem.getPrecioReferencia());
                     }
-
-                    lstRpt.get(0).getLstDetItemOfertaGlobalLibros().add(det);
+                    lst.add(det);
                 }
                 break;
             case 3:
@@ -284,43 +241,43 @@ public class ReportesEJB {
 
                     switch ((i + 1)) {
                         case 1:
-                            det.setDescripcionItem("Zapatos para niña, parvularia");
+                            det.setDescripcionItem("Zapatos para niño, incial y parvularia");
                             det.setPrecioMaxReferencia(new BigDecimal("14.60"));
                             break;
                         case 2:
-                            det.setDescripcionItem("Zapatos para niño, parvularia");
+                            det.setDescripcionItem("Zapatos para niña, incial y parvularia");
                             det.setPrecioMaxReferencia(new BigDecimal("14.60"));
                             break;
                         case 3:
-                            det.setDescripcionItem("Zapatos para niña, primer ciclo");
-                            det.setPrecioMaxReferencia(new BigDecimal("14.60"));
-                            break;
-                        case 4:
                             det.setDescripcionItem("Zapatos para niño, primer ciclo");
                             det.setPrecioMaxReferencia(new BigDecimal("14.60"));
                             break;
-                        case 5:
-                            det.setDescripcionItem("Zapatos para niña, segundo ciclo");
+                        case 4:
+                            det.setDescripcionItem("Zapatos para niña, primer ciclo");
                             det.setPrecioMaxReferencia(new BigDecimal("14.60"));
                             break;
-                        case 6:
+                        case 5:
                             det.setDescripcionItem("Zapatos para niño, segundo ciclo");
                             det.setPrecioMaxReferencia(new BigDecimal("14.60"));
                             break;
-                        case 7:
-                            det.setDescripcionItem("Zapatos para niña, tercer ciclo");
+                        case 6:
+                            det.setDescripcionItem("Zapatos para niña, segundo ciclo");
                             det.setPrecioMaxReferencia(new BigDecimal("14.60"));
                             break;
-                        case 8:
+                        case 7:
                             det.setDescripcionItem("Zapatos para niño, tercer ciclo");
                             det.setPrecioMaxReferencia(new BigDecimal("14.60"));
                             break;
+                        case 8:
+                            det.setDescripcionItem("Zapatos para niña, tercer ciclo");
+                            det.setPrecioMaxReferencia(new BigDecimal("14.60"));
+                            break;
                         case 9:
-                            det.setDescripcionItem("Zapatos para niña, bachillerato");
+                            det.setDescripcionItem("Zapatos para niño, bachillerato");
                             det.setPrecioMaxReferencia(new BigDecimal("16.00"));
                             break;
                         case 10:
-                            det.setDescripcionItem("Zapatos para niño, bachillerato");
+                            det.setDescripcionItem("Zapatos para niña, bachillerato");
                             det.setPrecioMaxReferencia(new BigDecimal("16.00"));
                             break;
                     }
@@ -331,14 +288,19 @@ public class ReportesEJB {
                             break;
                         }
                     }
-                    lstRpt.get(0).getLstDetItemOfertaGlobal().add(det);
+                    lst.add(det);
                 }
                 break;
         }
+        return lst;
+    }
 
-        q = em.createQuery("SELECT d FROM DisMunicipioInteres d WHERE d.estadoEliminacion=0 and d.idCapaDistribucion.idMuestraInteres.idEmpresa.numeroNit=:nit and d.idCapaDistribucion.idMuestraInteres.idDetProcesoAdq.idDetProcesoAdq=:idDetProcesoAdq ORDER BY d.idMunicipio.codigoDepartamento.codigoDepartamento, d.idMunicipio.codigoMunicipio ASC", DisMunicipioInteres.class);
+    public List<DetMunIntOfertaGlobal> getLstMunIntOfertaGlobal(String nit, BigDecimal idRubro, BigDecimal idAnho) {
+        List<DetMunIntOfertaGlobal> lst = new ArrayList();
+        Query q = em.createQuery("SELECT d FROM DisMunicipioInteres d WHERE d.estadoEliminacion=0 and d.idCapaDistribucion.idMuestraInteres.idEmpresa.numeroNit=:nit and d.idCapaDistribucion.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and d.idCapaDistribucion.idMuestraInteres.idAnho.idAnho=:pIdAnho ORDER BY d.idMunicipio.codigoDepartamento.codigoDepartamento, d.idMunicipio.codigoMunicipio ASC", DisMunicipioInteres.class);
         q.setParameter("nit", nit);
-        q.setParameter("idDetProcesoAdq", idDetProcesoAdq);
+        q.setParameter("pIdRubro", idRubro);
+        q.setParameter("pIdAnho", idAnho);
         List<DisMunicipioInteres> lstMunicipios = q.getResultList();
 
         for (DisMunicipioInteres disMunicipioInteres : lstMunicipios) {
@@ -348,12 +310,9 @@ public class ReportesEJB {
             detMun.setCodigoMunicipio(disMunicipioInteres.getIdMunicipio().getCodigoMunicipio());
             detMun.setNombreMunicipio(disMunicipioInteres.getIdMunicipio().getNombreMunicipio());
 
-            lstRpt.get(0).getLstMunIntOfertaGlobal().add(detMun);
+            lst.add(detMun);
         }
-
-        //lstRpt.add(oferta);
-        //}
-        return lstRpt;
+        return lst;
     }
 
     public PreciosRefRubroEmp getPrecioMax(List<PreciosRefRubroEmp> lstPrecioMax, final String noItem) {
@@ -365,31 +324,17 @@ public class ReportesEJB {
         }));
     }
 
-    public List<DeclaracionJurada> getDeclaracionJurada(Empresa empresa, DetalleProcesoAdq idDetProcesoAdq, String ciudad) {
-        List<DeclaracionJurada> lstDeclaracion = new ArrayList();
-        Query q = em.createNativeQuery("SELECT * FROM VW_RPT_DECLARACION_JURADA2 WHERE nit_empresa=?1 and id_det_proceso_adq=?2");
+    public List<DeclaracionJurada> getDeclaracionJurada(Empresa empresa, DetalleProcesoAdq detRubro, String ciudad) {
+        Query q = em.createNamedQuery("Proveedor.DeclaracionJurada", DeclaracionJurada.class);
         q.setParameter(1, empresa.getNumeroNit());
-        q.setParameter(2, idDetProcesoAdq.getIdDetProcesoAdq());
+        q.setParameter(2, detRubro.getIdRubroAdq().getIdRubroInteres());
+        q.setParameter(3, detRubro.getIdProcesoAdq().getIdAnho().getIdAnho());
 
-        List lst = q.getResultList();
-        for (Object object : lst) {
-            Object[] datos = (Object[]) object;
-
-            DeclaracionJurada decla = new DeclaracionJurada();
-            decla.setCiudad(ciudad);
-            decla.setFecha(new Date());
-            decla.setRubro(datos[0].toString());
-            decla.setAnho(datos[1].toString());
-            decla.setRazonSocial(datos[2].toString());
-            decla.setRepresentanteLegal(datos[3].toString());
-            decla.setNitEmpresa(datos[4].toString());
-            decla.setDireccionEmpresa(datos[5].toString());
-            decla.setNitRepre(datos[6].toString());
-            decla.setDuiRepre(datos[7].toString());
-            decla.setDireccionRepre(datos[8].toString());
-
-            lstDeclaracion.add(decla);
+        List<DeclaracionJurada> lstDeclaracion = q.getResultList();
+        if (!lstDeclaracion.isEmpty()) {
+            lstDeclaracion.get(0).setCiudad(ciudad);
+            lstDeclaracion.get(0).setFecha(new Date());
         }
-        return lstDeclaracion;
+        return lstDeclaracion.isEmpty() ? new ArrayList() : lstDeclaracion;
     }
 }

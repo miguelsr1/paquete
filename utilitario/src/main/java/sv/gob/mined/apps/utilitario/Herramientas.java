@@ -269,12 +269,184 @@ public class Herramientas {
     public static String getHora(Date fecha) {
         return String.valueOf(new SimpleDateFormat("HH:mm").format(fecha));
     }
-    
-    public static String getFormatoMonto(BigDecimal monto){
+
+    public static String getFormatoMonto(BigDecimal monto) {
         return formatter.format(monto);
     }
-    
-    public static String getFormatoMonto2(BigDecimal monto){
+
+    public static String getFormatoMonto2(BigDecimal monto) {
         return formatter2.format(monto);
+    }
+
+    public static String getFormatoLetrasHoraYFecha(Date fecha) {
+        SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat sdfFecha = new SimpleDateFormat("dd/MMMM/yyyy");
+        
+        String[] hora = sdfHora.format(fecha).split(":");
+        String[] fechaStr = sdfFecha.format(fecha).split("/");
+
+        StringBuilder cadena;
+
+        cadena = triTexto(Integer.parseInt(hora[0])).append("horas con ").append(triTexto(Integer.parseInt(hora[1]))).append("minutos del día ").
+                append(triTexto(Integer.parseInt(fechaStr[0]))).append("de ").append(fechaStr[1]).append(" de ").append(triTexto(Integer.parseInt(fechaStr[2])));
+
+        return cadena.toString();
+    }
+    
+    public static String addDiasAFecha(Date fecha, int dias){
+        String fechaStr = "%s del mes de %s de %s";
+         
+        Calendar c = Calendar.getInstance();
+        c.setTime(fecha);
+        
+        c.add(Calendar.DATE, dias);
+        
+        Date tmp = c.getTime();
+        
+        fechaStr = String.format(fechaStr, getNumDia(tmp), getNomMes(tmp), getNumAnyo(tmp));
+        
+        return fechaStr;
+    }
+
+    private static StringBuilder triTexto(int n) {
+        StringBuilder result = new StringBuilder();
+        int centenas = n / 100;
+        int decenas = (n % 100) / 10;
+        int unidades = (n % 10);
+
+        switch (centenas) {
+            case 0:
+                break;
+            case 1:
+                if (decenas == 0 && unidades == 0) {
+                    result.append("cien ");
+                    return result;
+                } else {
+                    result.append("ciento ");
+                }
+                break;
+            case 2:
+                result.append("doscientos ");
+                break;
+            case 3:
+                result.append("trescientos ");
+                break;
+            case 4:
+                result.append("cuatrocientos ");
+                break;
+            case 5:
+                result.append("quinientos ");
+                break;
+            case 6:
+                result.append("seiscientos ");
+                break;
+            case 7:
+                result.append("setecientos ");
+                break;
+            case 8:
+                result.append("ochocientos ");
+                break;
+            case 9:
+                result.append("novecientos ");
+                break;
+            case 20:
+                result.append("dos mil ");
+                break;
+        }
+
+        switch (decenas) {
+            case 0:
+                break;
+            case 1:
+                if (unidades == 0) {
+                    result.append("diez ");
+                    return result;
+                } else if (unidades == 1) {
+                    result.append("once ");
+                    return result;
+                } else if (unidades == 2) {
+                    result.append("doce ");
+                    return result;
+                } else if (unidades == 3) {
+                    result.append("trece ");
+                    return result;
+                } else if (unidades == 4) {
+                    result.append("catorce ");
+                    return result;
+                } else if (unidades == 5) {
+                    result.append("quince ");
+                    return result;
+                } else {
+                    result.append("dieci");
+                }
+                break;
+            case 2:
+                if (unidades == 0) {
+                    result.append("veinte ");
+                    return result;
+                } else {
+                    result.append("veinti");
+                }
+                break;
+            case 3:
+                result.append("treinta ");
+                break;
+            case 4:
+                result.append("cuarenta ");
+                break;
+            case 5:
+                result.append("cincuenta ");
+                break;
+            case 6:
+                result.append("sesenta ");
+                break;
+            case 7:
+                result.append("setenta ");
+                break;
+            case 8:
+                result.append("ochenta ");
+                break;
+            case 9:
+                result.append("noventa ");
+                break;
+        }
+
+        if (decenas > 2 && unidades > 0) {
+            result.append("y ");
+        }
+
+        switch (unidades) {
+            case 0:
+                break;
+            case 1:
+                result.append("un ");
+                break;
+            case 2:
+                result.append("dos ");
+                break;
+            case 3:
+                result.append("tres ");
+                break;
+            case 4:
+                result.append("cuatro ");
+                break;
+            case 5:
+                result.append("cinco ");
+                break;
+            case 6:
+                result.append("seis ");
+                break;
+            case 7:
+                result.append("siete ");
+                break;
+            case 8:
+                result.append("ocho ");
+                break;
+            case 9:
+                result.append("nueve ");
+                break;
+        }
+
+        return result;
     }
 }

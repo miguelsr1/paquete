@@ -28,7 +28,14 @@
                 NOMBRE_MUNICIPIO_EMP    as nombreMunicipioEmp,
                 CANTIDAD_CONTRATO       as cantidadContrato,
                 MONTO_CONTRATO          as montoContrato,
-                ID_CONTRATO             as idContrato
+                ID_CONTRATO             as idContrato,
+                miembro_firma       as miembroFirma,
+                tel_director        as telDirector,
+                tel_director2       as telDirector2,
+                numero_telefono     as numeroTelefono,
+                num_telefono2       as telefonoEmp2,
+                num_telefono3       as telefonoEmp3,
+                fecha_emision       as fechaEmision
             FROM 
                 VW_RPT_RESUMEN_CONTRATACION 
             WHERE 
@@ -372,15 +379,18 @@
                 DESCRIPCION_RUBRO       as descripcionRubro,
                 NOMBRE_PRESENTANTE      as nombreRepresentante,
                 NUMERO_NIT              as nitRepresentante,
-                ID_DET_PROCESO_ADQ      as idDetProcesoAdq,
                 CAPACIDAD_ACREDITADA    as capacidadCalificada,
                 NUMERO_DUI              as duiRepresentante,
-                NIT_EMPRESA             as nitSociedad
+                NIT_EMPRESA             as nitSociedad,
+                fecha_modificacion      as fechaModificacion,
+                id_rubro_interes        as idRubroInteres,
+                id_anho                 as idAnho
             FROM 
                 VW_RPT_CABECERA_OFERTA_GLOBAL 
             WHERE 
                 nit_empresa=?1 and 
-                id_det_proceso_adq=?2
+                id_rubro_interes=?2 and
+                id_anho=?3
             ]]>
         </query>
     </named-native-query>

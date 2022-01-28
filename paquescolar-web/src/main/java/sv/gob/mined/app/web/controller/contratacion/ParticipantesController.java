@@ -4,7 +4,6 @@
  */
 package sv.gob.mined.app.web.controller.contratacion;
 
-import java.io.File;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -12,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
@@ -23,6 +24,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.CellEditEvent;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.VarSession;
+import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.ejb.ResolucionAdjudicativaEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
@@ -45,7 +47,7 @@ public class ParticipantesController implements Serializable {
 
     private int rowEdit = 0;
     private int estadoEdicion = 0;
-    private String url;
+    private int tmpIdNivel = 0;
     private String numItem;
     private String codigoEntidad;
     private String msjError = "";
@@ -58,18 +60,21 @@ public class ParticipantesController implements Serializable {
     private CatalogoProducto item;
     private DetalleProcesoAdq detalleProceso = new DetalleProcesoAdq();
     private NivelEducativo nivel;
-    private Participantes current = new Participantes();
+    private Participantes participante = new Participantes();
     private DetalleOfertas detalleSeleccionado;
     private SelectItem[] lstEstilos = new SelectItem[0];
     private List<DetalleOfertas> lstDetalleOferta = new ArrayList();
     private List<DetalleOfertas> lstDetalleOfertaLibros = new ArrayList();
     private List<PreciosRefRubroEmp> lstPreciosEmp = new ArrayList<>();
+    private List<BigDecimal> lstNiveles = new ArrayList();
     @EJB
     private ProveedorEJB proveedorEJB;
     @EJB
     private ResolucionAdjudicativaEJB resolucionAdjudicativaEJB;
     @EJB
     private UtilEJB utilEJB;
+    @EJB
+    private EntidadEducativaEJB entidadEducativaEJB;
 
     /**
      * Creates a new instance of ParticipantesController
@@ -79,18 +84,16 @@ public class ParticipantesController implements Serializable {
 
     @PostConstruct
     public void init() {
-        url = "";
-
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         if (params.containsKey("txtCodigoEntidad")) {
             if (params.containsKey("idParticipante")) {
                 VarSession.setVariableSessionED("2");
                 deshabilitado = false;
-                if (current.getIdParticipante() == null) {
-                    current = utilEJB.find(Participantes.class, new BigDecimal(params.get("idParticipante")));
+                if (participante.getIdParticipante() == null) {
+                    participante = utilEJB.find(Participantes.class, new BigDecimal(params.get("idParticipante")));
                 }
-                idParticipante = current.getIdParticipante();
-                codigoEntidad = current.getIdOferta().getCodigoEntidad().getCodigoEntidad();
+                idParticipante = participante.getIdParticipante();
+                codigoEntidad = params.get("txtCodigoEntidad");//participante.getIdOferta().getCodigoEntidad().getCodigoEntidad();
                 buscarItemsProveedor();
             }
         } else {
@@ -129,14 +132,6 @@ public class ParticipantesController implements Serializable {
 
     public void setEstadoEdicion(int estadoEdicion) {
         this.estadoEdicion = estadoEdicion;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public String getNumItem() {
@@ -184,19 +179,19 @@ public class ParticipantesController implements Serializable {
     }
 
     public void setSelected(Participantes participante) {
-        if (participante != null && current != null) {
-            if (current.equals(participante)) {
+        if (participante != null && participante != null) {
+            if (participante.equals(participante)) {
             } else {
-                current = participante;
+                participante = participante;
             }
         }
     }
 
     public Participantes getSelected() {
-        if (current == null) {
-            current = new Participantes();
+        if (participante == null) {
+            participante = new Participantes();
         }
-        return current;
+        return participante;
     }
 
     public DetalleOfertas getDetalleSeleccionado() {
@@ -248,7 +243,7 @@ public class ParticipantesController implements Serializable {
         setDeshabilitado(false);
         VarSession.removeVariableSession("codigoEntidad");
         VarSession.setVariableSessionED("2");
-        current = new Participantes();
+        participante = new Participantes();
         estadoEdicion = 2;
         mostrarMsj = false;
         mostraTblLibros = false;
@@ -259,10 +254,21 @@ public class ParticipantesController implements Serializable {
 
     public String update() {
         String urlRed = "reg02ReservaFondos.mined?includeViewParams=true&codigoEntidad=" + codigoEntidad + "&idParticipante=" + idParticipante;
-
+        Boolean isError = false;
+        Boolean isUtiles;
         try {
-            if (lstDetalleOferta == null || lstDetalleOferta.isEmpty()) {
-                JsfUtil.mensajeAlerta("Debe de agregar al menos un detalle a la oferta.");
+            isUtiles = (detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 2);
+            if (isUtiles) {
+                if (mostraTblLibros) {
+                    isError = lstDetalleOferta.isEmpty() && lstDetalleOfertaLibros.isEmpty();
+                }
+            } else {
+                isError = (lstDetalleOferta == null || lstDetalleOfertaLibros == null);
+            }
+
+            if (isError) {
+                JsfUtil.mensajeAlerta("Debe de agregar al menos un detalle a la oferta."
+                        + ((isUtiles && mostraTblLibros) ? "\nDebe de agregar al menos un detalle a la oferta de libros" : ""));
                 return "";
             }
 
@@ -282,19 +288,21 @@ public class ParticipantesController implements Serializable {
                     }
                 }
             }
-            for (DetalleOfertas det : lstDetalleOfertaLibros) {
-                if (det.getEstadoEliminacion().compareTo(BigInteger.ONE) == 0) {
-                    det.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
-                    det.setFechaEliminacion(new Date());
-                } else {
-                    if (det.getCantidad().compareTo(BigInteger.ZERO) == 0) {
-                        JsfUtil.mensajeAlerta("Al menos un libro de la oferta tiene cantidad de ITEMS con valor de CERO.");
-                        return "";
-                    }
+            if (mostraTblLibros) {
+                for (DetalleOfertas det : lstDetalleOfertaLibros) {
+                    if (det.getEstadoEliminacion().compareTo(BigInteger.ONE) == 0) {
+                        det.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
+                        det.setFechaEliminacion(new Date());
+                    } else {
+                        if (det.getCantidad().compareTo(BigInteger.ZERO) == 0) {
+                            JsfUtil.mensajeAlerta("Al menos un libro de la oferta tiene cantidad de ITEMS con valor de CERO.");
+                            return "";
+                        }
 
-                    if (det.getPrecioUnitario().compareTo(BigDecimal.ZERO) == 0) {
-                        JsfUtil.mensajeAlerta("Al menos un libro de la oferta tiene precio unitario de con valor de CERO.");
-                        return "";
+                        if (det.getPrecioUnitario().compareTo(BigDecimal.ZERO) == 0) {
+                            JsfUtil.mensajeAlerta("Al menos un libro de la oferta tiene precio unitario de con valor de CERO.");
+                            return "";
+                        }
                     }
                 }
             }
@@ -303,7 +311,7 @@ public class ParticipantesController implements Serializable {
             if (res == null) {
                 res = new ResolucionesAdjudicativas();
                 res.setIdEstadoReserva(utilEJB.find(EstadoReserva.class, BigDecimal.ONE));
-                res.setIdParticipante(current);
+                res.setIdParticipante(participante);
                 res.setValor(getMontoAdjudicado(false).add(getMontoAdjudicado(true)));
                 res.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
 
@@ -329,7 +337,7 @@ public class ParticipantesController implements Serializable {
 
             if (urlRed != null) {
                 proveedorEJB.guardarDetalleOferta(lstDetalleOferta);
-                if (!lstDetalleOfertaLibros.isEmpty()) {
+                if (mostraTblLibros && !lstDetalleOfertaLibros.isEmpty()) {
                     proveedorEJB.guardarDetalleOferta(lstDetalleOfertaLibros);
                 }
                 return urlRed;
@@ -386,106 +394,168 @@ public class ParticipantesController implements Serializable {
         mostrarMsj = false;
         showEstilo = false;
         mostraTblLibros = false;
-        lstEstilos = new SelectItem[0];
+        // lstEstilos = new SelectItem[0];
         lstDetalleOferta.clear();
         if (idParticipante != null && idParticipante.compareTo(BigDecimal.ZERO) != 0) {
-            current = utilEJB.find(Participantes.class, idParticipante);
-            detalleProceso = current.getIdOferta().getIdDetProcesoAdq();
+            participante = utilEJB.find(Participantes.class, idParticipante);
+            try {
+                detalleProceso = participante.getIdOferta().getIdDetProcesoAdq();
 
-            //verificar si el proveedor seleccionado posee precios de referencia
-            if (proveedorEJB.isPrecioRef(current.getIdEmpresa(), current.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho())) {
-                //cargar estilos, unicamente si el rubro es zapatos
-                if (detalleProceso.getIdRubroAdq().getIdRubroInteres().compareTo(new BigDecimal(3)) == 0) {
-                    File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + current.getIdEmpresa().getNumeroNit() + "/");
+                //verificar si el proveedor seleccionado posee precios de referencia
+                if (proveedorEJB.isPrecioRef(participante.getIdEmpresa().getNumeroNit(), participante.getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres(), participante.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho())) {
+                    //cargar estilos, unicamente si el rubro es zapatos
+                    /*if (detalleProceso.getIdRubroAdq().getIdRubroInteres().compareTo(new BigDecimal(3)) == 0) {
+                        File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + participante.getIdEmpresa().getNumeroNit() + "/");
 
-                    if (carpetaNfs.list() != null) {
-                        showEstilo = true;
-                        lstEstilos = new SelectItem[carpetaNfs.list().length + 1];
-                        int i = 0;
-                        lstEstilos[i] = new SelectItem("-", "Seleccione");
-                        i++;
-                        for (String string : carpetaNfs.list()) {
-                            lstEstilos[i] = new SelectItem(string, string);
+                        if (carpetaNfs.list() != null) {
+                            showEstilo = true;
+                            lstEstilos = new SelectItem[carpetaNfs.list().length + 1];
+                            int i = 0;
+                            lstEstilos[i] = new SelectItem("-", "Seleccione");
                             i++;
-                        }
-                    }
-                }
-
-                //cargar detalle de contratación
-                lstDetalleOferta = proveedorEJB.findDetalleOfertas(current, false);
-
-                if (detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 2) {
-                    if (detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 5) {
-                        mostraTblLibros = true;
-                        lstDetalleOfertaLibros = proveedorEJB.findDetalleOfertas(current, true);
-                    }
-                }
-
-                //verificar el estado de la resersolucion adjudicativa
-                ResolucionesAdjudicativas res = resolucionAdjudicativaEJB.findResolucionesAdjudicativasByIdParticipante(idParticipante);
-                int idResolucion;
-
-                if (res == null) {
-                    idResolucion = 1;
-                } else {
-                    idResolucion = res.getIdEstadoReserva().getIdEstadoReserva().intValue();
-                }
-
-                switch (idResolucion) {
-                    case 1://digitacion
-                    case 3://revertida
-                        lstPreciosEmp = proveedorEJB.findPreciosRefRubroEmpRubro(current.getIdEmpresa(), detalleProceso);
-
-                        //en el momento de creación del detalle de oferta, se agregaran todos los items calificados del proveedor
-                        //seleccionado con el objetivo de facilitar el ingreso de esta información
-                        if (lstDetalleOferta.isEmpty()) {
-                            for (PreciosRefRubroEmp preRefEmp : lstPreciosEmp) {
-                                DetalleOfertas det = new DetalleOfertas();
-                                det.setNoItem(preRefEmp.getNoItem());
-                                det.setIdNivelEducativo(preRefEmp.getIdNivelEducativo());
-                                det.setIdProducto(preRefEmp.getIdProducto());
-                                det.setConsolidadoEspTec(preRefEmp.getIdProducto().toString() + ", " + preRefEmp.getIdNivelEducativo().toString());
-                                det.setCantidad(BigInteger.ZERO);
-                                det.setPrecioUnitario(preRefEmp.getPrecioReferencia());
-                                det.setEstadoEliminacion(BigInteger.ZERO);
-                                det.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-                                det.setFechaInsercion(new Date());
-                                det.setModificativa(BigInteger.ZERO);
-                                det.setIdParticipante(current);
-
-                                if (preRefEmp.getIdProducto().getIdProducto().intValue() != 1) {
-                                    lstDetalleOferta.add(det);
-                                } else {
-                                    lstDetalleOfertaLibros.add(det);
-                                }
+                            for (String string : carpetaNfs.list()) {
+                                lstEstilos[i] = new SelectItem(string, string);
+                                i++;
                             }
                         }
+                    }*/
 
-                        modifDesac = false;
-                        break;
-                    case 2:
-                        JsfUtil.mensajeInformacion("Reserva de fondos APLICADA. Primero debe REVERTIR la reserva para realizar cambios.");
-                        url = null;
-                        modifDesac = true;
-                        break;
-                    case 4:
-                    case 5:
-                        JsfUtil.mensajeInformacion("La reserva de fondos se encuentra ANULADA/MODIFICADA, No se pueden realizar cambios.");
-                        url = null;
-                        modifDesac = true;
-                        break;
+                    //cargar detalle de contratación
+                    lstDetalleOferta = proveedorEJB.findDetalleOfertas(participante, false);
+
+                    /*if (detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 2) {
+                        if (detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 5
+                                && detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() < 8) {
+                            mostraTblLibros = true;
+                            lstDetalleOfertaLibros = proveedorEJB.findDetalleOfertas(participante, true);
+                        }
+                    }*/
+                    //verificar el estado de la resersolucion adjudicativa
+                    ResolucionesAdjudicativas res = resolucionAdjudicativaEJB.findResolucionesAdjudicativasByIdParticipante(idParticipante);
+                    int idResolucion;
+
+                    if (res == null) {
+                        idResolucion = 1;
+                    } else {
+                        idResolucion = res.getIdEstadoReserva().getIdEstadoReserva().intValue();
+                    }
+
+                    switch (idResolucion) {
+                        case 1://digitacion
+                        case 3://revertida
+                            lstPreciosEmp = proveedorEJB.findPreciosRefRubroEmpRubro(participante.getIdEmpresa(),
+                                    detalleProceso.getIdRubroAdq().getIdRubroInteres(),
+                                    detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho());
+                            lstNiveles = entidadEducativaEJB.getLstNivelesConMatriculaReportadaByIdProcesoAdqAndCodigoEntidad(detalleProceso.getIdProcesoAdq().getIdProcesoAdq(), participante.getIdOferta().getCodigoEntidad().getCodigoEntidad());
+
+                            //en el momento de creación del detalle de oferta, se agregaran todos los items calificados del proveedor
+                            //seleccionado con el objetivo de facilitar el ingreso de esta información
+                            if (lstDetalleOferta.isEmpty()) {
+                                for (PreciosRefRubroEmp preRefEmp : lstPreciosEmp) {
+                                    if (preRefEmp.getIdProducto().getIdProducto().intValue() != 1) {
+                                        for (BigDecimal idNivel : lstNiveles) {
+                                            BigDecimal temIdNivel = BigDecimal.ZERO;
+                                            if (detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) { //rubro uniforme
+                                                switch (idNivel.intValue()) {
+                                                    case 1:
+                                                    case 6:
+                                                    case 16:
+                                                    case 18:
+                                                        temIdNivel = idNivel;
+                                                        break;
+                                                    case 3://primer ciclo
+                                                    case 4://segundo ciclo
+                                                    case 5://tercer ciclo
+                                                    case 7://7o grado
+                                                    case 8://8o grado
+                                                    case 9://9o grado
+                                                    case 10://1o grado
+                                                    case 11://2o grado
+                                                    case 12://3o grado
+                                                    case 13://4o grado
+                                                    case 14://5o grado
+                                                    case 15://6o grado
+                                                        temIdNivel = new BigDecimal(2);
+                                                        break;
+                                                }
+                                            } else {//rubro de utiles o zapatos
+                                                temIdNivel = idNivel;
+                                            }
+
+                                            if (preRefEmp.getIdNivelEducativo().getIdNivelEducativo().compareTo(temIdNivel) == 0) {
+                                                DetalleOfertas det = new DetalleOfertas();
+                                                det.setNoItem(preRefEmp.getNoItem());
+                                                det.setIdNivelEducativo(preRefEmp.getIdNivelEducativo());
+                                                det.setIdProducto(preRefEmp.getIdProducto());
+                                                det.setConsolidadoEspTec(preRefEmp.getIdProducto().toString() + ", " + preRefEmp.getIdNivelEducativo().toString());
+                                                det.setCantidad(BigInteger.ZERO);
+                                                det.setPrecioUnitario(preRefEmp.getPrecioReferencia());
+                                                det.setEstadoEliminacion(BigInteger.ZERO);
+                                                det.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+                                                det.setFechaInsercion(new Date());
+                                                det.setModificativa(BigInteger.ZERO);
+                                                det.setIdParticipante(participante);
+
+                                                lstDetalleOferta.add(det);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            /*if (mostraTblLibros && lstDetalleOfertaLibros.isEmpty()) {
+                                lstPreciosEmp.forEach((preRefEmp) -> {
+                                    if (preRefEmp.getIdProducto().getIdProducto().intValue() == 1) {
+                                        lstNiveles.forEach((idNivel) -> {
+                                            if (preRefEmp.getIdNivelEducativo().getIdNivelEducativo().compareTo(idNivel) == 0) {
+                                                DetalleOfertas det = new DetalleOfertas();
+                                                det.setNoItem(preRefEmp.getNoItem());
+                                                det.setIdNivelEducativo(preRefEmp.getIdNivelEducativo());
+                                                det.setIdProducto(preRefEmp.getIdProducto());
+                                                det.setConsolidadoEspTec(preRefEmp.getIdProducto().toString() + ", " + preRefEmp.getIdNivelEducativo().toString());
+                                                det.setCantidad(BigInteger.ZERO);
+                                                det.setPrecioUnitario(preRefEmp.getPrecioReferencia());
+                                                det.setEstadoEliminacion(BigInteger.ZERO);
+                                                det.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
+                                                det.setFechaInsercion(new Date());
+                                                det.setModificativa(BigInteger.ZERO);
+                                                det.setIdParticipante(participante);
+
+                                                lstDetalleOfertaLibros.add(det);
+                                            }
+                                        });
+                                    }
+                                });
+                            }*/
+
+                            modifDesac = false;
+                            break;
+                        case 2:
+                            JsfUtil.mensajeInformacion("Reserva de fondos APLICADA. Primero debe REVERTIR la reserva para realizar cambios.");
+                            modifDesac = true;
+                            break;
+                        case 4:
+                        case 5:
+                            JsfUtil.mensajeInformacion("La reserva de fondos se encuentra ANULADA/MODIFICADA, No se pueden realizar cambios.");
+                            modifDesac = true;
+                            break;
+                    }
+                } else {
+                    //bandera para monstrar mensaje que el proveedor no tiene precios de referencia ingresados
+                    mostrarMsj = true;
                 }
-            } else {
-                //bandera para monstrar mensaje que el proveedor no tiene precios de referencia ingresados
-                mostrarMsj = true;
+            } catch (Exception e) {
+                Logger.getLogger(ParticipantesController.class.getName()).log(Level.INFO, "Error obteniendo el participante {0}", idParticipante);
+                JsfUtil.mensajeError("Ah ocurrido un error");
             }
+
         } else {
             lstDetalleOferta.clear();
         }
     }
 
     public void prepareNewDetalle() {
-        if (current != null) {
+        if (participante != null) {
             DetalleOfertas det = new DetalleOfertas();
             det.setConsolidadoEspTec("");
             det.setCantidad(BigInteger.ZERO);
@@ -493,7 +563,7 @@ public class ParticipantesController implements Serializable {
             det.setEstadoEliminacion(BigInteger.ZERO);
             det.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
             det.setFechaInsercion(new Date());
-            det.setIdParticipante(current);
+            det.setIdParticipante(participante);
             det.setModificativa(BigInteger.ZERO);
 
             lstDetalleOferta.add(det);
@@ -503,7 +573,7 @@ public class ParticipantesController implements Serializable {
     }
 
     public void prepareNewDetalleLibro() {
-        if (current != null) {
+        if (participante != null) {
             DetalleOfertas det = new DetalleOfertas();
             det.setConsolidadoEspTec("");
             det.setCantidad(BigInteger.ZERO);
@@ -511,7 +581,7 @@ public class ParticipantesController implements Serializable {
             det.setEstadoEliminacion(BigInteger.ZERO);
             det.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
             det.setFechaInsercion(new Date());
-            det.setIdParticipante(current);
+            det.setIdParticipante(participante);
             det.setModificativa(BigInteger.ZERO);
 
             lstDetalleOfertaLibros.add(det);
@@ -565,11 +635,11 @@ public class ParticipantesController implements Serializable {
 
                 if (det.getEstadoEliminacion().compareTo(BigInteger.ONE) == 0) {
                     JsfUtil.mensajeError("El detalle seleccionado no se puede modificar.");
-                    //msjError = "";
                 } else {
+                    rowEdit = event.getRowIndex();
+
                     if (event.getColumn().getColumnKey().contains("item")) {
                         numItem = event.getNewValue().toString();
-                        rowEdit = event.getRowIndex();
                         editarNumeroDeItem(det, event.getRowIndex(), libros);
                         det.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
                         det.setFechaModificacion(new Date());
@@ -614,38 +684,99 @@ public class ParticipantesController implements Serializable {
         if (numRow > 1) {
             numRow--;
         }
-        PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":descripcionItem");
-        PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":precioUnitario");
-        PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":subTotal");
-        PrimeFaces.current().ajax().update(nombreTabla + ":" + numRow + ":totalCantidad");
-        PrimeFaces.current().ajax().update(nombreTabla + ":" + numRow + ":total");
-        if (!msjError.isEmpty()) {
-            JsfUtil.mensajeAlerta(msjError);
+        try {
+            PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":descripcionItem");
+            PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":precioUnitario");
+            PrimeFaces.current().ajax().update(nombreTabla + ":" + rowEdit + ":subTotal");
+            PrimeFaces.current().ajax().update(nombreTabla + ":" + (numRow == 1 ? 0 : numRow) + ":totalCantidad");
+            PrimeFaces.current().ajax().update(nombreTabla + ":" + (numRow == 1 ? 0 : numRow) + ":total");
+            if (!msjError.isEmpty()) {
+                JsfUtil.mensajeAlerta(msjError);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ParticipantesController.class.getName()).log(Level.WARNING, "No se encontro el componenete {0}:{1}", new Object[]{nombreTabla, numRow});
         }
     }
 
     private void editarNumeroDeItem(DetalleOfertas det, int rowEdit, Boolean libros) {
         Boolean error = true;
+        Boolean isNivel = true;
+        tmpIdNivel = 0;
         msjError = "";
 
         for (PreciosRefRubroEmp precio : lstPreciosEmp) {
             if (precio.getNoItem().equals(numItem)) {
                 item = precio.getIdProducto();
                 nivel = precio.getIdNivelEducativo();
-                error = false;
+
+                for (BigDecimal idNivel : lstNiveles) {
+                    switch (idNivel.intValue()) {
+                        case 1:
+                        case 22:
+                            if (detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 8) {
+                                tmpIdNivel = 22;
+                            } else {
+                                tmpIdNivel = 1;
+                            }
+                            break;
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 7:
+                        case 8:
+                        case 9:
+                        case 10:
+                        case 11:
+                        case 12:
+                        case 13:
+                        case 14:
+                        case 15:
+                            if (detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
+                                tmpIdNivel = 2;
+                            } else {
+                                tmpIdNivel = idNivel.intValue();
+                            }
+                            break;
+                        case 6:
+                        case 16:
+                        case 17:
+                        case 18:
+                            tmpIdNivel = 6;
+                            break;
+                        case 24:
+                            tmpIdNivel = 24;
+                            break;
+                        case 23:
+                            tmpIdNivel = 23;
+                            break;
+                    }
+
+                    if (nivel.getIdNivelEducativo().intValue() == tmpIdNivel) {
+                        isNivel = false;
+                        break;
+                    }
+                }
+
+                error = isNivel;
                 break;
             }
         }
 
         if (error) {
             msjError = "El item ingresado no es válido.";
+            if (isNivel) {
+                msjError += "<br/>No se ha ingresado estadisticas en este nivel educativo.";
+            }
             det.setConsolidadoEspTec("");
         } else {
             if (item != null && nivel != null && !validarItemDuplicado(det, rowEdit, libros)) {
                 det.setConsolidadoEspTec(item.toString() + ", " + nivel.toString());
                 det.setIdProducto(item);
                 det.setIdNivelEducativo(nivel);
-                PreciosRefRubroEmp precio = proveedorEJB.getPrecioRef(current.getIdEmpresa(), nivel.getIdNivelEducativo(), item.getIdProducto(), current.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getAnho());
+                PreciosRefRubroEmp precio = proveedorEJB.getPrecioRef(participante.getIdEmpresa(), nivel.getIdNivelEducativo(), item.getIdProducto(),
+                        participante.getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres(),
+                        participante.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho());
                 if (precio != null) {
                     det.setPrecioUnitario(precio.getPrecioReferencia());
                 } else {
@@ -677,4 +808,35 @@ public class ParticipantesController implements Serializable {
         }
         return false;
     }
+
+    /*public void impPrueba() throws JarException, IOException, JRException {
+        HashMap param = new HashMap();
+        param.put("listado", participante.getDetalleOfertasList());
+
+        List<JasperPrint> rpt = new ArrayList();
+
+        rpt.add(JasperFillManager.fillReport(Reportes.getPathReporte("sv/gob/mined/apps/sispaqescolar/reporte/rptPrueba.jasper"), param,  new JREmptyDataSource(1)));
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        JRPdfExporter exporter = new JRPdfExporter();
+
+        exporter.setParameter(JRExporterParameter.JASPER_PRINT_LIST, rpt);
+        exporter.setParameter(JRPdfExporterParameter.IS_CREATING_BATCH_MODE_BOOKMARKS, Boolean.FALSE);
+        exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
+        exporter.exportReport();
+        
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = facesContext.getExternalContext();
+        HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+
+        response.setContentType("application/pdf");
+        response.setContentLength(baos.toByteArray().length);
+        response.setHeader("Content-disposition", "attachment; filename=prueba.pdf");
+        OutputStream outStream = response.getOutputStream();
+        outStream.write(baos.toByteArray());
+        outStream.flush();
+        outStream.close();
+        facesContext.responseComplete();
+        facesContext.renderResponse();
+    }*/
 }

@@ -28,6 +28,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -36,15 +37,14 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.chart.DonutChartModel;
-import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.util.JsfUtil;
-import sv.gob.mined.app.web.util.RecuperarProceso;
+import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.RptExcel;
 import sv.gob.mined.app.web.util.UtilFile;
 import sv.gob.mined.app.web.util.VarSession;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.CreditosEJB;
 import sv.gob.mined.paquescolar.ejb.EMailEJB;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
@@ -53,8 +53,7 @@ import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
 import sv.gob.mined.paquescolar.ejb.ServiciosJsonEJB;
 import sv.gob.mined.paquescolar.ejb.UtilEJB;
-import sv.gob.mined.paquescolar.model.Bancos;
-import sv.gob.mined.paquescolar.model.CuentaBancaria;
+import sv.gob.mined.paquescolar.model.ContratosOrdenesCompras;
 import sv.gob.mined.paquescolar.model.DetalleDocPago;
 import sv.gob.mined.paquescolar.model.DetalleModificativa;
 import sv.gob.mined.paquescolar.model.DetallePlanilla;
@@ -71,7 +70,8 @@ import sv.gob.mined.paquescolar.model.pojos.pagoprove.ResumenRequerimientoDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosBusquedaPlanillaDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosResumenPagosDto;
-import sv.gob.mined.paquescolar.model.view.DatosPreliminarRequerimiento;
+import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosResumenPagosPorReqYProveedorDto;
+import sv.gob.mined.paquescolar.model.pojos.pagoprove.InformeF14Dto;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 
 /**
@@ -80,14 +80,12 @@ import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
  */
 @ManagedBean
 @ViewScoped
-public class PagoProveedoresController extends RecuperarProceso implements Serializable {
+public class PagoProveedoresController extends RecuperarProcesoUtil implements Serializable {
 
     @EJB
     private ProveedorEJB proveedorEJB;
     @EJB
     private ServiciosJsonEJB serviciosEJB;
-    @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
     @EJB
     private UtilEJB utilEJB;
     @EJB
@@ -104,10 +102,6 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("Bundle");
 
     private int indexTab = 0;
-    private int idBanco;
-    private int idNivelEducativo;
-    private int credito = 0;
-    private int idDetProceso;
     private int rowEdit = 0;
     private int ajusteRenta = 0;
     private int idMes = 0;
@@ -131,20 +125,20 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     private Boolean dlgDetallePlanilla = false;
     private Boolean dlgEdtDetPlanilla = false;
     private Boolean dlgEdtDetDocPago = false;
+    private Boolean dlgDetPagoProveedor = false;
     private Boolean contratoModificado = false;
     private Boolean renderGrafico = false;
     private Boolean renderMontoRenta = false;
     private Boolean tipoPagoEntFinanciera = false;
     private Boolean isRubroUniforme = false;
     private Boolean isPlanillaLectura = false;
+    private Boolean contratoSinActaRecepcion = false;
 
     private String anho;
     private String anhoRptAnual;
     private String anhoRptMensual;
-    private String concepto;
     private String codigoEntidad = "";
     private String codigoDepartamento = "";
-    private String cuentaBancaria = "";
     private String numeroCheque = "";
     private String numeroRequerimiento = "";
     private String nombreEntFinanciera = "";
@@ -157,17 +151,26 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
 
     private BigDecimal idPlanilla;
     private BigDecimal idReq = BigDecimal.ZERO;
+    private BigDecimal idDetReq = BigDecimal.ZERO;
     private BigDecimal idRubro = BigDecimal.ZERO;
     private BigDecimal montoCheque = BigDecimal.ZERO;
     private BigDecimal cantidadCe = BigDecimal.ZERO;
     private BigDecimal cantidadPlanilla = BigDecimal.ZERO;
     private BigDecimal montoTotal;
+    private BigDecimal montoTransferido;
     private BigDecimal montoPagado = BigDecimal.ZERO;
     private BigDecimal montoPendiente = BigDecimal.ZERO;
     private BigDecimal montoReintegro = BigDecimal.ZERO;
     private BigDecimal montoSaldo = BigDecimal.ZERO;
     private BigDecimal montoSujetoRenta = BigDecimal.ZERO;
     private BigDecimal montoRenta = BigDecimal.ZERO;
+    private BigDecimal montoContrato = BigDecimal.ZERO;
+    private BigDecimal ceContratados = BigDecimal.ZERO;
+    private BigDecimal totalContratado = BigDecimal.ZERO;
+    private BigDecimal totalPagado = BigDecimal.ZERO;
+    private BigDecimal totalPendiente = BigDecimal.ZERO;
+    private BigDecimal totalReintegro = BigDecimal.ZERO;
+    private BigInteger cantidadContrato = BigInteger.ZERO;
 
     private DonutChartModel donutModel = new DonutChartModel();
 
@@ -191,34 +194,117 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
 
     private List<ResumenRequerimientoDto> lstResumenRequerimiento = new ArrayList();
     private List<DatosResumenPagosDto> lstResumenPago = new ArrayList();
+    private List<DatosResumenPagosPorReqYProveedorDto> lstResumenPagoPorProveedor = new ArrayList();
     private List<EntidadFinanciera> lstEntFinRequerimiento = new ArrayList();
-    private List<CuentaBancaria> lstCuentaBancaria = new ArrayList();
-    private List<DatosPreliminarRequerimiento> lstDatos = new ArrayList();
+
     private List<RequerimientoFondos> lstRequerimientoFondos = new ArrayList();
     private List<DetalleRequerimiento> lstDetalleRequerimiento = new ArrayList();
     private List<DetalleRequerimiento> lstDetalleRequerimientoSeleccionado = new ArrayList();
     private List<PlanillaPago> lstPlanillas = new ArrayList();
     private List<DetallePlanilla> lstDetallePlanilla = new ArrayList();
     private List<DatosProveDto> lstProveedores = new ArrayList();
+    private List<InformeF14Dto> lstF14 = new ArrayList();
     private List<DatosBusquedaPlanillaDto> lstBusquedaPlanillas = new ArrayList();
+
+    private StreamedContent file;
 
     public PagoProveedoresController() {
     }
 
     @PostConstruct
     public void ini() {
-        AnhoProcesoController controller = (AnhoProcesoController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "anhoProcesoController");
-        try {
-            anho = controller.getAnho().getAnho().substring(2);
-        } catch (Exception e) {
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, "ERROR CONTROLADO: No se ha asignado el año de contratación");
-        }
-        concepto = "DOTACION DE UNIFORMES, ZAPATOS Y PAQUETES DE UTILES ESCOLARES " + controller.getAnho();
-        codigoDepartamento = super.getDepartamento();
+        codigoDepartamento = getRecuperarProceso().getDepartamento();
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public BigDecimal getIdDetReq() {
+        return idDetReq;
+    }
+
+    public void setIdDetReq(BigDecimal idDetReq) {
+        this.idDetReq = idDetReq;
+    }
+
+    public Boolean getContratoSinActaRecepcion() {
+        return contratoSinActaRecepcion;
+    }
+
+    public void setContratoSinActaRecepcion(Boolean contratoSinActaRecepcion) {
+        this.contratoSinActaRecepcion = contratoSinActaRecepcion;
+    }
+
+    public BigDecimal getMontoContrato() {
+        return montoContrato;
+    }
+
+    public BigInteger getCantidadContrato() {
+        return cantidadContrato;
+    }
+
+    public Boolean getDlgDetPagoProveedor() {
+        return dlgDetPagoProveedor;
+    }
+
+    public void setDlgDetPagoProveedor(Boolean dlgDetPagoProveedor) {
+        this.dlgDetPagoProveedor = dlgDetPagoProveedor;
+    }
+
+    public BigDecimal getCeContratados() {
+        return ceContratados;
+    }
+
+    public void setCeContratados(BigDecimal ceContratados) {
+        this.ceContratados = ceContratados;
+    }
+
+    public BigDecimal getTotalContratado() {
+        return totalContratado;
+    }
+
+    public void setTotalContratado(BigDecimal totalContratado) {
+        this.totalContratado = totalContratado;
+    }
+
+    public BigDecimal getTotalPagado() {
+        return totalPagado;
+    }
+
+    public void setTotalPagado(BigDecimal totalPagado) {
+        this.totalPagado = totalPagado;
+    }
+
+    public BigDecimal getTotalPendiente() {
+        return totalPendiente;
+    }
+
+    public void setTotalPendiente(BigDecimal totalPendiente) {
+        this.totalPendiente = totalPendiente;
+    }
+
+    public BigDecimal getTotalReintegro() {
+        return totalReintegro;
+    }
+
+    public void setTotalReintegro(BigDecimal totalReintegro) {
+        this.totalReintegro = totalReintegro;
+    }
+
+    public List<DatosResumenPagosPorReqYProveedorDto> getLstResumenPagoPorProveedor() {
+        return lstResumenPagoPorProveedor;
+    }
+
+    public void setLstResumenPagoPorProveedor(List<DatosResumenPagosPorReqYProveedorDto> lstResumenPagoPorProveedor) {
+        this.lstResumenPagoPorProveedor = lstResumenPagoPorProveedor;
+    }
+
+    public StreamedContent getFile() {
+        return file;
+    }
+
+    public void setFile(StreamedContent file) {
+        this.file = file;
+    }
+
     public ReintegroRequerimiento getReintegroRequerimiento() {
         return reintegroRequerimiento;
     }
@@ -332,7 +418,9 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     }
 
     public void setIdMes(int idMes) {
-        this.idMes = idMes;
+        if (idMes != 0) {
+            this.idMes = idMes;
+        }
     }
 
     public Empresa getEmpresa() {
@@ -613,76 +701,17 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         this.planilla = planilla;
     }
 
-    public List<RequerimientoFondos> getLstReq() {
-        return lstRequerimientoFondos;
-    }
-
+//    public List<RequerimientoFondos> getLstReq() {
+//        return lstRequerimientoFondos;
+//    }
     public String getCodigoDepartamento() {
         return codigoDepartamento;
     }
 
     public void setCodigoDepartamento(String codigoDepartamento) {
-        this.codigoDepartamento = codigoDepartamento;
-    }
-
-    public String getCuentaBancaria() {
-        return cuentaBancaria;
-    }
-
-    public void setCuentaBancaria(String cuentaBancaria) {
-        this.cuentaBancaria = cuentaBancaria;
-    }
-
-    public List<Bancos> getLstBancos() {
-        return proveedorEJB.getLstBancos();
-    }
-
-    public void updateCuentaBancaria() {
-        lstCuentaBancaria = proveedorEJB.getLstCuentaByDepa(codigoDepartamento);
-    }
-
-    public List<CuentaBancaria> getLstCuentaBancaria() {
-        return lstCuentaBancaria;
-    }
-
-    public int getIdBanco() {
-        return idBanco;
-    }
-
-    public void setIdBanco(int idBanco) {
-        this.idBanco = idBanco;
-    }
-
-    public List<DatosPreliminarRequerimiento> getLstDatos() {
-        return lstDatos;
-    }
-
-    public String getConcepto() {
-        return concepto;
-    }
-
-    public void setConcepto(String concepto) {
-        this.concepto = concepto;
-    }
-
-    public int getNumeroModalidades() {
-        return lstDatos.size();
-    }
-
-    public int getCredito() {
-        return credito;
-    }
-
-    public void setCredito(int credito) {
-        this.credito = credito;
-    }
-
-    public int getIdNivelEducativo() {
-        return idNivelEducativo;
-    }
-
-    public void setIdNivelEducativo(int idNivelEducativo) {
-        this.idNivelEducativo = idNivelEducativo;
+        if (codigoDepartamento != null) {
+            this.codigoDepartamento = codigoDepartamento;
+        }
     }
 
     public String getNombreRubro() {
@@ -773,6 +802,14 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
 
     public void setMontoTotal(BigDecimal montoTotal) {
         this.montoTotal = montoTotal;
+    }
+
+    public BigDecimal getMontoTransferido() {
+        return montoTransferido;
+    }
+
+    public void setMontoTransferido(BigDecimal montoTransferido) {
+        this.montoTransferido = montoTransferido;
     }
 
     public BigDecimal getMontoPagado() {
@@ -987,7 +1024,9 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         detPla.setMontoOriginal(detalleReq.getMontoTotal());
         detPla.setCantidadActual(BigInteger.ZERO);
         detPla.setMontoActual(BigDecimal.ZERO);
-        detPla.setCodigoEntidad(utilEJB.find(VwCatalogoEntidadEducativa.class, detalleReq.getCodigoEntidad()));
+        detPla
+                .setCodigoEntidad(utilEJB.find(VwCatalogoEntidadEducativa.class,
+                        detalleReq.getCodigoEntidad()));
         detPla.setIdPlanilla(planillaPago);
         detPla.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
         detPla.setFechaInsercion(new Date());
@@ -1027,10 +1066,10 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
 
         //guardar datos de fecha y numero de cheque en el detalle de planilla
         if (isRubroUniforme && chequeFinanProve.getFechaCheque() != null && chequeFinanProve.getNumeroCheque() != null) {
-            for (DetallePlanilla detPla : lstDetallePlanilla) {
+            lstDetallePlanilla.forEach((detPla) -> {
                 detPla.setFechaCheque(chequeFinanProve.getFechaCheque());
                 detPla.setNumCheque(chequeFinanProve.getNumeroCheque());
-            }
+            });
         }
 
         if (planillaPago.getIdPlanilla() == null) {
@@ -1049,9 +1088,10 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         }
 
         planillaPago = pagoProveedoresEJB.guardarPlanillaPago(planillaPago);
-        for (DetallePlanilla detPla : lstDetallePlanilla) {
+        lstDetallePlanilla.forEach((detPla) -> {
             pagoProveedoresEJB.guardarDetallePlanilla(detPla);
-        }
+        });
+
         planillaPago = utilEJB.find(PlanillaPago.class, planillaPago.getIdPlanilla());
         lstDetallePlanilla = planillaPago.getDetallePlanillaList();
 
@@ -1069,6 +1109,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
             PrimeFaces.current().ajax().update("tbDetallePlanilla");
         } else {
             JsfUtil.mensajeError("Ocurrio un error en la operación.");
+
         }
     }
 
@@ -1076,7 +1117,8 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
      * Almacenar datos de los cheques necesarios
      */
     private void guardarCheques() {
-        planillaPago = utilEJB.find(PlanillaPago.class, planillaPago.getIdPlanilla());
+        planillaPago = utilEJB.find(PlanillaPago.class,
+                planillaPago.getIdPlanilla());
         BigDecimal mRenta = BigDecimal.ZERO;
         BigDecimal montoTotalActual;
 
@@ -1169,7 +1211,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
                 detPlanilla.setCantidadActual(detPlanilla.getIdDetalleDocPago().getCantidadActual());
                 detPlanilla.setMontoActual(detPlanilla.getIdDetalleDocPago().getMontoActual());
             } else {
-                JsfUtil.mensajeAlerta("El monto actual no puede superar al monto original!");
+                JsfUtil.mensajeAlerta("El monto actual no puede recuperarProcesoar al monto original!");
             }
         } else {
             detPlanilla.setCantidadActual(detPlanilla.getCantidadOriginal());
@@ -1227,23 +1269,23 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
                 if (detalleDocPago.getFechaModificativa() == null) {
                     msj += " - Fecha de Resolución.<br/>";
                 }
-                if (detalleDocPago.getCantidadActual() != null && detalleDocPago.getCantidadActual().intValue() < 0) {
+                if (detalleDocPago.getCantidadActual() == null || (detalleDocPago.getCantidadActual() != null && detalleDocPago.getCantidadActual().intValue() < 0)) {
                     msj += " - Cantidad actual del contrato.<br/>";
                 }
-                if (detalleDocPago.getMontoActual() != null && detalleDocPago.getMontoActual().intValue() < 0) {
+                if (detalleDocPago.getMontoActual() == null || (detalleDocPago.getMontoActual() != null && detalleDocPago.getMontoActual().intValue() < 0)) {
                     msj += " - Monto ($) actual del contrato.<br/>";
                 }
             }
 
             if (msj.isEmpty()) {
-                //validar, si existe modificación, que el monto actual no supere el monto original del contrato
+                //validar, si existe modificación, que el monto actual no recuperarProcesoe el monto original del contrato
                 if (contratoModificado) {
                     if (detalleDocPago.getCantidadActual() != null && detalleDocPago.getMontoActual() != null) {
                         montoValidado = pagoProveedoresEJB.validarMontoRequerido(codigoEntidad,
                                 detalleDocPago.getIdDetRequerimiento().getIdRequerimiento().getIdRequerimiento(),
                                 detalleDocPago.getIdDetRequerimiento().getIdDetRequerimiento(),
                                 detalleDocPago.getMontoActual());
-                        msj = montoValidado ? "" : "El monto actual no puede superar al monto original!";
+                        msj = montoValidado ? "" : "El monto actual no puede recuperarProcesoar al monto original!";
                     } else {
                         msj = "La cantidad actual o monto actual deben de tener un valor mayor que 0";
                     }
@@ -1266,9 +1308,13 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
                     dlgEdtDetDocPago = false;
 
                     if (!numeroRequerimiento.trim().isEmpty()) {
-                        requerimientoFondos = utilEJB.find(RequerimientoFondos.class, detalleRequerimiento.getIdRequerimiento().getIdRequerimiento());
+                        requerimientoFondos = utilEJB.find(RequerimientoFondos.class,
+                                detalleRequerimiento.getIdRequerimiento().getIdRequerimiento());
                     } else if (!codigoEntidad.trim().isEmpty()) {
-                        lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad, super.getProcesoAdquisicion(), VarSession.isVariableSession("departamentoUsuario") ? super.getDepartamento() : null);
+                        lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad,
+                                getRecuperarProceso().getProcesoAdquisicion(),
+                                VarSession.isVariableSession("departamentoUsuario") ? getRecuperarProceso().getDepartamento() : null,
+                                numeroRequerimiento.isEmpty() ? null : numeroRequerimiento);
                     }
 
                     PrimeFaces.current().executeScript("PF('dlgEdtDetDocPago').hide();");
@@ -1379,10 +1425,12 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         lstProveedores.clear();
         lstTipoDocImp.clear();
         lstDetalleRequerimientoSeleccionado.clear();
+        documentosAImprimir();
     }
 
     public void selectRequerimiento() {
-        requerimientoFondos = utilEJB.find(RequerimientoFondos.class, idReq); //recuperacion del requerimiento de fondos
+        requerimientoFondos = utilEJB.find(RequerimientoFondos.class,
+                idReq); //recuperacion del requerimiento de fondos
 
         dlgShowTipoPlanilla = false;
         dlgShowEntidadesFinancieras = false;
@@ -1444,7 +1492,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         if (proveedor == null || proveedor.getNumeroNit() == null || proveedor.getNumeroNit().isEmpty()) {
             JsfUtil.mensajeAlerta("Debe de seleccionar un proveedor");
         } else {
-            empresa = proveedorEJB.findEmpresaByNit(proveedor.getNumeroNit());
+            empresa = proveedorEJB.findEmpresaByNit(proveedor.getNumeroNit(), true);
             recuperarContratosByProveedor(idReq, proveedor.getNumeroNit());
             mostrarEditDePlanilla();
         }
@@ -1495,7 +1543,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
                     showDlgSeleccionProveedor();
                     PrimeFaces.current().ajax().update("dlgSeleccionProveedor");
                 } else {
-                    empresa = proveedorEJB.findEmpresaByNit(lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit());
+                    empresa = proveedorEJB.findEmpresaByNit(lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit(), true);
                     recuperarContratosByProveedor(requerimientoFondos.getIdRequerimiento(), lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit());
                 }
                 chequeFinanProve = cheque(3); //recuperar cheque para proveedor
@@ -1524,6 +1572,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
                     recuperarContratosByEntidadFinanciera(requerimientoFondos.getIdRequerimiento(), nombreEntFinanciera);
                 }
                 chequeFinanProve = cheque(0); //recuperar cheque para financiera
+                tipoPagoEntFinanciera = (chequeFinanProve.getTransferencia() == 1);
                 break;
         }
 
@@ -1614,55 +1663,76 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         dlgEdtDetPlanilla = false;
     }
 
+    //docPago
     public void showDlgEdtDetDocPago() {
-        ajusteRenta = 0;
-        contratoModificado = false;
-        contratoExtinguido = (detalleRequerimiento.getActivo() == 1);
-        renderMontoRenta = false;
-
-        detalleDocPago = proveedorEJB.getDetalleDocPago(detalleRequerimiento);
-
-        if (detalleDocPago.getIdDetalleDocPago() == null) {
-            detalleDocPago.setIdDetRequerimiento(detalleRequerimiento);
-            detalleDocPago.setIdTipoDocPago(1);
-        } else {
-            contratoModificado = (detalleDocPago.getContratoModif() == (short) 1);
+        contratoSinActaRecepcion = true;
+        if (getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getIdAnho().intValue() >= 8) {
+            /**
+             * Modificación
+             *
+             * 16/08/2021 Validar que exista acta de recepción a partir del año
+             * 2020
+             */
+            contratoSinActaRecepcion = pagoProveedoresEJB.contratoConActaDeRecepcion(new BigDecimal(detalleRequerimiento.getIdContrato()));
         }
-        isRubroUniforme = (detalleRequerimiento.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue() == 1)
-                || (detalleRequerimiento.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue() == 4)
-                || (detalleRequerimiento.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue() == 5);
+        if (contratoSinActaRecepcion) {
+            ajusteRenta = 0;
+            contratoModificado = false;
+            contratoExtinguido = (detalleRequerimiento.getActivo() == 1);
+            renderMontoRenta = false;
 
-        //verificación del tipo de rubro y personeria natural para determinar si aplica o no el calculo de renta
-        renderMontoRenta = (isRubroUniforme
-                && proveedorEJB.isPersonaNatural(detalleDocPago.getIdDetRequerimiento().getNumeroNit()));
-        //Si aplica, se realiza el calculo del monto de renta
-        calculoDeRenta();
+            detalleDocPago = proveedorEJB.getDetalleDocPago(detalleRequerimiento);
 
-        //verificar si ha existido modificativa al contrato original
-        if (!contratoModificado) {
-            contratoModificado = pagoProveedoresEJB.isContratoConModificativa(new BigDecimal(detalleRequerimiento.getIdContrato()));
-        }
-        if (contratoModificado) {
-            ResolucionesModificativas resModif = pagoProveedoresEJB.getUltimaModificativa(new BigDecimal(detalleRequerimiento.getIdContrato()));
-            if (resModif != null) {
-                if (resModif.getIdEstadoReserva().intValue() == 1) {
-                    JsfUtil.mensajeAlerta("Este contrato tiene una modificativa en estado de DIGITACIÓN");
-                } else {
-                    detalleDocPago.setFechaModificativa(resModif.getFechaResolucion());
-                    detalleDocPago.setCantidadActual(BigInteger.ZERO);
-                    detalleDocPago.setMontoActual(BigDecimal.ZERO);
-                    for (DetalleModificativa detalle : resModif.getDetalleModificativaList()) {
-                        if (detalle.getEstadoEliminacion() == 0) {
-                            if (detalle.getIdProducto().intValue() != 1) {
-                                detalleDocPago.setCantidadActual(detalleDocPago.getCantidadActual().add(new BigInteger(detalle.getCantidadNew().toString())));
+            if (detalleDocPago.getIdDetalleDocPago() == null) {
+                detalleDocPago.setIdDetRequerimiento(detalleRequerimiento);
+                detalleDocPago.setIdTipoDocPago(1);
+            } else {
+                contratoModificado = (detalleDocPago.getContratoModif() == (short) 1);
+            }
+            isRubroUniforme = (detalleRequerimiento.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue() == 1)
+                    || (detalleRequerimiento.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue() == 4)
+                    || (detalleRequerimiento.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres().intValue() == 5);
+
+            //verificar si ha existido modificativa al contrato original
+            if (!contratoModificado) {
+                contratoModificado = pagoProveedoresEJB.isContratoConModificativa(new BigDecimal(detalleRequerimiento.getIdContrato()));
+            }
+            if (contratoModificado) {
+                ResolucionesModificativas resModif = pagoProveedoresEJB.getUltimaModificativa(new BigDecimal(detalleRequerimiento.getIdContrato()));
+
+                if (resModif != null) {
+
+                    montoContrato = resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getMonto();
+                    cantidadContrato = resModif.getIdContrato().getIdResolucionAdj().getIdParticipante().getCantidad();
+
+                    if (resModif.getIdEstadoReserva().intValue() == 1) {
+                        JsfUtil.mensajeAlerta("Este contrato tiene una modificativa en estado de DIGITACIÓN");
+                    } else {
+                        detalleDocPago.setFechaModificativa(resModif.getFechaResolucion());
+                        detalleDocPago.setCantidadActual(BigInteger.ZERO);
+                        detalleDocPago.setMontoActual(BigDecimal.ZERO);
+                        for (DetalleModificativa detalle : resModif.getDetalleModificativaList()) {
+                            if (detalle.getEstadoEliminacion() == 0) {
+                                if (detalle.getIdProducto().intValue() != 1) {
+                                    detalleDocPago.setCantidadActual(detalleDocPago.getCantidadActual().add(new BigInteger(detalle.getCantidadNew().toString())));
+                                }
+                                detalleDocPago.setMontoActual(detalleDocPago.getMontoActual().add(detalle.getPrecioUnitarioNew().multiply(new BigDecimal(detalle.getCantidadNew()))));
                             }
-                            detalleDocPago.setMontoActual(detalleDocPago.getMontoActual().add(detalle.getPrecioUnitarioNew().multiply(new BigDecimal(detalle.getCantidadNew()))));
                         }
                     }
                 }
+            } else {
+                ContratosOrdenesCompras contrato = utilEJB.find(ContratosOrdenesCompras.class, new BigDecimal(detalleRequerimiento.getIdContrato()));
+                montoContrato = contrato.getIdResolucionAdj().getIdParticipante().getMonto();
+                cantidadContrato = contrato.getIdResolucionAdj().getIdParticipante().getCantidad();
             }
-        }
 
+            //verificación del tipo de rubro y personeria natural para determinar si aplica o no el calculo de renta
+            renderMontoRenta = (isRubroUniforme
+                    && proveedorEJB.isPersonaNatural(detalleDocPago.getIdDetRequerimiento().getNumeroNit()));
+            //Si aplica, se realiza el calculo del monto de renta
+            calculoDeRenta();
+        }
         dlgEdtDetDocPago = true;
     }
 
@@ -1698,109 +1768,6 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         buscarPlanillas();
     }
 
-    public void updateConcepto() {
-        String rubroStr = "";
-        detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
-        if (idRubro != null) {
-            rubroStr = (idRubro.intValue() == 1 ? "UNIFORMES" : (idRubro.intValue() == 2 ? "UTILES" : "ZAPATOS"));
-        }
-        String nivel = (idNivelEducativo == 1 ? "PAR" : (idNivelEducativo == 2 ? "BAS" : "MEDI"));
-        String proceso = "";
-        switch (detalleProcesoAdq.getIdDetProcesoAdq()) {
-            case 28:
-            case 29:
-            case 30:
-                proceso = "SOBREDEMANDA-";
-                break;
-            case 31:
-                proceso = "COMPLEMENTO-";
-                break;
-        }
-
-        concepto = "DOTACION DE UNIFORMES, ZAPATOS Y PAQUETES DE UTILES ESCOLARES 20" + anho
-                + "(RB." + proceso + rubroStr + "-"
-                + nivel + "" + (credito == 1 ? "" : "-CREDI") + ")";
-
-        lstDatos.clear();
-    }
-
-    public void generarDatosPreliminares() {
-        detalleProcesoAdq = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro);
-        idDetProceso = detalleProcesoAdq.getIdDetProcesoAdq();
-        lstDatos = proveedorEJB.getLstPreRequerimiento(idDetProceso, codigoDepartamento, credito, idNivelEducativo);
-    }
-
-    public void generarRequerimiento() {
-        provisional(idNivelEducativo, credito);
-    }
-
-    public void provisional(Integer idNivel, Integer cre) {
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
-        credito = cre;
-        updateConcepto(idNivel);
-        try {
-            proveedorEJB.generarRequerimiento(anho, codigoDepartamento, idBanco, cuentaBancaria, concepto,
-                    concepto, "12 - 01 Dotación de Uniformes, Zapatos y Útiles Escolares",
-                    VarSession.getVariableSessionUsuario(), credito == 1 ? "NO" : "SI",
-                    getTotalRequerimiento(), idNivel, idDetProceso);
-        } catch (Exception ex) {
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING,
-                    "ERROR CONTROLADO: Se genero el requerimiento de fondos");
-            JsfUtil.mensajeInsert();
-        }
-    }
-
-    private void updateConcepto(Integer idNivel) {
-        String rubroStr = "";
-        if (idRubro != null) {
-            rubroStr = (idRubro.intValue() == 1 ? "UNIFORMES" : (idRubro.intValue() == 2 ? "UTILES" : "ZAPATOS"));
-        }
-        String nivel = (idNivel == 1 ? "PAR" : (idNivel == 2 ? "BAS" : "MEDI"));
-        String proceso = "";
-        if (detalleProcesoAdq.getIdProcesoAdq().getDescripcionProcesoAdq().contains("SOBREDEMANDA")) {
-            proceso = "SOBREDEMANDA-";
-        } else if (detalleProcesoAdq.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MINI")) {
-            proceso = "COMPLEMENTO-";
-        }
-
-        concepto = "DOTACION DE UNIFORMES, ZAPATOS Y PAQUETES DE UTILES ESCOLARES 20" + anho
-                + "(RB." + proceso + rubroStr + "-"
-                + nivel + "" + (credito == 1 ? "" : "-CREDI") + ")";
-
-        lstDatos.clear();
-    }
-
-    public int getNumeroMatricula() {
-        int matricula = 0;
-        for (DatosPreliminarRequerimiento lstDato : lstDatos) {
-            matricula += lstDato.getCantidadTotal().intValue();
-        }
-
-        if (idRubro != null && idRubro != BigDecimal.ZERO) {
-            if (idRubro.intValue() == 1) {
-                return matricula / 4;
-            } else {
-                return matricula;
-            }
-        } else {
-            return matricula;
-        }
-    }
-
-    public BigDecimal getTotalRequerimiento() {
-        BigDecimal monto = BigDecimal.ZERO;
-        for (DatosPreliminarRequerimiento datosPreliminarRequerimiento : lstDatos) {
-            monto = monto.add(datosPreliminarRequerimiento.getMontoTotal());
-        }
-        if (idRubro != null && idRubro.intValue() == 1
-                && !detalleProcesoAdq.getIdProcesoAdq().getDescripcionProcesoAdq().contains("SOBRE")
-                && !detalleProcesoAdq.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MINI")) {
-            return monto.divide(new BigDecimal(2));
-        } else {
-            return monto;
-        }
-    }
-
     private void documentosAImprimir() {
         lstTipoDocImp.clear();
         lstTipoDocImp.add(new SelectItem(1, "Planilla de Pago"));
@@ -1823,23 +1790,15 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         showPnlCheques = false;
     }
 
-    public void buscarRequerimientosImp() {
-        if (idRubro != null) {
-            idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
-            lstRequerimientoFondos = proveedorEJB.getLstRequerimientos(codigoDepartamento, idDetProceso);
-        } else {
-            JsfUtil.mensajeAlerta("Debe de seleccionar un rubro de adquisición.");
-        }
-    }
-
     public void generarRptLiquidacion() {
-        lstEmailProveeCredito = pagoProveedoresEJB.getDatosRptLiquidacion(codigoDepartamento, anho, super.getProcesoAdquisicion().getIdProcesoAdq(), codigoEntidad);
+        anho = getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getAnho().substring(2);
+        lstEmailProveeCredito = pagoProveedoresEJB.getDatosRptLiquidacion(codigoDepartamento, anho, getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq(), codigoEntidad);
     }
 
     public void buscarRequerimientos() {
         if (idRubro != null && idRubro.intValue() > 0) {
             buscarReuerimientoqOrPlanilla();
-            lstResumenRequerimiento = proveedorEJB.getLstResumenRequerimiento(codigoDepartamento, idDetProceso);
+            lstResumenRequerimiento = proveedorEJB.getLstResumenRequerimiento(codigoDepartamento, detalleProcesoAdq.getIdDetProcesoAdq());
         } else {
             JsfUtil.mensajeAlerta("Debe de seleccionar un rubro de adquisición.");
         }
@@ -1851,12 +1810,13 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
                 lstProveedores = pagoProveedoresEJB.getDatosRptReintegroByIdReq(idReq);
                 if (lstProveedores.isEmpty()) {
                     JsfUtil.mensajeInformacion("El requerimiento seleccionado no tienen reintegro de fondos");
+
                 } else {
                     requerimientoFondos = utilEJB.find(RequerimientoFondos.class, idReq);
                     montoReintegro = BigDecimal.ZERO;
-                    for (DatosProveDto datosProveDto : lstProveedores) {
+                    lstProveedores.forEach((datosProveDto) -> {
                         montoReintegro = montoReintegro.add(datosProveDto.getMontoReintegro());
-                    }
+                    });
                     reintegroRequerimiento = pagoProveedoresEJB.getReintegroByIdReq(idReq);
                     if (reintegroRequerimiento.getIdReintegro() == null) {
                         reintegroRequerimiento.setEstadoEliminacion((short) 0);
@@ -1882,9 +1842,10 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     }
 
     public void recuperarRequerimientos() {
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        detalleProcesoAdq = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
+        anho = detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho().substring(2);
         isRubroUniforme = idRubro.intValue() == 1 || idRubro.intValue() == 4 || idRubro.intValue() == 5;
-        lstRequerimientoFondos = proveedorEJB.getLstRequerimientos(codigoDepartamento, idDetProceso);
+        lstRequerimientoFondos = proveedorEJB.getLstRequerimientos(codigoDepartamento, detalleProcesoAdq.getIdDetProcesoAdq());
     }
 
     public void buscarPlanillas() {
@@ -1907,19 +1868,23 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     private void buscarReuerimientoqOrPlanilla() {
         reiniciarVisibilidadCheques();
         isRubroUniforme = ((idRubro.intValue() == 1) || (idRubro.intValue() == 4) || (idRubro.intValue() == 5));
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        detalleProcesoAdq = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
     }
 
     public void buscarRequerimiento() {
         if (!numeroRequerimiento.trim().isEmpty()) {
-            requerimientoFondos = proveedorEJB.getRequerimientoByNumero(numeroRequerimiento, super.getDepartamento(), super.getProcesoAdquisicion().getIdProcesoAdq());
+            requerimientoFondos = proveedorEJB.getRequerimientoByNumero(numeroRequerimiento, (VarSession.isVariableSession("departamentoUsuario") ? getRecuperarProceso().getDepartamento() : null), getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq());
             if (requerimientoFondos == null) {
                 JsfUtil.mensajeInformacion("No se encontro el requerimiento con número: " + numeroRequerimiento);
+            } else if (!codigoEntidad.trim().isEmpty()) {
+                lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad, getRecuperarProceso().getProcesoAdquisicion(),
+                        VarSession.isVariableSession("departamentoUsuario") ? getRecuperarProceso().getDepartamento() : null,
+                        numeroRequerimiento);
             } else {
                 lstDetalleRequerimiento = requerimientoFondos.getDetalleRequerimientoList();
             }
         } else if (!codigoEntidad.trim().isEmpty()) {
-            lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad, super.getProcesoAdquisicion(), VarSession.isVariableSession("departamentoUsuario") ? super.getDepartamento() : null);
+            lstDetalleRequerimiento = proveedorEJB.getLstDetalleReqByCodEntidadAndProceso(codigoEntidad, getRecuperarProceso().getProcesoAdquisicion(), VarSession.isVariableSession("departamentoUsuario") ? getRecuperarProceso().getDepartamento() : null, null);
         }
 
         if (lstDetalleRequerimiento.isEmpty()) {
@@ -1927,85 +1892,93 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         }
     }
 
-    public void imprimirRequerimiento() {
-        //if (requerimientoFondos.getIdRequerimiento() != null) {
-        List<JasperPrint> jasperPrintList = new ArrayList();
-
-        jasperPrintList.add(imprimirRpt(requerimientoFondos, JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento), "rptRequerimientoFondos.jasper", "requerimientoFondosDet"));
-        jasperPrintList.add(imprimirRpt(requerimientoFondos, JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento), "rptResumenRequerimiento.jasper", "resumenRequerimientoFondos"));
-
-        Reportes.generarReporte(jasperPrintList, "requerimiento_" + codigoDepartamento.replace(" ", ""));
-        /*} else {
-            JsfUtil.mensajeAlerta("Debe de seleccionar un requerimiento de fondos");
-        }*/
-    }
-
     public void impRptPagoProve() {
-        List<JasperPrint> jasperPrintList = new ArrayList();
+        try {
+            List<JasperPrint> jasperPrintList = new ArrayList();
 
-        jasperPrintList.add(imprimirRptPagoProve(JsfUtil.getNombreDepartamentoByCodigo(super.getDepartamento())));
+            jasperPrintList.add(imprimirRptPagoProve(JsfUtil.getNombreDepartamentoByCodigo(getRecuperarProceso().getDepartamento())));
 
-        Reportes.generarReporte(jasperPrintList, "rptPagoProve_" + codigoDepartamento.replace(" ", ""));
+            Reportes.generarReporte(jasperPrintList, "rptPagoProve_" + codigoDepartamento.replace(" ", ""));
+        } catch (IOException | JRException ex) {
+            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void impRptReintegro() {
         if (reintegroRequerimiento.getIdReintegro() == null) {
             JsfUtil.mensajeAlerta("Primero debe de guardar los datos del cheque.");
         } else {
-            List<JasperPrint> jasperPrintList = new ArrayList();
+            try {
+                List<JasperPrint> jasperPrintList = new ArrayList();
 
-            jasperPrintList.add(imprimirRptReintegro(JsfUtil.getNombreDepartamentoByCodigo(super.getDepartamento())));
+                jasperPrintList.add(imprimirRptReintegro(JsfUtil.getNombreDepartamentoByCodigo(getRecuperarProceso().getDepartamento())));
 
-            Reportes.generarReporte(jasperPrintList, "rptReintegro_" + codigoDepartamento.replace(" ", ""));
+                Reportes.generarReporte(jasperPrintList, "rptReintegro_" + codigoDepartamento.replace(" ", ""));
+            } catch (IOException | JRException ex) {
+                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, "Error en el reporte de Reintegro {0}", reintegroRequerimiento);
+            }
         }
     }
 
     public void imprimirDocumentos() {
-        boolean tempChequeEntPro;
-        String rpt = "";
-        String pNombreCheque;
+        try {
 
-        List<JasperPrint> jasperPrintList = new ArrayList();
-        //artificio para impresion de planillas creadas previo a la tipificación de planillas
-        if (planillaPago.getIdEstadoPlanilla() == 0) {
-            tempChequeEntPro = planillaPago.getIdRequerimiento().getCredito() == 1;
-            pNombreCheque = nombreEntFinanciera;
-        } else {
-            tempChequeEntPro = showChequeEntProv;
-            switch (planillaPago.getIdTipoPlanilla()) {
-                case 1:
-                    pNombreCheque = lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getRazonSocial();
-                    break;
-                case 3:
-                    pNombreCheque = nombreEntFinanciera;
-                    break;
-                default:
-                    pNombreCheque = "";
-                    break;
+            boolean tempChequeEntPro = false;
+            String rpt = "";
+            String pNombreCheque = "";
+
+            List<JasperPrint> jasperPrintList = new ArrayList();
+            //artificio para impresion de planillas creadas previo a la tipificación de planillas
+
+            if (planillaPago == null || planillaPago.getIdEstadoPlanilla() == null) {
+                Logger.getLogger(PagoProveedoresController.class
+                        .getName()).log(Level.INFO, "Error en el estado de la planilla {0}", planillaPago);
+            } else if (planillaPago.getIdEstadoPlanilla() == 0) {
+                tempChequeEntPro = planillaPago.getIdRequerimiento().getCredito() == 1;
+                pNombreCheque = nombreEntFinanciera;
+            } else {
+                tempChequeEntPro = showChequeEntProv;
+                switch (planillaPago.getIdTipoPlanilla()) {
+                    case 1:
+                        pNombreCheque = lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getRazonSocial();
+                        break;
+                    case 3:
+                        pNombreCheque = nombreEntFinanciera;
+                        break;
+                    default:
+                        pNombreCheque = "";
+                        break;
+                }
+            }
+
+            for (Integer idRpt : tipoDocumentoImp) {
+                switch (idRpt) {
+                    case 1: //Planilla de Pago
+                        rpt = tempChequeEntPro ? "rptTransferenciaCrediCheque" : "rptTransferenciaCheque";
+                        break;
+                    case 2: //Matriz de Pago
+                        rpt = tempChequeEntPro ? "rptMatrizPagoCredito" : "rptMatrizPago";
+                        break;
+                    case 3: //Formato Entrega de Cheques
+                        rpt = tempChequeEntPro ? "rptFormatoEntregaChequeCredito" : "rptFormatoEntregaCheque";
+                        break;
+                    case 4: //Planilla de Reintegro
+                        rpt = "rptFormatoReintegro";
+                        break;
+                    case 5: //Planilla Renta
+                        rpt = "rptTransferenciaRenta";
+                        break;
+                }
+                jasperPrintList.add(imprimirRptPlanilla(rpt, pNombreCheque));
+            }
+            Reportes.generarReporte(jasperPrintList, "rptsPlanilla-" + planillaPago.getIdPlanilla());
+        } catch (IOException | JRException e) {
+            if (planillaPago != null & planillaPago.getIdPlanilla() != null) {
+                JsfUtil.mensajeError("Ah ocurrido un error en la generacion de los documentos contractuales. Id Planilla: " + planillaPago.getIdPlanilla());
+            } else {
+                JsfUtil.mensajeError("Ah ocurrido un error en la generacion de los documentos contractuales.");
             }
         }
-
-        for (Integer idRpt : tipoDocumentoImp) {
-            switch (idRpt) {
-                case 1: //Planilla de Pago
-                    rpt = tempChequeEntPro ? "rptTransferenciaCrediCheque" : "rptTransferenciaCheque";
-                    break;
-                case 2: //Matriz de Pago
-                    rpt = tempChequeEntPro ? "rptMatrizPagoCredito" : "rptMatrizPago";
-                    break;
-                case 3: //Formato Entrega de Cheques
-                    rpt = tempChequeEntPro ? "rptFormatoEntregaChequeCredito" : "rptFormatoEntregaCheque";
-                    break;
-                case 4: //Planilla de Reintegro
-                    rpt = "rptFormatoReintegro";
-                    break;
-                case 5: //Planilla Renta
-                    rpt = "rptTransferenciaRenta";
-                    break;
-            }
-            jasperPrintList.add(imprimirRptPlanilla(rpt, pNombreCheque));
-        }
-        Reportes.generarReporte(jasperPrintList, "rptsPlanilla-" + planillaPago.getIdPlanilla());
     }
 
     public JasperPrint imprimirRptPlanilla(String rpt, String pNombreCheque) {
@@ -2017,7 +1990,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         param.put("pIdPlanilla", planillaPago.getIdPlanilla().intValue());
         param.put("pAFavorDe", (short) (planillaPago.getIdTipoPlanilla() == 1 ? 3 : 0));
         param.put("pNombreCheque", pNombreCheque);
-        jp = reportesEJB.getRpt(param, PagoProveedoresController.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + rpt + ".jasper")));
+        jp = reportesEJB.getRpt(param, Reportes.getPathReporte("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + rpt + ".jasper"));
         return jp;
     }
 
@@ -2027,10 +2000,10 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         HashMap param = new HashMap();
         param.put("pEscudo", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
         param.put("pDepartamental", nombreDepartamento);
-        param.put("pUniforme", idDetProceso == 25 ? 1 : 0);
+        param.put("pUniforme", detalleProcesoAdq.getIdDetProcesoAdq() == 25 ? 1 : 0);
         param.put("pIdRequerimiento", req.getIdRequerimiento().intValue());
         param.put("pAnho", "20" + anho);
-        jp = reportesEJB.getRpt(param, PagoProveedoresController.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + nombreRpt)));
+        jp = reportesEJB.getRpt(param, Reportes.getPathReporte("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + nombreRpt));
         return jp;
     }
 
@@ -2042,12 +2015,12 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         param.put("pNombreDepartamento", nombreDepartamento);
         param.put("pAnho", "20" + anho);
         param.put("pUsuario", VarSession.getVariableSessionUsuario());
-        param.put("pPagadorDepartamental", pagoProveedoresEJB.getNombrePagadorByCodDepa(super.getDepartamento()));
+        param.put("pPagadorDepartamental", pagoProveedoresEJB.getNombrePagadorByCodDepa(getRecuperarProceso().getDepartamento()));
         DatosProveDto datos = new DatosProveDto();
         datos.setLstDetalle(lstEmailProveeCredito);
         List<DatosProveDto> lst = new ArrayList();
         lst.add(datos);
-        jp = reportesEJB.getRpt(param, PagoProveedoresController.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoProvee.jasper")), lst);
+        jp = reportesEJB.getRpt(param, Reportes.getPathReporte("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoProvee.jasper"), lst);
         return jp;
     }
 
@@ -2059,7 +2032,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         param.put("pNombreDepartamento", nombreDepartamento);
         param.put("pAnho", "20" + anho);
         param.put("pUsuario", VarSession.getVariableSessionUsuario());
-        param.put("pPagadorDepartamental", pagoProveedoresEJB.getNombrePagadorByCodDepa(super.getDepartamento()));
+        param.put("pPagadorDepartamental", pagoProveedoresEJB.getNombrePagadorByCodDepa(getRecuperarProceso().getDepartamento()));
 
         param.put("pConcepto", requerimientoFondos.getConcepto());
         param.put("pFuenteFinanciamiento", requerimientoFondos.getFuenteFinanciamiento());
@@ -2072,7 +2045,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         datos.setLstDetalle(lstProveedores);
         List<DatosProveDto> lst = new ArrayList();
         lst.add(datos);
-        jp = reportesEJB.getRpt(param, PagoProveedoresController.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoReintegro.jasper")), lst);
+        jp = reportesEJB.getRpt(param, Reportes.getPathReporte("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoReintegro.jasper"), lst);
         return jp;
     }
 
@@ -2090,11 +2063,13 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
             if (entidadEducativa == null) {
                 JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + codigoEntidad);
             } else {
-                if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(super.getDepartamento())) {
+                if (entidadEducativa.getCodigoDepartamento().getCodigoDepartamento().equals(getRecuperarProceso().getDepartamento())) {
 
                 } else {
-                    JsfUtil.mensajeAlerta("El codigo del centro escolar no pertenece al departamento " + JsfUtil.getNombreDepartamentoByCodigo(super.getDepartamento()) + "<br/>"
-                            + "Departamento del CE: " + entidadEducativa.getCodigoEntidad() + " es " + entidadEducativa.getCodigoDepartamento().getNombreDepartamento());
+                    if (getRecuperarProceso().getDepartamento() != null) {
+                        JsfUtil.mensajeAlerta("El codigo del centro escolar no pertenece al departamento " + JsfUtil.getNombreDepartamentoByCodigo(getRecuperarProceso().getDepartamento()) + "<br/>"
+                                + "Departamento del CE: " + entidadEducativa.getCodigoEntidad() + " es " + entidadEducativa.getCodigoDepartamento().getNombreDepartamento());
+                    }
                 }
             }
         } else {
@@ -2107,13 +2082,11 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
             emailUnico = pagoProveedoresEJB.getEMailEntidadFinancieraById(lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getCodEntFinanciera());
             lstEmailProveeCredito = pagoProveedoresEJB.getLstNitProveeByIdPlanilla(planillaPago.getIdPlanilla());
 
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
-            for (DatosProveDto datosProveDto : lstEmailProveeCredito) {
-                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Email {0} Proveedor {1} {2}", new String[]{datosProveDto.getCorreoElectronico(), datosProveDto.getRazonSocial(), datosProveDto.getNumeroNit()});
-            }
+            //Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
+            //lstEmailProveeCredito.forEach((datosProveDto) -> { Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Email {0} Proveedor {1} {2}", new String[]{datosProveDto.getCorreoElectronico(), datosProveDto.getRazonSocial(), datosProveDto.getNumeroNit()});});
         } else if (planillaPago.getIdTipoPlanilla() == 1) {
             emailUnico = pagoProveedoresEJB.getEMailProveedorByNit(lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit());
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
+            //Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
         }
 
         if (emailUnico == null || emailUnico.isEmpty()) {
@@ -2124,24 +2097,42 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     }
 
     public void enviarCorreos() {
-        if (null == planillaPago.getIdTipoPlanilla()) {
+        String correoNotificacionAmbiente = utilEJB.getValorDeParametro("CORREO_NOTIFICACION_AMBIENTE");
+        String emailTemp = utilEJB.getValorDeParametro("CORREO_NOTIFICACION");
+
+        if (planillaPago.getIdTipoPlanilla() == null) {
         } else {
             switch (planillaPago.getIdTipoPlanilla()) {
                 case 1:
                 case 3:
                     //envio de notificacion a Entidad/Proveedor
-                    //eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", "miguel.sanchez@mined.gob.sv", getMensajeDeNotificacion(planillaPago, planillaPago.getDetallePlanillaList(), false));
-                    eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", emailUnico, getMensajeDeNotificacion(planillaPago, lstDetallePlanilla, false));
+                    if (correoNotificacionAmbiente.equals("PRODUCCION")) {
+                        emailTemp = emailUnico;
+                    }
+
+                    eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ",
+                            emailTemp,
+                            getMensajeDeNotificacion(planillaPago, lstDetallePlanilla, false),
+                            codigoDepartamento,
+                            JsfUtil.getSessionMailG("2"));
 
                     //Si es planilla tipo credito, enviar notificacion a proveedores incluidos en la planilla de pago
                     if (planillaPago.getIdTipoPlanilla() == 3) {
                         for (DatosProveDto datosProveDto : lstEmailProveeCredito) {
+                            if (correoNotificacionAmbiente.equals("PRODUCCION")) {
+                                emailTemp = datosProveDto.getCorreoElectronico();
+                            }
                             if (datosProveDto.getCorreoElectronico() != null && !datosProveDto.getCorreoElectronico().isEmpty()) {
-                                //eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", "miguel.sanchez@mined.gob.sv", getMensajeDeNotificacion(planillaPago, pagoProveedoresEJB.getLstDetallePlanillaByIdPlanillaAndNit(planillaPago.getIdPlanilla(), datosProveDto.getNumeroNit()), true));
-                                eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", datosProveDto.getCorreoElectronico(), getMensajeDeNotificacion(planillaPago, pagoProveedoresEJB.getLstDetallePlanillaByIdPlanillaAndNit(planillaPago.getIdPlanilla(), datosProveDto.getNumeroNit()), true));
+                                eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ",
+                                        emailTemp,
+                                        getMensajeDeNotificacion(planillaPago, pagoProveedoresEJB.getLstDetallePlanillaByIdPlanillaAndNit(planillaPago.getIdPlanilla(), datosProveDto.getNumeroNit()), true),
+                                        codigoDepartamento,
+                                        JsfUtil.getSessionMailG("2"));
                             }
                         }
                     }
+
+                    pagoProveedoresEJB.planillaNotificada(planillaPago.getIdPlanilla());
                     break;
                 default:
                     break;
@@ -2158,6 +2149,8 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
      */
     private String getMensajeDeNotificacion(PlanillaPago plaPago, List<DetallePlanilla> lstDetallePlanilla, boolean isProveedores) {
         StringBuilder sb = new StringBuilder("");
+        BigDecimal montoTotal = BigDecimal.ZERO;
+        BigDecimal montoRenta = BigDecimal.ZERO;
         if (isProveedores) {
             sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.cabeceraNotificacion"), lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getRazonSocial()));
         } else {
@@ -2174,8 +2167,13 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
             sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.cabeceraMensaje"), planillaPago.getIdRequerimiento().getFormatoRequerimiento(), JsfUtil.getFormatoNum(planillaPago.getMontoTotal(), false)));
         }
         sb.append(RESOURCE_BUNDLE.getString("pagoprov.email.tablaDetalle.header"));
-        for (DetallePlanilla detalle : lstDetallePlanilla) {
+        lstDetallePlanilla.forEach((detalle) -> {
             sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.tablaDetalle.detalle"), detalle.getCodigoEntidad().getCodigoEntidad(), detalle.getCodigoEntidad().getNombre(), detalle.getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit(), detalle.getIdDetalleDocPago().getIdDetRequerimiento().getRazonSocial(), JsfUtil.getFormatoNum(detalle.getMontoActual(), false)));
+        });
+
+        for (DetallePlanilla detalle : lstDetallePlanilla) {
+            montoTotal = montoTotal.add(detalle.getMontoActual());
+            montoRenta = montoRenta.add(detalle.getIdDetalleDocPago().getMontoRenta() == null ? BigDecimal.ZERO : detalle.getIdDetalleDocPago().getMontoRenta());
         }
         //agregando fila de totales (unicamente si la planilla de pago contiene más de 1 contrato)
         if (lstDetallePlanilla.size() > 1) {
@@ -2183,13 +2181,16 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
                     JsfUtil.getFormatoNum(getMontoActualTotal(), false)));
         }
         sb.append(RESOURCE_BUNDLE.getString("pagoprov.email.tablaDetalle.fin"));
-        sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.finNotificacion"), JsfUtil.getFechaString(planillaPago.getFechaInsercion()), JsfUtil.getNombreDepartamentoByCodigo(super.getDepartamento())));
+
+        sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.montoPagar"), montoTotal.add(montoRenta.negate())));
+
+        sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.finNotificacion"), JsfUtil.getFechaString(planillaPago.getFechaInsercion()), JsfUtil.getNombreDepartamentoByCodigo(getRecuperarProceso().getDepartamento())));
 
         return sb.toString();
     }
 
     public void createDonutModel() {
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        detalleProcesoAdq = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
         renderGrafico = true;
 
         generarResumenPagos();
@@ -2221,21 +2222,22 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
 
     private void generarResumenPagos() {
         if (codigoDepartamento.equals("00") && (Integer) VarSession.getVariableSession("idTipoUsuario") == 1) {
-            lstResumenPago = serviciosEJB.getResumenPagoJsonByDetProcesoAdq(idDetProceso);
+            lstResumenPago = serviciosEJB.getResumenPagoJsonByDetProcesoAdq(detalleProcesoAdq.getIdDetProcesoAdq());
         } else {
-            lstResumenPago = serviciosEJB.getResumenPagoJsonByDepaAndDetProcesoAdq(codigoDepartamento, idDetProceso);
+            lstResumenPago = serviciosEJB.getResumenPagoJsonByDepaAndDetProcesoAdq(codigoDepartamento, detalleProcesoAdq.getIdDetProcesoAdq());
         }
 
-        cantidadCe = cantidadPlanilla = montoTotal = montoPagado = montoPendiente = montoReintegro = montoSaldo = BigDecimal.ZERO;
-        for (DatosResumenPagosDto resumenPagoJson : lstResumenPago) {
+        cantidadCe = cantidadPlanilla = montoTotal = montoPagado = montoTransferido = montoPendiente = montoReintegro = montoSaldo = BigDecimal.ZERO;
+        lstResumenPago.forEach((resumenPagoJson) -> {
             cantidadCe = cantidadCe.add(resumenPagoJson.getCantidadCe());
             cantidadPlanilla = cantidadPlanilla.add(resumenPagoJson.getCantidadPlanilla());
             montoTotal = montoTotal.add(resumenPagoJson.getMontoTotal());
+            montoTransferido = montoTransferido.add(resumenPagoJson.getMontoTransferido());
             montoPagado = montoPagado.add(resumenPagoJson.getMontoPagado());
             montoPendiente = montoPendiente.add(resumenPagoJson.getMontoPendiente());
             montoReintegro = montoReintegro.add(resumenPagoJson.getMontoReintegro());
             montoSaldo = montoSaldo.add(resumenPagoJson.getMontoSaldo());
-        }
+        });
     }
 
     public void generarArchivoDePagoFinaciera() {
@@ -2283,6 +2285,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
                     notificacion();
                     UtilFile.downloadFileTextoPlano(sb.toString(), "transferencia-" + planillaPago.getIdPlanilla(), UtilFile.EXTENSION_CSV);
                     Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Archivo: Genera: {0}\n======================================\n{1}", new Object[]{VarSession.getVariableSessionUsuario(), sb.toString()});
+
                 } catch (IOException ex) {
                     Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -2292,8 +2295,8 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
 
     public void buscarLstRentaProve() {
         if (!numeroNit.isEmpty()) {
-            empresa = proveedorEJB.findEmpresaByNit(numeroNit);
-            lstProveedores = pagoProveedoresEJB.getLstDatosProveDto(anho, numeroNit, null);
+            empresa = proveedorEJB.findEmpresaByNit(numeroNit, true);
+            lstProveedores = pagoProveedoresEJB.getLstDatosProveDto(anho, numeroNit, null, VarSession.getVariableSessionUsuario());
         } else {
             JsfUtil.mensajeInformacion("Debe de ingresar un NIT o un requerimiento de fondos");
         }
@@ -2303,11 +2306,11 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
             montoTotal = BigDecimal.ZERO;
             montoSujetoRenta = BigDecimal.ZERO;
             montoRenta = BigDecimal.ZERO;
-            for (DatosProveDto rentaProveDto : lstProveedores) {
+            lstProveedores.forEach((rentaProveDto) -> {
                 montoTotal = montoTotal.add(rentaProveDto.getMontoActual());
                 montoSujetoRenta = montoSujetoRenta.add(rentaProveDto.getMontoRetencion());
                 montoRenta = montoRenta.add(rentaProveDto.getMontoRenta());
-            }
+            });
         }
     }
 
@@ -2318,58 +2321,58 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
             JsfUtil.mensajeAlerta("Debe de seleccionar un mes");
         } else {
             if (numeroRequerimiento.isEmpty()) {
-                lstProveedores = pagoProveedoresEJB.getDatosRptRentaMensual(codigoDepartamento, idMes, Integer.parseInt(anho));
+                lstProveedores = pagoProveedoresEJB.getDatosRptRentaMensual(codigoDepartamento, idMes, Integer.parseInt(anho), VarSession.getVariableSessionUsuario());
             } else {
-                lstProveedores = pagoProveedoresEJB.getDatosRptRentaMensualByRequerimiento(codigoDepartamento, idMes, Integer.parseInt(anho), numeroRequerimiento);
+                lstProveedores = pagoProveedoresEJB.getDatosRptRentaMensualByRequerimiento(codigoDepartamento, idMes, Integer.parseInt(anho), numeroRequerimiento, VarSession.getVariableSessionUsuario());
             }
             if (lstProveedores.isEmpty()) {
                 JsfUtil.mensajeInformacion("No se encontraron datos");
 
             } else {
-                RptExcel.generarRptRentaMensual(lstProveedores, anho);
+                RptExcel.generarRptRentaMensual(lstProveedores);
+                //RptExcel.generarRptGenerico(lstProveedores, "rentaMensual", 2);
             }
         }
     }
 
     public void generarArchivoF910() {
-        BigDecimal montoRetencionTotal = BigDecimal.ZERO;
-        BigDecimal montoRentaTotal = BigDecimal.ZERO;
-        try {
-            if (anho.length() == 2) {
-                anho = "20" + anho;
-            }
-            lstProveedores = pagoProveedoresEJB.getDatosF910(codigoDepartamento, Integer.parseInt(anho));
-            if (lstProveedores.isEmpty()) {
-                JsfUtil.mensajeInformacion("No se existen datos para el año seleccionado");
-            } else {
-                StringBuilder sb = new StringBuilder();
+        anho = getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getAnho();
+        lstProveedores = pagoProveedoresEJB.getDatosF910(codigoDepartamento, Integer.parseInt(anho));
+        if (lstProveedores.isEmpty()) {
+            JsfUtil.mensajeInformacion("No se existen datos para el año seleccionado");
 
-                for (DatosProveDto rentaProveDto : lstProveedores) {
-                    sb.append(JsfUtil.formatearNumero(40, rentaProveDto.getRazonSocial().replace("ñ", "Ñ"), false));
-                    sb.append(JsfUtil.formatearNumero(14, rentaProveDto.getNumeroNit().replace("-", ""), false));
-                    sb.append("11");
-                    montoRetencionTotal = montoRetencionTotal.add(rentaProveDto.getMontoRetencion());
-                    montoRentaTotal = montoRentaTotal.add(rentaProveDto.getMontoRenta());
-                    sb.append(JsfUtil.formatoNumeroF910(15, rentaProveDto.getMontoRetencion(), true));
-                    sb.append(JsfUtil.formatoNumeroF910(15, rentaProveDto.getMontoRenta(), true));
-                    sb.append(JsfUtil.formatearNumero(15, "0", true));
-                    sb.append(JsfUtil.formatearNumero(15, "0", true));
-                    sb.append(JsfUtil.formatearNumero(15, "0", true));
-                    sb.append(JsfUtil.formatearNumero(15, "0", true));
-                    sb.append(JsfUtil.formatearNumero(15, "0", true));
-                    sb.append(JsfUtil.formatearNumero(15, "0", true));
-                    sb.append(anho);
-                    sb.append("\r\n");
-                }
-                UtilFile.downloadFileTextoPlano(sb.toString(), "f910", UtilFile.EXTENSION_TXT);
+        } else {
+            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Generacion de archivo F910 ver. WEB");
+            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Departamento: {0}", codigoDepartamento);
+
+            RptExcel.generarRptRentaAnual(lstProveedores, anho);
+        }
+    }
+
+    public void generarArchivoF14() {
+        lstF14 = pagoProveedoresEJB.getDatosF14(codigoDepartamento,
+                (idMes < 10 ? "0".concat(String.valueOf(idMes)) : String.valueOf(idMes)).concat(getRecuperarProceso().getProcesoAdquisicion().getIdAnho().getAnho()));
+        if (lstF14.isEmpty()) {
+            JsfUtil.mensajeInformacion("No se existen datos para el año seleccionado");
+
+        } else {
+            try {
                 Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Generacion de archivo F910 ver. WEB");
                 Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Departamento: {0}", codigoDepartamento);
-                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Monto Total Sujeto Retencion: {0}", montoRetencionTotal);
-                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.INFO, "Monto Total Renta: {0}", montoRentaTotal);
 
+                StringBuilder sb = new StringBuilder();
+
+                for (InformeF14Dto dato : lstF14) {
+                    sb = sb.append(dato.getColA()).append(";").append(dato.getColB()).append(";").append(dato.getColC()).append(";").append(dato.getColD()).append(";").append(dato.getColE()).
+                            append(";").append(dato.getColF()).append(";").append(dato.getColG()).append(";").append(dato.getColH()).append(";").append(dato.getColI()).append(";").append(dato.getColJ()).
+                            append(";").append(dato.getColK()).append(";").append(dato.getColL()).append(";").append(dato.getColLl()).append(";").append(dato.getColM()).append(";").append(dato.getColN()).
+                            append(";").append(dato.getColO()).append(";").append(dato.getColP()).append(";").append(dato.getColQ()).append("\n");
+                }
+
+                UtilFile.downloadFileTextoPlano(sb.toString(), "rptF14", UtilFile.EXTENSION_CSV);
+            } catch (IOException ex) {
+                Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (NumberFormatException | IOException e) {
-            Logger.getLogger(PagoProveedoresController.class.getName()).log(Level.WARNING, "Error en generacion de archivo F910 ver. WEB departamento {0}", codigoDepartamento);
         }
     }
 
@@ -2383,7 +2386,13 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
             param.put("pCiudad", VarSession.getNombreMunicipioSession());
             param.put("pUsuario", VarSession.getVariableSessionUsuario());
 
-            Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/pagoproveedor/", "rptConstanciaRetencion", "contacionRentencion" + numeroNit.replace("-", ""));
+            param.put("pRazonSocial", empresa.getRazonSocial());
+            param.put("pNumeroNitEmp", empresa.getNumeroNit());
+            param.put("pMontoRetencion", getMontoSujetoRenta());
+            param.put("pMontoRenta", getMontoRenta());
+            param.put("pCodigoDepartamento", VarSession.getDepartamentoUsuarioSession());
+
+            Reportes.generarRptSQLConnection(reportesEJB, param, "sv/gob/mined/apps/reportes/pagoproveedor/", "contacionRentencion" + numeroNit.replace("-", ""), "rptConstanciaRetencion");
         }
     }
 
@@ -2391,20 +2400,40 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
         planillaPago = utilEJB.find(PlanillaPago.class,
                 idPlanilla);
         idRubro = planillaPago.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres();
-        buscarReuerimientoqOrPlanilla();
+
+        reiniciarVisibilidadCheques();
+        isRubroUniforme = ((idRubro.intValue() == 1) || (idRubro.intValue() == 4) || (idRubro.intValue() == 5));
+        detalleProcesoAdq = planillaPago.getIdRequerimiento().getIdDetProcesoAdq();
+
         selectPlanilla();
         isPlanillaLectura = true;
         PrimeFaces.current().ajax().update("dlgPlanillaPago");
     }
 
     public void buscarPlanilla() {
+        Integer idDet;
         if (montoTotal != null && montoTotal.intValue() == 0) {
             montoTotal = BigDecimal.ZERO;
         }
         if (idPlanilla != null && idPlanilla.intValue() == 0) {
             idPlanilla = BigDecimal.ZERO;
         }
-        lstBusquedaPlanillas = pagoProveedoresEJB.buscarPlanillas(idPlanilla, montoTotal, numeroNit, nombreEntFinanciera, super.getProcesoAdquisicion().getIdProcesoAdq());
+
+        switch (idRubro.intValue()) {
+            case 0:
+                idDet = null;
+                break;
+            case 6:
+                idDet = idRubro.intValue();
+                break;
+            default:
+                idDet = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+                break;
+        }
+
+        lstBusquedaPlanillas = pagoProveedoresEJB.buscarPlanillas(idPlanilla, montoTotal, numeroNit,
+                nombreEntFinanciera, getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq(),
+                numeroCheque, fechaCheque, codigoDepartamento, idDet);
     }
 
     public void postProcessXLS(Object document) {
@@ -2418,7 +2447,7 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
                 HSSFRow row = sheet.getRow(j);
                 if (j != 0) {
                     for (int i = 0; i < row.getPhysicalNumberOfCells(); i++) {
-                        if (i == 7 || i == 8 || i == 10) {
+                        if (i == 7 || i == 8 || i == 11) {
                             String valor = row.getCell(i).getRichStringCellValue().getString();
                             if (!valor.isEmpty()) {
                                 HSSFCell celda = row.createCell(i);
@@ -2435,8 +2464,37 @@ public class PagoProveedoresController extends RecuperarProceso implements Seria
     public String getFormatoFechaReporte() {
         return UtilFile.getFechaGeneracionReporte();
     }
-    
+
     public void editarReintegro() {
 
+    }
+
+    public void showDetalleRequerimientoPorProveedor() {
+        ceContratados = BigDecimal.ZERO;
+        totalContratado = BigDecimal.ZERO;
+        totalPagado = BigDecimal.ZERO;
+        totalPendiente = BigDecimal.ZERO;
+        totalReintegro = BigDecimal.ZERO;
+
+        nombreRubro = detalleProcesoAdq.getIdRubroAdq().getDescripcionRubro();
+        lstResumenPagoPorProveedor = serviciosEJB.getResumenPagoJsonByDetProcesoAdqAndRequerimiento(detalleProcesoAdq.getIdDetProcesoAdq(), numeroRequerimiento);
+
+        lstResumenPagoPorProveedor.forEach((dato) -> {
+            ceContratados = ceContratados.add(dato.getCantidadTotalContratos());
+            totalContratado = totalContratado.add(dato.getMontoTotalContratado());
+            totalPagado = totalPagado.add(dato.getMontoTotalPagado());
+            totalPendiente = totalPendiente.add(dato.getMontoTotalPendiente());
+            totalReintegro = totalReintegro.add(dato.getMontoTotalReintegrar());
+        });
+        dlgDetPagoProveedor = true;
+    }
+
+    public void cerrarDlgDetPagoProvee() {
+        dlgDetPagoProveedor = false;
+    }
+
+    public void extingirContrato() {
+        pagoProveedoresEJB.extingirContrato(idDetReq);
+        buscarRequerimiento();
     }
 }

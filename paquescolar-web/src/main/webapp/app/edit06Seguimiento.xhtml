@@ -6,23 +6,23 @@
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" 
+                        update="pnlFiltro pnlEstado " disabled="true"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar"
+                        update="pnlFiltro pnlEstado " disabled="true"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" action="#{segFisicoController.imprimir()}"  ajax="false"
+                        disabled="#{segFisicoController.recepcion.idEstadoSeguimiento.idEstadoSeguimiento eq 2}" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>  
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" 
-                                    update="pnlFiltro pnlEstado " disabled="true"/>
-                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar"
-                                    update="pnlFiltro pnlEstado " disabled="true"/>
-                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>  
-
-                        <f:facet  name="options">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-
                     <p:panel id="pnlFiltro" header="Seleccionar Contrato" visible="#{segFisicoController.showPnlNewSeguimiento}" >
                         <h:panelGrid columns="2">
                             <p:outputLabel value="Contrato:"/>
@@ -33,19 +33,17 @@
                             </h:panelGrid>
                         </h:panelGrid>
                     </p:panel>
-
-
                     <p:panelGrid columns="2" styleClass="ui-panelgrid-blank form-group form-elements"
                                  style="width: 100%; border:0px none; background-color:transparent;"
                                  columnClasses="ui-g-12 ui-md-7,ui-g-12 ui-md-5">
-                        <p:outputPanel>
+                        <p:outputPanel id="pnlContrato">
                             <h4>                                
                                 <i class="fa fa-list-ol verde" aria-hidden="true"></i>
                                 <p:spacer width="10"/>
                                 <h:outputText value="Detalles del contrato"  style="font-style: italic; font-weight: bold;"/>
                                 <p:separator />
                             </h4>
-                            <p:panelGrid id="pnlContrato" columns="2" columnClasses="col4_label,col8" 
+                            <p:panelGrid columns="2" columnClasses="col4_label,col8" 
                                          styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
                                 <h:outputText value="#{bundle['compra.rubroAdq']}: "/>
                                 <p:outputLabel value="#{segFisicoController.rubroAdquisicion}" style="font-weight: bold;"/>
@@ -67,10 +65,10 @@
                                 </h:panelGrid>
                                 <h:outputText value="Estado del Seguimiento: "/>
                                 <h:outputText value="#{segFisicoController.estadoSeguimiento}" rendered="#{segFisicoController.estadoSeguimiento eq 'EN PROCESO'}" style="color:green; font-weight: bold;"/>
-                                <h:outputText value="#{segFisicoController.estadoSeguimiento}" rendered="#{segFisicoController.estadoSeguimiento eq 'ENTREGADO'}" style="color:red; font-weight: bold;"/>
+                                <h:outputText value="#{segFisicoController.estadoSeguimiento}" rendered="#{segFisicoController.estadoSeguimiento eq 'ENTREGADO'}" style="color: #0000ff; font-weight: bold;"/>
                             </p:panelGrid>
 
-                            <h4>
+                            <h4> 
                                 <i class="fa fa-calendar" aria-hidden="true"></i>
                                 <p:spacer width="10"/>
                                 <h:outputText value="Fechas de Orden de Inicio"  style="font-style: italic; font-weight: bold;"/>
@@ -80,16 +78,14 @@
                                 <p:panelGrid columns="2" columnClasses="col6,col6" 
                                              styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
                                     <h:outputLabel value="#{segFisicoController.esDosUniformes ? 'Fecha Inicio Primera Entrega:':'Fecha:'}"/>
-                                    <p:calendar value="#{segFisicoController.fechaEntregaUno}" pattern="dd/MM/yyyy" size="10" id="fechaUno" locale="es" navigator="true" >
+                                    <p:calendar value="#{segFisicoController.fechaEntregaUno}" pattern="dd/MM/yyyy" size="10" id="fechaUno" locale="es" navigator="true"  disabled="#{!segFisicoController.uniforme}">
                                         <p:ajax event="dateSelect" listener="#{segFisicoController.onDateSelect}" />
                                     </p:calendar>
                                 </p:panelGrid>
                                 <p:panelGrid columns="2" columnClasses="col6,col6" rendered="#{segFisicoController.esDosUniformes}"
                                              styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
                                     <h:outputLabel value="Fecha Inicio Segunda Entrega:"/>
-                                    <p:calendar value="#{segFisicoController.fechaEntregaDos}" pattern="dd/MM/yyyy" size="10" id="fechaDos" locale="es" navigator="true" >
-                                        <p:ajax event="dateSelect" listener="#{segFisicoController.onDateSelect}" />
-                                    </p:calendar>
+                                    <p:calendar value="#{segFisicoController.fechaEntregaDos}" pattern="dd/MM/yyyy" size="10" id="fechaDos" locale="es" navigator="true" />
                                 </p:panelGrid>
                             </p:outputPanel>      
                         </p:outputPanel>
@@ -101,25 +97,14 @@
                                 <h:outputText value="Items del contrato"  style="font-style: italic; font-weight: bold;"/>
                                 <p:separator />
                             </h4>
-                            <p:dataTable id="tbl" var="item" value="#{segFisicoController.listaOfertas}">
-
-                                <p:column width="40" style="text-align: center;">
-                                    <f:facet name="header">
-                                        <h:outputText value="No Item" />
-                                    </f:facet>
+                            <p:dataTable var="item" value="#{segFisicoController.listaOfertas}">
+                                <p:column headerText="No Item" width="40" style="text-align: center;">
                                     <h:outputText value="#{item.noItem}" />
                                 </p:column>
-                                <p:column width="50">
-                                    <f:facet name="header">
-                                        <h:outputText value="Cantidad" />
-                                    </f:facet>
+                                <p:column width="50" headerText="Cantidad" style="text-align: center;">
                                     <h:outputText value="#{item.cantidad}" />
                                 </p:column>
-
-                                <p:column>
-                                    <f:facet name="header">
-                                        <h:outputText value="Descripción"/>
-                                    </f:facet>
+                                <p:column headerText="Descripción">
                                     <h:outputText value="#{item.consolidadoEspTec}" />
                                 </p:column>
                             </p:dataTable>
@@ -139,11 +124,11 @@
                                      sortBy="#{detalle.fechaRecepcion}">
                             <f:facet name="header">  
                                 <p:commandButton value="Agregar" icon="fa fa-plus-circle" action="#{segFisicoController.showDlgAgregarRecepcion}" disabled="#{segFisicoController.disableBtnTotal}">
-                                    <p:ajax event="dialogReturn" listener="#{segFisicoController.actualizarTblDetalleRecepcion}" update="tblDetalleSegF" />
+                                    <p:ajax event="dialogReturn" listener="#{segFisicoController.actualizarTblDetalleRecepcion}" update="tblDetalleSegF pnlContrato menuBar" />
                                     <f:param value="1" name="nuevo"/>
                                 </p:commandButton>
                                 <p:commandButton value="Entrega Total" icon="fa fa-plus-circle" action="#{segFisicoController.showDlgEntregaTotal}" disabled="#{segFisicoController.disableBtnTotal}">
-                                    <p:ajax event="dialogReturn" listener="#{segFisicoController.actualizarTblDetalleRecepcion}" update="tblDetalleSegF pnlContrato"/>
+                                    <p:ajax event="dialogReturn" listener="#{segFisicoController.actualizarTblDetalleRecepcion}" update="tblDetalleSegF pnlContrato menuBar"/>
                                     <f:param value="1" name="total"/>
                                 </p:commandButton>
                             </f:facet>

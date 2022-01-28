@@ -26,6 +26,7 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "NivelEducativo.findAll", query = "SELECT n FROM NivelEducativo n")})
 public class NivelEducativo implements Serializable {
+
     @OneToMany(mappedBy = "idNivelEducativo", fetch = FetchType.LAZY)
     private List<DetalleOfertas> detalleOfertasList;
     @OneToMany(mappedBy = "idNivelEducativo", fetch = FetchType.LAZY)
@@ -34,6 +35,11 @@ public class NivelEducativo implements Serializable {
     private List<PreciosRefRubroEmp> preciosRefRubroEmpList;
     @OneToMany(mappedBy = "idNivelEducativo", fetch = FetchType.LAZY)
     private List<PreciosRefRubro> preciosRefRubroList;
+    @OneToMany(mappedBy = "idNivelEducativo", fetch = FetchType.LAZY)
+    private List<ResguardoBienes> resguardoBienesList;
+    @OneToMany(mappedBy = "idNivelEducativo", fetch = FetchType.LAZY)
+    private List<DetalleResguardo> detalleResguardoBienesList;
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -74,6 +80,14 @@ public class NivelEducativo implements Serializable {
 
     public void setDetCapaSegunRubroList(List<DetCapaSegunRubro> detCapaSegunRubroList) {
         this.detCapaSegunRubroList = detCapaSegunRubroList;
+    }
+
+    public List<DetalleResguardo> getDetalleResguardoBienesList() {
+        return detalleResguardoBienesList;
+    }
+
+    public void setDetalleResguardoBienesList(List<DetalleResguardo> detalleResguardoBienesList) {
+        this.detalleResguardoBienesList = detalleResguardoBienesList;
     }
 
     @Override
@@ -132,5 +146,13 @@ public class NivelEducativo implements Serializable {
     public void setDetalleOfertasList(List<DetalleOfertas> detalleOfertasList) {
         this.detalleOfertasList = detalleOfertasList;
     }
-    
+
+    public List<ResguardoBienes> getResguardoBienesList() {
+        return resguardoBienesList;
+    }
+
+    public void setResguardoBienesList(List<ResguardoBienes> resguardoBienesList) {
+        this.resguardoBienesList = resguardoBienesList;
+    }
+
 }

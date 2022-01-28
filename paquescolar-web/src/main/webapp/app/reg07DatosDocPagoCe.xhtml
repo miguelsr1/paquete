@@ -4,6 +4,7 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:p="http://primefaces.org/ui"
     xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:jsf="http://xmlns.jcp.org/jsf"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
         <div class="ui-g">
@@ -14,10 +15,10 @@
                         <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true" />
                         <p:menuitem value="Guardar" icon="fa fa-save" disabled="true" />
                         <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
                         <f:facet  name="options" class="centradoVertical">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
                         </f:facet>  
                     </p:menubar>
 
@@ -30,11 +31,13 @@
                         <h:outputText value="Número de Requerimiento" rendered="#{pagoProveedoresController.usuarioAdministrador}"/>
                         <p:inputMask value="#{pagoProveedoresController.numeroRequerimiento}" mask="P99-999999-99" rendered="#{pagoProveedoresController.usuarioAdministrador}"/>
                         <h:outputText value="#{bundle['ce.codEnt']}:"/>
-                        <h:panelGrid columns="3">
-                            <p:inputText value="#{pagoProveedoresController.codigoEntidad}" maxlength="5" size="6" onkeyup="queryEntidad(this.value);" onkeypress="return event.keyCode !== 13;"/>
+                        <p:outputPanel>
+                            <p:inputText value="#{pagoProveedoresController.codigoEntidad}" maxlength="5" size="6" onkeypress="return event.keyCode !== 13;" onkeyup="return this.value.length >= 5">
+                                <p:ajax event="keyup" update="nombreCE" listener="#{pagoProveedoresController.buscarEntidadEducativa}"/>
+                            </p:inputText>
                             <p:spacer width="10"/>
                             <p:outputLabel id="nombreCE" value="#{pagoProveedoresController.entidadEducativa.nombre}" style="font-weight: bold"/>
-                        </h:panelGrid>
+                        </p:outputPanel>
 
                         <p:commandButton value="Buscar" icon="fa fa-search" action="#{pagoProveedoresController.buscarRequerimiento}" update="pnlLstContratos"/>
                     </h:panelGrid>
@@ -73,13 +76,20 @@
                             <p:column headerText="Ent. Finan">
                                 <p:outputLabel value="#{detReq.nombreEntFinan}"/>
                             </p:column>
-                            <p:column headerText="Num.Cuenta">
+                            <p:column headerText="Num.Cuenta" rendered="false">
                                 <p:outputLabel value="#{detReq.numeroCuenta}"/>
                             </p:column>
                             <p:column headerText="#{bundle['tabla.monto']}" width="70" styleClass="numero">
                                 <p:outputLabel value="#{detReq.montoTotal}">
                                     <f:convertNumber pattern="$ #,##0.00"/>
                                 </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="¿Extinguir?" width="70" style="text-align: center;" rendered="#{menuController.isUsuarioAdmin}">
+                                <p:commandLink oncomplete="PF('dlgConfirmar').show();" disabled="#{detReq.activo eq 1}">
+                                    <p:outputLabel> <i class="fa fa-check"></i></p:outputLabel>
+                                    <f:setPropertyActionListener value="#{detReq.idDetRequerimiento}" target="#{pagoProveedoresController.idDetReq}"/>  
+                                </p:commandLink>
+
                             </p:column>
                             <p:column headerText="Inf. Doc. Pago" width="30" style="text-align: center;">
                                 <p:commandLink action="#{pagoProveedoresController.showDlgEdtDetDocPago}" update="dlgEdtDetDocPago">
@@ -91,7 +101,7 @@
                             <p:column headerText="Estado **" width="33" style="text-align: center;">
                                 <p:inputSwitch id="estado" value="#{detReq.regCompleto}" disabled="true" onLabel="C" offLabel="I"/>
                             </p:column>
-                            <p:column headerText="Id.Pla." width="50" style="text-align: center;">
+                            <p:column headerText="Id.Pla." width="40" style="text-align: center;">
                                 <p:commandLink action="#{pagoProveedoresController.verPlanillaPago}" value="#{detReq.idPlanilla}" oncomplete="PF('dlgPlanillaPago').show();">
                                     <f:setPropertyActionListener value="#{detReq.idPlanilla}" target="#{pagoProveedoresController.idPlanilla}"/>
                                 </p:commandLink>
@@ -103,7 +113,12 @@
         </div>
 
         <p:dialog header="Informacion de proveedor" modal="true" id="dlgEdtDetDocPago" widgetVar="dlgEdtDetDocPago" visible="#{pagoProveedoresController.dlgEdtDetDocPago}" closable="false">
-            <p:panelGrid id="pngDocPago" styleClass="companyHeaderGrid ui-panelgrid-blank">
+
+            <div jsf:id="dvMensaje" style="display:#{(!pagoProveedoresController.contratoSinActaRecepcion)?'block':'none'}">
+                <p:outputLabel value="Este contrato no tiene ACTA DE RECEPCIÓN registrada"/>
+            </div>
+
+            <p:panelGrid id="pngDocPago" styleClass="companyHeaderGrid ui-panelgrid-blank" style="display:#{(pagoProveedoresController.contratoSinActaRecepcion)?'block':'none'}">
                 <p:row>
                     <p:column>
                         <p:outputLabel value="¿Contrato extinguido?:"/>
@@ -160,6 +175,23 @@
                 </p:row>
                 <p:row>
                     <p:column>
+                        <p:outputLabel value="Cantidad Contrato"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputNumber id="txtCantidadOrg" decimalPlaces="0" decimalSeparator="." thousandSeparator="," disabled="true" value="#{pagoProveedoresController.cantidadContrato}" inputStyle="text-align: right;" size="15"/>
+                    </p:column>
+                    <p:column>
+                        <p:spacer width="5" height="8"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Monto Contrato:"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputNumber id="txtMontoOrg" decimalPlaces="2" decimalSeparator="." thousandSeparator="," readonly="true" value="#{pagoProveedoresController.montoContrato}" inputStyle="text-align: right;" size="15"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
                         <p:outputLabel value="Contrato con Modificaciones:"/>
                     </p:column>
                     <p:column>
@@ -172,6 +204,33 @@
                     </p:column>
                     <p:column/>
                     <p:column/>
+                </p:row>
+                <p:row>
+                    <p:column colspan="5">
+                        <p:separator/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Cantidad Requerimiento:"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputNumber id="txtCantidadReq" decimalPlaces="0" decimalSeparator="." thousandSeparator="," disabled="true" value="#{pagoProveedoresController.detalleDocPago.idDetRequerimiento.cantidadTotal}" inputStyle="text-align: right;" size="15"/>
+                    </p:column>
+                    <p:column>
+                        <p:spacer width="5" height="8"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Monto Requerimiento:"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputNumber id="txtMontoReq" decimalPlaces="2" decimalSeparator="." thousandSeparator="," readonly="true" value="#{pagoProveedoresController.detalleDocPago.idDetRequerimiento.montoTotal}" inputStyle="text-align: right;" size="15"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="5">
+                        <p:separator/>
+                    </p:column>
                 </p:row>
                 <p:row>
                     <p:column>
@@ -188,24 +247,6 @@
                     </p:column>
                     <p:column>
                         <p:calendar id="cldFechaModif" locale="es" value="#{pagoProveedoresController.detalleDocPago.fechaModificativa}" pattern="dd/MM/yyyy" size="10" showOn="button" navigator="true" disabled="#{!pagoProveedoresController.contratoModificado || pagoProveedoresController.contratoExtinguido}"/>
-                    </p:column>
-                </p:row>
-
-                <p:row>
-                    <p:column>
-                        <p:outputLabel value="Cantidad Original:"/>
-                    </p:column>
-                    <p:column>
-                        <p:inputNumber id="txtCantidadOrg" decimalPlaces="0" decimalSeparator="." thousandSeparator="," disabled="true" value="#{pagoProveedoresController.detalleDocPago.idDetRequerimiento.cantidadTotal}" inputStyle="text-align: right;" size="15"/>
-                    </p:column>
-                    <p:column>
-                        <p:spacer width="5" height="8"/>
-                    </p:column>
-                    <p:column>
-                        <p:outputLabel value="Monto Original:"/>
-                    </p:column>
-                    <p:column>
-                        <p:inputNumber id="txtMontoOrg" decimalPlaces="2" decimalSeparator="." thousandSeparator="," readonly="true" value="#{pagoProveedoresController.detalleDocPago.idDetRequerimiento.montoTotal}" inputStyle="text-align: right;" size="15"/>
                     </p:column>
                 </p:row>
 
@@ -258,18 +299,31 @@
                 </p:row>
             </p:panelGrid>
             <f:facet name="footer">
-                <p:commandButton id="btnAceptar" value="Aceptar" actionListener="#{pagoProveedoresController.editEdtDetDocPago}" 
-                                 disabled="#{menuController.usuarioSoloLectura}" icon="fa fa-check-circle" 
-                                 update="tblDetRequerimiento"/>
-                <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{pagoProveedoresController.closeDlgEdtDetDocPago}" onclick="PF('dlgEdtDetDocPago').hide();" />
+                <h:panelGrid columns="3">
+                    <p:commandButton id="btnAceptar" value="Aceptar" actionListener="#{pagoProveedoresController.editEdtDetDocPago}" 
+                                     disabled="#{menuController.usuarioSoloLectura}" icon="fa fa-check-circle" 
+                                     update="tblDetRequerimiento" style="display:#{(pagoProveedoresController.contratoSinActaRecepcion)?'block':'none'}"/>
+                    <p:commandButton id="btnAceptarCerrar" value="Aceptarc" action="#{pagoProveedoresController.closeDlgEdtDetDocPago}" onclick="PF('dlgEdtDetDocPago').hide();"
+                                     disabled="#{menuController.usuarioSoloLectura}" icon="fa fa-check-circle" 
+                                     update="tblDetRequerimiento" style="display:#{(!pagoProveedoresController.contratoSinActaRecepcion)?'block':'none'}"/>
+                    <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{pagoProveedoresController.closeDlgEdtDetDocPago}" onclick="PF('dlgEdtDetDocPago').hide();" />
+                </h:panelGrid>
             </f:facet>
         </p:dialog>
 
         <p:dialog id="dlgPlanillaPago" widgetVar="dlgPlanillaPago" header="Planilla de Pago" width="900" height="600" modal="true" resizable="false">
             <ui:include src="/app/comunes/fragmentos/pagoProveedores/planillaPago.xhtml"/>
         </p:dialog>
-        <p:remoteCommand name="findEntidad" update="nombreCE" actionListener="#{pagoProveedoresController.buscarEntidadEducativa}" />
+
+        <p:confirmDialog id="dlgConfirmar" message="¿Está seguro de extingir este contrato?" severity="alert" appendTo="@(body)" 
+                         header="Confirmación" widgetVar="dlgConfirmar" closable="false" showEffect="puff" hideEffect="puff">  
+            <p:commandButton value="Si" icon="fa fa-check-circle" ajax="true" process="@this" action="#{pagoProveedoresController.extingirContrato}"
+                             update="pnlLstContratos" oncomplete="PF('dlgConfirmar').hide();"/>  
+            <p:commandButton value="No" onclick="PF('dlgConfirmar').hide();" type="button" icon="fa fa-times-circle"/>
+        </p:confirmDialog>
 
         <p:panel id="pnlDatos" visible="false"></p:panel>
+
+        <ui:include src="/app/comunes/fragmentos/pagoProveedores/dlgNotificacionEmail.xhtml"/>
     </ui:define>
 </ui:composition>

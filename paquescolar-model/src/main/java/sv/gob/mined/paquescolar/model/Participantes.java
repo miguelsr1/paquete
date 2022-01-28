@@ -40,9 +40,6 @@ import org.eclipse.persistence.annotations.AdditionalCriteria;
 @AdditionalCriteria("this.estadoEliminacion = 0")
 public class Participantes implements Serializable {
 
-    @OneToMany(mappedBy = "idParticipante", fetch = FetchType.EAGER)
-    @OrderBy("noItem ASC")
-    private List<DetalleOfertas> detalleOfertasList;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -80,6 +77,18 @@ public class Participantes implements Serializable {
     @JoinColumn(name = "ID_EMPRESA", referencedColumnName = "ID_EMPRESA")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Empresa idEmpresa;
+
+    @Column(name = "PORCENTAJE_PRECIO")
+    private BigDecimal porcentajePrecio;
+    @Column(name = "PORCENTAJE_GEO")
+    private BigDecimal porcentajeGeo;
+    @Column(name = "PORCENTAJE_CAPACIDAD")
+    private BigDecimal porcentajeCapacidad;
+
+    @OneToMany(mappedBy = "idParticipante", fetch = FetchType.LAZY)
+    @OrderBy("noItem ASC")
+    private List<DetalleOfertas> detalleOfertasList;
+
     @Transient
     private Boolean eliminar = false;
     @Transient
@@ -251,5 +260,30 @@ public class Participantes implements Serializable {
             }
         }
         return monto;
+    }
+
+    public BigDecimal getPorcentajePrecio() {
+        return porcentajePrecio;
+    }
+
+    public void setPorcentajePrecio(BigDecimal porcentajePrecio) {
+        this.porcentajePrecio = porcentajePrecio;
+    }
+    
+
+    public BigDecimal getPorcentajeGeo() {
+        return porcentajeGeo;
+    }
+
+    public void setPorcentajeGeo(BigDecimal porcentajeGeo) {
+        this.porcentajeGeo = porcentajeGeo;
+    }
+
+    public BigDecimal getPorcentajeCapacidad() {
+        return porcentajeCapacidad;
+    }
+
+    public void setPorcentajeCapacidad(BigDecimal porcentajeCapacidad) {
+        this.porcentajeCapacidad = porcentajeCapacidad;
     }
 }

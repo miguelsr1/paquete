@@ -27,6 +27,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import org.eclipse.persistence.annotations.AdditionalCriteria;
 
 /**
  *
@@ -36,6 +37,7 @@ import javax.persistence.Transient;
 @Table(name = "PERSONA")
 @NamedQueries({
     @NamedQuery(name = "Persona.findAll", query = "SELECT p FROM Persona p")})
+@AdditionalCriteria("this.estadoEliminacion = 0")
 public class Persona implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPersona", fetch = FetchType.LAZY)
@@ -130,8 +132,19 @@ public class Persona implements Serializable {
     private String foto;
     @Transient
     private String nombreCompleto;
+    
+    @Column(name = "CODIGO_CANTON")
+    private String codigoCanton;
 
     public Persona() {
+    }
+
+    public String getCodigoCanton() {
+        return codigoCanton;
+    }
+
+    public void setCodigoCanton(String codigoCanton) {
+        this.codigoCanton = codigoCanton;
     }
 
     public Persona(BigDecimal idPersona) {

@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ws.paquescolar.mined.gob.sv/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="TechoCE" targetNamespace="http://ws.paquescolar.mined.gob.sv/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.paquescolar.mined.gob.sv/" elementFormDefault="unqualified" targetNamespace="http://ws.paquescolar.mined.gob.sv/" version="1.0">
+
+  <xs:element name="asignarTecho" type="tns:asignarTecho"/>
+
+  <xs:element name="asignarTechoResponse" type="tns:asignarTechoResponse"/>
+
+  <xs:element name="updateCuentaEmpresa" type="tns:updateCuentaEmpresa"/>
+
+  <xs:element name="updateCuentaEmpresaResponse" type="tns:updateCuentaEmpresaResponse"/>
+
+  <xs:complexType name="updateCuentaEmpresa">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="numeroNit" type="xs:string"/>
+      <xs:element minOccurs="0" name="numeroCuenta" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="updateCuentaEmpresaResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="asignarTecho">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="codigoEntidad" type="xs:string"/>
+      <xs:element name="idProceso" type="xs:int"/>
+      <xs:element name="parMas" type="xs:int"/>
+      <xs:element name="parFem" type="xs:int"/>
+      <xs:element name="grado1mas" type="xs:int"/>
+      <xs:element name="grado1fem" type="xs:int"/>
+      <xs:element name="grado2mas" type="xs:int"/>
+      <xs:element name="grado2fem" type="xs:int"/>
+      <xs:element name="grado3mas" type="xs:int"/>
+      <xs:element name="grado3fem" type="xs:int"/>
+      <xs:element name="grado4mas" type="xs:int"/>
+      <xs:element name="grado4fem" type="xs:int"/>
+      <xs:element name="grado5mas" type="xs:int"/>
+      <xs:element name="grado5fem" type="xs:int"/>
+      <xs:element name="grado6mas" type="xs:int"/>
+      <xs:element name="grado6fem" type="xs:int"/>
+      <xs:element name="grado7mas" type="xs:int"/>
+      <xs:element name="grado7fem" type="xs:int"/>
+      <xs:element name="grado8mas" type="xs:int"/>
+      <xs:element name="grado8fem" type="xs:int"/>
+      <xs:element name="grado9mas" type="xs:int"/>
+      <xs:element name="grado9fem" type="xs:int"/>
+      <xs:element name="b1mas" type="xs:int"/>
+      <xs:element name="b1fem" type="xs:int"/>
+      <xs:element name="b2mas" type="xs:int"/>
+      <xs:element name="b2fem" type="xs:int"/>
+      <xs:element name="b3mas" type="xs:int"/>
+      <xs:element name="b3fem" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="asignarTechoResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="updateCuentaEmpresa">
+    <wsdl:part element="tns:updateCuentaEmpresa" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="asignarTechoResponse">
+    <wsdl:part element="tns:asignarTechoResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCuentaEmpresaResponse">
+    <wsdl:part element="tns:updateCuentaEmpresaResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="asignarTecho">
+    <wsdl:part element="tns:asignarTecho" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="TechoCE">
+    <wsdl:operation name="updateCuentaEmpresa">
+      <wsdl:input message="tns:updateCuentaEmpresa" name="updateCuentaEmpresa">
+    </wsdl:input>
+      <wsdl:output message="tns:updateCuentaEmpresaResponse" name="updateCuentaEmpresaResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="asignarTecho">
+      <wsdl:input message="tns:asignarTecho" name="asignarTecho">
+    </wsdl:input>
+      <wsdl:output message="tns:asignarTechoResponse" name="asignarTechoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="TechoCESoapBinding" type="tns:TechoCE">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="updateCuentaEmpresa">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateCuentaEmpresa">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateCuentaEmpresaResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="asignarTecho">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="asignarTecho">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="asignarTechoResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="TechoCE">
+    <wsdl:port binding="tns:TechoCESoapBinding" name="TechoCEPort">
+      <soap:address location="http://localhost:8080/paquescolar-web/TechoCE/TechoCE"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

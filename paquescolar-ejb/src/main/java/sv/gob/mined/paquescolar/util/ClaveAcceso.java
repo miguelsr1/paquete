@@ -16,7 +16,7 @@ public class ClaveAcceso {
     public static void main(String[] args) {
         //System.out.println(String.format("%010", "4"));
 
-        //System.out.println((new RC4Crypter()).encrypt("ha", "mined2017Lely"));
-        System.out.println((new RC4Crypter()).decrypt("ha", "361F140F77476837E4"));
+        //System.out.println((new RC4Crypter()).encrypt("ha", "rarias14"));
+        System.out.println((new RC4Crypter()).decrypt("ha", "1D1308044A"));
     }
 }

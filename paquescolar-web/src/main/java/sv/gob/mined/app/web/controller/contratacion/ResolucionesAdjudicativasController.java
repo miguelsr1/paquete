@@ -39,6 +39,7 @@ public class ResolucionesAdjudicativasController implements Serializable {
     private Boolean deshabilitar = true;
     private Boolean negativo = false;
     private Boolean positivo = false;
+    private Boolean contratoPreCarga = false;
     private BigInteger saldoAdjudicacion;
     private BigDecimal saldoActual = BigDecimal.ZERO;
     private BigDecimal idParticipante = BigDecimal.ZERO;
@@ -87,6 +88,10 @@ public class ResolucionesAdjudicativasController implements Serializable {
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
+    public Boolean getContratoPreCarga() {
+        return contratoPreCarga;
+    }
+
     public SaldoProveedorDto getSaldoPro() {
         return saldoPro;
     }
@@ -98,9 +103,9 @@ public class ResolucionesAdjudicativasController implements Serializable {
     public BigDecimal getIdResolucionAdj() {
         return current.getIdResolucionAdj();
     }
-    
-    public void setIdResolucionAdj(BigDecimal idResolucionAdj){
-        
+
+    public void setIdResolucionAdj(BigDecimal idResolucionAdj) {
+
     }
 
     public BigDecimal getIdParticipante() {
@@ -176,11 +181,14 @@ public class ResolucionesAdjudicativasController implements Serializable {
     }
 
     public List<EstadoReserva> getLstEstadoReservaModif() {
-        return resolucionAdjudicativaEJB.getLstEstadoReservaModif();
+        if (VarSession.getVariableSessionUsuario().equals("MSANCHEZ")) {
+            return resolucionAdjudicativaEJB.findEstadoReservaEntities();
+        } else {
+            return resolucionAdjudicativaEJB.getLstEstadoReservaModif();
+        }
     }
 
     //</editor-fold>
-    
     public void prepareEdit() {
         VarSession.setVariableSessionED("2");
         deshabilitar = false;
@@ -188,6 +196,7 @@ public class ResolucionesAdjudicativasController implements Serializable {
         idParticipante = BigDecimal.ZERO;
         idEstadoReserva = null;
         techoCE = null;
+        contratoPreCarga = false;
         if (lstCapaInstalada != null) {
             lstCapaInstalada.clear();
         }
@@ -198,8 +207,8 @@ public class ResolucionesAdjudicativasController implements Serializable {
         current = null;
         saldoAdjudicacion = BigInteger.ZERO;
         idEstadoReserva = null;
-        OfertaBienesServiciosController controller = (OfertaBienesServiciosController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "ofertaBienesServiciosController");
+        OfertaMB controller = (OfertaMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "ofertaMB");
         controller.limpiarFiltros();
     }
 
@@ -299,7 +308,7 @@ public class ResolucionesAdjudicativasController implements Serializable {
     }
 
     private boolean aplicarCambiosReserva() {
-        HashMap<String, Object> param = resolucionAdjudicativaEJB.aplicarReservaDeFondos(current, idEstadoReserva, codigoEntidad, saldoPro.getAdjudicadaActual(), comentarioReversion, VarSession.getVariableSessionUsuario());
+        HashMap<String, Object> param = resolucionAdjudicativaEJB.aplicarReservaDeFondos(current, idEstadoReserva, codigoEntidad, comentarioReversion, VarSession.getVariableSessionUsuario());
         Boolean exito = !param.containsKey("error");
         if (VarSession.getVariableSessionUsuario().equals("RMINERO")
                 || VarSession.getVariableSessionUsuario().equals("RAFAARIAS")
@@ -309,6 +318,11 @@ public class ResolucionesAdjudicativasController implements Serializable {
             JsfUtil.mensajeAlerta(param.get("error").toString());
         }
         return exito;
+    }
+
+    public void reversionMasiva() {
+        resolucionAdjudicativaEJB.reversionMasiva();
+        JsfUtil.mensajeUpdate();
     }
 
     public void buscarSaldoPresupuestoCE(Integer idDetProcesoAdq) {
@@ -328,6 +342,14 @@ public class ResolucionesAdjudicativasController implements Serializable {
             } else {
                 idEstadoReserva = current.getIdEstadoReserva().getIdEstadoReserva();
                 saldoPro = resolucionAdjudicativaEJB.getSaldoProveedor(current);
+
+                /**
+                 * 29/09/2021 Verificar que el contrato no este en preCarga
+                 */
+                contratoPreCarga = false; //resolucionAdjudicativaEJB.contratoIsReservaFondos(current.getIdResolucionAdj());
+                if(contratoPreCarga){
+                    JsfUtil.mensajeAlerta("Este contrato no puede ser modificado por estar incluido en una PRE-CARGA de Fondos");
+                }
             }
         } else {
             limpiarDatos();

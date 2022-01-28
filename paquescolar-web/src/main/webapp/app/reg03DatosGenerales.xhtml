@@ -6,28 +6,28 @@
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" ajax="true" process="@this" disabled="true"/>
+            <p:menuitem value="Modificar" update="frmPrincipal" icon="fa fa-edit" ajax="true"  onclick="onClick('btnModificar');"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="#{menuController.usuarioSoloLectura || proveedorController.deshabiliar}" action="#{proveedorController.guardarDatosGenerales}" />
+            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+            <p:menuitem value="Principal" icon="fa fa-home" action="#{parametrosMB.limpiarVariables}" url="#{request.contextPath}/app/inicial.mined"/>
+            <p:menuitem value="Notificar" icon="fa fa-envelope" action="#{proveedorController.generarNotificacion()}"
+                        rendered="#{proveedorController.mostrarNotificacion}"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+        <p:panel visible="false">
+            <p:commandButton id="btnModificar" value="ok" actionListener="#{proveedorController.filtroProveedores}">
+                <p:ajax event="dialogReturn" listener="#{proveedorController.empresaSeleccionada}"  update="frmPrincipal pnlFoto pnlModif" />
+            </p:commandButton>
+        </p:panel>
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar id="menuBar"> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" ajax="true" process="@this" disabled="true"/>
-                        <p:menuitem value="Modificar" update="frmPrincipal" icon="fa fa-edit" ajax="true"  onclick="onClick('btnModificar');"/>
-                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="#{menuController.usuarioSoloLectura || proveedorController.deshabiliar}" action="#{proveedorController.guardarDatosGenerales}"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                        <p:menuitem value="Principal" icon="fa fa-home" action="#{anhoProcesoController.limpiarVariables}" />
-
-                        <f:facet  name="options">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-                    <p:panel visible="false">
-                        <p:commandButton id="btnModificar" value="ok" actionListener="#{proveedorController.filtroProveedores}">
-                            <p:ajax event="dialogReturn" listener="#{proveedorController.empresaSeleccionada}"  update=":frmPrincipal:pnlFoto pnlModif" />
-                        </p:commandButton>
-                    </p:panel>
-
                     <ui:include src="/app/comunes/datosGenProveedor.xhtml"/>
-
                 </div>
 
                 <div class="card clearfix">
@@ -37,7 +37,7 @@
                         <h:outputText value="Campos editables"/>
                     </h1>
                     <p:outputPanel id="pnlModif">
-                        <p:tabView rendered="#{proveedorController.showUpdateEmpresa}">
+                        <p:tabView rendered="#{proveedorController.showUpdateEmpresa}" prependId="false">
                             <p:tab title="#{proveedorController.tapEmpresa}" rendered="#{proveedorController.tapEmpresa ne ''}">
                                 <p:panelGrid columns="2" columnClasses="col2_label,col10" styleClass="ui-panelgrid-blank form-group form-elements" >
                                     <p:outputLabel value="Razon Social:"/>
@@ -45,19 +45,25 @@
                                     <p:outputLabel value="Departamento: "/>
                                     <h:panelGroup>
                                         <h:panelGrid columns="4">
-                                            <p:selectOneMenu id="cboDepaEmp" value="#{proveedorController.empresa.idMunicipio.codigoDepartamento.codigoDepartamento}" disabled="#{datosGeograficosController.usuarioDepartamental}">
+                                            <p:selectOneMenu id="cboDepaEmp" value="#{proveedorController.codigoDepartamentoLocal}" disabled="#{parametrosMB.usuarioDepartamental}">
                                                 <f:selectItem noSelectionOption="true" itemLabel="Seleccione un departamento" />
                                                 <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
                                                 <p:ajax update="cboMuniEmp"/>
                                             </p:selectOneMenu>
                                             <p:spacer width="10"/>
                                             <p:outputLabel value="Municipio:" />
-                                            <p:selectOneMenu id="cboMuniEmp" value="#{proveedorController.empresa.idMunicipio.idMunicipio}" >
+                                            <p:selectOneMenu id="cboMuniEmp" value="#{proveedorController.idMunicipioLocal}" >
                                                 <f:selectItem noSelectionOption="true" itemLabel="Seleccione un municipio" />
-                                                <f:selectItems value="#{proveedorController.lstMunicipios}" var="mun" itemValue="#{mun.idMunicipio}" itemLabel="#{mun.codigoMunicipio} - #{mun.nombreMunicipio}" />
+                                                <f:selectItems value="#{proveedorController.lstMunicipiosLocal}" var="mun" itemValue="#{mun.idMunicipio}" itemLabel="#{mun.codigoMunicipio} - #{mun.nombreMunicipio}" />
                                             </p:selectOneMenu>
                                         </h:panelGrid>
                                     </h:panelGroup>
+                                    <p:outputLabel value="Cantón:" rendered="#{proveedorController.rubroUniforme}"/>
+                                    <p:selectOneMenu id="cboCantonEmp" value="#{proveedorController.idCantonLocal}" rendered="#{proveedorController.rubroUniforme}">
+                                        <f:selectItem noSelectionOption="true" itemLabel="Seleccione un cantón" />
+                                        <f:selectItems value="#{proveedorController.lstCantonesLocal}" var="can" itemValue="#{can.codigoCanton}" itemLabel="#{can.codigoCanton} - #{can.nombreCanton}" />
+                                        <p:ajax update="cboCantonEmp"/>
+                                    </p:selectOneMenu>
                                     <p:outputLabel value="Dirección:" />
                                     <p:inputTextarea value="#{proveedorController.empresa.direccionCompleta}" cols="40"/>
                                     <p:outputLabel value="Teléfono:"/>
@@ -95,7 +101,7 @@
                                     <p:inputText value="#{proveedorController.empresa.idPersona.numeroTelefono}"/>
                                     <p:outputLabel value="Celular:"/>
                                     <p:inputText value="#{proveedorController.empresa.idPersona.numeroCelular}"/>
-                                    
+
                                     <p:outputLabel value="Teléfono 2:"/>
                                     <p:inputText value="#{proveedorController.empresa.idPersona.numTelefono2}"/>
                                     <p:outputLabel value="Teléfono 3:"/>
@@ -117,6 +123,12 @@
                                         <f:selectItem noSelectionOption="true" itemLabel="Seleccione un municipio" />
                                         <f:selectItems value="#{proveedorController.lstMunicipios}" var="munP" itemValue="#{munP.idMunicipio}" itemLabel="#{munP.codigoMunicipio} - #{munP.nombreMunicipio}"/>
                                     </p:selectOneMenu>
+
+                                    <p:outputLabel value="Cantón:" rendered="#{proveedorController.rubroUniforme}"/>
+                                    <p:selectOneMenu id="cboCanton" value="#{proveedorController.idCanton}" rendered="#{proveedorController.rubroUniforme}">
+                                        <f:selectItem noSelectionOption="true" itemLabel="Seleccione un cantón" />
+                                        <f:selectItems value="#{proveedorController.lstCantones}" var="canP" itemValue="#{canP.codigoCanton}" itemLabel="#{canP.codigoCanton} - #{canP.nombreCanton}"/>
+                                    </p:selectOneMenu>
                                 </p:panelGrid>
                                 <p:panelGrid columns="2" columnClasses="col2_label,col10" layout="grid"
                                              styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
@@ -124,21 +136,109 @@
                                     <p:inputText value="#{proveedorController.empresa.idPersona.email}" style="width: 200px;"/>
                                     <p:outputLabel value="Dirección:" />
                                     <p:inputTextarea value="#{proveedorController.empresa.idPersona.domicilio}" cols="100"/>
+                                    <p:spacer />
+                                    <p:outputPanel>
+                                        <p:selectBooleanCheckbox value="#{proveedorController.mismaDireccion}" itemLabel="¿Su local tiene la misma dirección de su domicilio?"
+                                                                 rendered="#{proveedorController.personaNatural}" style="width: 100%;">
+                                            <p:ajax update="pnlDireccionLocal" />
+                                        </p:selectBooleanCheckbox>
+                                    </p:outputPanel>
                                 </p:panelGrid>
+
+                                <p:panel id="pnlDireccionLocal" header="Ubicación del Local" visible="#{!proveedorController.mismaDireccion}">
+                                    <p:panelGrid columns="4" columnClasses="col2_label,col3,col2_label,col5" 
+                                                 styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;width: 100%;">
+                                        <p:outputLabel value="Departamento: "/>
+                                        <p:selectOneMenu id="cboDepartamentoLocal" value="#{proveedorController.codigoDepartamentoLocal}" disabled="true">
+                                            <f:selectItem noSelectionOption="true" itemLabel="Seleccione un departamento" />
+                                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depaP" itemValue="#{depaP.codigoDepartamento}" itemLabel="#{depaP.codigoDepartamento} - #{depaP.nombreDepartamento}" />
+                                            <p:ajax update="cboMunicipio"/>
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Municipio:" />
+                                        <p:selectOneMenu id="cboMunicipioLocal" value="#{proveedorController.idMunicipioLocal}">
+                                            <f:selectItem noSelectionOption="true" itemLabel="Seleccione un municipio" />
+                                            <f:selectItems value="#{datosGeneralesMB.lstMunicipiosLocal}" var="munP" itemValue="#{munP.idMunicipio}" itemLabel="#{munP.codigoMunicipio} - #{munP.nombreMunicipio}"/>
+                                            <p:ajax update="cboCantonLocal"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Cantón:" rendered="#{proveedorController.rubroUniforme}"/>
+                                        <p:selectOneMenu id="cboCantonLocal" value="#{proveedorController.idCantonLocal}" rendered="#{proveedorController.rubroUniforme}">
+                                            <f:selectItem noSelectionOption="true" itemLabel="Seleccione un cantón" />
+                                            <f:selectItems value="#{datosGeneralesMB.lstCantonLocal}" var="canton" itemValue="#{canton.codigoCanton}" itemLabel="#{canton.codigoCanton} - #{canton.nombreCanton}"/>
+                                        </p:selectOneMenu>
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="2" columnClasses="col2_label,col10" rendered="#{proveedorController.personaNatural}"
+                                                 styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;width: 100%;">
+                                        <p:outputLabel value="Dirección:" />
+                                        <p:inputTextarea value="#{proveedorController.empresa.direccionCompleta}" cols="100"/>
+                                    </p:panelGrid>
+                                </p:panel>
                             </p:tab>
                             <p:tab title="Datos de Calificación">
                                 <p:panelGrid columns="2" columnClasses="col3_label,col9" 
                                              styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
                                     <p:outputLabel value="Departamento Calificado: "/>
-                                    <p:selectOneMenu id="cbDepartamento" value="#{proveedorController.codigoDepartamentoCalificado}" disabled="#{proveedorController.deshabiliar}">
+                                    <p:selectOneMenu id="cbDepartamento" value="#{proveedorController.codigoDepartamentoCalificado}" >
                                         <f:selectItem itemLabel="Seleccione un departamento"/>
                                         <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}"/>
                                     </p:selectOneMenu>
-                                    <p:outputLabel value="Capacidad Calificada: "/>
-                                    <p:inputText id="txtCapacidad" value="#{proveedorController.capacidadInst.capacidadAcreditada}" styleClass="solo-numeros numero" size="10" disabled="true"/>
-                                    <p:outputLabel value="Capacidad Adjudicada: " rendered="#{proveedorController.showCapacidadAdjudicada}"/>
-                                    <p:inputText id="txtCapacidadAdj" value="#{proveedorController.capacidadInst.capacidadAdjudicada}" styleClass="solo-numeros numero" size="10" disabled="true" rendered="#{proveedorController.showCapacidadAdjudicada}"/>
                                 </p:panelGrid>
+                                <p:panelGrid columns="1" styleClass="ui-panelgrid-blank form-group form-elements" 
+                                             style="border:0px none; background-color:transparent;">
+                                    <h:outputText value="A continuación, responda ¿Cuál considera que es su capacidad de producción real? Tomando en consideración los siguientes factores:"/>
+                                </p:panelGrid>
+                                <div class="ui-message ui-staticmessage ui-message-info ui-widget ui-corner-all" style="font-size: 14px !important;">
+                                    <ul>
+                                        <li><p:outputLabel value="Su maquinaria disponible para producción (no cuentan maquinas en des uso);"/><br/></li>
+                                        <li><p:outputLabel value="Personal a contratar para la producción;"/><br/></li>
+                                        <li><p:outputLabel value="Durante los primeros días de ejecución debe coordinarse y realizarse la toma de tallas a los estudiantes;"/><br/></li>
+                                        <li><p:outputLabel value="El período de ejecución de los contratos es de 40 días hábiles y deben cubrirse, sin falta, en ese período (incluye la coordinación de entrega y posibles arreglos a los bienes)."/><br/></li>
+                                        <li><p:outputLabel value="Considere también que puede resultar adjudicado por varios centros educativos, lo que supone que deberá coordinar y hacer la toma de tallas con cada uno sin que eso signifique una justificación a incumplir con lo considerado en el literal anterior."/><br/></li>
+                                    </ul>
+
+                                    <p:outputLabel value="Habiendo leído y tomado en cuenta los literales que anteceden considero que mi Capacidad de Producción es:"/>
+                                    <p:spacer width="10"/>
+                                    <p:inputNumber id="txtCapacidadPro" value="#{proveedorController.capacidadInst.capacidadPropuesta}" decimalPlaces="0" size="10"
+                                                   inputStyle="text-align: right;" minValue="0"/>
+                                    <p:spacer width="5"/>
+                                    <p:outputLabel value="piezas"/>
+                                </div>
+                                <p:panelGrid columns="2" columnClasses="col3_label,col9" 
+                                             styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+                                    <p:outputLabel value="Capacidad Adjudicada: " />
+                                    <p:inputNumber id="txtCapacidadAdj" value="#{proveedorController.capacidadInst.capacidadAdjudicada}" decimalPlaces="0" size="10" readonly="true"/>
+                                    <p:outputLabel value="Capacidad Calificada: "/>
+                                    <p:inputText id="txtCapacidad" value="#{proveedorController.capacidadInst.capacidadAcreditada}" styleClass="solo-numeros numero" size="10"/>
+                                </p:panelGrid>
+
+                                <br/>
+                                <br/>
+                                <br/>
+                                <p:panelGrid columns="2" columnClasses="col3_label,col9"  styleClass="ui-panelgrid-blank form-group form-elements" 
+                                             style="border:0px none; background-color:transparent;" rendered="#{proveedorController.rubroUniforme}">
+                                    <h:outputText value="¿Esta inscrito al IVA si sus ventas han sido superiores a $ 5,714.29?"/>
+                                    <p:selectBooleanCheckbox value="#{proveedorController.inscritoIva}">
+                                        <p:ajax update="chDesea" />
+                                    </p:selectBooleanCheckbox>
+                                </p:panelGrid>
+                                <br/>
+                                <p:panelGrid columns="2" columnClasses="col3_label,col9"  styleClass="ui-panelgrid-blank form-group form-elements" 
+                                             style="border:0px none; background-color:transparent;" rendered="#{proveedorController.rubroUniforme}">
+                                    <h:outputText value="¿Desea inscribirse al IVA?"/>
+                                    <p:selectBooleanCheckbox id="chDesea" value="#{proveedorController.deseaInscribirseIva}" disabled="#{proveedorController.inscritoIva}"/>
+                                </p:panelGrid>
+                                <!--p:panelGrid columns="2" columnClasses="col3_label,col9" 
+                                             styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+                                    <p:outputLabel value="Departamento Calificado: "/>
+                                    <p:selectOneMenu id="cbDepartamento" value="{proveedorController.codigoDepartamentoCalificado}" disabled="{proveedorController.deshabiliar}">
+                                        <f:selectItem itemLabel="Seleccione un departamento"/>
+                                        <f:selectItems value="{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="{depa.codigoDepartamento}" itemLabel="{depa.codigoDepartamento} - {depa.nombreDepartamento}"/>
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Capacidad Calificada: "/>
+                                    <p:inputText id="txtCapacidad" value="{proveedorController.capacidadInst.capacidadAcreditada}" styleClass="solo-numeros numero" size="10"/>
+                                    <p:outputLabel value="Capacidad Adjudicada: " rendered="{proveedorController.showCapacidadAdjudicada}"/>
+                                    <p:inputText id="txtCapacidadAdj" value="{proveedorController.capacidadInst.capacidadAdjudicada}" styleClass="solo-numeros numero" size="10" disabled="true" rendered="{proveedorController.showCapacidadAdjudicada}"/>
+                                </p:panelGrid-->
                             </p:tab>
                             <p:tab title="Cuenta Bancaria">
                                 <p:panelGrid columns="2" columnClasses="col3_label,col9" 

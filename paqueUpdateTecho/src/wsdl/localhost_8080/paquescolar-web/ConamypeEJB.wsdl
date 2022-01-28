@@ -1,0 +1,286 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ejb.paquescolar.mined.gob.sv/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="ConamypeEJBService" targetNamespace="http://ejb.paquescolar.mined.gob.sv/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ejb.paquescolar.mined.gob.sv/" elementFormDefault="unqualified" targetNamespace="http://ejb.paquescolar.mined.gob.sv/" version="1.0">
+
+  <xs:element name="generarCodigoSeguridad" type="tns:generarCodigoSeguridad"/>
+
+  <xs:element name="generarCodigoSeguridadResponse" type="tns:generarCodigoSeguridadResponse"/>
+
+  <xs:element name="getIdMunicipio" type="tns:getIdMunicipio"/>
+
+  <xs:element name="getIdMunicipioResponse" type="tns:getIdMunicipioResponse"/>
+
+  <xs:element name="guardarCanton" type="tns:guardarCanton"/>
+
+  <xs:element name="guardarCantonResponse" type="tns:guardarCantonResponse"/>
+
+  <xs:element name="setCantonProveedor" type="tns:setCantonProveedor"/>
+
+  <xs:element name="setCantonProveedorResponse" type="tns:setCantonProveedorResponse"/>
+
+  <xs:element name="setDatosProveedor" type="tns:setDatosProveedor"/>
+
+  <xs:element name="setDatosProveedorResponse" type="tns:setDatosProveedorResponse"/>
+
+  <xs:element name="updCapacidadByNitAndIdDet" type="tns:updCapacidadByNitAndIdDet"/>
+
+  <xs:element name="updCapacidadByNitAndIdDetResponse" type="tns:updCapacidadByNitAndIdDetResponse"/>
+
+  <xs:element name="updCorreoElectronicoByNit" type="tns:updCorreoElectronicoByNit"/>
+
+  <xs:element name="updCorreoElectronicoByNitResponse" type="tns:updCorreoElectronicoByNitResponse"/>
+
+  <xs:complexType name="setDatosProveedor">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg1" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="setDatosProveedorResponse">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="updCapacidadByNitAndIdDet">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg1" type="xs:int"/>
+      <xs:element minOccurs="0" name="arg2" type="xs:integer"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="updCapacidadByNitAndIdDetResponse">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="generarCodigoSeguridad">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="generarCodigoSeguridadResponse">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="getIdMunicipio">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg1" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getIdMunicipioResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="guardarCanton">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:int"/>
+      <xs:element minOccurs="0" name="arg1" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg2" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="guardarCantonResponse">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="setCantonProveedor">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg1" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="setCantonProveedorResponse">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="updCorreoElectronicoByNit">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg1" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="updCorreoElectronicoByNitResponse">
+    <xs:sequence/>
+  </xs:complexType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="setDatosProveedorResponse">
+    <wsdl:part element="tns:setDatosProveedorResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updCorreoElectronicoByNitResponse">
+    <wsdl:part element="tns:updCorreoElectronicoByNitResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="generarCodigoSeguridadResponse">
+    <wsdl:part element="tns:generarCodigoSeguridadResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getIdMunicipio">
+    <wsdl:part element="tns:getIdMunicipio" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="guardarCanton">
+    <wsdl:part element="tns:guardarCanton" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="guardarCantonResponse">
+    <wsdl:part element="tns:guardarCantonResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="setCantonProveedor">
+    <wsdl:part element="tns:setCantonProveedor" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updCorreoElectronicoByNit">
+    <wsdl:part element="tns:updCorreoElectronicoByNit" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="setCantonProveedorResponse">
+    <wsdl:part element="tns:setCantonProveedorResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="setDatosProveedor">
+    <wsdl:part element="tns:setDatosProveedor" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updCapacidadByNitAndIdDet">
+    <wsdl:part element="tns:updCapacidadByNitAndIdDet" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updCapacidadByNitAndIdDetResponse">
+    <wsdl:part element="tns:updCapacidadByNitAndIdDetResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="generarCodigoSeguridad">
+    <wsdl:part element="tns:generarCodigoSeguridad" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getIdMunicipioResponse">
+    <wsdl:part element="tns:getIdMunicipioResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ConamypeEJB">
+    <wsdl:operation name="setDatosProveedor">
+      <wsdl:input message="tns:setDatosProveedor" name="setDatosProveedor">
+    </wsdl:input>
+      <wsdl:output message="tns:setDatosProveedorResponse" name="setDatosProveedorResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updCapacidadByNitAndIdDet">
+      <wsdl:input message="tns:updCapacidadByNitAndIdDet" name="updCapacidadByNitAndIdDet">
+    </wsdl:input>
+      <wsdl:output message="tns:updCapacidadByNitAndIdDetResponse" name="updCapacidadByNitAndIdDetResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="generarCodigoSeguridad">
+      <wsdl:input message="tns:generarCodigoSeguridad" name="generarCodigoSeguridad">
+    </wsdl:input>
+      <wsdl:output message="tns:generarCodigoSeguridadResponse" name="generarCodigoSeguridadResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getIdMunicipio">
+      <wsdl:input message="tns:getIdMunicipio" name="getIdMunicipio">
+    </wsdl:input>
+      <wsdl:output message="tns:getIdMunicipioResponse" name="getIdMunicipioResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="guardarCanton">
+      <wsdl:input message="tns:guardarCanton" name="guardarCanton">
+    </wsdl:input>
+      <wsdl:output message="tns:guardarCantonResponse" name="guardarCantonResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setCantonProveedor">
+      <wsdl:input message="tns:setCantonProveedor" name="setCantonProveedor">
+    </wsdl:input>
+      <wsdl:output message="tns:setCantonProveedorResponse" name="setCantonProveedorResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updCorreoElectronicoByNit">
+      <wsdl:input message="tns:updCorreoElectronicoByNit" name="updCorreoElectronicoByNit">
+    </wsdl:input>
+      <wsdl:output message="tns:updCorreoElectronicoByNitResponse" name="updCorreoElectronicoByNitResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ConamypeEJBServiceSoapBinding" type="tns:ConamypeEJB">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="setDatosProveedor">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="setDatosProveedor">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="setDatosProveedorResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updCapacidadByNitAndIdDet">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updCapacidadByNitAndIdDet">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updCapacidadByNitAndIdDetResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="generarCodigoSeguridad">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="generarCodigoSeguridad">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="generarCodigoSeguridadResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getIdMunicipio">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getIdMunicipio">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getIdMunicipioResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="guardarCanton">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="guardarCanton">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="guardarCantonResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setCantonProveedor">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="setCantonProveedor">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="setCantonProveedorResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updCorreoElectronicoByNit">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updCorreoElectronicoByNit">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updCorreoElectronicoByNitResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ConamypeEJBService">
+    <wsdl:port binding="tns:ConamypeEJBServiceSoapBinding" name="ConamypeEJBPort">
+      <soap:address location="http://localhost:8080/paquescolar-web/ConamypeEJB"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

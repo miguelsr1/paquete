@@ -19,11 +19,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.ParameterMode;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import org.eclipse.persistence.annotations.Direction;
+import org.eclipse.persistence.annotations.NamedStoredProcedureQuery;
+import org.eclipse.persistence.annotations.StoredProcedureParameter;
 
 /**
  *
@@ -33,6 +37,15 @@ import javax.persistence.Transient;
 @Table(name = "ESTADISTICA_CENSO")
 @NamedQueries({
     @NamedQuery(name = "EstadisticaCenso.findAll", query = "SELECT e FROM EstadisticaCenso e")})
+
+@NamedStoredProcedureQuery(
+        name = "SP_ACTUALIZAR_EST2021",
+        procedureName = "SP_ACTUALIZAR_EST2021",
+        returnsResultSet = false,
+        parameters = {
+            @StoredProcedureParameter(mode =  ParameterMode.IN, type = String.class, name = "V_CODIGO_ENTIDAD", queryParameter = "V_CODIGO_ENTIDAD")
+        }
+)
 public class EstadisticaCenso implements Serializable {
 
     private static final long serialVersionUID = 1L;

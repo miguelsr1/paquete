@@ -69,12 +69,14 @@ public class PlanillaPago implements Serializable {
     @JoinColumn(name = "ID_REQUERIMIENTO", referencedColumnName = "ID_REQUERIMIENTO")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private RequerimientoFondos idRequerimiento;
-    @OneToMany(mappedBy = "idPlanilla", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "idPlanilla", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<DetallePlanilla> detallePlanillaList;
     @Column(name = "ID_TIPO_PLANILLA")
     private Short idTipoPlanilla;
     @Column(name = "ID_ESTADO_PLANILLA")
     private Short idEstadoPlanilla;
+    @Column(name = "NOTIFICACION")
+    private Short notificacion;
 
     @Transient
     private BigDecimal montoTotal;
@@ -94,6 +96,14 @@ public class PlanillaPago implements Serializable {
             }
         }
         return montoTotal;
+    }
+
+    public Short getNotificacion() {
+        return notificacion;
+    }
+
+    public void setNotificacion(Short notificacion) {
+        this.notificacion = notificacion;
     }
 
     public PlanillaPago(BigDecimal idPlanilla) {

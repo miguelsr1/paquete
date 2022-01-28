@@ -2,6 +2,7 @@ package sv.gob.mined.app.web.util;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -14,16 +15,24 @@ import java.util.Date;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
+import javax.mail.Session;
+import sv.gob.mined.app.web.controller.CatalogosGeneralesController;
+import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
+import sv.gob.mined.paquescolar.model.MunicipioAledanho;
+import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.ProveedorDisponibleDto;
+import sv.gob.mined.utils.mail.MailSession;
 
 public class JsfUtil {
 
@@ -31,6 +40,20 @@ public class JsfUtil {
     private static final DecimalFormat FORMAT_DECIMAL = new DecimalFormat("#,##0.00");
     private static final DecimalFormat FORMAT_ENTERO = new DecimalFormat("#,##0");
     public static final DateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
+
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("Bundle");
+
+    public static String getValorFromBundleByKey(String key) {
+        return RESOURCE_BUNDLE.getString(key);
+    }
+
+    public static String getPathReportes() {
+        if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
+            return JsfUtil.getValorFromBundleByKey("path_reportes_win");
+        } else {
+            return JsfUtil.getValorFromBundleByKey("path_reportes_linux");
+        }
+    }
 
     public static SelectItem[] getSelectItems(List<?> entities, boolean selectOne) {
         int size = selectOne ? entities.size() + 1 : entities.size();
@@ -93,7 +116,7 @@ public class JsfUtil {
                     value = (T) t.getClass().getMethod(getter.getName(), sinArgumentos).invoke(t, sinParametros);
                     break;
                 } catch (IntrospectionException | IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException ex) {
-                    Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(JsfUtil.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -118,7 +141,7 @@ public class JsfUtil {
 
                     break;
                 } catch (NumberFormatException ex) {
-                    Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(JsfUtil.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -261,5 +284,69 @@ public class JsfUtil {
     public static String getParametroUrl(String nombreParamentro) {
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         return params.get(nombreParamentro);
+    }
+
+    public static List<ProveedorDisponibleDto> getListFilterByStream(List<ProveedorDisponibleDto> lst, String cadenaStream) {
+        return lst.stream()
+                .filter(d -> d.getRazonSocial().contains(cadenaStream.toUpperCase()))
+                .collect(Collectors.toList());
+    }
+
+    public static Integer getProcesoAdqPadre(ProcesoAdquisicion proAdq) {
+        if (proAdq.getPadreIdProcesoAdq() != null) {
+            return getProcesoAdqPadre(proAdq.getPadreIdProcesoAdq());
+        } else {
+            return proAdq.getIdProcesoAdq();
+        }
+    }
+
+    public static DetalleProcesoAdq findDetalleByRubroAndAnho(ProcesoAdquisicion procesoAdquisicion, BigDecimal idRubro, BigDecimal idAnho) {
+        Optional<DetalleProcesoAdq> detalle = procesoAdquisicion.getDetalleProcesoAdqList().stream().parallel().
+                filter(det -> det.getIdRubroAdq().getIdRubroInteres().compareTo(idRubro) == 0 && det.getIdProcesoAdq().getIdAnho().getIdAnho().compareTo(idAnho) == 0).findAny();
+        if (detalle.isPresent()) {
+            return detalle.get();
+        } else {
+            return null;
+        }
+    }
+
+    public static DetalleProcesoAdq findDetalle(ProcesoAdquisicion procesoAdquisicion, BigDecimal idRubro) {
+        Optional<DetalleProcesoAdq> detalle = procesoAdquisicion.getDetalleProcesoAdqList().stream().parallel().
+                filter(det -> det.getIdRubroAdq().getIdRubroInteres().compareTo(idRubro) == 0).findAny();
+        if (detalle.isPresent()) {
+            return detalle.get();
+        } else {
+            return null;
+        }
+    }
+
+    public static MunicipioAledanho findIdMunicipios(BigDecimal idMunicipio) {
+        Optional<MunicipioAledanho> municipio = ((CatalogosGeneralesController) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "catalogosGeneralesController")).getLstMunicipiosAledanho().stream().parallel().
+                filter(munA -> munA.getIdMunicipio().compareTo(idMunicipio) == 0).findAny();
+        if (municipio.isPresent()) {
+            return municipio.get();
+        } else {
+            return null;
+        }
+    }
+
+    public static Object getControllerByName(String name) {
+        return FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, name);
+
+    }
+
+    public static void redirectToIndex() {
+        try {
+            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+            externalContext.redirect(externalContext.getRequestContextPath());
+        } catch (IOException ex) {
+            Logger.getLogger(JsfUtil.class.getName()).log(Level.INFO, "Error redireccionando al Index", ex);
+        }
+    }
+
+    public static Session getSessionMailG(String numero) {
+        return MailSession.getMailSessionOffice(JsfUtil.getValorFromBundleByKey("cuenta" + numero + ".name"), JsfUtil.getValorFromBundleByKey("cuenta" + numero + ".pass"));
     }
 }

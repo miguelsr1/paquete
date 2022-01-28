@@ -18,6 +18,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -37,6 +38,7 @@ public class ProcesoAdquisicion implements Serializable {
     @Column(name = "DESCRIPCION_PROCESO_ADQ")
     private String descripcionProcesoAdq;
     @OneToMany(mappedBy = "padreIdProcesoAdq")
+    @XmlTransient
     private List<ProcesoAdquisicion> procesoAdquisicionList;
     @JoinColumn(name = "PADRE_ID_PROCESO_ADQ", referencedColumnName = "ID_PROCESO_ADQ")
     @ManyToOne(fetch = FetchType.EAGER)
@@ -46,9 +48,14 @@ public class ProcesoAdquisicion implements Serializable {
     private Anho idAnho;
     @OneToMany(mappedBy = "idProcesoAdq", fetch = FetchType.LAZY)
     @OrderBy("idDetProcesoAdq ASC")
+    @XmlTransient
     private List<DetalleProcesoAdq> detalleProcesoAdqList;
     @OneToMany(mappedBy = "idProcesoAdq", fetch = FetchType.LAZY)
+    @XmlTransient
     private List<EstadisticaCenso> estadisticaCensoList;
+    @OneToMany(mappedBy = "idProcesoAdq", fetch = FetchType.LAZY)
+    @XmlTransient
+    private List<CapaInstPorRubro> capaInstPorRubroList;
 
     public ProcesoAdquisicion() {
     }
@@ -133,5 +140,13 @@ public class ProcesoAdquisicion implements Serializable {
 
     public void setEstadisticaCensoList(List<EstadisticaCenso> estadisticaCensoList) {
         this.estadisticaCensoList = estadisticaCensoList;
+    }
+
+    public List<CapaInstPorRubro> getCapaInstPorRubroList() {
+        return capaInstPorRubroList;
+    }
+
+    public void setCapaInstPorRubroList(List<CapaInstPorRubro> capaInstPorRubroList) {
+        this.capaInstPorRubroList = capaInstPorRubroList;
     }
 }

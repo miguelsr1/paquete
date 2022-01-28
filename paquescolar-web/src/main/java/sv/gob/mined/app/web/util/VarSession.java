@@ -9,8 +9,8 @@ import java.math.BigDecimal;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import sv.gob.mined.app.web.controller.DatosGeograficosController;
 import sv.gob.mined.app.web.controller.MenuController;
+import sv.gob.mined.app.web.controller.ParametrosMB;
 import sv.gob.mined.paquescolar.model.Usuario;
 
 /**
@@ -62,11 +62,6 @@ public class VarSession {
         context.getExternalContext().getSessionMap().remove(key);
     }
 
-    public static void limpiarVariableSession() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        context.getExternalContext().getSessionMap().clear();
-    }
-
     public static void crearCookie(String nombre, String valor) {
         FacesContext context = FacesContext.getCurrentInstance();
         Cookie cookie = new Cookie(nombre, valor);
@@ -92,13 +87,13 @@ public class VarSession {
     }
 
     public static BigDecimal getIdMunicipioSession() {
-        return ((DatosGeograficosController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "datosGeograficosController")).getMunicipio();
+        return ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getIdMunicipio();
     }
 
     public static String getNombreMunicipioSession() {
-        return ((DatosGeograficosController) FacesContext.getCurrentInstance().getApplication().getELResolver().
-                getValue(FacesContext.getCurrentInstance().getELContext(), null, "datosGeograficosController")).getNombreMunicipio();
+        return ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
+                getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getNombreMunicipio();
     }
 
     public static Usuario getUsuarioSession() {

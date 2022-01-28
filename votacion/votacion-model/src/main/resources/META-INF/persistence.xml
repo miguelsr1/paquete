@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+  <persistence-unit name="votacionUP" transaction-type="JTA">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <jta-data-source>java:/VotacionDS</jta-data-source>
+    <class>sv.gob.mined.votacion.model.votacion.entities.Candidato</class>
+    <class>sv.gob.mined.votacion.model.votacion.entities.Voto</class>
+    <class>sv.gob.mined.votacion.model.votacion.entities.Director</class>
+    <class>sv.gob.mined.votacion.model.votacion.dto.DirectorDto</class>
+    <properties>
+      <property name="eclipselink.cache.shared.default" value="false"/>
+      <property name="eclipselink.target-database" value="Oracle"/>
+      <property name="eclipselink.target-server" value="JBoss"/>
+    </properties>
+  </persistence-unit>
+  <persistence-unit name="paquescolarUP" transaction-type="JTA">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <jta-data-source>java:/PaqueteDS</jta-data-source>
+    <class>sv.gob.mined.votacion.model.paquete.entities.Departamento</class>
+    <class>sv.gob.mined.votacion.model.paquete.entities.VwCatalogoEntidadEducativa</class>
+    <properties>
+      <property name="eclipselink.cache.shared.default" value="false"/>
+      <property name="eclipselink.target-database" value="Oracle"/>
+      <property name="eclipselink.target-server" value="JBoss"/>
+    </properties>
+  </persistence-unit>
+</persistence>

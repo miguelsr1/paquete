@@ -4,59 +4,63 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:p="http://primefaces.org/ui"
     xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:jsf="http://xmlns.jcp.org/jsf"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="content">
+        <div jsf:id="dvMenu">
+            <p:menubar id="mbMenu"> 
+                <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"
+                            update="pnlFiltro pnlProveedores"/>
+                <p:menuitem value="Modificar" icon="fa fa-edit" 
+                            action="#{resolucionesAdjudicativasController.prepareEdit}" 
+                            update="pnlFiltro pnlProveedores pnlFondosCE"/>
+                <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" 
+                            action="#{resolucionesAdjudicativasController.update}" disabled="#{menuController.usuarioSoloLectura or resolucionesAdjudicativasController.contratoPreCarga}" update="pnlIdResolucion"/>
+                <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
+                <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+                <f:facet  name="options">  
+                    <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+                </f:facet> 
+            </p:menubar>        
+            <p:blockUI block="mbMenu" trigger="mGuardar" />
+        </div>
+        <p:panel visible="false" id="pnlIdResolucion">
+            <f:viewParam name="idResolucion" value="#{resolucionesAdjudicativasController.idResolucionAdj}"/>
+        </p:panel>
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar id="mbMenu"> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"
-                                    update="pnlFiltro pnlProveedores"/>
-                        <p:menuitem value="Modificar" icon="fa fa-edit" 
-                                    action="#{resolucionesAdjudicativasController.prepareEdit}" 
-                                    update="pnlFiltro pnlProveedores pnlFondosCE"/>
-                        <p:menuitem id="mGuardar" value="Guardar" icon="fa fa-save" 
-                                    action="#{resolucionesAdjudicativasController.update}" disabled="#{menuController.usuarioSoloLectura}" update="pnlIdResolucion"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
-
-                        <f:facet  name="options">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
-                        </f:facet> 
-                    </p:menubar>
-
-                    <p:panel visible="false" id="pnlIdResolucion">
-                        <f:viewParam name="idResolucion" value="#{resolucionesAdjudicativasController.idResolucionAdj}"/>
-                    </p:panel>
-                    
-                    <p:blockUI block="mbMenu" trigger="mGuardar" />
-
-                    <h3>
+                    <h1>
                         <i class="fa fa-filter blue" style="font-size: 16px;"></i>
                         <p:spacer width="10" height="8"/>
                         <p:outputLabel value="Filtro de busqueda"/>
-                    </h3>
+                    </h1>
                     <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10"
                                  style="width: 100%; border:0px none; background-color:transparent;"
                                  styleClass="form-group ui-panelgrid-blank">
                         <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
-                        <p:selectOneMenu id="cboRubro" value="#{ofertaBienesServiciosController.rubro}" disabled="#{resolucionesAdjudicativasController.deshabilitar}">
+                        <p:selectOneMenu id="cboRubro" value="#{ofertaMB.rubro}" disabled="#{resolucionesAdjudicativasController.deshabilitar}">
                             <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
-                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                             <p:ajax update=":frmPrincipal:pnlFiltro pnlProveedores pnlFondosCE" listener="#{resolucionesAdjudicativasController.limpiarDatos}"/>
                         </p:selectOneMenu>
 
                         <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
-                        <h:panelGrid columns="3" id="codigoEntidad" >
-                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaBienesServiciosController.codigoEntidad}" size="6" disabled="#{resolucionesAdjudicativasController.deshabilitar}" autocomplete="off" requiredMessage="Código de infraestructura" onkeyup="queryEntidad(this.value);" />
-                            <p:outputLabel id="nombreCE" value="#{ofertaBienesServiciosController.entidadEducativa.nombre}" style="font-weight: bold"/>
-                        </h:panelGrid>
+                        <p:outputPanel id="codigoEntidad" >
+                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaMB.codigoEntidad}" size="6" disabled="#{resolucionesAdjudicativasController.deshabilitar}" autocomplete="off" 
+                                         requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5">
+                                <p:ajax event="keyup" update="nombreCE cboProveedor pnlProveedores pnlFondosCE" listener="#{ofertaMB.buscarEntidadEducativaRes}" />
+                            </p:inputText>
+                            <p:spacer width="10"/>
+                            <p:outputLabel id="nombreCE" value="#{ofertaMB.entidadEducativa.nombre}" style="font-weight: bold"/>
+                        </p:outputPanel>
 
                         <p:outputLabel value="Proveedor:" />
                         <p:selectOneMenu id="cboProveedor" value="#{resolucionesAdjudicativasController.idParticipante}" disabled="#{resolucionesAdjudicativasController.deshabilitar}" >
                             <f:selectItem itemLabel="Seleccione un proveedor" />  
-                            <f:selectItems value="#{ofertaBienesServiciosController.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{par.idEmpresa.razonSocial}" />
-                            <p:ajax update="cboEstado pnlProveedores pnlSaldos idParticipante" listener="#{resolucionesAdjudicativasController.buscarResolucionAdjudicativa}" />
+                            <f:selectItems value="#{ofertaMB.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idParticipante)):par.idEmpresa.razonSocial}"/>
+                            <p:ajax update="cboEstado pnlProveedores pnlSaldos idParticipante dvMenu" listener="#{resolucionesAdjudicativasController.buscarResolucionAdjudicativa}" />
                         </p:selectOneMenu>
 
                         <p:outputLabel value="Estado de la Reserva:" />
@@ -206,6 +210,6 @@
             </f:facet>
         </p:dialog>
 
-        <p:remoteCommand name="findEntidad" update="nombreCE cboProveedor pnlProveedores pnlFondosCE" actionListener="#{ofertaBienesServiciosController.buscarEntidadEducativaRes}" />
+        <p:remoteCommand name="findEntidad" update="nombreCE cboProveedor pnlProveedores pnlFondosCE" actionListener="#{ofertaMB.buscarEntidadEducativaRes}" />
     </ui:define>
 </ui:composition>

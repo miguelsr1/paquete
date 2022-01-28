@@ -45,6 +45,7 @@ public class DatosProveDto implements Serializable {
     private String formatoRequerimiento;
     private String codigoEntidad;
     private String nombreCe;
+    private BigDecimal idPlanilla;
     private BigDecimal montoActual;
     private BigDecimal montoRetencion;
     private BigDecimal montoRenta;
@@ -259,5 +260,13 @@ public class DatosProveDto implements Serializable {
 
     public void setMontoReintegro(BigDecimal montoReintegro) {
         this.montoReintegro = montoReintegro;
+    }
+
+    public BigDecimal getIdPlanilla() {
+        return idPlanilla;
+    }
+
+    public void setIdPlanilla(BigDecimal idPlanilla) {
+        this.idPlanilla = idPlanilla;
     }
 }

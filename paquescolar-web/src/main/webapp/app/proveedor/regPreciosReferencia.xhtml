@@ -1,0 +1,118 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/templateProveedor.xhtml">
+    <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="#{preciosReferenciaMB.datosVerificados}"
+                        action="#{preciosReferenciaMB.guardarPreciosRef}" update="tblDetallePrecio"/>
+            <p:menuitem value="Imprimir" disabled="true" />
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-id-card-o" style="font-size: 16px;" aria-hidden="true"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel id="lblNombreEmpresa" value="Datos de #{preciosReferenciaMB.empresa.razonSocial}"/>
+                    </h1>
+                    <h3>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Precios de referencia"/>
+
+                    </h3>
+
+                    <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col6,col6" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <p:outputLabel value="Precios de Referencia"/>
+                        <p:outputLabel value="Precios Máximos"/>
+
+                        <p:dataTable id="tblDetallePrecio" widgetVar="tblDetallePrecio" value="#{preciosReferenciaMB.lstPreciosReferencia}" var="precio" 
+                                     editMode="cell" rowIndexVar="idRow" rowKey="#{precio.idPrecioRefEmp}" 
+                                     editable="true" rowStyleClass="#{precio.estadoEliminacion eq 1 ? 'filaEliminada' : null}" style="width: 570px !important"
+                                     selection="#{preciosReferenciaMB.precioRef}" emptyMessage="No se han registrado precios a este proveedor">
+
+                            <p:ajax event="cellEdit"  listener="#{preciosReferenciaMB.onCellEdit}" onsuccess="updatePrecioRef();" />
+
+                            <p:column headerText="Id" width="40">
+                                <p:outputLabel value="#{precio.idPrecioRefEmp}" />
+                            </p:column>
+
+                            <p:column headerText="Item" width="30" id="item" style="text-align: center;">
+                                <p:cellEditor>  
+                                    <f:facet name="output"><p:outputLabel value="#{precio.noItem}" /></f:facet>
+                                    <f:facet name="input">
+                                        <f:facet name="input">
+                                            <p:inputText value="#{precio.noItem}" disabled="#{precio.estadoEliminacion eq 1}" size="10"/>
+                                        </f:facet>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Descripción Item" width="120">
+                                <p:outputLabel value="#{precio.idProducto.nombreProducto}" id="descripcionItem" />
+                            </p:column>
+
+                            <p:column headerText="Nivel Educativo" width="150">
+                                <p:outputLabel value="#{precio.idNivelEducativo.descripcionNivel}" id="nivelEducativo"/>
+                            </p:column>
+
+                            <p:column headerText="Precio U." width="50" styleClass="numero" id="precio">
+                                <p:cellEditor>  
+                                    <f:facet name="output">
+                                        <h:outputText value="#{precio.precioReferencia}" id="precio2">
+                                            <f:convertNumber pattern="###0.00"/>
+                                        </h:outputText>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputNumber minValue="0" maxValue="16.00" decimalPlaces="2" value="#{precio.precioReferencia}" 
+                                                       inputStyle="text-align: left;" size="5" disabled="#{precio.estadoEliminacion eq 1}" />
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Borrar" width="25" style="text-align: center" rendered="false">
+                                <p:commandLink action="#{preciosReferenciaMB.eliminarDetalle}" update="tblDetallePrecio">
+                                    <p:outputLabel rendered="#{precio.estadoEliminacion eq 0}"> <i class="fa fa-check-circle"></i></p:outputLabel>
+                                    <p:outputLabel rendered="#{precio.estadoEliminacion eq 1}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
+
+                                    <f:setPropertyActionListener value="#{precio}" target="#{preciosReferenciaMB.precioRef}"/>  
+                                    <f:setPropertyActionListener value="#{idRow}" target="#{preciosReferenciaMB.idRow}"/>  
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:dataTable id="tblDetallePrecioMax" widgetVar="tblDetallePrecioMax" value="#{preciosReferenciaMB.lstPreciosMaximos}" var="precioMax" 
+                                     rowIndexVar="idRow" emptyMessage="No hay registros">
+                            <p:column headerText="Item" width="30" style="text-align: center;" rendered="false">
+                                <p:outputLabel value="#{precioMax.noItem}"/>
+                            </p:column>
+
+                            <p:column headerText="Descripción" width="120">
+                                <p:outputLabel value="#{precioMax.consolidadoEspTec}"/>
+                            </p:column>
+
+                            <p:column headerText="Precio U." width="50" styleClass="numero">
+                                <h:outputText value="#{precioMax.precioUnitario}" >
+                                    <f:convertNumber pattern="###0.00"/>
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panelGrid>
+
+                    <p:remoteCommand name="updatePrecioRef" action="#{preciosReferenciaMB.updateFilaDetalle}" />
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -23,22 +23,21 @@
 
     <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
         <ui:define name="content">
+            <p:menubar id="mbMenu"> 
+                <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+                <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+                <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+                <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>  
+            </p:menubar>
             <div class="ui-g">
                 <div class="ui-g-12">
                     <div class="card">
-                        <p:menubar> 
-                            <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
-                            <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
-                            <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
-                            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                            <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>  
-                        </p:menubar>
-
-                        <h3>
+                        <h1>
                             <i class="fa fa-filter blue" style="font-size: 16px;"></i>
                             <p:spacer width="10"/>
                             <p:outputLabel value="Filtro de busqueda"/>
-                        </h3>
+                        </h1>
 
                         <h:panelGrid columns="4" id="pnlFiltro">
                             <p:outputLabel value="Departamento: "/>

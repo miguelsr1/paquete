@@ -14,10 +14,10 @@
                         <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true" />
                         <p:menuitem value="Guardar" icon="fa fa-save" disabled="true" />
                         <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
                         <f:facet  name="options" class="centradoVertical">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
                         </f:facet>  
                     </p:menubar>
 
@@ -52,6 +52,32 @@
                         <div class="ui-g-12 ui-md-6 ui-lg-4">
                             <p:inputText value="#{pagoProveedoresController.nombreEntFinanciera}" style="width: 90%;"/>
                         </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-2">
+                            <p:outputLabel value="Número Cheque"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:inputText value="#{pagoProveedoresController.numeroCheque}" style="width: 90%;"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-2">
+                            <p:outputLabel value="Departamento"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:selectOneMenu id="codigoDepartamento" value="#{pagoProveedoresController.codigoDepartamento}" disabled="#{parametrosMB.usuarioDepartamental}" >
+                                <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
+                                <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />                                
+                            </p:selectOneMenu>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-6 ui-lg-2">
+                            <p:outputLabel value="#{bundle['compra.rubroAdq']}"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:selectOneMenu id="cboRubro" value="#{pagoProveedoresController.idRubro}">
+                                <f:selectItem itemLabel="Seleccione un rubro" itemValue="0" />
+                                <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                <f:selectItem itemLabel="TODOS LOS RUBROS" itemValue="6"/>
+                            </p:selectOneMenu>
+                        </div>
                     </div>
                     <p:commandButton value="Buscar" action="#{pagoProveedoresController.buscarPlanilla}" icon="fa fa-search" update="tblDatos"/>
                 </div>
@@ -63,7 +89,8 @@
                     </h1>
 
                     <p:dataTable id="tblDatos" value="#{pagoProveedoresController.lstBusquedaPlanillas}" var="pla" scrollable="true" 
-                                 paginator="true" paginatorPosition="top" rows="10">
+                                 paginator="true" paginatorPosition="top" rows="10"
+                                 styleClass="ui-datatable-borderless ui-datatable-reflow">
                         <f:facet name="header">
                             <p:spacer width="10" height="8"/>
                             <h:commandLink style="float:right;">
@@ -105,6 +132,9 @@
                         <p:column headerText="Cantidad" style="text-align: right" width="50">
                             <h:outputText value="#{pla.cantidadActual}"/>
                         </p:column>
+                        <p:column headerText="Núm.Cheque" style="text-align: right" width="70">
+                            <h:outputText value="#{pla.numCheque}"/>
+                        </p:column>
                         <p:column headerText="Entidad Financiera" width="200">
                             <h:outputText value="#{pla.nombreEntFinan}"/>
                         </p:column>
@@ -113,7 +143,7 @@
                                 <f:setPropertyActionListener value="#{pla.idPlanilla}" target="#{pagoProveedoresController.idPlanilla}"/>
                             </p:commandLink>
                         </p:column>
-                        <p:column headerText="Fecha Pla." style="text-align: center" width="55">
+                        <p:column headerText="Fecha Pla." style="text-align: center" width="65">
                             <h:outputText value="#{pla.fechaInsercion}">
                                 <f:convertDateTime pattern="dd/MM/yyyy"/>
                             </h:outputText>
@@ -123,9 +153,12 @@
             </div>
         </div>
 
+
         <p:dialog id="dlgPlanillaPago" widgetVar="dlgPlanillaPago" header="Planilla de Pago" width="900" height="600" modal="true" resizable="false">
             <ui:include src="/app/comunes/fragmentos/pagoProveedores/planillaPago.xhtml"/>
         </p:dialog>
         <p:panel id="pnlDatos" visible="false"></p:panel>
+
+        <ui:include src="/app/comunes/fragmentos/pagoProveedores/dlgNotificacionEmail.xhtml"/>
     </ui:define>
 </ui:composition>

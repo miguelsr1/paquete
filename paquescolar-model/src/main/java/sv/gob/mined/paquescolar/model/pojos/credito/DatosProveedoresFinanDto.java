@@ -37,14 +37,24 @@ public class DatosProveedoresFinanDto implements Serializable {
     private String codigoDepartamento;
     private String codigoEntidad;
     private String nombre;
+    private String refPrestamo;
     private BigDecimal montoCredito;
     private BigInteger creditoActivo;
     private String descripcionRubro;
     private BigInteger idRubroInteres;
     private BigInteger idProceso;
     private BigDecimal montoContrato;
+    private BigDecimal montoModificativa;
 
     public DatosProveedoresFinanDto() {
+    }
+
+    public BigDecimal getMontoModificativa() {
+        return montoModificativa;
+    }
+
+    public void setMontoModificativa(BigDecimal montoModificativa) {
+        this.montoModificativa = montoModificativa;
     }
 
     public BigDecimal getIdRow() {
@@ -113,6 +123,14 @@ public class DatosProveedoresFinanDto implements Serializable {
 
     public String getNombre() {
         return nombre;
+    }
+
+    public String getRefPrestamo() {
+        return refPrestamo;
+    }
+
+    public void setRefPrestamo(String refPrestamo) {
+        this.refPrestamo = refPrestamo;
     }
 
     public void setNombre(String nombre) {

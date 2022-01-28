@@ -5,27 +5,35 @@
     xmlns:p="http://primefaces.org/ui"
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+        </style>
+    </ui:define>
+
     <ui:define name="content">
+        <p:menubar id="mbMenu"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options" class="centradoVertical">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+
         <div class="ui-g">
             <div class="ui-g-12">
                 <div class="card">
-                    <p:menubar> 
-                        <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
-                        <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
-                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
-
-                        <f:facet  name="options" class="centradoVertical">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-
-                    <h3>
+                    <h1>
                         <i class="fa fa-filter blue" style="font-size: 16px;"></i>
                         <p:spacer width="10" height="8"/>
                         <p:outputLabel value="Filtro de busqueda"/>
-                    </h3>
+                    </h1>
                     <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10" 
                                  style="width: 100%; border:0px none; background-color:transparent;"
                                  styleClass="form-group ui-panelgrid-blank">
@@ -36,10 +44,8 @@
 
                         <p:outputLabel value="#{bundle['compra.rubroAdq']}: " />
                         <p:selectOneMenu id="idRubroInteres" value="#{reportesWebController.idRubro}" >
-                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                         </p:selectOneMenu>
-
-                        <p:commandButton action="#{reportesWebController.generarRptResumenContrataciones}" value="Buscar" id="ingresar" update="pnlDatos"/>
                     </p:panelGrid>
                 </div>
 
@@ -49,61 +55,107 @@
                         <p:spacer width="10"/>
                         <h:outputText value="Datos"/>
                     </h1>
-                    <p:dataTable id="pnlDatos" value="#{reportesWebController.lstProveedoresHaciendaDto}" var="prov" rowIndexVar="rowId" sortBy="#{prov.nombreDepartamentoCe}">
+                    <p:tabView id="tab">
+                        <p:tab title="Resumen Completo">
+                            <p:dataTable id="pnlDatos" value="#{reportesWebController.lstProveedoresHaciendaDto}" var="prov" 
+                                         rowIndexVar="rowId" sortBy="#{prov.nombreDepartamentoCe}" 
+                                         scrollRows="20" scrollable="true" liveScroll="true" scrollHeight="150"
+                                         styleClass="ui-datatable-borderless ui-datatable-reflow">
 
-                        <f:facet name="header">
-                            <p:spacer width="10" height="8"/>
-                            <h:commandLink style="float:right;">
-                                <i class="fa fa-download"></i>
-                                <p:spacer width="10" height="8"/>
-                                <h:outputText value="Exportar"/>
-                                <p:dataExporter  type="xls" encoding="ISO-8859-1" target="pnlDatos" 
-                                                 fileName="lstResumeContrataciones_#{catalogosGeneralesController.formatoFechaReporte}"
-                                                 postProcessor="#{reportesWebController.resumenContratacionesXls}"/>  
-                            </h:commandLink>
-                        </f:facet>
+                                <f:facet name="header">
+                                    <p:outputPanel>
+                                        <p:commandButton action="#{reportesWebController.generarRptResumenContrataciones}" value="Buscar" id="ingresar" update=":tab:pnlDatos"/>
+                                        <h:commandLink>
+                                            <i class="fa fa-download"></i>
+                                            <p:spacer width="10" height="8"/>
+                                            <h:outputText value="Exportar"/>
+                                            <p:dataExporter  type="xls" encoding="ISO-8859-1" target="pnlDatos" 
+                                                             fileName="lstResumeContrataciones_#{catalogosGeneralesController.formatoFechaReporte}"
+                                                             postProcessor="#{reportesWebController.resumenContratacionesXls}"/>  
+                                        </h:commandLink>
+                                    </p:outputPanel>
+                                </f:facet>
 
 
-                        <p:column headerText="Id">
-                            <p:outputLabel value="#{rowId+1}"/>
-                        </p:column>
-                        <p:column headerText="#{bundle['tabla.departamento']}">
-                            <p:outputLabel value="#{prov.nombreDepartamentoCe}"/>
-                        </p:column>
-                        <p:column headerText="#{bundle['tabla.codEnt']}">
-                            <p:outputLabel value="#{prov.codigoEntidad}"/>
-                        </p:column>
-                        <p:column headerText="#{bundle['tabla.nit']}">
-                            <p:outputLabel value="#{prov.numeroNit}"/>
-                        </p:column>
-                        <p:column headerText="#{bundle['tabla.proveedor']}">
-                            <p:outputLabel value="#{prov.razonSocial}"/>
-                        </p:column>
-                        <p:column headerText="#{bundle['tabla.cantidad']}" styleClass="numero">
-                            <p:outputLabel value="#{prov.cantidadContrato}"/>
-                        </p:column>
-                        <p:column headerText="#{bundle['tabla.monto']}" styleClass="numero">
-                            <h:outputText value="#{prov.montoContrato}">
-                                <f:convertNumber pattern="#,##0.00"/>
-                            </h:outputText>
-                        </p:column>
+                                <p:column headerText="Id" width="50">
+                                    <p:outputLabel value="#{rowId+1}"/>
+                                </p:column>
+                                <p:column headerText="#{bundle['tabla.departamento']}" width="120">
+                                    <p:outputLabel value="#{prov.nombreDepartamentoCe}"/>
+                                </p:column>
+                                <p:column headerText="#{bundle['tabla.municipio']}" width="120">
+                                    <p:outputLabel value="#{prov.nombreMunicipioCe}"/>
+                                </p:column>
+                                <p:column headerText="#{bundle['tabla.codEnt']}" width="40">
+                                    <p:outputLabel value="#{prov.codigoEntidad}"/>
+                                </p:column>
+                                <p:column headerText="#{bundle['tabla.nomEnt']}" width="40">
+                                    <p:outputLabel value="#{prov.nombreCe}"/>
+                                </p:column>
+                                <p:column headerText="Director" width="40">
+                                    <p:outputLabel value="#{prov.miembroFirma}"/>
+                                </p:column>
+                                <p:column headerText="Tel.Director 1">
+                                    <p:outputLabel value="#{prov.telDirector}"/>
+                                </p:column>
+                                <p:column headerText="Tel.Director 2">
+                                    <p:outputLabel value="#{prov.telDirector2}"/>
+                                </p:column>
+                                <p:column headerText="#{bundle['tabla.nit']}">
+                                    <p:outputLabel value="#{prov.numeroNit}"/>
+                                </p:column>
+                                <p:column headerText="#{bundle['tabla.proveedor']}">
+                                    <p:outputLabel value="#{prov.razonSocial}"/>
+                                </p:column>
+                                <p:column headerText="#{bundle['tabla.cantidad']}" styleClass="numero" width="50">
+                                    <p:outputLabel value="#{prov.cantidadContrato}"/>
+                                </p:column>
+                                <p:column headerText="#{bundle['tabla.monto']}" styleClass="numero" width="50">
+                                    <h:outputText value="#{prov.montoContrato}">
+                                        <f:convertNumber pattern="#,##0.00"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Prov.Celular">
+                                    <p:outputLabel value="#{prov.celularEmp}"/>
+                                </p:column>
+                                <p:column headerText="Prov.Telefono">
+                                    <p:outputLabel value="#{prov.telefonoEmp}"/>
+                                </p:column>
+                                <p:column headerText="Prov.Telefono 2">
+                                    <p:outputLabel value="#{prov.telefonoEmp2}"/>
+                                </p:column>
+                                <p:column headerText="Prov.Telefono 3">
+                                    <p:outputLabel value="#{prov.telefonoEmp3}"/>
+                                </p:column>
+                                <p:column headerText="Fecha Emisión">
+                                    <p:outputLabel value="#{prov.fechaEmision}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>
 
-                        <p:summaryRow>
-                            <p:column colspan="4" style="text-align:right">
-                                <h:outputText value="Total:" />
-                            </p:column>
-                            <p:column styleClass="numero">
-                                <h:outputText value="#{reportesWebController.cantidadTotal}">
-                                    <f:convertNumber type="currency" />
-                                </h:outputText>
-                            </p:column>
-                            <p:column styleClass="numero">
-                                <h:outputText value="#{reportesWebController.montoTotal}">
-                                    <f:convertNumber type="currency" currencySymbol="$" />
-                                </h:outputText>
-                            </p:column>
-                        </p:summaryRow>
-                    </p:dataTable>
+                                <p:summaryRow>
+                                    <p:column colspan="10" style="text-align:right">
+                                        <h:outputText value="Total:" />
+                                    </p:column>
+                                    <p:column styleClass="numero">
+                                        <h:outputText value="#{reportesWebController.cantidadTotal}">
+                                            <f:convertNumber type="currency" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column styleClass="numero">
+                                        <h:outputText value="#{reportesWebController.montoTotal}">
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                    </p:column>
+                                </p:summaryRow>
+                            </p:dataTable>
+                        </p:tab>
+                        <p:tab title="Detalle Matricula">
+
+                        </p:tab>
+                    </p:tabView>
                 </div>
             </div>
         </div>

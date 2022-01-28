@@ -300,7 +300,7 @@ public class EdicionSeguimientoMB implements Serializable {
     }
 
     public void onDateActaSelectEntregaCompleta(SelectEvent event) {
-        if (recepcion.getFechaOrdenInicioEntrega1() == null) {
+        if (recepcion.getIdContrato().getFechaOrdenInicio() == null) {
             fechaRecepcionTotal = null;
             JsfUtil.mensajeError("Favor Ingrese fecha de orden de inicio entrega n");
         } else if (esFechaInicioMayorRecepcion1Total() && tipoEntrega.equals("1")) {
@@ -316,8 +316,8 @@ public class EdicionSeguimientoMB implements Serializable {
         boolean salida = false;
         Date fechaInicio1 = null;
         Date fecharecepcion = null;
-        if (recepcion.getFechaOrdenInicioEntrega1() != null) {
-            fechaInicio1 = recepcion.getFechaOrdenInicioEntrega1();
+        if (recepcion.getIdContrato().getFechaOrdenInicio() != null) {
+            fechaInicio1 = recepcion.getIdContrato().getFechaOrdenInicio();
         }
         if (fechaRecepcionTotal != null) {
             fecharecepcion = fechaRecepcionTotal;
@@ -334,8 +334,8 @@ public class EdicionSeguimientoMB implements Serializable {
         Date fechaInicio2 = null;
         Date fecharecepcion = null;
         try {
-            if (recepcion.getFechaOrdenInicioEntrega1() != null) {
-                fechaInicio2 = recepcion.getFechaOrdenInicioEntrega2();
+            if (recepcion.getIdContrato().getFechaOrdenInicio() != null) {
+                fechaInicio2 = recepcion.getIdContrato().getFechaOrdenInicio();
             }
             if (fechaRecepcionTotal != null) {
                 fecharecepcion = fechaRecepcionTotal;
@@ -344,9 +344,9 @@ public class EdicionSeguimientoMB implements Serializable {
                 salida = true;
             }
         } catch (Exception e) {
-            System.out.println("Error compracion de fechas");
+            /*System.out.println("Error compracion de fechas");
             System.out.println("FechaRecepcionTotal " + fechaRecepcionTotal);
-            System.out.println("fechaInicio2 " + fechaInicio2);
+            System.out.println("fechaInicio2 " + fechaInicio2);*/
         }
 
         return salida;
@@ -412,21 +412,6 @@ public class EdicionSeguimientoMB implements Serializable {
         errorValidacion = cantidadPendienteItem.intValue() == 0;
         if (errorValidacion) {
             JsfUtil.mensajeInformacion("Este item ya ha sido entregado completamente");
-        }
-    }
-
-    private void calcularTotalRecibidoByItem() {
-        //item recibidos parcialmente
-        for (DetalleRecepcion detalle : lstDetalleRecepcion) {
-            if (noItem.equals(detalle.getNoItem())) {
-                if (detalle.getTipoEntrega() != null) {
-                    if (detalle.getTipoEntrega().equals(tipoEntrega)) {
-                        cantidadTotalRecibidaItem = cantidadTotalRecibidaItem.add(detalle.getCantidadEntregada());
-                    }
-                } else {
-                    cantidadTotalRecibidaItem = cantidadTotalRecibidaItem.add(detalle.getCantidadEntregada());
-                }
-            }
         }
     }
 

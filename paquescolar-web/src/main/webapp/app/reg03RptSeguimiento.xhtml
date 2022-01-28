@@ -1,0 +1,90 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true" />
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="true" />
+            <p:menuitem value="Imprimir" disabled="true" icon="fa fa-print" />
+            <p:menuitem value="Principal" icon="fa fa-home" action="#{parametrosMB.limpiarVariables}" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <h1>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h1>
+
+                    <p:panelGrid id="panel"  columns="2" columnClasses="col2_label,col10" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <p:outputLabel value="Rubro de adquisición: " />
+                        <p:selectOneMenu id="idRubroInteres" value="#{reporteView.idRubro}" required="true" requiredMessage="El rubro es requerido">
+                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="0" />  
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Fecha: " />
+                        <p:calendar value="#{reporteView.fecha}" pattern="dd/MM/yyyy" lang="es" showOn="button" navigator="true"/>
+
+                        <p:commandButton action="#{reporteView.generarExcelUpdateProveedores}" value="Buscar" update="tblDatos"/>
+                    </p:panelGrid>
+                </div>
+
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-list verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Datos"/>
+                    </h1>
+
+                    <p:dataTable id="tblDatos" var="dato" value="#{reporteView.lstDatos}" styleClass="ui-datatable-borderless ui-datatable-reflow">  
+                        <f:facet name="header">
+                            <p:spacer width="10" height="8"/>
+                            <h:commandLink style="float:right;" disabled="#{reporteView.lstDatos.size() eq 0}">
+                                <i class="fa fa-download"></i>
+                                <p:spacer width="10" height="8"/>
+                                <h:outputText value="Exportar"/>
+                                <p:dataExporter  type="xls" encoding="ISO-8859-1" target="tblDatos" 
+                                                 fileName="lstAdjProveedor_#{catalogosGeneralesController.formatoFechaReporte}" />
+                            </h:commandLink>
+                        </f:facet>
+
+                        <p:column headerText="NIT" width="110">
+                            <p:outputLabel value="#{dato.numeroNit}" />  
+                        </p:column>
+                        <p:column headerText="Empresa" >  
+                            <p:outputLabel value="#{dato.razonSocial}" />  
+                        </p:column>  
+
+                        <p:column headerText="Rubro" width="220">  
+                            <p:outputLabel value="#{dato.descripcionRubro}" />  
+                        </p:column>
+
+                        <p:column headerText="Usuario" width="220">
+                            <p:outputLabel value="#{dato.usuario}" />  
+                        </p:column>
+
+                        <p:column headerText="Fecha" width="70" >
+                            <p:outputLabel value="#{dato.fecha}">  
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:outputLabel>
+                        </p:column> 
+                    </p:dataTable>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

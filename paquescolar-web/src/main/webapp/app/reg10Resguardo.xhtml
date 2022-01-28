@@ -1,0 +1,128 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" disabled="true" />
+            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" action="#{resguardoMB.guardar}" update="pnlFiltro tblDetalleOferta"
+                        disabled="#{menuController.usuarioSoloLectura}"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true"/>
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <h1>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h1>
+                    <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
+                        <p:selectOneMenu id="cboRubro" value="#{resguardoMB.rubro}">
+                            <f:selectItem itemLabel="Seleccione un rubro" />
+                            <f:selectItems value="#{parametrosMB.lstRubrosResguardo}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <p:ajax update=":frmPrincipal:pnlFiltro"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
+                        <p:outputPanel id="codigoEntidad" >
+                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{resguardoMB.codigoEntidad}" size="6" autocomplete="off" 
+                                         requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5">
+                                <p:ajax event="keyup" update="menuBar nombreCE cboProveedor" listener="#{resguardoMB.buscarEntidadEducativa}" />
+                            </p:inputText>
+                            <p:spacer width="10"/>
+                            <p:outputLabel id="nombreCE" value="#{resguardoMB.entidadEducativa.nombre}" style="font-weight: bold"/>
+                        </p:outputPanel>
+
+                        <p:outputLabel value="Proveedor:" />
+                        <p:selectOneMenu id="cboProveedor" value="#{resguardoMB.idParticipante}"  onkeydown="setaFoco(this);" >
+                            <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
+                            <f:selectItems value="#{resguardoMB.lstParticipantes}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{par.razonSocial}"/>
+                            <p:ajax listener="#{resguardoMB.buscarResguardoPorContrato}" update="tblDetalleOferta"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                </div>
+
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Lista de Items"/>
+                        <p:commandButton id="btoAgregar" value=" Agregar" icon="fa fa-plus-circle" update="tblDetalleItems"
+                                         style="float: right; font-size: 12px;" action="#{resguardoMB.buscarItem}"/>
+                    </h1>
+
+                    <p:dataTable id="tblDetalleOferta" value="#{resguardoMB.lstResguardoBienes}" var="resguardo" rowKey="#{resguardo.idResguardo}" rowIndexVar="rowId"
+                                 rowStyleClass="#{resguardo.estadoEliminacion eq 1 ? 'filaEliminada' : null}"
+                                 styleClass="ui-datatable-borderless ui-datatable-reflow" emptyMessage="No hay registros" >
+                        <p:column headerText="#" width="50" styleClass="centrado">
+                            #{rowId +1 }
+                        </p:column>
+                        <p:column headerText="Fecha inserción">
+                            <p:outputLabel value="#{resguardo.fechaInsercion}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Total en Resguardo">
+                            <p:outputLabel value="#{resguardo.totalCantidad}"/>
+                        </p:column>
+                        <p:column headerText="Editar" width="40" styleClass="centrado" rendered="false">
+                            <p:commandLink action="#{resguardoMB.eliminarDetalle}" update="tblDetalleOferta">
+                                <p:outputLabel><i class="fa fa-pencil"></i></p:outputLabel>
+                                <f:setPropertyActionListener value="#{resguardo}" target="#{resguardoMB.resguardoBienes}"/>  
+                                <f:setPropertyActionListener value="#{rowId}" target="#{resguardoMB.rowEdit}"/>  
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="Borrar" width="40" styleClass="centrado">
+                            <p:commandLink action="#{resguardoMB.eliminarDetalle}" update="tblDetalleOferta">
+                                <p:outputLabel rendered="#{!(resguardo.estadoEliminacion eq 0)}"> <i class="fa fa-check-circle"></i></p:outputLabel>
+                                <p:outputLabel rendered="#{(resguardo.estadoEliminacion eq 0)}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
+                                <f:setPropertyActionListener value="#{resguardo}" target="#{resguardoMB.resguardoBienes}"/>  
+                                <f:setPropertyActionListener value="#{rowId}" target="#{resguardoMB.rowEdit}"/>  
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+        </div>
+
+        <p:dialog id="dlgDetalle" widgetVar="dlgDetalle" closable="false" draggable="false" minimizable="false" modal="true" width="700" header="Detalle de Items Contratados">
+
+            <p:dataTable id="tblDetalleItems" value="#{resguardoMB.lstDetalle}" var="det" rowIndexVar="rowId" rowKey="#{det.idRow}">
+                <p:column headerText="#" width="20" styleClass="centrado">
+                    <p:outputLabel value="#{det.noItem}"/>
+                </p:column>
+                <p:column headerText="Nivel educativo">
+                    <p:outputLabel value="#{det.descripcionNivel}"/>
+                </p:column>
+                <p:column headerText="Item">
+                    <p:outputLabel value="#{det.nombreProducto}"/>
+                </p:column>
+                <p:column headerText="Cantidad en Reguardo" width="70" styleClass="numero">
+                    <p:inputNumber value="#{det.cantidad}" size="6" inputStyle="text-align: right" decimalPlaces="0"/>
+                </p:column>
+            </p:dataTable>
+
+
+            <f:facet name="footer">
+                <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{resguardoMB.agregarDetalle}" onclick="PF('dlgDetalle').hide();" update="tblDetalleOferta"/>
+                <p:commandButton value="Cancelar" icon="fa fa-times-circle" onclick="PF('dlgDetalle').hide();"/>
+            </f:facet>
+        </p:dialog>
+
+        <p:remoteCommand name="findEntidad" update="menuBar nombreCE tblDetalleOferta" actionListener="#{resguardoMB.buscarEntidadEducativa}" />
+    </ui:define>
+</ui:composition>

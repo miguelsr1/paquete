@@ -1,0 +1,4 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<oracle.dbtools.crest.model.design.relational.RelationalDesign>
+   <object objectType="main_view" objectID="FA2FAA3A-E15B-793B-6BA6-1FF6F967B0CE" name="votacion" visible="true"/>
+</oracle.dbtools.crest.model.design.relational.RelationalDesign>

@@ -4,84 +4,121 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:p="http://primefaces.org/ui"
     xmlns:f="http://java.sun.com/jsf/core"
-    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
+    xmlns:jsf="http://xmlns.jcp.org/jsf">
     <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky">  
+            <p:menuitem value="Nuevo"  ajax="true"  action="#{creditoBancarioController.newCredito}" 
+                        update="pnlFiltro" icon="fa fa-file-o"/>
+            <p:menuitem value="Modificar"  ajax="true" action="#{creditoBancarioController.editCredito}" 
+                        update="pnlFiltro" icon="fa fa-edit"/>
+            <p:menuitem value="Guardar"  ajax="true" actionListener="#{creditoBancarioController.guardarCredito}" 
+                        disabled="#{menuController.usuarioSoloLectura}" update="pnlFiltro pnlEdicion pnlDatosCredito pngDatosCredito pnlListadoCreditos" icon="fa fa-save"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
         <div class="ui-g">
             <div class="ui-g-12">
-                <div class="card">
-                    <p:menubar id="menuBar">  
-                        <p:menuitem value="Nuevo"  ajax="true"  action="#{creditoBancarioController.newCredito}" 
-                                    update="pnlFiltro" icon="fa fa-file-o"/>
-                        <p:menuitem value="Modificar"  ajax="true" action="#{creditoBancarioController.editCredito}" 
-                                    update="pnlFiltro" icon="fa fa-edit"/>
-                        <p:menuitem value="Guardar"  ajax="true" actionListener="#{creditoBancarioController.guardarCredito}" 
-                                    disabled="#{menuController.usuarioSoloLectura}"
-                                    update="pnlFiltro pnlEdicion" icon="fa fa-save"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+                <div class="card" jsf:id="pnlFiltro" style="display:#{(creditoBancarioController.visibleFiltro)?'block':'none'}">
+                    <h1>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h1>
 
-                        <f:facet  name="options">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
-                        </f:facet>  
-                    </p:menubar>
-                    <p:outputPanel id="pnlFiltro" style="display:#{(!creditoBancarioController.visibleDatosGen)?'block':'none'}" >
-                        <h3>
-                            <i class="fa fa-filter blue" style="font-size: 16px;"></i>
-                            <p:spacer width="10" height="8"/>
-                            <p:outputLabel value="Filtro de busqueda"/>
-                        </h3>
+                    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2,ui-grid-col-10" styleClass="ui-panelgrid-blank form-group form-elements">
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />  
+                        <p:selectOneMenu id="idRubro" value="#{creditoBancarioController.rubro}" effect="fade" disabled="#{creditoBancarioController.deshabilitado}">
+                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
+                            <f:selectItems value="#{creditoBancarioController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <p:ajax listener="#{creditoBancarioController.buscarDetProceso}" update="idEntFinan"/>
+                        </p:selectOneMenu>
 
-                        <p:panelGrid columns="2" columnClasses="col2,col10" styleClass="ui-panelgrid-blank form-group form-elements" >
-                            <p:outputLabel value="Entidad Financiera:" />  
-                            <p:panelGrid>
-                                <p:selectOneMenu id="idEntFinan" value="#{creditoBancarioController.entidadSeleccionado}" effect="fade" 
-                                                 disabled="#{creditoBancarioController.deshabilitado}" converter="entidadFinancieraConverter" >
-                                    <f:selectItems value="#{creditoBancarioController.lstEntidades}" />
-                                    <p:ajax listener="#{creditoBancarioController.updateRubro}" update="idRubro"/>
-                                </p:selectOneMenu>
-                                <p:spacer width="10"/>
-                                <p:outputLabel rendered="#{creditoBancarioController.usuarioEntidadFinanciera}" value="No posee ninguna entidad financiera asociada a su Usuario." style="color: red; font: bold"/>
-                            </p:panelGrid>
-
-                            <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />  
-                            <p:selectOneMenu id="idRubro" value="#{creditoBancarioController.rubro}" effect="fade" 
-                                             disabled="#{creditoBancarioController.deshabilitado}">
-                                <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
-                                <f:selectItems value="#{creditoBancarioController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
-                                <f:ajax listener="#{creditoBancarioController.buscarDetProceso}"/>
+                        <p:outputLabel value="Entidad Financiera:" />  
+                        <p:panelGrid>
+                            <p:selectOneMenu id="idEntFinan" value="#{creditoBancarioController.entidadSeleccionado}" effect="fade" 
+                                             disabled="#{creditoBancarioController.deshabilitado}" converter="entidadFinancieraConverter" >
+                                <f:selectItems value="#{creditoBancarioController.lstEntidades}" />
                             </p:selectOneMenu>
-
-                            <p:outputLabel value="N.I.T.:" />
-                            <p:inputMask id="nit" mask="9999-999999-999-9"  value="#{creditoBancarioController.numeroNit}" 
-                                         disabled="#{creditoBancarioController.deshabilitado}" size="17"/> 
-
-
-                            <p:commandButton   value="Buscar" icon="ui-icon-search" 
-                                               update="pnlDatosGenerales pnlFiltro pnlEdicion pnlListadoCreditos"
-                                               action="#{creditoBancarioController.buscarEmpresa}" 
-                                               disabled="#{creditoBancarioController.deshabilitado}" />  
+                            <p:spacer width="10"/>
+                            <p:outputLabel rendered="#{creditoBancarioController.usuarioEntidadFinanciera}" value="No posee ninguna entidad financiera asociada a su Usuario." style="color: red; font-weight: bold;"/>
                         </p:panelGrid>
-                    </p:outputPanel>
 
-                    <p:outputPanel id="pnlDatosGenerales" style="display:#{(creditoBancarioController.visibleDatosGen)?'block':'none'}" >
-                        <h3>
-                            <i class="fa fa-filter blue" style="font-size: 16px;"></i>
-                            <p:spacer width="10" height="8"/>
-                            <h:outputText value="1. Datos general del proveedor"/>
-                        </h3>
+                        <p:outputLabel value="N.I.T.:" />
+                        <p:inputMask id="nit" mask="9999-999999-999-9"  value="#{creditoBancarioController.numeroNit}" 
+                                     disabled="#{creditoBancarioController.deshabilitado}" size="17"/> 
 
-                        <div class="ui-g">
-                            <div class="ui-g-12 ui-md-6 ui-lg-2"><h:outputLabel value="N.I.T.:" style="font-weight: bold;"/></div>
-                            <div class="ui-g-12 ui-md-6 ui-lg-4"><h:outputLabel value="#{creditoBancarioController.empresa.numeroNit}" /></div>
-                            <div class="ui-g-12 ui-md-6 ui-lg-2"><h:outputLabel value="Nombre proveedor:" style="font-weight: bold;"/></div>
-                            <div class="ui-g-12 ui-md-6 ui-lg-4"><h:outputLabel value="#{creditoBancarioController.empresa.razonSocial}" /></div>
-                            <div class="ui-g-12 ui-md-6 ui-lg-2"><h:outputLabel value="Dirección Completa:" style="font-weight: bold;"/></div>
-                            <div class="ui-g-12 ui-md-6 ui-lg-4"><h:outputLabel value="#{creditoBancarioController.empresa.direccionCompleta}, #{creditoBancarioController.empresa.idMunicipio.nombreMunicipio}, #{creditoBancarioController.empresa.idMunicipio.codigoDepartamento.nombreDepartamento}" /></div>
-                            <div class="ui-g-12 ui-md-6 ui-lg-2"><h:outputLabel value="Télefonos:" style="font-weight: bold;"/></div>
-                            <div class="ui-g-12 ui-md-6 ui-lg-4"><h:outputLabel value="#{creditoBancarioController.empresa.telefonos}, #{creditoBancarioController.empresa.numeroCelular}" /></div>
-                        </div>
-                    </p:outputPanel>
+
+                        <p:commandButton   value="Buscar" icon="ui-icon-search" 
+                                           update="pnlFiltro pnlEdicion pnlListadoCreditos pnlDatosGenerales pnlDatosCredito"
+                                           action="#{creditoBancarioController.buscarEmpresa}" 
+                                           disabled="#{creditoBancarioController.deshabilitado}" />  
+                    </p:panelGrid>
                 </div>
+            </div>
+
+            <div jsf:id="pnlDatosGenerales" class="ui-g-12 ui-lg-5" style="display:#{!(creditoBancarioController.visibleFiltro)?'block':'none'}" >
+                <div class="card">
+                    <h1>
+                        <i class="fa fa-id-card-o blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <h:outputText value="Datos generales del proveedor"/>
+                    </h1>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-lg-3"><h:outputLabel value="N.I.T.:" style="font-weight: bold;"/></div>
+                        <div class="ui-g-12 ui-lg-9"><h:outputLabel value="#{creditoBancarioController.empresa.numeroNit}" /></div>
+                        <div class="ui-g-12 ui-lg-3"><h:outputLabel value="Nombre" style="font-weight: bold;"/></div>
+                        <div class="ui-g-12 ui-lg-9"><h:outputLabel value="#{creditoBancarioController.empresa.razonSocial}" /></div>
+                        <div class="ui-g-12 ui-lg-3"><h:outputLabel value="Dirección" style="font-weight: bold;"/></div>
+                        <div class="ui-g-12 ui-lg-9"><h:outputLabel value="#{creditoBancarioController.empresa.direccionCompleta}, #{creditoBancarioController.empresa.idMunicipio.nombreMunicipio}, #{creditoBancarioController.empresa.idMunicipio.codigoDepartamento.nombreDepartamento}" /></div>
+                        <div class="ui-g-12 ui-lg-3"><h:outputLabel value="Télefonos:" style="font-weight: bold;"/></div>
+                        <div class="ui-g-12 ui-lg-9"><h:outputLabel value="#{creditoBancarioController.empresa.telefonos}, #{creditoBancarioController.empresa.numeroCelular}" /></div>
+                    </div>
+                </div>
+            </div>
+            <div jsf:id="pnlDatosCredito" class="ui-g-12 ui-lg-7" style="display:#{(creditoBancarioController.visibleDatosCredito)?'block':'none'}" >
+                <div class="card">
+                    <h1>
+                        <i class="fa fa-credit-card blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <h:outputText value="Datos del crédito"/>
+                    </h1>
+
+                    <p:panelGrid id="pngDatosCredito" columns="4" styleClass="ui-panelgrid-blank form-group form-elements" >
+                        <p:outputLabel value="Número Refe.:" />
+                        <p:inputText id="refPrestamo" value="#{creditoBancarioController.credito.refPrestamo}" 
+                                     disabled="#{!creditoBancarioController.visibleEdicion}" size="15"/>
+                        <p:spacer width="8"/>
+                        <p:spacer width="8"/>
+                        <p:outputLabel value="Crédito:" />
+                        <p:inputNumber id="montoCredito" minValue="0" decimalPlaces="2" value="#{creditoBancarioController.credito.montoCredito}" inputStyle="text-align: right;"
+                                       disabled="#{!creditoBancarioController.visibleEdicion}" size="10"/>
+                        <p:outputLabel value="Tasa de interés:" />
+                        <p:inputNumber id="tasaInteres" minValue="0" decimalPlaces="2" maxValue="40" value="#{creditoBancarioController.credito.tasaInteres}"  inputStyle="text-align: right;"
+                                       disabled="#{!creditoBancarioController.visibleEdicion}" size="10"/>
+
+                        <p:outputLabel value="Fecha aprobación:" />
+                        <p:calendar id="fechaAprobacion" pattern="dd/MM/yyyy" value="#{creditoBancarioController.credito.fechaAprobacion}"  
+                                    showOn="button" effect="fade" locale="es" navigator="true"
+                                    converterMessage="Error en el formato de la fecha de aprobación, el formato debe de ser dd/MM/yyyy"  
+                                    disabled="#{!creditoBancarioController.visibleEdicion}" size="10">
+                            <p:ajax event="dateSelect" update="fechaVencimiento" />
+                        </p:calendar>
+                        <p:outputLabel value="Fecha vencimiento:" />
+                        <p:calendar id="fechaVencimiento" pattern="dd/MM/yyyy" value="#{creditoBancarioController.credito.fechaVencimiento}" 
+                                    showOn="button" effect="fade" locale="es" navigator="true"
+                                    mindate="#{creditoBancarioController.credito.fechaAprobacion}"
+                                    converterMessage="Error en el formato de la fecha de vencimiento, el formato debe de ser dd/MM/yyyy" 
+                                    disabled="#{!creditoBancarioController.visibleEdicion}" size="10" /> 
+                    </p:panelGrid>
+                </div>
+            </div>
+
+            <div class="ui-g-12">
                 <div class="card clearfix">
                     <p:outputPanel id="pnlListadoCreditos" style="display:#{(creditoBancarioController.visibleLista)?'block':'none'}">
                         <h1>
@@ -90,10 +127,10 @@
                             <h:outputText value="Seleccione un crédito activo"/>
                         </h1>
 
-                        <p:dataTable id="lstCreditosActivos" var="credito" value="#{creditoBancarioController.lstCreditoActivos}" 
+                        <p:dataTable id="lstCreditosActivos" var="credito" value="#{creditoBancarioController.lstCreditoActivos}" styleClass="ui-datatable-borderless ui-datatable-reflow"
                                      rowKey="#{credito.idCredito}" selection="#{creditoBancarioController.credito}"
                                      selectionMode="single" emptyMessage="Este proveedor no posee créditos activos" > 
-                            <p:ajax event="rowSelect" update="pnlEdicion pnlDatosGenerales pnlFiltro menuBar pnlListadoCreditos" 
+                            <p:ajax event="rowSelect" update="pnlEdicion pnlDatosGenerales pnlDatosCredito pnlFiltro menuBar pnlListadoCreditos" 
                                     listener="#{creditoBancarioController.mostarPanelEdicion}"/> 
                             <p:column headerText="Número de Ref." width="120">  
                                 <h:outputText value="#{credito.refPrestamo}" />  
@@ -105,11 +142,11 @@
                                 </h:outputText>
                             </p:column>  
 
-                            <p:column headerText="Entidad Financiera" width="300">  
+                            <p:column headerText="Entidad Financiera" >  
                                 <h:outputText value="#{credito.codEntFinanciera.nombreEntFinan}" />  
                             </p:column>  
 
-                            <p:column headerText="Estado Credito">  
+                            <p:column headerText="Estado Credito" width="90" style="text-align: center;">   
                                 <h:outputText value="#{credito.creditoActivo eq 1?'Activo':'Inactivo'}" />  
                             </p:column>
                         </p:dataTable>
@@ -118,58 +155,28 @@
 
                     <p:outputPanel id="pnlEdicion" style="display:#{(creditoBancarioController.visibleEdicion)?'block':'none'}">
                         <h1>
-                            <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                            <i class="fa fa-list blue" style="font-size: 16px;"></i>
                             <p:spacer width="10" height="8"/>
-                            <h:outputText value="Ingrese los datos del crédito"/>
+                            <h:outputText value="Detalle de Contratos del crédito" />
+                            <p:spacer width="10" height="8"/>
+                            <p:outputLabel value="CREDITO CANCELADO" rendered="#{creditoBancarioController.visibleEstadoCreditoCancelado}" style="font-size: 16px;color: #FF0000;" />
+                            <p:outputLabel value="CREDITO ACTIVO" rendered="#{creditoBancarioController.visibleEstadoCreditoActivo}" style="font-size: 16px;color: #00DD00;"/>
+
+                            <p:commandButton value="Agregar Contrato" icon="fa fa-plus-circle" action="#{creditoBancarioController.agregarNuevoContrato}" style="float: right; font-size: 12px;"/>
+                            <p:commandButton value="#{creditoBancarioController.credito.creditoActivo eq 1?'Cancelacion de Credito':'Activar Credito'}" 
+                                             icon="fa fa-times-circle" action="#{creditoBancarioController.cancelacionDeCredito}" style="float: right; font-size: 12px;"/>
                         </h1>
 
-                        <h4>
-                            <h:outputText value="Datos del crédito" style="font-style: italic; font-weight: bold;"/>
-                        </h4>
-                        <p:panelGrid columns="6" styleClass="ui-panelgrid-blank form-group form-elements" >
-                            <p:outputLabel value="Número de Crédito:" />
-                            <p:inputText id="refPrestamo" value="#{creditoBancarioController.credito.refPrestamo}" 
-                                         disabled="#{!creditoBancarioController.visibleEdicion}" size="15"/>
-                            <p:outputLabel value="Monto del Crédito:" />
-                            <p:inputNumber id="montoCredito" minValue="0" decimalPlaces="2" value="#{creditoBancarioController.credito.montoCredito}" inputStyle="text-align: right;"
-                                           disabled="#{!creditoBancarioController.visibleEdicion}" size="10"/>
-                            <p:outputLabel value="Tasa de interés:" />
-                            <p:inputNumber id="tasaInteres" minValue="0" decimalPlaces="2" maxValue="40" value="#{creditoBancarioController.credito.tasaInteres}"  inputStyle="text-align: right;"
-                                           disabled="#{!creditoBancarioController.visibleEdicion}" size="10"/>
-
-                            <p:outputLabel value="Fecha de aprobación:" />
-                            <p:calendar id="fechaAprobacion" pattern="dd/MM/yyyy" value="#{creditoBancarioController.credito.fechaAprobacion}"  
-                                        showOn="button" effect="fade" locale="es"
-                                        converterMessage="Error en el formato de la fecha de aprobación, el formato debe de ser dd/MM/yyyy"  
-                                        disabled="#{!creditoBancarioController.visibleEdicion}" size="10"/>
-                            <p:outputLabel value="Fecha de vencimiento:" />
-                            <p:calendar id="fechaVencimiento" pattern="dd/MM/yyyy" value="#{creditoBancarioController.credito.fechaVencimiento}" 
-                                        showOn="button" effect="fade" locale="es"
-                                        converterMessage="Error en el formato de la fecha de vencimiento, el formato debe de ser dd/MM/yyyy" 
-                                        disabled="#{!creditoBancarioController.visibleEdicion}" size="10" /> 
-                        </p:panelGrid>
-                        <br/>
-                        <h4>
-                            <h:outputText value="Detalle de Contratos del crédito"  style="font-style: italic; font-weight: bold;"/>
-                        </h4>
-                        <p:commandButton value="Agregar Contrato" icon="fa fa-plus-circle" action="#{creditoBancarioController.agregarNuevoContrato}"/>
-                        <p:commandButton value="#{creditoBancarioController.credito.creditoActivo eq 1?'Cancelacion de Credito':'Activar Credito'}" 
-                                         icon="fa fa-times-circle" action="#{creditoBancarioController.cancelacionDeCredito}" />
-                        <p:spacer width="20" height="8"/>
-                        <p:outputLabel value="CREDITO CANCELADO" rendered="#{creditoBancarioController.visibleEstadoCreditoCancelado}" style="font-size: 16px;color: #FF0000;" />
-                        <p:outputLabel value="CREDITO ACTIVO" rendered="#{creditoBancarioController.visibleEstadoCreditoActivo}" style="font-size: 16px;color: #00DD00;"/>
-                        <br></br>
-                        <br></br>
 
                         <!--LISTADO DE CONTRATOS FINANCIADOS POR EL CREDITO-->
                         <p:dataTable id="tblDetalleCredito" var="detalleCredito" rowStyleClass="#{detalleCredito.estadoEliminacion eq 1 ? 'filaEliminada' : null}"
                                      value="#{creditoBancarioController.credito.detalleCreditoList}" 
-                                     selection="#{creditoBancarioController.detalleSeleccionado}"
+                                     selection="#{creditoBancarioController.detalleSeleccionado}" styleClass="ui-datatable-borderless ui-datatable-reflow"
                                      emptyMessage="Este proveedor no posee créditos" rowIndexVar="rowId" rowKey="#{detalleCredito.idDetalle}" > 
-                            <p:column headerText="#" width="20">
+                            <p:column headerText="#" width="15" style="text-align: center;">
                                 #{rowId+1}
                             </p:column>
-                            <p:column headerText="Código Entidad" width="45">  
+                            <p:column headerText="#{bundle['tabla.codEnt']}" width="70" style="text-align: center;">  
                                 <h:outputText value="#{detalleCredito.codigoEntidad}" />  
                             </p:column>  
 
@@ -205,103 +212,103 @@
                     </p:outputPanel>
 
                     <p:remoteCommand name="actualizarTabla" update="tblDetalleCredito"/>
-
-                    <p:dialog id="dlgEspere" widgetVar="dlgEspere" closable="false" closeOnEscape="false" width="150" height="60" resizable="false">
-                        <ui:include src="/app/comunes/dialogEspere.xhtml"/>
-                    </p:dialog>
-
-
-                    <p:dialog id="dlgCeDisponibles" widgetVar="dlgCeDisponibles" width="1000" resizable="false" closable="false" draggable="false" modal="true" 
-                              header="Seleccione los centros asociados al crédito">
-                        <p:dataTable value="#{creditoBancarioController.lstContratosDisponibles}" rowIndexVar="rowId" var="contrato" selectionMode="multiple"
-                                     selection="#{creditoBancarioController.lstContratos}" rowKey="#{contrato.idContrato}" scrollable="true" scrollHeight="300"
-                                     emptyMessage="No hay contratos dispobibles">
-                            <p:column headerText="#" width="20">
-                                #{rowId+1}
-                            </p:column>
-                            <p:column headerText="Código Entidad" width="35">
-                                <p:outputLabel value="#{contrato.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoEntidad}"/>
-                            </p:column>
-                            <p:column headerText="Nombre">
-                                <p:outputLabel value="#{contrato.idResolucionAdj.idParticipante.idOferta.codigoEntidad.nombre}"/>
-                            </p:column>
-                            <p:column headerText="Departamento" width="110">
-                                <p:outputLabel value="#{contrato.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoDepartamento.nombreDepartamento}"/>
-                            </p:column>
-                            <p:column headerText="Cantidad" styleClass="numero" width="50">
-                                <h:outputText value="#{contrato.idResolucionAdj.idParticipante.cantidad}">
-                                    <f:convertNumber pattern="#,###"/>
-                                </h:outputText>
-                            </p:column>
-                            <p:column headerText="Monto ($)" styleClass="numero" width="60">
-                                <h:outputText value="#{contrato.idResolucionAdj.idParticipante.monto}">
-                                    <f:convertNumber pattern="#,###.00"/>
-                                </h:outputText>
-                            </p:column>
-                        </p:dataTable>
-
-                        <f:facet name="footer">
-                            <h:panelGrid columns="2">
-                                <p:commandButton value="Agregar" icon="fa fa-check-circle" action="#{creditoBancarioController.onContratoSeleccionado}" oncomplete="actualizarTabla();"/>
-                                <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{creditoBancarioController.cerrar}"/>
-                            </h:panelGrid>
-                        </f:facet>
-                    </p:dialog>
-
-                    <!--DIALOG DE CREDITOS ACTIVOS-->
-                    <p:dialog id="dlgContratosActivos" header="Detalle de créditos activos" widgetVar="dlgContratosActivos" draggable="true"  width="700" modal="true">
-                        <p:dataTable id="tblCreditos" var="credito" value="#{creditoBancarioController.lstCreditoActivos}" 
-                                     rowKey="#{credito.idCredito}" selection="#{creditoBancarioController.creditoConsultado}"
-                                     selectionMode="single" emptyMessage="Este proveedor no posee créditos activos" > 
-                            <p:ajax event="rowSelect" listener="#{creditoBancarioController.buscarCENoDisponibleCredito}" update="tblCeNoDisponibles pngCredito" onsuccess="PF('dlgCeNoHabilites').show();" /> 
-                            <p:column headerText="Número de Ref." width="20">  
-                                <h:outputText value="#{credito.refPrestamo}" />  
-                            </p:column>  
-                            <p:column headerText="Monto del crédito"  style="text-align: right" width="20">  
-                                <h:outputText value="#{credito.montoCredito}" >  
-                                    <f:convertNumber pattern="#,##0.00"  />
-                                </h:outputText>
-                            </p:column>  
-                            <p:column headerText="Entidad Financiera" width="100">  
-                                <h:outputText value="#{credito.codEntFinanciera.nombreEntFinan}" />  
-                            </p:column>
-                            <p:column headerText="Estado" width="20">  
-                                <h:outputText value="#{credito.creditoActivo eq 1 ? 'ACTIVO':'CANCELADO'}" />  
-                            </p:column>
-                        </p:dataTable>
-                    </p:dialog>
-
-                    <p:dialog id="dlgCeNoHabilites" widgetVar="dlgCeNoHabilites"  modal="true"
-                              header="Centros asociados al crédito seleccionado" draggable="true" width="800" >
-                        <p:panelGrid id="pngCredito" columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank">
-                            <h:outputLabel value="Número de referencia: " />
-                            <h:outputText value="#{creditoBancarioController.creditoConsultado.refPrestamo}" style="font-weight:bold"/>
-                            <h:outputLabel value="Crédito emitido por: " />
-                            <h:outputText value="#{creditoBancarioController.creditoConsultado.codEntFinanciera.nombreEntFinan}" style="font-weight:bold"/>
-                            <h:outputLabel value="Monto del crédito: " />
-                            <h:outputText value="#{creditoBancarioController.creditoConsultado.montoCredito}" style="font-weight:bold">
-                                <f:convertNumber pattern="#,##0.00"  />
-                            </h:outputText>
-                            <h:outputLabel value="Detalle de centros asociados a este crédito:"/>
-                            <h:commandLink>  
-                                <i class="fa fa-file-excel-o" aria-hidden="true"></i>
-                                <p:dataExporter type="xls" target="tblCeNoDisponibles" fileName="centrosComprometidosEnCredito" />  
-                            </h:commandLink>  
-                        </p:panelGrid>
-                        <br/>
-                        <p:dataTable id="tblCeNoDisponibles" var="ceNoDisponible" value="#{creditoBancarioController.lstDetalleCeCredito}" 
-                                     emptyMessage="Este proveedor no posee créditos" rendered="true" scrollable="true" scrollHeight="300"> 
-                            <p:column headerText="Código Entidad" width="50">  
-                                <h:outputText value="#{ceNoDisponible.codigoEntidad}" />  
-                            </p:column>  
-                            <p:column headerText="Nombre del Centro Escolar" width="300">  
-                                <h:outputText value="#{ceNoDisponible.nombre}" />  
-                            </p:column> 
-                        </p:dataTable>  
-                        <br></br>
-                    </p:dialog>
                 </div>
             </div>
         </div>
+
+        <p:dialog id="dlgEspere" widgetVar="dlgEspere" closable="false" closeOnEscape="false" width="150" height="60" resizable="false">
+            <ui:include src="/app/comunes/dialogEspere.xhtml"/>
+        </p:dialog>
+
+
+        <p:dialog id="dlgCeDisponibles" widgetVar="dlgCeDisponibles" width="1000" resizable="false" closable="false" draggable="false" modal="true" 
+                  header="Seleccione los centros asociados al crédito">
+            <p:dataTable value="#{creditoBancarioController.lstContratosDisponibles}" rowIndexVar="rowId" var="contrato" selectionMode="multiple"
+                         selection="#{creditoBancarioController.lstContratos}" rowKey="#{contrato.idContrato}" scrollable="true" scrollHeight="300"
+                         emptyMessage="No hay contratos dispobibles" styleClass="ui-datatable-borderless ui-datatable-reflow">
+                <p:column headerText="#" width="15" style="text-align: center">
+                    #{rowId+1}
+                </p:column>
+                <p:column headerText="#{bundle['tabla.codEnt']}" width="40">
+                    <p:outputLabel value="#{contrato.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoEntidad}"/>
+                </p:column>
+                <p:column headerText="Nombre">
+                    <p:outputLabel value="#{contrato.idResolucionAdj.idParticipante.idOferta.codigoEntidad.nombre}"/>
+                </p:column>
+                <p:column headerText="Departamento" width="110">
+                    <p:outputLabel value="#{contrato.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoDepartamento.nombreDepartamento}"/>
+                </p:column>
+                <p:column headerText="Cantidad" styleClass="numero" width="50">
+                    <h:outputText value="#{contrato.idResolucionAdj.idParticipante.cantidad}">
+                        <f:convertNumber pattern="#,###"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="#{bundle['tabla.monto$']}" styleClass="numero" width="65">
+                    <h:outputText value="#{contrato.idResolucionAdj.idParticipante.monto}">
+                        <f:convertNumber pattern="#,###.00"/>
+                    </h:outputText>
+                </p:column>
+            </p:dataTable>
+
+            <f:facet name="footer">
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Agregar" icon="fa fa-check-circle" action="#{creditoBancarioController.onContratoSeleccionado}" oncomplete="actualizarTabla();"/>
+                    <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{creditoBancarioController.cerrar}"/>
+                </h:panelGrid>
+            </f:facet>
+        </p:dialog>
+
+        <!--DIALOG DE CREDITOS ACTIVOS-->
+        <p:dialog id="dlgContratosActivos" header="Detalle de créditos activos" widgetVar="dlgContratosActivos" draggable="true"  width="700" modal="true">
+            <p:dataTable id="tblCreditos" var="credito" value="#{creditoBancarioController.lstCreditoActivos}" 
+                         rowKey="#{credito.idCredito}" selection="#{creditoBancarioController.creditoConsultado}"
+                         selectionMode="single" emptyMessage="Este proveedor no posee créditos activos" > 
+                <p:ajax event="rowSelect" listener="#{creditoBancarioController.buscarCENoDisponibleCredito}" update="tblCeNoDisponibles pngCredito" onsuccess="PF('dlgCeNoHabilites').show();" /> 
+                <p:column headerText="Número de Ref." width="20">  
+                    <h:outputText value="#{credito.refPrestamo}" />  
+                </p:column>  
+                <p:column headerText="Monto del crédito"  style="text-align: right" width="20">  
+                    <h:outputText value="#{credito.montoCredito}" >  
+                        <f:convertNumber pattern="#,##0.00"  />
+                    </h:outputText>
+                </p:column>  
+                <p:column headerText="Entidad Financiera" width="100">  
+                    <h:outputText value="#{credito.codEntFinanciera.nombreEntFinan}" />  
+                </p:column>
+                <p:column headerText="Estado" width="20">  
+                    <h:outputText value="#{credito.creditoActivo eq 1 ? 'ACTIVO':'CANCELADO'}" />  
+                </p:column>
+            </p:dataTable>
+        </p:dialog>
+
+        <p:dialog id="dlgCeNoHabilites" widgetVar="dlgCeNoHabilites"  modal="true"
+                  header="Centros asociados al crédito seleccionado" draggable="true" width="800" >
+            <p:panelGrid id="pngCredito" columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank">
+                <h:outputLabel value="Número de referencia: " />
+                <h:outputText value="#{creditoBancarioController.creditoConsultado.refPrestamo}" style="font-weight:bold"/>
+                <h:outputLabel value="Crédito emitido por: " />
+                <h:outputText value="#{creditoBancarioController.creditoConsultado.codEntFinanciera.nombreEntFinan}" style="font-weight:bold"/>
+                <h:outputLabel value="Monto del crédito: " />
+                <h:outputText value="#{creditoBancarioController.creditoConsultado.montoCredito}" style="font-weight:bold">
+                    <f:convertNumber pattern="#,##0.00"  />
+                </h:outputText>
+                <h:outputLabel value="Detalle de centros asociados a este crédito:"/>
+                <h:commandLink>  
+                    <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                    <p:dataExporter type="xls" target="tblCeNoDisponibles" fileName="centrosComprometidosEnCredito" />  
+                </h:commandLink>  
+            </p:panelGrid>
+            <br/>
+            <p:dataTable id="tblCeNoDisponibles" var="ceNoDisponible" value="#{creditoBancarioController.lstDetalleCeCredito}" 
+                         emptyMessage="Este proveedor no posee créditos" rendered="true" scrollable="true" scrollHeight="300"> 
+                <p:column headerText="Código Entidad" width="50">  
+                    <h:outputText value="#{ceNoDisponible.codigoEntidad}" />  
+                </p:column>  
+                <p:column headerText="Nombre del Centro Escolar" width="300">  
+                    <h:outputText value="#{ceNoDisponible.nombre}" />  
+                </p:column> 
+            </p:dataTable>  
+            <br></br>
+        </p:dialog>
     </ui:define>
 </ui:composition>

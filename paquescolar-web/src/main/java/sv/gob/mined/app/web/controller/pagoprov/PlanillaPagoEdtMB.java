@@ -25,16 +25,16 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import sv.gob.mined.app.web.util.JsfUtil;
-import sv.gob.mined.app.web.util.RecuperarProceso;
+import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.Reportes;
 import sv.gob.mined.app.web.util.UtilFile;
 import sv.gob.mined.app.web.util.VarSession;
-import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.EMailEJB;
 import sv.gob.mined.paquescolar.ejb.PagoProveedoresEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
@@ -50,6 +50,7 @@ import sv.gob.mined.paquescolar.model.PlanillaPagoCheque;
 import sv.gob.mined.paquescolar.model.RequerimientoFondos;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
+import sv.gob.mined.paquescolar.util.Constantes;
 
 /**
  *
@@ -59,10 +60,8 @@ import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
  */
 @ManagedBean
 @ViewScoped
-public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable {
+public class PlanillaPagoEdtMB extends RecuperarProcesoUtil implements Serializable {
 
-    @EJB
-    private AnhoProcesoEJB anhoProcesoEJB;
     @EJB
     private ProveedorEJB proveedorEJB;
     @EJB
@@ -115,7 +114,6 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
     private RequerimientoFondos requerimientoFondos = new RequerimientoFondos();
 
     private List<DatosProveDto> lstEmailProveeCredito = new ArrayList();
-    private List<DetallePlanilla> lstDetallePlanilla = new ArrayList();
     private List<PlanillaPago> lstPlanillas = new ArrayList();
     private List<DetalleRequerimiento> lstDetalleRequerimiento = new ArrayList();
     private List<DetalleRequerimiento> lstDetalleRequerimientoSeleccionado = new ArrayList();
@@ -143,9 +141,9 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
     @PostConstruct
     public void ini() {
         idRubro = new BigDecimal(JsfUtil.getParametroUrl("cboRubro_input"));
-        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
+        idDetProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
         isRubroUniforme = idRubro.intValue() == 1 || idRubro.intValue() == 4 || idRubro.intValue() == 5;
-        
+
         if (JsfUtil.isExisteParametroUrl("idPlanilla")) {
             //editando planilla
             planillaPago = utilEJB.find(PlanillaPago.class, new BigDecimal(JsfUtil.getParametroUrl("idPlanilla")));
@@ -170,7 +168,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
                     break;
             }
         }
-        codigoDepartamento = super.getDepartamento();
+        codigoDepartamento = getRecuperarProceso().getDepartamento();
         documentosAImprimir();
     }
 
@@ -360,14 +358,13 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
         this.lstEmailProveeCredito = lstEmailProveeCredito;
     }
 
-    public List<DetallePlanilla> getLstDetallePlanilla() {
-        return lstDetallePlanilla;
-    }
-
-    public void setLstDetallePlanilla(List<DetallePlanilla> lstDetallePlanilla) {
-        this.lstDetallePlanilla = lstDetallePlanilla;
-    }
-
+//    public List<DetallePlanilla> getLstDetallePlanilla() {
+//        return lstDetallePlanilla;
+//    }
+//
+//    public void setLstDetallePlanilla(List<DetallePlanilla> lstDetallePlanilla) {
+//        this.lstDetallePlanilla = lstDetallePlanilla;
+//    }
     public int getIdTipoPlanilla() {
         return idTipoPlanilla;
     }
@@ -487,7 +484,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
     //</editor-fold>
     public void notificacion() {
         if (planillaPago.getIdTipoPlanilla() == 3) {
-            emailUnico = pagoProveedoresEJB.getEMailEntidadFinancieraById(lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getCodEntFinanciera());
+            emailUnico = pagoProveedoresEJB.getEMailEntidadFinancieraById(planillaPago.getDetallePlanillaList().get(0).getIdDetalleDocPago().getIdDetRequerimiento().getCodEntFinanciera());
             lstEmailProveeCredito = pagoProveedoresEJB.getLstNitProveeByIdPlanilla(planillaPago.getIdPlanilla());
 
             Logger.getLogger(PlanillaPagoEdtMB.class.getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
@@ -495,7 +492,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
                 Logger.getLogger(PlanillaPagoEdtMB.class.getName()).log(Level.INFO, "Email {0} Proveedor {1} {2}", new String[]{datosProveDto.getCorreoElectronico(), datosProveDto.getRazonSocial(), datosProveDto.getNumeroNit()});
             }
         } else if (planillaPago.getIdTipoPlanilla() == 1) {
-            emailUnico = pagoProveedoresEJB.getEMailProveedorByNit(lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit());
+            emailUnico = pagoProveedoresEJB.getEMailProveedorByNit(planillaPago.getDetallePlanillaList().get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit());
             Logger.getLogger(PlanillaPagoEdtMB.class.getName()).log(Level.INFO, "Email Entidad {0}", emailUnico);
         }
 
@@ -552,7 +549,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
                 if (detPlanilla.getIdDetallePlanilla() != null) {
                     detPlanilla.setEstadoEliminacion((short) 1);
                 } else {
-                    lstDetallePlanilla.remove(rowEdit);
+                    planillaPago.getDetallePlanillaList().remove(rowEdit);
                 }
             } else {
                 detPlanilla.setEstadoEliminacion((short) 0);
@@ -566,7 +563,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
 
     public BigInteger getCantidadOriginalTotal() {
         BigInteger total = BigInteger.ZERO;
-        for (DetallePlanilla detallePlanilla1 : lstDetallePlanilla) {
+        for (DetallePlanilla detallePlanilla1 : planillaPago.getDetallePlanillaList()) {
             if (detallePlanilla1.getCantidadOriginal() != null) {
                 total = total.add(detallePlanilla1.getCantidadOriginal());
             }
@@ -576,7 +573,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
 
     public BigDecimal getMontoOriginalTotal() {
         BigDecimal total = BigDecimal.ZERO;
-        for (DetallePlanilla detPla : lstDetallePlanilla) {
+        for (DetallePlanilla detPla : planillaPago.getDetallePlanillaList()) {
             if (detPla.getCantidadOriginal() != null) {
                 total = total.add(detPla.getMontoOriginal());
             }
@@ -586,7 +583,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
 
     public BigInteger getCantidadActualTotal() {
         BigInteger total = BigInteger.ZERO;
-        for (DetallePlanilla detPla : lstDetallePlanilla) {
+        for (DetallePlanilla detPla : planillaPago.getDetallePlanillaList()) {
             if (detPla.getCantidadActual() != null) {
                 total = total.add(detPla.getCantidadActual());
             }
@@ -596,7 +593,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
 
     public BigDecimal getMontoActualTotal() {
         BigDecimal total = BigDecimal.ZERO;
-        for (DetallePlanilla detPla : lstDetallePlanilla) {
+        for (DetallePlanilla detPla : planillaPago.getDetallePlanillaList()) {
             if (detPla.getCantidadActual() != null && detPla.getEstadoEliminacion() == 0) {
                 total = total.add(detPla.getMontoActual());
             }
@@ -606,7 +603,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
 
     public BigDecimal getMontoRentaTotal() {
         BigDecimal total = BigDecimal.ZERO;
-        for (DetallePlanilla detPla : lstDetallePlanilla) {
+        for (DetallePlanilla detPla : planillaPago.getDetallePlanillaList()) {
             if (detPla.getCantidadActual() != null && detPla.getIdDetalleDocPago().getMontoRenta() != null) {
                 total = total.add(detPla.getIdDetalleDocPago().getMontoRenta());
             }
@@ -667,38 +664,6 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
         }
     }
 
-//    public void eliminarPlanilla() {
-//        pagoProveedoresEJB.eliminarPlanilla(idPlanilla, VarSession.getVariableSessionUsuario());
-//        buscarPlanillas();
-//    }
-
-//    public void buscarPlanillas() {
-//        if (idRubro != null) {
-//            if (idReq != null) {
-//                buscarRequerimientoqOrPlanilla();
-//                lstPlanillas = proveedorEJB.getLstPlanillaPagos(idReq);
-//                if (lstPlanillas.isEmpty()) {
-//                    JsfUtil.mensajeInformacion("El requerimiento seleccionado no tienen planillas registradas");
-//                }
-//                documentosAImprimir();
-//            } else {
-//                JsfUtil.mensajeInformacion("Debe de seleccionar un requerimiento.");
-//            }
-//        } else {
-//            JsfUtil.mensajeAlerta("Debe de seleccionar un rubro de adquisición.");
-//        }
-//    }
-
-//    private void buscarRequerimientoqOrPlanilla() {
-//        showChequeEntProv = false;
-//        showChequeRenta = false;
-//        showChequeUsefi = false;
-//        showPnlCheques = false;
-//
-//        isRubroUniforme = ((idRubro.intValue() == 1) || (idRubro.intValue() == 4) || (idRubro.intValue() == 5));
-//        idDetProceso = anhoProcesoEJB.getDetProcesoAdq(super.getProcesoAdquisicion(), idRubro).getIdDetProcesoAdq();
-//    }
-
     private void documentosAImprimir() {
         lstTipoDocImp.clear();
         lstTipoDocImp.add(new SelectItem(1, "Planilla de Pago"));
@@ -716,20 +681,19 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
 
     public void cargarPlanilla() {
         idTipoPlanilla = planillaPago.getIdTipoPlanilla().intValue();
-        lstDetallePlanilla = planillaPago.getDetallePlanillaList();
 
         switch (planillaPago.getIdTipoPlanilla()) {
             case 1:
                 showChequeEntProv = true;
 
-                empresa = proveedorEJB.findEmpresaByNit(lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit());
-                recuperarContratosByProveedor(planillaPago.getIdRequerimiento().getIdRequerimiento(), lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit());
+                empresa = proveedorEJB.findEmpresaByNit(planillaPago.getDetallePlanillaList().get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit(), true);
+                recuperarContratosByProveedor(planillaPago.getIdRequerimiento().getIdRequerimiento(), planillaPago.getDetallePlanillaList().get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit());
                 chequeFinanProve = cheque(3); //recuperar cheque para proveedor
 
                 //Si la planilla seleccionada fue creada en el proceso anterior, se debe de recuperar el dato del cheque
                 if (chequeFinanProve.getIdPlanillaCheque() == null) {
                     chequeFinanProve.setMontoCheque(BigDecimal.ZERO);
-                    for (DetallePlanilla detPla : lstDetallePlanilla) {
+                    for (DetallePlanilla detPla : planillaPago.getDetallePlanillaList()) {
                         chequeFinanProve.setNumeroCheque(detPla.getNumCheque());
                         chequeFinanProve.setFechaCheque(detPla.getFechaCheque());
                         if (detPla.getMontoCheque() != null) {
@@ -744,8 +708,8 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
                 break;
             case 3:
                 showChequeEntProv = (planillaPago.getIdRequerimiento().getCredito() == 1);
-                if (!lstDetallePlanilla.isEmpty()) {
-                    nombreEntFinanciera = lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNombreEntFinan();
+                if (!planillaPago.getDetallePlanillaList().isEmpty()) {
+                    nombreEntFinanciera = planillaPago.getDetallePlanillaList().get(0).getIdDetalleDocPago().getIdDetRequerimiento().getNombreEntFinan();
                     entidadFinanciera = proveedorEJB.getEntidadByNombre(nombreEntFinanciera);
                     recuperarContratosByEntidadFinanciera(planillaPago.getIdRequerimiento().getIdRequerimiento(), nombreEntFinanciera);
                 }
@@ -760,7 +724,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
         }
 
         if (isRubroUniforme) {
-            for (DetallePlanilla detPla : lstDetallePlanilla) {
+            for (DetallePlanilla detPla : planillaPago.getDetallePlanillaList()) {
                 showChequeRenta = proveedorEJB.isPersonaNatural(detPla.getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit());
                 if (showChequeRenta) {
                     chequeRenta = cheque(2);
@@ -813,53 +777,20 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
     public void guardarPlanilla() {
         boolean guardarNuevo = (planillaPago.getIdPlanilla() == null);
 
-        //Verificar que los montos (actual y original) sean diferentes para ingreso de los datos del cheque USEFI
-        //Esta validacion se realiza unicamente cuando la planilla se esta creando
-        if (!showChequeUsefi) {
-            for (DetallePlanilla detPla : lstDetallePlanilla) {
-                if (detPla.getIdDetalleDocPago().getMontoActual() != null && detPla.getIdDetalleDocPago().getContratoModif() == 1) {
-                    showChequeUsefi = (detPla.getIdDetalleDocPago().getMontoActual().compareTo(detPla.getMontoOriginal()) == -1);
-                    if (showChequeUsefi) {
-                        break;
-                    }
-                }
-            }
-        }
+        HashMap<String, Object> mapDeRetorno = pagoProveedoresEJB.guardarPlanillaPago(planillaPago, tipoPagoEntFinanciera,
+                showChequeEntProv, showChequeRenta, showChequeUsefi,
+                chequeFinanProve, chequeUsefi, chequeRenta, VarSession.getVariableSessionUsuario());
 
-        //guardar datos de fecha y numero de cheque en el detalle de planilla
-        if (isRubroUniforme && chequeFinanProve.getFechaCheque() != null && chequeFinanProve.getNumeroCheque() != null) {
-            for (DetallePlanilla detPla : lstDetallePlanilla) {
-                detPla.setFechaCheque(chequeFinanProve.getFechaCheque());
-                detPla.setNumCheque(chequeFinanProve.getNumeroCheque());
-            }
-        }
-
-        if (guardarNuevo) {
-            planillaPago.setFechaInsercion(new Date());
-            planillaPago.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-            planillaPago.setEstadoEliminacion((short) 0);
-        
-            //Habilitar visibilidad de cheques
-            showChequeRenta = isRubroUniforme;
-            showPnlCheques = (showChequeEntProv || showChequeRenta || showChequeUsefi);
+        if ((Boolean) mapDeRetorno.get(Constantes.ERROR)) {
+            //error en la operación
+            JsfUtil.mensajeError(mapDeRetorno.get(Constantes.MSJ_ERROR).toString());
         } else {
-            planillaPago.setFechaModificacion(new Date());
-            planillaPago.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
-        }
+            JsfUtil.mensajeInformacion(mapDeRetorno.get(Constantes.MSJ_INFO).toString());
 
-        planillaPago = pagoProveedoresEJB.guardarPlanillaPago(planillaPago);
-        
-        //guardar detalle de planilla
-        for (DetallePlanilla detPla : lstDetallePlanilla) {
-            detPla = pagoProveedoresEJB.guardarDetallePlanilla(detPla);
-        }
-        
-        //cargar nuevamente la plantilla junto con el detalle
-        planillaPago = utilEJB.find(PlanillaPago.class, planillaPago.getIdPlanilla());
-        lstDetallePlanilla = planillaPago.getDetallePlanillaList();
-
-        if (planillaPago.getIdPlanilla() != null) {
-            JsfUtil.mensajeInformacion("Datos almacenados satisfactoriamente.");
+            showChequeEntProv = (Boolean) mapDeRetorno.get("showChequeEntProv");
+            showChequeRenta = (Boolean) mapDeRetorno.get("showChequeRenta");
+            showChequeUsefi = (Boolean) mapDeRetorno.get("showChequeUsefi");
+            showPnlCheques = (Boolean) mapDeRetorno.get("showPnlCheques");
 
             if (guardarNuevo) {
                 indexTab = 1;
@@ -867,79 +798,8 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
                 PrimeFaces.current().ajax().update("tabView");
             }
 
-            //Persistiendo los datos de los cheques
-            guardarCheques();
             PrimeFaces.current().ajax().update("tbDetallePlanilla");
-        } else {
-            JsfUtil.mensajeError("Ocurrio un error en la operación.");
-        }
-    }
 
-    /**
-     * Almacenar datos de los cheques necesarios
-     */
-    private void guardarCheques() {
-        BigDecimal mRenta = BigDecimal.ZERO;
-        BigDecimal montoTotalActual;
-
-        if (isRubroUniforme) {
-            for (DetallePlanilla detPla : lstDetallePlanilla) {
-                if (detPla.getIdDetalleDocPago().getMontoRenta() != null) {
-                    mRenta = mRenta.add(detPla.getIdDetalleDocPago().getMontoRenta());
-                }
-            }
-            montoTotalActual = getMontoActualTotal().add(mRenta.negate());
-        } else {
-            montoTotalActual = getMontoActualTotal();
-        }
-
-        if (showChequeEntProv) {
-            chequeFinanProve.setMontoCheque(montoTotalActual);
-            if (chequeFinanProve.getIdPlanillaCheque() == null) {
-                chequeFinanProve.setaFavorDe((short) (idTipoPlanilla == 1 ? 3 : 0));
-                chequeFinanProve.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-                chequeFinanProve.setFechaInsercion(new Date());
-                chequeFinanProve.setEstadoEliminacion((short) 0);
-                chequeFinanProve.setTransferencia((short) 0);
-                chequeFinanProve.setIdPlanilla(planillaPago);
-            } else {
-                chequeFinanProve.setTransferencia(tipoPagoEntFinanciera ? 1 : (short) 0);
-                chequeFinanProve.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
-                chequeFinanProve.setFechaModificacion(new Date());
-            }
-
-            chequeFinanProve = pagoProveedoresEJB.guardarPlanillaPagoCheque(chequeFinanProve);
-        }
-
-        if (showChequeUsefi) {
-            chequeUsefi.setMontoCheque(getMontoOriginalTotal().add(montoTotalActual.negate()).add(mRenta.negate()));
-            if (chequeUsefi.getIdPlanillaCheque() == null) {
-                chequeUsefi.setaFavorDe((short) 1);
-                chequeUsefi.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-                chequeUsefi.setFechaInsercion(new Date());
-                chequeUsefi.setEstadoEliminacion((short) 0);
-                chequeUsefi.setIdPlanilla(planillaPago);
-            } else {
-                chequeUsefi.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
-                chequeUsefi.setFechaModificacion(new Date());
-            }
-            chequeUsefi = pagoProveedoresEJB.guardarPlanillaPagoCheque(chequeUsefi);
-        }
-
-        if (showChequeRenta) {
-            if (chequeRenta.getIdPlanillaCheque() == null) {
-                chequeRenta.setaFavorDe((short) 2);
-                chequeRenta.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
-                chequeRenta.setFechaInsercion(new Date());
-                chequeRenta.setEstadoEliminacion((short) 0);
-                chequeRenta.setIdPlanilla(planillaPago);
-            } else {
-                chequeRenta.setUsuarioModificacion(VarSession.getVariableSessionUsuario());
-                chequeRenta.setFechaModificacion(new Date());
-            }
-
-            chequeRenta.setMontoCheque(mRenta);
-            chequeRenta = pagoProveedoresEJB.guardarPlanillaPagoCheque(chequeRenta);
         }
     }
 
@@ -951,14 +811,21 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
                 case 3:
                     //envio de notificacion a Entidad/Proveedor
                     //eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", "miguel.sanchez@mined.gob.sv", getMensajeDeNotificacion(planillaPago, planillaPago.getDetallePlanillaList(), false));
-                    eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", emailUnico, getMensajeDeNotificacion(planillaPago, lstDetallePlanilla, false));
+                    eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ",
+                            emailUnico,
+                            getMensajeDeNotificacion(planillaPago, planillaPago.getDetallePlanillaList(), false),
+                            codigoDepartamento,
+                            JsfUtil.getSessionMailG("2"));
 
                     //Si es planilla tipo credito, enviar notificacion a proveedores incluidos en la planilla de pago
                     if (planillaPago.getIdTipoPlanilla() == 3) {
                         for (DatosProveDto datosProveDto : lstEmailProveeCredito) {
                             if (datosProveDto.getCorreoElectronico() != null && !datosProveDto.getCorreoElectronico().isEmpty()) {
                                 //eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", "miguel.sanchez@mined.gob.sv", getMensajeDeNotificacion(planillaPago, pagoProveedoresEJB.getLstDetallePlanillaByIdPlanillaAndNit(planillaPago.getIdPlanilla(), datosProveDto.getNumeroNit()), true));
-                                eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ", datosProveDto.getCorreoElectronico(), getMensajeDeNotificacion(planillaPago, pagoProveedoresEJB.getLstDetallePlanillaByIdPlanillaAndNit(planillaPago.getIdPlanilla(), datosProveDto.getNumeroNit()), true));
+                                eMailEJB.enviarMail("Paquete Escolar - Notificación de Pago ",
+                                        datosProveDto.getCorreoElectronico(), getMensajeDeNotificacion(planillaPago, pagoProveedoresEJB.getLstDetallePlanillaByIdPlanillaAndNit(planillaPago.getIdPlanilla(), datosProveDto.getNumeroNit()), true),
+                                        codigoDepartamento,
+                                        JsfUtil.getSessionMailG("2"));
                             }
                         }
                     }
@@ -994,66 +861,70 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
             sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.cabeceraMensaje"), planillaPago.getIdRequerimiento().getFormatoRequerimiento(), JsfUtil.getFormatoNum(planillaPago.getMontoTotal(), false)));
         }
         sb.append(RESOURCE_BUNDLE.getString("pagoprov.email.tablaDetalle.header"));
-        for (DetallePlanilla detalle : lstDetallePlanilla) {
+        lstDetallePlanilla.forEach(detalle -> {
             sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.tablaDetalle.detalle"), detalle.getCodigoEntidad().getCodigoEntidad(), detalle.getCodigoEntidad().getNombre(), detalle.getIdDetalleDocPago().getIdDetRequerimiento().getNumeroNit(), detalle.getIdDetalleDocPago().getIdDetRequerimiento().getRazonSocial(), JsfUtil.getFormatoNum(detalle.getMontoActual(), false)));
-        }
+        });
         //agregando fila de totales (unicamente si la planilla de pago contiene más de 1 contrato)
         if (lstDetallePlanilla.size() > 1) {
             sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.tablaDetalle.footer"),
                     JsfUtil.getFormatoNum(getMontoActualTotal(), false)));
         }
         sb.append(RESOURCE_BUNDLE.getString("pagoprov.email.tablaDetalle.fin"));
-        sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.finNotificacion"), JsfUtil.getFechaString(planillaPago.getFechaInsercion()), JsfUtil.getNombreDepartamentoByCodigo(super.getDepartamento())));
+        sb.append(MessageFormat.format(RESOURCE_BUNDLE.getString("pagoprov.email.finNotificacion"), JsfUtil.getFechaString(planillaPago.getFechaInsercion()), JsfUtil.getNombreDepartamentoByCodigo(getRecuperarProceso().getDepartamento())));
 
         return sb.toString();
     }
 
     public void imprimirDocumentos() {
-        boolean tempChequeEntPro;
-        String rpt = "";
-        String pNombreCheque;
+        try {
+            boolean tempChequeEntPro;
+            String rpt = "";
+            String pNombreCheque;
 
-        List<JasperPrint> jasperPrintList = new ArrayList();
-        //artificio para impresion de planillas creadas previo a la tipificación de planillas
-        if (planillaPago.getIdEstadoPlanilla() == 0) {
-            tempChequeEntPro = planillaPago.getIdRequerimiento().getCredito() == 1;
-            pNombreCheque = nombreEntFinanciera;
-        } else {
-            tempChequeEntPro = showChequeEntProv;
-            switch (planillaPago.getIdTipoPlanilla()) {
-                case 1:
-                    pNombreCheque = lstDetallePlanilla.get(0).getIdDetalleDocPago().getIdDetRequerimiento().getRazonSocial();
-                    break;
-                case 3:
-                    pNombreCheque = nombreEntFinanciera;
-                    break;
-                default:
-                    pNombreCheque = "";
-                    break;
+            List<JasperPrint> jasperPrintList = new ArrayList();
+            //artificio para impresion de planillas creadas previo a la tipificación de planillas
+            if (planillaPago.getIdEstadoPlanilla() == 0) {
+                tempChequeEntPro = planillaPago.getIdRequerimiento().getCredito() == 1;
+                pNombreCheque = nombreEntFinanciera;
+            } else {
+                tempChequeEntPro = showChequeEntProv;
+                switch (planillaPago.getIdTipoPlanilla()) {
+                    case 1:
+                        pNombreCheque = planillaPago.getDetallePlanillaList().get(0).getIdDetalleDocPago().getIdDetRequerimiento().getRazonSocial();
+                        break;
+                    case 3:
+                        pNombreCheque = nombreEntFinanciera;
+                        break;
+                    default:
+                        pNombreCheque = "";
+                        break;
+                }
             }
-        }
 
-        for (Integer idRpt : tipoDocumentoImp) {
-            switch (idRpt) {
-                case 1: //Planilla de Pago
-                    rpt = tempChequeEntPro ? "rptTransferenciaCrediCheque" : "rptTransferenciaCheque";
-                    break;
-                case 2: //Matriz de Pago
-                    rpt = tempChequeEntPro ? "rptMatrizPagoCredito" : "rptMatrizPago";
-                    break;
-                case 3: //Formato Entrega de Cheques
-                    rpt = tempChequeEntPro ? "rptFormatoEntregaChequeCredito" : "rptFormatoEntregaCheque";
-                    break;
-                case 4: //Planilla de Reintegro
-                    rpt = "rptFormatoReintegro";
-                    break;
-                case 5: //Planilla Renta
-                    rpt = "rptTransferenciaRenta";
-                    break;
+            for (Integer idRpt : tipoDocumentoImp) {
+                switch (idRpt) {
+                    case 1: //Planilla de Pago
+                        rpt = tempChequeEntPro ? "rptTransferenciaCrediCheque" : "rptTransferenciaCheque";
+                        break;
+                    case 2: //Matriz de Pago
+                        rpt = tempChequeEntPro ? "rptMatrizPagoCredito" : "rptMatrizPago";
+                        break;
+                    case 3: //Formato Entrega de Cheques
+                        rpt = tempChequeEntPro ? "rptFormatoEntregaChequeCredito" : "rptFormatoEntregaCheque";
+                        break;
+                    case 4: //Planilla de Reintegro
+                        rpt = "rptFormatoReintegro";
+                        break;
+                    case 5: //Planilla Renta
+                        rpt = "rptTransferenciaRenta";
+                        break;
+                }
+                jasperPrintList.add(imprimirRptPlanilla(rpt, pNombreCheque));
             }
-            jasperPrintList.add(imprimirRptPlanilla(rpt, pNombreCheque));
+            Reportes.generarReporte(jasperPrintList, "rptsPlanilla-" + planillaPago.getIdPlanilla());
+        } catch (IOException | JRException ex) {
+            Logger.getLogger(PlanillaPagoEdtMB.class.getName()).log(Level.WARNING, "Error en la impresion de los documentos de pago {0}", planillaPago);
         }
-        Reportes.generarReporte(jasperPrintList, "rptsPlanilla-" + planillaPago.getIdPlanilla());
     }
 
     public JasperPrint imprimirRptPlanilla(String rpt, String pNombreCheque) {
@@ -1065,7 +936,9 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
         param.put("pIdPlanilla", planillaPago.getIdPlanilla().intValue());
         param.put("pAFavorDe", (short) (planillaPago.getIdTipoPlanilla() == 1 ? 3 : 0));
         param.put("pNombreCheque", pNombreCheque);
-        jp = reportesEJB.getRpt(param, PlanillaPagoEdtMB.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + rpt + ".jasper")));
+        jp
+                = reportesEJB.getRpt(param, PlanillaPagoEdtMB.class
+                        .getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + rpt + ".jasper")));
         return jp;
     }
 
@@ -1078,7 +951,9 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
         param.put("pUniforme", idDetProceso == 25 ? 1 : 0);
         param.put("pIdRequerimiento", req.getIdRequerimiento().intValue());
         param.put("pAnho", "20" + anho);
-        jp = reportesEJB.getRpt(param, PlanillaPagoEdtMB.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + nombreRpt)));
+        jp
+                = reportesEJB.getRpt(param, PlanillaPagoEdtMB.class
+                        .getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor" + File.separator + nombreRpt)));
         return jp;
     }
 
@@ -1090,12 +965,14 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
         param.put("pNombreDepartamento", nombreDepartamento);
         param.put("pAnho", "20" + anho);
         param.put("pUsuario", VarSession.getVariableSessionUsuario());
-        param.put("pPagadorDepartamental", pagoProveedoresEJB.getNombrePagadorByCodDepa(super.getDepartamento()));
+        param.put("pPagadorDepartamental", pagoProveedoresEJB.getNombrePagadorByCodDepa(getRecuperarProceso().getDepartamento()));
         DatosProveDto datos = new DatosProveDto();
         datos.setLstDetalle(lstEmailProveeCredito);
         List<DatosProveDto> lst = new ArrayList();
         lst.add(datos);
-        jp = reportesEJB.getRpt(param, PlanillaPagoEdtMB.class.getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoProvee.jasper")), lst);
+        jp
+                = reportesEJB.getRpt(param, PlanillaPagoEdtMB.class
+                        .getClassLoader().getResourceAsStream(("sv/gob/mined/apps/reportes/pagoproveedor/rptPagoProvee.jasper")), lst);
         return jp;
     }
 
@@ -1110,7 +987,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
                 detPlanilla.setCantidadActual(detPlanilla.getIdDetalleDocPago().getCantidadActual());
                 detPlanilla.setMontoActual(detPlanilla.getIdDetalleDocPago().getMontoActual());
             } else {
-                JsfUtil.mensajeAlerta("El monto actual no puede superar al monto original!");
+                JsfUtil.mensajeAlerta("El monto actual no puede recuperarProcesoar al monto original!");
             }
         } else {
             detPlanilla.setCantidadActual(detPlanilla.getCantidadOriginal());
@@ -1142,7 +1019,7 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
         for (DetalleRequerimiento detalleReq : lstDetalleRequerimientoSeleccionado) {
             boolean isRepetido = false;
 
-            for (DetallePlanilla detPla : lstDetallePlanilla) {
+            for (DetallePlanilla detPla : planillaPago.getDetallePlanillaList()) {
                 if (detPla.getIdDetalleDocPago().getIdDetRequerimiento().getIdContrato().intValue()
                         == detalleReq.getIdContrato().intValue()) {
                     isRepetido = true;
@@ -1162,12 +1039,14 @@ public class PlanillaPagoEdtMB extends RecuperarProceso implements Serializable 
         detPla.setMontoOriginal(detalleReq.getMontoTotal());
         detPla.setCantidadActual(BigInteger.ZERO);
         detPla.setMontoActual(BigDecimal.ZERO);
-        detPla.setCodigoEntidad(utilEJB.find(VwCatalogoEntidadEducativa.class, detalleReq.getCodigoEntidad()));
+        detPla
+                .setCodigoEntidad(utilEJB.find(VwCatalogoEntidadEducativa.class,
+                        detalleReq.getCodigoEntidad()));
         detPla.setIdPlanilla(planillaPago);
         detPla.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
         detPla.setFechaInsercion(new Date());
         detPla.setEstadoEliminacion((short) 0);
-        lstDetallePlanilla.add(detPla);
+        planillaPago.getDetallePlanillaList().add(detPla);
 
         DetalleDocPago detDocPago = detalleReq.getRegCompleto() ? detalleReq.getDetalleDocPagoList().get(0) : null;
         if (detDocPago != null && detDocPago.getIdDetalleDocPago() != null) {

@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -20,14 +22,18 @@ import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import sv.gob.mined.app.web.util.UtilFile;
+import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.DatosGeograficosEJB;
+import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.PagoProveedoresEJB;
 import sv.gob.mined.paquescolar.ejb.ResolucionAdjudicativaEJB;
 import sv.gob.mined.paquescolar.model.Anho;
 import sv.gob.mined.paquescolar.model.Departamento;
 import sv.gob.mined.paquescolar.model.EstadoReserva;
+import sv.gob.mined.paquescolar.model.MunicipioAledanho;
 import sv.gob.mined.paquescolar.model.TipoDocPago;
+import sv.gob.mined.paquescolar.ws.TechoCE;
 
 /**
  *
@@ -38,6 +44,8 @@ import sv.gob.mined.paquescolar.model.TipoDocPago;
 public class CatalogosGeneralesController implements Serializable {
 
     private String version;
+    private List<MunicipioAledanho> lstMunicipiosAledanho = new ArrayList();
+
     @EJB
     private AnhoProcesoEJB anhoProcesoEJB;
     @EJB
@@ -46,6 +54,8 @@ public class CatalogosGeneralesController implements Serializable {
     private ResolucionAdjudicativaEJB resolucionAdjudicativaEJB;
     @EJB
     private PagoProveedoresEJB pagoProveedoresEJB;
+    @EJB
+    private EntidadEducativaEJB entidadEjb;
 
     public CatalogosGeneralesController() {
     }
@@ -62,10 +72,16 @@ public class CatalogosGeneralesController implements Serializable {
 
             version = atts.getValue("Implementation-Build");
             version = version + "." + atts.getValue("build-time");
-
         } catch (IOException ex) {
             Logger.getLogger(CatalogosGeneralesController.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public List<MunicipioAledanho> getLstMunicipiosAledanho() {
+        if (lstMunicipiosAledanho == null || lstMunicipiosAledanho.isEmpty()) {
+            lstMunicipiosAledanho = datosGeograficosEJB.getLstMunicipiosAledanhos();
+        }
+        return lstMunicipiosAledanho;
     }
 
     public String getVersion() {
@@ -74,6 +90,10 @@ public class CatalogosGeneralesController implements Serializable {
 
     public List<Anho> getLstAnho() {
         return anhoProcesoEJB.getLstAnhos();
+    }
+    
+    public List<Anho> getLstAnhoDesde() {
+        return anhoProcesoEJB.getLstAnhosDesde("7");
     }
 
     public List<Departamento> getLstDepartamentos() {
@@ -104,8 +124,40 @@ public class CatalogosGeneralesController implements Serializable {
     public List<TipoDocPago> getLstTipoDocPago() {
         return pagoProveedoresEJB.findTipoDocPagoEntities();
     }
-    
+
     public String getFormatoFechaReporte() {
         return UtilFile.getFechaGeneracionReporte();
+    }
+
+    public String estadoReserva(BigInteger valor) {
+        if (valor == null) {
+            return "";
+        } else {
+            switch (valor.intValue()) {
+                case 1:
+                    return "DIGITADA";
+                case 2:
+                    return "APLICADA";
+                case 3:
+                    return "REVERTIDA";
+                case 4:
+                    return "ANULADA";
+                case 5:
+                    return "MODIFICADA";
+                default:
+                    return "";
+            }
+        }
+    }
+
+    public Boolean isUsuarioRoot() {
+        return VarSession.getVariableSessionUsuario().equals("MSANCHEZ");
+    }
+    public Boolean isUsuarioRafa() {
+        return VarSession.getVariableSessionUsuario().equals("RAFAARIAS");
+    }
+    
+    public void cargarMatricula(){
+        entidadEjb.cargarMatricula(null, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 }

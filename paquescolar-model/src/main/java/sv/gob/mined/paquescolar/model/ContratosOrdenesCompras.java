@@ -70,6 +70,7 @@ import org.eclipse.persistence.annotations.StoredProcedureParameter;
     )
 })
 public class ContratosOrdenesCompras implements Serializable {
+
     @Column(name = "ID_CONTRATO_PADRE")
     private BigInteger idContratoPadre;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idContrato", fetch = FetchType.LAZY)
@@ -77,7 +78,7 @@ public class ContratosOrdenesCompras implements Serializable {
     @Basic(optional = false)
     @Column(name = "MODIFICATIVA")
     private short modificativa;
-    
+
     @OneToMany(mappedBy = "idContrato", fetch = FetchType.LAZY)
     private List<DetalleCredito> detalleCreditoList;
     private static final long serialVersionUID = 1L;
@@ -86,7 +87,7 @@ public class ContratosOrdenesCompras implements Serializable {
     @Basic(optional = false)
     @Column(name = "ID_CONTRATO")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "contrato")
-    @SequenceGenerator(name="contrato", sequenceName = "SEQ_CONTRATO", allocationSize=1, initialValue=1)
+    @SequenceGenerator(name = "contrato", sequenceName = "SEQ_CONTRATO", allocationSize = 1, initialValue = 1)
     private BigDecimal idContrato;
     @Column(name = "ACTIVO")
     private BigInteger activo;
@@ -133,11 +134,6 @@ public class ContratosOrdenesCompras implements Serializable {
     @JoinColumn(name = "ID_RESOLUCION_ADJ", referencedColumnName = "ID_RESOLUCION_ADJ")
     @ManyToOne(fetch = FetchType.EAGER)
     private ResolucionesAdjudicativas idResolucionAdj;
-    /*@OneToMany(mappedBy = "idContratoPadre", fetch = FetchType.LAZY)
-    private List<ContratosOrdenesCompras> contratosOrdenesComprasList;*/
-    /*@JoinColumn(name = "ID_CONTRATO_PADRE", referencedColumnName = "ID_CONTRATO")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private ContratosOrdenesCompras idContratoPadre;*/
     @Basic(optional = false)
     @Column(name = "PRIMERO")
     private Short primero;
@@ -307,7 +303,7 @@ public class ContratosOrdenesCompras implements Serializable {
     public void setIdResolucionAdj(ResolucionesAdjudicativas idResolucionAdj) {
         this.idResolucionAdj = idResolucionAdj;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;

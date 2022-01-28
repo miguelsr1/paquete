@@ -1,0 +1,62 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pa="http://primefaces.org/paradise">
+
+    <div class="topbar">
+        <div class="pageColumnLeft">
+            <h:link styleClass="topbar-logo">
+                <p:graphicImage name="escudo_rpt.png" style="border: 0px;" library="images" />
+            </h:link>
+
+            <a href="#" id="menu-button">
+                <i class="fa fa-bars"></i>
+            </a>
+        </div>
+
+        <div class="pageColumnMid" style="text-align: left;">
+            <br/><p:outputLabel style="font-size: 20px; color: black; font-family: 'Bembo Std';" value="Ministerio de Educación, Ciencia y Tecnología"/>
+            <br/><p:outputLabel style="font-size: 18px; color: black; font-family: 'Bembo Std';" value="Sistema de Paquetes Escolares"/>
+        </div>
+
+        <div id="user-display" style="padding-top: 1px; text-align: right;">
+            <p:outputPanel id="pnlParametrosGenerales">
+                <table style=" width: auto;margin-right: 0px;margin-left: auto;">
+                    <tr>
+                        <td>
+                            <i class="fa fa-users" aria-hidden="true"></i>                        
+                            <p:outputLabel value="   #{menuController.usuario.idPersona.usuario} :: #{menuController.usuario.idTipoUsuario.descripcion}" />
+                            <h:panelGrid columns="2">
+                                <p:outputLabel value="Año:" />
+                                <p:selectOneMenu id="cboAnho" value="#{proveedorMB.idAnho}" disabled="true">
+                                    <f:selectItems value="#{catalogosGeneralesController.lstAnhoDesde}" var="anho" itemValue="#{anho.idAnho}" itemLabel="#{anho.anho}"/>
+                                    <p:ajax listener="#{proveedorMB.actualizarVista()}"/>
+                                </p:selectOneMenu>
+                            </h:panelGrid>
+                        </td>
+                    </tr>
+                </table>
+            </p:outputPanel>
+        </div>
+    </div>
+
+    <style type="text/css">
+        .topbar-badge {
+            background-color: #FF0000;
+            padding: 2px 8px;
+            display: block;
+            margin-top: -2px;
+            color: #ffffff;
+            -moz-border-radius: 2px;
+            -webkit-border-radius: 2px;
+            border-radius: 2px; 
+        }
+    </style>
+
+
+    <p:remoteCommand name="slimMenu" update="@all" actionListener="#{guestPreferences.setSlimMenu(true)}" />
+
+</ui:composition>

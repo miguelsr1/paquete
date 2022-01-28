@@ -74,7 +74,9 @@ public class Empresa implements Serializable {
     @Column(name = "FAX")
     private String fax;
     @Column(name = "ES_CONTRIBUYENTE")
-    private BigInteger esContribuyente;
+    private Short esContribuyente;
+    @Column(name = "DESEA_INSCRIBIRSE")
+    private Short deseaInscribirse;
     @Basic(optional = false)
     @Column(name = "USUARIO_INSERCION")
     private String usuarioInsercion;
@@ -116,6 +118,8 @@ public class Empresa implements Serializable {
     private EstadoRegistro idEstadoRegistro;
     @Column(name = "NUMERO_CUENTA")
     private String numeroCuenta;
+    @Column(name = "CODIGO_CANTON")
+    private String codigoCanton;
 
     public Empresa() {
     }
@@ -132,6 +136,14 @@ public class Empresa implements Serializable {
         this.usuarioInsercion = usuarioInsercion;
         this.fechaInsercion = fechaInsercion;
         this.estadoEliminacion = estadoEliminacion;
+    }
+
+    public Short getDeseaInscribirse() {
+        return deseaInscribirse;
+    }
+
+    public void setDeseaInscribirse(Short deseaInscribirse) {
+        this.deseaInscribirse = deseaInscribirse;
     }
 
     public BigDecimal getIdEmpresa() {
@@ -222,11 +234,11 @@ public class Empresa implements Serializable {
         this.fax = fax;
     }
 
-    public BigInteger getEsContribuyente() {
+    public Short getEsContribuyente() {
         return esContribuyente;
     }
 
-    public void setEsContribuyente(BigInteger esContribuyente) {
+    public void setEsContribuyente(Short esContribuyente) {
         this.esContribuyente = esContribuyente;
     }
 
@@ -365,10 +377,7 @@ public class Empresa implements Serializable {
             return false;
         }
         Empresa other = (Empresa) object;
-        if ((this.idEmpresa == null && other.idEmpresa != null) || (this.idEmpresa != null && !this.idEmpresa.equals(other.idEmpresa))) {
-            return false;
-        }
-        return true;
+        return !((this.idEmpresa == null && other.idEmpresa != null) || (this.idEmpresa != null && !this.idEmpresa.equals(other.idEmpresa)));
     }
 
     @Override
@@ -398,5 +407,13 @@ public class Empresa implements Serializable {
 
     public void setNumeroCuenta(String numeroCuenta) {
         this.numeroCuenta = numeroCuenta;
+    }
+
+    public String getCodigoCanton() {
+        return codigoCanton;
+    }
+
+    public void setCodigoCanton(String codigoCanton) {
+        this.codigoCanton = codigoCanton;
     }
 }

@@ -27,6 +27,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 /**
  *
@@ -37,6 +38,7 @@ import javax.persistence.TemporalType;
 @NamedQueries({
     @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u")})
 public class Usuario implements Serializable {
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUsuario", fetch = FetchType.LAZY)
     private List<UsuarioEntidadFinanciera> usuarioEntidadFinancieraList;
     private static final long serialVersionUID = 1L;
@@ -65,6 +67,8 @@ public class Usuario implements Serializable {
     @Basic(optional = false)
     @Column(name = "CODIGO_DEPARTAMENTO")
     private String codigoDepartamento;
+    @Column(name = "TOKEN_CAMBIO_CLAVE")
+    private String tokenCambioClave;
     @ManyToMany(mappedBy = "usuarioList")
     private List<OpcionMenu> opcionMenuList;
     @JoinColumn(name = "ID_TIPO_USUARIO", referencedColumnName = "ID_TIPO_USUARIO")
@@ -88,8 +92,29 @@ public class Usuario implements Serializable {
     private Short rangoFechaLogin;
     @Column(name = "ACTIVO")
     private Short activo;
+    @Column(name = "CAMBIAR_CLAVE")
+    private Short cambiarClave;
+
+    @Transient
+    private String msj;
 
     public Usuario() {
+    }
+
+    public String getTokenCambioClave() {
+        return tokenCambioClave;
+    }
+
+    public void setTokenCambioClave(String tokenCambioClave) {
+        this.tokenCambioClave = tokenCambioClave;
+    }
+
+    public String getMsj() {
+        return msj;
+    }
+
+    public void setMsj(String msj) {
+        this.msj = msj;
     }
 
     public Usuario(BigDecimal idUsuario) {
@@ -265,5 +290,13 @@ public class Usuario implements Serializable {
 
     public void setActivo(Short activo) {
         this.activo = activo;
+    }
+
+    public Short getCambiarClave() {
+        return cambiarClave;
+    }
+
+    public void setCambiarClave(Short cambiarClave) {
+        this.cambiarClave = cambiarClave;
     }
 }

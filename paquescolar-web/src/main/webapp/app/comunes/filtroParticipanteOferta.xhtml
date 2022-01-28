@@ -20,14 +20,14 @@
     <h:body>
         <h:form id="frmDialog">
             <p:tabView id="tbEmpresas">
-                <p:tab title="Municipio: #{ofertaBienesServiciosController.municipioCe}">
-                    <p:dataTable id="tblEmpresas" widgetVar="tblEmpresas" value="#{ofertaBienesServiciosController.lstCapaEmpresas}" 
+                <p:tab title="Municipio: #{ofertaMB.municipioCe}">
+                    <p:dataTable id="tblEmpresas" widgetVar="tblEmpresas" value="#{ofertaMB.lstCapaEmpresas}" 
                                  var="capaEmpresa" rowKey="#{capaEmpresa.idMuestraInteres.idEmpresa}" rowIndexVar="id"
-                                 selectionMode="single" selection="#{ofertaBienesServiciosController.capaInstSeleccionada}" style="height: 400px; width: 800px"
+                                 selectionMode="single" selection="#{ofertaMB.capaInstSeleccionada}" style="height: 400px; width: 800px"
                                  paginator="true" rows="10" emptyMessage="#{bundle.EmptyTable}"
                                  paginatorPosition="top" resizableColumns="true" lazy="false" scrollable="false">
 
-                        <p:ajax event="rowToggle" listener="#{ofertaBienesServiciosController.onRowToggle}"  />
+                        <p:ajax event="rowToggle" listener="#{ofertaMB.onRowToggle}"  />
 
                         <p:column style="width:16px">
                             <p:rowToggler />
@@ -54,7 +54,7 @@
                                             <f:facet name="header">
                                                 <p:row>
                                                     <p:column colspan="2">
-                                                        <p:graphicImage value="/DynamicImageServlet?file=fotoProveedores/#{capaEmpresa.idMuestraInteres.idEmpresa.idPersona.urlImagen}"/>
+                                                        <p:graphicImage value="/DynamicImageServlet?file=#{capaEmpresa.idMuestraInteres.idEmpresa.idPersona.urlImagen}"/>
                                                     </p:column>
                                                 </p:row>
                                             </f:facet>
@@ -111,12 +111,12 @@
                                                 </p:column>
                                             </p:row>
                                         </p:panelGrid>
-                                        <p:panel visible="#{ofertaBienesServiciosController.detalleProceso.idRubroAdq.idRubroInteres eq 3}">
-                                            <p:commandButton  value="Ver Fotos" action="#{ofertaBienesServiciosController.verFotosProductos}"/>
+                                        <p:panel visible="#{ofertaMB.detalleProceso.idRubroAdq.idRubroInteres eq 3}">
+                                            <p:commandButton  value="Ver Fotos" action="#{ofertaMB.verFotosProductos}"/>
                                         </p:panel>
                                     </p:column>
                                     <p:column headerText="Foto" width="160">
-                                        <p:dataTable id="tblDetallePrecio" widgetVar="tblDetallePrecio" value="#{ofertaBienesServiciosController.lstPreciosReferencia}" var="precio" 
+                                        <p:dataTable id="tblDetallePrecio" widgetVar="tblDetallePrecio" value="#{ofertaMB.lstPreciosReferencia}" var="precio" 
                                                      emptyMessage="No se han registrado precios a este proveedor">
 
                                             <p:column headerText="Item" width="15" id="item">
@@ -131,7 +131,7 @@
                                                 <p:outputLabel value="#{precio.idNivelEducativo.descripcionNivel}" id="nivelEducativo"/>
                                             </p:column>
 
-                                            <p:column headerText="Precio U." width="50" styleClass="celdaNumero" id="precio">
+                                            <p:column headerText="Precio U." width="50" styleClass="numero" id="precio">
                                                 <h:outputText value="#{precio.precioReferencia}">
                                                     <f:convertNumber pattern="###0.00"/>
                                                 </h:outputText>
@@ -145,13 +145,13 @@
                     </p:dataTable>
                 </p:tab>
                 <p:tab title="Otros Municipios">
-                    <p:dataTable id="tblEmpresas2" widgetVar="tblEmpresas2" value="#{ofertaBienesServiciosController.lstCapaEmpresasOtros}" 
+                    <p:dataTable id="tblEmpresas2" widgetVar="tblEmpresas2" value="#{ofertaMB.lstCapaEmpresasOtros}" 
                                  var="capaEmpresa" rowKey="#{capaEmpresa.idMuestraInteres.idEmpresa}" rowIndexVar="id"
-                                 selectionMode="single" selection="#{ofertaBienesServiciosController.capaInstSeleccionada}" style="height: 400px; width: 800px"
+                                 selectionMode="single" selection="#{ofertaMB.capaInstSeleccionada}" style="height: 400px; width: 800px"
                                  paginator="true" rows="10" emptyMessage="#{bundle.EmptyTable}"
                                  paginatorPosition="top" resizableColumns="true" lazy="false" scrollable="false">
 
-                        <p:ajax event="rowToggle" listener="#{ofertaBienesServiciosController.onRowToggle}"  />
+                        <p:ajax event="rowToggle" listener="#{ofertaMB.onRowToggle}"  />
 
                         <p:column style="width:16px">
                             <p:rowToggler />
@@ -180,7 +180,7 @@
                                             <f:facet name="header">
                                                 <p:row>
                                                     <p:column rowspan="2">
-                                                        <p:graphicImage value="/DynamicImageServlet?file=fotoProveedores/#{capaEmpresa.idMuestraInteres.idEmpresa.idPersona.urlImagen}"/>
+                                                        <p:graphicImage value="/DynamicImageServlet?file=#{capaEmpresa.idMuestraInteres.idEmpresa.idPersona.urlImagen}"/>
                                                     </p:column>
                                                 </p:row>
                                             </f:facet>
@@ -201,12 +201,12 @@
                                                 <f:convertNumber pattern="#,##0"  />
                                             </h:outputText>
                                         </p:panelGrid>
-                                        <p:panel visible="#{ofertaBienesServiciosController.detalleProceso.idRubroAdq.idRubroInteres eq 3}">
-                                            <p:commandButton  value="Ver Fotos" action="#{ofertaBienesServiciosController.verFotosProductos}" />
+                                        <p:panel visible="#{ofertaMB.detalleProceso.idRubroAdq.idRubroInteres eq 3}">
+                                            <p:commandButton  value="Ver Fotos" action="#{ofertaMB.verFotosProductos}" />
                                         </p:panel>
                                     </p:column>
                                     <p:column headerText="Foto" width="160">
-                                        <p:dataTable id="tblDetallePrecio2" widgetVar="tblDetallePrecio2" value="#{ofertaBienesServiciosController.lstPreciosReferencia}" var="precio" 
+                                        <p:dataTable id="tblDetallePrecio2" widgetVar="tblDetallePrecio2" value="#{ofertaMB.lstPreciosReferencia}" var="precio" 
                                                      emptyMessage="No se han registrado precios a este proveedor">
 
                                             <p:column headerText="Item" width="15" id="item">
@@ -221,7 +221,7 @@
                                                 <p:outputLabel value="#{precio.idNivelEducativo.descripcionNivel}" id="nivelEducativo"/>
                                             </p:column>
 
-                                            <p:column headerText="Precio U." width="50" styleClass="celdaNumero" id="precio">
+                                            <p:column headerText="Precio U." width="50" styleClass="numero" id="precio">
                                                 <h:outputText value="#{precio.precioReferencia}">
                                                     <f:convertNumber pattern="###0.00"/>
                                                 </h:outputText>
@@ -238,7 +238,7 @@
 
             <f:facet name="footer" >
                 <p:commandButton value="Aceptar" icon="fa fa-check-circle" update=":frmPrincipal:tblParticipantes :frmPrincipal:tbEmpresas" 
-                                 action="#{ofertaBienesServiciosController.onSelect}"/>
+                                 action="#{ofertaMB.onSelect}"/>
                 <p:commandButton value="Cancelar" icon="fa fa-times-circle" onclick="PF('dlgProveedor').hide();" />
             </f:facet>
 

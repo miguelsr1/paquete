@@ -26,12 +26,11 @@ import sv.gob.mined.paquescolar.model.EntidadFinanciera;
 import sv.gob.mined.paquescolar.model.RubrosAmostrarInteres;
 import sv.gob.mined.paquescolar.model.Usuario;
 import sv.gob.mined.paquescolar.model.UsuarioEntidadFinanciera;
-import sv.gob.mined.paquescolar.model.pojos.credito.CreditoProveedor;
+import sv.gob.mined.paquescolar.model.pojos.credito.CreditoProveedorDto;
 import sv.gob.mined.paquescolar.model.pojos.credito.ResumenCreditosDto;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 import sv.gob.mined.paquescolar.model.pojos.credito.DatosProveedoresFinanDto;
-import sv.gob.mined.paquescolar.util.Fechas;
-import sv.gob.mined.paquescolar.util.StringUtils;
+import sv.gob.mined.paquescolar.util.Constantes;
 
 /**
  *
@@ -60,8 +59,8 @@ public class CreditosEJB {
 
     /**
      * Devuelve un listado de entidades financieras (BANCOS o CAJAS DE CREDITO O
-     * PRESTAMO) dependiendo del parametro que reciba 0 - modulo de créditos 1 -
-     * Bancos asociados a cuentas de los proveedores 2 - las 2 anteriores
+     * PRESTAMO) dependiendo del parametro que reciba 0 - Modulo de créditos 1 -
+     * Bancos asociados a cuentas de los proveedores 2 - Las 2 anteriores
      *
      * @param tipoEntidad
      * @return
@@ -70,6 +69,23 @@ public class CreditosEJB {
         Query q = em.createQuery("SELECT e FROM EntidadFinanciera e WHERE e.estadoEliminacion=0 AND e.bandera=:tipoEntidad ORDER BY e.nombreEntFinan", EntidadFinanciera.class);
         q.setParameter("tipoEntidad", tipoEntidad);
         return q.getResultList();
+    }
+
+    public List<EntidadFinanciera> findEntidadFinancieraByIdDetProcesoAdq(Integer idDetProcesoAdq) {
+        Query query = em.createNamedQuery("Credito.EntidadFinancieraByIdDetProcesoAdq", EntidadFinanciera.class);
+        query.setParameter(1, idDetProcesoAdq);
+        return query.getResultList();
+    }
+
+    public List<EntidadFinanciera> getlstEntFinanUsuario(String usuario, Integer idDetProcesoAdq) {
+        Query query = em.createNamedQuery("Credito.EntidadFinancieraByUsuarioAndIdDetProcesoAdq", EntidadFinanciera.class);
+        query.setParameter(1, usuario);
+        query.setParameter(2, idDetProcesoAdq);
+        return query.getResultList();
+
+        /*Query query = em.createQuery("SELECT u.codEntFinanciera FROM UsuarioEntidadFinanciera u WHERE u.idUsuario.idPersona.usuario=:usuario", EntidadFinanciera.class);
+        query.setParameter("usuario", usuario);
+        return query.getResultList();*/
     }
 
     public List<EntidadFinanciera> findEntidadFinancieraEntitiesByName(List<String> nombres) {
@@ -116,12 +132,6 @@ public class CreditosEJB {
         }
     }
 
-    public List<EntidadFinanciera> getlstEntFinanUsuario(String usuario) {
-        Query query = em.createQuery("SELECT u.codEntFinanciera FROM UsuarioEntidadFinanciera u WHERE u.idUsuario.idPersona.usuario=:usuario", EntidadFinanciera.class);
-        query.setParameter("usuario", usuario);
-        return query.getResultList();
-    }
-
     public List<CreditoBancario> findCreditoBancarioByEmpresa(String numeroNit, DetalleProcesoAdq proceso) {
         Query q = em.createQuery("SELECT c FROM CreditoBancario c WHERE c.numeroNit=:numeroNit and c.estadoEliminacion=0 and c.idDetProcesoAdq=:proceso", CreditoBancario.class);
         q.setParameter("numeroNit", numeroNit);
@@ -138,14 +148,12 @@ public class CreditosEJB {
         return q.getResultList();
     }
 
-    public CreditoBancario guardarCredito(CreditoBancario creditoBancario, String usuario) {
+    public void guardarCredito(CreditoBancario creditoBancario, String usuario) {
         if (creditoBancario.getIdCredito() == null) {
             crearCredito(creditoBancario, usuario);
         } else {
-            creditoBancario = editCreditoBancario(creditoBancario, usuario);
+            editCreditoBancario(creditoBancario, usuario);
         }
-
-        return creditoBancario;
     }
 
     public void crearCredito(CreditoBancario creditoBancario, String usuario) {
@@ -153,23 +161,48 @@ public class CreditosEJB {
         creditoBancario.setUsuarioInsercion(usuario);
         creditoBancario.setEstadoEliminacion(BigInteger.ZERO);
         em.persist(creditoBancario);
+
+        em.find(CreditoBancario.class, creditoBancario.getIdCredito());
     }
 
-    public CreditoBancario editCreditoBancario(CreditoBancario creditoBancario, String usuario) {
+    public void editCreditoBancario(CreditoBancario creditoBancario, String usuario) {
+        creditoBancario.getDetalleCreditoList().stream().map((detalleCredito) -> {
+            if (detalleCredito.getEliminado()) {
+                detalleCredito.setFechaEliminacion(new Date());
+                detalleCredito.setUsuarioModificacion(usuario);
+            }
+            return detalleCredito;
+        }).forEachOrdered((detalleCredito) -> {
+            em.merge(detalleCredito);
+        });
+
         creditoBancario.setFechaModificacion(new Date());
         creditoBancario.setUsuarioModificacion(usuario);
         creditoBancario = em.merge(creditoBancario);
-        return creditoBancario;
+
+        //return em.find(CreditoBancario.class, creditoBancario.getIdCredito());
     }
 
     public List<ContratosOrdenesCompras> getLstContratosDisponiblesCreditos(Empresa empresa, DetalleProcesoAdq proceso) {
+        List<ContratosOrdenesCompras> lst = new ArrayList();
+        
         Query q = em.createQuery("SELECT c FROM ContratosOrdenesCompras c WHERE c.estadoEliminacion=0 and c.idResolucionAdj.estadoEliminacion = 0 and c.idResolucionAdj.idEstadoReserva.idEstadoReserva=2 and c.idResolucionAdj.idParticipante.idEmpresa=:idEmpresa and c.idResolucionAdj.idParticipante.estadoEliminacion=0 and c.idResolucionAdj.idParticipante.idOferta.estadoEliminacion=0 and c.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq=:idProceso and c.idContrato not in (SELECT d.idContrato.idContrato FROM DetalleCredito d WHERE d.estadoEliminacion=0 and d.idCredito.idDetProcesoAdq=:idProceso and d.idCredito.numeroNit=:numeroNit) order by c.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoEntidad", ContratosOrdenesCompras.class);
         q.setParameter("idEmpresa", empresa);
         q.setParameter("idProceso", proceso);
 
         q.setParameter("numeroNit", empresa.getNumeroNit());
 
-        return q.getResultList();
+        lst.addAll(q.getResultList());
+        
+        q = em.createQuery("SELECT r.idContrato FROM ResolucionesModificativas r WHERE r.idEstadoReserva=2 and r.estadoEliminacion=0 and r.idContrato.idResolucionAdj.idParticipante.idEmpresa=:idEmpresa and r.idContrato.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq=:idProceso and r.idContrato.idContrato not in (SELECT d.idContrato.idContrato FROM DetalleCredito d WHERE d.estadoEliminacion=0 and d.idCredito.idDetProcesoAdq=:idProceso and d.idCredito.numeroNit=:numeroNit) ", ContratosOrdenesCompras.class);
+        q.setParameter("idEmpresa", empresa);
+        q.setParameter("idProceso", proceso);
+
+        q.setParameter("numeroNit", empresa.getNumeroNit());
+        
+        lst.addAll(q.getResultList());
+        
+        return lst;
     }
 
     public List<ResumenCreditosDto> generarResumen(BigDecimal idAnho) {
@@ -178,69 +211,38 @@ public class CreditosEJB {
         return q.getResultList();
     }
 
-    public List<CreditoProveedor> getCreditosActivosPorProveedor(String codigoDepartamento, DetalleProcesoAdq idDetProceso) {
-        List<CreditoProveedor> lstCreditosProveedor = new ArrayList<>();
-        String sql = "SELECT * FROM vw_creditos_proveedores ";
+    public List<CreditoProveedorDto> getCreditosActivosPorProveedor(String codigoDepartamento, DetalleProcesoAdq idDetProceso) {
+        String strWhere = "";
         if (codigoDepartamento != null) {
             if (!codigoDepartamento.equals("00")) {
-                if (sql.contains("WHERE")) {
-                    sql = sql.concat(" COD_DEPA_EMP = ").concat(codigoDepartamento);
-                } else {
-                    sql = sql.concat(" WHERE COD_DEPA_EMP = ").concat(codigoDepartamento);
-                }
+                strWhere = Constantes.addCampoToWhere("", "COD_DEPA_EMP", codigoDepartamento);
             }
         }
         if (idDetProceso != null) {
-            if (sql.contains("WHERE")) {
-                sql = sql.concat(" and ID_DET_PROCESO_ADQ = ").concat(String.valueOf(idDetProceso.getIdDetProcesoAdq()));
-            } else {
-                sql = sql.concat(" WHERE ID_DET_PROCESO_ADQ = ").concat(String.valueOf(idDetProceso.getIdDetProcesoAdq()));
-            }
+            strWhere = Constantes.addCampoToWhere(strWhere, "ID_DET_PROCESO_ADQ", idDetProceso.getIdDetProcesoAdq());
         }
 
-        Query query = em.createNativeQuery(sql);
-        List lst = query.getResultList();
+        Query query = em.createNativeQuery(Constantes.QUERY_CREDITO_ACTIVOS_POR_PROVEEDOR + strWhere + " ORDER BY monto_credito,id_credito,codigo_entidad", CreditoProveedorDto.class);
 
-        for (Object object : lst) {
-            Object[] datos = (Object[]) object;
-            CreditoProveedor credito = new CreditoProveedor();
-            credito.setIdCredito(new BigDecimal(datos[0].toString()));
-            credito.setNumeroNit(datos[1].toString());
-            credito.setMontoCredito(datos[2] == null ? null : new BigDecimal(datos[2].toString()));
-            credito.setNombreEntFinan(datos[3].toString());
-            credito.setFechaVencimiento(datos[4] == null ? null : Fechas.getStringToDate(datos[4].toString()));
-            credito.setCodigoEntidad(datos[5].toString());
-            credito.setNombreCE(datos[6].toString());
-            credito.setNombreDepartamento(datos[7].toString());
-            credito.setIdProceso(new BigDecimal(datos[8].toString()));
-            credito.setCodigoDepartamento(datos[9].toString());
-            credito.setCodigoDepaEmp(datos[10].toString());
-            credito.setCreditoActivo(new BigInteger(datos[11].toString()));
-            credito.setMontoContrato(new BigDecimal(datos[12].toString()));
-            credito.setNombreDepartamentoPro(datos[13].toString());
-            credito.setRazonSocial(datos[14].toString());
-            credito.setCodigoDepaEmp(datos[15].toString());
-            lstCreditosProveedor.add(credito);
-        }
-        return lstCreditosProveedor;
+        return query.getResultList();
     }
 
     public List<DatosProveedoresFinanDto> buscarListadoProveedor(BigDecimal rubro, EntidadFinanciera entidadSeleccionado, DetalleProcesoAdq proceso, BigInteger estadoCredito) {
-        String cadenaWhere = StringUtils.addCampoToWhere("", "id_rubro_interes", rubro);
+        String cadenaWhere = Constantes.addCampoToWhere("", "id_rubro_interes", rubro);
 
         if (entidadSeleccionado != null && !entidadSeleccionado.getCodEntFinanciera().equals("00000")) {
-            cadenaWhere = StringUtils.addCampoToWhere(cadenaWhere, "cod_ent_financiera", entidadSeleccionado.getCodEntFinanciera());
+            cadenaWhere = Constantes.addCampoToWhere(cadenaWhere, "cod_ent_financiera", entidadSeleccionado.getCodEntFinanciera());
         }
 
-        cadenaWhere = StringUtils.addCampoToWhere(cadenaWhere, "ID_DET_PROCESO_ADQ", proceso.getIdDetProcesoAdq());
-        cadenaWhere = StringUtils.addCampoToWhere(cadenaWhere, "credito_activo", estadoCredito);
+        cadenaWhere = Constantes.addCampoToWhere(cadenaWhere, "ID_DET_PROCESO_ADQ", proceso.getIdDetProcesoAdq());
+        cadenaWhere = Constantes.addCampoToWhere(cadenaWhere, "credito_activo", estadoCredito);
 
         if (!cadenaWhere.isEmpty()) {
             cadenaWhere = cadenaWhere + " AND monto_credito is not null";
         }
 
         em.clear();
-        Query q = em.createNativeQuery(StringUtils.QUERY_RPT_PROVEEDOR_ENT_FINAN + cadenaWhere, DatosProveedoresFinanDto.class);
+        Query q = em.createNativeQuery(Constantes.QUERY_RPT_PROVEEDOR_ENT_FINAN + cadenaWhere, DatosProveedoresFinanDto.class);
         return q.getResultList();
     }
 

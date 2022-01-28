@@ -115,11 +115,19 @@
     </h:head>
 
     <h:body >
-        <p:idleMonitor onactive="PF('sessionTimeOutDialog').show();" timeout="600000" >
-            <p:ajax event="active" listener="#{personaController.logout}"/>
-        </p:idleMonitor>
+        <h:form>
+            <p:idleMonitor onactive="PF('sessionTimeOutDialog').show();" timeout="#{monitorDeSessionMB.sessionTimeOut}" >
+                <p:confirmDialog id="sessionTimeOutDialog"
+                                 message="La sesión a caducado por inactividad, por favor, pulse sobre el siguiente botón para volver a acceder a la aplicación" closable="false"
+                                 header="Sesión finalizada" widgetVar="sessionTimeOutDialog">
+                    <p:commandButton id="Logout" value="Iniciar sesión"
+                                     icon="fa fa-sign-out" ajax="false"
+                                     action="#{monitorDeSessionMB.cerrarSession()}" />
+                </p:confirmDialog>
+            </p:idleMonitor>
+        </h:form>
 
-        <p:dialog header="Sesión caducada" id="sessionTimeOutDialog" widgetVar="sessionTimeOutDialog" resizable="false" draggable="false"
+        <!--p:dialog header="Sesión caducada" id="sessionTimeOutDialog" widgetVar="sessionTimeOutDialog" resizable="false" draggable="false"
                   modal="true" closable="false" width="400" visible="false">
             <h:panelGrid columns="1" style="text-align: center;">
                 <h:panelGrid columns="3">
@@ -129,15 +137,33 @@
                 </h:panelGrid>
             </h:panelGrid>
             <f:facet name="footer">
-                <p:commandButton id="confirmBackToLogin" type="button" value="Iniciar sesión" onclick="window.location = '#{request.contextPath}/index.mined';" />
+                <p:commandButton id="confirmBackToLogin" type="button" value="Iniciar sesión" onclick="window.location = '{request.contextPath}/index.mined';" />
             </f:facet>
-        </p:dialog>
+        </p:dialog-->
 
 
         <div class="layout-wrapper #{guestPreferences.slimMenu ? 'layout-menu-slim' : (guestPreferences.overlayMenu ? 'layout-menu-overlay' : 'layout-menu-static')}">
-            <p:growl id="growl" showDetail="true" escape="false">
+            <p:growl id="growl" showDetail="true" escape="false" sticky="true" >
                 <p:autoUpdate />
             </p:growl>
+
+            <p:ajaxStatus>
+                <f:facet name="default">
+
+                </f:facet>
+                <f:facet name="start">
+                    <div id="div_modal" class="layout-content ui-widget-overlay ui-dialog-mask" style="z-index: 1000;"></div>
+                    <div id="ajax_gif" class="ui-tooltip-text ui-corner-all ui-shadow">
+                        <i class="fa fa-refresh fa-spin ajax-loader" aria-hidden="true" 
+                           style="color: #349ffb; font-size: 36px; display: block;  position: relative;  top: 18%;  transform: translateY(-18%);"></i>
+                    </div>
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+
             <h:form id="frmTopBar">
                 <ui:include src="./topbar.xhtml" />
 
@@ -151,22 +177,6 @@
                     <h:form id="frmPrincipal" prependId="false" >
                         <ui:insert name="content"/>
                     </h:form>
-
-                    <p:ajaxStatus>
-                        <f:facet name="default">
-                        </f:facet>
-                        <f:facet name="start">
-                            <div id="div_modal" class="layout-content ui-widget-overlay ui-dialog-mask" style="z-index: 900;"></div>
-                            <div id="ajax_gif" class="ui-tooltip-text ui-corner-all ui-shadow">
-                                <i class="fa fa-refresh fa-spin ajax-loader" aria-hidden="true" 
-                                   style="color: #349ffb; font-size: 36px; display: block;  position: relative;  top: 18%;  transform: translateY(-18%);"></i>
-                            </div>
-                        </f:facet>
-
-                        <f:facet name="complete">
-                            <h:outputText value="" />
-                        </f:facet>
-                    </p:ajaxStatus>
                 </div>
             </div>    
         </div>

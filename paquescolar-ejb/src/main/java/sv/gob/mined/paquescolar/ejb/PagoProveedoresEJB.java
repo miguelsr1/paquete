@@ -6,9 +6,13 @@
 package sv.gob.mined.paquescolar.ejb;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -16,15 +20,22 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import sv.gob.mined.paquescolar.model.DetalleDocPago;
 import sv.gob.mined.paquescolar.model.DetallePlanilla;
+import sv.gob.mined.paquescolar.model.DetallePreCarga;
 import sv.gob.mined.paquescolar.model.DetalleRequerimiento;
+import sv.gob.mined.paquescolar.model.Liquidacion;
+import sv.gob.mined.paquescolar.model.ListaNotificacionPago;
 import sv.gob.mined.paquescolar.model.PlanillaPago;
 import sv.gob.mined.paquescolar.model.PlanillaPagoCheque;
+import sv.gob.mined.paquescolar.model.PreCarga;
+import sv.gob.mined.paquescolar.model.RecepcionBienesServicios;
 import sv.gob.mined.paquescolar.model.ReintegroRequerimiento;
 import sv.gob.mined.paquescolar.model.ResolucionesModificativas;
 import sv.gob.mined.paquescolar.model.TipoDocPago;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosBusquedaPlanillaDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
-import sv.gob.mined.paquescolar.util.StringUtils;
+import sv.gob.mined.paquescolar.model.pojos.pagoprove.InformeF14Dto;
+import sv.gob.mined.paquescolar.model.pojos.pagoprove.PreCargaDto;
+import sv.gob.mined.paquescolar.util.Constantes;
 
 /**
  *
@@ -34,39 +45,75 @@ import sv.gob.mined.paquescolar.util.StringUtils;
 @LocalBean
 public class PagoProveedoresEJB {
 
+    @EJB
+    private EMailEJB eMailEJB;
+
     @PersistenceContext(unitName = "paquescolarUP")
     private EntityManager em;
 
-    public List<DatosProveDto> getLstDatosProveDto(String anhoPago, String numeroNit, String codigoDepartamento) {
-        Query q = em.createNamedQuery("PagoProve.ConstanciaRentencionByAnhoAndNitEmp", DatosProveDto.class);
-        q.setParameter(1, Integer.parseInt(anhoPago));
-        q.setParameter(2, numeroNit);
-        q.setParameter(3, codigoDepartamento);
-        return q.getResultList();
+    public List<DatosProveDto> getLstDatosProveDto(String anhoPago, String numeroNit, String codigoDepartamento, String usuario) {
+        try {
+            Query q = em.createNamedQuery("PagoProve.ConstanciaRentencionByAnhoAndNitEmp", DatosProveDto.class);
+            q.setParameter(1, Integer.parseInt(anhoPago));
+            q.setParameter(2, numeroNit);
+            q.setParameter(3, codigoDepartamento);
+            return q.getResultList();
+        } catch (NumberFormatException e) {
+            /*eMailEJB.enviarMailDeError("Paquete Escolar - Error - Modulo de pago",
+                    "Error en generacion de constancia de renta.\n"
+                    + "Anho " + anhoPago + "; NIT " + numeroNit + "; codigoDepartamento " + codigoDepartamento + "; usuario " + usuario,
+                    e);*/
+            Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, "Error en generacion de constancia de renta.");
+            Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, "Anho {0} NIT {1} codigoDepartamento {2}", new Object[]{anhoPago, numeroNit, codigoDepartamento});
+            return new ArrayList();
+        }
     }
 
     public List<DatosProveDto> getDatosF910(String codigoDepartamento, Integer anho) {
         Query q = em.createNamedQuery("PagoProve.FileF910", DatosProveDto.class);
         q.setParameter(1, codigoDepartamento);
-        q.setParameter(1, anho);
+        q.setParameter(2, anho);
         return q.getResultList();
     }
 
-    public List<DatosProveDto> getDatosRptRentaMensual(String codigoDepartamento, Integer idMesPago, Integer anhoPago) {
-        Query q = em.createNamedQuery("PagoProve.ReporteRentaMensual", DatosProveDto.class);
+    public List<InformeF14Dto> getDatosF14(String codigoDepartamento, String idMes) {
+        Query q = em.createNamedQuery("PagoProve.FileF14v15", InformeF14Dto.class);
         q.setParameter(1, codigoDepartamento);
-        q.setParameter(2, idMesPago);
-        q.setParameter(3, anhoPago);
+        q.setParameter(2, idMes);
         return q.getResultList();
     }
 
-    public List<DatosProveDto> getDatosRptRentaMensualByRequerimiento(String codigoDepartamento, Integer idMesPago, Integer anhoPago, String formatoRequerimiento) {
-        Query q = em.createNamedQuery("PagoProve.ReporteRentaMensualByRequerimiento", DatosProveDto.class);
-        q.setParameter(1, codigoDepartamento);
-        q.setParameter(2, idMesPago);
-        q.setParameter(3, anhoPago);
-        q.setParameter(4, formatoRequerimiento);
-        return q.getResultList();
+    public List<DatosProveDto> getDatosRptRentaMensual(String codigoDepartamento, Integer idMesPago, Integer anhoPago, String usuario) {
+        try {
+            Query q = em.createNamedQuery("PagoProve.ReporteRentaMensual", DatosProveDto.class);
+            q.setParameter(1, codigoDepartamento);
+            q.setParameter(2, idMesPago);
+            q.setParameter(3, anhoPago);
+            return q.getResultList();
+        } catch (Exception e) {
+            /*eMailEJB.enviarMailDeError("Paquete Escolar - Error - Modulo de pago",
+                    "Error en generacion de constancia de renta mensual.\n"
+                    + "Anho " + anhoPago + "; idMesPago " + idMesPago + "; codigoDepartamento " + codigoDepartamento + "; usuario " + usuario,
+                    e);*/
+            Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, String.format("Error generando el reporte de renta mensual: %s - %d - %d", codigoDepartamento, idMesPago, anhoPago));
+
+            return new ArrayList();
+        }
+    }
+
+    public List<DatosProveDto> getDatosRptRentaMensualByRequerimiento(String codigoDepartamento, Integer idMesPago, Integer anhoPago, String formatoRequerimiento, String usuario) {
+        try {
+            Query q = em.createNamedQuery("PagoProve.ReporteRentaMensualByRequerimiento", DatosProveDto.class);
+            q.setParameter(1, codigoDepartamento);
+            q.setParameter(2, idMesPago);
+            q.setParameter(3, anhoPago);
+            q.setParameter(4, formatoRequerimiento);
+            return q.getResultList();
+        } catch (Exception e) {
+            Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, String.format("Error generando el reporte de renta mensual por requerimiento: %s - %d - %d", codigoDepartamento, idMesPago, anhoPago));
+
+            return new ArrayList();
+        }
     }
 
     public List<DatosProveDto> getDatosRptLiquidacion(String codigoDepartamento, String anho, Integer idDetProcesoAdq, String codigoEntidad) {
@@ -84,6 +131,14 @@ public class PagoProveedoresEJB {
         return q.getResultList();
     }
 
+    /**
+     * Este metodo se dejara de utilizar a partir de 05/12/2018
+     *
+     * @param planillaPago
+     * @return
+     * @deprecated
+     */
+    @Deprecated
     public PlanillaPago guardarPlanillaPago(PlanillaPago planillaPago) {
         try {
             if (planillaPago.getIdPlanilla() == null) {
@@ -96,6 +151,160 @@ public class PagoProveedoresEJB {
             Logger.getLogger(ProveedorEJB.class.getName()).log(Level.SEVERE, null, e);
             return new PlanillaPago();
         }
+    }
+
+    public HashMap<String, Object> guardarPlanillaPago(PlanillaPago planillaPago, Boolean tipoPagoEntFinanciera,
+            Boolean showChequeEntProv, Boolean showChequeRenta, Boolean showChequeUsefi,
+            PlanillaPagoCheque chequeFinanProve, PlanillaPagoCheque chequeUsefi, PlanillaPagoCheque chequeRenta, String usuario) {
+
+        boolean isRubroUniforme = planillaPago.getIdRequerimiento().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroUniforme().intValue() == 1;
+        boolean guardarNuevo = (planillaPago.getIdPlanilla() == null);
+        boolean showPnlCheques = false;
+        int idTipoPlanilla = planillaPago.getIdTipoPlanilla();
+
+        HashMap<String, Object> mapDeRetorno = new HashMap();
+
+        //Verificar que los montos (actual y original) sean diferentes para ingreso de los datos del cheque USEFI
+        //Esta validacion se realiza unicamente cuando la planilla se esta creando
+        if (!showChequeUsefi) {
+            for (DetallePlanilla detPla : planillaPago.getDetallePlanillaList()) {
+                if (detPla.getIdDetalleDocPago().getMontoActual() != null && detPla.getIdDetalleDocPago().getContratoModif() == 1) {
+                    showChequeUsefi = (detPla.getIdDetalleDocPago().getMontoActual().compareTo(detPla.getMontoOriginal()) == -1);
+                    if (showChequeUsefi) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        //guardar datos de fecha y numero de cheque en el detalle de planilla
+        if (isRubroUniforme && chequeFinanProve.getFechaCheque() != null && chequeFinanProve.getNumeroCheque() != null) {
+            for (DetallePlanilla detPla : planillaPago.getDetallePlanillaList()) {
+                detPla.setFechaCheque(chequeFinanProve.getFechaCheque());
+                detPla.setNumCheque(chequeFinanProve.getNumeroCheque());
+            }
+        }
+
+        if (guardarNuevo) {
+            planillaPago.setFechaInsercion(new Date());
+            planillaPago.setUsuarioInsercion(usuario);
+            planillaPago.setEstadoEliminacion((short) 0);
+
+            //Habilitar visibilidad de cheques
+            showChequeRenta = isRubroUniforme;
+            showPnlCheques = (showChequeEntProv || showChequeRenta || showChequeUsefi);
+        } else {
+            planillaPago.setFechaModificacion(new Date());
+            planillaPago.setUsuarioModificacion(usuario);
+        }
+
+        mapDeRetorno.put("showChequeEntProv", showChequeEntProv);
+        mapDeRetorno.put("showChequeRenta", showChequeRenta);
+        mapDeRetorno.put("showChequeUsefi", showChequeUsefi);
+        mapDeRetorno.put("showPnlCheques", showPnlCheques);
+
+        if (guardarNuevo) {
+            em.persist(planillaPago);
+        } else {
+            em.merge(planillaPago);
+        }
+
+        if (planillaPago.getIdPlanilla() != null) {
+            //mensaje
+            mapDeRetorno.put(Constantes.MSJ_INFO, "Datos almacenados satisfactoriamente.");
+
+            //Persistiendo los datos de los cheques
+            BigDecimal mRenta = BigDecimal.ZERO;
+            BigDecimal montoTotalActual;
+
+            if (isRubroUniforme) {
+                for (DetallePlanilla detPla : planillaPago.getDetallePlanillaList()) {
+                    if (detPla.getIdDetalleDocPago().getMontoRenta() != null) {
+                        mRenta = mRenta.add(detPla.getIdDetalleDocPago().getMontoRenta());
+                    }
+                }
+                montoTotalActual = getMontoActualTotal(planillaPago).add(mRenta.negate());
+            } else {
+                montoTotalActual = getMontoActualTotal(planillaPago);
+            }
+
+            if (showChequeEntProv) {
+                chequeFinanProve.setMontoCheque(montoTotalActual);
+                if (chequeFinanProve.getIdPlanillaCheque() == null) {
+                    chequeFinanProve.setaFavorDe((short) (idTipoPlanilla == 1 ? 3 : 0));
+                    chequeFinanProve.setUsuarioInsercion(usuario);
+                    chequeFinanProve.setFechaInsercion(new Date());
+                    chequeFinanProve.setEstadoEliminacion((short) 0);
+                    chequeFinanProve.setTransferencia((short) 0);
+                    chequeFinanProve.setIdPlanilla(planillaPago);
+                } else {
+                    chequeFinanProve.setTransferencia(tipoPagoEntFinanciera ? 1 : (short) 0);
+                    chequeFinanProve.setUsuarioModificacion(usuario);
+                    chequeFinanProve.setFechaModificacion(new Date());
+                }
+
+                mapDeRetorno.put("chequeFinanProve", guardarPlanillaPagoCheque(chequeFinanProve));
+            }
+
+            if (showChequeUsefi) {
+                chequeUsefi.setMontoCheque(getMontoOriginalTotal(planillaPago).add(montoTotalActual.negate()).add(mRenta.negate()));
+                if (chequeUsefi.getIdPlanillaCheque() == null) {
+                    chequeUsefi.setaFavorDe((short) 1);
+                    chequeUsefi.setUsuarioInsercion(usuario);
+                    chequeUsefi.setFechaInsercion(new Date());
+                    chequeUsefi.setEstadoEliminacion((short) 0);
+                    chequeUsefi.setIdPlanilla(planillaPago);
+                } else {
+                    chequeUsefi.setUsuarioModificacion(usuario);
+                    chequeUsefi.setFechaModificacion(new Date());
+                }
+                mapDeRetorno.put("chequeUsefi", guardarPlanillaPagoCheque(chequeUsefi));
+            }
+
+            if (showChequeRenta) {
+                if (chequeRenta.getIdPlanillaCheque() == null) {
+                    chequeRenta.setaFavorDe((short) 2);
+                    chequeRenta.setUsuarioInsercion(usuario);
+                    chequeRenta.setFechaInsercion(new Date());
+                    chequeRenta.setEstadoEliminacion((short) 0);
+                    chequeRenta.setIdPlanilla(planillaPago);
+                } else {
+                    chequeRenta.setUsuarioModificacion(usuario);
+                    chequeRenta.setFechaModificacion(new Date());
+                }
+
+                chequeRenta.setMontoCheque(mRenta);
+                mapDeRetorno.put("chequeRenta", guardarPlanillaPagoCheque(chequeRenta));
+            }
+            mapDeRetorno.put(Constantes.ERROR, false);
+        } else {
+            //mensaje
+            mapDeRetorno.clear();
+            mapDeRetorno.put(Constantes.ERROR, true);
+            mapDeRetorno.put(Constantes.MSJ_ERROR, "Ocurrio un error en la operación. Comuniquese con el administrador del sistema");
+        }
+
+        return mapDeRetorno;
+    }
+
+    private BigDecimal getMontoActualTotal(PlanillaPago planillaPago) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (DetallePlanilla detPla : planillaPago.getDetallePlanillaList()) {
+            if (detPla.getCantidadActual() != null && detPla.getEstadoEliminacion() == 0) {
+                total = total.add(detPla.getMontoActual());
+            }
+        }
+        return total;
+    }
+
+    private BigDecimal getMontoOriginalTotal(PlanillaPago planillaPago) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (DetallePlanilla detPla : planillaPago.getDetallePlanillaList()) {
+            if (detPla.getCantidadOriginal() != null) {
+                total = total.add(detPla.getMontoOriginal());
+            }
+        }
+        return total;
     }
 
     public ReintegroRequerimiento guardarReintegro(ReintegroRequerimiento reintegro) {
@@ -152,7 +361,7 @@ public class PagoProveedoresEJB {
         q.setParameter("numeroNit", numeroNit);
         return q.getResultList();
     }
-    
+
     public List<DetalleRequerimiento> getDetRequerimientoPendienteByEntFinan(BigDecimal idRequerimiento, String nomEntFinanciera) {
         List<DetalleRequerimiento> lst;
         Query q = em.createQuery("select d from DetalleRequerimiento d where d.activo=0 and d.idRequerimiento.idRequerimiento =:idReq and d.nombreEntFinan=:nomEntFinanciera and d.idDetRequerimiento not in(select p.idDetalleDocPago.idDetRequerimiento.idDetRequerimiento from DetallePlanilla p where p.estadoEliminacion = 0 and p.idPlanilla.idRequerimiento.idRequerimiento=:idReq1 ) order by d.razonSocial, d.codigoEntidad", DetalleRequerimiento.class);
@@ -163,6 +372,7 @@ public class PagoProveedoresEJB {
 
         return lst;
     }
+
     public List<DetalleRequerimiento> getDetRequerimientoPendiente(BigDecimal idRequerimiento) {
         List<DetalleRequerimiento> lst;
         Query q = em.createQuery("select d from DetalleRequerimiento d where d.activo=0 and d.idRequerimiento.idRequerimiento =:idReq and d.idDetRequerimiento not in(select p.idDetalleDocPago.idDetRequerimiento.idDetRequerimiento from DetallePlanilla p where p.estadoEliminacion = 0 and p.idPlanilla.idRequerimiento.idRequerimiento=:idReq1 ) order by d.razonSocial, d.codigoEntidad", DetalleRequerimiento.class);
@@ -231,6 +441,10 @@ public class PagoProveedoresEJB {
         q.setParameter("idPlanilla", planillaPago);
         q.setParameter("aFavorDe", aFavorDe);
         return q.getResultList().isEmpty() ? new PlanillaPagoCheque() : (PlanillaPagoCheque) q.getSingleResult();
+    }
+
+    public PlanillaPago getPlanillaPago(BigDecimal idPlanilla) {
+        return em.find(PlanillaPago.class, idPlanilla);
     }
 
     public ReintegroRequerimiento getReintegroByIdReq(BigDecimal idReq) {
@@ -321,13 +535,28 @@ public class PagoProveedoresEJB {
         q.executeUpdate();
     }
 
-    public List<DatosBusquedaPlanillaDto> buscarPlanillas(BigDecimal idPlanilla, BigDecimal monto, String numeroNit, String nombreEntFinan, Integer idProcesoAdq) {
-        String strWhere = StringUtils.addCampoToWhere("", "pp.ID_PLANILLA", idPlanilla);
-        strWhere = StringUtils.addCampoToWhere(strWhere, "dp.MONTO_ACTUAL", monto);
-        strWhere = StringUtils.addCampoToWhere(strWhere, "dr.NUMERO_NIT", numeroNit);
-        strWhere = StringUtils.addCampoToWhere(strWhere, "upper(dr.NOMBRE_ENT_FINAN)", nombreEntFinan);
-        strWhere = StringUtils.addCampoToWhere(strWhere, "pa.id_proceso_adq", idProcesoAdq);
-        Query q = em.createNativeQuery(StringUtils.QUERY_PAGOS_BUSQUEDA_PLANILLA + strWhere + " ORDER BY pp.ID_PLANILLA", DatosBusquedaPlanillaDto.class);
+    public List<DatosBusquedaPlanillaDto> buscarPlanillas(BigDecimal idPlanilla, BigDecimal monto, String numeroNit,
+            String nombreEntFinan, Integer idProcesoAdq, String numeroCheque, Date fechaCheque, String codigoDepartamento, Integer idDetProcesoAdq) {
+        String strWhere = Constantes.addCampoToWhere("", "ID_PLANILLA", idPlanilla);
+        strWhere = Constantes.addCampoToWhere(strWhere, "MONTO_ACTUAL", monto);
+        strWhere = Constantes.addCampoToWhere(strWhere, "NUMERO_NIT", numeroNit);
+        strWhere = Constantes.addCampoToWhere(strWhere, "upper(NOMBRE_ENT_FINAN)", nombreEntFinan.toUpperCase());
+        strWhere = Constantes.addCampoToWhere(strWhere, "id_proceso_adq", idProcesoAdq);
+        strWhere = Constantes.addCampoToWhere(strWhere, "numero_cheque", numeroCheque);
+        strWhere = Constantes.addCampoToWhere(strWhere, "fecha_cheque", fechaCheque);
+        if (codigoDepartamento.equals("00")) {
+            strWhere = (strWhere.isEmpty() ? "" : strWhere.concat(" AND ")).concat(" codigo_departamento in ('01','02','03','04','05','06','07','08','09','10','11','12','13','14') ");
+        } else {
+            strWhere = (strWhere.isEmpty() ? "" : strWhere.concat(" AND ")).concat(" codigo_departamento in ('" + codigoDepartamento + "') ");
+        }
+        if (idDetProcesoAdq == 6) {
+
+        } else {
+            strWhere = Constantes.addCampoToWhere(strWhere, "id_det_proceso_adq", idDetProcesoAdq);
+        }
+
+        //System.out.println("QUERY\n=========================" + Constantes.QUERY_PAGOS_BUSQUEDA_PLANILLA + strWhere + " ORDER BY ID_PLANILLA\n================");
+        Query q = em.createNativeQuery(Constantes.QUERY_PAGOS_BUSQUEDA_PLANILLA + strWhere + " ORDER BY ID_PLANILLA", DatosBusquedaPlanillaDto.class);
         return q.getResultList();
     }
 
@@ -338,7 +567,7 @@ public class PagoProveedoresEJB {
     }
 
     public ResolucionesModificativas getUltimaModificativa(BigDecimal idContrato) {
-        Query q = em.createQuery("SELECT r FROM ResolucionesModificativas r WHERE r.idContrato.idContrato=:idCon and r.idResModifPadre is null ", ResolucionesModificativas.class);
+        Query q = em.createQuery("SELECT r FROM ResolucionesModificativas r WHERE r.idContrato.idContrato=:idCon and r.idEstadoReserva=2 and r.estadoEliminacion = 0", ResolucionesModificativas.class);
         q.setParameter("idCon", idContrato);
         if (q.getResultList().isEmpty()) {
             return null;
@@ -351,5 +580,75 @@ public class PagoProveedoresEJB {
         Query q = em.createNativeQuery("SELECT PAGADOR_DEPARTAMENTAL FROM DATOS_DEPA_PAGADURIA WHERE estado_eliminacion = 0 and codigo_departamento=?1");
         q.setParameter(1, codDepa);
         return (String) q.getSingleResult();
+    }
+
+    public List<PreCargaDto> getLstPreCargaByIdDetProcesoAdq(Integer idDetProcesoAdq) {
+        Query q = em.createNamedQuery("PagoProve.RptPreCargaByIdDetProcesoAdq");
+        q.setParameter(1, idDetProcesoAdq);
+        return q.getResultList();
+    }
+
+    public List<PreCarga> findPreCargaByIdDetProcesoAdq(Integer idDetProcesoAdq) {
+        Query q = em.createQuery("SELECT p FROM PreCarga p WHERE p.idDetProcesoAdq.idDetProcesoAdq = :idDetProcesoAdq ORDER BY p.idPrecarga, p.idDetProcesoAdq", PreCarga.class);
+        q.setParameter("idDetProcesoAdq", idDetProcesoAdq);
+        return q.getResultList();
+    }
+
+    public void guardarPreCarga(PreCarga preCarga) {
+        if (preCarga.getIdPrecarga() == null) {
+            em.persist(preCarga);
+        } else {
+            em.merge(preCarga);
+        }
+    }
+
+    public List<DetallePreCarga> getLstDetallePreCargaByIdPreCarga(BigDecimal idPrecarga) {
+        Query q = em.createQuery("SELECT d FROM DetallePreCarga d WHERE d.idPrecarga.idPrecarga=:idPrecarga ORDER BY d.codigoDepartamento, d.codigoMunicipio", DetallePreCarga.class);
+        q.setParameter("idPrecarga", idPrecarga);
+        return q.getResultList();
+    }
+
+    public int guardarNotificacionPago(ListaNotificacionPago listaNotificacionPago) {
+        try {
+            if (listaNotificacionPago.getIdLista() == null) {
+                em.persist(listaNotificacionPago);
+                return 1;
+            } else {
+                em.merge(listaNotificacionPago);
+                return 2;
+            }
+        } catch (Exception e) {
+            return 3;
+        }
+    }
+
+    public List<ListaNotificacionPago> getLstNotificacionPagosByCodDepa(String codigoDepartamento) {
+        Query q = em.createQuery("SELECT l FROM ListaNotificacionPago l WHERE l.codigoDepartamento=:codDepa ORDER BY l.idLista", ListaNotificacionPago.class);
+        q.setParameter("codDepa", codigoDepartamento);
+        return q.getResultList();
+    }
+
+    public void planillaNotificada(BigDecimal idPlanilla) {
+        PlanillaPago pp = em.find(PlanillaPago.class, idPlanilla);
+        pp.setNotificacion((short) 1);
+        em.merge(pp);
+    }
+
+    public List<Liquidacion> findContratosALiquidarByProceso(Integer idProcesoAdq) {
+        Query q = em.createQuery("SELECT l FROM Liquidacion l WHERE l.estadoEliminacion = 0 and l.idContrato.idResolucionAdj.idParticipante.idOferta.idDetProcesoAdq.idProcesoAdq.idProcesoAdq=:idProcesoAdq", Liquidacion.class);
+        q.setParameter("idProcesoAdq", idProcesoAdq);
+        return q.getResultList();
+    }
+
+    public Boolean contratoConActaDeRecepcion(BigDecimal idContrato) {
+        Query q = em.createQuery("SELECT r FROM RecepcionBienesServicios r WHERE r.estadoEliminacion=0 and r.idContrato.idContrato=:pIdContrato and r.idEstadoSeguimiento.idEstadoSeguimiento=2", RecepcionBienesServicios.class);
+        q.setParameter("pIdContrato", idContrato);
+        return !q.getResultList().isEmpty();
+    }
+    
+    public void extingirContrato(BigDecimal idDetReque){
+        Query q = em.createQuery("UPDATE DetalleRequerimiento dr SET dr.activo=1 WHERE dr.idDetRequerimiento=:pIdDetReque");
+        q.setParameter("pIdDetReque", idDetReque);
+        q.executeUpdate();
     }
 }

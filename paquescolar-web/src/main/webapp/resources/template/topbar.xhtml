@@ -9,7 +9,7 @@
     <div class="topbar">
         <div class="pageColumnLeft">
             <h:link styleClass="topbar-logo">
-                <p:graphicImage name="logo_mined.png" style="border: 0px;" library="images" />
+                <p:graphicImage name="escudo_rpt.png" style="border: 0px;" library="images" />
             </h:link>
 
             <a href="#" id="menu-button">
@@ -18,35 +18,37 @@
         </div>
 
         <div class="pageColumnMid" style="text-align: left;">
-            <br/><h:outputText style="font-size: 20px; color: black;" value="Ministerio de Educación"/>
-            <br/><h:outputText style="font-size: 18px; color: black;" value="Sistema de Paquetes Escolares"/>
+            <br/><p:outputLabel style="font-size: 20px; color: black; font-family: 'Bembo Std';" value="Ministerio de Educación, Ciencia y Tecnología"/>
+            <br/><p:outputLabel style="font-size: 18px; color: black; font-family: 'Bembo Std';" value="Sistema de Paquetes Escolares"/>
         </div>
 
         <div id="user-display" style="padding-top: 1px; text-align: right;">
-            <table style=" width: auto;margin-right: 0px;margin-left: auto;">
-                <tr>
-                    <td>
-                        <p:commandLink id="linkUbicacion" styleClass="Animated05 CursPointer" onclick="PF('dlgParamUbicacion').show();">
-                            <i class="fa fa-map-marker" aria-hidden="true"></i>
-                            #{datosGeograficosController.ubicacion}
-                        </p:commandLink> 
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p:commandLink id="linkAnhoProceso" styleClass="Animated05 CursPointer" onclick="PF('dlgParamAnhoProceso').show();">
-                            <i class="fa fa-calendar-o" aria-hidden="true"></i>
-                            #{anhoProcesoController.anhoProceso}
-                        </p:commandLink>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <i class="fa fa-users" aria-hidden="true"></i>                        
-                        <p:outputLabel value="   #{menuController.usuario.idPersona.usuario} :: #{menuController.usuario.idTipoUsuario.descripcion}"/>
-                    </td>
-                </tr>
-            </table>
+            <p:outputPanel id="pnlParametrosGenerales">
+                <table style=" width: auto;margin-right: 0px;margin-left: auto;">
+                    <tr>
+                        <td>
+                            <p:commandLink id="linkUbicacion" styleClass="Animated05 CursPointer" onclick="PF('dlgParamUbicacion').show();">
+                                <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                #{parametrosMB.ubicacion}
+                            </p:commandLink> 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:commandLink id="linkAnhoProceso" styleClass="Animated05 CursPointer" onclick="PF('dlgParamAnhoProceso').show();">
+                                <i class="fa fa-calendar-o" aria-hidden="true"></i>
+                                #{parametrosMB.anhoProceso}
+                            </p:commandLink>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <i class="fa fa-users" aria-hidden="true"></i>                        
+                            <p:outputLabel value="   #{menuController.usuario.idPersona.usuario} :: #{menuController.usuario.idTipoUsuario.descripcion}" />
+                        </td>
+                    </tr>
+                </table>
+            </p:outputPanel>
         </div>
     </div>
 
@@ -65,40 +67,40 @@
         <p:dialog modal="true" id="dlgParamUbicacion" widgetVar="dlgParamUbicacion" header="Ubicación">
         <h:panelGrid columns="2" >
             <p:outputLabel value="Departamento:" />
-            <p:selectOneMenu id="cboDepartamento" value="#{datosGeograficosController.codigoDepartamento}" disabled="#{datosGeograficosController.usuarioDepartamental}">
+            <p:selectOneMenu id="cboDepartamento" value="#{parametrosMB.codigoDepartamento}" disabled="#{parametrosMB.usuarioDepartamental}">
                 <f:selectItem noSelectionOption="true" itemLabel="Seleccione un departamento" />
                 <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}"/>
                 <p:ajax update="cboMunicipio"/>
             </p:selectOneMenu>
             <p:outputLabel value="Municipio:" />
-            <p:selectOneMenu id="cboMunicipio" value="#{datosGeograficosController.idMunicipio}">
+            <p:selectOneMenu id="cboMunicipio" value="#{parametrosMB.idMunicipio}">
                 <f:selectItem noSelectionOption="true" itemLabel="Seleccione un municipio" />
-                <f:selectItems value="#{datosGeograficosController.lstMunicipios}" var="muni" itemValue="#{muni.idMunicipio}" itemLabel="#{muni.codigoMunicipio} - #{muni.nombreMunicipio}"/>
+                <f:selectItems value="#{parametrosMB.lstMunicipios}" var="muni" itemValue="#{muni.idMunicipio}" itemLabel="#{muni.codigoMunicipio} - #{muni.nombreMunicipio}"/>
             </p:selectOneMenu>
         </h:panelGrid>
         <f:facet name="footer">
-            <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{datosGeograficosController.cerrarDlgParamUbicacion}" oncomplete="PF('dlgParamUbicacion').hide();" update="linkUbicacion"/>
-            <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{datosGeograficosController.cerrarFiltroPro}" oncomplete="PF('dlgParamUbicacion').hide();"/>
+            <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{parametrosMB.cerrarDlgParamUbicacion}" oncomplete="PF('dlgParamUbicacion').hide();" update="linkUbicacion"/>
+            <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{parametrosMB.cerrarFiltroUbicacion}" oncomplete="PF('dlgParamUbicacion').hide();"/>
         </f:facet>
     </p:dialog>
 
     <p:dialog modal="true" id="dlgParamAnhoProceso" widgetVar="dlgParamAnhoProceso" header="Año y Proceso de compra" width="700">
         <h:panelGrid columns="2" >
             <p:outputLabel value="Año contratación:" />
-            <p:selectOneMenu id="cboAnho" value="#{anhoProcesoController.anho}" converter="genericConverter">
+            <p:selectOneMenu id="cboAnho" value="#{parametrosMB.idAnho}">
                 <f:selectItem noSelectionOption="true" itemLabel="Seleccione"  />  
-                <f:selectItems value="#{catalogosGeneralesController.lstAnho}" />
+                <f:selectItems value="#{catalogosGeneralesController.lstAnho}" var="anho" itemValue="#{anho.idAnho}" itemLabel="#{anho.anho}"/>
                 <p:ajax update="cboComponente"/>
             </p:selectOneMenu>
             <p:outputLabel value="Proceso:" />
-            <p:selectOneMenu id="cboComponente" value="#{anhoProcesoController.proceso}" converter="genericConverter">
+            <p:selectOneMenu id="cboComponente" value="#{parametrosMB.idProcesoAdq}">
                 <f:selectItem noSelectionOption="true" itemLabel="Seleccione un proceso" />  
-                <f:selectItems value="#{anhoProcesoController.lstProcesoAdquisicion}" />
+                <f:selectItems value="#{parametrosMB.lstProcesoAdquisicion}" var="pro" itemValue="#{pro.idProcesoAdq}" itemLabel="#{pro.descripcionProcesoAdq}"/>
             </p:selectOneMenu>
         </h:panelGrid>
         <f:facet name="footer">
-            <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{anhoProcesoController.cerrarDlgParamAnhoProceso}" update="linkAnhoProceso" oncomplete="PF('dlgParamAnhoProceso').hide();"/>
-            <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{anhoProcesoController.cerrarFiltroPro}" oncomplete="PF('dlgParamAnhoProceso').hide();"/>
+            <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{parametrosMB.cerrarDlgParamAnhoProceso}" update="linkAnhoProceso" oncomplete="PF('dlgParamAnhoProceso').hide();"/>
+            <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{parametrosMB.cerrarFiltroAnhoPro}" oncomplete="PF('dlgParamAnhoProceso').hide();"/>
         </f:facet>
     </p:dialog>
 

@@ -22,7 +22,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @SqlResultSetMapping(name = "defaultResumenRequerimientoDto",
         entities = @EntityResult(entityClass = ResumenRequerimientoDto.class))
-public class ResumenRequerimientoDto implements Serializable{
+public class ResumenRequerimientoDto implements Serializable {
+
     @Id
     private BigDecimal idRow;
     private BigDecimal idRequerimiento;
@@ -31,6 +32,7 @@ public class ResumenRequerimientoDto implements Serializable{
     private BigDecimal montoTotal;
     private BigInteger cantidadPlanilla;
     private BigDecimal montoTotalPlanilla;
+    private BigDecimal montoTransferido;
     private BigDecimal montoPendientePago;
     private BigDecimal montoReintegrar;
     private BigDecimal saldoRequerimiento;
@@ -64,6 +66,14 @@ public class ResumenRequerimientoDto implements Serializable{
 
     public String getFormatoRequerimiento() {
         return formatoRequerimiento;
+    }
+
+    public BigDecimal getMontoTransferido() {
+        return montoTransferido;
+    }
+
+    public void setMontoTransferido(BigDecimal montoTransferido) {
+        this.montoTransferido = montoTransferido;
     }
 
     public void setFormatoRequerimiento(String formatoRequerimiento) {

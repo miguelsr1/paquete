@@ -13,11 +13,11 @@
                         <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" disabled="true" />
                         <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true" />
                         <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{pagoProveedoresController.imprimirRequerimiento}"/>
-                        <p:menuitem value="Principal" icon="fa fa-home" url="#{pageContext.servletContext.contextPath}/app/inicial.mined"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{infoRequerimientoView.imprimirRequerimiento}"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
                         <f:facet  name="options" class="centradoVertical">  
-                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{personaController.logout}"/>
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
                         </f:facet>  
                     </p:menubar>
 
@@ -28,19 +28,19 @@
                     </h3>
                     <h:panelGrid columns="2">
                         <h:outputText value="Departamento"/>
-                        <p:selectOneMenu id="codigoDepartamento" value="#{pagoProveedoresController.codigoDepartamento}"  required="true" disabled="#{datosGeograficosController.usuarioDepartamental}" >
+                        <p:selectOneMenu id="codigoDepartamento" value="#{infoRequerimientoView.codigoDepartamento}"  required="true" disabled="#{parametrosMB.usuarioDepartamental}" >
                             <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
                             <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
                             <p:ajax update="codigoDepartamento"/>
                         </p:selectOneMenu>
 
                         <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
-                        <p:selectOneMenu id="cboRubro" value="#{pagoProveedoresController.idRubro}">
+                        <p:selectOneMenu id="cboRubro" value="#{infoRequerimientoView.idRubro}">
                             <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />
-                            <f:selectItems value="#{anhoProcesoController.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
                         </p:selectOneMenu>
 
-                        <p:commandButton value="Filtrar" action="#{pagoProveedoresController.buscarRequerimientosImp}" update="pnlDatos"/>
+                        <p:commandButton value="Filtrar" action="#{infoRequerimientoView.buscarRequerimientosImp}" update="pnlDatos"/>
                     </h:panelGrid>
                 </div>
 
@@ -52,8 +52,8 @@
                     </h3>
 
                     <h:panelGrid id="pnlDatos">
-                        <p:dataTable value="#{pagoProveedoresController.lstRequerimientoFondos}" var="req" style="margin-bottom:0" 
-                                     selection="#{pagoProveedoresController.requerimientoFondos}" rowKey="#{req.idRequerimiento}" rowIndexVar="id"
+                        <p:dataTable value="#{infoRequerimientoView.lstRequerimientoFondos}" var="req" style="margin-bottom:0" 
+                                     selection="#{infoRequerimientoView.requerimientoFondos}" rowKey="#{req.idRequerimiento}" rowIndexVar="id"
                                      selectionMode="single" >
 
                             <p:column headerText="id Req." width="40" style="text-align: center;">
@@ -73,10 +73,67 @@
                                     <f:convertNumber pattern="$ #,##0.00"/>
                                 </p:outputLabel>
                             </p:column>
+                            <p:column headerText="Trans." width="40" styleClass="centrado">
+                                <p:commandLink action="#{infoRequerimientoView.showTransferenciaRealizadas()}" ajax="true" update="pnlTransferencia">
+                                    <f:setPropertyActionListener value="#{req}" target="#{infoRequerimientoView.requerimientoFondos}"/>
+                                    <i class="fa fa-eye" style="font-size: 17px;"></i>
+                                </p:commandLink>
+                            </p:column>
                         </p:dataTable>
                     </h:panelGrid>
                 </div>
             </div>
+
+            <p:dialog id="dlgTransferencia" widgetVar="dlgTransferencia" width="330" header="Detalle de Transferencias" modal="true" draggable="false" resizable="false" closable="false" closeOnEscape="true" position="top">
+                <p:outputPanel id="pnlTransferencia">
+                    <p:panelGrid id="pnlFiltro" columns="2" columnClasses="ui-g-5,ui-g-7" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <p:outputLabel for="txtMonto" value="Monto transferido:" />
+                        <p:inputNumber id="txtMonto" inputStyle="text-align: right;" value="#{infoRequerimientoView.transReq.montoTransferido}"/>
+                        <p:outputLabel for="cldTrans" value="Fecha transferido:" />
+                        <p:calendar id="cldTrans" pattern="dd/MM/yyyy" navigator="true" locale="es" value="#{infoRequerimientoView.transReq.fechaTransferencia}"/>
+                    </p:panelGrid>
+                    <div class="ui-g-12" style="text-align: center !important;">
+                        <div class="ui-g-6">
+                            <p:commandButton value="Guardar" action="#{infoRequerimientoView.guardarTransferencia()}" process="@this,txtMonto,cldTrans" update="tblTransferencias" />
+                        </div>
+                        <div class="ui-g-6">
+                            <p:commandButton value="Cancelar" onclick="PF('dlgTransferencia').hide();"/>
+                        </div>
+                        <div class="ui-g-12">
+                            <br/>
+                            <p:dataTable id="tblTransferencias" value="#{infoRequerimientoView.lstTransferenciaRequerimientos}" var="transferencia" 
+                                         rowIndexVar="rowId" sortBy="#{transferencia.idRequerimiento.idRequerimiento}">
+                                <p:column headerText="#" styleClass="centrado" width="40">
+                                    #{rowId + 1} 
+                                </p:column>
+                                <p:column headerText="Fecha" styleClass="centrado">
+                                    <p:outputLabel value="#{transferencia.fechaTransferencia}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column headerText="Monto" styleClass="numero">
+                                    <p:outputLabel value="#{transferencia.montoTransferido}">
+                                        <f:convertNumber pattern="$ #,###.00"/>
+                                    </p:outputLabel>
+                                </p:column>
+
+                                <p:summaryRow>
+                                    <p:column styleClass="numero" colspan="2">
+                                        <p:outputLabel value="Totales" />
+                                    </p:column>
+                                    <p:column styleClass="numero" >
+                                        <p:outputLabel value="#{infoRequerimientoView.totalTransferido}">
+                                            <f:convertNumber pattern="$ #,###.00"/>
+                                        </p:outputLabel>
+                                    </p:column>
+                                </p:summaryRow>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </p:outputPanel>
+            </p:dialog>
         </div>
     </ui:define>
 </ui:composition>

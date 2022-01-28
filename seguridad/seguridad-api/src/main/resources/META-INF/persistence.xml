@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+    <persistence-unit name="sv.gob.mined_seguridad-model_jar_1.0PU" transaction-type="JTA">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <jta-data-source>java:/SeguridadDS</jta-data-source>
+        <class>sv.gob.mined.seguridad.model.AplicacionOpcMenu</class>
+        <class>sv.gob.mined.seguridad.model.HistorialClavesAcceso</class>
+        <class>sv.gob.mined.seguridad.model.Usuario</class>
+        <class>sv.gob.mined.seguridad.model.BitacoraAcceso</class>
+        <class>sv.gob.mined.seguridad.model.Aplicacion</class>
+        <class>sv.gob.mined.seguridad.model.Grupo</class>
+        <class>sv.gob.mined.seguridad.model.OpcionMenu</class>
+        <class>sv.gob.mined.seguridad.model.GrupoAplicacion</class>
+        <class>sv.gob.mined.seguridad.model.ParametrosGenerales</class>
+        <class>sv.gob.mined.seguridad.model.UsuarioAplicacion</class>
+        <class>sv.gob.mined.seguridad.model.UsuarioGrupoAplicacion</class>
+        <properties/>
+    </persistence-unit>
+</persistence>

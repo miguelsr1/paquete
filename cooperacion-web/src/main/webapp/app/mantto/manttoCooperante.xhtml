@@ -1,0 +1,90 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/plantilla.xhtml"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:jsf="http://xmlns.jcp.org/jsf">
+
+    <ui:define name="head">
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOZGfkDBXOJYiOY1ovS_alyW8YueD8hBg" type="text/javascript"></script>
+        <h:outputScript name="js/nanoscroller.js" library="paradise-layout" />
+        <h:outputScript name="js/layout.js" library="paradise-layout" />
+        <h:outputScript name="calendar-localization.js" library="js"/>
+
+        <style type="text/css">
+            .label {
+                width:20%;
+                padding:4px;
+            }
+            .value {
+                width:80%;
+                padding:4px;
+            }
+            .grid {
+                width:100%;
+            }
+            .error {
+                color: red;
+            }
+            .outputLabel {
+                font-weight: bold;
+            }
+            .grid {
+                width:33%;
+                padding:4px;
+            }
+            .ui-wizard-step-titles.ui-helper-reset.ui-helper-clearfix {
+                height: 80px;
+            }
+
+
+            .ui-fileupload-upload, .ui-fileupload-cancel, .ui-fileupload-progress{
+                display: none;
+            }
+            .ui-fileupload-buttonbar, .ui-fileupload-content{
+                float: left;
+
+            }
+            body .ui-fileupload .ui-fileupload-content {
+                border: 0px;
+            }
+            .ui-fileupload-files{
+                margin: 0;
+            }
+
+            body .ui-fileupload .ui-fileupload-buttonbar {
+                border: 0px;
+                padding: 0rem;
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
+            }
+
+            body .ui-fileupload .ui-fileupload-content {
+                display: none;
+            }
+        </style>
+
+    </ui:define>
+
+    <f:metadata>
+        <f:event listener="#{userBean.validarUsuario('CE')}" type="preRenderView" />
+    </f:metadata>
+
+    <ui:define name="contenido">
+        <p:breadCrumb>
+            <p:menuitem value="Inicio" url="../inicio.mined" />
+            <p:menuitem value="Mantenimientos" url="inicioManttos.mined" />
+        </p:breadCrumb>
+        <br/>
+        
+        <ui:include src="/app/fragmento/manttoCooperante.xhtml"/>
+
+        <h:outputStylesheet name="css/primeicons.css" library="paradise-layout" />
+        <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout" />
+        <h:outputStylesheet name="css/demo.css" library="demo" />
+        <h:outputStylesheet name="css/nanoscroller.css" library="paradise-layout" />
+    </ui:define>    
+</ui:composition>

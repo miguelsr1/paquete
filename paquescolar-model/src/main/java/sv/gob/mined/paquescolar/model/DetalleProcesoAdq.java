@@ -30,22 +30,23 @@ import javax.persistence.Transient;
     @NamedQuery(name = "DetalleProcesoAdq.findAll", query = "SELECT d FROM DetalleProcesoAdq d")})
 public class DetalleProcesoAdq implements Serializable {
 
+    @OneToMany(mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
+    private List<ResguardoBienes> reguardoBienesList;
+
     @OneToMany(mappedBy = "idDetProcesoAdq")
     private List<RptDocumentos> rptDocumentosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
-    private List<CreditoBancario> creditoBancarioList;
-    @OneToMany(mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
-    private List<DetRubroMuestraInteres> detRubroMuestraInteresList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDetProcesoAdq")
+
+    
     private List<OfertaBienesServicios> ofertaBienesServiciosList;
     @OneToMany(mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
     private List<TechoRubroEntEdu> techoRubroEntEduList;
-    @OneToMany(mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
-    private List<PreciosRefRubro> preciosRefRubroList;
-    @OneToMany(mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
-    private List<PreciosRefRubroEmp> preciosRefRubroEmpList;
+    
+    
     @OneToMany(mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
     private List<RequerimientoFondos> requerimientoFondosList;
+    @OneToMany(mappedBy = "idDetProcesoAdq", fetch = FetchType.LAZY)
+    private List<PreCarga> preCargaList;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -59,8 +60,12 @@ public class DetalleProcesoAdq implements Serializable {
     private ProcesoAdquisicion idProcesoAdq;
     @Column(name = "CREDITO")
     private Short credito;
+    @Column(name = "HABILITAR")
+    private Short habilitar;
     @Transient
     private Boolean habilitarCredito;
+    @Transient
+    private Boolean habilitarRegistro;
 
     public DetalleProcesoAdq() {
     }
@@ -117,6 +122,23 @@ public class DetalleProcesoAdq implements Serializable {
         this.habilitarCredito = habilitarCredito;
         this.credito = this.habilitarCredito ? (short) 1 : 0;
     }
+    
+    public Boolean getHabilitarRegistro() {
+        return (this.habilitar == 1);
+    }
+
+    public void setHabilitarRegistro(Boolean habilitarRegistro) {
+        this.habilitarRegistro = habilitarRegistro;
+        this.habilitar = this.habilitarRegistro ? (short) 1 : 0;
+    }
+
+    public Short getHabilitar() {
+        return habilitar;
+    }
+
+    public void setHabilitar(Short habilitar) {
+        this.habilitar = habilitar;
+    }
 
     @Override
     public int hashCode() {
@@ -140,22 +162,6 @@ public class DetalleProcesoAdq implements Serializable {
         return "sv.gob.mined.paquescolar.model.DetalleProcesoAdq[ idDetProcesoAdq=" + idDetProcesoAdq + " ]";
     }
 
-    public List<PreciosRefRubroEmp> getPreciosRefRubroEmpList() {
-        return preciosRefRubroEmpList;
-    }
-
-    public void setPreciosRefRubroEmpList(List<PreciosRefRubroEmp> preciosRefRubroEmpList) {
-        this.preciosRefRubroEmpList = preciosRefRubroEmpList;
-    }
-
-    public List<PreciosRefRubro> getPreciosRefRubroList() {
-        return preciosRefRubroList;
-    }
-
-    public void setPreciosRefRubroList(List<PreciosRefRubro> preciosRefRubroList) {
-        this.preciosRefRubroList = preciosRefRubroList;
-    }
-
     public List<TechoRubroEntEdu> getTechoRubroEntEduList() {
         return techoRubroEntEduList;
     }
@@ -172,28 +178,28 @@ public class DetalleProcesoAdq implements Serializable {
         this.ofertaBienesServiciosList = ofertaBienesServiciosList;
     }
 
-    public List<DetRubroMuestraInteres> getDetRubroMuestraInteresList() {
-        return detRubroMuestraInteresList;
-    }
-
-    public void setDetRubroMuestraInteresList(List<DetRubroMuestraInteres> detRubroMuestraInteresList) {
-        this.detRubroMuestraInteresList = detRubroMuestraInteresList;
-    }
-
-    public List<CreditoBancario> getCreditoBancarioList() {
-        return creditoBancarioList;
-    }
-
-    public void setCreditoBancarioList(List<CreditoBancario> creditoBancarioList) {
-        this.creditoBancarioList = creditoBancarioList;
-    }
-
     public List<RptDocumentos> getRptDocumentosList() {
         return rptDocumentosList;
     }
 
     public void setRptDocumentosList(List<RptDocumentos> rptDocumentosList) {
         this.rptDocumentosList = rptDocumentosList;
+    }
+
+    public List<PreCarga> getPreCargaList() {
+        return preCargaList;
+    }
+
+    public void setPreCargaList(List<PreCarga> preCargaList) {
+        this.preCargaList = preCargaList;
+    }
+
+    public List<ResguardoBienes> getReguardoBienesList() {
+        return reguardoBienesList;
+    }
+
+    public void setReguardoBienesList(List<ResguardoBienes> reguardoBienesList) {
+        this.reguardoBienesList = reguardoBienesList;
     }
 
 }

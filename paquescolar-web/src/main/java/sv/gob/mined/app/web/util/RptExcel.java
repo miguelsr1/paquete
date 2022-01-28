@@ -8,12 +8,16 @@ package sv.gob.mined.app.web.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -29,11 +33,11 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
-import sv.gob.mined.app.web.controller.segmodif.GraficoController;
 import sv.gob.mined.paquescolar.model.pojos.credito.ResumenCreditosDto;
 import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
@@ -48,10 +52,70 @@ public class RptExcel {
     private static HSSFWorkbook wb1;
     private static DataFormat FORMATO_DATA;
 
+    public static void generarRptGenerico(List<? extends Object> lst, String nombreExcel, int rowInicial) {
+        HSSFCellStyle style;
+        int row = rowInicial;
+        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/" + nombreExcel + ".xls")) {
+            wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
+            FORMATO_DATA = wb1.createDataFormat();
+            style = wb1.createCellStyle();
+            style.setWrapText(true);
+            style.setBorderBottom(BorderStyle.THIN);
+            style.setBorderTop(BorderStyle.THIN);
+            style.setBorderRight(BorderStyle.THIN);
+            style.setBorderLeft(BorderStyle.THIN);
+
+            HSSFSheet s1 = wb1.getSheetAt(0);   //sheet by index
+
+            Field[] attributosClase = lst.get(0).getClass().getDeclaredFields();
+
+            for (Object item : lst) {
+                int col = 0;
+                for (Field attibuto : attributosClase) {
+                    if (!attibuto.getName().equals("idRow") && attibuto.getModifiers() == 2) {
+                        switch (attibuto.getType().getName()) {
+                            case "java.lang.String":
+                                escribirTexto(callMethodReflection("get".concat(StringUtils.capitalize(attibuto.getName())), item), row, col, style, s1);
+                                break;
+                            case "java.math.BigDecimal":
+                                Object value = callMethodReflection("get".concat(StringUtils.capitalize(attibuto.getName())), item);
+                                if (value != null) {
+                                    escribirNumero(value.toString(), row, col, style, true, s1);
+                                }
+                                break;
+                            case "java.math.Integer":
+                                break;
+                        }
+                        col++;
+                    }
+                }
+                row++;
+            }
+
+            generarArchivo(wb1, nombreExcel);
+        } catch (IOException ex) {
+            Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private static <T extends Object> T callMethodReflection(String nombreMetodo, Object item) {
+        Object valorRetorno;
+
+        try {
+            Method method = item.getClass().getMethod(nombreMetodo);
+            valorRetorno = method.invoke(item);
+        } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException ex) {
+            Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, "ERROR: En ejecución de metodo " + nombreMetodo, ex);
+            throw new RuntimeException(ex);
+        }
+
+        return (T) valorRetorno;
+    }
+
     public static void generarRptProveedoresHacienda(List<VwRptProveedoresContratadosDto> lst) {
         HSSFCellStyle style;
         int row = 1;
-        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/excel/proveedoresHacienda.xls")) {
+        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/proveedoresHacienda.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             style = wb1.createCellStyle();
@@ -74,7 +138,33 @@ public class RptExcel {
             }
 
             generarArchivo(wb1, "proveedoresHacienda");
-        } catch (IOException | InvalidFormatException ex) {
+        } catch (IOException ex) {
+            Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void generarRptRentaAnual(List<DatosProveDto> lstDatos, String anho) {
+        HSSFCellStyle style;
+        int row = 1;
+        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptRentaAnual.xls")) {
+            wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
+            FORMATO_DATA = wb1.createDataFormat();
+            style = wb1.createCellStyle();
+
+            HSSFSheet s1 = wb1.getSheetAt(0);   //sheet by index
+
+            for (DatosProveDto dato : lstDatos) {
+                escribirTexto(JsfUtil.formatearNumero(40, dato.getRazonSocial().replace("ñ", "Ñ"), false), row, 0, style, s1);
+                escribirTexto(JsfUtil.formatearNumero(14, dato.getNumeroNit().replace("-", ""), false), row, 1, style, s1);
+                escribirTexto("11", row, 2, style, s1);
+                escribirNumero(dato.getMontoRetencion().toString(), row, 3, style, false, s1);
+                escribirNumero(dato.getMontoRenta().toString(), row, 4, style, false, s1);
+                escribirTexto(anho, row, 5, style, s1);
+                row++;
+            }
+
+            generarArchivo(wb1, "rptRentaAnual");
+        } catch (IOException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -116,38 +206,25 @@ public class RptExcel {
         }
         style.setDataFormat(entero ? FORMATO_DATA.getFormat("#,##0") : FORMATO_DATA.getFormat("#,##0.00"));
         cell.setCellStyle(style);
-        cell.setCellValue(entero ? Integer.parseInt(text) : Double.parseDouble(text));
+        if (text != null && !text.isEmpty()) {
+            cell.setCellValue(entero ? Integer.parseInt(text) : Double.parseDouble(text));
+        }
     }
 
     private static void generarArchivo(Workbook wb, String nombreFile) {
-        //FacesContext fc = FacesContext.getCurrentInstance();
-        //OutputStream outStream;
         try (ByteArrayOutputStream outByteStream = new ByteArrayOutputStream()) {
-            //HttpServletResponse response = (HttpServletResponse) fc.getExternalContext().getResponse();
             wb.write(outByteStream);
             byte[] outArray = outByteStream.toByteArray();
             UtilFile.downloadFileBytes(outArray, nombreFile, UtilFile.CONTENIDO_XLS, UtilFile.EXTENSION_XLS);
-            
-            /*response.setContentType("application /ms-excel");
-            response.setContentLength(outArray.length);
-            response.setHeader("Expires:", "0"); // eliminates browser caching
-            response.setHeader("Content-Disposition", "attachment;filename =" + nombreFile + "-" + JsfUtil.getFechaGeneracionReporte() + ".xls");
-            outStream = response.getOutputStream();
-            outStream.write(outArray);
-            outStream.flush();
-            outStream.close();
-            outByteStream.flush();
-            outByteStream.close();*/
         } catch (IOException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
         }
-       // fc.responseComplete();
     }
 
-    public static void generarRptRentaMensual(List<DatosProveDto> lst, String anho) {
+    public static void generarRptRentaMensual(List<DatosProveDto> lst) {
         HSSFCellStyle style;
         int row = 2;
-        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/excel/rentaMensual.xls")) {
+        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rentaMensual.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             style = wb1.createCellStyle();
@@ -170,14 +247,14 @@ public class RptExcel {
                 escribirNumero(dato.getMontoRenta().toString(), row, 7, style, false, s1);
                 row++;
             }
-            generarArchivo(wb1, "Paquete" + anho + "-RentaMensua");
-        } catch (IOException | InvalidFormatException ex) {
+            generarArchivo(wb1, "Paquete-RentaMensual");
+        } catch (IOException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public static void generarRptResumenGeneralCreditos(List<ResumenCreditosDto> listaResumenGen, String anho) {
-        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/excel/rptCreditoResumenGeneral.xls")) {
+        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptCreditoResumenGeneral.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             HSSFSheet hoja = wb1.getSheetAt(0);
@@ -290,20 +367,22 @@ public class RptExcel {
             celda8.setCellStyle(style);
 
             generarArchivo(wb1, "Paquete" + anho + "-ResumenGeneralCreditos");
-        } catch (IOException | InvalidFormatException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public static void generarRptResumenPorRubroYFinanciera(List<DatosProveedoresFinanDto> listaProvGral, String anho) {
-        try (InputStream ins = GraficoController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/excel/rptCreditoRubroEntidadFinanciera.xls")) {
+        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptCreditoRubroEntidadFinanciera.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             HSSFSheet hoja = wb1.getSheetAt(0);
+            
+            
 
             HSSFFont font = (HSSFFont) wb1.createFont();
             font.setBold(true);
-            font.setColor(HSSFColor.BLACK.index);
+            font.setColor(IndexedColors.BLACK.index);
             font.setFontName(HSSFFont.FONT_ARIAL);
 
             HSSFCellStyle style = (HSSFCellStyle) wb1.createCellStyle();
@@ -319,7 +398,7 @@ public class RptExcel {
             style2.setBorderRight(BorderStyle.THIN);
             style2.setBorderLeft(BorderStyle.THIN);
             style2.setFont(font);
-            style2.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+            style2.setAlignment(HorizontalAlignment.CENTER);
 
             HSSFRow fila = hoja.createRow(0);
             HSSFCell celda0 = fila.createCell(0);
@@ -417,13 +496,16 @@ public class RptExcel {
             celda5.setCellFormula(StrFormula2);
 
             generarArchivo(wb1, "Paquete" + anho + "-ResumenPorRubroYFinanciera");
-        } catch (IOException | InvalidFormatException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public static void generarRptExcelGenerico(HSSFWorkbook wb, int colsNumEnteros[], int colsNumDecimal[]) {
         HSSFSheet sheet = wb.getSheetAt(0);
+
+        HSSFCellStyle styleNumber = wb.createCellStyle();
+        styleNumber.setAlignment(HorizontalAlignment.RIGHT);
         FORMATO_DATA = wb.createDataFormat();
 
         for (int j = 1; j <= sheet.getLastRowNum(); j++) {
@@ -432,12 +514,12 @@ public class RptExcel {
                 String valor = row.getCell(i).getRichStringCellValue().getString();
                 for (Integer colsNumEntero : colsNumEnteros) {
                     if (i == colsNumEntero) {
-                        escribirNumero(valor, j, i, wb.createCellStyle(), true, sheet);
+                        escribirNumero(valor, j, i, styleNumber, true, sheet);
                     }
                 }
                 for (Integer colsNumEntero : colsNumDecimal) {
                     if (i == colsNumEntero) {
-                        escribirNumero(valor, j, i, wb.createCellStyle(), false, sheet);
+                        escribirNumero(valor, j, i, styleNumber, false, sheet);
                     }
                 }
             }

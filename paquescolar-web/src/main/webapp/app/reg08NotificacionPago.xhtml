@@ -1,0 +1,78 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <p:menubar id="menuBar">
+            <p:menuitem value="Nuevo"  ajax="true" 
+                        update="pgDatos" icon="fa fa-file-o"/>  
+            <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" action="#{notificacionPagoMB.guardar()}"
+                        disabled="#{menuController.usuarioSoloLectura}"
+                        update="tbNotificacion pgDatos" />
+            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options" class="centradoVertical">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>
+        </p:menubar>
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <h1>
+                        <i class="fa fa-university blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Registro de Entidades Financieras" />
+                    </h1>
+
+                    <p:panelGrid id="pgDatos" columns="2" columnClasses="col2_label,col10" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <h:outputLabel value="Departamento " />
+                        <p:selectOneMenu id="codigoDepartamento" value="#{notificacionPagoMB.codigoDepartamento}" >
+                            <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
+                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
+                            <p:ajax update="tbNotificacion" listener="#{notificacionPagoMB.actualizarListaNotificacion()}"/>
+                        </p:selectOneMenu>
+                        <h:outputLabel value="Nombre" />
+                        <p:inputText size="50" required="true" value="#{notificacionPagoMB.notificacionPago.nombre}" id="nombreEntFinan" />  
+                        <h:outputLabel value="Correo" />
+                        <p:inputText size="50" required="true" value="#{notificacionPagoMB.notificacionPago.cuentaCorreo}" id="nombreContacto" />  
+                        <h:outputLabel value="Activo" />
+                        <p:selectBooleanCheckbox value="#{notificacionPagoMB.activo}" />
+                    </p:panelGrid>
+                </div>
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Lista de Entidades"/>
+                    </h1>
+                    <p:dataTable id="tbNotificacion" value="#{notificacionPagoMB.lstNotificacionPagos}" var="notificacion" rowKey="#{notificacion.idLista}" 
+                                 selectionMode="single" selection="#{notificacionPagoMB.notificacionPago}" scrollable="true" scrollHeight="400"
+                                 styleClass="ui-datatable-borderless ui-datatable-reflow" rowIndexVar="rowId"
+                                 emptyMessage="No se han encontrado datos"> 
+                        <p:ajax event="rowSelect" listener="#{notificacionPagoMB.onRowSelect}" update="pgDatos" />
+                        
+                        <p:column headerText="#">
+                            <p:outputLabel value="#{rowId+1}"/>
+                        </p:column>
+                        <p:column headerText="Nombre">
+                            <p:outputLabel value="#{notificacion.nombre}" />
+                        </p:column>
+                        <p:column headerText="Correo">
+                            <p:outputLabel value="#{notificacion.cuentaCorreo}" />
+                        </p:column>
+                        <p:column headerText="Activo">
+                            <p:selectBooleanCheckbox value="#{notificacion.desactivar}" />
+                        </p:column>
+                    </p:dataTable>  
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

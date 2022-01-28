@@ -18,6 +18,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -32,6 +33,7 @@ import javax.persistence.Table;
 public class RubrosAmostrarInteres implements Serializable {
 
     @OneToMany(mappedBy = "idRubroAdq", fetch = FetchType.LAZY)
+    @XmlTransient
     private List<DetalleProcesoAdq> detalleProcesoAdqList;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -83,10 +85,7 @@ public class RubrosAmostrarInteres implements Serializable {
             return false;
         }
         RubrosAmostrarInteres other = (RubrosAmostrarInteres) object;
-        if ((this.idRubroInteres == null && other.idRubroInteres != null) || (this.idRubroInteres != null && !this.idRubroInteres.equals(other.idRubroInteres))) {
-            return false;
-        }
-        return true;
+        return !((this.idRubroInteres == null && other.idRubroInteres != null) || (this.idRubroInteres != null && !this.idRubroInteres.equals(other.idRubroInteres)));
     }
 
     @Override

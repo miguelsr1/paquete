@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.faces.context.FacesContext;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
@@ -33,9 +32,8 @@ import sv.gob.mined.paquescolar.model.pojos.Bean;
 
 /**
  *
- * @author oamartinez
- * Modificación: 11octubre2018
- * Comentario: Ordenamiento de código y estandarización de generación de archivo a generar
+ * @author oamartinez Modificación: 11octubre2018 Comentario: Ordenamiento de
+ * código y estandarización de generación de archivo a generar
  */
 public class Bean2Excel {
 
@@ -73,10 +71,10 @@ public class Bean2Excel {
         listado = listadoProv;
     }
 
-    public void createFile(String codigoEntidad) {
+    public void createFile(String codigoEntidad, String nombreDirector, String nombreEncargadoCompra) {
         try {
-            this.addSheetAnalisisEconomico(listado);
-            this.addSheetAnalisisTecnico();
+            this.addSheetAnalisisEconomico(listado, nombreDirector, nombreEncargadoCompra);
+            this.addSheetAnalisisTecnico(nombreDirector, nombreEncargadoCompra);
             ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
             workbook.write(outByteStream);
 
@@ -86,7 +84,7 @@ public class Bean2Excel {
         }
     }
 
-    private void addSheetAnalisisEconomico(List<?> listado) {
+    private void addSheetAnalisisEconomico(List<?> listado, String nombreDirector, String nombreEncargadoCompra) {
         ReportColumn[] columns = new ReportColumn[]{
             new ReportColumn("numItem", "ITEM", FormatType.TEXT),
             new ReportColumn("item", "DESCRIPCION DEL ITEM", FormatType.TEXT),
@@ -133,8 +131,8 @@ public class Bean2Excel {
         HSSFCellStyle myBoldStyle = workbook.createCellStyle();
         myBoldStyle.setFont(this.boldFont);
 
-        HSSFCellStyle myNoParticipateStyle = workbook.createCellStyle(); 
-        myNoParticipateStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        HSSFCellStyle myNoParticipateStyle = workbook.createCellStyle();
+        myNoParticipateStyle.setAlignment(HorizontalAlignment.CENTER);
         myNoParticipateStyle.setBorderBottom(BorderStyle.THIN);
         myNoParticipateStyle.setBorderTop(BorderStyle.THIN);
         myNoParticipateStyle.setBorderRight(BorderStyle.THIN);
@@ -145,14 +143,14 @@ public class Bean2Excel {
         HSSFCellStyle myNormalStyle = workbook.createCellStyle();
         myNormalStyle.setFont(hSSFFont);
         myNormalStyle.setWrapText(true);
-        myNormalStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        myNormalStyle.setAlignment(HorizontalAlignment.CENTER);
         myNormalStyle.setBorderBottom(BorderStyle.THIN);
         myNormalStyle.setBorderTop(BorderStyle.THIN);
         myNormalStyle.setBorderRight(BorderStyle.THIN);
         myNormalStyle.setBorderLeft(BorderStyle.THIN);
 
         HSSFCellStyle myParticularStyle = workbook.createCellStyle();
-        myParticularStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        myParticularStyle.setAlignment(HorizontalAlignment.CENTER);
         myParticularStyle.setBorderBottom(BorderStyle.NONE);
         myParticularStyle.setBorderTop(BorderStyle.NONE);
         myParticularStyle.setBorderRight(BorderStyle.NONE);
@@ -276,10 +274,21 @@ public class Bean2Excel {
         currentRow++;
         currentRow++;
         row = sheet.createRow(currentRow);
-        HSSFCell cell = row.createCell(0);
-        cell.setCellValue("RAZONAMIENTO:");
-
+        HSSFCell cell;// = row.createCell(0);
+        /*cell.setCellValue("F._____________________________________");
         currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue(nombreDirector);
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue("Representante Legal (Presidente del Organismo de Administración Escolar(a)");
+        
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue("");
         currentRow++;
         row = sheet.createRow(currentRow);
         cell = row.createCell(0);
@@ -287,11 +296,11 @@ public class Bean2Excel {
         currentRow++;
         row = sheet.createRow(currentRow);
         cell = row.createCell(0);
-        cell.setCellValue("Representante Legal (Presidente del Organismo de Administración Escolar(a)");
+        cell.setCellValue(nombreEncargadoCompra);
         currentRow++;
         row = sheet.createRow(currentRow);
         cell = row.createCell(0);
-        cell.setCellValue("CDE, CECE o CDI");
+        cell.setCellValue("Encargado de Compra");*/
 
         row = sheet.getRow(3);
         cell = row.getCell(0);
@@ -334,7 +343,7 @@ public class Bean2Excel {
         row = sheet.createRow(2);
         cell1 = row.createCell(0);
         cell1.setCellStyle(myBoldStyle);
-        cell1.setCellValue("FUENTE DE FINANCIAMIENTO : " + fuenteFinanciamiento + " FECHA DE ELABORACIÓN : " + fechaElaboracion);
+        cell1.setCellValue("FECHA DE ELABORACIÓN : " + fechaElaboracion);
         currentRow++;
 
         String leyenda = HSSFHeader.font("Arial", "Bold") + HSSFHeader.fontSize((short) 8) + "ANALISIS TÉCNICO RUBRO : " + rubro + ", CENTRO EDUCATIVO : " + nombreCentroEducativo + " CODIGO : " + codigoCentroEducativo;
@@ -347,7 +356,7 @@ public class Bean2Excel {
         sheet.setColumnBreak(20);
     }
 
-    private void addSheetAnalisisTecnico() {
+    private void addSheetAnalisisTecnico(String nombreDirector, String nombreEncargadoCompra) {
         HSSFSheet sheet = workbook.createSheet("técnico");
         int currentRow = 0;
         HSSFRow row;
@@ -363,13 +372,13 @@ public class Bean2Excel {
         HSSFCellStyle myBoldStyle = workbook.createCellStyle();
         myBoldStyle.setFont(this.boldFont);
         myBoldStyle.setWrapText(true);
-        myBoldStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        myBoldStyle.setAlignment(HorizontalAlignment.CENTER);
         myBoldStyle.setVerticalAlignment(VerticalAlignment.TOP);
 
         HSSFCellStyle myNormalStyle = workbook.createCellStyle();
         myNormalStyle.setFont(hSSFFont);
         myNormalStyle.setWrapText(true);
-        myNormalStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        myNormalStyle.setAlignment(HorizontalAlignment.CENTER);
         myNormalStyle.setVerticalAlignment(VerticalAlignment.TOP);
         myNormalStyle.setBorderBottom(BorderStyle.THIN);
         myNormalStyle.setBorderTop(BorderStyle.THIN);
@@ -377,7 +386,7 @@ public class Bean2Excel {
         myNormalStyle.setBorderLeft(BorderStyle.THIN);
 
         HSSFCellStyle myParticularStyle = workbook.createCellStyle();
-        myParticularStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        myParticularStyle.setAlignment(HorizontalAlignment.CENTER);
         myParticularStyle.setBorderBottom(BorderStyle.NONE);
         myParticularStyle.setBorderTop(BorderStyle.NONE);
         myParticularStyle.setBorderRight(BorderStyle.NONE);
@@ -414,20 +423,17 @@ public class Bean2Excel {
         row = sheet.createRow(0);
         HSSFCell cell1 = row.createCell(0);
         cell1.setCellStyle(myBoldTitleStyle);
-        cell1.setCellValue(
-                "MODELO DE FORMATO PARA ANALISIS TÉCNICO RUBRO " + rubro);
+        cell1.setCellValue("MODELO DE FORMATO PARA ANALISIS TÉCNICO RUBRO " + rubro);
         currentRow++;
         row = sheet.createRow(1);
         cell1 = row.createCell(0);
         cell1.setCellStyle(myBoldTitleStyle);
-        cell1.setCellValue("NOMBRE DEL CENTRO EDUCATIVO : "
-                + nombreCentroEducativo + " CODIGO : " + codigoCentroEducativo);
+        cell1.setCellValue("NOMBRE DEL CENTRO EDUCATIVO : " + nombreCentroEducativo + " CODIGO : " + codigoCentroEducativo);
         currentRow++;
         row = sheet.createRow(2);
         cell1 = row.createCell(0);
         cell1.setCellStyle(myBoldTitleStyle);
-        cell1.setCellValue("FUENTE DE FINANCIAMIENTO : "
-                + fuenteFinanciamiento + " FECHA DE ELABORACIÓN : " + fechaElaboracion);
+        cell1.setCellValue("FECHA DE ELABORACIÓN : " + fechaElaboracion);
 
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 1 + (proveedoresAMostrar.length * 2)));
         sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 1 + (proveedoresAMostrar.length * 2)));
@@ -499,14 +505,12 @@ public class Bean2Excel {
         currentRow++;
         currentRow++;
         row = sheet.createRow(currentRow);
-        HSSFCell cell = row.createCell(0);
-        cell.setCellValue("RAZONAMIENTO:");
-
-        currentRow++;
+        HSSFCell cell;/* = row.createCell(0);
+        cell.setCellValue("F._____________________________________");
         currentRow++;
         row = sheet.createRow(currentRow);
         cell = row.createCell(0);
-        cell.setCellValue("F._____________________________________");
+        cell.setCellValue(nombreDirector);
         currentRow++;
         row = sheet.createRow(currentRow);
         cell = row.createCell(0);
@@ -514,7 +518,23 @@ public class Bean2Excel {
         currentRow++;
         row = sheet.createRow(currentRow);
         cell = row.createCell(0);
-        cell.setCellValue("CDE, CECE o CDI");
+        cell.setCellValue("");
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue("");
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue("F._____________________________________");
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue(nombreEncargadoCompra);
+        currentRow++;
+        row = sheet.createRow(currentRow);
+        cell = row.createCell(0);
+        cell.setCellValue("Encargado de Compra");*/
 
         String leyenda = HSSFHeader.font("Arial", "Bold")
                 + HSSFHeader.fontSize((short) 8) + "ANALISIS TÉCNICO RUBRO : " + rubro
