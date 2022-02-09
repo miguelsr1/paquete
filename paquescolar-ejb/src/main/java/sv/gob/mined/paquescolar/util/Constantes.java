@@ -280,17 +280,9 @@ public class Constantes {
             + "    pre.id_empresa";
 
     public static final String QUERY_PAGOS_ENTIDADES_POR_REQUERIMIENTO = "SELECT distinct NOMBRE_ENT_FINAN \n"
-            + " FROM DETALLE_REQUERIMIENTO\n"
-            + " WHERE \n"
-            + "     ID_DET_REQUERIMIENTO not in("
-            + "         SELECT DR.ID_DET_REQUERIMIENTO \n"
-            + "         FROM DETALLE_PLANILLA DP\n"
-            + "             INNER JOIN DETALLE_DOC_PAGO DDP ON DP.ID_DETALLE_DOC_PAGO = DDP.ID_DETALLE_DOC_PAGO\n"
-            + "             INNER JOIN DETALLE_REQUERIMIENTO DR ON DR.ID_DET_REQUERIMIENTO = DDP.ID_DET_REQUERIMIENTO\n"
-            + "         WHERE DP.ESTADO_ELIMINACION = 0\n"
-            + "             AND DDP.ESTADO_ELIMINACION = 0\n"
-            + "             AND DR.ID_REQUERIMIENTO = ?1) AND\n"
-            + "     ID_REQUERIMIENTO = ?1\n"
+            + " FROM DETALLE_REQUERIMIENTO DR\n"
+            + "     INNER JOIN DETALLE_DOC_PAGO DDP ON DR.ID_DET_REQUERIMIENTO = DDP.ID_DET_REQUERIMIENTO\n"
+            + " WHERE DR.ID_REQUERIMIENTO = ?1 \n"
             + " ORDER BY NOMBRE_ENT_FINAN";
 
     public static final String QUERY_CREDITO_ACTIVOS_POR_PROVEEDOR = "SELECT\n"

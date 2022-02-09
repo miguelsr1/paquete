@@ -27,6 +27,7 @@ import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
+import org.primefaces.PrimeFaces;
 import sv.gob.mined.app.web.controller.ParametrosMB;
 import sv.gob.mined.app.web.util.Bean2Excel;
 import sv.gob.mined.app.web.util.JsfUtil;
@@ -716,23 +717,22 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                 resolucionAdj = null;
 
                             } else {
-                                //if (resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().compareTo(new BigDecimal("2")) == 0) {
-                                switch (resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().intValue()) {
-                                    case 2:
-                                    case 5:
-                                        current = contratoOrd;
-                                        continuar = false;
-                                        if (current.getPlazoPrevistoEntrega() == null) {
-                                            setPlazoPrevistoEntrega();
-                                        }
-                                        seleccionarDocumentosAImprimir();
-                                        break;
-                                    default:
-                                        JsfUtil.mensajeAlerta("La reserva de fondos NO ESTA APLICADA.");
-                                        break;
-                                }
-
-                                /*} else {
+                                if (resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().compareTo(new BigDecimal("2")) == 0) {
+                                    switch (resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().intValue()) {
+                                        case 2:
+                                        case 5:
+                                            current = contratoOrd;
+                                            continuar = false;
+                                            if (current.getPlazoPrevistoEntrega() == null) {
+                                                setPlazoPrevistoEntrega();
+                                            }
+                                            seleccionarDocumentosAImprimir();
+                                            break;
+                                        default:
+                                            JsfUtil.mensajeAlerta("La reserva de fondos NO ESTA APLICADA.");
+                                            break;
+                                    }
+                                } else if (VarSession.getVariableSessionUsuario().equals("MSANCHEZ") || VarSession.getVariableSessionUsuario().equals("RAFAARIAS")) {
                                     buscarHistorialCambios();
                                     PrimeFaces.current().ajax().update("dlgHistorialCambiosReserva");
                                     JsfUtil.mensajeAlerta("Esta reserva de fondo se encuentra en estado de " + resolucionAdj.getIdEstadoReserva().getDescripcionReserva()
@@ -740,7 +740,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                     current = contratoOrd;
                                     continuar = true;
                                     deshabilitado = true;
-                                }*/
+                                }
                             }
                             break;
                     }

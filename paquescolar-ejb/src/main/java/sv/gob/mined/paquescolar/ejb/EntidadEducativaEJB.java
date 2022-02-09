@@ -374,25 +374,15 @@ public class EntidadEducativaEJB {
         return q.getResultList();
     }
 
-    public BigDecimal getCantidadTotalByCodEntAndIdProcesoAdq(String codigoEntidad, Integer idProcesoAdq) {
-        String niveles = "";
-        switch (idProcesoAdq) {
-            case 19:
-                niveles = "(22,3,4,5,6,23,24)";
-                break;
-            default:
-                niveles = "(1,3,4,5,6)";
-                break;
-        }
-
+    public BigDecimal getCantidadTotalByCodEntAndIdProcesoAdq(String niveles, String codigoEntidad, Integer idProcesoAdq) {
         Query q = em.createNativeQuery("select sum(nvl(masculino,0)+nvl(femenimo,0)) from estadistica_censo \n"
-                + "where codigo_entidad = ?1 and id_proceso_adq = ?2 and estado_eliminacion = 0 and id_nivel_educativo in " + niveles);
+                + "where codigo_entidad = ?1 and id_proceso_adq = ?2 and estado_eliminacion = 0 and id_nivel_educativo in (" + niveles + ")");
         q.setParameter(1, codigoEntidad);
         q.setParameter(2, idProcesoAdq);
         return q.getResultList().isEmpty() ? BigDecimal.ZERO : (BigDecimal) q.getSingleResult();
     }
 
-    public HashMap<String, String> getNoItemsByCodigoEntidadAndIdProcesoAdq(String codigoEntidad, DetalleProcesoAdq detProcesoAdq, boolean isUniforme) {
+    public HashMap<String, String> getNoItemsByCodigoEntidadAndIdProcesoAdq(String codigoEntidad, DetalleProcesoAdq detProcesoAdq, String niveles, boolean isUniforme) {
         String noItemSeparados = "";
         String noItems = "";
         String idNivelesCe = "";
@@ -414,7 +404,7 @@ public class EntidadEducativaEJB {
                     + "id_nivel_educativo, "
                     + "masculino, femenimo from estadistica_censo \n"
                     + "where id_proceso_adq = ?1 and \n"
-                    + "    id_nivel_educativo in (1,3,4,5,6) and \n"
+                    + "    id_nivel_educativo in (" + niveles + ") and \n"
                     + "    codigo_entidad = ?2 and \n"
                     + "    (masculino <> 0 or femenimo <> 0)";
         }
@@ -434,6 +424,32 @@ public class EntidadEducativaEJB {
             fem = (BigDecimal) datos[2];
 
             switch (((BigDecimal) datos[0]).intValue()) {
+                case 23:
+                    idNivelesCe += idNivelesCe.isEmpty() ? "23" : ",23";
+                    switch (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
+                        case 2:
+                            if (fem.intValue() > 0 || mas.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_4_4 = '44'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'44'";
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case 24:
+                    idNivelesCe += idNivelesCe.isEmpty() ? "24" : ",24";
+                    switch (detProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue()) {
+                        case 2:
+                            if (fem.intValue() > 0 || mas.intValue() > 0) {
+                                noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_5_1 = '51'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'51'";
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
                 case 22:
                 case 1: //PARVULARIA
                     idNivelesCe += idNivelesCe.isEmpty() ? "" + ((BigDecimal) datos[0]).intValue() : "," + ((BigDecimal) datos[0]).intValue() + "";

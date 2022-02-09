@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
@@ -62,6 +63,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     private String tipoDocumentoImp = "";
     private String nombreEmp = "";
     private String nombreEmpOtros = "";
+    private String nivelesEducativos="";
     private Boolean showProductos = false;
     private Boolean deshabilitar = true;
     private Boolean modifDesac = false;
@@ -579,7 +581,9 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
                 if (entidadEducativa == null) {
                     JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + codigoEntidad);
                 } else {
-                    cantidadAlumnos = entidadEducativaEJB.getCantidadTotalByCodEntAndIdProcesoAdq(codigoEntidad, getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq());
+                    List<BigDecimal> lstNiveles = entidadEducativaEJB.getLstNivelesConMatriculaReportadaByIdProcesoAdqAndCodigoEntidad(detalleProceso.getIdProcesoAdq().getIdProcesoAdq(), codigoEntidad);
+                    nivelesEducativos = String.join(",", lstNiveles.stream().map(String::valueOf).collect(Collectors.toList()));
+                    cantidadAlumnos = entidadEducativaEJB.getCantidadTotalByCodEntAndIdProcesoAdq(nivelesEducativos, codigoEntidad, getRecuperarProceso().getProcesoAdquisicion().getIdProcesoAdq());
 
                     if (cantidadAlumnos == null || cantidadAlumnos.intValue() == 0) {
                         JsfUtil.mensajeAlerta("Es necesario registrar las estadisticas para este centro educativo");
@@ -629,7 +633,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
         if (!current.getIdDetProcesoAdq().getHabilitarRegistro()) {
             JsfUtil.mensajeInformacion("El registro de contratos ha sido deshabilitado por el Administrador.");
         } else {
-            mapItems = entidadEducativaEJB.getNoItemsByCodigoEntidadAndIdProcesoAdq(codigoEntidad, detalleProceso,
+            mapItems = entidadEducativaEJB.getNoItemsByCodigoEntidadAndIdProcesoAdq(codigoEntidad, detalleProceso, nivelesEducativos,
                     detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1);
         }
     }
