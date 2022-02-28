@@ -717,11 +717,23 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                 resolucionAdj = null;
 
                             } else {
-                                if (resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().compareTo(new BigDecimal("2")) == 0) {
+                                 if ((VarSession.getVariableSessionUsuario().equals("MSANCHEZ") || 
+                                         VarSession.getVariableSessionUsuario().equals("RAFAARIAS")) &&
+                                         resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().compareTo(new BigDecimal("5")) == 0) {
+                                    buscarHistorialCambios();
+                                    PrimeFaces.current().ajax().update("dlgHistorialCambiosReserva");
+                                    JsfUtil.mensajeAlerta("Esta reserva de fondo se encuentra en estado de " + resolucionAdj.getIdEstadoReserva().getDescripcionReserva()
+                                            + ".<br/>Ver historico de cambios. <a onclick=\"PF('dlgHistorialCambiosReserva').show();\">Ver</a>");
+                                    current = contratoOrd;
+                                    continuar = true;
+                                    deshabilitado = true;
+                                }else if (resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().compareTo(new BigDecimal("2")) == 0 ||
+                                        resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().compareTo(new BigDecimal("5")) == 0) {
                                     switch (resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().intValue()) {
                                         case 2:
                                         case 5:
                                             current = contratoOrd;
+                                            soloLectura = (resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 5);
                                             continuar = false;
                                             if (current.getPlazoPrevistoEntrega() == null) {
                                                 setPlazoPrevistoEntrega();
@@ -732,14 +744,6 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                             JsfUtil.mensajeAlerta("La reserva de fondos NO ESTA APLICADA.");
                                             break;
                                     }
-                                } else if (VarSession.getVariableSessionUsuario().equals("MSANCHEZ") || VarSession.getVariableSessionUsuario().equals("RAFAARIAS")) {
-                                    buscarHistorialCambios();
-                                    PrimeFaces.current().ajax().update("dlgHistorialCambiosReserva");
-                                    JsfUtil.mensajeAlerta("Esta reserva de fondo se encuentra en estado de " + resolucionAdj.getIdEstadoReserva().getDescripcionReserva()
-                                            + ".<br/>Ver historico de cambios. <a onclick=\"PF('dlgHistorialCambiosReserva').show();\">Ver</a>");
-                                    current = contratoOrd;
-                                    continuar = true;
-                                    deshabilitado = true;
                                 }
                             }
                             break;
@@ -815,7 +819,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
 
         for (RptDocumentos rptDoc : lstRptDocumentos) {
 
-            param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue(), param, sobredemanda);
+            param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue(), param, sobredemanda, detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("FLEXIBLE"));
 
             switch (rptDoc.getDs()) {
                 case 0://JRBeanColletions
@@ -842,7 +846,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                             anho = detalleProceso.getIdProcesoAdq().getIdAnho().getAnho();
                                         }
 
-                                        param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda);
+                                        //param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda, detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("FLEXIBLE"));
                                         rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + anho + ".jasper"), lst);
                                         lstRptAImprimir.add(rptTemp);
                                     }
@@ -855,7 +859,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                         anho = detalleProceso.getIdProcesoAdq().getIdAnho().getAnho();
                                     }
 
-                                    param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda);
+                                    //param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda, detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("FLEXIBLE"));
                                     rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + anho + ".jasper"), lst);
                                     lstRptAImprimir.add(rptTemp);
                                 }
@@ -868,7 +872,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                         anho = detalleProceso.getIdProcesoAdq().getIdAnho().getAnho();
                                     }
 
-                                    param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda);
+                                    //param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda, detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("FLEXIBLE"));
                                     rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + anho + ".jasper"), lst);
                                     lstRptAImprimir.add(rptTemp);
                                 }
@@ -876,9 +880,9 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
 
                             break;
                         case 3://Acta Adjudicacion
-                            if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
-                                param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
-                            }
+//                            if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
+//                                param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
+//                            }
 
                             param.put("SUBREPORT_DIR", JsfUtil.getPathReportes().concat(Reportes.PATH_REPORTES + "notasactas") + File.separator);
                             param.put("pPorcentajeCapa", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "25" : "35");
@@ -889,9 +893,9 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                             lstRptAImprimir.add(rptTemp);
                             break;
                         case 4://Nota Adjudicacion
-                            if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
-                                param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
-                            }
+//                            if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
+//                                param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
+//                            }
 
                             param.put("SUBREPORT_DIR", JsfUtil.getPathReportes().concat(Reportes.PATH_REPORTES + "notasactas") + File.separator);
                             rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptNotaAdjudicacion(current.getIdResolucionAdj().getIdResolucionAdj()));
@@ -901,16 +905,16 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                             break;
                         case 5://Garantia Cumplimiento
                         case 6://Garantia Uso Tela
-                            if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
-                                param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
-                            }
+//                            if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
+//                                param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
+//                            }
 
                             lstRptAImprimir.add(reportesEJB.getRpt(param, Reportes.getPathReporte(rptDoc.getNombreRpt() + ".jasper"), resolucionAdjudicativaEJB.generarRptGarantia(current.getIdResolucionAdj().getIdResolucionAdj(), current.getIdContrato())));
                             break;
                         case 7://Contrato
-                            if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
-                                param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
-                            }
+//                            if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
+//                                param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
+//                            }
 
                             param.put("SUBREPORT_DIR", JsfUtil.getPathReportes().concat(Reportes.PATH_REPORTES + "contratos") + File.separator);
                             param.put("idContrato", current.getIdContrato());
@@ -1014,9 +1018,9 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                     param.put("P_FECHA_INICIO", "SIN DEFINIR");
                                 }
                             }
-                            if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
-                                param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
-                            }
+//                            if (detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("MODALIDADES FLEXIBLES")) {
+//                                param.put("descripcionRubro", "SUMINISTRO DE LIBROS DE MATEMÁTICA");
+//                            }
                             nombreRpt = rptDoc.getNombreRpt().concat(perNatural ? "Nat" : "Jur");
                             rptTemp = reportesEJB.getRpt(param, Reportes.getPathReporte(nombreRpt + ".jasper"));
 
@@ -1119,7 +1123,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                     nombreRpt = "rptCotizacionZap" + anho + ".jasper";
                 }
         }
-        param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda);
+        param = JsfUtil.getNombreRubroRpt(detalleProceso.getIdRubroAdq().getIdRubroInteres().toBigInteger().intValue(), param, sobredemanda, detalleProceso.getIdProcesoAdq().getDescripcionProcesoAdq().contains("FLEXIBLE"));
         param.put("ubicacionImagenes", ContratosOrdenesComprasController.class.getClassLoader().getResource(("sv/gob/mined/apps/reportes/cotizacion" + File.separator + nombreRpt)).getPath().replace(nombreRpt, ""));
 
         return Reportes.generarRptBeanConnection(lst, param, "sv/gob/mined/apps/reportes/cotizacion", nombreRpt);

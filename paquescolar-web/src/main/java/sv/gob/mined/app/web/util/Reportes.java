@@ -56,7 +56,7 @@ public class Reportes {
             } else {
                 tmpPath = JsfUtil.getValorFromBundleByKey("path_reportes_linux");
             }
-            return new FileInputStream(tmpPath.concat(pathReporte));
+                    return new FileInputStream(tmpPath.concat(pathReporte));
         } catch (FileNotFoundException ex) {
             try {
                 tmpPath = JsfUtil.getValorFromBundleByKey("path_reportes_linux2");

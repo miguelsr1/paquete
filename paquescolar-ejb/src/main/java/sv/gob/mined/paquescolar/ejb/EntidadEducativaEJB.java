@@ -430,7 +430,7 @@ public class EntidadEducativaEJB {
                         case 2:
                             if (fem.intValue() > 0 || mas.intValue() > 0) {
                                 noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_4_4 = '44'";
-                                noItems += (noItems.isEmpty() ? "" : " , ") + "'44'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'4.4'";
                             }
                             break;
                         default:
@@ -443,7 +443,7 @@ public class EntidadEducativaEJB {
                         case 2:
                             if (fem.intValue() > 0 || mas.intValue() > 0) {
                                 noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_5_1 = '51'";
-                                noItems += (noItems.isEmpty() ? "" : " , ") + "'51'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'5.1'";
                             }
                             break;
                         default:

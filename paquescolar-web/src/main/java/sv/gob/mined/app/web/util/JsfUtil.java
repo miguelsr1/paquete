@@ -213,7 +213,7 @@ public class JsfUtil {
         }
     }
 
-    public static HashMap getNombreRubroRpt(int idRubro, HashMap param, Boolean sobredemanda) {
+    public static HashMap getNombreRubroRpt(int idRubro, HashMap param, Boolean sobredemanda, Boolean modFlexible) {
         switch (idRubro) {
             case 1:
                 param.put("descripcionRubro", (sobredemanda ? "SOBREDEMANDA DE " : "") + "SERVICIOS DE CONFECCION DE UNIFORMES");
@@ -225,7 +225,7 @@ public class JsfUtil {
                 param.put("descripcionRubro", (sobredemanda ? "SOBREDEMANDA DE " : "") + "SERVICIOS DE CONFECCION DE SEGUNDO UNIFORME");
                 break;
             case 2:
-                param.put("descripcionRubro", (sobredemanda ? "SOBREDEMANDA DE " : "") + "SUMINISTRO DE PAQUETES DE UTILES ESCOLARES");
+                param.put("descripcionRubro", (sobredemanda ? "SOBREDEMANDA DE SUMINISTRO DE PAQUETES DE UTILES ESCOLARES" : (modFlexible ? "SUMINISTRO PARA ESTUDIANTES DE MODALIDAD FLEXIBLE DE PAQUETES DE UTILES ESCOLARES":"SUMINISTRO DE PAQUETES DE UTILES ESCOLARES")));
                 break;
             case 3:
                 param.put("descripcionRubro", (sobredemanda ? "SOBREDEMANDA DE " : "") + "PRODUCCION DE ZAPATOS");

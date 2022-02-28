@@ -1513,7 +1513,8 @@ public class EstadisticasCensoController implements Serializable {
                         presupuesto = presupuesto.add(new BigDecimal(est2media.getMasculino().add(est2media.getFemenimo())).multiply(preBachi2Uti.getPrecioMaxMas()));
                     }
                     break;
-                case 9: //incluye inicial 1, 2 y modalidades flexibles en los niveles de 3er ciclo y media
+                case 9:
+                case 10://incluye inicial 1, 2 y modalidades flexibles en los niveles de 3er ciclo y media
                     presupuesto = presupuesto.add(new BigDecimal(estInicial1grado.getMasculino().add(estInicial1grado.getFemenimo())).multiply(preParUti.getPrecioMaxMas()));
                     presupuesto = presupuesto.add(new BigDecimal(estInicial2grado.getMasculino().add(estInicial2grado.getFemenimo())).multiply(preParUti.getPrecioMaxMas()));
                     presupuesto = presupuesto.add(new BigDecimal(estaditicaCiclo3MF.getMasculino().add(estaditicaCiclo3MF.getFemenimo())).multiply(preCicloIIIMFUti.getPrecioMaxMas()));

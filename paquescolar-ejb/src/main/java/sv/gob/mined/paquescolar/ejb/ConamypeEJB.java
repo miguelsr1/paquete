@@ -473,7 +473,7 @@ public class ConamypeEJB {
      */
     @WebMethod(operationName = "updCapacidadByNitAndIdDet")
     public void updCapacidadByNitAndIdDet(String numeroNit, BigDecimal idRubro, BigDecimal idAnho, BigInteger capacidad) {
-        Query q = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idMuestraInteres.idEmpresa.numeroNit=:nit and c.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and c.idMuestraInteres.idAnho.idAnho=:pIdAnho and c.idMuestraInteres.estadoEliminacion=0", CapaInstPorRubro.class);
+        Query q = em.createQuery("SELECT c FROM CapaInstPorRubro c WHERE c.idProcesoAdq.idProcesoAdq=22 and c.idMuestraInteres.idEmpresa.numeroNit=:nit and c.idMuestraInteres.idRubroInteres.idRubroInteres=:pIdRubro and c.idMuestraInteres.idAnho.idAnho=:pIdAnho and c.idMuestraInteres.estadoEliminacion=0", CapaInstPorRubro.class);
         q.setParameter("nit", numeroNit);
         q.setParameter("pIdRubro", idRubro);
         q.setParameter("pIdAnho", idAnho);
