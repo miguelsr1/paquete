@@ -71,12 +71,12 @@
                         <p:column headerText="#" width="50" styleClass="centrado">
                             #{rowId +1 }
                         </p:column>
-                        <p:column headerText="Fecha inserción">
+                        <p:column headerText="Fecha inserción" style="text-align: center;">
                             <p:outputLabel value="#{resguardo.fechaInsercion}">
                                 <f:convertDateTime pattern="dd/MM/yyyy"/>
                             </p:outputLabel>
                         </p:column>
-                        <p:column headerText="Total en Resguardo">
+                        <p:column headerText="Total en Resguardo" style="text-align: center;">
                             <p:outputLabel value="#{resguardo.totalCantidad}"/>
                         </p:column>
                         <p:column headerText="Editar" width="40" styleClass="centrado" rendered="false">
@@ -118,9 +118,10 @@
 
 
             <f:facet name="footer">
-                <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{resguardoMB.agregarDetalle}" onclick="PF('dlgDetalle').hide();" update="tblDetalleOferta"/>
+                <p:commandButton id="btnGuardar" value="Aceptar" icon="fa fa-check-circle" action="#{resguardoMB.agregarDetalle}" onclick="PF('dlgDetalle').hide();" update="tblDetalleOferta"/>
                 <p:commandButton value="Cancelar" icon="fa fa-times-circle" onclick="PF('dlgDetalle').hide();"/>
             </f:facet>
+            <p:blockUI block="dlgDetalle" trigger="btnGuardar"/>
         </p:dialog>
 
         <p:remoteCommand name="findEntidad" update="menuBar nombreCE tblDetalleOferta" actionListener="#{resguardoMB.buscarEntidadEducativa}" />

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <ui:composition
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -11,7 +12,7 @@
             <p:menuitem value="Nuevo" icon="fa fa-file-o" action="#{liquidacionMB.nuevo()}" id="mtmNuevo" update="pnlFiltro divDetalle"/>
             <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true"/>
             <p:menuitem value="Guardar" icon="fa fa-save" ajax="true" disabled="true"/>
-            <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" disabled="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" />
             <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
 
             <f:facet  name="options" class="centradoVertical">  
@@ -43,7 +44,7 @@
                         <p:outputPanel id="codigoEntidad" >
                             <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{liquidacionMB.codigoEntidad}" size="6" autocomplete="off" 
                                          requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5" disabled="#{liquidacionMB.deshabilitar}">
-                                <p:ajax event="keyup" update="menuBar nombreCE cboProveedor" listener="#{liquidacionMB.buscarEntidadEducativa}"/>
+                                <p:ajax event="keyup" update="menuBar nombreCE cboProveedor tblLiquidaciones" listener="#{liquidacionMB.buscarEntidadEducativa}"/>
                             </p:inputText>
                             <p:spacer width="10"/>
                             <p:outputLabel id="nombreCE" value="#{liquidacionMB.entidadEducativa.nombre}" style="font-weight: bold"/>
@@ -93,6 +94,16 @@
                                 <f:convertNumber pattern="#,##0.00"/>
                             </p:outputLabel>
                         </p:column>
+                        <p:column headerText="Donación Recibida" styleClass="numero">
+                            <p:outputLabel value="#{liq.totalDonacionRecibe}">
+                                <f:convertNumber pattern="#,##0"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Donación Entregada" styleClass="numero">
+                            <p:outputLabel value="#{liq.totalDonacionEntrega}">
+                                <f:convertNumber pattern="#,##0"/>
+                            </p:outputLabel>
+                        </p:column>
                         <p:column headerText="Estado" style="text-align: center;">
                             <p:outputLabel value="#{liq.estadoLiquidacion eq 'L' ?'LIQUIDADO':'EN PROCESO'}"/>
                         </p:column>
@@ -101,7 +112,6 @@
                                 <i class="fa fa-file-text"></i>
                                 <f:setPropertyActionListener value="#{liq}" target="#{liquidacionMB.liquidacion}"/>  
                             </h:commandLink>
-                            <p:spacer width="10"/>
                             <h:commandLink action="#{liquidacionMB.imprimirReporteInc}">
                                 <i class="fa fa-list"></i>
                                 <f:setPropertyActionListener value="#{liq}" target="#{liquidacionMB.liquidacion}"/>  
@@ -126,23 +136,35 @@
             </div>
         </div>
 
-        <p:dialog id="dlgLiquidacion" widgetVar="dlgLiquidacion" header="Información del Contrato" width="550" modal="true">
+        <p:dialog id="dlgLiquidacion" widgetVar="dlgLiquidacion" header="Información del Contrato" width="850" 
+                  modal="true" position="center center" onShow="PF('dlgLiquidacion').initPosition()"
+                  dynamic="true" responsive="true" resizable="false" hideEffect="fade" showEffect="fade"  >
             <p:outputPanel id="detalleLiquidacion" styleClass="ui-fluid">
                 <p:dataTable value="#{liquidacionMB.datosLiquidacionDtos}" var="liquidacion">
-                    <p:column headerText="NoItem">
+                    <p:column headerText="Item" width="30" style="text-align: center;">
                         <p:outputLabel value="#{liquidacion.noItem}"/>
                     </p:column>
-                    <p:column headerText="Contratado" styleClass="numero">
+                    <p:column headerText="Descripción">
+                        <p:outputLabel value="#{liquidacionMB.especificacion(liquidacion.noItem)}"/>
+                    </p:column>
+                    <p:column headerText="Contratado" styleClass="numero" width="60">
                         <p:outputLabel value="#{liquidacion.cantidadContrato}"/>
                     </p:column>
-                    <p:column headerText="Modificado" styleClass="numero">
+                    <p:column headerText="Modificado" styleClass="numero" width="55">
                         <p:outputLabel value="#{liquidacion.cantidadModificativa}"/>
                     </p:column>
-                    <p:column headerText="Recepción" styleClass="numero">
+                    <p:column headerText="Recepción" styleClass="numero" width="55">
                         <p:outputLabel value="#{liquidacion.cantidadRecepcion}" />
                     </p:column>
-                    <p:column headerText="Resguardo">
-                        <p:inputNumber value="#{liquidacion.cantidadResguardo}" inputStyle="text-align: right;" decimalPlaces="0"/>
+                    <p:column headerText="Resguardo" width="55">
+                        <p:inputNumber value="#{liquidacion.cantidadResguardo}" inputStyle="text-align: right;" decimalPlaces="0" size="5"/>
+                    </p:column>
+                    <p:column headerText="Cantidad Donada" styleClass="numero" width="100">
+                        <p:inputNumber size="4" inputStyle="text-align: right" decimalPlaces="0" style="margin-right: 5px;" value="#{liquidacion.totalDonacion}" readonly="true"/>
+                        <p:commandLink update="pnoDonacion" onclick="PF('dlgDonacion').show();" >
+                            <i class="fa fa-external-link-square" style="color: #3ac162;"></i>
+                            <f:setPropertyActionListener value="#{liquidacion}" target="#{liquidacionMB.datosLiquidacionDto}"/>
+                        </p:commandLink>
                     </p:column>
                 </p:dataTable>
                 <br/>
@@ -163,11 +185,15 @@
 
             <f:facet name="footer">
                 <p:commandButton id="btnGuardar" value="Guardar" action="#{liquidacionMB.agregarLista}" process="@this,cblRecepcion,cblLiquidacion,txaObservacion" icon="fa fa-check" oncomplete="PF('dlgLiquidacion').hide();" update="tblLiquidaciones"/>
-                <p:commandButton id="btnCancelar" value="Cancelar" styleClass="secondary-button" icon="fa fa-times" onclick="PF('dlgLiquidacion').hide();"/>
+                <p:commandButton id="btnCancelar" value="Cancelar" action="#{liquidacionMB.cancelarLiquidacion}" styleClass="secondary-button" icon="fa fa-times" onclick="PF('dlgLiquidacion').hide();"/>
             </f:facet>
+            
+            <p:blockUI block="dlgLiquidacion" trigger="btnGuardar"/>
         </p:dialog>
 
-        <p:dialog id="dlgObservacionLiquidacion" widgetVar="dlgObservacionLiquidacion" header="Información del Contrato" width="1150" modal="true">    
+        <p:dialog id="dlgObservacionLiquidacion" widgetVar="dlgObservacionLiquidacion" header="Información del Contrato" width="1150" 
+                  modal="true" position="center center" onShow="PF('dlgObservacionLiquidacion').initPosition()"
+                  dynamic="true" responsive="true" resizable="false" hideEffect="fade" showEffect="fade">    
             <p:outputPanel id="outObservacion" styleClass="ui-fluid">
                 <div class="ui-g-12">
                     <div class="ui-g-2">
@@ -210,7 +236,9 @@
             </f:facet>
         </p:dialog>
 
-        <p:dialog id="dlgCambiarEstadoLiquidacion" widgetVar="dlgCambiarEstadoLiquidacion" header="Carmbiar estado" modal="true" width="280">    
+        <p:dialog id="dlgCambiarEstadoLiquidacion" widgetVar="dlgCambiarEstadoLiquidacion" header="Carmbiar estado" width="280"
+                  modal="true" position="center center" onShow="PF('dlgCambiarEstadoLiquidacion').initPosition()"
+                  dynamic="true" responsive="true" resizable="false" hideEffect="fade" showEffect="fade">
             <p:outputPanel id="outCambioEstado" styleClass="ui-fluid">
                 <div class="ui-g-12">
                     <div class="ui-g-3">
@@ -227,6 +255,83 @@
             <f:facet name="footer">
                 <p:commandButton id="btnGuardarCe" value="Guardar" action="#{liquidacionMB.guardarCambioEstado()}" icon="fa fa-check" oncomplete="PF('dlgCambiarEstadoLiquidacion').hide();" update="tblLiquidaciones"/>
                 <p:commandButton id="btnCancelarCe" value="Cancelar" styleClass="secondary-button" icon="fa fa-times" onclick="PF('dlgCambiarEstadoLiquidacion').hide();"/>
+            </f:facet>
+        </p:dialog>
+
+        <p:dialog header="Detalle Donación" id="dlgDonacion" widgetVar="dlgDonacion" width="800"
+                  modal="true" position="center center" onShow="PF('dlgDonacion').initPosition()"
+                  dynamic="true" responsive="true" resizable="false" hideEffect="fade" showEffect="fade">
+            <p:ajax event="close" listener="#{liquidacionMB.closeDlgDetalleDonacion}" />
+            <p:outputPanel id="pnoDonacion">
+                <p:panelGrid columns="2" columnClasses="col3_label,col9" 
+                             style="width: 100%; border:0px none; background-color:transparent;"
+                             styleClass="form-group ui-panelgrid-blank">
+                    <p:outputLabel value="¿Donación recibida?" />
+                    <p:toggleSwitch id="estado" value="#{liquidacionMB.tipoDonacion}" >
+                        <p:ajax listener="#{liquidacionMB.obtenerProveedor()}" update="pnoDonacion"/>
+                    </p:toggleSwitch>
+                    <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
+                    <p:outputPanel id="ceDonante" >
+                        <p:inputText id="txtCeDonante" maxlength="5" value="#{liquidacionMB.ceDonante}" size="6"  autocomplete="off" 
+                                     requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5">
+                            <p:ajax event="keyup" update="nombreCEDonante cboProveedorDonante txtPuDonado" listener="#{liquidacionMB.buscarEntidadEducativaDonante()}"/>
+                        </p:inputText>
+                        <p:spacer width="10"/>
+                        <p:outputLabel id="nombreCEDonante" value="#{liquidacionMB.entidadEducativaDonante.nombre}" style="font-weight: bold"/>
+                    </p:outputPanel>
+
+                    <p:outputLabel value="Proveedor:"/>
+                    <p:selectOneMenu id="cboProveedorDonante" value="#{liquidacionMB.idParticipanteDonante}" rendered="#{liquidacionMB.tipoDonacion}"  onkeydown="setaFoco(this);">
+                        <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
+                        <f:selectItems value="#{liquidacionMB.lstParticipantesDonante}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{par.razonSocial}"/>
+                        <p:ajax listener="#{liquidacionMB.recuperarPrecioUnitarioItemByProveedorDonante}" update="txtPuDonado"/>
+                    </p:selectOneMenu>
+                    <p:inputText value="#{liquidacionMB.nombreProveedor}" readonly="true" rendered="#{!liquidacionMB.tipoDonacion}" style="width: 100%;"/>
+                    
+                    <p:outputLabel value="Item:" />
+                    <p:outputLabel value="#{liquidacionMB.especificacionItem}" style="font-weight: bold"/>
+
+                    <p:outputLabel value="Cantidad Donada:" for="txtCodigoEntidad" />
+                    <p:inputNumber id="txtCantidaDonante" size="5" inputStyle="text-align: right;" value="#{liquidacionMB.cantidadDonada}" decimalPlaces="0"/>
+                    
+                    <p:outputLabel value="Precio Unitario:" for="txtPuDonado" rendered="#{liquidacionMB.tipoDonacion}"/>
+                    <p:inputNumber id="txtPuDonado" readonly="true" size="5" inputStyle="text-align: right;" value="#{liquidacionMB.detalleItemDto.precioUnitario}" decimalPlaces="2" rendered="#{liquidacionMB.tipoDonacion}"/>
+
+                    <p:outputLabel value="Fecha Donación:" for="cld" />
+                    <p:calendar id="cld" value="#{liquidacionMB.fechaDonacion}" pattern="dd/MM/yyyy" locale="es" showOn="button" navigator="true"/>
+
+                    <p:commandButton value="Agregar" action="#{liquidacionMB.agregarLiqCeDonante()}" update="pnoDonacion"/>
+                </p:panelGrid>
+                <br/>
+                <p:dataTable id="tblLiqCeDonacion" value="#{liquidacionMB.lstLiqCeDonacion}" var="liq" rowIndexVar="rowIdLiq">
+                    <p:column headerText="#{bundle['tabla.codEnt']}">
+                        <p:outputLabel value="#{liq.codigoEntidad}"/>
+                    </p:column>
+                    <p:column headerText="Cantidad" style="text-align: right;">
+                        <p:outputLabel value="#{liq.cantidad}"/>
+                    </p:column>
+                    <p:column headerText="Tipo Donación" style="text-align: right;">
+                        <p:outputLabel value="#{liq.tipoDonacion eq 1?'Recibe':'Entrega'}"/>
+                    </p:column>
+                    <p:column headerText="Fecha Donación">
+                        <p:outputLabel value="#{liq.fechaDonacion}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column headerText="Borrar" style="text-align: center;" width="40">
+                        <p:commandLink action="#{liquidacionMB.eliminarLiqCeDonante()}" update="tblLiqCeDonacion">
+                            <p:outputLabel rendered="#{liq.eliminar}"> <i class="fa fa-check-circle"></i></p:outputLabel>
+                            <p:outputLabel rendered="#{not liq.eliminar}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
+                            <f:setPropertyActionListener value="#{liq}" target="#{liquidacionMB.liqDetDonacion}"/>  
+                            <f:setPropertyActionListener value="#{rowIdLiq}" target="#{liquidacionMB.rowEditLiq}"/>  
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </p:outputPanel>
+            <f:facet name="footer">
+                <p:commandButton id="btnGuardarLiqDona" value="Guardar" action="#{liquidacionMB.guardarDetalleCeDonante()}" 
+                                 icon="fa fa-check" oncomplete="PF('dlgDonacion').hide();" update="detalleLiquidacion"/>
+                <p:commandButton id="btnCancelarLiqDona" value="Cancelar" action="#{liquidacionMB.cerrarDlgDetalleCedonante()}" styleClass="secondary-button" icon="fa fa-times" onclick="PF('dlgDonacion').hide();"/>
             </f:facet>
         </p:dialog>
     </ui:define>
