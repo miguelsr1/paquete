@@ -7,7 +7,10 @@ package sv.gob.mined.paquescolar.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,6 +19,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -28,6 +32,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "DETALLE_LIQUIDACION")
 @XmlRootElement
 public class DetalleLiquidacion implements Serializable {
+
+    @OneToMany(mappedBy = "idDetLiquidacion", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<LiquidacionDetalleDonacion> liquidacionDetalleDonacionList;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -164,5 +171,16 @@ public class DetalleLiquidacion implements Serializable {
     public String toString() {
         return "sv.gob.mined.paquescolar.model.DetalleLiquidacion[ idDetLiquidacion=" + idDetLiquidacion + " ]";
     }
-    
+
+    public List<LiquidacionDetalleDonacion> getLiquidacionDetalleDonacionList() {
+        if (liquidacionDetalleDonacionList == null) {
+            liquidacionDetalleDonacionList = new ArrayList();
+        }
+        return liquidacionDetalleDonacionList;
+    }
+
+    public void setLiquidacionDetalleDonacionList(List<LiquidacionDetalleDonacion> liquidacionDetalleDonacionList) {
+        this.liquidacionDetalleDonacionList = liquidacionDetalleDonacionList;
+    }
+
 }

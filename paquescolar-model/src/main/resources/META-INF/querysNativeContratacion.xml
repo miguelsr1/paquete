@@ -774,4 +774,51 @@
             ]]>
         </query>
     </named-native-query>
+    
+    <named-native-query name="Contratacion.ItemModificativa" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                  as idRow,
+                dm.no_item              as noItem,
+                dm.consolidado_esp_tec  as consolidadoEspTec,
+                dm.cantidad_new         as cantidad,
+                dm.precio_unitario_new  as precioUnitario
+            from resoluciones_modificativas rm
+                inner join detalle_modificativa dm on rm.id_resolucion_modif = dm.id_resolucion_modif
+            where rm.estado_eliminacion = 0 and
+                dm.estado_eliminacion = 0 and
+                rm.id_estado_reserva = 2 and
+                rm.id_contrato = ?1 and
+                dm.no_item = ?2
+            ]]>
+        </query>
+    </named-native-query>
+    <named-native-query name="Contratacion.ItemContrato" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto">
+        <query>
+            <![CDATA[
+            select 
+                rownum                  as idRow,
+                det.no_item             as noItem,
+                det.consolidado_esp_tec as consolidadoEspTec,
+                det.cantidad            as cantidad,
+                det.precio_unitario     as precioUnitario
+            from
+                contratos_ordenes_compras con
+                inner join resoluciones_adjudicativas res on res.id_resolucion_adj = con.id_resolucion_adj
+                inner join participantes par on par.id_participante = res.id_participante
+                inner join detalle_ofertas det on par.id_participante = det.id_participante
+            where con.estado_eliminacion = 0 and
+                con.modificativa = 0 and
+                res.estado_eliminacion = 0 and
+                par.estado_eliminacion = 0 and
+                det.estado_eliminacion = 0 and
+                res.id_estado_reserva = 2 and
+                con.id_contrato = ?1 and
+                det.no_item = ?2
+            ]]>
+        </query>
+    </named-native-query>
 </entity-mappings>

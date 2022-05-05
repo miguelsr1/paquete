@@ -520,7 +520,8 @@
                 id_det_proceso_adq as idDetProcesoAdq
             from vw_sub_liq_contrato_orig 
             where codigo_entidad = ?1 and 
-                id_det_proceso_adq = ?2
+                id_det_proceso_adq = ?2 and 
+                id_participante = ?3
             order by to_number(no_item)
             ]]>
         </query>
@@ -562,7 +563,7 @@
                 left outer join (select res.id_contrato, no_item, cantidad 
                                 from resguardo res
                                     inner join detalle_resguardo det on res.id_resguardo = det.id_resguardo
-                                where det.estado_eliminacion = 0) tb on vw.id_contrato = tb.id_contrato and vw.no_item = tb.no_item
+                                where det.estado_eliminacion = 0 and res.estado_eliminacion = 0) tb on vw.id_contrato = tb.id_contrato and vw.no_item = tb.no_item
             where vw.id_contrato = ?1 
             order by to_number(vw.no_item)) 
             ]]>

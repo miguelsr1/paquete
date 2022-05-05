@@ -29,6 +29,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.eclipse.persistence.annotations.AdditionalCriteria;
 
 /**
  *
@@ -37,6 +38,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "LIQUIDACION")
 @XmlRootElement
+@AdditionalCriteria("this.estadoEliminacion = 0")
 public class Liquidacion implements Serializable {
 
     @Size(max = 500)
@@ -77,6 +79,9 @@ public class Liquidacion implements Serializable {
     @Column(name = "FECHA_MODIFICACION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
+    @Column(name = "FECHA_ELIMINACION")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaEliminacion;
 
     @OneToMany(mappedBy = "idLiquidacion", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<DetalleLiquidacion> detalleLiquidacionList;
@@ -89,8 +94,20 @@ public class Liquidacion implements Serializable {
     private BigDecimal montoModificativa;
     @Transient
     private BigDecimal montoResguardo;
+    @Transient
+    private Long totalDonacionRecibe;
+    @Transient
+    private Long totalDonacionEntrega;
 
     public Liquidacion() {
+    }
+
+    public Date getFechaEliminacion() {
+        return fechaEliminacion;
+    }
+
+    public void setFechaEliminacion(Date fechaEliminacion) {
+        this.fechaEliminacion = fechaEliminacion;
     }
 
     public Date getFechaLiquidacion() {
@@ -264,6 +281,34 @@ public class Liquidacion implements Serializable {
         });
 
         return montoResguardo;
+    }
+
+    public Long getTotalDonacionRecibe() {
+        totalDonacionRecibe = 0l;
+
+        detalleLiquidacionList.forEach(detalleLiquidacion -> {
+            for (LiquidacionDetalleDonacion det : detalleLiquidacion.getLiquidacionDetalleDonacionList()) {
+                if (det.getTipoDonacion() == (short) 1) {
+                    totalDonacionRecibe += det.getCantidad();
+                }
+            }
+        });
+
+        return totalDonacionRecibe;
+    }
+
+    public Long getTotalDonacionEntrega() {
+        totalDonacionEntrega = 0l;
+
+        detalleLiquidacionList.forEach(detalleLiquidacion -> {
+            for (LiquidacionDetalleDonacion det : detalleLiquidacion.getLiquidacionDetalleDonacionList()) {
+                if (det.getTipoDonacion() == (short) 0) {
+                    totalDonacionEntrega += det.getCantidad();
+                }
+            }
+        });
+
+        return totalDonacionEntrega;
     }
 
     public void setMontoResguardo(BigDecimal montoResguardo) {

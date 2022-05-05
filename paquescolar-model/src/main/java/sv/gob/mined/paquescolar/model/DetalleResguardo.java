@@ -72,7 +72,7 @@ public class DetalleResguardo implements Serializable {
     @JoinColumn(name = "ID_NIVEL_EDUCATIVO", referencedColumnName = "ID_NIVEL_EDUCATIVO")
     @ManyToOne(fetch = FetchType.EAGER)
     private NivelEducativo idNivelEducativo;
-    
+
     public DetalleResguardo() {
     }
 
@@ -200,5 +200,5 @@ public class DetalleResguardo implements Serializable {
     public String toString() {
         return "sv.gob.mined.paquescolar.model.DetalleResguardo[ idDetResguardo=" + idDetResguardo + " ]";
     }
-    
+
 }

@@ -2,6 +2,9 @@ package sv.gob.mined.paquescolar.model.pojos.liquidacion;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import sv.gob.mined.paquescolar.model.LiquidacionDetalleDonacion;
 
 /**
  *
@@ -19,8 +22,23 @@ public class DatosLiquidacionDto implements Serializable {
     private BigDecimal precioUnitarioContrato;
     private BigDecimal precioUnitarioModificativa;
     private BigDecimal cantidadResguardo;
+    
+    private Long totalDonacion = 0l;
+
+    private List<LiquidacionDetalleDonacion> detDonacion = new ArrayList();
 
     public DatosLiquidacionDto() {
+    }
+
+    public List<LiquidacionDetalleDonacion> getDetDonacion() {
+        if (detDonacion == null) {
+            detDonacion = new ArrayList();
+        }
+        return detDonacion;
+    }
+
+    public void setDetDonacion(List<LiquidacionDetalleDonacion> detDonacion) {
+        this.detDonacion = detDonacion;
     }
 
     public BigDecimal getIdContrato() {
@@ -81,6 +99,18 @@ public class DatosLiquidacionDto implements Serializable {
 
     public BigDecimal getCantidadResguardo() {
         return cantidadResguardo;
+    }
+
+    public Long getTotalDonacion() {
+        totalDonacion = 0l;
+        for (LiquidacionDetalleDonacion liquidacionDetalleDonacion : getDetDonacion()) {
+            totalDonacion += liquidacionDetalleDonacion.getCantidad();
+        }
+        return totalDonacion;
+    }
+
+    public void setTotalDonacion(Long totalDonacion) {
+        this.totalDonacion = totalDonacion;
     }
 
     public void setCantidadResguardo(BigDecimal cantidadResguardo) {
