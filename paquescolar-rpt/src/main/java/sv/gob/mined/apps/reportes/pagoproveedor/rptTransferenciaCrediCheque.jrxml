@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a8ea1f80-75bc-46f9-99cd-6308856e4784">
-	<property name="ireport.zoom" value="1.2722928551174544"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.zoom" value="3.000000000000001"/>
+	<property name="ireport.x" value="135"/>
+	<property name="ireport.y" value="473"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -48,24 +48,58 @@
 			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 		</parameter>
 		<queryString>
-			<![CDATA[SELECT 
-  ROWNUM,
-dp.CODIGO_ENTIDAD,
-dr.NOMBRE_CE,
-dr.numero_nit,
-DR.RAZON_SOCIAL,
-dr.NOMBRE_ENT_FINAN,
-dp.monto_actual-nvl(ddp.monto_renta,0) monto_actual
-FROM PLANILLA_PAGO PP
-  INNER JOIN DETALLE_PLANILLA DP ON PP.ID_PLANILLA = DP.ID_PLANILLA
-  INNER JOIN DETALLE_DOC_PAGO DDP ON DP.ID_DETALLE_DOC_PAGO = DDP.ID_DETALLE_DOC_PAGO
-  INNER JOIN DETALLE_REQUERIMIENTO DR ON DDP.ID_DET_REQUERIMIENTO = DR.ID_DET_REQUERIMIENTO
-where pp.id_planilla = $P{idPlanilla}
-  and dp.estado_eliminacion = 0
-  and ddp.estado_eliminacion = 0
-order by 
-  DR.RAZON_SOCIAL,
-  dp.CODIGO_ENTIDAD]]>
+			<![CDATA[select
+    rownum,
+    codigo_entidad,
+    nombre_ce,
+    numero_nit,
+    razon_social,
+    nombre_ent_finan,
+    nvl(monto_contrato,0) monto_contrato,
+    nvl(monto_requerimiento,0) monto_requerimiento,
+    nvl(monto_modificativa,0) monto_modificativa,
+    nvl(monto_actual,0) monto_actual
+from (select
+        dp.codigo_entidad,
+        dr.nombre_ce,
+        dr.numero_nit,
+        dr.razon_social,
+        dr.nombre_ent_finan,
+        sum(det.cantidad*det.precio_unitario) monto_contrato,
+        dr.monto_total monto_requerimiento,
+        sum(detm.cantidad_new*detm.precio_unitario_new) monto_modificativa,
+        dp.monto_actual-nvl(ddp.monto_renta,0) monto_actual
+    from planilla_pago pp
+        inner join detalle_planilla dp              on pp.id_planilla = dp.id_planilla
+        inner join detalle_doc_pago ddp             on dp.id_detalle_doc_pago = ddp.id_detalle_doc_pago
+        inner join detalle_requerimiento dr         on ddp.id_det_requerimiento = dr.id_det_requerimiento
+        inner join contratos_ordenes_compras con    on con.id_contrato = dr.id_contrato
+        inner join resoluciones_adjudicativas res   on res.id_resolucion_adj = con.id_resolucion_adj
+        inner join detalle_ofertas det              on det.id_participante = res.id_participante
+
+        left join resoluciones_modificativas resm   on resm.id_contrato = con.id_contrato
+        left join detalle_modificativa detm         on detm.id_resolucion_modif = resm.id_resolucion_modif and detm.no_item = det.no_item
+    where pp.id_planilla = $P{idPlanilla} and
+        dp.estado_eliminacion = 0 and
+        ddp.estado_eliminacion = 0 and
+        con.estado_eliminacion = 0 and
+        res.estado_eliminacion = 0 and
+        res.id_estado_reserva in (2,5) and
+        det.estado_eliminacion = 0 and
+        (resm.id_resolucion_modif is null or resm.estado_eliminacion = 0) and
+        (detm.id_detalle_modif is null or detm.estado_eliminacion = 0)
+    group by
+        dp.codigo_entidad,
+        dr.nombre_ce,
+        dr.numero_nit,
+        dr.razon_social,
+        dr.nombre_ent_finan,
+        dr.monto_total,
+        dp.monto_actual,
+        ddp.monto_renta
+    order by
+        dr.razon_social,
+        dp.codigo_entidad)]]>
 		</queryString>
 		<field name="ROWNUM" class="java.math.BigDecimal"/>
 		<field name="CODIGO_ENTIDAD" class="java.lang.String"/>
@@ -73,9 +107,21 @@ order by
 		<field name="NUMERO_NIT" class="java.lang.String"/>
 		<field name="RAZON_SOCIAL" class="java.lang.String"/>
 		<field name="NOMBRE_ENT_FINAN" class="java.lang.String"/>
+		<field name="MONTO_CONTRATO" class="java.math.BigDecimal"/>
+		<field name="MONTO_REQUERIMIENTO" class="java.math.BigDecimal"/>
+		<field name="MONTO_MODIFICATIVA" class="java.math.BigDecimal"/>
 		<field name="MONTO_ACTUAL" class="java.math.BigDecimal"/>
 		<variable name="montoTotal" class="java.math.BigDecimal" calculation="Sum">
 			<variableExpression><![CDATA[$F{MONTO_ACTUAL}]]></variableExpression>
+		</variable>
+		<variable name="montoContrato" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{MONTO_CONTRATO}]]></variableExpression>
+		</variable>
+		<variable name="montoRequerimiento" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{MONTO_REQUERIMIENTO}]]></variableExpression>
+		</variable>
+		<variable name="montoModificativa" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{MONTO_MODIFICATIVA}]]></variableExpression>
 		</variable>
 	</subDataset>
 	<parameter name="pDepartamento" class="java.lang.String"/>
@@ -89,7 +135,7 @@ order by
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT 
+		<![CDATA[SELECT
   PP.ID_PLANILLA,
   RF.CONCEPTO,
   RF.FUENTE_FINANCIAMIENTO,
@@ -97,7 +143,7 @@ order by
   sum(dp.monto_actual-NVL(DDP.MONTO_RENTA,0)) monto,
   PPC.NUMERO_CHEQUE,
   PPC.MONTO_CHEQUE,
-  PPC.FECHA_CHEQUE  
+  PPC.FECHA_CHEQUE
 FROM REQUERIMIENTO_FONDOS RF
   INNER JOIN PLANILLA_PAGO PP ON PP.ID_REQUERIMIENTO = RF.ID_REQUERIMIENTO
   inner join planilla_pago_cheque ppc on pp.id_planilla = ppc.id_planilla
@@ -109,7 +155,7 @@ WHERE DP.ID_PLANILLA = $P{pIdPlanilla}
   and ppc.estado_eliminacion = 0
   AND DP.ESTADO_ELIMINACION = 0
   AND DDP.ESTADO_ELIMINACION = 0
-GROUP BY 
+GROUP BY
   PP.ID_PLANILLA,
   RF.CONCEPTO,
   RF.FUENTE_FINANCIAMIENTO,
@@ -181,7 +227,7 @@ GROUP BY
 						<font fontName="Arial" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["MINISTERIO DE EDUCACIÓN, CIENCIA Y TECNOLOGÍA\n"+
-"DIRECCIÓN DEPARTAMENTAL DE EDUCACIÓN DE "  + $P{pDepartamento} + "\n"+ 
+"DIRECCIÓN DEPARTAMENTAL DE EDUCACIÓN DE "  + $P{pDepartamento} + "\n"+
 "PAGADURÍA AUXILIAR DEPARTAMENTAL\n"+
 "PLANILLA DE PAGO"]]></textFieldExpression>
 				</textField>
@@ -213,7 +259,7 @@ GROUP BY
 					</textElement>
 					<text><![CDATA[No CHEQUE:]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement uuid="65c07728-3ead-4f0d-a182-11b8aff92a6a" x="124" y="171" width="132" height="12"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Arial" size="8"/>
@@ -440,9 +486,9 @@ GROUP BY
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="5" splitType="Stretch">
+		<band height="11" splitType="Stretch">
 			<componentElement>
-				<reportElement uuid="25c98f24-2a14-49a6-a633-03bbe7d2e67b" key="table 1" style="table" x="16" y="0" width="718" height="5">
+				<reportElement uuid="25c98f24-2a14-49a6-a633-03bbe7d2e67b" key="table 1" style="table" x="16" y="0" width="718" height="11">
 					<printWhenExpression><![CDATA[$P{pAFavorDe}==0]]></printWhenExpression>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
@@ -452,20 +498,20 @@ GROUP BY
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
-					<jr:columnGroup width="240" uuid="949ffa2d-ca89-44e8-855c-c66236466b4f">
-						<jr:column width="21" uuid="67f44308-a00b-4b08-a2b7-b86c7d1225b3">
+					<jr:columnGroup width="192" uuid="949ffa2d-ca89-44e8-855c-c66236466b4f">
+						<jr:column width="18" uuid="67f44308-a00b-4b08-a2b7-b86c7d1225b3">
 							<jr:columnHeader style="table_TD" height="18" rowSpan="1">
 								<staticText>
-									<reportElement uuid="01fa4e65-8543-4e32-999a-316731ec9107" mode="Transparent" x="0" y="0" width="20" height="18"/>
+									<reportElement uuid="01fa4e65-8543-4e32-999a-316731ec9107" mode="Transparent" x="0" y="0" width="18" height="18"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
 									</textElement>
 									<text><![CDATA[No]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:detailCell style="table_TD" height="13" rowSpan="1">
+							<jr:detailCell style="table_TD" height="11" rowSpan="1">
 								<textField>
-									<reportElement uuid="e9326d98-9768-40c4-b954-a16d2717d26e" x="0" y="1" width="20" height="10"/>
+									<reportElement uuid="e9326d98-9768-40c4-b954-a16d2717d26e" x="0" y="1" width="18" height="9"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
 									</textElement>
@@ -473,19 +519,19 @@ GROUP BY
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="32" uuid="d403e91e-8f6e-4736-bfbb-3cded5458f29">
+						<jr:column width="24" uuid="d403e91e-8f6e-4736-bfbb-3cded5458f29">
 							<jr:columnHeader style="table_TD" height="18" rowSpan="1">
 								<staticText>
-									<reportElement uuid="029e25f9-bb59-4d7d-9e17-ae2c0c5570a4" mode="Transparent" x="0" y="0" width="32" height="18"/>
+									<reportElement uuid="029e25f9-bb59-4d7d-9e17-ae2c0c5570a4" mode="Transparent" x="0" y="0" width="24" height="18"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
 									</textElement>
 									<text><![CDATA[Código]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:detailCell style="table_TD" height="13" rowSpan="1">
+							<jr:detailCell style="table_TD" height="11" rowSpan="1">
 								<textField>
-									<reportElement uuid="e9326d98-9768-40c4-b954-a16d2717d26e" x="1" y="1" width="29" height="10"/>
+									<reportElement uuid="e9326d98-9768-40c4-b954-a16d2717d26e" x="1" y="1" width="21" height="9"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
 									</textElement>
@@ -493,19 +539,19 @@ GROUP BY
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="187" uuid="a9d73e29-faa3-47de-a102-6538a3815236">
+						<jr:column width="150" uuid="a9d73e29-faa3-47de-a102-6538a3815236">
 							<jr:columnHeader style="table_TD" height="18" rowSpan="1">
 								<staticText>
-									<reportElement uuid="860382b0-b7e8-4c78-a24c-ee1c3bcc157c" x="0" y="0" width="187" height="18"/>
+									<reportElement uuid="860382b0-b7e8-4c78-a24c-ee1c3bcc157c" x="0" y="0" width="150" height="18"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
 									</textElement>
 									<text><![CDATA[Nombre del Centro Educativo]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:detailCell style="table_TD" height="13" rowSpan="1">
+							<jr:detailCell style="table_TD" height="11" rowSpan="1">
 								<textField isStretchWithOverflow="true">
-									<reportElement uuid="53794b82-0bae-4b3d-998c-4e1e7ba8b71f" stretchType="RelativeToTallestObject" x="2" y="1" width="183" height="10" isPrintWhenDetailOverflows="true"/>
+									<reportElement uuid="53794b82-0bae-4b3d-998c-4e1e7ba8b71f" stretchType="RelativeToTallestObject" x="2" y="1" width="146" height="9" isPrintWhenDetailOverflows="true"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Arial" size="6"/>
 									</textElement>
@@ -514,19 +560,19 @@ GROUP BY
 							</jr:detailCell>
 						</jr:column>
 					</jr:columnGroup>
-					<jr:column width="73" uuid="eae4a15b-3bf9-4aea-a369-39e944e8ce31">
+					<jr:column width="63" uuid="eae4a15b-3bf9-4aea-a369-39e944e8ce31">
 						<jr:columnHeader style="table_TD" height="18" rowSpan="1">
 							<staticText>
-								<reportElement uuid="12149d4a-17d6-48ef-a63e-95ebcb8b32de" mode="Transparent" x="0" y="0" width="73" height="18"/>
+								<reportElement uuid="12149d4a-17d6-48ef-a63e-95ebcb8b32de" mode="Transparent" x="0" y="0" width="63" height="18"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="7"/>
 								</textElement>
 								<text><![CDATA[NIT]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="table_TD" height="13" rowSpan="1">
+						<jr:detailCell style="table_TD" height="11" rowSpan="1">
 							<textField>
-								<reportElement uuid="0ffeedd6-5da8-48f1-87b7-df3b849a99e7" x="1" y="1" width="70" height="10"/>
+								<reportElement uuid="0ffeedd6-5da8-48f1-87b7-df3b849a99e7" x="1" y="1" width="60" height="9"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial" size="6"/>
 								</textElement>
@@ -534,11 +580,11 @@ GROUP BY
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:columnGroup width="413" uuid="d09284d2-faf6-483f-8d39-e397f410b5dc">
-						<jr:column width="187" uuid="0b1608b1-68eb-4bf0-b163-efb6831e8668">
+					<jr:columnGroup width="464" uuid="d09284d2-faf6-483f-8d39-e397f410b5dc">
+						<jr:column width="130" uuid="0b1608b1-68eb-4bf0-b163-efb6831e8668">
 							<jr:columnHeader style="table_TD" height="18" rowSpan="1">
 								<staticText>
-									<reportElement uuid="6d075b8a-5451-49a9-9483-47e16d638950" mode="Transparent" x="0" y="0" width="187" height="18"/>
+									<reportElement uuid="6d075b8a-5451-49a9-9483-47e16d638950" mode="Transparent" x="0" y="0" width="130" height="18"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
 									</textElement>
@@ -547,16 +593,16 @@ GROUP BY
 							</jr:columnHeader>
 							<jr:columnFooter height="13" rowSpan="1">
 								<staticText>
-									<reportElement uuid="6d075b8a-5451-49a9-9483-47e16d638950" mode="Transparent" x="0" y="0" width="187" height="13"/>
+									<reportElement uuid="6d075b8a-5451-49a9-9483-47e16d638950" mode="Transparent" x="0" y="0" width="130" height="13"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="7" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Total]]></text>
 								</staticText>
 							</jr:columnFooter>
-							<jr:detailCell style="table_TD" height="13" rowSpan="1">
+							<jr:detailCell style="table_TD" height="11" rowSpan="1">
 								<textField isStretchWithOverflow="true">
-									<reportElement uuid="26ab9b1a-1983-4f26-9d76-1d279860cd58" stretchType="RelativeToTallestObject" x="1" y="1" width="184" height="10" isPrintWhenDetailOverflows="true"/>
+									<reportElement uuid="26ab9b1a-1983-4f26-9d76-1d279860cd58" stretchType="RelativeToTallestObject" x="1" y="1" width="127" height="9" isPrintWhenDetailOverflows="true"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Arial" size="6"/>
 									</textElement>
@@ -564,28 +610,115 @@ GROUP BY
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="68" uuid="f83322ad-d5ab-4d7f-833d-ce1827d3f4ac">
+						<jr:column width="53" uuid="f83322ad-d5ab-4d7f-833d-ce1827d3f4ac">
 							<jr:columnHeader style="table_TD" height="18" rowSpan="1">
 								<staticText>
-									<reportElement uuid="6d075b8a-5451-49a9-9483-47e16d638950" mode="Transparent" x="0" y="0" width="68" height="18"/>
+									<reportElement uuid="6d075b8a-5451-49a9-9483-47e16d638950" mode="Transparent" x="0" y="0" width="53" height="18"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
 									</textElement>
-									<text><![CDATA[Monto ($)]]></text>
+									<text><![CDATA[Monto Contrato]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:columnFooter height="13" rowSpan="1">
 								<textField isStretchWithOverflow="true" pattern="#,##0.00">
-									<reportElement uuid="26ab9b1a-1983-4f26-9d76-1d279860cd58" stretchType="RelativeToTallestObject" x="0" y="0" width="67" height="13" isPrintWhenDetailOverflows="true"/>
+									<reportElement uuid="26ab9b1a-1983-4f26-9d76-1d279860cd58" stretchType="RelativeToTallestObject" x="0" y="0" width="52" height="13" isPrintWhenDetailOverflows="true"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Arial" size="7" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{montoContrato}]]></textFieldExpression>
+								</textField>
+							</jr:columnFooter>
+							<jr:detailCell style="table_TD" height="11" rowSpan="1">
+								<textField isStretchWithOverflow="true" pattern="#,##0.00">
+									<reportElement uuid="26ab9b1a-1983-4f26-9d76-1d279860cd58" stretchType="RelativeToTallestObject" x="1" y="1" width="50" height="9" isPrintWhenDetailOverflows="true"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{MONTO_CONTRATO}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="53" uuid="956bb3b7-9a7c-4f8c-870d-2a4635514624">
+							<jr:columnHeader style="table_TD" height="18" rowSpan="1">
+								<staticText>
+									<reportElement uuid="6d075b8a-5451-49a9-9483-47e16d638950" mode="Transparent" x="0" y="0" width="53" height="18"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<text><![CDATA[Monto Requerimiento]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter style="table_TD" height="13" rowSpan="1">
+								<textField isStretchWithOverflow="true" pattern="#,##0.00">
+									<reportElement uuid="26ab9b1a-1983-4f26-9d76-1d279860cd58" stretchType="RelativeToTallestObject" x="0" y="0" width="52" height="13" isPrintWhenDetailOverflows="true"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Arial" size="7" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{montoRequerimiento}]]></textFieldExpression>
+								</textField>
+							</jr:columnFooter>
+							<jr:detailCell style="table_TD" height="11" rowSpan="1">
+								<textField isStretchWithOverflow="true" pattern="#,##0.00">
+									<reportElement uuid="26ab9b1a-1983-4f26-9d76-1d279860cd58" stretchType="RelativeToTallestObject" x="1" y="1" width="50" height="9" isPrintWhenDetailOverflows="true"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{MONTO_REQUERIMIENTO}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="53" uuid="08da7834-234b-4d59-a9d6-f1e64552df1a">
+							<jr:columnHeader style="table_TD" height="18" rowSpan="1">
+								<staticText>
+									<reportElement uuid="6d075b8a-5451-49a9-9483-47e16d638950" mode="Transparent" x="0" y="0" width="53" height="18"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="7" isStrikeThrough="false"/>
+									</textElement>
+									<text><![CDATA[Monto Modificativa]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter style="table_TD" height="13" rowSpan="1">
+								<textField isStretchWithOverflow="true" pattern="#,##0.00">
+									<reportElement uuid="26ab9b1a-1983-4f26-9d76-1d279860cd58" stretchType="RelativeToTallestObject" x="0" y="0" width="52" height="13" isPrintWhenDetailOverflows="true"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Arial" size="7" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{montoModificativa}]]></textFieldExpression>
+								</textField>
+							</jr:columnFooter>
+							<jr:detailCell style="table_TD" height="11" rowSpan="1">
+								<textField isStretchWithOverflow="true" pattern="#,##0.00">
+									<reportElement uuid="26ab9b1a-1983-4f26-9d76-1d279860cd58" stretchType="RelativeToTallestObject" x="1" y="1" width="50" height="9" isPrintWhenDetailOverflows="true"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{MONTO_MODIFICATIVA}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="53" uuid="8ce973ab-e804-4a67-b485-cc349dfd6fdc">
+							<jr:columnHeader style="table_TD" height="18" rowSpan="1">
+								<staticText>
+									<reportElement uuid="6d075b8a-5451-49a9-9483-47e16d638950" mode="Transparent" x="0" y="0" width="53" height="18"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="7"/>
+									</textElement>
+									<text><![CDATA[Monto Cheque]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter style="table_TD" height="13" rowSpan="1">
+								<textField isStretchWithOverflow="true" pattern="#,##0.00">
+									<reportElement uuid="26ab9b1a-1983-4f26-9d76-1d279860cd58" stretchType="RelativeToTallestObject" x="0" y="0" width="52" height="13" isPrintWhenDetailOverflows="true"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Arial" size="7" isBold="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$V{montoTotal}]]></textFieldExpression>
 								</textField>
 							</jr:columnFooter>
-							<jr:detailCell style="table_TD" height="13" rowSpan="1">
+							<jr:detailCell style="table_TD" height="11" rowSpan="1">
 								<textField isStretchWithOverflow="true" pattern="#,##0.00">
-									<reportElement uuid="26ab9b1a-1983-4f26-9d76-1d279860cd58" stretchType="RelativeToTallestObject" x="1" y="1" width="65" height="10" isPrintWhenDetailOverflows="true"/>
+									<reportElement uuid="26ab9b1a-1983-4f26-9d76-1d279860cd58" stretchType="RelativeToTallestObject" x="1" y="1" width="50" height="9" isPrintWhenDetailOverflows="true"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
 									</textElement>
@@ -593,19 +726,19 @@ GROUP BY
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="158" uuid="42790c7f-4170-485f-afc3-2ac2a6106221">
+						<jr:column width="122" uuid="42790c7f-4170-485f-afc3-2ac2a6106221">
 							<jr:columnHeader style="table_TD" height="18" rowSpan="1">
 								<staticText>
-									<reportElement uuid="86371381-5548-412e-97e7-fa251a4afebc" mode="Transparent" x="0" y="0" width="157" height="18"/>
+									<reportElement uuid="86371381-5548-412e-97e7-fa251a4afebc" mode="Transparent" x="0" y="0" width="122" height="18"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Arial" size="7"/>
 									</textElement>
 									<text><![CDATA[Entidad Financiadora]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:detailCell style="table_TD" height="13" rowSpan="1">
+							<jr:detailCell style="table_TD" height="11" rowSpan="1">
 								<textField isStretchWithOverflow="true">
-									<reportElement uuid="26ab9b1a-1983-4f26-9d76-1d279860cd58" stretchType="RelativeToTallestObject" x="2" y="1" width="154" height="10" isPrintWhenDetailOverflows="true"/>
+									<reportElement uuid="26ab9b1a-1983-4f26-9d76-1d279860cd58" stretchType="RelativeToTallestObject" x="2" y="1" width="119" height="9" isPrintWhenDetailOverflows="true"/>
 									<textElement verticalAlignment="Middle">
 										<font fontName="Arial" size="6"/>
 									</textElement>
