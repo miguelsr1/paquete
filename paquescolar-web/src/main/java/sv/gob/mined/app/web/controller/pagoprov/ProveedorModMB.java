@@ -533,31 +533,31 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
                     switch (precio.getIdNivelEducativo().getIdNivelEducativo().intValue()) {
                         case 1:
                             det.setNoItem("1");
-                            det.setConsolidadoEspTec("Utiles Escolares, PARVULARIA");
+                            det.setConsolidadoEspTec("Útiles Escolares, PARVULARIA");
                             break;
                         case 3:
                             det.setNoItem("2");
-                            det.setConsolidadoEspTec("Utiles Escolares, PRIMER CICLO");
+                            det.setConsolidadoEspTec("Útiles Escolares, PRIMER CICLO");
                             break;
                         case 4:
                             det.setNoItem("3");
-                            det.setConsolidadoEspTec("Utiles Escolares, SEGUNDO CICLO");
+                            det.setConsolidadoEspTec("Útiles Escolares, SEGUNDO CICLO");
                             break;
                         case 5:
                             det.setNoItem("4");
-                            det.setConsolidadoEspTec("Utiles Escolares, TERCER CICLO");
+                            det.setConsolidadoEspTec("Útiles Escolares, TERCER CICLO");
                             break;
                         case 6:
                             det.setNoItem("5");
-                            det.setConsolidadoEspTec("Utiles Escolares, BACHILLERATO");
+                            det.setConsolidadoEspTec("Útiles Escolares, BACHILLERATO");
                             break;
                         case 7:
                             det.setNoItem("6");
-                            det.setConsolidadoEspTec("Utiles Escolares, INICIAL");
+                            det.setConsolidadoEspTec("Útiles Escolares, INICIAL");
                             break;
                         case 8:
                             det.setNoItem("7");
-                            det.setConsolidadoEspTec("Utiles Escolares, MODALIDAD FLEXIBLE");
+                            det.setConsolidadoEspTec("Útiles Escolares, MODALIDAD FLEXIBLE");
                             break;
                     }
                     det.setPrecioUnitario(precio.getPrecioMaxFem());

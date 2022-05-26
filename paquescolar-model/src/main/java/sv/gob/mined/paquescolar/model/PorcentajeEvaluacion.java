@@ -32,7 +32,7 @@ public class PorcentajeEvaluacion implements Serializable {
     @Column(name = "ID_PORCENTAJE")
     private Long idPorcentaje;
     @Column(name = "ID_RUBRO_INTERES")
-    private BigInteger idRubroInteres;
+    private Long idRubroInteres;
     @Column(name = "ID_ANHO")
     private Long idAnho;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -64,11 +64,11 @@ public class PorcentajeEvaluacion implements Serializable {
         this.idPorcentaje = idPorcentaje;
     }
 
-    public BigInteger getIdRubroInteres() {
+    public Long getIdRubroInteres() {
         return idRubroInteres;
     }
 
-    public void setIdRubroInteres(BigInteger idRubroInteres) {
+    public void setIdRubroInteres(Long idRubroInteres) {
         this.idRubroInteres = idRubroInteres;
     }
 
@@ -118,15 +118,12 @@ public class PorcentajeEvaluacion implements Serializable {
             return false;
         }
         PorcentajeEvaluacion other = (PorcentajeEvaluacion) object;
-        if ((this.idPorcentaje == null && other.idPorcentaje != null) || (this.idPorcentaje != null && !this.idPorcentaje.equals(other.idPorcentaje))) {
-            return false;
-        }
-        return true;
+        return !((this.idPorcentaje == null && other.idPorcentaje != null) || (this.idPorcentaje != null && !this.idPorcentaje.equals(other.idPorcentaje)));
     }
 
     @Override
     public String toString() {
         return "sv.gob.mined.paquescolar.model.PorcentajeEvaluacion[ idPorcentaje=" + idPorcentaje + " ]";
     }
-    
+
 }

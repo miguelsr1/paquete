@@ -318,10 +318,7 @@ public class ContratosOrdenesCompras implements Serializable {
             return false;
         }
         ContratosOrdenesCompras other = (ContratosOrdenesCompras) object;
-        if ((this.idContrato == null && other.idContrato != null) || (this.idContrato != null && !this.idContrato.equals(other.idContrato))) {
-            return false;
-        }
-        return true;
+        return !((this.idContrato == null && other.idContrato != null) || (this.idContrato != null && !this.idContrato.equals(other.idContrato)));
     }
 
     @Override

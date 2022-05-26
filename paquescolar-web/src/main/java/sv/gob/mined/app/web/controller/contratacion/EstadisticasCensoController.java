@@ -878,9 +878,9 @@ public class EstadisticasCensoController implements Serializable {
 
             if (procesoAdquisicion != null) {
                 organizacionEducativa = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
-                organizacionEducativaEncargadoCompra = entidadEducativaEJB.getMiembro(codigoEntidad, "ENCARGADO_COMPRA");
+                organizacionEducativaEncargadoCompra = entidadEducativaEJB.getMiembro(codigoEntidad, "ENCARGADO DE COMPRA");
                 orgTesorero = entidadEducativaEJB.getMiembro(codigoEntidad, "TESORERO");
-                orgConsejal = entidadEducativaEJB.getMiembro(codigoEntidad, "CONSEJAL");
+                orgConsejal = entidadEducativaEJB.getMiembro(codigoEntidad, "ENCARGADO DE COMPRA");
 
                 if (organizacionEducativa.getIdOrganizacionEducativa() == null) {
                     organizacionEducativa.setCargo("Presidente Propietario, Director");
@@ -899,7 +899,7 @@ public class EstadisticasCensoController implements Serializable {
                 }
 
                 if (organizacionEducativaEncargadoCompra.getIdOrganizacionEducativa() == null) {
-                    organizacionEducativaEncargadoCompra.setCargo("ENCARGADO_COMPRA");
+                    organizacionEducativaEncargadoCompra.setCargo("ENCARGADO DE COMPRA");
                     organizacionEducativaEncargadoCompra.setCodigoEntidad(codigoEntidad);
                     organizacionEducativaEncargadoCompra.setEstadoEliminacion(BigInteger.ZERO);
                     organizacionEducativaEncargadoCompra.setFechaInsercion(new Date());
@@ -1390,7 +1390,7 @@ public class EstadisticasCensoController implements Serializable {
 
             organizacionEducativaEncargadoCompra.setNombreMiembro(nombreEncargadoCompras);
             initOrg(orgTesorero, "TESORERO", nombreTesorero);
-            initOrg(orgConsejal, "CONSEJAL", nombreConsejal);
+            initOrg(orgConsejal, "ENCARGADO DE COMPRAS", nombreConsejal);
 
             entidadEducativaEJB.guardar(organizacionEducativaEncargadoCompra);
             entidadEducativaEJB.guardar(orgTesorero);

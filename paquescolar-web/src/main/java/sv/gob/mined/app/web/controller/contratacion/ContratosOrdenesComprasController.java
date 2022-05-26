@@ -431,7 +431,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
             razonSocial = resolucionAdj.getIdParticipante().getIdEmpresa().getRazonSocial();
             representanteLegal = proveedorEJB.getRespresentanteLegalEmp(resolucionAdj.getIdParticipante().getIdEmpresa().getIdPersona().getIdPersona());
             representanteCe = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
-            nombreEncargadoCompra = entidadEducativaEJB.getMiembro(codigoEntidad, "ENCARGADO_COMPRA").getNombreMiembro();
+            nombreEncargadoCompra = entidadEducativaEJB.getMiembro(codigoEntidad, "ENCARGADO DE COMPRA").getNombreMiembro();
 
             soloLectura = (resolucionAdj.getIdEstadoReserva().getIdEstadoReserva().intValue() == 2);
 
@@ -635,7 +635,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                     }
                                 }
 
-                                nombreEncargadoCompra = entidadEducativaEJB.getMiembro(codigoEntidad, "ENCARGADO_COMPRA").getNombreMiembro();
+                                nombreEncargadoCompra = entidadEducativaEJB.getMiembro(codigoEntidad, "ENCARGADO DE COMPRA").getNombreMiembro();
                                 //BUSCAR REPRESENTANTE DEL ORGANISMO DE ADMINISTRACION ESCOLAR
                                 representanteCe = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
                                 if (representanteCe == null) {

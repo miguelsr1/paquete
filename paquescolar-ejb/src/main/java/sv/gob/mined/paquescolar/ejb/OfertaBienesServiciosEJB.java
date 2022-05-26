@@ -42,7 +42,7 @@ import sv.gob.mined.paquescolar.util.Constantes;
  */
 @Stateless
 @LocalBean
-public class OfertaBienesServiciosEJB {
+public class OfertaBienesServiciosEJB  {
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")

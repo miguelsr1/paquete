@@ -470,7 +470,7 @@ public class EntidadEducativaEJB {
                             //case 6://mascarillas
                             if (fem.intValue() > 0 || mas.intValue() > 0) {
                                 noItemSeparados += (noItemSeparados.isEmpty() ? "" : " and ") + "item_" + ((BigDecimal) datos[0]).intValue() + " = '" + ((BigDecimal) datos[0]).intValue() + "'";
-                                noItems += (noItems.isEmpty() ? "" : " , ") + "'" + ((BigDecimal) datos[0]).intValue() + "'";
+                                noItems += (noItems.isEmpty() ? "" : " , ") + "'1'";
                             }
                             break;
                         case 3://zapatos

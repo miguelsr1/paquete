@@ -142,6 +142,11 @@
     <class>sv.gob.mined.paquescolar.model.LiquidacionDetalleDonacion</class>
     <class>sv.gob.mined.paquescolar.model.pojos.contratacion.CapAcreAdjPorCapaDto</class>
     <class>sv.gob.mined.paquescolar.model.pojos.contratacion.PorCapaGeoPorPrecioDto</class>
+    <class>sv.gob.mined.paquescolar.model.LiquidacionFinanciera</class>
+    <class>sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiqFinanConModifDto</class>
+    <class>sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiqFinanConOrigDto</class>
+    <class>sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiqFinanConRecepDto</class>
+    <class>sv.gob.mined.paquescolar.model.HistorialLiquiFinan</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>

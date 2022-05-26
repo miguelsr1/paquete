@@ -25,8 +25,6 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -42,6 +40,7 @@ import sv.gob.mined.paquescolar.model.pojos.credito.ResumenCreditosDto;
 import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
 import sv.gob.mined.paquescolar.model.pojos.credito.DatosProveedoresFinanDto;
+import sv.gob.mined.paquescolar.model.pojos.liquidacion.RptLiquidacionDto;
 
 /**
  *
@@ -55,7 +54,7 @@ public class RptExcel {
     public static void generarRptGenerico(List<? extends Object> lst, String nombreExcel, int rowInicial) {
         HSSFCellStyle style;
         int row = rowInicial;
-        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/" + nombreExcel + ".xls")) {
+        try ( InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/" + nombreExcel + ".xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             style = wb1.createCellStyle();
@@ -115,7 +114,7 @@ public class RptExcel {
     public static void generarRptProveedoresHacienda(List<VwRptProveedoresContratadosDto> lst) {
         HSSFCellStyle style;
         int row = 1;
-        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/proveedoresHacienda.xls")) {
+        try ( InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/proveedoresHacienda.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             style = wb1.createCellStyle();
@@ -146,7 +145,7 @@ public class RptExcel {
     public static void generarRptRentaAnual(List<DatosProveDto> lstDatos, String anho) {
         HSSFCellStyle style;
         int row = 1;
-        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptRentaAnual.xls")) {
+        try ( InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptRentaAnual.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             style = wb1.createCellStyle();
@@ -198,12 +197,18 @@ public class RptExcel {
 
     private static void escribirNumero(String text, Integer row, Integer col, CellStyle style, Boolean entero, HSSFSheet hoja) {
         text = text.replace(",", "");
-        HSSFRow hrow = hoja.getRow(row);
-        HSSFCell cell = hrow.getCell(col);
-        if (cell == null) {
-            hrow.createCell(col);
-            cell = hrow.getCell(col);
+        Row hrow;
+        Cell cell;
+        if (hoja.getRow(row) == null) {
+            hrow = hoja.createRow(row);
+            cell = hrow.createCell(col);
+        } else {
+            hrow = hoja.getRow(row);
+            cell = hrow.createCell(col);
+            cell.setCellValue(text);
+            cell.setCellStyle(style);
         }
+        
         style.setDataFormat(entero ? FORMATO_DATA.getFormat("#,##0") : FORMATO_DATA.getFormat("#,##0.00"));
         cell.setCellStyle(style);
         if (text != null && !text.isEmpty()) {
@@ -212,7 +217,7 @@ public class RptExcel {
     }
 
     private static void generarArchivo(Workbook wb, String nombreFile) {
-        try (ByteArrayOutputStream outByteStream = new ByteArrayOutputStream()) {
+        try ( ByteArrayOutputStream outByteStream = new ByteArrayOutputStream()) {
             wb.write(outByteStream);
             byte[] outArray = outByteStream.toByteArray();
             UtilFile.downloadFileBytes(outArray, nombreFile, UtilFile.CONTENIDO_XLS, UtilFile.EXTENSION_XLS);
@@ -224,7 +229,7 @@ public class RptExcel {
     public static void generarRptRentaMensual(List<DatosProveDto> lst) {
         HSSFCellStyle style;
         int row = 2;
-        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rentaMensual.xls")) {
+        try ( InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rentaMensual.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             style = wb1.createCellStyle();
@@ -254,7 +259,7 @@ public class RptExcel {
     }
 
     public static void generarRptResumenGeneralCreditos(List<ResumenCreditosDto> listaResumenGen, String anho) {
-        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptCreditoResumenGeneral.xls")) {
+        try ( InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptCreditoResumenGeneral.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             HSSFSheet hoja = wb1.getSheetAt(0);
@@ -373,12 +378,10 @@ public class RptExcel {
     }
 
     public static void generarRptResumenPorRubroYFinanciera(List<DatosProveedoresFinanDto> listaProvGral, String anho) {
-        try (InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptCreditoRubroEntidadFinanciera.xls")) {
+        try ( InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptCreditoRubroEntidadFinanciera.xls")) {
             wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
             FORMATO_DATA = wb1.createDataFormat();
             HSSFSheet hoja = wb1.getSheetAt(0);
-            
-            
 
             HSSFFont font = (HSSFFont) wb1.createFont();
             font.setBold(true);
@@ -526,5 +529,42 @@ public class RptExcel {
         }
 
         sheet.autoSizeColumn(1);
+    }
+
+    public static void generarRptLiquidacion(String codigoDepartamento, Integer idDetProcesoAdq, List<RptLiquidacionDto> lstLiquidacion) {
+        HSSFCellStyle style;
+        int row = 1;
+        try ( InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/reporteLiquidacion.xls")) {
+            wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
+            FORMATO_DATA = wb1.createDataFormat();
+            style = wb1.createCellStyle();
+            style.setWrapText(true);
+            style.setBorderBottom(BorderStyle.THIN);
+            style.setBorderTop(BorderStyle.THIN);
+            style.setBorderRight(BorderStyle.THIN);
+            style.setBorderLeft(BorderStyle.THIN);
+
+            HSSFSheet s1 = wb1.getSheetAt(0);   //sheet by index
+            for (RptLiquidacionDto dato : lstLiquidacion) {
+                escribirNumero(String.valueOf(row), row, 0, style, true, s1);
+                escribirTexto(dato.getCodigoEntidad(), row, 1, style, s1);
+                escribirTexto(dato.getNombre(), row, 2, style, s1);
+                escribirTexto(dato.getNombreDepartamento(), row, 3, style, s1);
+                escribirTexto(dato.getNombreMunicipio(), row, 4, style, s1);
+                escribirTexto(dato.getDescripcionRubro(), row, 5, style, s1);
+                escribirTexto(dato.getNumeroNit(), row, 6, style, s1);
+                escribirTexto(dato.getRazonSocial(), row, 7, style, s1);
+                escribirNumero(dato.getCantidad().toString(), row, 8, style, true, s1);
+                escribirNumero(dato.getMonto().toString(), row, 9, style, false, s1);
+                escribirTexto(dato.getEstadoReserva(), row, 10, style, s1);
+                escribirTexto(dato.getActaEntrega(), row, 11, style, s1);
+                escribirTexto(dato.getEstadoLiquidacion(), row, 12, style, s1);
+                escribirFecha(dato.getFechaLiquidacion(), row, 13, style, s1);
+                row++;
+            }
+            generarArchivo(wb1, "Paquete-ReporteLiquidacion");
+        } catch (IOException ex) {
+            Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

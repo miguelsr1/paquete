@@ -58,7 +58,7 @@ public class ParametrosMB implements Serializable {
     private DatosGeograficosEJB datosGeograficosEJB;
     @EJB
     private AnhoProcesoEJB anhoProcesoEJB;
-
+    
     @PostConstruct
     public void init() {
         Map<String, Object> requestCookieMap = FacesContext.getCurrentInstance().getExternalContext().getRequestCookieMap();

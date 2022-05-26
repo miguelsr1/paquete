@@ -7,6 +7,7 @@ package sv.gob.mined.paquescolar.model.pojos;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.Transient;
 import sv.gob.mined.paquescolar.model.EstadisticaCenso;
@@ -16,10 +17,12 @@ import sv.gob.mined.paquescolar.model.EstadisticaCenso;
  * @author misanchez
  */
 @Entity
+@NamedNativeQueries({
 @NamedNativeQuery(
         name = "cabeceraCertificacionPre",
         query = "SELECT nombre_departamento as nombreDepartamento, nombre_municipio as nombreMunicipio, codigo_entidad as codigoEntidad, nombre, iniciales_modalidad as modalidadDeAdministracion FROM vw_cabecera_certificacion_pre WHERE codigo_entidad = ?1",
         resultClass = VwRptCertificacionPresupuestaria.class)
+})
 
 public class VwRptCertificacionPresupuestaria implements Serializable {
 

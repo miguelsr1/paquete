@@ -349,4 +349,108 @@ public class JsfUtil {
     public static Session getSessionMailG(String numero) {
         return MailSession.getMailSessionOffice(JsfUtil.getValorFromBundleByKey("cuenta" + numero + ".name"), JsfUtil.getValorFromBundleByKey("cuenta" + numero + ".pass"));
     }
+    
+    public static String getNombreItem(String noItem, BigDecimal idRubro){
+        String item = "";
+        switch(idRubro.intValue()){
+            case 4:
+            case 5:
+                switch(noItem){
+                    case "1":
+                        item = "Blusas, INICIAL Y PARVULARIA";
+                        break;
+                    case "2":
+                        item = "Falda, INICIAL Y PARVULARIA";
+                        break;
+                    case "3":
+                        item = "Camisas, INICIAL Y PARVULARIA";
+                        break;
+                    case "4":
+                        item = "Pantalon Corto, INICIAL Y PARVULARIA";
+                        break;
+                    case "5":
+                        item = "Pantalón, INICIAL Y PARVULARIA";
+                        break;
+                    case "6":
+                        item = "Blusas, BASICA(I, II Y III)";
+                        break;
+                    case "7":
+                        item = "Falda, BASICA(I, II Y III)";
+                        break;
+                    case "8":
+                        item = "Camisas, BASICA(I, II Y III)";
+                        break;
+                    case "9":
+                        item = "Pantalón, BASICA(I, II Y III)";
+                        break;
+                    case "10":
+                        item = "Blusas, BACHILLERATO";
+                        break;
+                    case "11":
+                        item = "Falda, BACHILLERATO";
+                        break;
+                    case "12":
+                        item = "Camisas, BACHILLERATO";
+                        break;
+                    case "13":
+                        item = "Pantalón, BACHILLERATO";
+                        break;
+                }
+                break;
+            case 2:
+                switch(noItem){
+                    case "1":
+                        item = "Útiles Escolares, INICIAL Y PARVULARIA";
+                        break;
+                    case "2":
+                        item = "Útiles Escolares, PRIMER CICLO";
+                        break;
+                    case "3":
+                        item = "Útiles Escolares, SEGUNDO CICLO";
+                        break;
+                    case "4":
+                        item = "Útiles Escolares, TERCER CICLO";
+                        break;
+                    case "5":
+                        item = "Útiles Escolares, BACHILLERATO";
+                        break;
+                }
+                break;
+            case 3:
+                switch(noItem){
+                    case "1":
+                        item = "Zapato de niña, INICIAL Y PARVULARIA";
+                        break;
+                    case "2":
+                        item = "Zapato de niño, INICIAL Y PARVULARIA";
+                        break;
+                    case "3":
+                        item = "Zapato de niña, PRIMER CICLO";
+                        break;
+                    case "4":
+                        item = "Zapato de niño, PRIMER CICLO";
+                        break;
+                    case "5":
+                        item = "Zapato de niña, SEGUNDO CICLO";
+                        break;
+                    case "6":
+                        item = "Zapato de niño, SEGUNDO CICLO";
+                        break;
+                    case "7":
+                        item = "Zapato de niña, TERCER CICLO";
+                        break;
+                    case "8":
+                        item = "Zapato de niño, TERCER CICLO";
+                        break;
+                    case "9":
+                        item = "Zapato de niña, BACHILLERATO";
+                        break;
+                    case "10":
+                        item = "Zapato de niño, BACHILLERATO";
+                        break;
+                }
+                break;
+        }
+        return item;
+    }
 }

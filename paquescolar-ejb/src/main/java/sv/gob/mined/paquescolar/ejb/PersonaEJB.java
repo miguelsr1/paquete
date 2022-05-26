@@ -84,6 +84,9 @@ public class PersonaEJB {
             case 6: // REFERENTE DEPARTAMENTAL
                 setOpcionesUsuario("31,32,34,39,42,43,45,50,61,62,68,54,73,74", usuarioObj.getIdUsuario());
                 break;
+            case 10: // LIQUIDACION
+                setOpcionesUsuario("46,52,78,84", usuarioObj.getIdUsuario());
+                break;
         }
     }
 

@@ -17,7 +17,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import sv.gob.mined.app.web.controller.ParametrosMB;
-//import sv.gob.mined.app.web.controller.AnhoProcesoController;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
 import sv.gob.mined.app.web.util.VarSession;

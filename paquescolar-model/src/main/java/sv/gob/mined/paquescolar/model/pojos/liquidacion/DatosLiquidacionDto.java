@@ -22,7 +22,7 @@ public class DatosLiquidacionDto implements Serializable {
     private BigDecimal precioUnitarioContrato;
     private BigDecimal precioUnitarioModificativa;
     private BigDecimal cantidadResguardo;
-    
+
     private Long totalDonacion = 0l;
 
     private List<LiquidacionDetalleDonacion> detDonacion = new ArrayList();
@@ -74,6 +74,9 @@ public class DatosLiquidacionDto implements Serializable {
     }
 
     public BigDecimal getCantidadRecepcion() {
+        if (cantidadRecepcion == null) {
+            return BigDecimal.ZERO;
+        }
         return cantidadRecepcion;
     }
 

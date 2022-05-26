@@ -114,7 +114,9 @@
             </div>
         </div>
 
-        <p:dialog id="dlgImprimir" widgetVar="dlgImprimir" header="Tipo de documento" >
+        <p:dialog id="dlgImprimir" widgetVar="dlgImprimir" header="Tipo de documento" 
+                  modal="true" position="center center" onShow="PF('dlgImprimir').initPosition()"
+                  dynamic="true" responsive="true" resizable="false" hideEffect="fade" showEffect="fade">
             <p:panel>
                 <p:outputLabel value="¿Qué tipo de documento desea imprimir?"/>
                 <h:panelGrid columns="2">
@@ -132,7 +134,9 @@
 
 
 
-        <p:dialog id="dlgProveedor" widgetVar="dlgProveedor" header="Seleccione un proveedor" closable="true" style="font-size: 11px;" modal="true" showEffect="fade" hideEffect="fade" minWidth="1000" width="1000" height="500">
+        <p:dialog id="dlgProveedor" widgetVar="dlgProveedor" header="Seleccione un proveedor" closable="true" style="font-size: 11px;" minWidth="1000" width="1000" height="500"
+                  modal="true" position="center center" onShow="PF('dlgProveedor').initPosition()"
+                  dynamic="true" responsive="true" resizable="false" hideEffect="fade" showEffect="fade">
             <p:outputPanel id="pnoCantidad">
                 <h:panelGrid columns="2">
                     <p:outputLabel value="Número de alumnos: "/>
@@ -183,7 +187,9 @@
 
 
         <p:dialog id="dlgDetalleProveedor" header="#{menuController.isUsuarioDigitador?('PROVE-'.concat(ofertaMB.empresaSeleccionada.idEmpresa)):ofertaMB.empresaSeleccionada.razonSocial}"
-                  showEffect="fade" hideEffect="fade"  widgetVar="dlgDetalleProveedor" width="670" height="550"  >
+                  widgetVar="dlgDetalleProveedor" width="670" height="550"  
+                  modal="true" position="center center" onShow="PF('dlgDetalleProveedor').initPosition()"
+                  dynamic="true" responsive="true" resizable="false" hideEffect="fade" showEffect="fade">
             <h:panelGrid columns="1" >
                 <p:tabView>
                     <p:tab title="Fotos productos"  rendered="#{ofertaMB.rubro eq 3}">

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
+    xmlns:jsf="http://xmlns.jcp.org/jsf">
+    <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" action="#{liquidacionFinancieraView.nuevo()}" id="mtmNuevo" update="pnlFiltro pnlContratoOri pnlContratoMod pnlContratoEnt pnlEstLiqui pnlDato pnlContratoDetPago" process="@this"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" disabled="true"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" ajax="true" action="#{liquidacionFinancieraView.guardar()}"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options" class="centradoVertical">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+
+
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <h1>
+                        <i class="fa fa-file-text-o blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro"/>
+                    </h1>
+
+                    <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" for="cboRubro" />
+                        <p:selectOneMenu id="cboRubro" value="#{liquidacionFinancieraView.idRubro}" required="true" requiredMessage="Debe de seleccionar el rubro de adquisición" >
+                            <f:selectItem itemLabel="Seleccione un rubro" noSelectionOption="true" />
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <p:ajax update=":frmPrincipal:pnlFiltro"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
+                        <p:outputPanel id="codigoEntidad" >
+                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{liquidacionFinancieraView.codigoEntidad}" size="6" autocomplete="off" required="true"
+                                         requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5" >
+                                <p:ajax event="keyup" update="menuBar nombreCE cboProveedor pnlFiltro" listener="#{liquidacionFinancieraView.buscarEntidadEducativa}"/>
+                            </p:inputText>
+                            <p:spacer width="10"/>
+                            <p:outputLabel id="nombreCE" value="#{liquidacionFinancieraView.entidadEducativa.nombre}" style="font-weight: bold"/>
+                        </p:outputPanel>
+
+                        <p:outputLabel value="Proveedor:" for="cboProveedor" />
+                        <p:selectOneMenu id="cboProveedor" value="#{liquidacionFinancieraView.idContrato}" onkeydown="setaFoco(this);" required="true" requiredMessage="Debe de seleccionar un proveedor contratado">
+                            <f:selectItem itemLabel="Seleccione un proveedor" noSelectionOption="true" />  
+                            <f:selectItems value="#{liquidacionFinancieraView.lstParticipantes}" var="par" itemValue="#{par.idContrato}" itemLabel="#{par.razonSocial}"/>
+                            <p:ajax listener="#{liquidacionFinancieraView.buscarDatos()}" update="pnlContratoOri pnlContratoMod pnlContratoEnt pnlEstLiqui pnlDato pnlContratoDetPago"/>
+                        </p:selectOneMenu>
+
+                    </p:panelGrid>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-lg-3">
+                <p:panel id="pnlDato" >
+                    <f:facet name="header">
+                        <p:outputLabel value="Proveedor"/>
+                    </f:facet>
+                    <h:panelGrid columns="1">
+                        <p:outputLabel value="Proveedor: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conOrinDto.razonSocial}" class="negrita">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </p:outputLabel>
+                        <p:outputLabel value="N.I.T.: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conOrinDto.numeroNit}" class="negrita"/>
+                        <p:outputLabel value="Número contrato: "/>
+                        <p:outputLabel value="ME-#{liquidacionFinancieraView.conOrinDto.numeroContrato}" class="negrita">
+                            <f:convertNumber pattern="#,##0.00"/>
+                        </p:outputLabel>
+                    </h:panelGrid>
+                </p:panel>
+            </div>
+            <div class="ui-g-12 ui-lg-3">
+                <p:panel id="pnlContratoOri">
+                    <f:facet name="header">
+                        <p:outputLabel value="Contrato"/>
+                    </f:facet>
+                    <h:panelGrid columns="1">
+                        <p:outputLabel value="Fecha contrato: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conOrinDto.fechaEmision}" class="negrita">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </p:outputLabel>
+                        <p:outputLabel value="Cantidad: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conOrinDto.cantidadContrato}" class="negrita">
+                            <f:convertNumber pattern="#,##0"/>
+                        </p:outputLabel>
+                        <p:outputLabel value="Monto: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conOrinDto.montoContrato}" class="negrita">
+                            <f:convertNumber pattern="#,##0.00"/>
+                        </p:outputLabel>
+                    </h:panelGrid>
+                </p:panel>
+            </div>
+
+            <div class="ui-g-12 ui-lg-3" style="position: relative;">
+                <p:panel id="pnlContratoMod">
+                    <f:facet name="header">
+                        <p:outputLabel value="Modificativa"/>
+                    </f:facet>
+                    <h:panelGrid columns="1">
+                        <p:outputLabel value="Fecha modificativa: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conModifDto.fechaModificacion}" class="negrita">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </p:outputLabel>
+                        <p:outputLabel value="Cantidad: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conModifDto.cantidadContrato}" class="negrita">
+                            <f:convertNumber pattern="#,##0"/>
+                        </p:outputLabel>
+                        <p:outputLabel value="Monto: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conModifDto.montoContrato}" class="negrita">
+                            <f:convertNumber pattern="#,##0.00"/>
+                        </p:outputLabel>
+                    </h:panelGrid>
+                    <div class="ui-blockui ui-widget-overlay ui-helper-hidden ui-corner-all" style="z-index: 1001; display: #{liquidacionFinancieraView.isModificativa?'none':'block'}; opacity: 0.3;"></div>
+                </p:panel>
+            </div>
+
+            <div class="ui-g-12 ui-lg-3">
+                <p:panel id="pnlContratoEnt">
+                    <f:facet name="header">
+                        <p:outputLabel value="Acta de Recepción"/>
+                    </f:facet>
+                    <h:panelGrid columns="1">
+                        <p:outputLabel value="Fecha recepción: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conRecepDto.fechaRecepcion}" class="negrita">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </p:outputLabel>
+                        <p:outputLabel value="Cantidad: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conRecepDto.cantidadContrato}" class="negrita">
+                            <f:convertNumber pattern="#,##0"/>
+                        </p:outputLabel>
+                        <p:outputLabel value="Monto: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conRecepDto.montoContrato}" class="negrita">
+                            <f:convertNumber pattern="#,##0.00"/>
+                        </p:outputLabel>
+                    </h:panelGrid>
+                </p:panel>
+            </div>
+            
+            <div class="ui-g-12 ui-lg-3">
+                <p:panel id="pnlContratoDetPago">
+                    <f:facet name="header">
+                        <p:outputLabel value="Detalle de Pago"/>
+                    </f:facet>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="idPlanilla: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conDetPagoDto.idPlanilla}" class="negrita"/>
+                        <p:outputLabel value="Forma de pago: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conDetPagoDto.tipoPago}" class="negrita"/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conDetPagoDto.transferencia eq 0 ? 'Número Cheque:': 'Número Transferencia'}: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conDetPagoDto.numeroDocPago}" class="negrita"/>
+                        <p:outputLabel value="Fecha de pago: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conDetPagoDto.fechaCheque}" class="negrita">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </p:outputLabel>
+                        <p:outputLabel value="Cantidad de pago: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conDetPagoDto.cantidadActual}" class="negrita">
+                            <f:convertNumber pattern="#,##0"/>
+                        </p:outputLabel>
+                        <p:outputLabel value="Monto de pago: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conDetPagoDto.montoActual}" class="negrita">
+                            <f:convertNumber pattern="#,##0.00"/>
+                        </p:outputLabel>
+                    </h:panelGrid>
+                </p:panel>
+            </div>
+            
+            <div class="ui-g-12 ui-lg-4 ">
+                <div class="ui-fluid">
+                    <p:panel id="pnlEstLiqui">
+                        <f:facet name="header">
+                            <p:outputLabel value="Estado de Liquidación"/>
+                        </f:facet>
+                        <h:panelGrid columns="2" style="width: 100%;">
+                            <p:outputLabel for="cboEstado" value="Estado: "/>
+                            <p:selectOneMenu id="cboEstado" value="#{liquidacionFinancieraView.estadoLiquidacion}" disabled="#{liquidacionFinancieraView.deshabilitar}"
+                                             required="true" requiredMessage="Debe de seleccionar un estado válido">
+                                <f:selectItem noSelectionOption="true" itemLabel="SIN REGISTRO"/>
+                                <f:selectItem itemValue="1" itemLabel="CON OBSERVACIÓN"/>
+                                <f:selectItem itemValue="2" itemLabel="LIQUIDADO"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Observación (Si aplica)"/>
+                            <p:inputTextarea value="#{liquidacionFinancieraView.observacion}" rows="3" />
+                            <p:outputLabel value="Fecha: "/>
+                            <p:calendar value="#{liquidacionFinancieraView.fechaEstadoLiqui}" pattern="dd/MM/yyyy" disabled="true"/>
+                        </h:panelGrid>
+                    </p:panel>
+                </div>
+            </div>
+            <!--div jsf:id="divDetalle" class="card clearfix">
+                <h1>
+                    <i class="fa fa-list-ol blue" style="font-size: 16px;"></i>
+                    <p:spacer width="10" height="8"/>
+                    <p:outputLabel value="Liquidaciones realizadas"/>
+
+                    <p:commandButton value="Agregar" update="detalleLiquidacion" action="{liquidacionMB.recuperarDatos}" onsuccess="PF('dlgLiquidacion').show();"
+                                     icon="fa fa-plus" style="float: right; font-size: 12px;" disabled="{liquidacionMB.deshabilitarAgregar}"/>
+                </h1>
+
+                
+            </div-->
+        </div>
+
+    </ui:define>
+</ui:composition>

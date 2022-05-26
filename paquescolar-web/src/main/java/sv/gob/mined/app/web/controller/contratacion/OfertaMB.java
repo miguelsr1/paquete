@@ -24,6 +24,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.faces.bean.ViewScoped;
+import javax.inject.Inject;
 import org.primefaces.PrimeFaces;
 import sv.gob.mined.app.web.controller.ParametrosMB;
 import sv.gob.mined.app.web.util.Bean2Excel;
@@ -36,6 +37,7 @@ import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.OfertaBienesServiciosEJB;
 import sv.gob.mined.paquescolar.ejb.ProveedorEJB;
 import sv.gob.mined.paquescolar.ejb.ReportesEJB;
+import sv.gob.mined.paquescolar.ejb.impl.EntidadEducativaFacade;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.Empresa;
 import sv.gob.mined.paquescolar.model.OfertaBienesServicios;
@@ -95,6 +97,8 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
     private OfertaBienesServiciosEJB ofertaBienesServiciosEJB;
     @EJB
     private EntidadEducativaEJB entidadEducativaEJB;
+    @Inject
+    private EntidadEducativaFacade entidadEducativaFacade;
     @EJB
     private DatosGeograficosEJB datosGeograficosEJB;
     @EJB
@@ -531,8 +535,8 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
             List lst = ofertaBienesServiciosEJB.getDatosRptAnalisisEconomico(getSelected().getCodigoEntidad().getCodigoEntidad(), getSelected().getIdDetProcesoAdq());
             Bean2Excel oReport = new Bean2Excel(lst, detalleProceso.getIdRubroAdq().getDescripcionRubro(), entidadEducativa.getNombre(), entidadEducativa.getCodigoEntidad(), "", sd.format(getSelected().getFechaApertura()), getSelected().getUsuarioInsercion());
             oReport.createFile(getSelected().getCodigoEntidad().getCodigoEntidad(), 
-                    entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad).getNombreMiembro(), 
-                    entidadEducativaEJB.getMiembro(codigoEntidad, "ENCARGADO_COMPRA").getNombreMiembro());
+                    entidadEducativaFacade.findOrgByCargo(codigoEntidad, "PRESIDENTE").getNombreMiembro(),
+                    entidadEducativaFacade.findOrgByCargo(codigoEntidad, "ENCARGADO DE COMPRA").getNombreMiembro());
         }
     }
 
@@ -577,7 +581,7 @@ public class OfertaMB extends RecuperarProcesoUtil implements Serializable {
             } else {
                 detalleProceso = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), rubro);
                 abrirDialogCe = false;
-                entidadEducativa = entidadEducativaEJB.getEntidadEducativa(codigoEntidad);
+                entidadEducativa = entidadEducativaFacade.findByPk(codigoEntidad);
                 if (entidadEducativa == null) {
                     JsfUtil.mensajeAlerta("No se ha encontrado el centro escolar con código: " + codigoEntidad);
                 } else {

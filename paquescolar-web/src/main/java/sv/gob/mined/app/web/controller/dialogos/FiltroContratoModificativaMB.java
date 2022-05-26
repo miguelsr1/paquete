@@ -245,7 +245,9 @@ public class FiltroContratoModificativaMB extends RecuperarProcesoUtil implement
                 vwContratoModificatoria = null;
                 PrimeFaces.current().executeScript("frmDialog:tblContratos");
                 JsfUtil.mensajeAlerta("El contrato seleccionado posee registro de entrega, por favor borrar la recepcion registrada antes de continuar.");
-            } else {
+            } else //verificar que el contrato no este en una planilla
+                /*if () {
+            } else*/ {
                 vwContratoModificatoria = (VwContratoModificatoria) event.getObject();
             }
         }

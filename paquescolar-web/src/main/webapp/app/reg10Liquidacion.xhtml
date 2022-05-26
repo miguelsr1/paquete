@@ -117,6 +117,12 @@
                                 <f:setPropertyActionListener value="#{liq}" target="#{liquidacionMB.liquidacion}"/>  
                             </h:commandLink>
                         </p:column>
+                        <p:column headerText="Eliminar" style="text-align: center;">
+                            <p:commandLink onsuccess="PF('confirmDialog').show();">
+                                <i class="fa fa-trash"></i>
+                                <f:setPropertyActionListener value="#{liq}" target="#{liquidacionMB.liquidacion}"/>  
+                            </p:commandLink>
+                        </p:column>
                         <p:column headerText="Observación" width="110" style="text-align: center;">
                             <!--                            <p:commandLink action="" />                                           >
                                                             <i class="fa fa-external-link"></i>
@@ -135,6 +141,16 @@
                 </div>
             </div>
         </div>
+
+        <p:panel visible="false">
+            <p:confirmDialog id="confirmDialog" message="¿Esta seguro de querer eliminar esta planilla?" severity="alert" appendTo="@(body)" 
+                             header="Confirmación" widgetVar="confirmDialog" closable="false" hideEffect="fade" showEffect="fade">  
+                <p:commandButton id="confirm" value="Si" icon="fa fa-check-circle" ajax="true" process="@this" action="#{liquidacionMB.eliminarLiquidacion()}"
+                                 update="divDetalle" oncomplete="PF('confirmDialog').hide();"/>  
+                <p:commandButton id="decline" value="No" onclick="PF('confirmDialog').hide();" type="button" icon="fa fa-times-circle"/>
+            </p:confirmDialog> 
+
+        </p:panel>
 
         <p:dialog id="dlgLiquidacion" widgetVar="dlgLiquidacion" header="Información del Contrato" width="850" 
                   modal="true" position="center center" onShow="PF('dlgLiquidacion').initPosition()"
@@ -161,7 +177,7 @@
                     </p:column>
                     <p:column headerText="Cantidad Donada" styleClass="numero" width="100">
                         <p:inputNumber size="4" inputStyle="text-align: right" decimalPlaces="0" style="margin-right: 5px;" value="#{liquidacion.totalDonacion}" readonly="true"/>
-                        <p:commandLink update="pnoDonacion" onclick="PF('dlgDonacion').show();" >
+                        <p:commandLink update="pnoDonacion" onclick="PF('dlgDonacion').show();" actionListener="#{liquidacionMB.limpiarDlgDonacion}">
                             <i class="fa fa-external-link-square" style="color: #3ac162;"></i>
                             <f:setPropertyActionListener value="#{liquidacion}" target="#{liquidacionMB.datosLiquidacionDto}"/>
                         </p:commandLink>
@@ -187,7 +203,7 @@
                 <p:commandButton id="btnGuardar" value="Guardar" action="#{liquidacionMB.agregarLista}" process="@this,cblRecepcion,cblLiquidacion,txaObservacion" icon="fa fa-check" oncomplete="PF('dlgLiquidacion').hide();" update="tblLiquidaciones"/>
                 <p:commandButton id="btnCancelar" value="Cancelar" action="#{liquidacionMB.cancelarLiquidacion}" styleClass="secondary-button" icon="fa fa-times" onclick="PF('dlgLiquidacion').hide();"/>
             </f:facet>
-            
+
             <p:blockUI block="dlgLiquidacion" trigger="btnGuardar"/>
         </p:dialog>
 
@@ -287,13 +303,13 @@
                         <p:ajax listener="#{liquidacionMB.recuperarPrecioUnitarioItemByProveedorDonante}" update="txtPuDonado"/>
                     </p:selectOneMenu>
                     <p:inputText value="#{liquidacionMB.nombreProveedor}" readonly="true" rendered="#{!liquidacionMB.tipoDonacion}" style="width: 100%;"/>
-                    
+
                     <p:outputLabel value="Item:" />
                     <p:outputLabel value="#{liquidacionMB.especificacionItem}" style="font-weight: bold"/>
 
                     <p:outputLabel value="Cantidad Donada:" for="txtCodigoEntidad" />
                     <p:inputNumber id="txtCantidaDonante" size="5" inputStyle="text-align: right;" value="#{liquidacionMB.cantidadDonada}" decimalPlaces="0"/>
-                    
+
                     <p:outputLabel value="Precio Unitario:" for="txtPuDonado" rendered="#{liquidacionMB.tipoDonacion}"/>
                     <p:inputNumber id="txtPuDonado" readonly="true" size="5" inputStyle="text-align: right;" value="#{liquidacionMB.detalleItemDto.precioUnitario}" decimalPlaces="2" rendered="#{liquidacionMB.tipoDonacion}"/>
 
@@ -329,9 +345,10 @@
                 </p:dataTable>
             </p:outputPanel>
             <f:facet name="footer">
-                <p:commandButton id="btnGuardarLiqDona" value="Guardar" action="#{liquidacionMB.guardarDetalleCeDonante()}" 
-                                 icon="fa fa-check" oncomplete="PF('dlgDonacion').hide();" update="detalleLiquidacion"/>
-                <p:commandButton id="btnCancelarLiqDona" value="Cancelar" action="#{liquidacionMB.cerrarDlgDetalleCedonante()}" styleClass="secondary-button" icon="fa fa-times" onclick="PF('dlgDonacion').hide();"/>
+                <p:commandButton id="btnGuardarLiqDona" value="Guardar" action="#{liquidacionMB.guardarDetalleCeDonante()}"
+                                 icon="fa fa-check" oncomplete="PF('dlgDonacion').hide();" update="detalleLiquidacion pnoDonacion"/>
+                <p:commandButton id="btnCancelarLiqDona" value="Cancelar" action="#{liquidacionMB.cerrarDlgDetalleCedonante()}" update="pnoDonacion"
+                                 styleClass="secondary-button" icon="fa fa-times" onclick="PF('dlgDonacion').hide();"/>
             </f:facet>
         </p:dialog>
     </ui:define>
