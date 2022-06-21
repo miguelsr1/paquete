@@ -170,6 +170,16 @@
                         <p:outputLabel value="#{liquidacionFinancieraView.conDetPagoDto.montoActual}" class="negrita">
                             <f:convertNumber pattern="#,##0.00"/>
                         </p:outputLabel>
+                        
+                        
+                        <p:outputLabel value="Documento de pago: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conDetPagoDto.tipoDoc}" class="negrita"/>
+                        <p:outputLabel value="Número de documento: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conDetPagoDto.noDocPago}" class="negrita"/>
+                        <p:outputLabel value="Fecha de documento: "/>
+                        <p:outputLabel value="#{liquidacionFinancieraView.conDetPagoDto.fechaDocPago}" class="negrita">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </p:outputLabel>
                     </h:panelGrid>
                 </p:panel>
             </div>

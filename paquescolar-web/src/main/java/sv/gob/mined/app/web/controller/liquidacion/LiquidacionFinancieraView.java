@@ -1,28 +1,43 @@
 package sv.gob.mined.app.web.controller.liquidacion;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.RecuperarProcesoUtil;
+import sv.gob.mined.app.web.util.Reportes;
+import sv.gob.mined.app.web.util.RptExcel;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.EntidadEducativaEJB;
 import sv.gob.mined.paquescolar.ejb.LiquidacionFinancieraEJB;
+import sv.gob.mined.paquescolar.ejb.ReportesEJB;
 import sv.gob.mined.paquescolar.ejb.ResolucionAdjudicativaEJB;
 import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.HistorialLiquiFinan;
 import sv.gob.mined.paquescolar.model.LiquidacionFinanciera;
+import sv.gob.mined.paquescolar.model.RptDocumentos;
 import sv.gob.mined.paquescolar.model.pojos.contratacion.ParticipanteConContratoDto;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiqFinanConModifDto;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiqFinanConOrigDto;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiqFinanConRecepDto;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiqFinanDetPlanillaDto;
+import sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiquidacionFinancieraConsolidadoDto;
+import sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiquidacionFinancieraDto;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 
 /**
@@ -36,8 +51,10 @@ public class LiquidacionFinancieraView extends RecuperarProcesoUtil implements S
     private Boolean isModificativa = true;
     private Boolean isRecepcion = true;
     private Boolean deshabilitar = true;
+    private Boolean excel = true;
 
     private String codigoEntidad;
+    private String codigoDepartamento;
     private String observacion;
     private short estadoLiquidacion;
     private Short estadoLiquidacionOld = null;
@@ -64,10 +81,28 @@ public class LiquidacionFinancieraView extends RecuperarProcesoUtil implements S
     private EntidadEducativaEJB entidadEducativaEJB;
     @EJB
     private ResolucionAdjudicativaEJB resolucionAdjudicativaEJB;
+    @EJB
+    private ReportesEJB reportesEJB;
 
     @PostConstruct
     public void init() {
         fechaEstadoLiqui = new Date();
+    }
+
+    public Boolean getExcel() {
+        return excel;
+    }
+
+    public void setExcel(Boolean excel) {
+        this.excel = excel;
+    }
+
+    public String getCodigoDepartamento() {
+        return codigoDepartamento;
+    }
+
+    public void setCodigoDepartamento(String codigoDepartamento) {
+        this.codigoDepartamento = codigoDepartamento;
     }
 
     public Boolean getDeshabilitar() {
@@ -201,13 +236,13 @@ public class LiquidacionFinancieraView extends RecuperarProcesoUtil implements S
     public void nuevo() {
         liquidacionFinanciera = new LiquidacionFinanciera();
         historialLiquiFinan = new HistorialLiquiFinan();
-        
+
         isModificativa = true;
         isRecepcion = true;
         deshabilitar = true;
         codigoEntidad = null;
         idRubro = null;
-        
+
         fechaEstadoLiqui = null;
 
         conOrinDto = new VwLiqFinanConOrigDto();
@@ -262,7 +297,48 @@ public class LiquidacionFinancieraView extends RecuperarProcesoUtil implements S
 
     private boolean validarCambioDeEstado() {
         return idContrato != null && ((estadoLiquidacionOld == null && estadoLiquidacion == (short) 1)
+                || (estadoLiquidacionOld == null && estadoLiquidacion == (short) 2)
                 || (estadoLiquidacionOld == (short) 1 && estadoLiquidacion == (short) 2)
                 || (estadoLiquidacionOld == (short) 1 && estadoLiquidacion == (short) 1));
+    }
+
+    public void generarReporte() {
+        detalleProcesoAdq = JsfUtil.findDetalle(getRecuperarProceso().getProcesoAdquisicion(), idRubro);
+        if (excel) {
+            imprimirXls();
+        } else {
+            imprimirPdf();
+        }
+    }
+
+    private void imprimirXls() {
+        List<VwLiquidacionFinancieraDto> lstLiquidacionFinan = liquidacionFinancieraEJB.findAllLiquidacionFinan(detalleProcesoAdq.getIdDetProcesoAdq(), codigoDepartamento);
+        List<VwLiquidacionFinancieraConsolidadoDto> lstLiquidacionFinanConsolidado = liquidacionFinancieraEJB.findAllLiquidacionFinanConsolidado(detalleProcesoAdq.getIdDetProcesoAdq(), codigoDepartamento);
+        if (lstLiquidacionFinan.isEmpty()) {
+            JsfUtil.mensajeInformacion("No se han encontrado datos");
+        } else {
+            RptExcel.generarRptLiquidacionFinanciera(codigoDepartamento, lstLiquidacionFinan, lstLiquidacionFinanConsolidado);
+        }
+    }
+
+    private void imprimirPdf() {
+        try {
+            ServletContext ctx;
+            HashMap param = new HashMap();
+            List<JasperPrint> lstRptAImprimir = new ArrayList();
+
+            ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+
+            param.put("ubicacionImagenes", ctx.getRealPath(Reportes.PATH_IMAGENES) + File.separator);
+            param.put("pCodigoDepartamento", VarSession.getDepartamentoUsuarioSession());
+            param.put("pIdDetProcesoAdq", detalleProcesoAdq.getIdDetProcesoAdq());
+
+            lstRptAImprimir.add(reportesEJB.getRpt(param, Reportes.getPathReporte("sv/gob/mined/apps/reportes/liquidacion/rptLiquiFinanConsolidad.jasper")));
+            lstRptAImprimir.add(reportesEJB.getRpt(param, Reportes.getPathReporte("sv/gob/mined/apps/reportes/liquidacion/rptLiquiFinanDetallado.jasper")));
+
+            Reportes.generarReporte(lstRptAImprimir, "rptLiquidacionFinanciera_" + codigoDepartamento.replace(" ", ""));
+        } catch (IOException | JRException ex) {
+            Logger.getLogger(LiquidacionFinancieraView.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

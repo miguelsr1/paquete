@@ -23,7 +23,6 @@ import javax.servlet.ServletContext;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -76,20 +75,6 @@ public class Reportes {
      * @param param
      * @param paqueteRpt
      * @param nombreRpt
-     * @param nombrePdfGenerado
-     *
-     * public static void generarRptBeanConnection(List lst, HashMap param,
-     * String paqueteRpt, String nombreRpt, String nombrePdfGenerado) { try {
-     * ServletContext ctx = (ServletContext)
-     * FacesContext.getCurrentInstance().getExternalContext().getContext();
-     * param.put("ubicacionImagenes", ctx.getRealPath(PATH_IMAGENES));
-     * JasperPrint jasperPrint =
-     * JasperFillManager.fillReport(Reportes.getPathReporte(paqueteRpt +
-     * File.separator + nombreRpt), param, new JRBeanCollectionDataSource(lst));
-     * responseRptPdf(jasperPrint, nombrePdfGenerado); } catch (IOException |
-     * JRException ex) {
-     * Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, null, ex); }
-    }
      */
     public static JasperPrint generarRptBeanConnection(List lst, HashMap param, String paqueteRpt, String nombreRpt) {
         try {

@@ -41,6 +41,8 @@ import sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto;
 import sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto;
 import sv.gob.mined.paquescolar.model.pojos.credito.DatosProveedoresFinanDto;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.RptLiquidacionDto;
+import sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiquidacionFinancieraConsolidadoDto;
+import sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiquidacionFinancieraDto;
 
 /**
  *
@@ -208,7 +210,7 @@ public class RptExcel {
             cell.setCellValue(text);
             cell.setCellStyle(style);
         }
-        
+
         style.setDataFormat(entero ? FORMATO_DATA.getFormat("#,##0") : FORMATO_DATA.getFormat("#,##0.00"));
         cell.setCellStyle(style);
         if (text != null && !text.isEmpty()) {
@@ -221,6 +223,16 @@ public class RptExcel {
             wb.write(outByteStream);
             byte[] outArray = outByteStream.toByteArray();
             UtilFile.downloadFileBytes(outArray, nombreFile, UtilFile.CONTENIDO_XLS, UtilFile.EXTENSION_XLS);
+        } catch (IOException ex) {
+            Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private static void generarArchivo(Workbook wb, String nombreFile, String contentFile, String extensionFile) {
+        try ( ByteArrayOutputStream outByteStream = new ByteArrayOutputStream()) {
+            wb.write(outByteStream);
+            byte[] outArray = outByteStream.toByteArray();
+            UtilFile.downloadFileBytes(outArray, nombreFile, contentFile, extensionFile);
         } catch (IOException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -563,6 +575,58 @@ public class RptExcel {
                 row++;
             }
             generarArchivo(wb1, "Paquete-ReporteLiquidacion");
+        } catch (IOException ex) {
+            Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void generarRptLiquidacionFinanciera(String codigoDepartamento, List<VwLiquidacionFinancieraDto> lstLiquidacion, List<VwLiquidacionFinancieraConsolidadoDto> lstLiquidacionConsolidado) {
+        HSSFCellStyle style;
+        int row = 1;
+        try ( InputStream ins = Reportes.getPathReporte("sv/gob/mined/apps/reportes/excel/rptLiquidacionFinanciera.xls")) {
+            wb1 = (HSSFWorkbook) WorkbookFactory.create(ins);
+            FORMATO_DATA = wb1.createDataFormat();
+            style = wb1.createCellStyle();
+            style.setWrapText(true);
+            style.setBorderBottom(BorderStyle.THIN);
+            style.setBorderTop(BorderStyle.THIN);
+            style.setBorderRight(BorderStyle.THIN);
+            style.setBorderLeft(BorderStyle.THIN);
+
+            HSSFSheet sDetalle = wb1.getSheetAt(0);
+            HSSFSheet sConsolidado = wb1.getSheetAt(1);
+
+            for (VwLiquidacionFinancieraDto dato : lstLiquidacion) {
+                escribirNumero(String.valueOf(row), row, 0, style, true, sDetalle);
+                escribirTexto(dato.getFormatoRequerimiento(), row, 1, style, sDetalle);
+                escribirNumero(dato.getMontoRequerimiento().toString(), row, 2, style, false, sDetalle);
+                escribirTexto(dato.getNombreDepartamento(), row, 3, style, sDetalle);
+                escribirTexto(dato.getNombreMunicipio(), row, 4, style, sDetalle);
+                escribirTexto(dato.getRubro(), row, 5, style, sDetalle);
+                escribirTexto(dato.getCodigoEntidad(), row, 6, style, sDetalle);
+                escribirTexto(dato.getNombre(), row, 7, style, sDetalle);
+                escribirTexto(dato.getProceso(), row, 8, style, sDetalle);
+                escribirNumero(dato.getMontoLiquidado().toString(), row, 9, style, false, sDetalle);
+                escribirNumero(dato.getMontoPendiente().toString(), row, 10, style, false, sDetalle);
+                escribirTexto(dato.getEstadoLiquidacion(), row, 11, style, sDetalle);
+                escribirTexto(dato.getUsuario(), row, 12, style, sDetalle);
+                row++;
+            }
+
+            row = 1;
+            for (VwLiquidacionFinancieraConsolidadoDto dato : lstLiquidacionConsolidado) {
+                escribirNumero(String.valueOf(row), row, 0, style, true, sConsolidado);
+                escribirTexto(dato.getPagadorDepartamental(), row, 1, style, sConsolidado);
+                escribirTexto(dato.getNumeroCuenta(), row, 2, style, sConsolidado);
+                escribirTexto(dato.getFormatoRequerimiento(), row, 3, style, sConsolidado);
+                escribirNumero(dato.getMontoRequerimiento().toString(), row, 4, style, false, sConsolidado);
+                escribirTexto(dato.getRubro(), row, 5, style, sConsolidado);
+                escribirTexto(dato.getProceso(), row, 6, style, sConsolidado);
+                escribirNumero(dato.getMontoLiquidado().toString(), row, 7, style, false, sConsolidado);
+                escribirNumero(dato.getMontoPendiente().toString(), row, 8, style, false, sConsolidado);
+                row++;
+            }
+            generarArchivo(wb1, "Paquete-ReporteLiquidacionFinanciera_" + JsfUtil.getNombreDepartamentoByCodigo(codigoDepartamento));
         } catch (IOException ex) {
             Logger.getLogger(RptExcel.class.getName()).log(Level.SEVERE, null, ex);
         }

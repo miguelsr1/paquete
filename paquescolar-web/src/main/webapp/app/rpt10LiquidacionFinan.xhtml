@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
+    xmlns:jsf="http://xmlns.jcp.org/jsf">
+    <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="false"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="false"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{liquidacionFinancieraView.generarReporte()}" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options" class="centradoVertical">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+
+
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <h1>
+                        <i class="fa fa-file-text-o blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro"/>
+                    </h1>
+
+                    <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+
+                        <h:outputText value="Departamento"/>
+                        <p:selectOneMenu id="codigoDepartamento" value="#{liquidacionFinancieraView.codigoDepartamento}"  required="true" disabled="#{parametrosMB.usuarioDepartamental}" >
+                            <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
+                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}" />
+                            <p:ajax update="codigoDepartamento"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" for="cboRubro" />
+                        <p:selectOneMenu id="cboRubro" value="#{liquidacionFinancieraView.idRubro}" required="true" requiredMessage="Debe de seleccionar el rubro de adquisición" >
+                            <f:selectItem itemLabel="Seleccione un rubro" noSelectionOption="true" />
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <p:ajax update=":frmPrincipal:pnlFiltro"/>
+                        </p:selectOneMenu>
+                        
+                        <p:outputLabel value="Formato:" for="cboRubro" />
+                        <p:selectBooleanButton onLabel="XLS" offLabel="PDF" style="width:6rem" value="#{liquidacionFinancieraView.excel}"/>
+                    </p:panelGrid>
+                </div>
+            </div>            
+        </div>
+
+    </ui:define>
+</ui:composition>
