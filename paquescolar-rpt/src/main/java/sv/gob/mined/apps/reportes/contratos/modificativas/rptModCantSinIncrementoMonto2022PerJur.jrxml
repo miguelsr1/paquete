@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptContratoPersonaJuridicaZapatos" pageWidth="612" pageHeight="792" columnWidth="510" leftMargin="51" rightMargin="51" topMargin="39" bottomMargin="39" uuid="07e1e5af-9848-4273-96b4-6595abfd46c0">
+	<property name="ireport.zoom" value="1.3310000000000013"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="240"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="Utilitario.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="dsItemsOld" uuid="9824b1c1-6002-4b72-b7af-57566d698b29">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="noItem" class="java.lang.String">
+			<fieldDescription><![CDATA[noItem]]></fieldDescription>
+		</field>
+		<field name="consolidadoEspTec" class="java.lang.String">
+			<fieldDescription><![CDATA[consolidadoEspTec]]></fieldDescription>
+		</field>
+		<field name="cantidad" class="java.math.BigInteger">
+			<fieldDescription><![CDATA[cantidad]]></fieldDescription>
+		</field>
+		<field name="precioUnitario" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[precioUnitario]]></fieldDescription>
+		</field>
+		<field name="subTotal" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[subTotal]]></fieldDescription>
+		</field>
+	</subDataset>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[".\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ubicacionImagenes" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="numeroContrato" class="java.lang.String">
+		<fieldDescription><![CDATA[numeroContrato]]></fieldDescription>
+	</field>
+	<field name="fechaCreacionModif" class="java.util.Date">
+		<fieldDescription><![CDATA[fechaCreacionModif]]></fieldDescription>
+	</field>
+	<field name="lstDetalleNew" class="java.util.List">
+		<fieldDescription><![CDATA[lstDetalleNew]]></fieldDescription>
+	</field>
+	<field name="nitEmpresa" class="java.lang.String">
+		<fieldDescription><![CDATA[nitEmpresa]]></fieldDescription>
+	</field>
+	<field name="razonSocial" class="java.lang.String">
+		<fieldDescription><![CDATA[razonSocial]]></fieldDescription>
+	</field>
+	<field name="nombreCe" class="java.lang.String">
+		<fieldDescription><![CDATA[nombreCe]]></fieldDescription>
+	</field>
+	<field name="anhoContrato" class="java.lang.String">
+		<fieldDescription><![CDATA[anhoContrato]]></fieldDescription>
+	</field>
+	<field name="montoContratoModif" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[montoContratoModif]]></fieldDescription>
+	</field>
+	<field name="modalidadAdministrativa" class="java.lang.String">
+		<fieldDescription><![CDATA[modalidadAdministrativa]]></fieldDescription>
+	</field>
+	<field name="descripcionRubro" class="java.lang.String">
+		<fieldDescription><![CDATA[descripcionRubro]]></fieldDescription>
+	</field>
+	<field name="nombreRepresentante" class="java.lang.String">
+		<fieldDescription><![CDATA[nombreRepresentante]]></fieldDescription>
+	</field>
+	<field name="fechaOrdenInicio" class="java.util.Date">
+		<fieldDescription><![CDATA[fechaOrdenInicio]]></fieldDescription>
+	</field>
+	<field name="lstDetalleOld" class="java.util.List">
+		<fieldDescription><![CDATA[lstDetalleOld]]></fieldDescription>
+	</field>
+	<field name="codigoEntidad" class="java.lang.String">
+		<fieldDescription><![CDATA[codigoEntidad]]></fieldDescription>
+	</field>
+	<field name="plazoContrato" class="java.lang.String">
+		<fieldDescription><![CDATA[plazoContrato]]></fieldDescription>
+	</field>
+	<field name="nombreMiembro" class="java.lang.String">
+		<fieldDescription><![CDATA[nombreMiembro]]></fieldDescription>
+	</field>
+	<field name="fechaContratoModif" class="java.util.Date">
+		<fieldDescription><![CDATA[fechaContratoModif]]></fieldDescription>
+	</field>
+	<field name="nitRepresentante" class="java.lang.String">
+		<fieldDescription><![CDATA[nitRepresentante]]></fieldDescription>
+	</field>
+	<field name="ciudadFirma" class="java.lang.String">
+		<fieldDescription><![CDATA[ciudadFirma]]></fieldDescription>
+	</field>
+	<field name="minutoRegistro" class="java.lang.String">
+		<fieldDescription><![CDATA[minutoRegistro]]></fieldDescription>
+	</field>
+	<field name="horaRegistro" class="java.lang.String">
+		<fieldDescription><![CDATA[horaRegistro]]></fieldDescription>
+	</field>
+	<group name="codigoEntidad">
+		<groupExpression><![CDATA[$F{codigoEntidad}]]></groupExpression>
+		<groupHeader>
+			<band height="71">
+				<componentElement>
+					<reportElement uuid="84753f6a-fea5-4757-a1f3-ddb0b8130aa9" key="table" style="table" x="10" y="21" width="490" height="50"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="dsItemsOld" uuid="e6b6297e-5db7-4290-ab6c-54d6ef1708e8">
+							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleOld})]]></dataSourceExpression>
+						</datasetRun>
+						<jr:column width="48" uuid="666b31af-943c-452f-9b95-7340b10b34da">
+							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+								<staticText>
+									<reportElement uuid="1bc83db2-718c-4a49-95a8-c716639203eb" x="0" y="0" width="48" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[No. Ítem]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="571b02ae-c733-433f-b4f9-04161c5bb3ae" x="0" y="0" width="48" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{noItem}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="210" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
+							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+								<staticText>
+									<reportElement uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee" x="0" y="0" width="210" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[Descripción del Ítem]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e" x="2" y="0" width="208" height="20"/>
+									<textElement verticalAlignment="Middle">
+										<font size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{consolidadoEspTec}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="57" uuid="9d2ef7c2-8a0b-4851-826c-60b197cb42cb">
+							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+								<staticText>
+									<reportElement uuid="4f39794c-c566-4503-9b3f-cdf4f1910e38" x="0" y="0" width="57" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[Cantidad]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="20" rowSpan="1">
+								<textField pattern="###0">
+									<reportElement uuid="f9818080-501d-4136-8b98-2be6c69d2b79" x="0" y="0" width="53" height="20"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="72" uuid="06de5d58-dfb8-4844-8fe7-f93ee75eb61a">
+							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+								<staticText>
+									<reportElement uuid="b63937e5-54f9-479b-b504-a8f7368bb5d6" x="0" y="0" width="72" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9"/>
+									</textElement>
+									<text><![CDATA[Precio Unitario]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="20" rowSpan="1">
+								<textField pattern="#,##0.00">
+									<reportElement uuid="72feb515-f4f4-4ea7-a210-a3aff26cc5b0" x="0" y="0" width="68" height="20"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{precioUnitario}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="76" uuid="e00c32b4-05d9-4193-b510-f36acab3597e">
+							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+								<staticText>
+									<reportElement uuid="a52e76a3-78bb-4538-9e0f-42fd81817404" x="0" y="0" width="76" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[Precio Total $]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="20" rowSpan="1">
+								<textField pattern="#,##0.00">
+									<reportElement uuid="255e974a-2138-4511-8500-ae23eb17e481" x="0" y="0" width="72" height="20"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{subTotal}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+				<staticText>
+					<reportElement uuid="742b667d-1aae-4a5c-8a9a-f37691c7b810" x="10" y="2" width="117" height="19"/>
+					<textElement/>
+					<text><![CDATA[Cantidad contratada]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="259">
+				<textField>
+					<reportElement uuid="91ecff33-47bd-499f-96f4-7289be10ea06" x="0" y="10" width="510" height="47"/>
+					<textElement>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Para tal efecto se modifica dicha Cláusula, únicamente en el sentido antes expresado.\nDicha modificativa implica: modificar las cantidades sin incrementar el monto; o disminuyendo el monto contratado."]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="878dc138-f264-48d0-a92b-13397750bc1e" x="0" y="66" width="100" height="20"/>
+					<textElement/>
+					<text><![CDATA[NOTIFÍQUESE.]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="8f987429-6387-4bf0-9f54-ae5e75b4a5e7" x="0" y="111" width="264" height="63"/>
+					<textElement/>
+					<textFieldExpression><![CDATA["F.____________________________\n"
++$F{nombreMiembro}
++"\nPresidente del Organismo de"
++"\nAdministración Escolar\n"+
+"CONTRATANTE"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="5ebe8c69-88d9-43db-872e-ac8e796a1661" x="266" y="111" width="244" height="63"/>
+					<textElement/>
+					<textFieldExpression><![CDATA["F.____________________________\n"
++$F{nombreRepresentante}+"\n"
++"Nombre y firma del Representante Legal\n\n"+
+"CONTRATISTA"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="5ebe8c69-88d9-43db-872e-ac8e796a1661" x="266" y="210" width="244" height="49"/>
+					<textElement/>
+					<textFieldExpression><![CDATA["F.____________________________\n"
++$F{razonSocial}
++"Sello de la Sociedad\n"+
+"CONTRATISTA"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="numeroContrato">
+		<groupExpression><![CDATA[$F{numeroContrato}]]></groupExpression>
+		<groupHeader>
+			<band height="81">
+				<staticText>
+					<reportElement uuid="742b667d-1aae-4a5c-8a9a-f37691c7b810" x="10" y="9" width="169" height="19"/>
+					<textElement/>
+					<text><![CDATA[Cantidad según modificación]]></text>
+				</staticText>
+				<componentElement>
+					<reportElement uuid="84753f6a-fea5-4757-a1f3-ddb0b8130aa9" key="table" style="table" x="10" y="28" width="490" height="50"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="dsItemsOld" uuid="e6b6297e-5db7-4290-ab6c-54d6ef1708e8">
+							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleNew})]]></dataSourceExpression>
+						</datasetRun>
+						<jr:column width="48" uuid="666b31af-943c-452f-9b95-7340b10b34da">
+							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+								<staticText>
+									<reportElement uuid="1bc83db2-718c-4a49-95a8-c716639203eb" x="0" y="0" width="48" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[No. Ítem]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="571b02ae-c733-433f-b4f9-04161c5bb3ae" x="0" y="0" width="48" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{noItem}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="210" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
+							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+								<staticText>
+									<reportElement uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee" x="0" y="0" width="210" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[Descripción del Ítem]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e" x="2" y="0" width="208" height="20"/>
+									<textElement verticalAlignment="Middle">
+										<font size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{consolidadoEspTec}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="57" uuid="9d2ef7c2-8a0b-4851-826c-60b197cb42cb">
+							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+								<staticText>
+									<reportElement uuid="4f39794c-c566-4503-9b3f-cdf4f1910e38" x="0" y="0" width="57" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[Cantidad]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="20" rowSpan="1">
+								<textField pattern="###0">
+									<reportElement uuid="f9818080-501d-4136-8b98-2be6c69d2b79" x="0" y="0" width="53" height="20"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="72" uuid="06de5d58-dfb8-4844-8fe7-f93ee75eb61a">
+							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+								<staticText>
+									<reportElement uuid="b63937e5-54f9-479b-b504-a8f7368bb5d6" x="0" y="0" width="72" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9"/>
+									</textElement>
+									<text><![CDATA[Precio Unitario]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="20" rowSpan="1">
+								<textField pattern="#,##0.00">
+									<reportElement uuid="72feb515-f4f4-4ea7-a210-a3aff26cc5b0" x="0" y="0" width="68" height="20"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{precioUnitario}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="76" uuid="e00c32b4-05d9-4193-b510-f36acab3597e">
+							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+								<staticText>
+									<reportElement uuid="a52e76a3-78bb-4538-9e0f-42fd81817404" x="0" y="0" width="76" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[Precio Total $]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="20" rowSpan="1">
+								<textField pattern="#,##0.00">
+									<reportElement uuid="255e974a-2138-4511-8500-ae23eb17e481" x="0" y="0" width="72" height="20"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{subTotal}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="54">
+				<componentElement>
+					<reportElement uuid="84753f6a-fea5-4757-a1f3-ddb0b8130aa9" key="table" style="table" x="10" y="4" width="490" height="50"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="dsItemsOld" uuid="e6b6297e-5db7-4290-ab6c-54d6ef1708e8">
+							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleNew})]]></dataSourceExpression>
+						</datasetRun>
+						<jr:column width="48" uuid="666b31af-943c-452f-9b95-7340b10b34da">
+							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+								<staticText>
+									<reportElement uuid="1bc83db2-718c-4a49-95a8-c716639203eb" x="0" y="0" width="48" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[No. Ítem]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="571b02ae-c733-433f-b4f9-04161c5bb3ae" x="0" y="0" width="48" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{noItem}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="210" uuid="6c3bd3d1-7b8b-4e0f-acf9-dec73d0daca1">
+							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+								<staticText>
+									<reportElement uuid="d02d8a18-05a9-4cca-9901-12f8566a20ee" x="0" y="0" width="210" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[Descripción del Ítem]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true">
+									<reportElement uuid="b96bc5db-83f5-4b5b-ac06-335583cac79e" x="2" y="0" width="208" height="20"/>
+									<textElement verticalAlignment="Middle">
+										<font size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{consolidadoEspTec}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="57" uuid="9d2ef7c2-8a0b-4851-826c-60b197cb42cb">
+							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+								<staticText>
+									<reportElement uuid="4f39794c-c566-4503-9b3f-cdf4f1910e38" x="0" y="0" width="57" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[Cantidad]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="20" rowSpan="1">
+								<textField pattern="###0">
+									<reportElement uuid="f9818080-501d-4136-8b98-2be6c69d2b79" x="0" y="0" width="53" height="20"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="72" uuid="06de5d58-dfb8-4844-8fe7-f93ee75eb61a">
+							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+								<staticText>
+									<reportElement uuid="b63937e5-54f9-479b-b504-a8f7368bb5d6" x="0" y="0" width="72" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9"/>
+									</textElement>
+									<text><![CDATA[Precio Unitario]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="20" rowSpan="1">
+								<textField pattern="#,##0.00">
+									<reportElement uuid="72feb515-f4f4-4ea7-a210-a3aff26cc5b0" x="0" y="0" width="68" height="20"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{precioUnitario}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="76" uuid="e00c32b4-05d9-4193-b510-f36acab3597e">
+							<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+								<staticText>
+									<reportElement uuid="a52e76a3-78bb-4538-9e0f-42fd81817404" x="0" y="0" width="76" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[Precio Total $]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="20" rowSpan="1">
+								<textField pattern="#,##0.00">
+									<reportElement uuid="255e974a-2138-4511-8500-ae23eb17e481" x="0" y="0" width="72" height="20"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{subTotal}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="149" splitType="Stretch">
+			<image>
+				<reportElement uuid="f4a333fc-68e5-4442-8115-87aabaf37082" key="image-1" x="0" y="0" width="51" height="51"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"escudo.jpg"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement uuid="5aa4cba5-61ed-4dba-b0cd-983efc007a2a" key="image-2" x="420" y="0" width="90" height="57"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{ubicacionImagenes}+File.separator+"logo_mined_rpt.png"]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="90274944-4c08-4de4-a182-5dd3b9cb2a69" x="69" y="0" width="336" height="92"/>
+				<textElement textAlignment="Center">
+					<font isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RESOLUCIÓN MODIFICATIVA POR VARIACIÓN EN CANTIDADES PERO SIN INCREMENTAR MONTO\n"+
+"N° ME-"+$F{numeroContrato}+"/"+$F{anhoContrato}+"\n\n"+
+$F{descripcionRubro}+"\n"+$F{nombreCe}+"\n"+"Fuente Financiamiento: GOES"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="aba0ff22-1c29-41a5-a438-278710302dd1" x="0" y="92" width="510" height="57"/>
+				<textElement textAlignment="Justified">
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["En la ciudad de ".concat($F{ciudadFirma}).concat(", a las ").concat($F{horaRegistro}).concat(" horas y ").concat($F{minutoRegistro}).concat(" minutos del día ")
+.concat(Herramientas.getNumDia($F{fechaCreacionModif})).concat(" del mes de ").concat(Herramientas.getNomMes($F{fechaCreacionModif})).concat(" de ")
+.concat(Herramientas.getNumAnyo($F{fechaCreacionModif})).concat("\n\n")
+.concat("VISTO:\n")
+.concat("El contrato No ME-").concat($F{numeroContrato}).concat("/").concat($F{anhoContrato}).concat(", referente al rubro de ").concat($F{descripcionRubro})
+.concat(" suscrito entre el Organismo de Administración Escolar del "+$F{codigoEntidad}+" "+$F{nombreCe}).concat(", y ").concat($F{nombreRepresentante})
+.concat(", quien actúa en su calidad de Representante Legal de la Sociedad ").concat($F{razonSocial}).concat(", de fecha ").concat(Herramientas.getNumDia($F{fechaContratoModif})).concat(" del mes de ")
+.concat(Herramientas.getNomMes($F{fechaContratoModif})).concat(" de ").concat(Herramientas.getNumAnyo($F{fechaContratoModif})).concat(", por un monto total de ")
+.concat(Herramientas.aLetras($F{montoContratoModif}).trim()).concat(" Dólares de los Estados Unidos de América (US$ ")
+.concat((($F{montoContratoModif}.doubleValue())*100)/100 + ") IVA INCLUIDO; por un período de ").concat($F{plazoContrato}).concat(", contados a partir del ").concat(Herramientas.getNumDia($F{fechaOrdenInicio})).concat(" del mes de ")
+.concat(Herramientas.getNomMes($F{fechaOrdenInicio})).concat(" de ").concat(Herramientas.getNumAnyo($F{fechaOrdenInicio}))
+.concat("\n\nCONSIDERANDO:\n")
+.concat("Que en nota de fecha __________").concat(", este Organismo de Administración Escolar, a través de su Representante Legal del ").concat($F{modalidadAdministrativa})
+.concat(", comunica al contratista ").concat($F{razonSocial}).concat(" que por la justificación de: al analizar y comparar la matricula rápida del año ").concat($F{anhoContrato})
+.concat(" y la matricula actual del Centro Educativo es necesario realizar cambios en el contrato por variación en matricula, situación que no puede ser evitado o previsto, por lo que es ")
+.concat($F{nombreCe})
+.concat("es necesario realizar las respectivas modificaciones en cuanto a cantidades originalmente contratadas (sin incrementar el monto o disminuyendo el monto) del contrato ")
+.concat("en base a la CLAUSULA XIV MODIFICACIÓN del referido contrato y al Art. 83-A de la LACAP, por lo que le pide que manifieste por escrito si está de acuerdo en realizar estos cambios, según el siguiente detalle:")]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="28" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="f8945ecc-fc50-4532-8f2e-bdc580cdd27c" x="0" y="8" width="510" height="20"/>
+				<textElement>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Que en nota de fecha _____________, la persona proveedora ".concat($F{razonSocial}).concat(" manifiesta estar de acuerdo en dichos cambios, y legalizar estas")
+.concat(" modificaciones por medio de documento legal (manteniendo o disminuyendo el monto total del contrato o manteniendo los precios unitarios pactados en el contrato original).\n\n")
+.concat("Que la Cláusula XIV Modificación, del referido Contrato, establece: \"De común acuerdo, el presente contrato podrá ser modificado. En tal caso, la institución contratante emitirá la correspondiente resolución, y para que surta efecto legal, esta modificativa debe ser firmada por el/la presidente/a del Organismo contratante y el Contratista, la cual formará parte integrante del presente contrato\".\n\n")
+.concat("POR TANTO:\n").concat("Con base a los Considerandos antes expuestos y a las disposiciones legales antes realacionadas, este Organismo de Administración Escolar.\n\n")
+.concat("RESUELVE:\n1. Modificar el Contrato en referencia, en su Cláusula II. Precio y Forma de Pago(ÚNICAMENTE SI APLICA), en el sentido de modificar las cantidades por ítems (y monto SI APLICA) del contrato según el detalle de los cuadros \"Cantidad Contratada\" y \"Cantidades según modificación\", de los CONSIDERANDO de la presente Resolución:")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
