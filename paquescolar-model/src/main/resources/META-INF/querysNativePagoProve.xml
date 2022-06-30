@@ -50,7 +50,7 @@
                 DOC_PAGO        as docPago, 
                 MONTO_ACTUAL    as montoActual, 
                 MONTO_RETENCION as montoRetencion, 
-                MONTO_RENTA     as montoRenta 
+                MONTO_RENTA     as montoRenta
             from 
                 VW_RPT_RENTA 
             where 
