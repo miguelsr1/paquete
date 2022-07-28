@@ -940,7 +940,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
 
                             lstRptAImprimir.addAll(Reportes.getReporteOfertaDeProveedor(capacidadInst, resolucionAdj.getIdParticipante().getIdEmpresa(), detalleProceso,
                                     reportesEJB.getLstOfertaGlobal(resolucionAdj.getIdParticipante().getIdEmpresa().getNumeroNit(), detalleProceso.getIdRubroAdq().getIdRubroInteres(), detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho()),
-                                    reportesEJB.getDeclaracionJurada(resolucionAdj.getIdParticipante().getIdEmpresa(), detalleProceso, VarSession.getNombreMunicipioSession())));
+                                    reportesEJB.getDeclaracionJurada(resolucionAdj.getIdParticipante().getIdEmpresa(), detalleProceso.getIdRubroAdq().getIdRubroInteres(), detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho(), VarSession.getNombreMunicipioSession())));
                             break;
                         case 13://Acta de recomendacion
                             param.put("pPorcentajeCapa", detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1 ? "25" : "35");

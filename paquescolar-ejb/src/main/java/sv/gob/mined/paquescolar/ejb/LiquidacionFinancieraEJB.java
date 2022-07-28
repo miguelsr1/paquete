@@ -2,6 +2,7 @@ package sv.gob.mined.paquescolar.ejb;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
@@ -14,6 +15,8 @@ import sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiqFinanConModifDto;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiqFinanConOrigDto;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiqFinanConRecepDto;
 import sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiqFinanDetPlanillaDto;
+import sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiquidacionFinancieraConsolidadoDto;
+import sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiquidacionFinancieraDto;
 
 /**
  *
@@ -48,6 +51,20 @@ public class LiquidacionFinancieraEJB {
         Query q = em.createNamedQuery("defaultVwLiqFinanDetPlanillaDto", VwLiqFinanDetPlanillaDto.class);
         q.setParameter(1, idContrato);
         return q.getResultList().isEmpty() ? new VwLiqFinanDetPlanillaDto() : (VwLiqFinanDetPlanillaDto) q.getResultList().get(0);
+    }
+    
+    public List<VwLiquidacionFinancieraDto> findAllLiquidacionFinan(Integer idDetProcesoAdq, String codigoDepartamento) {
+        Query q = em.createNamedQuery("defaultVwLiquidacionFinancieraDto", VwLiquidacionFinancieraDto.class);
+        q.setParameter(1, idDetProcesoAdq);
+        q.setParameter(2, codigoDepartamento);
+        return q.getResultList();
+    }
+    
+    public List<VwLiquidacionFinancieraConsolidadoDto> findAllLiquidacionFinanConsolidado(Integer idDetProcesoAdq, String codigoDepartamento) {
+        Query q = em.createNamedQuery("defaultVwLiquidacionFinancieraConsolidadoDto", VwLiquidacionFinancieraConsolidadoDto.class);
+        q.setParameter(1, idDetProcesoAdq);
+        q.setParameter(2, codigoDepartamento);
+        return q.getResultList();
     }
 
     public LiquidacionFinanciera findLiquidacion(BigDecimal idContrato) {

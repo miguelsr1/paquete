@@ -7,7 +7,7 @@
     <h1>
         <i class="fa fa-id-card-o" style="font-size: 16px;" aria-hidden="true"></i>
         <p:spacer width="10" height="8"/>
-        <p:outputLabel id="lblNombreEmpresa" value="Datos de #{proveedorController.empresa.razonSocial}"/>
+        <p:outputLabel id="lblNombreEmpresa" value="Datos de #{cargaGeneralView.empresa.razonSocial}"/>
     </h1>
     <p:accordionPanel id="pnlFoto">
         <p:tab title="Información General">
@@ -16,21 +16,21 @@
                          style="border:0px none; background-color:transparent;">
                 <p:panelGrid columns="2" columnClasses="col3_label,col9" style="width: 100%;" styleClass="ui-panelgrid-blank form-group form-elements"  >
                     <p:outputLabel value="N.I.T.:"/>
-                    <p:outputLabel styleClass="negrita" value="#{proveedorController.empresa.numeroNit}" />
+                    <p:outputLabel styleClass="negrita" value="#{cargaGeneralView.empresa.numeroNit}" />
                     <p:outputLabel value="Municipio y Departamento:"/>
-                    <p:outputLabel styleClass="negrita" value="#{proveedorController.empresa.idMunicipio.nombreMunicipio} , #{proveedorController.empresa.idMunicipio.codigoDepartamento.nombreDepartamento}" />
+                    <p:outputLabel styleClass="negrita" value="#{cargaGeneralView.empresa.idMunicipio.nombreMunicipio} , #{cargaGeneralView.empresa.idMunicipio.codigoDepartamento.nombreDepartamento}" />
                     <p:outputLabel value="Domicilio: "/>
-                    <p:outputLabel styleClass="negrita" value="#{proveedorController.empresa.direccionCompleta}" />
+                    <p:outputLabel styleClass="negrita" value="#{cargaGeneralView.empresa.direccionCompleta}" />
                     <p:outputLabel value="Teléfonos: "/>
-                    <p:outputLabel styleClass="negrita" value="#{proveedorController.empresa.telefonos} , #{proveedorController.empresa.numeroCelular}" />
+                    <p:outputLabel styleClass="negrita" value="#{cargaGeneralView.empresa.telefonos} , #{cargaGeneralView.empresa.numeroCelular}" />
                     <p:outputLabel value="Estado de registro: "/>
-                    <p:outputLabel styleClass="negrita" value="#{proveedorController.empresa.idEstadoRegistro.descripcionEstado}" />
+                    <p:outputLabel styleClass="negrita" value="#{cargaGeneralView.empresa.idEstadoRegistro.descripcionEstado}" />
                     <p:outputLabel value="Rubro a participar: "/>
-                    <p:outputLabel styleClass="negrita" value="#{proveedorController.nombreRubroProveedor}" />
+                    <p:outputLabel styleClass="negrita" value="#{cargaGeneralView.nombreRubroProveedor}" />
                 </p:panelGrid>
-                <p:commandLink id="foto" action="#{proveedorController.dlgFotografia}" disabled="#{proveedorController.capacidadInst eq null}">
-                    <p:ajax event="dialogReturn" listener="#{proveedorController.updateFrm}" update="pnlFoto"/>
-                    <p:graphicImage rendered="#{proveedorController.showFoto}" value="/DynamicImageServlet?file=#{proveedorController.empresa.idPersona.urlImagen}" width="120"/>
+                <p:commandLink id="foto" action="#{cargaGeneralView.dlgFotografia}" disabled="#{cargaGeneralView.capacidadInstPorRubro eq null}">
+                    <p:ajax event="dialogReturn" listener="#{datosGeneralesView.updateFrm}" update="pnlFoto"/>
+                    <p:graphicImage rendered="#{cargaGeneralView.showFoto}" value="/DynamicImageServlet?file=#{cargaGeneralView.empresa.idPersona.urlImagen}" width="120"/>
                 </p:commandLink>
             </p:panelGrid>
         </p:tab>

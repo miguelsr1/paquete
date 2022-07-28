@@ -9,9 +9,9 @@
         <p:menubar id="menuBar" styleClass="divSticky"> 
             <p:menuitem value="Nuevo" icon="fa fa-file-o" ajax="true" process="@this" disabled="true"/>
             <p:menuitem value="Modificar" update="frmPrincipal" icon="fa fa-edit" ajax="true"  onclick="onClick('btnModificar');"/>
-            <p:menuitem value="Guardar" icon="fa fa-save" disabled="#{menuController.usuarioSoloLectura || proveedorController.deshabiliar}" 
-                        action="#{proveedorController.guardarPreciosRef}" update="tblDetallePrecio"/>
-            <p:menuitem value="Imprimir" ajax="false" icon="fa fa-print" action="#{proveedorController.impOfertaGlobal}" />
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="#{menuController.usuarioSoloLectura || preciosReferenciaView.deshabiliar}" 
+                        action="#{preciosReferenciaView.guardarPreciosRef}" update="tblDetallePrecio"/>
+            <p:menuitem value="Imprimir" ajax="false" icon="fa fa-print" action="#{preciosReferenciaView.impOfertaGlobal}" />
             <p:menuitem value="Principal" icon="fa fa-home" action="#{parametrosMB.limpiarVariables}" url="#{request.contextPath}/app/inicial.mined"/>
 
             <f:facet  name="options">  
@@ -19,8 +19,8 @@
             </f:facet>  
         </p:menubar>
         <p:panel visible="false">
-            <p:commandButton id="btnModificar" value="ok" actionListener="#{proveedorController.filtroProveedores}">
-                <p:ajax event="dialogReturn" listener="#{proveedorController.empSelecPrecioRef}" update="frmPrincipal pnlFoto" />
+            <p:commandButton id="btnModificar" value="ok" actionListener="#{preciosReferenciaView.filtroProveedores}">
+                <p:ajax event="dialogReturn" listener="#{preciosReferenciaView.empSelecPrecioRef}" update="frmPrincipal pnlFoto" />
             </p:commandButton>
         </p:panel>
         <div class="ui-g">
@@ -34,19 +34,19 @@
                         <p:spacer width="10"/>
                         <h:outputText value="Precios de referencia"/>
                         <p:commandButton id="btoAgregarProveedor" value=" Agregar" icon="fa fa-plus-circle" style="float: right; font-size: 12px;"
-                                         action="#{proveedorController.agregarNewPrecio}" update="tblDetallePrecio"/>
+                                         action="#{preciosReferenciaView.agregarNewPrecio}" update="tblDetallePrecio"/>
                     </h1>
                     <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col6,col6" 
                                  style="width: 100%; border:0px none; background-color:transparent;"
                                  styleClass="form-group ui-panelgrid-blank">
                         <p:outputLabel value="Precios de Referencia"/>
                         <p:outputLabel value="Precios Máximos"/>
-                        <p:dataTable id="tblDetallePrecio" widgetVar="tblDetallePrecio" value="#{proveedorController.lstPreciosReferencia}" var="precio" 
+                        <p:dataTable id="tblDetallePrecio" widgetVar="tblDetallePrecio" value="#{preciosReferenciaView.lstPreciosReferencia}" var="precio" 
                                      editMode="cell" rowIndexVar="idRow" rowKey="#{precio.idPrecioRefEmp}"
                                      editable="true" rowStyleClass="#{precio.estadoEliminacion eq 1 ? 'filaEliminada' : null}" style="width: 570px !important"
-                                     selection="#{proveedorController.precioRef}" emptyMessage="No se han registrado precios a este proveedor">
+                                     selection="#{preciosReferenciaView.precioRef}" emptyMessage="No se han registrado precios a este proveedor">
 
-                            <p:ajax event="cellEdit"  listener="#{proveedorController.onCellEdit}" onsuccess="updatePrecioRef();" />
+                            <p:ajax event="cellEdit"  listener="#{preciosReferenciaView.onCellEdit}" onsuccess="updatePrecioRef();" />
 
                             <p:column headerText="Id" width="40">
                                 <p:outputLabel value="#{precio.idPrecioRefEmp}" />
@@ -91,12 +91,12 @@
                             </p:column>
 
                             <p:column headerText="Borrar" width="25" style="text-align: center">
-                                <p:commandLink action="#{proveedorController.eliminarDetalle}" update="tblDetallePrecio">
+                                <p:commandLink action="#{preciosReferenciaView.eliminarDetalle}" update="tblDetallePrecio">
                                     <p:outputLabel rendered="#{precio.estadoEliminacion eq 0}"> <i class="fa fa-check-circle"></i></p:outputLabel>
                                     <p:outputLabel rendered="#{precio.estadoEliminacion eq 1}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
 
-                                    <f:setPropertyActionListener value="#{precio}" target="#{proveedorController.precioRef}"/>  
-                                    <f:setPropertyActionListener value="#{idRow}" target="#{proveedorController.idRow}"/>  
+                                    <f:setPropertyActionListener value="#{precio}" target="#{preciosReferenciaView.precioRef}"/>  
+                                    <f:setPropertyActionListener value="#{idRow}" target="#{preciosReferenciaView.idRow}"/>  
                                 </p:commandLink>
                             </p:column>
                         </p:dataTable>
@@ -119,7 +119,7 @@
                             </p:column>
                         </p:dataTable>
                     </p:panelGrid>
-                    <p:remoteCommand name="updatePrecioRef"   action="#{proveedorController.updateFilaDetalle}" />
+                    <p:remoteCommand name="updatePrecioRef"   action="#{preciosReferenciaView.updateFilaDetalle}" />
                 </div>
             </div>
         </div>

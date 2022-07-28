@@ -6,23 +6,17 @@
 package sv.gob.mined.paquescolar.ws;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
 import sv.gob.mined.paquescolar.ejb.ServiciosJsonEJB;
 import sv.gob.mined.paquescolar.model.Anho;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.RubrosAmostrarInteres;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.VwProveedorContratoDto;
 
 /**
  *
@@ -52,7 +46,7 @@ public class RestPaquete {
         return anhoProcesoEJB.getLstRubros(new ProcesoAdquisicion(idProceso));
     }
     
-    public List getLstProveedoresByCodEntAndIdProAndIdRub(String codigoEntidad, Integer idProcesoAdq, Integer idRubro){
+    public List<VwProveedorContratoDto> getLstProveedoresByCodEntAndIdProAndIdRub(String codigoEntidad, Integer idProcesoAdq, Integer idRubro){
         return serviciosJsonEJB.getLstProveedoresByCodEntAndIdProAndIdRub(codigoEntidad, idProcesoAdq, idRubro);
     }
 }

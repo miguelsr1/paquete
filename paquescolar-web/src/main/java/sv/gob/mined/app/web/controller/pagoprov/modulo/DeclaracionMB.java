@@ -196,11 +196,9 @@ public class DeclaracionMB implements Serializable {
             param.put("pLugar", empresa.getIdMunicipio().getCodigoDepartamento().getNombreDepartamento());
 
             if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
-                jasperPrintList.add(Reportes.getReporteAImprimir("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerProvNat" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho(), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
-
+                jasperPrintList.add(Reportes.getReporteAImprimir("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerProvNat" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho(), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres(), detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho(), muni))));
             } else {
-                jasperPrintList.add(Reportes.getReporteAImprimir("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerProvJur" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho(), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
-
+                jasperPrintList.add(Reportes.getReporteAImprimir("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerProvJur" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho(), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres(), detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho(), muni))));
             }
 
             Reportes.generarReporte(jasperPrintList, "oferta_global_" + getEmpresa().getNumeroNit());
@@ -235,9 +233,9 @@ public class DeclaracionMB implements Serializable {
                 sdfHora.format(fecha).split(":")[0], sdfHora.format(fecha).split(":")[1],
                 Herramientas.getNumDia(fecha), Herramientas.getNomMes(fecha), Herramientas.getNumAnyo(fecha));
 
-        proveedorEJB.enviarNotificacionModProv(titulo, 
-                mensaje, 
-                to, cc, bcc, 
+        proveedorEJB.enviarNotificacionModProv(titulo,
+                mensaje,
+                to, cc, bcc,
                 JsfUtil.getSessionMailG("3"));
     }
 }

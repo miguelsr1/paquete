@@ -149,40 +149,45 @@ public class DatosGeneralesMB implements Serializable {
                 proceso = proceso.getPadreIdProcesoAdq();
             }*/
             DetRubroMuestraInteres detRubro = proveedorEJB.findDetRubroByAnhoAndRubro(anho.getIdAnho(), empresa.getIdEmpresa());
-            capacidadInst = proveedorEJB.findDetProveedor(detRubro, proceso.getIdProcesoAdq(), CapaInstPorRubro.class);
-            if (capacidadInst == null) {
-                JsfUtil.mensajeAlerta("No se han cargado los datos de este proveedor para el proceso de contratación del año " + proceso.getIdAnho().getAnho());
+            if (detRubro == null) {
+
             } else {
-                if (capacidadInst.getIdMuestraInteres().getDatosVerificados() != null
-                        && capacidadInst.getIdMuestraInteres().getDatosVerificados() == 1) {
-                    datosVerificados = true;
-                }
 
-                departamentoCalif = proveedorEJB.findDetProveedor(detRubro, null, CapaDistribucionAcre.class);
-
-                if (departamentoCalif == null || departamentoCalif.getCodigoDepartamento() == null) {
-                    JsfUtil.mensajeAlerta("Este proveedor no posee departamento de calificación " + proceso.getIdAnho().getAnho());
+                capacidadInst = proveedorEJB.findDetProveedor(detRubro, proceso.getIdProcesoAdq(), CapaInstPorRubro.class);
+                if (capacidadInst == null) {
+                    JsfUtil.mensajeAlerta("No se han cargado los datos de este proveedor para el proceso de contratación del año " + proceso.getIdAnho().getAnho());
                 } else {
-                    codigoDepartamentoCalificado = departamentoCalif.getCodigoDepartamento().getCodigoDepartamento();
-                    personaNatural = (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1);
-
-                    if (personaNatural) {
-                        mismaDireccion = (empresa.getIdMunicipio().getIdMunicipio().intValue() == empresa.getIdPersona().getIdMunicipio().getIdMunicipio().intValue()
-                                && empresa.getDireccionCompleta().equals(empresa.getIdPersona().getDomicilio()));
+                    if (capacidadInst.getIdMuestraInteres().getDatosVerificados() != null
+                            && capacidadInst.getIdMuestraInteres().getDatosVerificados() == 1) {
+                        datosVerificados = true;
                     }
-                    idMunicipio = empresa.getIdPersona().getIdMunicipio().getIdMunicipio();
-                    codigoDepartamento = empresa.getIdPersona().getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
 
-                    idMunicipioLocal = empresa.getIdMunicipio().getIdMunicipio();
-                    codigoDepartamentoLocal = empresa.getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
+                    departamentoCalif = proveedorEJB.findDetProveedor(detRubro, null, CapaDistribucionAcre.class);
 
-                    rubroUniforme = (departamentoCalif.getIdMuestraInteres().getIdRubroInteres().getIdRubroUniforme().intValue() == 1);
+                    if (departamentoCalif == null || departamentoCalif.getCodigoDepartamento() == null) {
+                        JsfUtil.mensajeAlerta("Este proveedor no posee departamento de calificación " + proceso.getIdAnho().getAnho());
+                    } else {
+                        codigoDepartamentoCalificado = departamentoCalif.getCodigoDepartamento().getCodigoDepartamento();
+                        personaNatural = (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1);
 
-                    if (rubroUniforme) {
-                        inscritoIva = (empresa.getEsContribuyente() == 1);
-                        deseaInscribirseIva = (empresa.getDeseaInscribirse() == 1);
-                        idCanton = empresa.getIdPersona().getCodigoCanton();
-                        idCantonLocal = empresa.getCodigoCanton();
+                        if (personaNatural) {
+                            mismaDireccion = (empresa.getIdMunicipio().getIdMunicipio().intValue() == empresa.getIdPersona().getIdMunicipio().getIdMunicipio().intValue()
+                                    && empresa.getDireccionCompleta().equals(empresa.getIdPersona().getDomicilio()));
+                        }
+                        idMunicipio = empresa.getIdPersona().getIdMunicipio().getIdMunicipio();
+                        codigoDepartamento = empresa.getIdPersona().getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
+
+                        idMunicipioLocal = empresa.getIdMunicipio().getIdMunicipio();
+                        codigoDepartamentoLocal = empresa.getIdMunicipio().getCodigoDepartamento().getCodigoDepartamento();
+
+                        rubroUniforme = (departamentoCalif.getIdMuestraInteres().getIdRubroInteres().getIdRubroUniforme().intValue() == 1);
+
+                        if (rubroUniforme) {
+                            inscritoIva = (empresa.getEsContribuyente() == 1);
+                            deseaInscribirseIva = (empresa.getDeseaInscribirse() == 1);
+                            idCanton = empresa.getIdPersona().getCodigoCanton();
+                            idCantonLocal = empresa.getCodigoCanton();
+                        }
                     }
                 }
             }

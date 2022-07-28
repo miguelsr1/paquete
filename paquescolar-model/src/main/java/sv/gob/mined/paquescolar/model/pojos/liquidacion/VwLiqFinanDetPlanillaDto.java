@@ -16,7 +16,7 @@ import javax.persistence.Temporal;
 @Entity
 @NamedNativeQuery(
         name = "defaultVwLiqFinanDetPlanillaDto",
-        query = "select id_contrato as idContrato, transferencia, id_planilla as idPlanilla, tipo_pago as tipoPago, numero_doc_pago as numeroDocPago, fecha_cheque as fechaCheque, tipo_doc as tipoDoc, monto_actual as montoActual, cantidad_actual as cantidadActual from vw_liq_finan_det_planilla where id_contrato = ?1",
+        query = "select id_contrato as idContrato, transferencia, id_planilla as idPlanilla, tipo_pago as tipoPago, numero_doc_pago as numeroDocPago, fecha_cheque as fechaCheque, tipo_doc as tipoDoc, monto_actual as montoActual, cantidad_actual as cantidadActual, no_doc_pago as noDocPago, fecha_doc_pago as fechaDocPago from vw_liq_finan_det_planilla where id_contrato = ?1",
         resultClass = VwLiqFinanDetPlanillaDto.class)
 public class VwLiqFinanDetPlanillaDto implements Serializable {
 
@@ -25,9 +25,12 @@ public class VwLiqFinanDetPlanillaDto implements Serializable {
     private BigDecimal idPlanilla;
     private String tipoPago;
     private String numeroDocPago;
+    private String noDocPago;
     private Short transferencia;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date fechaCheque;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date fechaDocPago;
     private String tipoDoc;
     private BigDecimal montoActual;
     private BigInteger cantidadActual;
@@ -105,6 +108,22 @@ public class VwLiqFinanDetPlanillaDto implements Serializable {
 
     public void setCantidadActual(BigInteger cantidadActual) {
         this.cantidadActual = cantidadActual;
+    }
+
+    public String getNoDocPago() {
+        return noDocPago;
+    }
+
+    public void setNoDocPago(String noDocPago) {
+        this.noDocPago = noDocPago;
+    }
+
+    public Date getFechaDocPago() {
+        return fechaDocPago;
+    }
+
+    public void setFechaDocPago(Date fechaDocPago) {
+        this.fechaDocPago = fechaDocPago;
     }
 
 }

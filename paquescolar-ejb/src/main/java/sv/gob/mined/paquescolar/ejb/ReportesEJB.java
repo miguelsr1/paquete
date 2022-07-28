@@ -324,11 +324,11 @@ public class ReportesEJB {
         }));
     }
 
-    public List<DeclaracionJurada> getDeclaracionJurada(Empresa empresa, DetalleProcesoAdq detRubro, String ciudad) {
+    public List<DeclaracionJurada> getDeclaracionJurada(Empresa empresa, BigDecimal idRubro, BigDecimal idAnho, String ciudad) {
         Query q = em.createNamedQuery("Proveedor.DeclaracionJurada", DeclaracionJurada.class);
         q.setParameter(1, empresa.getNumeroNit());
-        q.setParameter(2, detRubro.getIdRubroAdq().getIdRubroInteres());
-        q.setParameter(3, detRubro.getIdProcesoAdq().getIdAnho().getIdAnho());
+        q.setParameter(2, idRubro);
+        q.setParameter(3, idAnho);
 
         List<DeclaracionJurada> lstDeclaracion = q.getResultList();
         if (!lstDeclaracion.isEmpty()) {

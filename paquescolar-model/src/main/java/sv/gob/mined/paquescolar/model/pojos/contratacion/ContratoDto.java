@@ -82,8 +82,18 @@ public class ContratoDto implements Serializable {
     private List<ParticipanteDto> lstParticipantes = new ArrayList();
     @Transient
     private List<ProveedorDisponibleDto> lstPorcentajeEval = new ArrayList();
+    @Transient
+    private Integer cantidadTotalOld;
 
     public ContratoDto() {
+    }
+
+    public Integer getCantidadTotalOld() {
+        cantidadTotalOld = 0;
+        for (DetalleItemDto detalleItemDto : lstDetalleOld) {
+            cantidadTotalOld = cantidadTotalOld + detalleItemDto.getCantidad().intValue();
+        }
+        return cantidadTotalOld;
     }
 
     public BigDecimal getIdRow() {

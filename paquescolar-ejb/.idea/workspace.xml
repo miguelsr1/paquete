@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3d086056-5bc0-4231-9027-4640239d770b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../paquescolar-web/src/main/webapp/app/reg03DatosGenerales_1.xhtml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../paquescolar-web/src/main/webapp/app/reg03MunicipiosInteres_1.xhtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../boleta-api/nb-configuration.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../boleta-api/nb-configuration.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../boleta-api/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../boleta-api/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../boleta-api/src/main/java/sv/gob/mined/boleta/ejb/EMailFacade.java" beforeDir="false" afterPath="$PROJECT_DIR$/../boleta-api/src/main/java/sv/gob/mined/boleta/ejb/EMailFacade.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../boleta-api/src/main/java/sv/gob/mined/boleta/ejb/LeerBoletasFacade.java" beforeDir="false" afterPath="$PROJECT_DIR$/../boleta-api/src/main/java/sv/gob/mined/boleta/ejb/LeerBoletasFacade.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../boleta-api/src/main/java/sv/gob/mined/boleta/ejb/SeparacionBoletasFacade.java" beforeDir="false" afterPath="$PROJECT_DIR$/../boleta-api/src/main/java/sv/gob/mined/boleta/ejb/SeparacionBoletasFacade.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../boleta-web/nb-configuration.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../boleta-web/nb-configuration.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../boleta-web/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../boleta-web/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../boleta-web/src/main/java/sv/gob/mined/boleta/web/BoletaMB.java" beforeDir="false" afterPath="$PROJECT_DIR$/../boleta-web/src/main/java/sv/gob/mined/boleta/web/BoletaMB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../boleta-web/src/main/java/sv/gob/mined/boleta/web/EnviarCorreoMB.java" beforeDir="false" afterPath="$PROJECT_DIR$/../boleta-web/src/main/java/sv/gob/mined/boleta/web/EnviarCorreoMB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../boleta-web/src/main/resources/cuenta_office365.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../boleta-web/src/main/resources/cuenta_office365.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../envio-web/nb-configuration.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../envio-web/nb-configuration.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paqueUpdateTecho/nb-configuration.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../paqueUpdateTecho/nb-configuration.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paqueUpdateTecho/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../paqueUpdateTecho/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paqueUpdateTecho/src/main/java/sv/gob/mined/paqueupdatetecho/Start.java" beforeDir="false" afterPath="$PROJECT_DIR$/../paqueUpdateTecho/src/main/java/sv/gob/mined/paqueupdatetecho/Start.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paqueUpdateTecho/src/wsdl/localhost_8080/paquescolar-web/ConamypeEJB.wsdl" beforeDir="false" afterPath="$PROJECT_DIR$/../paqueUpdateTecho/src/wsdl/localhost_8080/paquescolar-web/ConamypeEJB.wsdl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sv/gob/mined/paquescolar/ejb/LiquidacionFinancieraEJB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sv/gob/mined/paquescolar/ejb/LiquidacionFinancieraEJB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sv/gob/mined/paquescolar/ejb/ModificativaEJB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sv/gob/mined/paquescolar/ejb/ModificativaEJB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sv/gob/mined/paquescolar/ejb/ReportesEJB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sv/gob/mined/paquescolar/ejb/ReportesEJB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sv/gob/mined/paquescolar/ejb/ServiciosJsonEJB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sv/gob/mined/paquescolar/ejb/ServiciosJsonEJB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sv/gob/mined/paquescolar/ws/RestPaquete.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sv/gob/mined/paquescolar/ws/RestPaquete.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-model/src/main/java/sv/gob/mined/paquescolar/model/pojos/contratacion/ContratoDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-model/src/main/java/sv/gob/mined/paquescolar/model/pojos/contratacion/ContratoDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-model/src/main/java/sv/gob/mined/paquescolar/model/pojos/liquidacion/VwLiqFinanDetPlanillaDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-model/src/main/java/sv/gob/mined/paquescolar/model/pojos/liquidacion/VwLiqFinanDetPlanillaDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-model/src/main/java/sv/gob/mined/paquescolar/model/pojos/pagoprove/InformeF14Dto.java" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-model/src/main/java/sv/gob/mined/paquescolar/model/pojos/pagoprove/InformeF14Dto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-model/src/main/resources/META-INF/persistence.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-model/src/main/resources/META-INF/persistence.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-model/src/main/resources/META-INF/querysNativePagoProve.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-model/src/main/resources/META-INF/querysNativePagoProve.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-rpt/src/main/java/sv/gob/mined/apps/reportes/contratos/modificativas/rptModCantSinIncrementoMonto2022PerJur.jasper" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-rpt/src/main/java/sv/gob/mined/apps/reportes/contratos/modificativas/rptModCantSinIncrementoMonto2022PerJur.jrxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-rpt/src/main/java/sv/gob/mined/apps/reportes/contratos/modificativas/rptModCantSinIncrementoMonto2022PerNat.jasper" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-rpt/src/main/java/sv/gob/mined/apps/reportes/contratos/modificativas/rptModCantSinIncrementoMonto2022PerNat.jrxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-rpt/src/main/java/sv/gob/mined/apps/reportes/contratos/modificativas/rptModIncrementoMontoPerJur.jasper" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-rpt/src/main/java/sv/gob/mined/apps/reportes/contratos/modificativas/rptModIncrementoMontoPerJur.jasper" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-rpt/src/main/java/sv/gob/mined/apps/reportes/contratos/modificativas/rptModIncrementoMontoPerJur.jrxml" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-rpt/src/main/java/sv/gob/mined/apps/reportes/contratos/modificativas/rptModIncrementoMontoPerJur.jrxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-rpt/src/main/java/sv/gob/mined/apps/reportes/contratos/modificativas/rptModIncrementoMontoPerNat.jasper" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-rpt/src/main/java/sv/gob/mined/apps/reportes/contratos/modificativas/rptModIncrementoMontoPerNat.jasper" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-rpt/src/main/java/sv/gob/mined/apps/reportes/contratos/modificativas/rptModIncrementoMontoPerNat.jrxml" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-rpt/src/main/java/sv/gob/mined/apps/reportes/contratos/modificativas/rptModIncrementoMontoPerNat.jrxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-rpt/src/main/java/sv/gob/mined/apps/reportes/pagoproveedor/rptMatrizPagoCredito.jasper" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-rpt/src/main/java/sv/gob/mined/apps/reportes/pagoproveedor/rptMatrizPagoCredito.jasper" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-rpt/src/main/java/sv/gob/mined/apps/reportes/pagoproveedor/rptMatrizPagoCredito.jrxml" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-rpt/src/main/java/sv/gob/mined/apps/reportes/pagoproveedor/rptMatrizPagoCredito.jrxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-web/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-web/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-web/src/main/java/sv/gob/mined/app/web/controller/contratacion/ContratosOrdenesComprasController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-web/src/main/java/sv/gob/mined/app/web/controller/contratacion/ContratosOrdenesComprasController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-web/src/main/java/sv/gob/mined/app/web/controller/pagoprov/PagoProveedoresController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-web/src/main/java/sv/gob/mined/app/web/controller/pagoprov/PagoProveedoresController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-web/src/main/java/sv/gob/mined/app/web/controller/pagoprov/ProveedorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-web/src/main/java/sv/gob/mined/app/web/controller/pagoprov/ProveedorController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-web/src/main/java/sv/gob/mined/app/web/controller/pagoprov/ProveedorModMB.java" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-web/src/main/java/sv/gob/mined/app/web/controller/pagoprov/ProveedorModMB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-web/src/main/java/sv/gob/mined/app/web/controller/pagoprov/modulo/DatosGeneralesMB.java" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-web/src/main/java/sv/gob/mined/app/web/controller/pagoprov/modulo/DatosGeneralesMB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-web/src/main/java/sv/gob/mined/app/web/controller/pagoprov/modulo/DeclaracionMB.java" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-web/src/main/java/sv/gob/mined/app/web/controller/pagoprov/modulo/DeclaracionMB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-web/src/main/java/sv/gob/mined/app/web/controller/pagoprov/modulo/PreciosReferenciaMB.java" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-web/src/main/java/sv/gob/mined/app/web/controller/pagoprov/modulo/PreciosReferenciaMB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-web/src/main/java/sv/gob/mined/app/web/controller/segmodif/ModificatoriaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-web/src/main/java/sv/gob/mined/app/web/controller/segmodif/ModificatoriaController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-web/src/main/webapp/app/comunes/datosGenProveedor.xhtml" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-web/src/main/webapp/app/comunes/datosGenProveedor.xhtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-web/src/main/webapp/app/comunes/dialogos/proveedor/filtroProveedor.xhtml" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-web/src/main/webapp/app/comunes/dialogos/proveedor/filtroProveedor.xhtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-web/src/main/webapp/app/reg03DatosGenerales.xhtml" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-web/src/main/webapp/app/reg03DatosGenerales.xhtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-web/src/main/webapp/app/reg03MunicipiosInteres.xhtml" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-web/src/main/webapp/app/reg03MunicipiosInteres.xhtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-web/src/main/webapp/app/reg03PreciosReferencia.xhtml" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-web/src/main/webapp/app/reg03PreciosReferencia.xhtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../paquescolar-web/src/main/webapp/index.xhtml" beforeDir="false" afterPath="$PROJECT_DIR$/../paquescolar-web/src/main/webapp/index.xhtml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="2CZo2AP9n5ceUgkRRuQMO2WrNXG" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "/home/misanchez/NetBeansProjects/paquete/paquescolar-ejb"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3d086056-5bc0-4231-9027-4640239d770b" name="Changes" comment="" />
+      <created>1659019258314</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1659019258314</updated>
+    </task>
+    <servers />
+  </component>
+</project>

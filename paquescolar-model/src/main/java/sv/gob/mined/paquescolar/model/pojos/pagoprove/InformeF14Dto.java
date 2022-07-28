@@ -38,6 +38,8 @@ public class InformeF14Dto implements Serializable {
     private String colO;
     private String colP;
     private String colQ;
+    private String colR;
+    private String colS;
 
     public BigDecimal getIdRow() {
         return idRow;
@@ -189,6 +191,22 @@ public class InformeF14Dto implements Serializable {
 
     public void setColQ(String colQ) {
         this.colQ = colQ;
+    }
+
+    public String getColR() {
+        return colR;
+    }
+
+    public void setColR(String colR) {
+        this.colR = colR;
+    }
+
+    public String getColS() {
+        return colS;
+    }
+
+    public void setColS(String colS) {
+        this.colS = colS;
     }
 
 }

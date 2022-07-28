@@ -1257,6 +1257,8 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
 
     public void impOfertaGlobal() {
         try {
+            String tmp = "";
+            String muni = VarSession.getNombreMunicipioSession();
             String lugar = ((ParametrosMB) FacesContext.getCurrentInstance().getApplication().getELResolver().
                     getValue(FacesContext.getCurrentInstance().getELContext(), null, "parametrosMB")).getUbicacion();
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -1277,49 +1279,31 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
             } else {
                 param.put("productor", Boolean.FALSE);
             }
-
-            String tmp = "";
+            
             List<JasperPrint> jasperPrintList = new ArrayList();
             if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 6
                     && detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres().intValue() == 2) {
                 tmp = "2019";
-
             }
 
             if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() >= 8) {
-                jasperPrintList.add(JasperFillManager.fillReport(Reportes.class
-                        .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobal" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(lstDatos)));
-
+                jasperPrintList.add(JasperFillManager.fillReport(Reportes.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobal" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(lstDatos)));
             } else {
-                jasperPrintList.add(JasperFillManager.fillReport(Reportes.class
-                        .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobal" + tmp + ".jasper"), param, new JRBeanCollectionDataSource(lstDatos)));
+                jasperPrintList.add(JasperFillManager.fillReport(Reportes.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/oferta" + File.separator + "rptOfertaGlobal" + tmp + ".jasper"), param, new JRBeanCollectionDataSource(lstDatos)));
             }
-
-            String muni = VarSession.getNombreMunicipioSession();
 
             if (detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() >= 8) {
                 if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
-                    jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class
-                            .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerNat" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
-
+                    jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerNat" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres(), detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho(), muni))));
                 } else {
-                    jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class
-                            .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerJur" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
-
+                    jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerJur" + detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getAnho() + ".jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres(), detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho(), muni))));
                 }
             } else if (empresa.getIdPersoneria().getIdPersoneria().intValue() == 1) {
-                jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class
-                        .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurCumplimientoPerNat.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
-                jasperPrintList
-                        .add(JasperFillManager.fillReport(ProveedorController.class
-                                .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerNat2.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
-
+                jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurCumplimientoPerNat.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres(), detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho(), muni))));
+                jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerNat2.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres(), detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho(), muni))));
             } else {
-                jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class
-                        .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurCumplimientoPerJur.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
-                jasperPrintList
-                        .add(JasperFillManager.fillReport(ProveedorController.class
-                                .getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerJur2.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq, muni))));
+                jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurCumplimientoPerJur.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres(), detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho(), muni))));
+                jasperPrintList.add(JasperFillManager.fillReport(ProveedorController.class.getClassLoader().getResourceAsStream("sv/gob/mined/apps/reportes/declaracion" + File.separator + "rptDeclaracionJurAceptacionPerJur2.jasper"), param, new JRBeanCollectionDataSource(reportesEJB.getDeclaracionJurada(empresa, detalleProcesoAdq.getIdRubroAdq().getIdRubroInteres(), detalleProcesoAdq.getIdProcesoAdq().getIdAnho().getIdAnho(), muni))));
             }
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

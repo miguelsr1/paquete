@@ -526,6 +526,7 @@ public class ModificativaEJB {
                 concat(persona.getPrimerApellido()).concat(persona.getSegundoApellido() == null ? " " : " " + persona.getSegundoApellido() + " ").
                 concat(persona.getAcasada() == null ? " " : " " + persona.getAcasada() + " ");
 
+        rptModificacionContrato.setJustificacion(resolucionesModificativas.getJustificacionModificativa());
         rptModificacionContrato.setDescripcionRubro(resolucionesModificativas.getIdContrato().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getDescripcionRubro());
         rptModificacionContrato.setFechaCreacionModif(resolucionesModificativas.getFechaInsercion());
         rptModificacionContrato.setNumeroContrato(resolucionesModificativas.getIdContrato().getNumeroContrato());

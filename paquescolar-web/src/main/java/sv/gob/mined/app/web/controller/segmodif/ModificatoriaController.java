@@ -1213,6 +1213,8 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
             param.put("pJustificacion", resolucionesModificativas.getJustificacionModificativa());
             param.put("pPlazoEntrega", resolucionesModificativas.getIdContrato().getPlazoPrevistoEntrega().intValue());
             param.put("pFechaEmision", resolucionesModificativas.getIdContrato().getFechaEmision());
+            param.put("pTotalOld", new BigInteger(getCantidadAdjudicadoOld().toString()));
+            param.put("pTotalNew", new BigInteger(getCantidadAdjudicadoNew().toString()));
             if (nombreRpt.contains("rptModProrroga")) {
                 param.put("JUSTIFICACION", resolucionesModificativas.getJustificacionModificativa());
                 param.put("DIAS_PRORROGA", resolucionesModificativas.getDiasProrroga().toString());
