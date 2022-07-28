@@ -95,7 +95,7 @@
             <id>maven.repository.redhat.com</id>
             <name>JBOSS EAP 6.X.X Repository for Maven</name>
             <url>https://maven.repository.redhat.com/techpreview/all</url>
-        </repository> 
+        </repository>
     </repositories>
     <build>
         <plugins>
@@ -132,19 +132,19 @@
                             <build-time>${timestamp}</build-time>
                         </manifestEntries>
                     </archive>
-                    <webResources>                        
-                        <resource>                        
+                    <webResources>
+                        <resource>
                             <directory>${basedir}/src/main/webapp/WEB-INF</directory>
                             <filtering>true</filtering>
                             <targetPath>WEB-INF</targetPath>
                             <includes>
-                                <include>**/web.xml</include>               
+                                <include>**/web.xml</include>
                             </includes>
                         </resource>
-                    </webResources> 
+                    </webResources>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>yuicompressor-maven-plugin</artifactId>
@@ -165,8 +165,8 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build>    
-    <properties>        
+    </build>
+    <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netbeans.hint.deploy.server>JBoss4</netbeans.hint.deploy.server>
         <version.maven-compiler-plugin>2.3.2</version.maven-compiler-plugin>
