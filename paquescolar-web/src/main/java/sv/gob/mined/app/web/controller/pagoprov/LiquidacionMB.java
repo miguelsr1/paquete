@@ -467,8 +467,8 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
             DetalleLiquidacion det = new DetalleLiquidacion();
 
             det.setNoItem(dato.getNoItem());
-            det.setCantidad(dato.getCantidadContrato().longValue());
-            det.setPrecioUnitario(dato.getPrecioUnitarioContrato());
+            det.setCantidad(dato.getCantidadContrato() == null ? 0l : dato.getCantidadContrato().longValue());
+            det.setPrecioUnitario(dato.getPrecioUnitarioContrato() == null ? BigDecimal.ZERO : dato.getPrecioUnitarioContrato());
 
             if (modificativa) {
                 det.setCantidadModificativa(dato.getCantidadModificativa().longValue());
@@ -589,16 +589,16 @@ public class LiquidacionMB extends RecuperarProcesoUtil implements Serializable 
         if (noEstaItem) {
             return null;
         } else {
-            if(datoLiquidacion.getCantidadModificativa() == null){
+            if (datoLiquidacion.getCantidadModificativa() == null) {
                 datoLiquidacion.setCantidadModificativa(BigDecimal.ZERO);
             }
-            if(datoLiquidacion.getPrecioUnitarioModificativa() == null){
+            if (datoLiquidacion.getPrecioUnitarioModificativa() == null) {
                 datoLiquidacion.setPrecioUnitarioModificativa(BigDecimal.ZERO);
             }
-            if(datoLiquidacion.getCantidadResguardo()== null){
+            if (datoLiquidacion.getCantidadResguardo() == null) {
                 datoLiquidacion.setCantidadResguardo(BigDecimal.ZERO);
             }
-            
+
             return datoLiquidacion;
         }
     }
