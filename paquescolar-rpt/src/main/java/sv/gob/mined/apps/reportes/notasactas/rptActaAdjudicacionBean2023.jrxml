@@ -113,7 +113,7 @@
 					<imageExpression><![CDATA[$P{ubicacionImagenes} +File.separator+ "logo_mined_rpt.png"]]></imageExpression>
 				</image>
 				<textField isBlankWhenNull="false">
-					<reportElement key="textField-1" x="0" y="66" width="528" height="68" uuid="c89610dd-e8b5-4071-a79e-c44be59352dc"/>
+					<reportElement key="textField-1" stretchType="RelativeToTallestObject" x="0" y="66" width="528" height="68" uuid="c89610dd-e8b5-4071-a79e-c44be59352dc"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

@@ -117,7 +117,7 @@ WHERE
 		<groupHeader>
 			<band height="159" splitType="Stretch">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-					<reportElement key="textField-1" x="0" y="89" width="528" height="70" uuid="6b873f65-f86f-424f-9fea-fcfe7c8fc6ba"/>
+					<reportElement key="textField-1" stretchType="RelativeToTallestObject" x="0" y="89" width="528" height="70" uuid="6b873f65-f86f-424f-9fea-fcfe7c8fc6ba"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
