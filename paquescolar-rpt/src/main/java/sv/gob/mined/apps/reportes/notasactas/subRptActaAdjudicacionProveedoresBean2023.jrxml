@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptActaAdjudicacionProveedores" pageWidth="535" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="70a234ea-f9ad-4d40-8bbc-f96b80044c49">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="pPorcentajeGeo" class="java.lang.String"/>
+	<parameter name="pPorcentajeCapa" class="java.lang.String"/>
+	<parameter name="pIdOferta" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+                rownum              as id,
+                emp.RAZON_SOCIAL    as razonSocial
+            from OFERTA_BIENES_SERVICIOS ofe
+                inner join PARTICIPANTES par    on par.ID_OFERTA = ofe.ID_OFERTA
+                inner join EMPRESA emp          on par.ID_EMPRESA = emp.ID_EMPRESA
+            where
+                ofe.ID_OFERTA = $P{pIdOferta}
+                and par.ESTADO_ELIMINACION = 0]]>
+	</queryString>
+	<field name="ID" class="java.math.BigDecimal"/>
+	<field name="RAZONSOCIAL" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-1" x="28" y="1" width="23" height="13" uuid="400115ce-de58-449c-ae5e-dd4069d6a7ff"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID}+")"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-2" x="51" y="1" width="430" height="13" uuid="4212aa6c-0f88-47f2-835f-5d1c927085c7"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RAZONSOCIAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="86" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-4" x="1" y="0" width="14" height="17" uuid="3a42e639-fade-4b54-8a1b-b637c0883547"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[b)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-1" x="15" y="0" width="520" height="86" isPrintWhenDetailOverflows="true" uuid="a4cd8aff-abc5-41b2-a226-16d694618f0f"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Posterior a la generación e impresión de cotizaciones, se analizaron detenidamente tomando en cuenta los criterios siguientes: a) oferta económica; b) capacidad de producción o de suministro proporcionada por el proveedor en su manifestación de interés y calificada por CONAMYPE; y c) priorizando artesanos y negocios pequeños de la localidad; Una vez evaluados los criterios se procede a la decisión estableciendo en orden de mérito del mayor al menor puntaje en la valoración de los criterios.
+
+Luego se procede a hacer del conocimiento del Consejo Directivo Escolar el resultado de las evaluaciones de la comisión para recomendar la adjudicación correspondiente.
+
+Es por ello que, en el presente acto, celebrado este día, en reunión extraordinaria del CDE se procede a tomar a bien la recomendación realizada por la comisión adjudicando a cada persona proveedora de acuerdo al siguiente detalle:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="1" y="46" width="14" height="17" uuid="3a42e639-fade-4b54-8a1b-b637c0883547"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[c)]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
