@@ -80,8 +80,8 @@ public class DetalleOfertas implements Serializable {
     @Basic(optional = false)
     @Column(name = "MODIFICATIVA")
     private BigInteger modificativa;
-    @Column(name = "CANTIDAD_OFERTADA")
-    private BigInteger cantidadOfertada;
+//    @Column(name = "CANTIDAD_OFERTADA")
+//    private BigInteger cantidadOfertada;
     
     
     @JoinColumn(name = "ID_PARTICIPANTE", referencedColumnName = "ID_PARTICIPANTE")
@@ -227,13 +227,13 @@ public class DetalleOfertas implements Serializable {
         this.modificativa = modificativa;
     }
 
-    public BigInteger getCantidadOfertada() {
-        return cantidadOfertada;
-    }
-
-    public void setCantidadOfertada(BigInteger cantidadOfertada) {
-        this.cantidadOfertada = cantidadOfertada;
-    }
+//    public BigInteger getCantidadOfertada() {
+//        return cantidadOfertada;
+//    }
+//
+//    public void setCantidadOfertada(BigInteger cantidadOfertada) {
+//        this.cantidadOfertada = cantidadOfertada;
+//    }
 
     public Participantes getIdParticipante() {
         return idParticipante;
