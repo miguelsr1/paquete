@@ -56,7 +56,7 @@
                         <p:selectOneMenu id="cboProveedor" value="#{participantesController.idParticipante}" disabled="#{participantesController.deshabilitado}" onkeydown="setaFoco(this);" >
                             <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
                             <f:selectItems value="#{ofertaMB.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idParticipante)):par.idEmpresa.razonSocial}"/>
-                            <p:ajax update="menuBar dvDetalle btnAgregar" listener="#{participantesController.buscarItemsProveedor}" />
+                            <p:ajax update="menuBar dvDetalle btnAgregar" listener="#{participantesController.buscarItemsProveedor}" onsuccess="findResguardo();"/>
                         </p:selectOneMenu>
                     </p:panelGrid>
                 </div>
@@ -168,6 +168,23 @@
                                 </p:column>
                                 <p:column/>
                             </p:summaryRow>
+                        </p:dataTable>
+
+                        <br/>
+                        <p:dataTable id="tblResguardo" value="#{participantesController.lstResguardo}" var="res" styleClass="ui-datatable-borderless ui-datatable-reflow" rowIndexVar="rowId">
+                            <p:column headerText="#">
+                                <p:outputLabel value="#{res.idRow}"/>
+                            </p:column>
+                            <p:column headerText="Descripción"> 
+                                <p:outputLabel value="#{res.descripcionNivel}"/>
+                            </p:column>
+                            <p:column headerText="Producto"> 
+                                <p:outputLabel value="#{res.nombreProducto}"/>
+                            </p:column>
+                            <p:column headerText="Cantidad"> 
+                                <p:outputLabel value="#{res.cantidad}"/>
+                            </p:column>
+
                         </p:dataTable>
 
                         <p:spacer width="10" height="25" style="display:#{(participantesController.mostraTblLibros)?'block':'none'}"/>
@@ -285,6 +302,7 @@
                              onclick="PF('confirmacion').hide();" update="dvDetalle" />
         </p:confirmDialog> 
 
+        <p:remoteCommand name="findResguardo" action="#{participantesController.limpiarFiltros()}" update="tblResguardo"/>
         <p:remoteCommand name="updDetalleOferta" action="#{participantesController.updateFilaDetalle('tblDetalleOferta')}"/>
         <p:remoteCommand name="updDetalleOfertaLibros" action="#{participantesController.updateFilaDetalle('tblDetalleOfertaLibros')}"/>
         <p:remoteCommand name="findEntidad" update="nombreCE cboProveedor tblDetalleOferta" actionListener="#{ofertaMB.buscarEntidadEducativa}"/>

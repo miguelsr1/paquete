@@ -918,7 +918,7 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                             param.put("telDirector", (representanteCe.getTelDirector() == null ? "" : representanteCe.getTelDirector()));
                             if (!getSelected().getIdResolucionAdj().getIdParticipante().getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getDescripcionRubro().contains("UNIFORME")) {
                                 if (getSelected().getFechaOrdenInicio() != null) {
-                                    param.put("P_FECHA_INICIO", Herramientas.getNumDia(getSelected().getFechaOrdenInicio()) + " días del mes de " + Herramientas.getNomMes(getSelected().getFechaOrdenInicio()) + " del año  " + Herramientas.getNumAnyo(getSelected().getFechaOrdenInicio()));
+                                    param.put("P_FECHA_INICIO", " día " + Herramientas.getNumDia(getSelected().getFechaOrdenInicio()) + " del mes de " + Herramientas.getNomMes(getSelected().getFechaOrdenInicio()) + " del año  " + Herramientas.getNumAnyo(getSelected().getFechaOrdenInicio()));
                                 } else {
                                     param.put("P_FECHA_INICIO", "SIN DEFINIR");
                                 }

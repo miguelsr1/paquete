@@ -89,6 +89,7 @@
         <class>sv.gob.mined.paquescolar.model.pojos.contratacion.DetalleItemDto</class>
         <class>sv.gob.mined.paquescolar.model.pojos.contratacion.ParticipanteDto</class>
         <class>sv.gob.mined.paquescolar.model.pojos.contratacion.RptDeAdjudicacionDto</class>
+        <class>sv.gob.mined.paquescolar.model.pojos.contratacion.ResguardoItemDto</class>
         <class>sv.gob.mined.paquescolar.model.pojos.contratacion.VwCotizacion</class>
         <class>sv.gob.mined.paquescolar.model.pojos.modificativa.VwContratoModificatoria</class>
         <class>sv.gob.mined.paquescolar.model.pojos.modificativa.VwBusquedaContratos</class>
