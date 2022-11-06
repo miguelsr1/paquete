@@ -34,6 +34,7 @@ import sv.gob.mined.paquescolar.model.OrganizacionEducativa;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
 import sv.gob.mined.paquescolar.model.TechoRubroEntEdu;
 import sv.gob.mined.paquescolar.model.pojos.VwRptCertificacionPresupuestaria;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.ResguardoItemDto;
 import sv.gob.mined.paquescolar.model.view.VwCatalogoEntidadEducativa;
 import sv.gob.mined.paquescolar.ws.TechoCE;
 
@@ -891,5 +892,27 @@ public class EntidadEducativaEJB {
             }
         }
 
+    }
+    
+    public List<ResguardoItemDto> getLstResguardoADisminuir(String codigoEntidad, Integer idProcesoAdq, Integer idProcesoAdqAnt, BigDecimal idRubroInteres) {
+        String queryName;
+
+        switch (idRubroInteres.intValue()) {
+            case 2:
+                queryName = "Contratacion.resguardoUtiles";
+                break;
+            case 3:
+                queryName = "Contratacion.resguardoZapatos";
+                break;
+            default:
+                queryName = "Contratacion.resguardoUniformes";
+                break;
+        }
+
+        Query q = em.createNamedQuery(queryName, ResguardoItemDto.class);
+        q.setParameter(1, codigoEntidad);
+        q.setParameter(2, idProcesoAdq);
+        q.setParameter(3, idProcesoAdqAnt);
+        return q.getResultList();
     }
 }

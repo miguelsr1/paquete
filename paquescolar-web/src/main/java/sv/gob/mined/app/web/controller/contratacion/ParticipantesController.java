@@ -36,6 +36,7 @@ import sv.gob.mined.paquescolar.model.NivelEducativo;
 import sv.gob.mined.paquescolar.model.Participantes;
 import sv.gob.mined.paquescolar.model.PreciosRefRubroEmp;
 import sv.gob.mined.paquescolar.model.ResolucionesAdjudicativas;
+import sv.gob.mined.paquescolar.model.pojos.contratacion.ResguardoItemDto;
 
 /**
  *
@@ -66,6 +67,7 @@ public class ParticipantesController implements Serializable {
     private List<DetalleOfertas> lstDetalleOferta = new ArrayList();
     private List<DetalleOfertas> lstDetalleOfertaLibros = new ArrayList();
     private List<PreciosRefRubroEmp> lstPreciosEmp = new ArrayList<>();
+    private List<ResguardoItemDto> lstResguardo = new ArrayList();
     private List<BigDecimal> lstNiveles = new ArrayList();
     @EJB
     private ProveedorEJB proveedorEJB;
@@ -104,6 +106,10 @@ public class ParticipantesController implements Serializable {
     // <editor-fold defaultstate="collapsed" desc="getter-setter">
     public Boolean getMostraTblLibros() {
         return mostraTblLibros;
+    }
+
+    public List<ResguardoItemDto> getLstResguardo() {
+        return lstResguardo;
     }
 
     public void setMostraTblLibros(Boolean mostraTblLibros) {
@@ -420,6 +426,7 @@ public class ParticipantesController implements Serializable {
                         }
                     }*/
 
+                    limpiarFiltros();
                     //cargar detalle de contratación
                     lstDetalleOferta = proveedorEJB.findDetalleOfertas(participante, false);
 
@@ -457,11 +464,20 @@ public class ParticipantesController implements Serializable {
                                             BigDecimal temIdNivel = BigDecimal.ZERO;
                                             if (detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) { //rubro uniforme
                                                 switch (idNivel.intValue()) {
-                                                    case 1:
-                                                    case 6:
-                                                    case 16:
-                                                    case 18:
-                                                        temIdNivel = idNivel;
+                                                    case 1://parvularia
+                                                    case 25:
+                                                    case 26:
+                                                    case 28:
+                                                    case 29:
+                                                    case 30:
+                                                    case 22:
+                                                        temIdNivel = new BigDecimal(22);
+                                                        break;
+                                                    case 6://media
+                                                    case 16://1er AÑO BACHILLERATO
+                                                    case 17://1er AÑO BACHILLERATO
+                                                    case 18://3er AÑO BACHILLERATO
+                                                        temIdNivel = new BigDecimal(6);
                                                         break;
                                                     case 3://primer ciclo
                                                     case 4://segundo ciclo
@@ -839,4 +855,8 @@ public class ParticipantesController implements Serializable {
         facesContext.responseComplete();
         facesContext.renderResponse();
     }*/
+    public void limpiarFiltros() {
+        Integer idProcesoAdqAnt = utilEJB.getIdProcesoAdqAnt(detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho());
+        lstResguardo = entidadEducativaEJB.getLstResguardoADisminuir(participante.getIdOferta().getCodigoEntidad().getCodigoEntidad(), detalleProceso.getIdProcesoAdq().getIdProcesoAdq(), idProcesoAdqAnt, detalleProceso.getIdRubroAdq().getIdRubroInteres());
+    }
 }
