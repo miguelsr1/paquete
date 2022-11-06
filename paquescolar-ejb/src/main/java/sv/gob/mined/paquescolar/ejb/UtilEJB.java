@@ -1,5 +1,6 @@
 package sv.gob.mined.paquescolar.ejb;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -186,4 +187,9 @@ public class UtilEJB {
         }
 
     }*/
+    public Integer getIdProcesoAdqAnt(BigDecimal idAnho) {
+        Query q = em.createQuery("SELECT p.idProcesoAdq FROM ProcesoAdquisicion p wHERE p.idAnho.idAnho=:pIdAnho and p.padreIdProcesoAdq is null");
+        q.setParameter("pIdAnho", idAnho.add(BigDecimal.ONE.negate()));
+        return (Integer) q.getSingleResult();
+    }
 }
