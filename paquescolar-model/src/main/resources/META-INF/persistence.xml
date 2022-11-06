@@ -149,6 +149,7 @@
     <class>sv.gob.mined.paquescolar.model.HistorialLiquiFinan</class>
     <class>sv.gob.mined.paquescolar.model.pojos.liquidacion.VwLiquidacionFinancieraDto</class>
     <class>sv.gob.mined.paquescolar.model.pojos.contratacion.VwProveedorContratoDto</class>
+    <class>sv.gob.mined.paquescolar.model.pojos.contratacion.ResguardoItemDto</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.target-database" value="Oracle"/>
