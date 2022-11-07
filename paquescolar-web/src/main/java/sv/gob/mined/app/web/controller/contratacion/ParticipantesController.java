@@ -57,6 +57,7 @@ public class ParticipantesController implements Serializable {
     private Boolean mostrarMsj = false;
     private Boolean modifDesac = true;
     private Boolean mostraTblLibros = false;
+    private Boolean ceClimaFrio = false;
     private BigDecimal idParticipante = BigDecimal.ZERO;
     private CatalogoProducto item;
     private DetalleProcesoAdq detalleProceso = new DetalleProcesoAdq();
@@ -400,7 +401,6 @@ public class ParticipantesController implements Serializable {
         mostrarMsj = false;
         showEstilo = false;
         mostraTblLibros = false;
-        // lstEstilos = new SelectItem[0];
         lstDetalleOferta.clear();
         if (idParticipante != null && idParticipante.compareTo(BigDecimal.ZERO) != 0) {
             participante = utilEJB.find(Participantes.class, idParticipante);
@@ -409,33 +409,11 @@ public class ParticipantesController implements Serializable {
 
                 //verificar si el proveedor seleccionado posee precios de referencia
                 if (proveedorEJB.isPrecioRef(participante.getIdEmpresa().getNumeroNit(), participante.getIdOferta().getIdDetProcesoAdq().getIdRubroAdq().getIdRubroInteres(), participante.getIdOferta().getIdDetProcesoAdq().getIdProcesoAdq().getIdAnho().getIdAnho())) {
-                    //cargar estilos, unicamente si el rubro es zapatos
-                    /*if (detalleProceso.getIdRubroAdq().getIdRubroInteres().compareTo(new BigDecimal(3)) == 0) {
-                        File carpetaNfs = new File("/imagenes/PaqueteEscolar/Fotos_Zapatos/" + participante.getIdEmpresa().getNumeroNit() + "/");
-
-                        if (carpetaNfs.list() != null) {
-                            showEstilo = true;
-                            lstEstilos = new SelectItem[carpetaNfs.list().length + 1];
-                            int i = 0;
-                            lstEstilos[i] = new SelectItem("-", "Seleccione");
-                            i++;
-                            for (String string : carpetaNfs.list()) {
-                                lstEstilos[i] = new SelectItem(string, string);
-                                i++;
-                            }
-                        }
-                    }*/
+                    ceClimaFrio = entidadEducativaEJB.findCeClimaFrioByCodigoEntidad(codigoEntidad) != null;
 
                     //cargar detalle de contratación
                     lstDetalleOferta = proveedorEJB.findDetalleOfertas(participante, false);
 
-                    /*if (detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 2) {
-                        if (detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() > 5
-                                && detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho().intValue() < 8) {
-                            mostraTblLibros = true;
-                            lstDetalleOfertaLibros = proveedorEJB.findDetalleOfertas(participante, true);
-                        }
-                    }*/
                     //verificar el estado de la resersolucion adjudicativa
                     ResolucionesAdjudicativas res = resolucionAdjudicativaEJB.findResolucionesAdjudicativasByIdParticipante(idParticipante);
                     int idResolucion;

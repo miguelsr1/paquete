@@ -4,7 +4,7 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:jsf="http://xmlns.jcp.org/jsf"
-                template="/WEB-INF/template.xhtml">
+                template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
     <ui:define name="head">
         <script type="text/javascript">
             function calcularSubTotalMatriculaIniPar(val1, val2, val3, val4, val5, lblVal, lblNivel) {
@@ -224,18 +224,15 @@
 
     <ui:define name="title">Listado de ofertas registradas</ui:define>
     <ui:define name="content">
-        <h:form id="form" prependId="false" onkeypress="if (event.keyCode == 13) {
-                    return false;
-                }">
             <div class="p-grid dashboard"> 
                 <div class="p-col-12" style="padding-bottom: 1px;">
                     <p:menubar>
-                        <p:menuitem value="Nuevo"  icon="pi pi-file" />
-                        <p:menuitem value="Modificar" icon="pi pi-pencil" disabled="true"/>
-                        <p:menuitem value="Buscar"  icon="pi pi-search" disabled="true"/>
-                        <p:menuitem value="Guardar" icon="pi pi-save" action="#{estadisticasCensoView.guardar}" disabled="#{sessionView.usuarioSoloLectura}"/>
-                        <p:menuitem value="Imprimir" icon="pi pi-print" ajax="true" onclick="PF('dlgImprimir').show();" disabled="true"/>
-                        <p:menuitem value="Principal" icon="pi pi-home" action="#{sessionView.gotoPrincipalPage()}" actionListener="#{guestPreferences.ocultarMenu()}"/>
+                        <p:menuitem value="Nuevo"  icon="fa fa-file" />
+                        <p:menuitem value="Modificar" icon="fa fa-pencil" disabled="true"/>
+                        <p:menuitem value="Buscar"  icon="fa fa-search" disabled="true"/>
+                        <p:menuitem value="Guardar" icon="fa fa-save" action="#{estadisticasCensoController.guardar}" disabled="#{sessionView.usuarioSoloLectura}"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="true" onclick="PF('dlgImprimir').show();" disabled="true"/>
+                        <p:menuitem value="Principal" icon="fa fa-home" action="#{sessionView.gotoPrincipalPage()}" actionListener="#{guestPreferences.ocultarMenu()}"/>
 
                         <f:facet  name="options">  
                             <p:commandButton icon="pi pi-sign-out" value="Salir" action="#{sessionView.logout()}" process="@this"/>
@@ -251,19 +248,17 @@
                             </h5>
                         </div>
 
-                        <div class="p-col-12">
-                            <div class="p-field p-grid">
-                                <p:outputLabel value="Código Infraestructura:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
-                                <div class="p-col-12 p-md-9">
-                                    <p:inputText style="margin-right: 10px;" id="txtCodigoEntidad" maxlength="5" 
-                                                 value="#{estadisticasCensoView.codigoEntidad}" size="4" 
-                                                 autocomplete="false" disabled="#{estadisticasCensoView.deshabilitado}" onkeyup="return this.value.length >= 5">
-                                        <p:ajax event="keyup" listener="#{estadisticasCensoView.buscarEntidadEducativa}" update="nombreCE tabDatos"/>
-                                    </p:inputText>
-                                    <p:outputLabel id="nombreCE" value="#{estadisticasCensoView.entidadEducativa.nombre}" style="font-weight: bold" />
-                                </div>
-                            </div>
-                        </div>
+                        <h:panelGrid id="pnlFiltro" columns="4" >
+                            <p:outputLabel value="#{bundle['ce.codEnt']}:" />
+                            <p:outputPanel id="codigoEntidad" >
+                                <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{estadisticasCensoController.codigoEntidad}" size="5" 
+                                             autocomplete="false" disabled="#{estadisticasCensoController.deshabilitado}" onkeyup="return this.value.length >= 5">
+                                    <p:ajax event="keyup" listener="#{estadisticasCensoController.buscarEntidadEducativa}" update="nombreCE tabDatos"/>
+                                </p:inputText>
+                                <p:spacer width="10"/>
+                                <p:outputLabel id="nombreCE" value="#{estadisticasCensoController.entidadEducativa.nombre}" style="font-weight: bold"/>
+                            </p:outputPanel>
+                        </h:panelGrid>
 
 
                     </div>
@@ -310,51 +305,51 @@
                                             </p:column>
                                         </p:row>
                                     </f:facet>
-                                    <p:row rendered="#{estadisticasCensoView.mostrarInicial}">
+                                    <p:row rendered="#{estadisticasCensoController.mostrarInicial}">
                                         <p:column styleClass="numero">Inicial 2</p:column>
-                                        <p:column><p:inputNumber id="txtIni2F" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.estInicial2grado.femenimo}"  onkeyup="calcularMontoPorNivel('txtIni2F', 'txtIni2M', 'Ini2');calcularSubTotalMatriculaIniPar('txtIni2F', 'txtIni3F', 'txtPar4F', 'txtPar5F', 'txtPar6F', 'txtIPFem', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txtIni2M" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.estInicial2grado.masculino}" onkeyup="calcularMontoPorNivel('txtIni2F', 'txtIni2M', 'Ini2');calcularSubTotalMatriculaIniPar('txtIni2M', 'txtIni3M', 'txtPar4M', 'txtPar5M', 'txtPar6M', 'txtIPMas', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txtIni2F" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estInicial2grado.femenimo}"  onkeyup="calcularMontoPorNivel('txtIni2F', 'txtIni2M', 'Ini2');calcularSubTotalMatriculaIniPar('txtIni2F', 'txtIni3F', 'txtPar4F', 'txtPar5F', 'txtPar6F', 'txtIPFem', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txtIni2M" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estInicial2grado.masculino}" onkeyup="calcularMontoPorNivel('txtIni2F', 'txtIni2M', 'Ini2');calcularSubTotalMatriculaIniPar('txtIni2M', 'txtIni3M', 'txtPar4M', 'txtPar5M', 'txtPar6M', 'txtIPMas', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatIni2"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblIni2Uni" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtIni2PreUniFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParUni.precioMaxFem}"/>
-                                            <p:inputText id="txtIni2PreUniMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParUni.precioMaxMas}"/>
+                                            <p:inputText id="txtIni2PreUniFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParUni.precioMaxFem}"/>
+                                            <p:inputText id="txtIni2PreUniMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParUni.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblIni2Uti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtIni2PreUtiFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParUti.precioMaxFem}"/>
-                                            <p:inputText id="txtIni2PreUtiMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParUti.precioMaxMas}"/>
+                                            <p:inputText id="txtIni2PreUtiFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParUti.precioMaxFem}"/>
+                                            <p:inputText id="txtIni2PreUtiMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParUti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblIni2Zap" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtIni2PreZapFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParZap.precioMaxFem}"/>
-                                            <p:inputText id="txtIni2PreZapMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParZap.precioMaxMas}"/>
+                                            <p:inputText id="txtIni2PreZapFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParZap.precioMaxFem}"/>
+                                            <p:inputText id="txtIni2PreZapMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParZap.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblIni2Lib" size="5" readonly="true" styleClass="numero"/>
                                         </p:column>
                                     </p:row>
-                                    <p:row rendered="#{estadisticasCensoView.mostrarInicial}">
+                                    <p:row rendered="#{estadisticasCensoController.mostrarInicial}">
                                         <p:column styleClass="numero">Inicial 3</p:column>
-                                        <p:column><p:inputNumber id="txtIni3F" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.estInicial3grado.femenimo}"  onkeyup="calcularMontoPorNivel('txtIni3F', 'txtIni3M', 'Ini3');calcularSubTotalMatriculaIniPar('txtIni2F', 'txtIni3F', 'txtPar4F', 'txtPar5F', 'txtPar6F', 'txtIPFem', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txtIni3M" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.estInicial3grado.masculino}" onkeyup="calcularMontoPorNivel('txtIni3F', 'txtIni3M', 'Ini3');calcularSubTotalMatriculaIniPar('txtIni2M', 'txtIni3M', 'txtPar4M', 'txtPar5M', 'txtPar6M', 'txtIPMas', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txtIni3F" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estInicial3grado.femenimo}"  onkeyup="calcularMontoPorNivel('txtIni3F', 'txtIni3M', 'Ini3');calcularSubTotalMatriculaIniPar('txtIni2F', 'txtIni3F', 'txtPar4F', 'txtPar5F', 'txtPar6F', 'txtIPFem', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txtIni3M" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estInicial3grado.masculino}" onkeyup="calcularMontoPorNivel('txtIni3F', 'txtIni3M', 'Ini3');calcularSubTotalMatriculaIniPar('txtIni2M', 'txtIni3M', 'txtPar4M', 'txtPar5M', 'txtPar6M', 'txtIPMas', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatIni3"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblIni3Uni" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtIni3PreUniFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParUni.precioMaxFem}"/>
-                                            <p:inputText id="txtIni3PreUniMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParUni.precioMaxMas}"/>
+                                            <p:inputText id="txtIni3PreUniFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParUni.precioMaxFem}"/>
+                                            <p:inputText id="txtIni3PreUniMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParUni.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblIni3Uti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtIni3PreUtiFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParUti.precioMaxFem}"/>
-                                            <p:inputText id="txtIni3PreUtiMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParUti.precioMaxMas}"/>
+                                            <p:inputText id="txtIni3PreUtiFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParUti.precioMaxFem}"/>
+                                            <p:inputText id="txtIni3PreUtiMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParUti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblIni3Zap" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtIni3PreZapFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParZap.precioMaxFem}"/>
-                                            <p:inputText id="txtIni3PreZapMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParZap.precioMaxMas}"/>
+                                            <p:inputText id="txtIni3PreZapFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParZap.precioMaxFem}"/>
+                                            <p:inputText id="txtIni3PreZapMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParZap.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblIni3Lib" size="5" readonly="true" styleClass="numero"/>
@@ -362,76 +357,76 @@
                                     </p:row>
 
 
-                                    <p:row rendered="#{estadisticasCensoView.mostrarInicial}">
+                                    <p:row rendered="#{estadisticasCensoController.mostrarInicial}">
                                         <p:column styleClass="numero">Parvularia 4</p:column>
-                                        <p:column><p:inputNumber id="txtPar4F" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaPar4.femenimo}"  onkeyup="calcularMontoPorNivel('txtPar4F', 'txtPar4M', 'Par4');calcularSubTotalMatriculaIniPar('txtIni2F', 'txtIni3F', 'txtPar4F', 'txtPar5F', 'txtPar6F', 'txtIPFem', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txtPar4M" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaPar4.masculino}" onkeyup="calcularMontoPorNivel('txtPar4F', 'txtPar4M', 'Par4');calcularSubTotalMatriculaIniPar('txtIni2M', 'txtIni3M', 'txtPar4M', 'txtPar5M', 'txtPar6M', 'txtIPMas', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txtPar4F" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaPar4.femenimo}"  onkeyup="calcularMontoPorNivel('txtPar4F', 'txtPar4M', 'Par4');calcularSubTotalMatriculaIniPar('txtIni2F', 'txtIni3F', 'txtPar4F', 'txtPar5F', 'txtPar6F', 'txtIPFem', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txtPar4M" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaPar4.masculino}" onkeyup="calcularMontoPorNivel('txtPar4F', 'txtPar4M', 'Par4');calcularSubTotalMatriculaIniPar('txtIni2M', 'txtIni3M', 'txtPar4M', 'txtPar5M', 'txtPar6M', 'txtIPMas', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatPar4"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblPar4Uni" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtPar4PreUniFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParUni.precioMaxFem}"/>
-                                            <p:inputText id="txtPar4PreUniMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParUni.precioMaxMas}"/>
+                                            <p:inputText id="txtPar4PreUniFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParUni.precioMaxFem}"/>
+                                            <p:inputText id="txtPar4PreUniMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParUni.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblPar4Uti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtPar4PreUtiFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParUti.precioMaxFem}"/>
-                                            <p:inputText id="txtPar4PreUtiMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParUti.precioMaxMas}"/>
+                                            <p:inputText id="txtPar4PreUtiFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParUti.precioMaxFem}"/>
+                                            <p:inputText id="txtPar4PreUtiMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParUti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblPar4Zap" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtPar4PreZapFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParZap.precioMaxFem}"/>
-                                            <p:inputText id="txtPar4PreZapMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParZap.precioMaxMas}"/>
+                                            <p:inputText id="txtPar4PreZapFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParZap.precioMaxFem}"/>
+                                            <p:inputText id="txtPar4PreZapMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParZap.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblPar4Lib" size="5" readonly="true" styleClass="numero"/>
                                         </p:column>
                                     </p:row>
-                                    <p:row rendered="#{estadisticasCensoView.mostrarInicial}">
+                                    <p:row rendered="#{estadisticasCensoController.mostrarInicial}">
                                         <p:column styleClass="numero">Parvularia 5</p:column>
-                                        <p:column><p:inputNumber id="txtPar5F" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaPar5.femenimo}"  onkeyup="calcularMontoPorNivel('txtPar5F', 'txtPar5M', 'Par5');calcularSubTotalMatriculaIniPar('txtIni2F', 'txtIni3F', 'txtPar4F', 'txtPar5F', 'txtPar6F', 'txtIPFem', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txtPar5M" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaPar5.masculino}" onkeyup="calcularMontoPorNivel('txtPar5F', 'txtPar5M', 'Par5');calcularSubTotalMatriculaIniPar('txtIni2M', 'txtIni3M', 'txtPar4M', 'txtPar5M', 'txtPar6M', 'txtIPMas', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txtPar5F" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaPar5.femenimo}"  onkeyup="calcularMontoPorNivel('txtPar5F', 'txtPar5M', 'Par5');calcularSubTotalMatriculaIniPar('txtIni2F', 'txtIni3F', 'txtPar4F', 'txtPar5F', 'txtPar6F', 'txtIPFem', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txtPar5M" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaPar5.masculino}" onkeyup="calcularMontoPorNivel('txtPar5F', 'txtPar5M', 'Par5');calcularSubTotalMatriculaIniPar('txtIni2M', 'txtIni3M', 'txtPar4M', 'txtPar5M', 'txtPar6M', 'txtIPMas', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatPar5"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblPar5Uni" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtPar5PreUniFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParUni.precioMaxFem}"/>
-                                            <p:inputText id="txtPar5PreUniMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParUni.precioMaxMas}"/>
+                                            <p:inputText id="txtPar5PreUniFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParUni.precioMaxFem}"/>
+                                            <p:inputText id="txtPar5PreUniMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParUni.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblPar5Uti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtPar5PreUtiFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParUti.precioMaxFem}"/>
-                                            <p:inputText id="txtPar5PreUtiMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParUti.precioMaxMas}"/>
+                                            <p:inputText id="txtPar5PreUtiFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParUti.precioMaxFem}"/>
+                                            <p:inputText id="txtPar5PreUtiMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParUti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblPar5Zap" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtPar5PreZapFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParZap.precioMaxFem}"/>
-                                            <p:inputText id="txtPar5PreZapMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParZap.precioMaxMas}"/>
+                                            <p:inputText id="txtPar5PreZapFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParZap.precioMaxFem}"/>
+                                            <p:inputText id="txtPar5PreZapMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParZap.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblPar5Lib" size="5" readonly="true" styleClass="numero"/>
                                         </p:column>
                                     </p:row>
-                                    <p:row rendered="#{estadisticasCensoView.mostrarInicial}">
+                                    <p:row rendered="#{estadisticasCensoController.mostrarInicial}">
                                         <p:column styleClass="numero">Parvularia 6</p:column>
-                                        <p:column><p:inputNumber id="txtPar6F" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaPar6.femenimo}"  onkeyup="calcularMontoPorNivel('txtPar6F', 'txtPar6M', 'Par6');calcularSubTotalMatriculaIniPar('txtIni2F', 'txtIni3F', 'txtPar4F', 'txtPar5F', 'txtPar6F', 'txtIPFem', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txtPar6M" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaPar6.masculino}" onkeyup="calcularMontoPorNivel('txtPar6F', 'txtPar6M', 'Par6');calcularSubTotalMatriculaIniPar('txtIni2M', 'txtIni3M', 'txtPar4M', 'txtPar5M', 'txtPar6M', 'txtIPMas', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txtPar6F" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaPar6.femenimo}"  onkeyup="calcularMontoPorNivel('txtPar6F', 'txtPar6M', 'Par6');calcularSubTotalMatriculaIniPar('txtIni2F', 'txtIni3F', 'txtPar4F', 'txtPar5F', 'txtPar6F', 'txtIPFem', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txtPar6M" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaPar6.masculino}" onkeyup="calcularMontoPorNivel('txtPar6F', 'txtPar6M', 'Par6');calcularSubTotalMatriculaIniPar('txtIni2M', 'txtIni3M', 'txtPar4M', 'txtPar5M', 'txtPar6M', 'txtIPMas', 'IP');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatPar6"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblPar6Uni" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtPar6PreUniFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParUni.precioMaxFem}"/>
-                                            <p:inputText id="txtPar6PreUniMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParUni.precioMaxMas}"/>
+                                            <p:inputText id="txtPar6PreUniFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParUni.precioMaxFem}"/>
+                                            <p:inputText id="txtPar6PreUniMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParUni.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblPar6Uti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtPar6PreUtiFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParUti.precioMaxFem}"/>
-                                            <p:inputText id="txtPar6PreUtiMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParUti.precioMaxMas}"/>
+                                            <p:inputText id="txtPar6PreUtiFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParUti.precioMaxFem}"/>
+                                            <p:inputText id="txtPar6PreUtiMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParUti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblPar6Zap" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtPar6PreZapFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParZap.precioMaxFem}"/>
-                                            <p:inputText id="txtPar6PreZapMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParZap.precioMaxMas}"/>
+                                            <p:inputText id="txtPar6PreZapFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParZap.precioMaxFem}"/>
+                                            <p:inputText id="txtPar6PreZapMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParZap.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblPar6Lib" size="5" readonly="true" styleClass="numero"/>
@@ -439,26 +434,26 @@
                                     </p:row>
 
 
-                                    <p:row rendered="#{estadisticasCensoView.mostrarInicial}">
+                                    <p:row rendered="#{estadisticasCensoController.mostrarInicial}">
                                         <p:column style="background-color: #86b8f0;">Edu. Inicial + Parvularia</p:column>
-                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtIPFem" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaIniPar.femenimo}"/></p:column>
-                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtIPMas" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaIniPar.masculino}"/></p:column>
+                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtIPFem" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaIniPar.femenimo}"/></p:column>
+                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtIPMas" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaIniPar.masculino}"/></p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero"><p:outputLabel id="lblMatIP"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblIPUni" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtIPPreUniFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParUni.precioMaxFem}"/>
-                                            <p:inputText id="txtIPPreUniMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParUni.precioMaxMas}"/>
+                                            <p:inputText id="txtIPPreUniFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParUni.precioMaxFem}"/>
+                                            <p:inputText id="txtIPPreUniMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParUni.precioMaxMas}"/>
                                         </p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblIPUti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtIPPreUtiFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParUti.precioMaxFem}"/>
-                                            <p:inputText id="txtIPPreUtiMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParUti.precioMaxMas}"/>
+                                            <p:inputText id="txtIPPreUtiFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParUti.precioMaxFem}"/>
+                                            <p:inputText id="txtIPPreUtiMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParUti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblIPZap" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtIPPreZapFem" size="4" style="display: none;" value="#{estadisticasCensoView.preParZap.precioMaxFem}"/>
-                                            <p:inputText id="txtIPPreZapMas" size="4" style="display: none;" value="#{estadisticasCensoView.preParZap.precioMaxMas}"/>
+                                            <p:inputText id="txtIPPreZapFem" size="4" style="display: none;" value="#{estadisticasCensoController.preParZap.precioMaxFem}"/>
+                                            <p:inputText id="txtIPPreZapMas" size="4" style="display: none;" value="#{estadisticasCensoController.preParZap.precioMaxMas}"/>
                                         </p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblIPLib" size="5" readonly="true" styleClass="numero"/>
@@ -467,15 +462,15 @@
 
                                     <p:row>
                                         <p:column styleClass="numero">1er Grado</p:column>
-                                        <p:column><p:inputNumber id="txt1gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est1grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt1gfem', 'txt1gmas', 'G1');calcularSubTotalMatriculaNivelEdu('txt1gfem', 'txt2gfem', 'txt3gfem', 'txtCIFem', 'CI');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txt1gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est1grado.masculino}" onkeyup="calcularMontoPorNivel('txt1gfem', 'txt1gmas', 'G1');calcularSubTotalMatriculaNivelEdu('txt1gmas', 'txt2gmas', 'txt3gmas', 'txtCIMas', 'CI');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt1gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est1grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt1gfem', 'txt1gmas', 'G1');calcularSubTotalMatriculaNivelEdu('txt1gfem', 'txt2gfem', 'txt3gfem', 'txtCIFem', 'CI');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt1gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est1grado.masculino}" onkeyup="calcularMontoPorNivel('txt1gfem', 'txt1gmas', 'G1');calcularSubTotalMatriculaNivelEdu('txt1gmas', 'txt2gmas', 'txt3gmas', 'txtCIMas', 'CI');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatG1"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblG1Uti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtG1PreUtiFem" style="display: none;" value="#{estadisticasCensoView.preGrado1Uti.precioMaxFem}"/>
-                                            <p:inputText id="txtG1PreUtiMas" style="display: none;" value="#{estadisticasCensoView.preGrado1Uti.precioMaxMas}"/>
+                                            <p:inputText id="txtG1PreUtiFem" style="display: none;" value="#{estadisticasCensoController.preGrado1Uti.precioMaxFem}"/>
+                                            <p:inputText id="txtG1PreUtiMas" style="display: none;" value="#{estadisticasCensoController.preGrado1Uti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
@@ -484,15 +479,15 @@
                                     </p:row>
                                     <p:row>
                                         <p:column styleClass="numero">2do Grado</p:column>
-                                        <p:column><p:inputNumber id="txt2gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est2grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt2gfem', 'txt2gmas', 'G2');calcularSubTotalMatriculaNivelEdu('txt1gfem', 'txt2gfem', 'txt3gfem', 'txtCIFem', 'CI');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txt2gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est2grado.masculino}" onkeyup="calcularMontoPorNivel('txt2gfem', 'txt2gmas', 'G2');calcularSubTotalMatriculaNivelEdu('txt1gmas', 'txt2gmas', 'txt3gmas', 'txtCIMas', 'CI');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt2gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est2grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt2gfem', 'txt2gmas', 'G2');calcularSubTotalMatriculaNivelEdu('txt1gfem', 'txt2gfem', 'txt3gfem', 'txtCIFem', 'CI');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt2gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est2grado.masculino}" onkeyup="calcularMontoPorNivel('txt2gfem', 'txt2gmas', 'G2');calcularSubTotalMatriculaNivelEdu('txt1gmas', 'txt2gmas', 'txt3gmas', 'txtCIMas', 'CI');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatG2"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblG2Uti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtG2PreUtiFem" style="display: none;" value="#{estadisticasCensoView.preGrado2Uti.precioMaxFem}"/>
-                                            <p:inputText id="txtG2PreUtiMas" style="display: none;" value="#{estadisticasCensoView.preGrado2Uti.precioMaxMas}"/>
+                                            <p:inputText id="txtG2PreUtiFem" style="display: none;" value="#{estadisticasCensoController.preGrado2Uti.precioMaxFem}"/>
+                                            <p:inputText id="txtG2PreUtiMas" style="display: none;" value="#{estadisticasCensoController.preGrado2Uti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
@@ -501,15 +496,15 @@
                                     </p:row>
                                     <p:row>
                                         <p:column styleClass="numero">3er Grado</p:column>
-                                        <p:column><p:inputNumber id="txt3gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est3grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt3gfem', 'txt3gmas', 'G3');calcularSubTotalMatriculaNivelEdu('txt1gfem', 'txt2gfem', 'txt3gfem', 'txtCIFem', 'CI');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txt3gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est3grado.masculino}" onkeyup="calcularMontoPorNivel('txt3gfem', 'txt3gmas', 'G3');calcularSubTotalMatriculaNivelEdu('txt1gmas', 'txt2gmas', 'txt3gmas', 'txtCIMas', 'CI');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt3gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est3grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt3gfem', 'txt3gmas', 'G3');calcularSubTotalMatriculaNivelEdu('txt1gfem', 'txt2gfem', 'txt3gfem', 'txtCIFem', 'CI');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt3gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est3grado.masculino}" onkeyup="calcularMontoPorNivel('txt3gfem', 'txt3gmas', 'G3');calcularSubTotalMatriculaNivelEdu('txt1gmas', 'txt2gmas', 'txt3gmas', 'txtCIMas', 'CI');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatG3"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblG3Uti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtG3PreUtiFem" style="display: none;" value="#{estadisticasCensoView.preGrado3Uti.precioMaxFem}"/>
-                                            <p:inputText id="txtG3PreUtiMas" style="display: none;" value="#{estadisticasCensoView.preGrado3Uti.precioMaxMas}"/>
+                                            <p:inputText id="txtG3PreUtiFem" style="display: none;" value="#{estadisticasCensoController.preGrado3Uti.precioMaxFem}"/>
+                                            <p:inputText id="txtG3PreUtiMas" style="display: none;" value="#{estadisticasCensoController.preGrado3Uti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
@@ -518,24 +513,24 @@
                                     </p:row>
                                     <p:row>
                                         <p:column style="background-color: #86b8f0;">I Ciclo</p:column>
-                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtCIFem" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaCiclo1.femenimo}"/></p:column>
-                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtCIMas" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaCiclo1.masculino}"/></p:column>
+                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtCIFem" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaCiclo1.femenimo}"/></p:column>
+                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtCIMas" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaCiclo1.masculino}"/></p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero"><p:outputLabel id="lblMatCI"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblCIUni" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtCIPreUniFem" size="4" style="display: none;" value="#{estadisticasCensoView.preCicloIUni.precioMaxFem}"/>
-                                            <p:inputText id="txtCIPreUniMas" size="4" style="display: none;" value="#{estadisticasCensoView.preCicloIUni.precioMaxMas}"/>
+                                            <p:inputText id="txtCIPreUniFem" size="4" style="display: none;" value="#{estadisticasCensoController.preCicloIUni.precioMaxFem}"/>
+                                            <p:inputText id="txtCIPreUniMas" size="4" style="display: none;" value="#{estadisticasCensoController.preCicloIUni.precioMaxMas}"/>
                                         </p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblCIUti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtCIPreUtiFem" size="4" style="display: none;" value="#{estadisticasCensoView.preCicloIUti.precioMaxFem}"/>
-                                            <p:inputText id="txtCIPreUtiMas" size="4" style="display: none;" value="#{estadisticasCensoView.preCicloIUti.precioMaxMas}"/>
+                                            <p:inputText id="txtCIPreUtiFem" size="4" style="display: none;" value="#{estadisticasCensoController.preCicloIUti.precioMaxFem}"/>
+                                            <p:inputText id="txtCIPreUtiMas" size="4" style="display: none;" value="#{estadisticasCensoController.preCicloIUti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblCIZap" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtCIPreZapFem" size="4" style="display: none;" value="#{estadisticasCensoView.preCicloIZap.precioMaxFem}"/>
-                                            <p:inputText id="txtCIPreZapMas" size="4" style="display: none;" value="#{estadisticasCensoView.preCicloIZap.precioMaxMas}"/>
+                                            <p:inputText id="txtCIPreZapFem" size="4" style="display: none;" value="#{estadisticasCensoController.preCicloIZap.precioMaxFem}"/>
+                                            <p:inputText id="txtCIPreZapMas" size="4" style="display: none;" value="#{estadisticasCensoController.preCicloIZap.precioMaxMas}"/>
                                         </p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblCILib" size="5" readonly="true" styleClass="numero"/>
@@ -543,15 +538,15 @@
                                     </p:row>
                                     <p:row>
                                         <p:column styleClass="numero">4to Grado</p:column>
-                                        <p:column><p:inputNumber id="txt4gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est4grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt4gfem', 'txt4gmas', 'G4');calcularSubTotalMatriculaNivelEdu('txt4gfem', 'txt5gfem', 'txt6gfem', 'txtCIIFem', 'CII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txt4gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est4grado.masculino}" onkeyup="calcularMontoPorNivel('txt4gfem', 'txt4gmas', 'G4');calcularSubTotalMatriculaNivelEdu('txt4gmas', 'txt5gmas', 'txt6gmas', 'txtCIIMas', 'CII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt4gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est4grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt4gfem', 'txt4gmas', 'G4');calcularSubTotalMatriculaNivelEdu('txt4gfem', 'txt5gfem', 'txt6gfem', 'txtCIIFem', 'CII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt4gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est4grado.masculino}" onkeyup="calcularMontoPorNivel('txt4gfem', 'txt4gmas', 'G4');calcularSubTotalMatriculaNivelEdu('txt4gmas', 'txt5gmas', 'txt6gmas', 'txtCIIMas', 'CII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatG4"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblG4Uti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtG4PreUtiFem" style="display: none;" value="#{estadisticasCensoView.preGrado4Uti.precioMaxFem}"/>
-                                            <p:inputText id="txtG4PreUtiMas" style="display: none;" value="#{estadisticasCensoView.preGrado4Uti.precioMaxMas}"/>
+                                            <p:inputText id="txtG4PreUtiFem" style="display: none;" value="#{estadisticasCensoController.preGrado4Uti.precioMaxFem}"/>
+                                            <p:inputText id="txtG4PreUtiMas" style="display: none;" value="#{estadisticasCensoController.preGrado4Uti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
@@ -560,15 +555,15 @@
                                     </p:row>
                                     <p:row>
                                         <p:column styleClass="numero">5to Grado</p:column>
-                                        <p:column><p:inputNumber id="txt5gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est5grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt5gfem', 'txt5gmas', 'G5');calcularSubTotalMatriculaNivelEdu('txt4gfem', 'txt5gfem', 'txt6gfem', 'txtCIIFem', 'CII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txt5gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est5grado.masculino}" onkeyup="calcularMontoPorNivel('txt5gfem', 'txt5gmas', 'G5');calcularSubTotalMatriculaNivelEdu('txt4gmas', 'txt5gmas', 'txt6gmas', 'txtCIIMas', 'CII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt5gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est5grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt5gfem', 'txt5gmas', 'G5');calcularSubTotalMatriculaNivelEdu('txt4gfem', 'txt5gfem', 'txt6gfem', 'txtCIIFem', 'CII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt5gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est5grado.masculino}" onkeyup="calcularMontoPorNivel('txt5gfem', 'txt5gmas', 'G5');calcularSubTotalMatriculaNivelEdu('txt4gmas', 'txt5gmas', 'txt6gmas', 'txtCIIMas', 'CII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatG5"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblG5Uti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtG5PreUtiFem" style="display: none;" value="#{estadisticasCensoView.preGrado5Uti.precioMaxFem}"/>
-                                            <p:inputText id="txtG5PreUtiMas" style="display: none;" value="#{estadisticasCensoView.preGrado5Uti.precioMaxMas}"/>
+                                            <p:inputText id="txtG5PreUtiFem" style="display: none;" value="#{estadisticasCensoController.preGrado5Uti.precioMaxFem}"/>
+                                            <p:inputText id="txtG5PreUtiMas" style="display: none;" value="#{estadisticasCensoController.preGrado5Uti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
@@ -577,15 +572,15 @@
                                     </p:row>
                                     <p:row>
                                         <p:column styleClass="numero">6to Grado</p:column>
-                                        <p:column><p:inputNumber id="txt6gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est6grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt6gfem', 'txt6gmas', 'G6');calcularSubTotalMatriculaNivelEdu('txt4gfem', 'txt5gfem', 'txt6gfem', 'txtCIIFem', 'CII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txt6gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est6grado.masculino}" onkeyup="calcularMontoPorNivel('txt6gfem', 'txt6gmas', 'G6');calcularSubTotalMatriculaNivelEdu('txt4gmas', 'txt5gmas', 'txt6gmas', 'txtCIIMas', 'CII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt6gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est6grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt6gfem', 'txt6gmas', 'G6');calcularSubTotalMatriculaNivelEdu('txt4gfem', 'txt5gfem', 'txt6gfem', 'txtCIIFem', 'CII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt6gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est6grado.masculino}" onkeyup="calcularMontoPorNivel('txt6gfem', 'txt6gmas', 'G6');calcularSubTotalMatriculaNivelEdu('txt4gmas', 'txt5gmas', 'txt6gmas', 'txtCIIMas', 'CII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatG6"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblG6Uti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtG6PreUtiFem" style="display: none;" value="#{estadisticasCensoView.preGrado6Uti.precioMaxFem}"/>
-                                            <p:inputText id="txtG6PreUtiMas" style="display: none;" value="#{estadisticasCensoView.preGrado6Uti.precioMaxMas}"/>
+                                            <p:inputText id="txtG6PreUtiFem" style="display: none;" value="#{estadisticasCensoController.preGrado6Uti.precioMaxFem}"/>
+                                            <p:inputText id="txtG6PreUtiMas" style="display: none;" value="#{estadisticasCensoController.preGrado6Uti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
@@ -594,24 +589,24 @@
                                     </p:row>
                                     <p:row>
                                         <p:column style="background-color: #86b8f0;">II Ciclo</p:column>
-                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtCIIFem" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaCiclo2.femenimo}"/></p:column>
-                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtCIIMas" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaCiclo2.masculino}"/></p:column>
+                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtCIIFem" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaCiclo2.femenimo}"/></p:column>
+                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtCIIMas" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaCiclo2.masculino}"/></p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero"><p:outputLabel id="lblMatCII"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblCIIUni" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtCIIPreUniFem" style="display: none;" value="#{estadisticasCensoView.preCicloIIUni.precioMaxFem}"/>
-                                            <p:inputText id="txtCIIPreUniMas" style="display: none;" value="#{estadisticasCensoView.preCicloIIUni.precioMaxMas}"/>
+                                            <p:inputText id="txtCIIPreUniFem" style="display: none;" value="#{estadisticasCensoController.preCicloIIUni.precioMaxFem}"/>
+                                            <p:inputText id="txtCIIPreUniMas" style="display: none;" value="#{estadisticasCensoController.preCicloIIUni.precioMaxMas}"/>
                                         </p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblCIIUti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtCIIPreUtiFem" style="display: none;" value="#{estadisticasCensoView.preCicloIIUti.precioMaxFem}"/>
-                                            <p:inputText id="txtCIIPreUtiMas" style="display: none;" value="#{estadisticasCensoView.preCicloIIUti.precioMaxMas}"/>
+                                            <p:inputText id="txtCIIPreUtiFem" style="display: none;" value="#{estadisticasCensoController.preCicloIIUti.precioMaxFem}"/>
+                                            <p:inputText id="txtCIIPreUtiMas" style="display: none;" value="#{estadisticasCensoController.preCicloIIUti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblCIIZap" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtCIIPreZapFem" style="display: none;" value="#{estadisticasCensoView.preCicloIIZap.precioMaxFem}"/>
-                                            <p:inputText id="txtCIIPreZapMas" style="display: none;" value="#{estadisticasCensoView.preCicloIIZap.precioMaxMas}"/>
+                                            <p:inputText id="txtCIIPreZapFem" style="display: none;" value="#{estadisticasCensoController.preCicloIIZap.precioMaxFem}"/>
+                                            <p:inputText id="txtCIIPreZapMas" style="display: none;" value="#{estadisticasCensoController.preCicloIIZap.precioMaxMas}"/>
                                         </p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblCIILib" size="5" readonly="true" styleClass="numero"/>
@@ -619,15 +614,15 @@
                                     </p:row>
                                     <p:row>
                                         <p:column styleClass="numero">7mo Grado</p:column>
-                                        <p:column><p:inputNumber id="txt7gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est7grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt7gfem', 'txt7gmas', 'G7');calcularSubTotalMatriculaNivelEdu('txt7gfem', 'txt8gfem', 'txt9gfem', 'txtCIIIFem', 'CIII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txt7gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est7grado.masculino}" onkeyup="calcularMontoPorNivel('txt7gfem', 'txt7gmas', 'G7');calcularSubTotalMatriculaNivelEdu('txt7gmas', 'txt8gmas', 'txt9gmas', 'txtCIIIMas', 'CIII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt7gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est7grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt7gfem', 'txt7gmas', 'G7');calcularSubTotalMatriculaNivelEdu('txt7gfem', 'txt8gfem', 'txt9gfem', 'txtCIIIFem', 'CIII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt7gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est7grado.masculino}" onkeyup="calcularMontoPorNivel('txt7gfem', 'txt7gmas', 'G7');calcularSubTotalMatriculaNivelEdu('txt7gmas', 'txt8gmas', 'txt9gmas', 'txtCIIIMas', 'CIII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatG7"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblG7Uti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtG7PreUtiFem" style="display: none;" value="#{estadisticasCensoView.preGrado7Uti.precioMaxFem}"/>
-                                            <p:inputText id="txtG7PreUtiMas" style="display: none;" value="#{estadisticasCensoView.preGrado7Uti.precioMaxMas}"/>
+                                            <p:inputText id="txtG7PreUtiFem" style="display: none;" value="#{estadisticasCensoController.preGrado7Uti.precioMaxFem}"/>
+                                            <p:inputText id="txtG7PreUtiMas" style="display: none;" value="#{estadisticasCensoController.preGrado7Uti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
@@ -636,15 +631,15 @@
                                     </p:row>
                                     <p:row>
                                         <p:column styleClass="numero">8vo Grado</p:column>
-                                        <p:column><p:inputNumber id="txt8gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est8grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt8gfem', 'txt8gmas', 'G8');calcularSubTotalMatriculaNivelEdu('txt7gfem', 'txt8gfem', 'txt9gfem', 'txtCIIIFem', 'CIII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txt8gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est8grado.masculino}" onkeyup="calcularMontoPorNivel('txt8gfem', 'txt8gmas', 'G8');calcularSubTotalMatriculaNivelEdu('txt7gmas', 'txt8gmas', 'txt9gmas', 'txtCIIIMas', 'CIII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt8gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est8grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt8gfem', 'txt8gmas', 'G8');calcularSubTotalMatriculaNivelEdu('txt7gfem', 'txt8gfem', 'txt9gfem', 'txtCIIIFem', 'CIII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt8gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est8grado.masculino}" onkeyup="calcularMontoPorNivel('txt8gfem', 'txt8gmas', 'G8');calcularSubTotalMatriculaNivelEdu('txt7gmas', 'txt8gmas', 'txt9gmas', 'txtCIIIMas', 'CIII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatG8"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblG8Uti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtG8PreUtiFem" style="display: none;" value="#{estadisticasCensoView.preGrado8Uti.precioMaxFem}"/>
-                                            <p:inputText id="txtG8PreUtiMas" style="display: none;" value="#{estadisticasCensoView.preGrado8Uti.precioMaxMas}"/>
+                                            <p:inputText id="txtG8PreUtiFem" style="display: none;" value="#{estadisticasCensoController.preGrado8Uti.precioMaxFem}"/>
+                                            <p:inputText id="txtG8PreUtiMas" style="display: none;" value="#{estadisticasCensoController.preGrado8Uti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
@@ -653,15 +648,15 @@
                                     </p:row>
                                     <p:row>
                                         <p:column styleClass="numero">9no Grado</p:column>
-                                        <p:column><p:inputNumber id="txt9gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est9grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt9gfem', 'txt9gmas', 'G9');calcularSubTotalMatriculaNivelEdu('txt7gfem', 'txt8gfem', 'txt9gfem', 'txtCIIIFem', 'CIII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txt9gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est9grado.masculino}" onkeyup="calcularMontoPorNivel('txt9gfem', 'txt9gmas', 'G9');calcularSubTotalMatriculaNivelEdu('txt7gmas', 'txt8gmas', 'txt9gmas', 'txtCIIIMas', 'CIII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt9gfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est9grado.femenimo}"  onkeyup="calcularMontoPorNivel('txt9gfem', 'txt9gmas', 'G9');calcularSubTotalMatriculaNivelEdu('txt7gfem', 'txt8gfem', 'txt9gfem', 'txtCIIIFem', 'CIII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt9gmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est9grado.masculino}" onkeyup="calcularMontoPorNivel('txt9gfem', 'txt9gmas', 'G9');calcularSubTotalMatriculaNivelEdu('txt7gmas', 'txt8gmas', 'txt9gmas', 'txtCIIIMas', 'CIII');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatG9"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblG9Uti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtG9PreUtiFem" style="display: none;" value="#{estadisticasCensoView.preGrado9Uti.precioMaxFem}"/>
-                                            <p:inputText id="txtG9PreUtiMas" style="display: none;" value="#{estadisticasCensoView.preGrado9Uti.precioMaxMas}"/>
+                                            <p:inputText id="txtG9PreUtiFem" style="display: none;" value="#{estadisticasCensoController.preGrado9Uti.precioMaxFem}"/>
+                                            <p:inputText id="txtG9PreUtiMas" style="display: none;" value="#{estadisticasCensoController.preGrado9Uti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
@@ -670,33 +665,33 @@
                                     </p:row>
                                     <p:row>
                                         <p:column style="background-color: #86b8f0;">III Ciclo</p:column>
-                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtCIIIFem" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaCiclo3.femenimo}"/></p:column>
-                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtCIIIMas" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaCiclo3.masculino}"/></p:column>
+                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtCIIIFem" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaCiclo3.femenimo}"/></p:column>
+                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtCIIIMas" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaCiclo3.masculino}"/></p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero"><p:outputLabel id="lblMatCIII"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblCIIIUni" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtCIIIPreUniFem" style="display: none;" value="#{estadisticasCensoView.preCicloIIIUni.precioMaxFem}"/>
-                                            <p:inputText id="txtCIIIPreUniMas" style="display: none;" value="#{estadisticasCensoView.preCicloIIIUni.precioMaxMas}"/>
+                                            <p:inputText id="txtCIIIPreUniFem" style="display: none;" value="#{estadisticasCensoController.preCicloIIIUni.precioMaxFem}"/>
+                                            <p:inputText id="txtCIIIPreUniMas" style="display: none;" value="#{estadisticasCensoController.preCicloIIIUni.precioMaxMas}"/>
                                         </p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblCIIIUti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtCIIIPreUtiFem" style="display: none;" value="#{estadisticasCensoView.preCicloIIIUti.precioMaxFem}"/>
-                                            <p:inputText id="txtCIIIPreUtiMas" style="display: none;" value="#{estadisticasCensoView.preCicloIIIUti.precioMaxMas}"/>
+                                            <p:inputText id="txtCIIIPreUtiFem" style="display: none;" value="#{estadisticasCensoController.preCicloIIIUti.precioMaxFem}"/>
+                                            <p:inputText id="txtCIIIPreUtiMas" style="display: none;" value="#{estadisticasCensoController.preCicloIIIUti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblCIIIZap" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtCIIIPreZapFem" style="display: none;" value="#{estadisticasCensoView.preCicloIIIZap.precioMaxFem}"/>
-                                            <p:inputText id="txtCIIIPreZapMas" style="display: none;" value="#{estadisticasCensoView.preCicloIIIZap.precioMaxMas}"/>
+                                            <p:inputText id="txtCIIIPreZapFem" style="display: none;" value="#{estadisticasCensoController.preCicloIIIZap.precioMaxFem}"/>
+                                            <p:inputText id="txtCIIIPreZapMas" style="display: none;" value="#{estadisticasCensoController.preCicloIIIZap.precioMaxMas}"/>
                                         </p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblCIIILib" size="5" readonly="true" styleClass="numero"/>
                                         </p:column>
                                     </p:row>
-                                    <p:row rendered="#{estadisticasCensoView.mostrarModFlex}">
+                                    <p:row rendered="#{estadisticasCensoController.mostrarModFlex}">
                                         <p:column>Modalidad Flexible (Todos los niveles Nocturna y 3er Ciclo Distancia)</p:column>
-                                        <p:column><p:inputNumber id="txtCIIIMFFem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaCiclo3MF.femenimo}" onkeyup="calcularSubTotalMatricula('txtCIIIMFFem', 'txtCIIIMFMas', 'lblMatCIIIMF'); calcularMontoPorNivel('txtCIIIMFFem', 'txtCIIIMFMas', 'CIIIMF');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txtCIIIMFMas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaCiclo3MF.masculino}" onkeyup="calcularSubTotalMatricula('txtCIIIMFFem', 'txtCIIIMFMas', 'lblMatCIIIMF'); calcularMontoPorNivel('txtCIIIMFFem', 'txtCIIIMFMas', 'CIIIMF');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txtCIIIMFFem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaCiclo3MF.femenimo}" onkeyup="calcularSubTotalMatricula('txtCIIIMFFem', 'txtCIIIMFMas', 'lblMatCIIIMF'); calcularMontoPorNivel('txtCIIIMFFem', 'txtCIIIMFMas', 'CIIIMF');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txtCIIIMFMas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaCiclo3MF.masculino}" onkeyup="calcularSubTotalMatricula('txtCIIIMFFem', 'txtCIIIMFMas', 'lblMatCIIIMF'); calcularMontoPorNivel('txtCIIIMFFem', 'txtCIIIMFMas', 'CIIIMF');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatCIIIMF"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero">
@@ -704,23 +699,23 @@
                                         </p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblCIIIMFUti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtCIIIMFPreUtiFem" style="display: none;" value="#{estadisticasCensoView.preCicloIIIMFUti.precioMaxFem}"/>
-                                            <p:inputText id="txtCIIIMFPreUtiMas" style="display: none;" value="#{estadisticasCensoView.preCicloIIIMFUti.precioMaxMas}"/>
+                                            <p:inputText id="txtCIIIMFPreUtiFem" style="display: none;" value="#{estadisticasCensoController.preCicloIIIMFUti.precioMaxFem}"/>
+                                            <p:inputText id="txtCIIIMFPreUtiMas" style="display: none;" value="#{estadisticasCensoController.preCicloIIIMFUti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                     </p:row>
                                     <p:row>
                                         <p:column styleClass="numero">1er año bachillerato</p:column>
-                                        <p:column><p:inputNumber id="txt1bfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est1media.femenimo}"  onkeyup="calcularMontoPorNivel('txt1bfem', 'txt1bmas', 'B1');calcularSubTotalMatriculaNivelEdu('txt1bfem', 'txt2bfem', 'txt3bfem', 'txtBacFem', 'Bac');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txt1bmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est1media.masculino}" onkeyup="calcularMontoPorNivel('txt1bfem', 'txt1bmas', 'B1');calcularSubTotalMatriculaNivelEdu('txt1bmas', 'txt2bmas', 'txt3bmas', 'txtBacMas', 'Bac');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt1bfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est1media.femenimo}"  onkeyup="calcularMontoPorNivel('txt1bfem', 'txt1bmas', 'B1');calcularSubTotalMatriculaNivelEdu('txt1bfem', 'txt2bfem', 'txt3bfem', 'txtBacFem', 'Bac');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt1bmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est1media.masculino}" onkeyup="calcularMontoPorNivel('txt1bfem', 'txt1bmas', 'B1');calcularSubTotalMatriculaNivelEdu('txt1bmas', 'txt2bmas', 'txt3bmas', 'txtBacMas', 'Bac');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatB1"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblB1Uti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtB1PreUtiFem" style="display: none;" value="#{estadisticasCensoView.preBachi1Uti.precioMaxFem}"/>
-                                            <p:inputText id="txtB1PreUtiMas" style="display: none;" value="#{estadisticasCensoView.preBachi1Uti.precioMaxMas}"/>
+                                            <p:inputText id="txtB1PreUtiFem" style="display: none;" value="#{estadisticasCensoController.preBachi1Uti.precioMaxFem}"/>
+                                            <p:inputText id="txtB1PreUtiMas" style="display: none;" value="#{estadisticasCensoController.preBachi1Uti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
@@ -729,15 +724,15 @@
                                     </p:row>
                                     <p:row>
                                         <p:column styleClass="numero">2do año bachillerato</p:column>
-                                        <p:column><p:inputNumber id="txt2bfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est2media.femenimo}"  onkeyup="calcularMontoPorNivel('txt2bfem', 'txt2bmas', 'B2');calcularSubTotalMatriculaNivelEdu('txt1bfem', 'txt2bfem', 'txt3bfem', 'txtBacFem', 'Bac');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txt2bmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est2media.masculino}" onkeyup="calcularMontoPorNivel('txt2bfem', 'txt2bmas', 'B2');calcularSubTotalMatriculaNivelEdu('txt1bmas', 'txt2bmas', 'txt3bmas', 'txtBacMas', 'Bac');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt2bfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est2media.femenimo}"  onkeyup="calcularMontoPorNivel('txt2bfem', 'txt2bmas', 'B2');calcularSubTotalMatriculaNivelEdu('txt1bfem', 'txt2bfem', 'txt3bfem', 'txtBacFem', 'Bac');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt2bmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est2media.masculino}" onkeyup="calcularMontoPorNivel('txt2bfem', 'txt2bmas', 'B2');calcularSubTotalMatriculaNivelEdu('txt1bmas', 'txt2bmas', 'txt3bmas', 'txtBacMas', 'Bac');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatB2"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblB2Uti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtB2PreUtiFem" style="display: none;" value="#{estadisticasCensoView.preBachi2Uti.precioMaxFem}"/>
-                                            <p:inputText id="txtB2PreUtiMas" style="display: none;" value="#{estadisticasCensoView.preBachi2Uti.precioMaxMas}"/>
+                                            <p:inputText id="txtB2PreUtiFem" style="display: none;" value="#{estadisticasCensoController.preBachi2Uti.precioMaxFem}"/>
+                                            <p:inputText id="txtB2PreUtiMas" style="display: none;" value="#{estadisticasCensoController.preBachi2Uti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
                                         <p:column styleClass="numero">
@@ -746,8 +741,8 @@
                                     </p:row>
                                     <p:row>
                                         <p:column styleClass="numero">3er año bachillerato</p:column>
-                                        <p:column><p:inputNumber id="txt3bfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est3media.femenimo}"  onkeyup="calcularMontoPorNivel('txt3bfem', 'txt3bmas', 'B3');calcularSubTotalMatriculaNivelEdu('txt1bfem', 'txt2bfem', 'txt3bfem', 'txtBacFem', 'Bac');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txt3bmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.est3media.masculino}" onkeyup="calcularMontoPorNivel('txt3bfem', 'txt3bmas', 'B3');calcularSubTotalMatriculaNivelEdu('txt1bmas', 'txt2bmas', 'txt3bmas', 'txtBacMas', 'Bac');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt3bfem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est3media.femenimo}"  onkeyup="calcularMontoPorNivel('txt3bfem', 'txt3bmas', 'B3');calcularSubTotalMatriculaNivelEdu('txt1bfem', 'txt2bfem', 'txt3bfem', 'txtBacFem', 'Bac');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txt3bmas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.est3media.masculino}" onkeyup="calcularMontoPorNivel('txt3bfem', 'txt3bmas', 'B3');calcularSubTotalMatriculaNivelEdu('txt1bmas', 'txt2bmas', 'txt3bmas', 'txtBacMas', 'Bac');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatB3"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero"><p:outputLabel value="0.00"/></p:column>
@@ -757,33 +752,33 @@
                                     </p:row>
                                     <p:row>
                                         <p:column style="background-color: #86b8f0;">Media</p:column>
-                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtBacFem" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaBac.femenimo}"/></p:column>
-                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtBacMas" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaBac.masculino}"/></p:column>
+                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtBacFem" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaBac.femenimo}"/></p:column>
+                                        <p:column style="background-color: #86b8f0;"><p:inputText id="txtBacMas" readonly="true" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaBac.masculino}"/></p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero"><p:outputLabel id="lblMatBac"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblBacUni" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtBacPreUniFem" style="display: none;" value="#{estadisticasCensoView.preBacUni.precioMaxFem}"/>
-                                            <p:inputText id="txtBacPreUniMas" style="display: none;" value="#{estadisticasCensoView.preBacUni.precioMaxMas}"/>
+                                            <p:inputText id="txtBacPreUniFem" style="display: none;" value="#{estadisticasCensoController.preBacUni.precioMaxFem}"/>
+                                            <p:inputText id="txtBacPreUniMas" style="display: none;" value="#{estadisticasCensoController.preBacUni.precioMaxMas}"/>
                                         </p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblBacUti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtBacPreUtiFem" style="display: none;" value="#{estadisticasCensoView.preBacUti.precioMaxFem}"/>
-                                            <p:inputText id="txtBacPreUtiMas" style="display: none;" value="#{estadisticasCensoView.preBacUti.precioMaxMas}"/>
+                                            <p:inputText id="txtBacPreUtiFem" style="display: none;" value="#{estadisticasCensoController.preBacUti.precioMaxFem}"/>
+                                            <p:inputText id="txtBacPreUtiMas" style="display: none;" value="#{estadisticasCensoController.preBacUti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblBacZap" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtBacPreZapFem" style="display: none;" value="#{estadisticasCensoView.preBacZap.precioMaxFem}"/>
-                                            <p:inputText id="txtBacPreZapMas" style="display: none;" value="#{estadisticasCensoView.preBacZap.precioMaxMas}"/>
+                                            <p:inputText id="txtBacPreZapFem" style="display: none;" value="#{estadisticasCensoController.preBacZap.precioMaxFem}"/>
+                                            <p:inputText id="txtBacPreZapMas" style="display: none;" value="#{estadisticasCensoController.preBacZap.precioMaxMas}"/>
                                         </p:column>
                                         <p:column style="background-color: #86b8f0;" styleClass="numero">
                                             <p:inputText id="lblBacLib" size="5" readonly="true" styleClass="numero"/>
                                         </p:column>
                                     </p:row>
-                                    <p:row style="background-color: #86b8f0;" rendered="#{estadisticasCensoView.mostrarModFlex}">
+                                    <p:row style="background-color: #86b8f0;" rendered="#{estadisticasCensoController.mostrarModFlex}">
                                         <p:column>Media - Modalidad Flexible (Distancia)</p:column>
-                                        <p:column><p:inputNumber id="txtBacMFFem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaBacMF.femenimo}" onkeyup="calcularSubTotalMatricula('txtBacMFFem', 'txtBacMFMas', 'lblMatBacMF'); calcularMontoPorNivel('txtBacMFFem', 'txtBacMFMas', 'BacMF');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
-                                        <p:column><p:inputNumber id="txtBacMFMas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoView.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoView.estaditicaBacMF.masculino}" onkeyup="calcularSubTotalMatricula('txtBacMFFem', 'txtBacMFMas', 'lblMatBacMF'); calcularMontoPorNivel('txtBacMFFem', 'txtBacMFMas', 'BacMF');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txtBacMFFem" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaBacMF.femenimo}" onkeyup="calcularSubTotalMatricula('txtBacMFFem', 'txtBacMFMas', 'lblMatBacMF'); calcularMontoPorNivel('txtBacMFFem', 'txtBacMFMas', 'BacMF');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
+                                        <p:column><p:inputNumber id="txtBacMFMas" emptyValue="zero" onclick="this.setSelectionRange(0, this.value.length);" disabled="#{estadisticasCensoController.isProcesoAdq}" styleClass="numero" size="4" value="#{estadisticasCensoController.estaditicaBacMF.masculino}" onkeyup="calcularSubTotalMatricula('txtBacMFFem', 'txtBacMFMas', 'lblMatBacMF'); calcularMontoPorNivel('txtBacMFFem', 'txtBacMFMas', 'BacMF');" decimalPlaces="0" minValue="0" inputStyle="text-align: right;"/></p:column>
                                         <p:column styleClass="numero"><p:outputLabel id="lblMatBacMF"><f:convertNumber pattern="#,#00"/></p:outputLabel></p:column>
 
                                         <p:column styleClass="numero">
@@ -791,8 +786,8 @@
                                         </p:column>
                                         <p:column styleClass="numero">
                                             <p:inputText id="lblBacMFUti" size="5" readonly="true" styleClass="numero"/>
-                                            <p:inputText id="txtBacMFPreUtiFem" style="display: none;" value="#{estadisticasCensoView.preBacMFUti.precioMaxFem}"/>
-                                            <p:inputText id="txtBacMFPreUtiMas" style="display: none;" value="#{estadisticasCensoView.preBacMFUti.precioMaxMas}"/>
+                                            <p:inputText id="txtBacMFPreUtiFem" style="display: none;" value="#{estadisticasCensoController.preBacMFUti.precioMaxFem}"/>
+                                            <p:inputText id="txtBacMFPreUtiMas" style="display: none;" value="#{estadisticasCensoController.preBacMFUti.precioMaxMas}"/>
                                         </p:column>
                                         <p:column styleClass="numero"><p:inputText value="0" size="5" readonly="true" styleClass="numero"/></p:column>
                                         <p:column styleClass="numero"><p:inputText value="0" size="5" readonly="true" styleClass="numero"/></p:column>
@@ -804,12 +799,12 @@
                                             <p:column styleClass="numero"><h:outputText id="lblTotalUni"><f:convertNumber pattern="#,#00.00"/></h:outputText></p:column>
                                             <p:column styleClass="numero"><h:outputText id="lblTotalUti"><f:convertNumber pattern="#,#00.00"/></h:outputText></p:column>
                                             <p:column styleClass="numero"><h:outputText id="lblTotalZap"><f:convertNumber pattern="#,#00.00"/></h:outputText></p:column>
-                                            <p:column styleClass="numero"><p:inputText size="5" readonly="true" id="lblTotalLib" value="#{estadisticasCensoView.presupuestoLibros}" style="text-align: right;"><f:convertNumber pattern="#,#00.00"/></p:inputText></p:column>
+                                            <p:column styleClass="numero"><p:inputText size="5" readonly="true" id="lblTotalLib" value="#{estadisticasCensoController.presupuestoLibros}" style="text-align: right;"><f:convertNumber pattern="#,#00.00"/></p:inputText></p:column>
                                         </p:row>
                                     </f:facet>
                                 </p:panelGrid>
 
-                                <p:remoteCommand name="updateTotal" action="#{estadisticasCensoView.updateFilaTotal}"/>
+                                <p:remoteCommand name="updateTotal" action="#{estadisticasCensoController.updateFilaTotal}"/>
                             </p:tab>
                             <p:tab title="Miembros de Organismo de Adminitración Escolar">
                                 <f:facet name="header">
@@ -819,12 +814,12 @@
                                 </f:facet>
                                 <p:panelGrid id="pngCde" columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-2,ui-grid-col-10">
                                     <h:outputText value="Modalidad del C.E. : "/>
-                                    <p:inputText size="5" readonly="true" value="#{estadisticasCensoView.entidadEducativa.inicialesModalidad}" disabled="true"/>
+                                    <p:inputText size="5" readonly="true" value="#{estadisticasCensoController.entidadEducativa.inicialesModalidad}" disabled="true"/>
                                 </p:panelGrid>
 
                                 <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
-                                    <p:selectBooleanCheckbox value="#{estadisticasCensoView.editDirector}">
-                                        <p:ajax update="pngDirector pngTesorero pngConsejal" listener="#{estadisticasCensoView.editNombre}"/>
+                                    <p:selectBooleanCheckbox value="#{estadisticasCensoController.editDirector}">
+                                        <p:ajax update="pngDirector pngTesorero pngConsejal" listener="#{estadisticasCensoController.editNombre}"/>
                                     </p:selectBooleanCheckbox>
                                     <p:outputLabel value="Editar"/>
                                 </h:panelGrid>
@@ -835,33 +830,33 @@
                                     <p:outputLabel value="Datos del director" />
                                     <p:spacer width="10"/>
                                     <h:outputText value="Nombre: "/>
-                                    <p:inputText style="width: 100%;" value="#{estadisticasCensoView.nombre}" disabled="#{!estadisticasCensoView.editDirector}"/>
+                                    <p:inputText style="width: 100%;" value="#{estadisticasCensoController.nombre}" disabled="#{!estadisticasCensoController.editDirector}"/>
                                     <h:outputText value="Teléfono: "/>
-                                    <p:inputText size="10" maxlength="8" value="#{estadisticasCensoView.telefono1}" disabled="#{!estadisticasCensoView.editDirector}"/>
+                                    <p:inputText size="10" maxlength="8" value="#{estadisticasCensoController.telefono1}" disabled="#{!estadisticasCensoController.editDirector}"/>
                                     <h:outputText value="Teléfono 2: "/>
-                                    <p:inputText size="10" maxlength="8" value="#{estadisticasCensoView.telefono2}" disabled="#{!estadisticasCensoView.editDirector}"/>
+                                    <p:inputText size="10" maxlength="8" value="#{estadisticasCensoController.telefono2}" disabled="#{!estadisticasCensoController.editDirector}"/>
                                     <h:outputText value="Número DUI: "/>
-                                    <p:inputMask mask="99999999-9" size="10" maxlength="11" value="#{estadisticasCensoView.numeroDui}" disabled="#{!estadisticasCensoView.editDirector}"/>
+                                    <p:inputMask mask="99999999-9" size="10" maxlength="11" value="#{estadisticasCensoController.numeroDui}" disabled="#{!estadisticasCensoController.editDirector}"/>
                                     <h:outputText value="Modalidad del C.E. : "/>
-                                    <p:inputText size="5" readonly="true" value="#{estadisticasCensoView.entidadEducativa.inicialesModalidad}" disabled="true}"/>
+                                    <p:inputText size="5" readonly="true" value="#{estadisticasCensoController.entidadEducativa.inicialesModalidad}" disabled="true}"/>
                                     <p:spacer width="10"/>
                                     <p:spacer width="10"/>
                                     <h:outputText value="Encargado de Compras: "/>
-                                    <p:inputText style="width: 100%;" value="#{estadisticasCensoView.nombreEncargadoCompras}" />
+                                    <p:inputText style="width: 100%;" value="#{estadisticasCensoController.nombreEncargadoCompras}" />
                                 </p:panelGrid>
 
                                 <p:separator />
 
                                 <p:panelGrid id="pngTesorero" columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-2,ui-grid-col-10">
                                     <h:outputText value="Tesorero: "/>
-                                    <p:inputText style="width: 100%;" value="#{estadisticasCensoView.nombreTesorero}" disabled="#{!estadisticasCensoView.editDirector}"/>                                    
+                                    <p:inputText style="width: 100%;" value="#{estadisticasCensoController.nombreTesorero}" disabled="#{!estadisticasCensoController.editDirector}"/>                                    
                                 </p:panelGrid>
 
                                 <p:separator />
 
                                 <p:panelGrid id="pngConsejal" columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-2,ui-grid-col-10">
                                     <h:outputText value="Consejal docente"/>
-                                    <p:inputText style="width: 100%;" value="#{estadisticasCensoView.nombreConsejal}" disabled="#{!estadisticasCensoView.editDirector}"/>                                    
+                                    <p:inputText style="width: 100%;" value="#{estadisticasCensoController.nombreConsejal}" disabled="#{!estadisticasCensoController.editDirector}"/>                                    
                                 </p:panelGrid>
                             </p:tab>
                         </p:tabView>
@@ -875,21 +870,20 @@
                     <p:outputLabel value="Seleccione los rubros de los cuales desea genera la Certificación Presupuestaria" escape="false"/>
                     <h:panelGrid columns="2">
                         <p:outputLabel value="Confección de uniformes"/>
-                        <p:selectBooleanCheckbox value="#{estadisticasCensoView.uniformes}"/>
+                        <p:selectBooleanCheckbox value="#{estadisticasCensoController.uniformes}"/>
                         <p:outputLabel value="Páquete de útiles escolares"/>
-                        <p:selectBooleanCheckbox value="#{estadisticasCensoView.utiles}"/>
+                        <p:selectBooleanCheckbox value="#{estadisticasCensoController.utiles}"/>
                         <p:outputLabel value="Zapatos escolares"/>
-                        <p:selectBooleanCheckbox value="#{estadisticasCensoView.zapatos}"/>
+                        <p:selectBooleanCheckbox value="#{estadisticasCensoController.zapatos}"/>
                         <p:outputLabel value="Declaración Jurada"/>
-                        <p:selectBooleanCheckbox value="#{estadisticasCensoView.declaracion}"/>
+                        <p:selectBooleanCheckbox value="#{estadisticasCensoController.declaracion}"/>
                     </h:panelGrid>
                 </p:panel>
                 <f:facet name="footer">
-                    <p:commandButton value="Aceptar" onclick="PF('dlgImprimir').hide();" ajax="false" action="#{estadisticasCensoView.imprimir}"/>
+                    <p:commandButton value="Aceptar" onclick="PF('dlgImprimir').hide();" ajax="false" action="#{estadisticasCensoController.imprimir}"/>
                     <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgImprimir').hide();"/>
                 </f:facet>
             </p:dialog>
-        </h:form>
         <h:outputStylesheet name="personalizadas.css" library="css"/>
     </ui:define>
 </ui:composition>

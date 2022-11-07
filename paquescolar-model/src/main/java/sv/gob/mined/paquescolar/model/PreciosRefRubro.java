@@ -68,6 +68,8 @@ public class PreciosRefRubro implements Serializable {
     @JoinColumn(name = "ID_NIVEL_EDUCATIVO", referencedColumnName = "ID_NIVEL_EDUCATIVO")
     @ManyToOne(fetch = FetchType.EAGER)
     private NivelEducativo idNivelEducativo;
+    @Column(name = "CLIMA_FRIO")
+    private Short climaFrio;
 
     public PreciosRefRubro() {
     }
@@ -198,5 +200,13 @@ public class PreciosRefRubro implements Serializable {
 
     public void setIdRubroInteres(RubrosAmostrarInteres idRubroInteres) {
         this.idRubroInteres = idRubroInteres;
+    }
+
+    public Short getClimaFrio() {
+        return climaFrio;
+    }
+
+    public void setClimaFrio(Short climaFrio) {
+        this.climaFrio = climaFrio;
     }
 }

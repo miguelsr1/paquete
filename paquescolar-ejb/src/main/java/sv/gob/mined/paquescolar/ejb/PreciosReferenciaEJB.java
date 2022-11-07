@@ -70,12 +70,12 @@ public class PreciosReferenciaEJB {
 
         if (rubro.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
             if (ceClimaFrio) {
-                q = em.createQuery("SELECT p FROM PreciosRefRubro p WHERE p.idAnho.id = :pIdAnho and p.idRubroInteres.id = :pIdRubro and ((p.idNivelEducativo.id = 22 and p.climaFrio=1) or (p.idNivelEducativo.id in (2,6) and p.climaFrio=0)) ORDER BY p.idNivelEducativo.orden2", PreciosRefRubro.class);
+                q = em.createQuery("SELECT p FROM PreciosRefRubro p WHERE p.idAnho.idAnho = :pIdAnho and p.idRubroInteres.idRubroInteres = :pIdRubro and ((p.idNivelEducativo.idNivelEducativo = 22 and p.climaFrio=1) or (p.idNivelEducativo.idNivelEducativo in (2,6) and p.climaFrio=0)) ORDER BY p.idNivelEducativo.orden2", PreciosRefRubro.class);
             } else {
-                q = em.createQuery("SELECT p FROM PreciosRefRubro p WHERE p.idAnho.id = :pIdAnho and p.idRubroInteres.id = :pIdRubro and p.idNivelEducativo.id in (22, 2, 6) and p.climaFrio=0 ORDER BY p.idNivelEducativo.orden2", PreciosRefRubro.class);
+                q = em.createQuery("SELECT p FROM PreciosRefRubro p WHERE p.idAnho.idAnho = :pIdAnho and p.idRubroInteres.idRubroInteres = :pIdRubro and p.idNivelEducativo.idNivelEducativo in (22, 2, 6) and p.climaFrio=0 ORDER BY p.idNivelEducativo.orden2", PreciosRefRubro.class);
             }
         } else {
-            q = em.createQuery("SELECT p FROM PreciosRefRubro p WHERE p.idAnho.id = :pIdAnho and p.idRubroInteres.id = :pIdRubro ORDER BY p.idNivelEducativo.orden2", PreciosRefRubro.class);
+            q = em.createQuery("SELECT p FROM PreciosRefRubro p WHERE p.idAnho.idAnho = :pIdAnho and p.idRubroInteres.idRubroInteres = :pIdRubro ORDER BY p.idNivelEducativo.orden2", PreciosRefRubro.class);
         }
 
         q.setParameter("pIdAnho", rubro.getIdProcesoAdq().getIdAnho().getIdAnho());

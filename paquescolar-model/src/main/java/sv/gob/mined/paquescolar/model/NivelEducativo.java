@@ -50,6 +50,8 @@ public class NivelEducativo implements Serializable {
     private String descripcionNivel;
     @OneToMany(mappedBy = "idNivelEducativo", fetch = FetchType.LAZY)
     private List<DetCapaSegunRubro> detCapaSegunRubroList;
+    @Column(name = "ORDEN2")
+    private Integer orden2;
 
     public NivelEducativo() {
     }
@@ -153,6 +155,14 @@ public class NivelEducativo implements Serializable {
 
     public void setResguardoBienesList(List<ResguardoBienes> resguardoBienesList) {
         this.resguardoBienesList = resguardoBienesList;
+    }
+
+    public Integer getOrden2() {
+        return orden2;
+    }
+
+    public void setOrden2(Integer orden2) {
+        this.orden2 = orden2;
     }
 
 }

@@ -7,7 +7,6 @@ package sv.gob.mined.app.web.controller.contratacion;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -999,60 +998,60 @@ public class EstadisticasCensoController implements Serializable {
 
         if (lstEstadistica.isEmpty()) {
             if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() >= 9) {
-                estInicial2grado = crearEstadistica(25l);
-                estInicial3grado = crearEstadistica(26l);
-                estaditicaIniPar = crearEstadistica(22l);
-                estaditicaPar4 = crearEstadistica(28l);
-                estaditicaPar5 = crearEstadistica(29l);
-                estaditicaPar6 = crearEstadistica(30l);
-                estaditicaCiclo3MF = crearEstadistica(23l);
-                estaditicaBacMF = crearEstadistica(24l);
+                estInicial2grado = crearEstadistica(new BigDecimal(25));
+                estInicial3grado = crearEstadistica(new BigDecimal(26));
+                estaditicaIniPar = crearEstadistica(new BigDecimal(22));
+                estaditicaPar4 = crearEstadistica(new BigDecimal(28));
+                estaditicaPar5 = crearEstadistica(new BigDecimal(29));
+                estaditicaPar6 = crearEstadistica(new BigDecimal(30));
+                estaditicaCiclo3MF = crearEstadistica(new BigDecimal(23));
+                estaditicaBacMF = crearEstadistica(new BigDecimal(24));
             }
-            estaditicaCiclo1 = crearEstadistica(3l);
-            estaditicaCiclo2 = crearEstadistica(4l);
-            estaditicaCiclo3 = crearEstadistica(5l);
-            estaditicaBac = crearEstadistica(6l);
+            estaditicaCiclo1 = crearEstadistica(new BigDecimal(3));
+            estaditicaCiclo2 = crearEstadistica(new BigDecimal(4));
+            estaditicaCiclo3 = crearEstadistica(new BigDecimal(5));
+            estaditicaBac = crearEstadistica(new BigDecimal(6));
 
-            est7grado = crearEstadistica(7l);
-            est8grado = crearEstadistica(8l);
-            est9grado = crearEstadistica(9l);
-            est1grado = crearEstadistica(10l);
-            est2grado = crearEstadistica(11l);
-            est3grado = crearEstadistica(12l);
-            est4grado = crearEstadistica(13l);
-            est5grado = crearEstadistica(14l);
-            est6grado = crearEstadistica(15l);
-            est1media = crearEstadistica(16l);
-            est2media = crearEstadistica(17l);
-            est3media = crearEstadistica(18l);
+            est7grado = crearEstadistica(new BigDecimal(7));
+            est8grado = crearEstadistica(new BigDecimal(8));
+            est9grado = crearEstadistica(new BigDecimal(9));
+            est1grado = crearEstadistica(new BigDecimal(10));
+            est2grado = crearEstadistica(new BigDecimal(11));
+            est3grado = crearEstadistica(new BigDecimal(12));
+            est4grado = crearEstadistica(new BigDecimal(13));
+            est5grado = crearEstadistica(new BigDecimal(14));
+            est6grado = crearEstadistica(new BigDecimal(15));
+            est1media = crearEstadistica(new BigDecimal(16));
+            est2media = crearEstadistica(new BigDecimal(17));
+            est3media = crearEstadistica(new BigDecimal(18));
         } else {
             if (procesoAdquisicion.getIdAnho().getIdAnho().intValue() >= 9) {
-                estInicial2grado = getEstadisticaCenso(lstEstadistica, 25l);
-                estInicial3grado = getEstadisticaCenso(lstEstadistica, 26l);
-                estaditicaIniPar = getEstadisticaCenso(lstEstadistica, 22l);
-                estaditicaPar4 = getEstadisticaCenso(lstEstadistica, 28l);
-                estaditicaPar5 = getEstadisticaCenso(lstEstadistica, 29l);
-                estaditicaPar6 = getEstadisticaCenso(lstEstadistica, 30l);
-                estaditicaCiclo3MF = getEstadisticaCenso(lstEstadistica, 23l);
-                estaditicaBacMF = getEstadisticaCenso(lstEstadistica, 24l);
+                estInicial2grado = getEstadisticaCenso(lstEstadistica, new BigDecimal(25));
+                estInicial3grado = getEstadisticaCenso(lstEstadistica, new BigDecimal(26));
+                estaditicaIniPar = getEstadisticaCenso(lstEstadistica, new BigDecimal(22));
+                estaditicaPar4 = getEstadisticaCenso(lstEstadistica, new BigDecimal(28));
+                estaditicaPar5 = getEstadisticaCenso(lstEstadistica, new BigDecimal(29));
+                estaditicaPar6 = getEstadisticaCenso(lstEstadistica, new BigDecimal(30));
+                estaditicaCiclo3MF = getEstadisticaCenso(lstEstadistica, new BigDecimal(23));
+                estaditicaBacMF = getEstadisticaCenso(lstEstadistica, new BigDecimal(24));
             }
             //estaditicaPar = getEstadisticaCenso(lstEstadistica, 1l);
-            estaditicaCiclo1 = getEstadisticaCenso(lstEstadistica, 3l);
-            estaditicaCiclo2 = getEstadisticaCenso(lstEstadistica, 4l);
-            estaditicaCiclo3 = getEstadisticaCenso(lstEstadistica, 5l);
-            estaditicaBac = getEstadisticaCenso(lstEstadistica, 6l);
-            est7grado = getEstadisticaCenso(lstEstadistica, 7l);
-            est8grado = getEstadisticaCenso(lstEstadistica, 8l);
-            est9grado = getEstadisticaCenso(lstEstadistica, 9l);
-            est1grado = getEstadisticaCenso(lstEstadistica, 10l);
-            est2grado = getEstadisticaCenso(lstEstadistica, 11l);
-            est3grado = getEstadisticaCenso(lstEstadistica, 12l);
-            est4grado = getEstadisticaCenso(lstEstadistica, 13l);
-            est5grado = getEstadisticaCenso(lstEstadistica, 14l);
-            est6grado = getEstadisticaCenso(lstEstadistica, 15l);
-            est1media = getEstadisticaCenso(lstEstadistica, 16l);
-            est2media = getEstadisticaCenso(lstEstadistica, 17l);
-            est3media = getEstadisticaCenso(lstEstadistica, 18l);
+            estaditicaCiclo1 = getEstadisticaCenso(lstEstadistica, new BigDecimal(3));
+            estaditicaCiclo2 = getEstadisticaCenso(lstEstadistica, new BigDecimal(4));
+            estaditicaCiclo3 = getEstadisticaCenso(lstEstadistica, new BigDecimal(5));
+            estaditicaBac = getEstadisticaCenso(lstEstadistica, new BigDecimal(6));
+            est7grado = getEstadisticaCenso(lstEstadistica, new BigDecimal(7));
+            est8grado = getEstadisticaCenso(lstEstadistica, new BigDecimal(8));
+            est9grado = getEstadisticaCenso(lstEstadistica, new BigDecimal(9));
+            est1grado = getEstadisticaCenso(lstEstadistica, new BigDecimal(10));
+            est2grado = getEstadisticaCenso(lstEstadistica, new BigDecimal(11));
+            est3grado = getEstadisticaCenso(lstEstadistica, new BigDecimal(12));
+            est4grado = getEstadisticaCenso(lstEstadistica, new BigDecimal(13));
+            est5grado = getEstadisticaCenso(lstEstadistica, new BigDecimal(14));
+            est6grado = getEstadisticaCenso(lstEstadistica, new BigDecimal(15));
+            est1media = getEstadisticaCenso(lstEstadistica, new BigDecimal(16));
+            est2media = getEstadisticaCenso(lstEstadistica, new BigDecimal(17));
+            est3media = getEstadisticaCenso(lstEstadistica, new BigDecimal(18));
         }
     }
 
@@ -1121,7 +1120,7 @@ public class EstadisticasCensoController implements Serializable {
         }
     }
 
-    private EstadisticaCenso crearEstadistica(Long idNivel) {
+    private EstadisticaCenso crearEstadistica(BigDecimal idNivel) {
         EstadisticaCenso est = new EstadisticaCenso();
         est.setCodigoEntidad(codigoEntidad);
         est.setFemenimo(BigInteger.ZERO);
@@ -1132,11 +1131,11 @@ public class EstadisticasCensoController implements Serializable {
         return est;
     }
 
-    private EstadisticaCenso getEstadisticaCenso(List<EstadisticaCenso> lstEstadistica, Long idNivel) {
+    private EstadisticaCenso getEstadisticaCenso(List<EstadisticaCenso> lstEstadistica, BigDecimal idNivel) {
         EstadisticaCenso estC;
         try {
             estC = lstEstadistica.stream()
-                    .filter(est -> est.getIdNivelEducativo().getIdNivelEducativo().intValue() == idNivel).findAny().orElse(new EstadisticaCenso());
+                    .filter(est -> est.getIdNivelEducativo().getIdNivelEducativo().intValue() == idNivel.intValue()).findAny().orElse(new EstadisticaCenso());
         } catch (NoSuchElementException e) {
             estC = null;
         }
