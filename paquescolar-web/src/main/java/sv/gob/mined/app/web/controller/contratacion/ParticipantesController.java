@@ -489,7 +489,25 @@ public class ParticipantesController implements Serializable {
                                                 det.setModificativa(BigInteger.ZERO);
                                                 det.setIdParticipante(participante);
 
-                                                lstDetalleOferta.add(det);
+                                                if (detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
+                                                    switch (preRefEmp.getNoItem()) {
+                                                        case "4":
+                                                            if (!ceClimaFrio) {
+                                                                lstDetalleOferta.add(det);
+                                                            }
+                                                            break;
+                                                        case "5":
+                                                            if (ceClimaFrio) {
+                                                                lstDetalleOferta.add(det);
+                                                            }
+                                                            break;
+                                                        default:
+                                                            lstDetalleOferta.add(det);
+                                                            break;
+                                                    }
+                                                } else {
+                                                    lstDetalleOferta.add(det);
+                                                }
                                                 break;
                                             }
                                         }
