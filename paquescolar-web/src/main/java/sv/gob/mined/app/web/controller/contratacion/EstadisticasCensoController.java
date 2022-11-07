@@ -1140,7 +1140,7 @@ public class EstadisticasCensoController implements Serializable {
         } catch (NoSuchElementException e) {
             estC = null;
         }
-        if (estC == null) {
+        if (estC == null || estC.getIdEstadistica() == null) {
             estC = crearEstadistica(idNivel);
         }
         return estC;

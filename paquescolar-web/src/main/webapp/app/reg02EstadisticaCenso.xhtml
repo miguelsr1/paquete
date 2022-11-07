@@ -231,7 +231,7 @@
                         <p:menuitem value="Modificar" icon="fa fa-pencil" disabled="true"/>
                         <p:menuitem value="Buscar"  icon="fa fa-search" disabled="true"/>
                         <p:menuitem value="Guardar" icon="fa fa-save" action="#{estadisticasCensoController.guardar}" disabled="#{sessionView.usuarioSoloLectura}"/>
-                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="true" onclick="PF('dlgImprimir').show();" disabled="true"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" ajax="true" onclick="PF('dlgImprimir').show();" disabled="false"/>
                         <p:menuitem value="Principal" icon="fa fa-home" action="#{sessionView.gotoPrincipalPage()}" actionListener="#{guestPreferences.ocultarMenu()}"/>
 
                         <f:facet  name="options">  
