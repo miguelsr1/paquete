@@ -222,83 +222,83 @@ public class EntidadEducativaEJB {
             cabecera.setModalidadDeAdministracion(datos[4].toString());
         }
         try {
-            q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=" + (proceso.getIdAnho().getIdAnho().intValue() > 8 ? "22" : "1") + " and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+            q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=" + (proceso.getIdAnho().getIdAnho().intValue() > 8 ? "22" : "1") + " and e.estadoEliminacion = 0 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
             q.setParameter("codigoEntidad", codigoEntidad);
             q.setParameter("proceso", proceso);
             cabecera.setParvularia((EstadisticaCenso) q.getSingleResult());
 
-            q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=3 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+            q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=3 and e.estadoEliminacion = 0 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
             q.setParameter("codigoEntidad", codigoEntidad);
             q.setParameter("proceso", proceso);
             cabecera.setCiclo1((EstadisticaCenso) q.getSingleResult());
 
-            q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=4 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+            q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=4 and e.estadoEliminacion = 0 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
             q.setParameter("codigoEntidad", codigoEntidad);
             q.setParameter("proceso", proceso);
             cabecera.setCiclo2((EstadisticaCenso) q.getSingleResult());
 
-            q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo in (5) and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+            q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo in (5) and e.estadoEliminacion = 0 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
             q.setParameter("codigoEntidad", codigoEntidad);
             q.setParameter("proceso", proceso);
             cabecera.setCiclo3((EstadisticaCenso) q.getSingleResult());
 
-            q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo in (6) and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+            q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo in (6) and e.estadoEliminacion = 0 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
             q.setParameter("codigoEntidad", codigoEntidad);
             q.setParameter("proceso", proceso);
             cabecera.setBachillerato((EstadisticaCenso) q.getSingleResult());
 
             if (utiles) {
-                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=10 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=10 and e.estadoEliminacion = 0 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
                 q.setParameter("codigoEntidad", codigoEntidad);
                 q.setParameter("proceso", proceso);
                 cabecera.setGrado1((EstadisticaCenso) q.getSingleResult());
 
-                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=11 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=11 and e.estadoEliminacion = 0 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
                 q.setParameter("codigoEntidad", codigoEntidad);
                 q.setParameter("proceso", proceso);
                 cabecera.setGrado2((EstadisticaCenso) q.getSingleResult());
 
-                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=12 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=12 and e.estadoEliminacion = 0 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
                 q.setParameter("codigoEntidad", codigoEntidad);
                 q.setParameter("proceso", proceso);
                 cabecera.setGrado3((EstadisticaCenso) q.getSingleResult());
 
-                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=13 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=13 and e.estadoEliminacion = 0 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
                 q.setParameter("codigoEntidad", codigoEntidad);
                 q.setParameter("proceso", proceso);
                 cabecera.setGrado4((EstadisticaCenso) q.getSingleResult());
 
-                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=14 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=14 and e.estadoEliminacion = 0 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
                 q.setParameter("codigoEntidad", codigoEntidad);
                 q.setParameter("proceso", proceso);
                 cabecera.setGrado5((EstadisticaCenso) q.getSingleResult());
 
-                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=15 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=15 and e.estadoEliminacion = 0 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
                 q.setParameter("codigoEntidad", codigoEntidad);
                 q.setParameter("proceso", proceso);
                 cabecera.setGrado6((EstadisticaCenso) q.getSingleResult());
 
-                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=7 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=7 and e.estadoEliminacion = 0 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
                 q.setParameter("codigoEntidad", codigoEntidad);
                 q.setParameter("proceso", proceso);
                 cabecera.setGrado7((EstadisticaCenso) q.getSingleResult());
 
-                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=8 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=8 and e.estadoEliminacion = 0 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
                 q.setParameter("codigoEntidad", codigoEntidad);
                 q.setParameter("proceso", proceso);
                 cabecera.setGrado8((EstadisticaCenso) q.getSingleResult());
 
-                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=9 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=9 and e.estadoEliminacion = 0 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
                 q.setParameter("codigoEntidad", codigoEntidad);
                 q.setParameter("proceso", proceso);
                 cabecera.setGrado9((EstadisticaCenso) q.getSingleResult());
 
-                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=16 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=16 and e.estadoEliminacion = 0 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
                 q.setParameter("codigoEntidad", codigoEntidad);
                 q.setParameter("proceso", proceso);
                 cabecera.setGradob1((EstadisticaCenso) q.getSingleResult());
 
-                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=17 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
+                q = em.createQuery("SELECT e FROM EstadisticaCenso e WHERE e.codigoEntidad=:codigoEntidad and e.idNivelEducativo.idNivelEducativo=17 and e.estadoEliminacion = 0 and e.idProcesoAdq=:proceso", EstadisticaCenso.class);
                 q.setParameter("codigoEntidad", codigoEntidad);
                 q.setParameter("proceso", proceso);
                 cabecera.setGradob2((EstadisticaCenso) q.getSingleResult());

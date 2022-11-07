@@ -70,13 +70,20 @@ public class UtilEJB {
             lstDocumentosImp.add(new SelectItem(5, "Garantía Contrato"));
             lstDocumentosImp.add(new SelectItem(4, "Nota Adjudicación"));
             lstDocumentosImp.add(new SelectItem(3, "Acta Adjudicación"));
-            if (idAnho != 10) {
-                lstDocumentosImp.add(new SelectItem(12, "Orden de Inicio"));
-            }
-            lstDocumentosImp.add(new SelectItem(10, "Declaración Adjudicatorio"));
+            
+            //comentado por que en año 2023 no se usa
+            //if (idAnho != 10) {
+            //    lstDocumentosImp.add(new SelectItem(12, "Orden de Inicio"));
+            //}
+            
+            //comentado por que en año 2023 no se usa
+            //lstDocumentosImp.add(new SelectItem(10, "Declaración Adjudicatorio"));
+            
             lstDocumentosImp.add(new SelectItem(13, "Acta de Recomendación"));
             lstDocumentosImp.add(new SelectItem(2, "Cotización"));
-            lstDocumentosImp.add(new SelectItem(11, "Oferta Global del Proveedor"));
+            
+            //comentado por que en año 2023 no se usa
+            //lstDocumentosImp.add(new SelectItem(11, "Oferta Global del Proveedor"));
 
         }
         if (uniforme) {
