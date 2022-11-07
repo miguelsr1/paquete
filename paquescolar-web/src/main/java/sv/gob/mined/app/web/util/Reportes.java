@@ -196,10 +196,12 @@ public class Reportes {
                         if (Integer.parseInt(anho) > 2017) {
                             param.put("descripcionRubro", "SERVICIOS DE CONFECCION DEL PRIMER UNIFORME");
                             jasperPrintList.add(JasperFillManager.fillReport(Reportes.getPathReporte("sv/gob/mined/apps/sispaqescolar/reporte" + File.separator + rpt), param, new JRBeanCollectionDataSource(lst)));
-                            if (Integer.parseInt(anho) != 2022) {
-                                param.put("descripcionRubro", "SERVICIOS DE CONFECCION DEL SEGUNDO UNIFORME");
-                                jasperPrintList.add(JasperFillManager.fillReport(Reportes.getPathReporte("sv/gob/mined/apps/sispaqescolar/reporte" + File.separator + rpt), param, new JRBeanCollectionDataSource(lst)));
-                            }
+                            
+                            //Comentado para no incluir el segundo uniforme, 07Nov2022 1504horas
+                            //if (Integer.parseInt(anho) != 2022) {
+                            //    param.put("descripcionRubro", "SERVICIOS DE CONFECCION DEL SEGUNDO UNIFORME");
+                            //    jasperPrintList.add(JasperFillManager.fillReport(Reportes.getPathReporte("sv/gob/mined/apps/sispaqescolar/reporte" + File.separator + rpt), param, new JRBeanCollectionDataSource(lst)));
+                            //}
                         } else {
                             jasperPrintList.add(JasperFillManager.fillReport(Reportes.getPathReporte("sv/gob/mined/apps/sispaqescolar/reporte" + File.separator + rpt), param, new JRBeanCollectionDataSource(lst)));
                         }
@@ -212,6 +214,7 @@ public class Reportes {
             }
             generarReporte(jasperPrintList, codigoEntidad);
         } catch (JRException | IOException ex) {
+            ex.printStackTrace(); //Se agregó a petición de Miguel el 07 de Nov 2022 a las 08:50 a.m.
             Logger.getLogger(Reportes.class.getName()).log(Level.WARNING, "Error en la impresion de los documentos contractuales {0} anho {1}", new Object[]{codigoEntidad, anho});
         }
     }

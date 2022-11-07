@@ -65,7 +65,7 @@ public class EstadisticasCensoController implements Serializable {
     private Boolean uniformes = true;
     private Boolean utiles = true;
     private Boolean zapatos = true;
-    private Boolean declaracion = true;
+    private Boolean declaracion = false; //Antes estaba true por defecto 07Nov2022 1422horas
     private Boolean editDirector = false;
     private Boolean ceClimaFrio = false;
     private BigInteger totalAlumnosMas = BigInteger.ZERO;
@@ -1570,7 +1570,7 @@ public class EstadisticasCensoController implements Serializable {
                 HashMap param = new HashMap();
                 String reportes = "";
                 
-                VwRptCertificacionPresupuestaria vw = entidadEducativaEJB.getCertificacion(codigoEntidad, procesoAdquisicion, (detProAdqUti.getIdProcesoAdq().getIdProcesoAdq() >= 12));
+                VwRptCertificacionPresupuestaria vw = entidadEducativaEJB.getCertificacion(codigoEntidad, procesoAdquisicion, (detProAdqUti.getIdProcesoAdq().getIdProcesoAdq() >= 12));                
                 vw.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
                 lst.add(vw);
                 
@@ -1603,6 +1603,7 @@ public class EstadisticasCensoController implements Serializable {
                 Reportes.generarRptsContractuales(lst, param, codigoEntidad, procesoAdquisicion.getDescripcionProcesoAdq().contains("SOBREDEMANDA"), reportesEJB, procesoAdquisicion.getIdAnho().getAnho(), reportes.split(","));
             }
         } catch (Exception e) {
+            e.printStackTrace();
             Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.WARNING, "=============================================================");
             Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.WARNING, "Error en la impresion de reporte de la certificación presupuestaria");
             Logger.getLogger(EstadisticasCensoController.class.getName()).log(Level.WARNING, "C\u00f3digo Entidad: {0}", codigoEntidad);
