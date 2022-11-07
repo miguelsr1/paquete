@@ -431,6 +431,9 @@ public class ParticipantesController implements Serializable {
                                     detalleProceso.getIdRubroAdq().getIdRubroInteres(),
                                     detalleProceso.getIdProcesoAdq().getIdAnho().getIdAnho());
                             lstNiveles = entidadEducativaEJB.getLstNivelesConMatriculaReportadaByIdProcesoAdqAndCodigoEntidad(detalleProceso.getIdProcesoAdq().getIdProcesoAdq(), participante.getIdOferta().getCodigoEntidad().getCodigoEntidad());
+                            if (detalleProceso.getIdRubroAdq().getIdRubroInteres().intValue() == 2) {
+                                lstNiveles.add(new BigDecimal(27));
+                            }
 
                             //en el momento de creación del detalle de oferta, se agregaran todos los items calificados del proveedor
                             //seleccionado con el objetivo de facilitar el ingreso de esta información
@@ -761,6 +764,9 @@ public class ParticipantesController implements Serializable {
                         case 23:
                             tmpIdNivel = 23;
                             break;
+                        case 27:
+                            tmpIdNivel = 27;
+                            break;
                     }
 
                     if (nivel.getIdNivelEducativo().intValue() == tmpIdNivel) {
@@ -782,22 +788,22 @@ public class ParticipantesController implements Serializable {
             det.setConsolidadoEspTec("");
         } else {
             if (detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
-                if(ceClimaFrio){
-                    if(numItem.equals("5")){
-                    }else{
+                if (ceClimaFrio) {
+                    if (numItem.equals("5")) {
+                    } else {
                         msjError = "Este centro educativo es de Clima Frio, debe de ingresar item 5";
                         return;
                     }
-                }else{
-                    if(numItem.equals("5")){
+                } else {
+                    if (numItem.equals("5")) {
                         msjError = "Este centro educativo NO ES de Clima Frio, debe de ingresar item 4";
                         return;
-                    }else{
+                    } else {
                     }
                 }
-                
-            } 
-            
+
+            }
+
             if (item != null && nivel != null && !validarItemDuplicado(det, rowEdit, libros)) {
                 det.setConsolidadoEspTec(item.toString() + ", " + nivel.toString());
                 det.setIdProducto(item);
