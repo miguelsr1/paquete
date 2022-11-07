@@ -1165,6 +1165,7 @@ public class EstadisticasCensoController implements Serializable {
             techo.setMontoAdjudicado(BigDecimal.ZERO);
             techo.setMontoDisponible(BigDecimal.ZERO);
             techo.setMontoPresupuestado(BigDecimal.ZERO);
+            techo.setEstadoEliminacion(BigInteger.ZERO);
             techo.setUsuarioInsercion(VarSession.getVariableSessionUsuario());
         }
         return techo;

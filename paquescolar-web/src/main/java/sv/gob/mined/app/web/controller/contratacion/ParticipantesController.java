@@ -781,6 +781,23 @@ public class ParticipantesController implements Serializable {
             }
             det.setConsolidadoEspTec("");
         } else {
+            if (detalleProceso.getIdRubroAdq().getIdRubroUniforme().intValue() == 1) {
+                if(ceClimaFrio){
+                    if(numItem.equals("5")){
+                    }else{
+                        msjError = "Este centro educativo es de Clima Frio, debe de ingresar item 5";
+                        return;
+                    }
+                }else{
+                    if(numItem.equals("5")){
+                        msjError = "Este centro educativo NO ES de Clima Frio, debe de ingresar item 4";
+                        return;
+                    }else{
+                    }
+                }
+                
+            } 
+            
             if (item != null && nivel != null && !validarItemDuplicado(det, rowEdit, libros)) {
                 det.setConsolidadoEspTec(item.toString() + ", " + nivel.toString());
                 det.setIdProducto(item);

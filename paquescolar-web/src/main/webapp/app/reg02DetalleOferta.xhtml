@@ -170,8 +170,15 @@
                             </p:summaryRow>
                         </p:dataTable>
 
-                        <br/>
-                        <p:dataTable id="tblResguardo" value="#{participantesController.lstResguardo}" var="res" styleClass="ui-datatable-borderless ui-datatable-reflow" rowIndexVar="rowId">
+                        <p:spacer width="10" height="25" style="display:#{(participantesController.lstResguardo.size() != 0)?'block':'none'}"/>
+                        <h3 style="display:#{(participantesController.lstResguardo.size() != 0)?'block':'none'}">
+                            <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                            <p:spacer width="10" />
+                            <h:outputText value="Detalle de Resguardo"/>
+                        </h3>
+                        <p:dataTable id="tblResguardo" value="#{participantesController.lstResguardo}" var="res" 
+                                     style="display:#{(participantesController.lstResguardo.size() != 0)?'block':'none'}"
+                                     styleClass="ui-datatable-borderless ui-datatable-reflow" rowIndexVar="rowId">
                             <p:column headerText="#">
                                 <p:outputLabel value="#{res.idRow}"/>
                             </p:column>
@@ -184,7 +191,6 @@
                             <p:column headerText="Cantidad"> 
                                 <p:outputLabel value="#{res.cantidad}"/>
                             </p:column>
-
                         </p:dataTable>
 
                         <p:spacer width="10" height="25" style="display:#{(participantesController.mostraTblLibros)?'block':'none'}"/>
@@ -302,7 +308,7 @@
                              onclick="PF('confirmacion').hide();" update="dvDetalle" />
         </p:confirmDialog> 
 
-        <p:remoteCommand name="findResguardo" action="#{participantesController.limpiarFiltros()}" update="tblResguardo"/>
+        <p:remoteCommand name="findResguardo" action="#{participantesController.limpiarFiltros()}" update="dvDetalle"/>
         <p:remoteCommand name="updDetalleOferta" action="#{participantesController.updateFilaDetalle('tblDetalleOferta')}"/>
         <p:remoteCommand name="updDetalleOfertaLibros" action="#{participantesController.updateFilaDetalle('tblDetalleOfertaLibros')}"/>
         <p:remoteCommand name="findEntidad" update="nombreCE cboProveedor tblDetalleOferta" actionListener="#{ofertaMB.buscarEntidadEducativa}"/>
