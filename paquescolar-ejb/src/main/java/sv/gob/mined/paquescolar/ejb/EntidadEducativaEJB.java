@@ -899,4 +899,10 @@ public class EntidadEducativaEJB {
         q.setParameter(3, idProcesoAdqAnt);
         return q.getResultList();
     }
+    
+    public VwCatalogoEntidadEducativa findCeClimaFrioByCodigoEntidad(String codigoEntidad) {
+        Query q = em.createNativeQuery("select e.* from vw_catalogo_entidad_educativa e inner join ce_clima_frio c on e.codigo_entidad = c.codigo_entidad  where e.codigo_entidad = ?1", VwCatalogoEntidadEducativa.class);
+        q.setParameter(1, codigoEntidad);
+        return q.getResultList().isEmpty() ? null : (VwCatalogoEntidadEducativa) q.getSingleResult();
+    }
 }
