@@ -1589,7 +1589,8 @@ public class EstadisticasCensoController implements Serializable {
                     }
                 }
                 if (zapatos) {
-                    reportes += (reportes.isEmpty() ? "" : ",") + "rptCertZap.jasper";
+                    reportes += (reportes.isEmpty() ? "" : ",") + "rptCertZap" + procesoAdquisicion.getIdAnho().getAnho() + ".jasper";
+                    //reportes += (reportes.isEmpty() ? "" : ",") + "rptCertZap.jasper"; //antes 08nov2022
                 }
                 if (declaracion && procesoAdquisicion.getIdAnho().getIdAnho().intValue() >= 7) {
                     param.put("descripcionProcesoAdq", detProAdqUni.getIdProcesoAdq().getDescripcionProcesoAdq());

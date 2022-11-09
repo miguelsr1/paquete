@@ -634,7 +634,8 @@ public class ContratosOrdenesComprasController extends RecuperarProcesoUtil impl
                                     }
                                 }
 
-                                nombreEncargadoCompra = entidadEducativaEJB.getMiembro(codigoEntidad, "ENCARGADO_COMPRA").getNombreMiembro();
+                                //nombreEncargadoCompra = entidadEducativaEJB.getMiembro(codigoEntidad, "ENCARGADO_COMPRA").getNombreMiembro(); //comentado el 08 nov 2022 por corregir el cargo 
+                                nombreEncargadoCompra = entidadEducativaEJB.getMiembro(codigoEntidad, "ENCARGADO DE COMPRA").getNombreMiembro(); //así quedo luego de comentar
                                 //BUSCAR REPRESENTANTE DEL ORGANISMO DE ADMINISTRACION ESCOLAR
                                 representanteCe = entidadEducativaEJB.getPresidenteOrganismoEscolar(codigoEntidad);
                                 if (representanteCe == null) {
