@@ -183,9 +183,15 @@ public class Resguardo implements Serializable {
     public BigInteger getTotalCantidad() {
         totalCantidad = BigInteger.ZERO;
         if (detalleResguardoList != null) {
+            //Comentado, ya que se usa cuando se compila con JDK8
             detalleResguardoList.forEach(det -> {
                 totalCantidad = totalCantidad.add(det.getCantidad());
             });
+
+            //para compilar con JDK7 y poder hacer uso del proyecto en los reporte en IReport 5.0.0
+//            for (DetalleResguardo det: detalleResguardoList){
+//                totalCantidad = totalCantidad.add(det.getCantidad());
+//            }
         }
         return totalCantidad;
     }

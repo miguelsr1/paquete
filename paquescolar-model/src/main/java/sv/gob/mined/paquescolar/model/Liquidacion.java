@@ -206,6 +206,7 @@ public class Liquidacion implements Serializable {
     public BigDecimal getMontoRecepcion() {
         montoRecepcion = BigDecimal.ZERO;
 
+        //Comentado, ya que se usa cuando se compila con JDK8
         detalleLiquidacionList.forEach(detalleLiquidacion -> {
             if (detalleLiquidacion.getPrecioUnitarioModif() == null) {
                 montoRecepcion = montoRecepcion.add(detalleLiquidacion.getPrecioUnitario().multiply(new BigDecimal(detalleLiquidacion.getCantidadEntregada())));
@@ -213,6 +214,15 @@ public class Liquidacion implements Serializable {
                 montoRecepcion = montoRecepcion.add(detalleLiquidacion.getPrecioUnitarioModif().multiply(new BigDecimal(detalleLiquidacion.getCantidadEntregada())));
             }
         });
+    
+        //para compilar con JDK7 y poder hacer uso del proyecto en los reporte en IReport 5.0.0
+//        for (DetalleLiquidacion detalleLiquidacion: detalleLiquidacionList){
+//            if (detalleLiquidacion.getPrecioUnitarioModif() == null) {
+//                montoRecepcion = montoRecepcion.add(detalleLiquidacion.getPrecioUnitario().multiply(new BigDecimal(detalleLiquidacion.getCantidadEntregada())));
+//            } else {
+//                montoRecepcion = montoRecepcion.add(detalleLiquidacion.getPrecioUnitarioModif().multiply(new BigDecimal(detalleLiquidacion.getCantidadEntregada())));
+//            }
+//        }
 
         return montoRecepcion;
     }
@@ -224,9 +234,15 @@ public class Liquidacion implements Serializable {
     public BigDecimal getMontoContratado() {
         montoContratado = BigDecimal.ZERO;
 
+        //Comentado, ya que se usa cuando se compila con JDK8
         detalleLiquidacionList.forEach(detalleLiquidacion -> {
             montoContratado = montoContratado.add(detalleLiquidacion.getPrecioUnitario().multiply(new BigDecimal(detalleLiquidacion.getCantidad())));
         });
+        
+        //para compilar con JDK7 y poder hacer uso del proyecto en los reporte en IReport 5.0.0
+//        for (DetalleLiquidacion detalleLiquidacion: detalleLiquidacionList){
+//            montoContratado = montoContratado.add(detalleLiquidacion.getPrecioUnitario().multiply(new BigDecimal(detalleLiquidacion.getCantidad())));
+//        }
 
         return montoContratado;
     }
@@ -239,11 +255,19 @@ public class Liquidacion implements Serializable {
 
         montoModificativa = BigDecimal.ZERO;
 
+        //Comentado, ya que se usa cuando se compila con JDK8
         detalleLiquidacionList.forEach(detalleLiquidacion -> {
             if (detalleLiquidacion.getCantidadModificativa() != null) {
                 montoModificativa = montoModificativa.add(detalleLiquidacion.getPrecioUnitarioModif().multiply(new BigDecimal(detalleLiquidacion.getCantidadModificativa())));
             }
         });
+        
+        //para compilar con JDK7 y poder hacer uso del proyecto en los reporte en IReport 5.0.0
+//        for (DetalleLiquidacion detalleLiquidacion: detalleLiquidacionList){
+//            if (detalleLiquidacion.getCantidadModificativa() != null) {
+//                montoModificativa = montoModificativa.add(detalleLiquidacion.getPrecioUnitarioModif().multiply(new BigDecimal(detalleLiquidacion.getCantidadModificativa())));
+//            }
+//        }
 
         return montoModificativa;
     }
@@ -255,6 +279,7 @@ public class Liquidacion implements Serializable {
     public BigDecimal getMontoResguardo() {
         montoResguardo = BigDecimal.ZERO;
 
+        //Comentado, ya que se usa cuando se compila con JDK8
         detalleLiquidacionList.forEach(detalleLiquidacion -> {
             if (detalleLiquidacion.getPrecioUnitarioModif() == null) {
                 montoResguardo = montoResguardo.add(detalleLiquidacion.getPrecioUnitario().multiply(new BigDecimal(detalleLiquidacion.getCantidadResguardo())));
@@ -263,6 +288,15 @@ public class Liquidacion implements Serializable {
             }
         });
 
+
+        //para compilar con JDK7 y poder hacer uso del proyecto en los reporte en IReport 5.0.0
+//        for (DetalleLiquidacion detalleLiquidacion: detalleLiquidacionList){
+//            if (detalleLiquidacion.getPrecioUnitarioModif() == null) {
+//                montoResguardo = montoResguardo.add(detalleLiquidacion.getPrecioUnitario().multiply(new BigDecimal(detalleLiquidacion.getCantidadResguardo())));
+//            } else {
+//                montoResguardo = montoResguardo.add(detalleLiquidacion.getPrecioUnitarioModif().multiply(new BigDecimal(detalleLiquidacion.getCantidadResguardo())));
+//            }
+//        }
         return montoResguardo;
     }
 
