@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptActaAdjudicacion" pageWidth="612" pageHeight="792" columnWidth="544" leftMargin="34" rightMargin="34" topMargin="34" bottomMargin="34">
-	<property name="ireport.zoom" value="1.7715610000000022"/>
-	<property name="ireport.x" value="75"/>
-	<property name="ireport.y" value="0"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptActaAdjudicacion" pageWidth="612" pageHeight="792" columnWidth="544" leftMargin="34" rightMargin="34" topMargin="34" bottomMargin="34" uuid="1fd8ad83-58ff-4298-a38c-b83e1331061d">
+	<property name="ireport.zoom" value="1.2100000000000013"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="96"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -13,7 +13,7 @@
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
-	<subDataset name="dsDetCotizacion">
+	<subDataset name="dsDetCotizacion" uuid="dc380103-9f1f-4896-be67-2129b58fb35e">
 		<queryString>
 			<![CDATA[]]>
 		</queryString>
@@ -76,9 +76,9 @@
 	<group name="reporte">
 		<groupExpression><![CDATA[]]></groupExpression>
 		<groupHeader>
-			<band height="256" splitType="Stretch">
+			<band height="243" splitType="Stretch">
 				<staticText>
-					<reportElement x="50" y="16" width="424" height="41"/>
+					<reportElement uuid="7e70b10c-7390-4c0c-898d-453e4f3eb8d7" x="50" y="16" width="424" height="41"/>
 					<textElement textAlignment="Center">
 						<font size="14" isBold="true"/>
 					</textElement>
@@ -86,7 +86,7 @@
  (RUBRO: UTILES ESCOLARES)]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-					<reportElement key="textField-8" x="0" y="71" width="544" height="185"/>
+					<reportElement uuid="d0b0cdf9-90a5-44af-b099-01b6dcfa89e9" key="textField-8" x="0" y="71" width="544" height="170"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -123,7 +123,7 @@
 			</band>
 			<band height="47">
 				<textField isStretchWithOverflow="true">
-					<reportElement x="10" y="0" width="255" height="38"/>
+					<reportElement uuid="d38196c2-4f82-4057-978c-c7c7b90352cd" x="10" y="0" width="255" height="38"/>
 					<textElement markup="styled"/>
 					<textFieldExpression><![CDATA["\n\n\n\n"
 +"F. ________________________________"
@@ -131,7 +131,7 @@
 +"\n\n\nSello CDE, CECE o CIE"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement x="265" y="0" width="255" height="38"/>
+					<reportElement uuid="67cff98c-f0bd-44a1-86e8-d0580121e0bd" x="265" y="0" width="255" height="38"/>
 					<textElement markup="styled"/>
 					<textFieldExpression><![CDATA["\n\n\n\n"
 +"F. ________________________________"
@@ -143,26 +143,26 @@
 		<groupFooter>
 			<band height="122" splitType="Stretch">
 				<staticText>
-					<reportElement x="10" y="3" width="534" height="43"/>
+					<reportElement uuid="f459b739-1b30-4073-8404-2aa7c63a6710" x="10" y="3" width="534" height="43"/>
 					<textElement/>
 					<text><![CDATA[Nota:    1) Únicamente  los ítems que presenten precios son los cotizados por el proveedor.]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true">
-					<reportElement x="0" y="72" width="270" height="50"/>
+					<reportElement uuid="3c9eb65f-9feb-4fc7-a6ae-2b081732c92a" x="0" y="72" width="270" height="50"/>
 					<textElement/>
 					<textFieldExpression><![CDATA["Nombre: "+$F{nombreRespresenanteEmp}
 +"\n\nF.____________________________"
 +"\nNombre y firma del proveedor"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement x="272" y="72" width="272" height="50"/>
+					<reportElement uuid="f15176f9-dde9-4450-9a83-ff8cb28607f2" x="272" y="72" width="272" height="50"/>
 					<textElement/>
 					<textFieldExpression><![CDATA["Nombre: "+$F{nombreRepresentanteCe}
 +"\n\nF.____________________________"
 +"\nFecha y Hora\nSello CDE,CECE O CIE"]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="274" y="58" width="100" height="14"/>
+					<reportElement uuid="fa13014f-8076-4325-bed5-4fbafad59c16" x="274" y="58" width="100" height="14"/>
 					<textElement/>
 					<text><![CDATA[Recibida por:]]></text>
 				</staticText>
@@ -183,88 +183,89 @@
 	</columnHeader>
 	<detail>
 		<band height="150" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{PAGE_COUNT}==2]]></printWhenExpression>
 			<componentElement>
-				<reportElement key="table" style="table 2_TD" x="0" y="108" width="534" height="42"/>
+				<reportElement uuid="9f650cc9-ff0b-491b-9417-92fc0ed1e20c" key="table" style="table 2_TD" x="0" y="108" width="534" height="42"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="dsDetCotizacion">
+					<datasetRun subDataset="dsDetCotizacion" uuid="b4c26e7b-ab1d-4176-b45a-34e674faf877">
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lstDetalleOferta})]]></dataSourceExpression>
 					</datasetRun>
-					<jr:columnGroup width="440">
+					<jr:columnGroup width="440" uuid="c46490fe-9a4e-4577-ab25-1f6ba4c70fd9">
 						<jr:columnFooter style="table 2_TD" height="30" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="440" height="30"/>
+								<reportElement uuid="c6d84be3-0327-4a16-a387-30b2529847ce" x="0" y="0" width="440" height="30"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle"/>
 								<text><![CDATA[TOTAL US$]]></text>
 							</staticText>
 						</jr:columnFooter>
-						<jr:column width="31">
+						<jr:column width="31" uuid="830d2c02-0f00-4ea4-abda-95b24d3139d3">
 							<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
 								<staticText>
-									<reportElement x="0" y="0" width="31" height="30"/>
+									<reportElement uuid="1c9a934d-543d-47ca-be4c-2d0ba93e9f9d" x="0" y="0" width="31" height="30"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<text><![CDATA[ITEM]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
 								<textField>
-									<reportElement x="0" y="0" width="31" height="20"/>
+									<reportElement uuid="e17960f5-cf07-4131-a0ab-15a43ed6b5b6" x="0" y="0" width="31" height="20"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{noItemInt}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="166">
+						<jr:column width="166" uuid="3650bf4c-8ee2-4da3-83dd-6047d7f61b1f">
 							<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
 								<staticText>
-									<reportElement x="0" y="0" width="166" height="30"/>
+									<reportElement uuid="9ad2b8b9-6966-4c20-9fde-321d69a1d096" x="0" y="0" width="166" height="30"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<text><![CDATA[DESCRIPCION]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
 								<textField>
-									<reportElement x="2" y="0" width="164" height="20"/>
+									<reportElement uuid="ac3fdff8-b029-4dc2-aece-a6d9cd016d6c" x="2" y="0" width="164" height="20"/>
 									<textElement verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{nombreProducto}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="81">
+						<jr:column width="81" uuid="2e3acf40-26d6-40c2-a7dd-e5c6c8397693">
 							<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
 								<staticText>
-									<reportElement x="0" y="0" width="80" height="30"/>
+									<reportElement uuid="e1825994-fd4b-4b1d-93da-e08190997a7d" x="0" y="0" width="80" height="30"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<text><![CDATA[CANTIDAD SOLICITADA]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
 								<textField pattern="#,##0;(-#,##0)">
-									<reportElement x="0" y="0" width="78" height="20"/>
+									<reportElement uuid="838f5868-dacc-4f9b-a085-3925f3818f36" x="0" y="0" width="78" height="20"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="82">
+						<jr:column width="82" uuid="da3aed9d-9df0-476b-9d74-42a9d81c2024">
 							<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
 								<staticText>
-									<reportElement x="1" y="0" width="80" height="30"/>
+									<reportElement uuid="770f6cb0-76e4-446d-8828-2202a11e88ea" x="1" y="0" width="80" height="30"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<text><![CDATA[CANTIDAD OFERTADA]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
 								<textField pattern="#,##0;(-#,##0)">
-									<reportElement x="1" y="0" width="78" height="20"/>
+									<reportElement uuid="370f5cd2-9945-4526-94ce-fa2645875e83" x="1" y="0" width="78" height="20"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="80">
+						<jr:column width="80" uuid="3e890fa8-2038-4a3e-919e-79647a474810">
 							<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
 								<staticText>
-									<reportElement x="0" y="0" width="80" height="30"/>
+									<reportElement uuid="55aad9d0-a41f-436a-a8b9-e293c4d131cc" x="0" y="0" width="80" height="30"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<text><![CDATA[PRECIO
 UNITARIO]]></text>
@@ -272,31 +273,31 @@ UNITARIO]]></text>
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
 								<textField pattern="#,##0.00;(#,##0.00)">
-									<reportElement x="0" y="0" width="78" height="20"/>
+									<reportElement uuid="07ae6a83-85b0-4146-9a8b-de9e3d76ff99" x="0" y="0" width="78" height="20"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{precioUnitario}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
 					</jr:columnGroup>
-					<jr:column width="80">
+					<jr:column width="80" uuid="9eeccd23-e9f6-464f-acf1-cf2e7be9a562">
 						<jr:columnHeader style="table 2_TD" height="30" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="80" height="30"/>
+								<reportElement uuid="fa060ae4-3a10-4029-9f11-bb5c9c2c0a3c" x="0" y="0" width="80" height="30"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle"/>
 								<text><![CDATA[PRECIO TOTAL]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:columnFooter style="table 2_TD" height="30" rowSpan="1">
 							<textField pattern="#,##0.00;#,##0.00-">
-								<reportElement x="0" y="0" width="78" height="30"/>
+								<reportElement uuid="76733fff-1e4c-4aed-90a9-9920ec8f92a0" x="0" y="0" width="78" height="30"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle"/>
 								<textFieldExpression><![CDATA[$V{TOTAL}]]></textFieldExpression>
 							</textField>
 						</jr:columnFooter>
 						<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
 							<textField pattern="#,##0.00;(#,##0.00)">
-								<reportElement x="0" y="0" width="78" height="20"/>
+								<reportElement uuid="c44b1355-2384-46f1-a062-918b79853990" x="0" y="0" width="78" height="20"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle"/>
 								<textFieldExpression><![CDATA[$F{precioUnitario}.multiply(new java.math.BigDecimal($F{cantidad}))]]></textFieldExpression>
 							</textField>
@@ -305,22 +306,22 @@ UNITARIO]]></text>
 				</jr:table>
 			</componentElement>
 			<break>
-				<reportElement x="0" y="0" width="544" height="1"/>
+				<reportElement uuid="9c20ed45-e30d-4206-8d9a-517783ce622c" x="0" y="0" width="544" height="1"/>
 			</break>
 			<textField>
-				<reportElement x="0" y="12" width="265" height="18"/>
+				<reportElement uuid="6c2ee765-4a0d-4a5a-aa13-7738dc503909" x="0" y="12" width="265" height="18"/>
 				<textElement markup="styled"/>
 				<textFieldExpression><![CDATA["<style isBold='true' pdfFontName='Helvetica-Bold'><u>II. COTIZACIÓN</u></style>\n"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="90" y="30" width="361" height="20"/>
+				<reportElement uuid="d0612aa1-1d3e-4a2c-9a4e-15b58ae7746e" x="90" y="30" width="361" height="20"/>
 				<textElement textAlignment="Center">
 					<font size="14"/>
 				</textElement>
 				<text><![CDATA[RUBRO PAQUETE UTILES ESCOLARES]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="59" width="544" height="49"/>
+				<reportElement uuid="15da7357-ff44-4e88-9427-8d49fb594ba1" x="0" y="59" width="544" height="49"/>
 				<textElement markup="styled">
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
@@ -335,7 +336,7 @@ UNITARIO]]></text>
 	<pageFooter>
 		<band height="15" splitType="Stretch">
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-10" x="0" y="0" width="176" height="11"/>
+				<reportElement uuid="535ee297-584d-4e20-81e9-4e4bea58bc01" key="textField-10" x="0" y="0" width="176" height="11"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
