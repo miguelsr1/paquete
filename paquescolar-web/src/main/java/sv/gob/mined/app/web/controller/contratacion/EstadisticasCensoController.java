@@ -65,7 +65,7 @@ public class EstadisticasCensoController implements Serializable {
     private Boolean uniformes = true;
     private Boolean utiles = true;
     private Boolean zapatos = true;
-    private Boolean declaracion = false; //Antes estaba true por defecto 07Nov2022 1422horas
+    private Boolean declaracion = true; //Antes estaba true por defecto 07Nov2022 1422horas
     private Boolean editDirector = false;
     private Boolean ceClimaFrio = false;
     private BigInteger totalAlumnosMas = BigInteger.ZERO;
