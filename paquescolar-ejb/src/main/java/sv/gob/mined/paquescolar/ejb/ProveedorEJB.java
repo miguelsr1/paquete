@@ -857,7 +857,7 @@ public class ProveedorEJB {
                 + "        cda.estado_eliminacion = 0 and\n"
                 + "        det.estado_eliminacion = 0) tb1\n"
                 + "    inner join (select \n"
-                + "                    det.id_muestra_interes,\n"
+                + "                    distinct det.id_muestra_interes,\n"
                 + "                    cip.capacidad_acreditada,\n"
                 + "                    cip.capacidad_adjudicada,\n"
                 + "                    case when (cip.capacidad_acreditada-cip.capacidad_adjudicada) >= " + cantidad + " then " + (idRubro == 4 ? "12.50" : (idRubro == 5 ? "12.50" : porCapacidadCompleta.toString())) + " \n"
