@@ -140,11 +140,11 @@
                         <f:convertNumber pattern="#,###"/>
                     </p:outputLabel>
                     <p:outputLabel value="Número de piezas a contratar: "/>
-                    <p:outputLabel value="#{ofertaMB.cantidadAlumnos*2}" style="font-weight: bold;" rendered="#{ofertaMB.rubro eq 4 || ofertaMB.rubro eq 5}">
+                    <p:outputLabel value="#{ofertaMB.cantidadAlumnos*2}" style="font-weight: bold;" rendered="#{ofertaMB.rubro eq 2 || ofertaMB.rubro eq 4 || ofertaMB.rubro eq 5}">
                         <f:convertNumber pattern="#,###"/>
                     </p:outputLabel>
 
-                    <p:outputLabel value="#{ofertaMB.cantidadAlumnos}" style="font-weight: bold;" rendered="#{ofertaMB.rubro eq 2 || ofertaMB.rubro eq 3}">
+                    <p:outputLabel value="#{ofertaMB.cantidadAlumnos}" style="font-weight: bold;" rendered="#{ofertaMB.rubro eq 3}">
                         <f:convertNumber pattern="#,###"/>
                     </p:outputLabel>
                 </h:panelGrid>
