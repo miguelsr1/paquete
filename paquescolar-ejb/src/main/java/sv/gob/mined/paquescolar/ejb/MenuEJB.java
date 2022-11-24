@@ -119,14 +119,33 @@ public class MenuEJB {
     }
 
     public List<OpcionMenu> getOpciones(Integer idUsuario, Integer idOpcMenu, Boolean isPadre) {
-        Query q = em.createNativeQuery("select om.* \n"
-                + "from \n"
-                + "    OPCION_MENU om\n"
-                + "    inner join USUARIO_OPC_MENU uom on uom.id_opc_menu = OM.ID_OPC_MENU\n"
-                + "where \n"
-                + "    id_usuario = " + idUsuario + " and om.opc_id_opc_menu " + (isPadre ? " = " + idOpcMenu : " is null ") + "\n"
-                + "order by\n"
-                + "    app, orden");
+        Query q = null;
+        if (idUsuario.equals(2) || idUsuario.equals(18) || idUsuario.equals(21) ||
+        idUsuario.equals(22) || idUsuario.equals(35) || idUsuario.equals(36) || idUsuario.equals(38) || idUsuario.equals(202) ||
+        idUsuario.equals(423) || idUsuario.equals(1060) || idUsuario.equals(2043) || idUsuario.equals(2250)) {
+            q = em.createNativeQuery("select om.* \n"
+                    + "from \n"
+                    + "    OPCION_MENU om\n"
+                    + "    inner join USUARIO_OPC_MENU uom on uom.id_opc_menu = OM.ID_OPC_MENU\n"
+                    + "where \n"
+                    + "    id_usuario = " + idUsuario + " and om.opc_id_opc_menu " + (isPadre ? " = " + idOpcMenu : " is null ") + "\n"
+                    + "order by\n"
+                    + "    app, orden");
+        }else{
+            //Corrección de consulta, para obtener as opciones tanto de las del usuario como las de su rol
+            q = em.createNativeQuery("select om.* \n"
+                    +"from \n"
+                    +"    OPCION_MENU om \n"
+                    +"inner join \n"
+                    +"( \n"
+                    +"select id_opc_menu from usuario_opc_menu where id_usuario = " + idUsuario + " \n"
+                    +"union \n"
+                    +"select id_opc_menu from tipo_usu_opc_menu where id_tipo_usuario = (select distinct id_tipo_usuario from usuario where id_usuario = " + idUsuario + ") \n"
+                    +") uom on uom.id_opc_menu = OM.ID_OPC_MENU \n"
+                    +"where om.opc_id_opc_menu " + (isPadre ? " = " + idOpcMenu : " is null ") + "\n"
+                    +"order by \n"
+                    +"    app, orden");
+        }
         return q.getResultList();
     }
 }
