@@ -116,6 +116,62 @@
         </query>
     </named-native-query>
     
+    <named-native-query name="PagoProve.FileF14v15_DUI" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.InformeF14Dto">
+        <query>
+            <![CDATA[
+            select 
+                rownum as idRow,
+                colA, colB, colC, colD, colE,
+                colF, colG, colH, colI, colJ,
+                colK, colL, colLl, colM, colN, colO,
+                colP,colQ
+            from (select 
+                    '1'                         as colA,
+                    '9300'                      as colB,
+                    SUBSTR(FN_GET_NOMBRE_EMP_F14(der.numero_nit),0, 100) as colC,
+                    replace(per.numero_dui,'-','')  as colD,
+                    '11'                        as colE,
+                    to_char(sum(DECODE(DDP.ID_TIPO_DOC_PAGO, 1, ROUND(((case ddp.CONTRATO_MODIF when 1 then DDP.MONTO_ACTUAL when 0 then DP.MONTO_ACTUAL end)/1.13),2), 2, (case ddp.CONTRATO_MODIF when 1 then DDP.MONTO_ACTUAL when 0 then DP.MONTO_ACTUAL end))))     as colF,
+                    '0'                         as colG,
+                    to_char(sum(ddp.monto_Renta))        as colH,
+                    0                           as colI,
+                    0                           as colJ,
+                    0                           as colK,
+                    0                           as colL,
+                    0                           as colLl,
+                    0                           as colM,
+                    0                           as colN,
+                    0                           as colO,
+                    0                           as colP,
+                    to_char(dp.fecha_insercion,'mmyyyy') as colQ
+                from requerimiento_fondos req
+                    inner join detalle_proceso_adq dpa      on req.id_det_proceso_adq = dpa.id_det_proceso_adq
+                    inner join proceso_adquisicion pa       on pa.id_proceso_Adq = dpa.id_proceso_Adq
+                    inner join detalle_Requerimiento der    on req.id_requerimiento = der.id_requerimiento
+                    inner join persona per                  on der.numero_nit = per.numero_nit 
+                    inner join detalle_doc_pago ddp         on der.id_det_requerimiento = ddp.id_det_requerimiento
+                    inner join detalle_planilla dp          on dp.id_detalle_doc_pago = ddp.id_detalle_doc_pago
+                    inner join planilla_pago pp             on pp.id_planilla = dp.id_planilla
+                where
+                    der.activo = 0 and
+                    ddp.estado_eliminacion = 0 and
+                    dp.estado_eliminacion = 0 and
+                    pp.estado_eliminacion = 0 and
+                    dpa.id_rubro_Adq in (4,5) and
+                    der.codigo_departamento = ?1 and
+                    to_char(dp.fecha_insercion,'mmyyyy') = ?2
+                group by 
+                    razon_social,
+                    der.numero_nit,
+                    per.numero_dui,
+                    id_anho,
+                    dp.fecha_insercion
+                order by dp.fecha_insercion)
+            ]]>
+        </query>
+    </named-native-query>
+    
     <named-native-query name="PagoProve.FileF910" 
                         result-class="sv.gob.mined.paquescolar.model.pojos.pagoprove.DatosProveDto">
         <query>
