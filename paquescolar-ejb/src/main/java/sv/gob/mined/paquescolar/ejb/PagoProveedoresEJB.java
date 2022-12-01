@@ -18,6 +18,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import org.eclipse.persistence.internal.jpa.JPAQuery;
 import sv.gob.mined.paquescolar.model.DetalleDocPago;
 import sv.gob.mined.paquescolar.model.DetallePlanilla;
 import sv.gob.mined.paquescolar.model.DetallePreCarga;
@@ -77,7 +78,9 @@ public class PagoProveedoresEJB {
     }
 
     public List<InformeF14Dto> getDatosF14(String codigoDepartamento, String idMes) {
-        Query q = em.createNamedQuery("PagoProve.FileF14v15", InformeF14Dto.class);
+        //Query q = em.createNamedQuery("PagoProve.FileF14v15", InformeF14Dto.class);
+        Query q = em.createNamedQuery("PagoProve.FileF14v15_DUI", InformeF14Dto.class);        
+        //System.out.println(q.toString());
         q.setParameter(1, codigoDepartamento);
         q.setParameter(2, idMes);
         return q.getResultList();
