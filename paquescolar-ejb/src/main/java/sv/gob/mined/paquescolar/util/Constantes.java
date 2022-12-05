@@ -34,35 +34,72 @@ public class Constantes {
             + "                    ofe.codigo_entidad = ?1 and\n"
             + "                    ofe.id_det_proceso_adq = ?2";
 
-    public static final String QUERY_CONTRATACION_RESUMEN_CONTRATACIONES = "SELECT \n"
-            + "                rownum                  as idRow,\n"
-            + "                CODIGO_ENTIDAD          as codigoEntidad,\n"
-            + "                NOMBRE_CE               as nombreCe,\n"
-            + "                NOMBRE_DEPARTAMENTO_CE  as nombreDepartamentoCe,\n"
-            + "                NOMBRE_MUNICIPIO_CE     as nombreMunicipioCe,\n"
-            + "                DIRECCION_CE            as direccionCe,\n"
-            + "                RUBRO                   as rubro,\n"
-            + "                NUMERO_NIT              as numeroNit,\n"
-            + "                RAZON_SOCIAL            as razonSocial,\n"
-            + "                DIRECCION_EMP           as direccionEmp,\n"
-            + "                TELEFONO_EMP            as telefonoEmp,\n"
-            + "                CELULAR_EMP             as celularEmp,\n"
-            + "                NOMBRE_DEPARTAMENTO_EMP as nombreDepartamentoEmp,\n"
-            + "                NOMBRE_MUNICIPIO_EMP    as nombreMunicipioEmp,\n"
-            + "                CANTIDAD_CONTRATO       as cantidadContrato,\n"
-            + "                MONTO_CONTRATO          as montoContrato,\n"
-            + "                ID_CONTRATO             as idContrato,\n"
-            + "                miembro_firma       as miembroFirma,\n"
-            + "                tel_director        as telDirector,\n"
-            + "                tel_director2       as telDirector2,\n"
-            + "                numero_telefono     as numeroTelefono,\n"
-            + "                num_telefono2       as telefonoEmp2,\n"
-            + "                num_telefono3       as telefonoEmp3,"
-            + "                fecha_emision       as fechaEmision"
-            + "            FROM \n"
-            + "                VW_RPT_RESUMEN_CONTRATACION \n"
-            + "            WHERE \n"
-            + "                ID_DET_PROCESO_ADQ = ?1";
+//    Comentado, se reemplazo por el que está abajo, 05 Dic 2022
+//    public static final String QUERY_CONTRATACION_RESUMEN_CONTRATACIONES = "SELECT \n"
+//            + "                rownum                  as idRow,\n"
+//            + "                CODIGO_ENTIDAD          as codigoEntidad,\n"
+//            + "                NOMBRE_CE               as nombreCe,\n"
+//            + "                NOMBRE_DEPARTAMENTO_CE  as nombreDepartamentoCe,\n"
+//            + "                NOMBRE_MUNICIPIO_CE     as nombreMunicipioCe,\n"
+//            + "                DIRECCION_CE            as direccionCe,\n"
+//            + "                RUBRO                   as rubro,\n"
+//            + "                NUMERO_NIT              as numeroNit,\n"
+//            + "                RAZON_SOCIAL            as razonSocial,\n"
+//            + "                DIRECCION_EMP           as direccionEmp,\n"
+//            + "                TELEFONO_EMP            as telefonoEmp,\n"
+//            + "                CELULAR_EMP             as celularEmp,\n"
+//            + "                NOMBRE_DEPARTAMENTO_EMP as nombreDepartamentoEmp,\n"
+//            + "                NOMBRE_MUNICIPIO_EMP    as nombreMunicipioEmp,\n"
+//            + "                CANTIDAD_CONTRATO       as cantidadContrato,\n"
+//            + "                MONTO_CONTRATO          as montoContrato,\n"
+//            + "                ID_CONTRATO             as idContrato,\n"
+//            + "                miembro_firma       as miembroFirma,\n"
+//            + "                tel_director        as telDirector,\n"
+//            + "                tel_director2       as telDirector2,\n"
+//            + "                numero_telefono     as numeroTelefono,\n"
+//            + "                num_telefono2       as telefonoEmp2,\n"
+//            + "                num_telefono3       as telefonoEmp3,"
+//            + "                fecha_emision       as fechaEmision"
+//            + "            FROM \n"
+//            + "                VW_RPT_RESUMEN_CONTRATACION \n"
+//            + "            WHERE \n"
+//            + "                ID_DET_PROCESO_ADQ = ?1";
+    
+    public static final String QUERY_CONTRATACION_RESUMEN_CONTRATACIONES = "SELECT \n" +
+            "rownum                  as idRow, \n" +
+            "vrrc.CODIGO_ENTIDAD          as codigoEntidad, \n" +
+            "vrrc.NOMBRE_CE               as nombreCe, \n" +
+            "vrrc.NOMBRE_DEPARTAMENTO_CE  as nombreDepartamentoCe, \n" +
+            "vrrc.NOMBRE_MUNICIPIO_CE     as nombreMunicipioCe, \n" +
+            "vrrc.DIRECCION_CE            as direccionCe, \n" +
+            "vrrc.RUBRO                   as rubro, \n" +
+            "vrrc.NUMERO_NIT              as numeroNit, \n" +
+            "vrrc.RAZON_SOCIAL            as razonSocial, \n" +
+            "vrrc.DIRECCION_EMP           as direccionEmp, \n" +
+            "vrrc.TELEFONO_EMP            as telefonoEmp, \n" +
+            "vrrc.CELULAR_EMP             as celularEmp, \n" +
+            "vrrc.NOMBRE_DEPARTAMENTO_EMP as nombreDepartamentoEmp, \n" +
+            "vrrc.NOMBRE_MUNICIPIO_EMP    as nombreMunicipioEmp, \n" +
+            "vrrc.CANTIDAD_CONTRATO       as cantidadContrato, \n" +
+            "vrrc.MONTO_CONTRATO          as montoContrato, \n" +
+            "vrrc.ID_CONTRATO             as idContrato, \n" +
+            "vrrc.miembro_firma           as miembroFirma, \n" +
+            "vrrc.tel_director            as telDirector, \n" +
+            "vrrc.tel_director2           as telDirector2, \n" +
+            "vrrc.numero_telefono         as numeroTelefono, \n" +
+            "vrrc.num_telefono2           as telefonoEmp2, \n" +
+            "vrrc.num_telefono3           as telefonoEmp3, \n" +
+            "vrrc.fecha_emision           as fechaEmision, \n" +
+            "p.numero_dui                 as numeroDui, \n" +
+            "rai.descripcion_rubro        as descripcionRubro \n" +
+            "FROM \n" +
+            "VW_RPT_RESUMEN_CONTRATACION vrrc \n" +
+            "INNER JOIN EMPRESA e ON vrrc.NUMERO_NIT = e.NUMERO_NIT \n" +
+            "INNER JOIN PERSONA p ON e.ID_PERSONA = p.ID_PERSONA \n" +
+            "INNER JOIN DETALLE_PROCESO_ADQ dpa ON vrrc.ID_DET_PROCESO_ADQ = dpa.ID_DET_PROCESO_ADQ \n" +
+            "INNER JOIN RUBROS_AMOSTRAR_INTERES rai ON dpa.ID_RUBRO_ADQ = rai.ID_RUBRO_INTERES \n" +
+            "WHERE \n" +
+            "vrrc.ID_DET_PROCESO_ADQ = ?1";
 
     public static final String QUERY_RPT_PROVEEDOR_ENT_FINAN = "SELECT "
             + "    rownum              as idRow, "
