@@ -6,8 +6,8 @@
     version="2.0">
     <description>Native queries para Paquete Escolar</description>
     
-   
-    <named-native-query name="Ejecucion.ResumenContratacionesByProcesoAndDepa" 
+   <!--Se reemplazo el 05 Dic 2022-->
+<!--    <named-native-query name="Ejecucion.ResumenContratacionesByProcesoAndDepa" 
                         result-class="sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto">
         <query>
              <![CDATA[
@@ -41,6 +41,50 @@
             WHERE 
                 ID_DET_PROCESO_ADQ = ?1 AND 
                 CODIGO_DEPARTAMENTO = ?2
+            ]]>
+        </query>    
+    </named-native-query>-->
+    
+    <named-native-query name="Ejecucion.ResumenContratacionesByProcesoAndDepa" 
+                        result-class="sv.gob.mined.paquescolar.model.pojos.VwRptProveedoresContratadosDto">
+        <query>
+             <![CDATA[
+            SELECT 
+                rownum                       as idRow,
+                vrrc.CODIGO_ENTIDAD          as codigoEntidad,
+                vrrc.NOMBRE_CE               as nombreCe,
+                vrrc.NOMBRE_DEPARTAMENTO_CE  as nombreDepartamentoCe,
+                vrrc.NOMBRE_MUNICIPIO_CE     as nombreMunicipioCe,
+                vrrc.DIRECCION_CE            as direccionCe,
+                vrrc.RUBRO                   as rubro,
+                vrrc.NUMERO_NIT              as numeroNit,
+                vrrc.RAZON_SOCIAL            as razonSocial,
+                vrrc.DIRECCION_EMP           as direccionEmp,
+                vrrc.TELEFONO_EMP            as telefonoEmp,
+                vrrc.CELULAR_EMP             as celularEmp,
+                vrrc.NOMBRE_DEPARTAMENTO_EMP as nombreDepartamentoEmp,
+                vrrc.NOMBRE_MUNICIPIO_EMP    as nombreMunicipioEmp,
+                vrrc.CANTIDAD_CONTRATO       as cantidadContrato,
+                vrrc.MONTO_CONTRATO          as montoContrato,
+                vrrc.ID_CONTRATO             as idContrato,
+                vrrc.miembro_firma           as miembroFirma,
+                vrrc.tel_director            as telDirector,
+                vrrc.tel_director2           as telDirector2,
+                vrrc.numero_telefono         as numeroTelefono,
+                vrrc.num_telefono2           as telefonoEmp2,
+                vrrc.num_telefono3           as telefonoEmp3,
+                vrrc.fecha_emision           as fechaEmision,
+                p.numero_dui                 as numeroDui,
+                rai.descripcion_rubro        as descripcionRubro 
+            FROM 
+                VW_RPT_RESUMEN_CONTRATACION vrrc
+            INNER JOIN EMPRESA e ON vrrc.NUMERO_NIT = e.NUMERO_NIT 
+            INNER JOIN PERSONA p ON e.ID_PERSONA = p.ID_PERSONA 
+            INNER JOIN DETALLE_PROCESO_ADQ dpa ON vrrc.ID_DET_PROCESO_ADQ = dpa.ID_DET_PROCESO_ADQ 
+            INNER JOIN RUBROS_AMOSTRAR_INTERES rai ON dpa.ID_RUBRO_ADQ = rai.ID_RUBRO_INTERES 
+            WHERE 
+                ID_DET_PROCESO_ADQ = ?1 AND 
+                CODIGO_DEPARTAMENTO = ?2 
             ]]>
         </query>    
     </named-native-query>

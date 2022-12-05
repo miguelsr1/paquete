@@ -49,6 +49,9 @@ public class VwRptProveedoresContratadosDto implements Serializable {
     private String telefonoEmp3;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date fechaEmision;
+    
+    private String numeroDui;
+    private String descripcionRubro;
 
     public VwRptProveedoresContratadosDto() {
     }
@@ -244,4 +247,22 @@ public class VwRptProveedoresContratadosDto implements Serializable {
     public void setFechaEmision(Date fechaEmision) {
         this.fechaEmision = fechaEmision;
     }
+
+    public String getNumeroDui() {
+        return numeroDui;
+    }
+
+    public void setNumeroDui(String numeroDui) {
+        this.numeroDui = numeroDui;
+    }
+
+    public String getDescripcionRubro() {
+        return descripcionRubro;
+    }
+
+    public void setDescripcionRubro(String descripcionRubro) {
+        this.descripcionRubro = descripcionRubro;
+    }
+    
+    
 }
